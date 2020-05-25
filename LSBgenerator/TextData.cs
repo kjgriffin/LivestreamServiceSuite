@@ -28,6 +28,7 @@ namespace LSBgenerator
         None,
     }
 
+    [Serializable]
     public class LiturgySpeaker
     {
         public Speaker Speaker { get; set; }
@@ -42,12 +43,14 @@ namespace LSBgenerator
 
     }
 
+    [Serializable]
     public class LiturgyLineState
     {
         public bool SpeakerWrap { get; set; } = false;
         public Speaker LastSpeaker { get; set; } = Speaker.None;
     }
 
+    [Serializable]
     public class LiturgyLine : ITypesettable
     {
         public Speaker Speaker { get; set; }
@@ -169,6 +172,8 @@ namespace LSBgenerator
         NewSlide,
         WrapSpeakerText,
     }
+
+    [Serializable]
     public class TypesetCommand : ITypesettable
     {
         public Command Command { get; set; }
@@ -189,6 +194,8 @@ namespace LSBgenerator
         }
     }
 
+
+    [Serializable]
     public class ReadingLine : ITypesettable
     {
 
@@ -238,6 +245,7 @@ namespace LSBgenerator
         }
     }
 
+    [Serializable]
     public class SermonTitle : ITypesettable
     {
         public string Title { get; set; }
@@ -297,6 +305,7 @@ namespace LSBgenerator
         }
     }
 
+    [Serializable]
     public class InlineImage: ITypesettable
     {
         public ProjectAsset ImageAsset { get; set; }
@@ -322,6 +331,8 @@ namespace LSBgenerator
         }
     }
 
+
+    [Serializable]
     public class Fullimage: ITypesettable
     {
         public ProjectAsset ImageAsset { get; set; }
@@ -345,6 +356,8 @@ namespace LSBgenerator
         }
     }
 
+
+    [Serializable]
     public class TextData
     {
 
@@ -397,7 +410,7 @@ namespace LSBgenerator
                 {
                     var args = tl.Split('(', ',', ')');
                     InlineImage inlineImage = new InlineImage();
-                    inlineImage.ImageAsset = assets[int.Parse(args[1])];
+                    inlineImage.ImageAsset = assets.Find(a => a.Name == args[1]);
                     inlineImage.AutoScale = args[2] == "fill";
                     LineData.Add(inlineImage);
                     continue;
@@ -407,7 +420,7 @@ namespace LSBgenerator
                 {
                     var args = tl.Split('(', ')');
                     Fullimage img = new Fullimage();
-                    img.ImageAsset = assets[int.Parse(args[1])];
+                    img.ImageAsset = assets.Find(a => a.Name == args[1]);
                     LineData.Add(img);
                     continue;
                 }

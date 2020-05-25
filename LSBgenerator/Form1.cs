@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -25,8 +27,9 @@ namespace LSBgenerator
         public string DFSize { get => DrawingFont.Size.ToString(); }
 
         ServiceProject proj = new ServiceProject();
-        
 
+
+        ImageList AssetImageList = new ImageList();
         private void Form1_Load(object sender, EventArgs e)
         {
             DrawingFont = Font;
@@ -41,6 +44,7 @@ namespace LSBgenerator
             CreateRenderer();
             tbFontName.Text = DrawingFont.Name;
             tbFontSize.Text = DrawingFont.Size.ToString();
+            lvAssets.SmallImageList = AssetImageList;
         }
 
         private void CreateRenderer()
@@ -61,6 +65,11 @@ namespace LSBgenerator
 
         TextData td;
         private void button3_Click(object sender, EventArgs e)
+        {
+            Typeset();
+        }
+
+        private void Typeset()
         {
             td = new TextData();
             td.ParseText(tbinput.Text, proj.Assets);
@@ -199,6 +208,7 @@ namespace LSBgenerator
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Title = "Open Program Source";
+            openFileDialog.Filter = "Text|*.txt";
             openFileDialog.ShowDialog();
             if (openFileDialog.FileName != "")
             {
@@ -211,44 +221,45 @@ namespace LSBgenerator
 
         private void button10_Click(object sender, EventArgs e)
         {
-            ProjectAsset asset = new ProjectAsset();
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Multiselect = true;
             openFileDialog.Title = "Select Image Asset";
-            openFileDialog.Filter = "JPeg Image|*.jpg|Bitmap Image|*.bmp|PNG Image|*.png";
+            openFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG";
             openFileDialog.ShowDialog();
 
-            if (openFileDialog.FileName != "")
+            foreach (var filename in openFileDialog.FileNames)
             {
                 // based on filetype do different things
 
-                System.IO.FileStream fs = (FileStream)openFileDialog.OpenFile();
-                string ext = Path.GetExtension(openFileDialog.FileName);
+                string ext = Path.GetExtension(filename);
 
+                ProjectAsset asset = new ProjectAsset();
                 asset.Type = ext;
-                asset.Name = openFileDialog.FileName;
-                asset.ResourcePath = openFileDialog.FileName;
+                asset.Name = Path.GetFileNameWithoutExtension(filename);
+                asset.ResourcePath = filename;
                 // get image
-                asset.Image = (Bitmap)Image.FromStream(fs);
+                asset.Image = (Bitmap)Image.FromFile(filename);
 
                 proj.Assets.Add(asset);
 
-
-                // add asset to assetbox
-                if (lvAssets.LargeImageList == null)
-                {
-                    lvAssets.LargeImageList = new ImageList();
-                    lvAssets.LargeImageList.ImageSize = new Size(100, 100);
-                }
-                lvAssets.LargeImageList.Images.Add(asset.Name, asset.Image);
-                ListViewItem i = new ListViewItem();
-                i.ImageKey = asset.Name;
-                i.Text = asset.Name;
-                lvAssets.Items.Add(i);
-
+                AddProjectAsset(asset);
             }
 
+        }
 
+        private void AddProjectAsset(ProjectAsset asset)
+        {
+            // add asset to assetbox
+            lvAssets.SmallImageList.ImageSize = new Size(100, 100);
+            lvAssets.SmallImageList.Images.Add(asset.guid.ToString(), asset.Image);
+            ListViewItem i = new ListViewItem();
+            i.ImageKey = asset.guid.ToString();
+            i.Text = "";
+            i.SubItems.Add(asset.Type);
+            i.SubItems.Add(asset.Name);
+            i.SubItems.Add(asset.guid.ToString());
+            lvAssets.Items.Add(i);
         }
 
         private void button15_Click(object sender, EventArgs e)
@@ -256,9 +267,173 @@ namespace LSBgenerator
             if (lvAssets.SelectedItems.Count == 1)
             {
                 Preview wnd = new Preview();
-                wnd.SetImage(proj.Assets.First(a => a.Name == lvAssets.SelectedItems[0].Text).Image);
+                wnd.SetImage(proj.Assets.First(a => a.Name == lvAssets.SelectedItems[0].SubItems[2].Text).Image);
                 wnd.Show();
             }
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            // add slides to project
+            proj.SourceText = tbinput.Text;
+
+            // assume assets to have been loaded already
+            // assume renderer to have been created
+            proj.Layout = renderer.GetLayoutParams();
+
+
+            // save project
+
+            SaveFileDialog saveproj = new SaveFileDialog();
+            saveproj.Title = "Save Project";
+            saveproj.FileName = DateTime.Now.ToString("yyyyMMdd") + "_Proj.lsbproj";
+            saveproj.Filter = "Project|*.lsbproj";
+            saveproj.ShowDialog();
+
+            if (saveproj.FileName != "")
+            {
+                proj.Serialize(saveproj.FileName);
+            }
+
+
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            // save project assets
+            SaveFileDialog saveassets = new SaveFileDialog();
+            saveassets.Title = "Save Asset Group";
+            saveassets.FileName = DateTime.Now.ToString("yyyyMMdd") + "_Assets.bal";
+            saveassets.Filter = "Asset Set|*.bal";
+            saveassets.ShowDialog();
+
+            if (saveassets.FileName != "")
+            {
+                AssetListSerilizer.Serialize(saveassets.FileName, proj.Assets);
+            }
+
+
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openassets = new OpenFileDialog();
+            openassets.Title = "Open Asset Group";
+            openassets.Filter = "Asset Sets|*.bal";
+            openassets.ShowDialog();
+
+            if (openassets.FileName != "")
+            {
+                proj.Assets = AssetListSerilizer.Deserialize(openassets.FileName);
+            }
+            lvAssets.Items.Clear();
+            foreach (var a in proj.Assets)
+            {
+                AddProjectAsset(a);
+            }
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openproj = new OpenFileDialog();
+            openproj.Title = "Open Project";
+            openproj.Filter = "Project|*.lsbproj";
+            openproj.ShowDialog();
+
+            if (openproj.FileName != "")
+            {
+                proj = ServiceProject.Deserialize(openproj.FileName);
+
+                // create new renderer
+                renderer = new TextRenderer(proj.Layout);
+                // load assets
+                lvAssets.Items.Clear();
+                foreach (var a in proj.Assets)
+                {
+                    AddProjectAsset(a);
+                }
+                // set text
+                tbinput.Text = proj.SourceText;
+                // update layout
+                UpdateLayoutPreview();
+
+                // render slides
+                Typeset();
+
+            }
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+
+            // select folder to save into
+            //FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+            //folderBrowser.ShowDialog();
+
+            SaveFileDialog savefiles = new SaveFileDialog();
+            savefiles.Title = "Save Stillframes";
+            savefiles.Filter = "Bitmap|*.BMP|PNG|*.PNG|JPEG|*.JPG";
+            savefiles.FileName = "slide_#";
+            savefiles.ShowDialog();
+
+            if (savefiles.FileName != "")
+            {
+                ImageFormat format;
+                switch (savefiles.FilterIndex)
+                {
+                    case 0:
+                        format = ImageFormat.Bmp;
+                        break;
+                    case 1:
+                        format = ImageFormat.Jpeg;
+                        break;
+                    case 2:
+                        format = ImageFormat.Png;
+                        break;
+                    default:
+                        format = ImageFormat.Png;
+                        break;
+                }
+                StillFrameRenderer sfr = new StillFrameRenderer() { Format = format };
+
+                List<Bitmap> slides = renderer.Slides.Select(p => p.rendering).ToList();
+
+                sfr.ExportStillFrames(Path.GetDirectoryName(savefiles.FileName), slides);
+
+            }
+
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            PowerPointRenderer powerPointRenderer = new PowerPointRenderer();
+            SaveFileDialog saveppt = new SaveFileDialog();
+            saveppt.Title = "Save to Powerpoint";
+            saveppt.Filter = "Powerpoint|*.pptx";
+            saveppt.ShowDialog();
+
+            if (saveppt.FileName == "")
+            {
+                return;
+            }
+
+            OpenFileDialog openfiles = new OpenFileDialog();
+            openfiles.Title = "Open Stills";
+            openfiles.ShowDialog();
+
+            if (openfiles.FileName == "")
+            {
+                return;
+            }
+
+            // get all the png files from openfile directory
+            List<string> files = new List<string>();
+
+            string path = Path.GetDirectoryName(openfiles.FileName);
+
+            files = Directory.GetFiles(path, "*.png").ToList();
+
+            powerPointRenderer.RenderStillsToPowerpoint(saveppt.FileName, files);
         }
     }
 }

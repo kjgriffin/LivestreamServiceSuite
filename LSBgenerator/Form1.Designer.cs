@@ -51,6 +51,7 @@
             this.nHeight = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button13 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.tbinput = new System.Windows.Forms.RichTextBox();
@@ -68,6 +69,8 @@
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.button12 = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.button15 = new System.Windows.Forms.Button();
+            this.button14 = new System.Windows.Forms.Button();
             this.lvAssets = new System.Windows.Forms.ListView();
             this.chImg = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -75,9 +78,10 @@
             this.button11 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
-            this.button13 = new System.Windows.Forms.Button();
-            this.button14 = new System.Windows.Forms.Button();
-            this.button15 = new System.Windows.Forms.Button();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.button16 = new System.Windows.Forms.Button();
+            this.button17 = new System.Windows.Forms.Button();
+            this.button18 = new System.Windows.Forms.Button();
             this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -96,6 +100,7 @@
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox8.SuspendLayout();
+            this.groupBox9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -368,6 +373,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Program";
             // 
+            // button13
+            // 
+            this.button13.Location = new System.Drawing.Point(335, 19);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(75, 23);
+            this.button13.TabIndex = 3;
+            this.button13.Text = "Open";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
+            // 
             // button8
             // 
             this.button8.Location = new System.Drawing.Point(416, 19);
@@ -391,6 +406,7 @@
             // tbinput
             // 
             this.tbinput.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tbinput.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbinput.Location = new System.Drawing.Point(3, 48);
             this.tbinput.Name = "tbinput";
             this.tbinput.Size = new System.Drawing.Size(491, 446);
@@ -508,13 +524,14 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.button18);
             this.groupBox7.Controls.Add(this.button12);
             this.groupBox7.Controls.Add(this.lbSlides);
             this.groupBox7.Controls.Add(this.groupBox5);
             this.groupBox7.Controls.Add(this.button6);
             this.groupBox7.Location = new System.Drawing.Point(987, 546);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(476, 370);
+            this.groupBox7.Size = new System.Drawing.Size(476, 279);
             this.groupBox7.TabIndex = 18;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Slides";
@@ -527,6 +544,7 @@
             this.button12.TabIndex = 18;
             this.button12.Text = "Render PPT";
             this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
             // groupBox8
             // 
@@ -543,12 +561,32 @@
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Resources";
             // 
+            // button15
+            // 
+            this.button15.Location = new System.Drawing.Point(397, 338);
+            this.button15.Name = "button15";
+            this.button15.Size = new System.Drawing.Size(75, 23);
+            this.button15.TabIndex = 5;
+            this.button15.Text = "View";
+            this.button15.UseVisualStyleBackColor = true;
+            this.button15.Click += new System.EventHandler(this.button15_Click);
+            // 
+            // button14
+            // 
+            this.button14.Location = new System.Drawing.Point(397, 139);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(75, 23);
+            this.button14.TabIndex = 4;
+            this.button14.Text = "Add Video";
+            this.button14.UseVisualStyleBackColor = true;
+            // 
             // lvAssets
             // 
             this.lvAssets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chImg,
             this.chType,
             this.chName});
+            this.lvAssets.FullRowSelect = true;
             this.lvAssets.HideSelection = false;
             this.lvAssets.Location = new System.Drawing.Point(6, 20);
             this.lvAssets.MultiSelect = false;
@@ -556,11 +594,12 @@
             this.lvAssets.Size = new System.Drawing.Size(385, 341);
             this.lvAssets.TabIndex = 3;
             this.lvAssets.UseCompatibleStateImageBehavior = false;
+            this.lvAssets.View = System.Windows.Forms.View.Details;
             // 
             // chImg
             // 
-            this.chImg.Text = "";
-            this.chImg.Width = 200;
+            this.chImg.Text = "Preview";
+            this.chImg.Width = 100;
             // 
             // chType
             // 
@@ -569,24 +608,25 @@
             // chName
             // 
             this.chName.Text = "Asset Name";
-            this.chName.Width = 500;
+            this.chName.Width = 100;
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(397, 106);
+            this.button11.Location = new System.Drawing.Point(397, 48);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(75, 23);
             this.button11.TabIndex = 2;
             this.button11.Text = "Save Assets";
             this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(397, 48);
+            this.button10.Location = new System.Drawing.Point(397, 110);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(75, 23);
             this.button10.TabIndex = 1;
-            this.button10.Text = "Add Image";
+            this.button10.Text = "Add Images";
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
@@ -598,35 +638,48 @@
             this.button9.TabIndex = 0;
             this.button9.Text = "Load Assets";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
-            // button13
+            // groupBox9
             // 
-            this.button13.Location = new System.Drawing.Point(335, 19);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(75, 23);
-            this.button13.TabIndex = 3;
-            this.button13.Text = "Open";
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Click += new System.EventHandler(this.button13_Click);
+            this.groupBox9.Controls.Add(this.button17);
+            this.groupBox9.Controls.Add(this.button16);
+            this.groupBox9.Location = new System.Drawing.Point(987, 831);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(476, 85);
+            this.groupBox9.TabIndex = 20;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Project";
             // 
-            // button14
+            // button16
             // 
-            this.button14.Location = new System.Drawing.Point(397, 77);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(75, 23);
-            this.button14.TabIndex = 4;
-            this.button14.Text = "Add Video";
-            this.button14.UseVisualStyleBackColor = true;
+            this.button16.Location = new System.Drawing.Point(6, 53);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(75, 23);
+            this.button16.TabIndex = 0;
+            this.button16.Text = "Open";
+            this.button16.UseVisualStyleBackColor = true;
+            this.button16.Click += new System.EventHandler(this.button16_Click);
             // 
-            // button15
+            // button17
             // 
-            this.button15.Location = new System.Drawing.Point(397, 338);
-            this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(75, 23);
-            this.button15.TabIndex = 5;
-            this.button15.Text = "View";
-            this.button15.UseVisualStyleBackColor = true;
-            this.button15.Click += new System.EventHandler(this.button15_Click);
+            this.button17.Location = new System.Drawing.Point(87, 53);
+            this.button17.Name = "button17";
+            this.button17.Size = new System.Drawing.Size(75, 23);
+            this.button17.TabIndex = 1;
+            this.button17.Text = "Save";
+            this.button17.UseVisualStyleBackColor = true;
+            this.button17.Click += new System.EventHandler(this.button17_Click);
+            // 
+            // button18
+            // 
+            this.button18.Location = new System.Drawing.Point(136, 250);
+            this.button18.Name = "button18";
+            this.button18.Size = new System.Drawing.Size(75, 23);
+            this.button18.TabIndex = 19;
+            this.button18.Text = "Render Still";
+            this.button18.UseVisualStyleBackColor = true;
+            this.button18.Click += new System.EventHandler(this.button18_Click);
             // 
             // form1BindingSource
             // 
@@ -637,6 +690,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1469, 919);
+            this.Controls.Add(this.groupBox9);
             this.Controls.Add(this.groupBox8);
             this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.groupBox2);
@@ -665,6 +719,7 @@
             this.groupBox6.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
+            this.groupBox9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).EndInit();
             this.ResumeLayout(false);
 
@@ -722,6 +777,10 @@
         private System.Windows.Forms.Button button13;
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Button button15;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.Button button17;
+        private System.Windows.Forms.Button button16;
+        private System.Windows.Forms.Button button18;
     }
 }
 

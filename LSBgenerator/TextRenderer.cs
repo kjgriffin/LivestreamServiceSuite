@@ -10,6 +10,30 @@ using System.Windows.Forms.VisualStyles;
 
 namespace LSBgenerator
 {
+
+    [Serializable]
+    public class TextRendererLayout
+    {
+        public int DisplayWidth { get; set; }
+        public int DisplayHeight { get; set; }
+
+
+        public int TextboxWidth { get; set; }
+        public int TextboxHeight { get; set; }
+
+        //public int PaddingH { get; set; }
+        public int PaddingLeft { get; set; }
+        public int PaddingRight { get; set; }
+        //public int PaddingV { get; set; }
+        public int PaddingTop { get; set; }
+        public int PaddingBottom { get; set; }
+
+        public int PaddingCol { get; set; }
+
+        public Font Font { get; set; }
+
+    }
+
     public class TextRenderer
     {
 
@@ -65,16 +89,61 @@ namespace LSBgenerator
             PaddingTop = ptop;
             PaddingBottom = pbot;
             Font = f;
-            bmp = new Bitmap(displaywidth, displayheight);
+
+            create();
+            createSpeakers();
+        }
+
+        public TextRenderer(TextRendererLayout layout)
+        {
+            DisplayHeight = layout.DisplayHeight;
+            DisplayWidth = layout.DisplayWidth;
+            TextboxHeight = layout.TextboxHeight;
+            TextboxWidth = layout.TextboxWidth;
+            PaddingLeft = layout.PaddingLeft;
+            PaddingRight = layout.PaddingRight;
+            PaddingCol = layout.PaddingCol;
+            PaddingTop = layout.PaddingTop;
+            PaddingBottom = layout.PaddingBottom;
+            Font = layout.Font;
+            create();
+            createSpeakers();
+        }
+
+        public TextRendererLayout GetLayoutParams()
+        {
+            TextRendererLayout layoutparams = new TextRendererLayout();
+
+            layoutparams.DisplayHeight = DisplayHeight;
+            layoutparams.DisplayWidth = DisplayWidth;
+            layoutparams.TextboxHeight = TextboxHeight;
+            layoutparams.TextboxWidth = TextboxWidth;
+            layoutparams.PaddingLeft = PaddingLeft;
+            layoutparams.PaddingRight = PaddingRight;
+            layoutparams.PaddingCol = PaddingCol;
+            layoutparams.PaddingTop = PaddingTop;
+            layoutparams.PaddingBottom = PaddingBottom;
+            layoutparams.Font = Font;
+
+            return layoutparams;
+
+        }
+
+        private void create()
+        {
+            bmp = new Bitmap(DisplayWidth, DisplayHeight);
             gfx = Graphics.FromImage(bmp);
-            blocksize = (int)(f.Size * gfx.DpiX / 72);
+            blocksize = (int)(Font.Size * gfx.DpiX / 72);
             TextRect = new Rectangle(DisplayWidth - TextboxWidth + PaddingLeft, DisplayHeight - TextboxHeight + PaddingTop, TextboxWidth - (PaddingLeft + PaddingRight), TextboxHeight - (PaddingTop + PaddingBottom));
             ETextRect = new Rectangle(TextRect.X + blocksize + PaddingCol, TextRect.Y, TextRect.Width - blocksize - PaddingCol, TextRect.Height);
             TextboxRect = new Rectangle((DisplayWidth - TextboxWidth) / 2, DisplayHeight - TextboxHeight, TextboxWidth, TextboxHeight);
+        }
 
-            SpeakerFonts.Add(Speaker.Pastor, new Font(f, FontStyle.Regular));
-            SpeakerFonts.Add(Speaker.Congregation, new Font(f, FontStyle.Bold));
-            SpeakerFonts.Add(Speaker.Assistant, new Font(f, FontStyle.Regular));
+        private void createSpeakers()
+        {
+            SpeakerFonts.Add(Speaker.Pastor, new Font(Font, FontStyle.Regular));
+            SpeakerFonts.Add(Speaker.Congregation, new Font(Font, FontStyle.Bold));
+            SpeakerFonts.Add(Speaker.Assistant, new Font(Font, FontStyle.Regular));
 
             SpeakerFills.Add(Speaker.Pastor, false);
             SpeakerFills.Add(Speaker.Congregation, true);

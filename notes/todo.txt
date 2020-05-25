@@ -1,0 +1,14 @@
+TODO LSB:
+
+- center liturgy?
+- better linesplitting liturgy?
+
+- save assetbundle
+- load assetbundle
+- asset naming
+
+- save project
+
+- export slides
+
+- import video assets

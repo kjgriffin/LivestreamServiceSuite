@@ -18,6 +18,7 @@ namespace LSBgenerator
         void Render(RenderSlide slide, TextRenderer r);
     }
 
+    [Serializable]
     public class RenderInlineImage : IRenderable
     {
         public int RenderX { get; set; }
