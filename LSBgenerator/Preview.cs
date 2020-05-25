@@ -19,11 +19,11 @@ namespace LSBgenerator
 
         public void SetImage(Bitmap b)
         {
-            Width = b.Width + 50;
-            Height = b.Height + 100;
+            Width = b.Width + 16;
+            Height = b.Height + 40;
             pbPreview.Image = b;
             pbPreview.SizeMode = PictureBoxSizeMode.AutoSize;
-            
+
         }
 
         public Graphics GetGraphics()

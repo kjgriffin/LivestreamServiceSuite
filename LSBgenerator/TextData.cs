@@ -7,12 +7,13 @@ using System.Drawing;
 using System.IO;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Security.Cryptography;
 
 namespace LSBgenerator
 {
 
 
-    enum Speaker
+    public enum Speaker
     {
         Pastor,
         Congregation,
@@ -27,15 +28,27 @@ namespace LSBgenerator
         None,
     }
 
-    class LiturgySpeaker
+    public class LiturgySpeaker
     {
         public Speaker Speaker { get; set; }
 
         public void Render() { }
-        
+
     }
 
-    class LiturgyLine
+    public interface ITypesettable
+    {
+        RenderSlide TypesetSlide(RenderSlide slide, TextRenderer r);
+
+    }
+
+    public class LiturgyLineState
+    {
+        public bool SpeakerWrap { get; set; } = false;
+        public Speaker LastSpeaker { get; set; } = Speaker.None;
+    }
+
+    public class LiturgyLine : ITypesettable
     {
         public Speaker Speaker { get; set; }
         public string Text { get; set; }
@@ -54,30 +67,304 @@ namespace LSBgenerator
             return 0;
         }
 
+        public RenderSlide TypesetSlide(RenderSlide slide, TextRenderer r)
+        {
+            LiturgyLine line = this;
+
+
+            // update state if not in wrapmode
+            if (!r.LLState.SpeakerWrap)
+            {
+                r.LLState.LastSpeaker = line.Speaker;
+            }
+            else
+            {
+                line.Speaker = r.LLState.LastSpeaker;
+            }
+
+            // try to fit to current slide
+            int lineheight = (int)Math.Ceiling(slide.gfx.MeasureString("CPALTgy", r.SpeakerFonts.TryGetVal(line.Speaker, r.Font)).Height);
+
+            // check if whole line will fit
+
+            SizeF s = slide.gfx.MeasureString(line.Text, r.SpeakerFonts.TryGetVal(line.Speaker, r.Font), r.ETextRect.Width);
+
+            if (slide.YOffset + s.Height <= r.ETextRect.Height)
+            {
+                // it fits, add this line at position and compute
+                RenderLine rl = new RenderLine() { Height = (int)s.Height, Width = (int)s.Width, ShowSpeaker = line.SubSplit == 0 || slide.Lines == 0, Speaker = line.Speaker, Text = line.Text, RenderX = 0, RenderY = 0, RenderLayoutMode = LayoutMode.Auto, LineNum = slide.Lines++, Font = r.SpeakerFonts.TryGetVal(line.Speaker, r.Font) };
+                slide.RenderLines.Add(rl);
+                slide.YOffset += (int)s.Height;
+                // wrap only works for one line
+                r.LLState.SpeakerWrap = false;
+                return slide;
+            }
+            // if slide isn't blank, then try it on a blank slide
+            if (!slide.Blank)
+            {
+                r.Slides.Add(r.FinalizeSlide(slide));
+                // wrap only works for one line
+                r.LLState.SpeakerWrap = false;
+                return line.TypesetSlide(new RenderSlide() { Order = slide.Order + 1 }, r);
+            }
+            // if doesn't fit on a blank slide
+            // try to split into sentences. put as many sentences as fit on one slide until done
+
+
+            // If have already split into sentences... split into chunks of words?
+            if (line.IsSubsplit)
+            {
+                RenderSlide errorslide;
+                if (!slide.Blank)
+                {
+                    r.Slides.Add(r.FinalizeSlide(slide));
+                    errorslide = new RenderSlide() { Order = slide.Order + 1 };
+                }
+                else
+                {
+                    errorslide = slide;
+                }
+                // for now abandon
+                string emsg = "ERROR";
+                Size esize = slide.gfx.MeasureString(emsg, r.Font).ToSize();
+                RenderLine errorline = new RenderLine() { Height = esize.Height, Width = esize.Width, ShowSpeaker = r.LLState.SpeakerWrap, Speaker = Speaker.None, Text = emsg, RenderX = 0, RenderY = 0, RenderLayoutMode = LayoutMode.Auto, LineNum = 0, Font = r.Font, TextBrush = Brushes.Red };
+                errorslide.RenderLines.Add(errorline);
+                r.Slides.Add(r.FinalizeSlide(errorslide));
+                // wrap only works for one line
+                r.LLState.SpeakerWrap = false;
+                return new RenderSlide() { Order = errorslide.Order + 1 };
+
+            }
+
+
+            // split line text into sentences
+            var sentences = line.Text.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+
+            // keep trying to stuff a sentence
+            List<LiturgyLine> sublines = new List<LiturgyLine>();
+            int splitnum = 0;
+            foreach (var sentence in sentences)
+            {
+                // create a bunch of sub-liturgy-lines and try to typeset them all
+                sublines.Add(new LiturgyLine() { Speaker = line.Speaker, Text = sentence.Trim() + ".", SubSplit = splitnum++, IsSubsplit = true });
+            }
+
+            foreach (var sl in sublines)
+            {
+                slide = sl.TypesetSlide(slide, r);
+            }
+
+
+            // wrap only works for one line
+            r.LLState.SpeakerWrap = false;
+            return slide;
+
+        }
+
     }
 
-    class TextData
+
+    public enum Command
+    {
+        NewSlide,
+        WrapSpeakerText,
+    }
+    public class TypesetCommand : ITypesettable
+    {
+        public Command Command { get; set; }
+
+        public RenderSlide TypesetSlide(RenderSlide slide, TextRenderer r)
+        {
+            if (Command == Command.NewSlide)
+            {
+                // force new slide
+                r.Slides.Add(r.FinalizeSlide(slide));
+                return new RenderSlide() { Order = slide.Order + 1 };
+            }
+            if (Command == Command.WrapSpeakerText)
+            {
+                r.LLState.SpeakerWrap = true;
+            }
+            return slide;
+        }
+    }
+
+    public class ReadingLine : ITypesettable
     {
 
-        public List<LiturgyLine> LineData = new List<LiturgyLine>();
+        public string Title { get; set; }
+        public string Reference { get; set; }
+
+        public RenderSlide TypesetSlide(RenderSlide slide, TextRenderer r)
+        {
+            // force a new slide
+            RenderSlide rslide = slide;
+            if (!slide.Blank)
+            {
+                r.Slides.Add(r.FinalizeSlide(slide));
+                rslide = new RenderSlide() { Order = slide.Order + 1 };
+            }
+
+
+            // create the slide 
+
+
+            Font titlefont = new Font(r.Font, FontStyle.Bold);
+            Font reffont = new Font(r.Font, FontStyle.Bold | FontStyle.Italic);
+
+            // add render lines for title and for reference
+            Size tsize = rslide.gfx.MeasureString(Title, titlefont).ToSize();
+            int titley = r.ETextRect.Height / 2 - (tsize.Height / 2);
+
+
+            RenderLine titleline = new RenderLine() { Height = tsize.Height, Width = tsize.Width, LineNum = 0, RenderLayoutMode = LayoutMode.Fixed, ShowSpeaker = false, Speaker = Speaker.None, Text = Title, RenderX = 0, RenderY = titley, Font = titlefont };
+
+            Size rsize = rslide.gfx.MeasureString(Reference, reffont).ToSize();
+            // add equal column spacing
+            int padright = r.ETextRect.X - r.TextboxRect.X + r.PaddingCol;
+            int refx = r.ETextRect.Width - rsize.Width - padright;
+            int refy = r.ETextRect.Height / 2 - (rsize.Height / 2);
+            RenderLine refline = new RenderLine() { Height = rsize.Height, Width = rsize.Width, LineNum = 0, RenderLayoutMode = LayoutMode.Fixed, ShowSpeaker = false, Speaker = Speaker.None, Text = Reference, RenderX = refx, RenderY = refy, Font = reffont };
+
+            rslide.RenderLines.Add(titleline);
+            rslide.RenderLines.Add(refline);
+
+
+            r.Slides.Add(r.FinalizeSlide(rslide));
+
+            // return a new black slide
+            return new RenderSlide() { Order = rslide.Order + 1 };
+
+        }
+    }
+
+    public class SermonTitle : ITypesettable
+    {
+        public string Title { get; set; }
+        public string SermonName { get; set; }
+        public string SermonText { get; set; }
+
+        public RenderSlide TypesetSlide(RenderSlide slide, TextRenderer r)
+        {
+            // force a new slide
+            RenderSlide rslide = slide;
+            if (!slide.Blank)
+            {
+                r.Slides.Add(r.FinalizeSlide(slide));
+                rslide = new RenderSlide() { Order = slide.Order + 1 };
+            }
+
+            // create the slide 
+
+
+            Font titlefont = new Font(r.Font, FontStyle.Bold);
+            Font sermontitlefont = new Font(r.Font, FontStyle.Bold);
+            Font reffont = new Font(r.Font, FontStyle.Bold | FontStyle.Italic);
+
+            // add render lines for title and for reference
+            Size tsize = rslide.gfx.MeasureString(Title, r.Font).ToSize();
+            Size rsize = rslide.gfx.MeasureString(SermonText, reffont).ToSize();
+            Size nsize = rslide.gfx.MeasureString(SermonName, r.Font).ToSize();
+
+            int yslack = r.ETextRect.Height - Math.Max(tsize.Height, rsize.Height) - nsize.Height;
+
+            int titley = yslack / 3;
+
+            RenderLine titleline = new RenderLine() { Height = tsize.Height, Width = tsize.Width, LineNum = 0, RenderLayoutMode = LayoutMode.Fixed, ShowSpeaker = false, Speaker = Speaker.None, Text = Title, RenderX = 0, RenderY = titley, Font = titlefont };
+
+            // add equal column spacing
+            int padright = r.ETextRect.X - r.TextboxRect.X + r.PaddingCol;
+            int refx = r.ETextRect.Width - rsize.Width - padright;
+            int refy = yslack / 3;
+            RenderLine refline = new RenderLine() { Height = rsize.Height, Width = rsize.Width, LineNum = 0, RenderLayoutMode = LayoutMode.Fixed, ShowSpeaker = false, Speaker = Speaker.None, Text = SermonText, RenderX = refx, RenderY = refy, Font = reffont };
+
+            rslide.RenderLines.Add(titleline);
+            rslide.RenderLines.Add(refline);
+
+            int stitley = yslack / 3 * 2 + Math.Max(tsize.Height, rsize.Height);
+            int stitlex = r.ETextRect.Width / 2 - padright - nsize.Width / 2;
+            RenderLine sermontitleline = new RenderLine() { Height = nsize.Height, Width = nsize.Width, LineNum = 1, RenderLayoutMode = LayoutMode.Fixed, ShowSpeaker = false, Speaker = Speaker.None, Text = SermonName, RenderX = stitlex, RenderY = stitley, Font = sermontitlefont };
+
+            rslide.RenderLines.Add(sermontitleline);
+
+
+
+            r.Slides.Add(r.FinalizeSlide(rslide));
+
+            // return a new black slide
+            return new RenderSlide() { Order = rslide.Order + 1 };
+
+        }
+    }
+
+    public class TextData
+    {
+
+        public List<ITypesettable> LineData = new List<ITypesettable>();
 
         public void ParseText(string text)
         {
+            // preprocessor to make linewraping more convenient
+            text = text.Replace(@"\wrap", @"\\\wrap\\");
             var lines = text.Split(new[] { @"\\" }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var line in lines)
             {
-                LiturgyLine l = new LiturgyLine();
-                string tl = line.Trim().Replace(Environment.NewLine, " ");
-                l.Text = tl.Replace(" T ", " + ").Substring(1).Trim();
+                string tl = line.Trim().Replace(Environment.NewLine, " ").Replace("\n", " ").Replace("\r", " ").Replace("\r\n", " ");
 
+                if (tl.StartsWith(@"\break"))
+                {
+                    TypesetCommand cmd = new TypesetCommand() { Command = Command.NewSlide };
+                    LineData.Add(cmd);
+                    continue;
+                }
+
+                if (tl.StartsWith(@"\wrap"))
+                {
+                    TypesetCommand cmd = new TypesetCommand() { Command = Command.WrapSpeakerText };
+                    LineData.Add(cmd);
+                    continue;
+                }
+
+                // typeset the reading on a new slide
+                // expected params are comma delimited
+                // eg. \reading(<Title>,<Reference>)
+                if (tl.StartsWith(@"\reading"))
+                {
+                    var contents = tl.Split('(', ',', ')');
+                    ReadingLine rl = new ReadingLine() { Title = contents[1], Reference = contents[2] };
+                    LineData.Add(rl);
+                    continue;
+                }
+
+                if (tl.StartsWith(@"\sermon"))
+                {
+                    var contents = tl.Split('(', ',', ')');
+                    SermonTitle sermonTitle = new SermonTitle() { Title = "Sermon", SermonName = contents[1], SermonText = contents[2] };
+                    LineData.Add(sermonTitle);
+                    continue;
+                }
+
+                LiturgyLine l = new LiturgyLine();
                 if (tl.StartsWith("P"))
                 {
+                    l.Text = tl.Replace(" T ", " + ").Substring(1).Trim();
                     l.Speaker = Speaker.Pastor;
                 }
                 else if (tl.StartsWith("C"))
                 {
+                    l.Text = tl.Replace(" T ", " + ").Substring(1).Trim();
                     l.Speaker = Speaker.Congregation;
+                }
+                else if (tl.StartsWith("A"))
+                {
+                    l.Text = tl.Replace(" T ", " + ").Substring(1).Trim();
+                    l.Speaker = Speaker.Assistant;
+                }
+                else
+                {
+                    l.Text = tl.Trim();
+                    l.Speaker = Speaker.None;
                 }
                 l.IsSubsplit = false;
                 LineData.Add(l);
@@ -94,7 +381,7 @@ namespace LSBgenerator
         {
 
 
-            int linestartX = 10 +  (r.DisplayWidth - r.TextboxWidth)/2;
+            int linestartX = 10 + (r.DisplayWidth - r.TextboxWidth) / 2;
             int linestartY = r.DisplayHeight - r.TextboxHeight;
 
             int speakerblocksize = (int)(f.Size * gfx.DpiX / 72);
@@ -107,8 +394,17 @@ namespace LSBgenerator
 
 
             // render in centered mode
-            foreach (var ll in LineData)
+            foreach (var l in LineData)
             {
+                LiturgyLine ll;
+                if (l is LiturgyLine)
+                {
+                    ll = l as LiturgyLine;
+                }
+                else
+                {
+                    return;
+                }
 
                 RectangleF displayaera = new RectangleF(3 + linestartX + speakerblocksize, linestartY + 3, r.TextboxWidth - speakerblocksize, r.TextboxHeight - 3);
                 Font df;
@@ -143,7 +439,7 @@ namespace LSBgenerator
                 {
                     Font cf = new Font(f, FontStyle.Bold);
                     gfx.FillPath(Brushes.Black, DrawRoundedRect(speakerblock, 2));
-                    gfx.DrawString("C", cf, Brushes.White, speakerblock, format );
+                    gfx.DrawString("C", cf, Brushes.White, speakerblock, format);
                 }
 
                 if (ll.Speaker == Speaker.Pastor)
@@ -183,7 +479,7 @@ namespace LSBgenerator
 
             arc.X = bounds.Right - diameter;
             path.AddArc(arc, 270, 90);
-            
+
             arc.Y = bounds.Bottom - diameter;
             path.AddArc(arc, 0, 90);
 

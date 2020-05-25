@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.tbinput = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button7 = new System.Windows.Forms.Button();
             this.nWidth = new System.Windows.Forms.NumericUpDown();
@@ -41,7 +41,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tbFontName = new System.Windows.Forms.TextBox();
             this.pbTypeset = new System.Windows.Forms.PictureBox();
             this.button3 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -53,13 +53,25 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.lbSlides = new System.Windows.Forms.ListBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.tbFontSize = new System.Windows.Forms.TextBox();
             this.nPaddingCol = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.nPaddingBottom = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.nPaddingTop = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.tbinput = new System.Windows.Forms.RichTextBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
+            this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.button9 = new System.Windows.Forms.Button();
+            this.button10 = new System.Windows.Forms.Button();
+            this.button11 = new System.Windows.Forms.Button();
+            this.listView1 = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).BeginInit();
@@ -75,6 +87,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nPaddingCol)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nPaddingBottom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nPaddingTop)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
+            this.groupBox7.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -102,14 +117,6 @@
             this.label3.Size = new System.Drawing.Size(49, 13);
             this.label3.TabIndex = 7;
             this.label3.Text = "Height %";
-            // 
-            // tbinput
-            // 
-            this.tbinput.Location = new System.Drawing.Point(6, 19);
-            this.tbinput.Multiline = true;
-            this.tbinput.Name = "tbinput";
-            this.tbinput.Size = new System.Drawing.Size(480, 472);
-            this.tbinput.TabIndex = 8;
             // 
             // groupBox1
             // 
@@ -180,6 +187,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.button8);
+            this.groupBox2.Controls.Add(this.button4);
             this.groupBox2.Controls.Add(this.tbinput);
             this.groupBox2.Location = new System.Drawing.Point(0, 422);
             this.groupBox2.Name = "groupBox2";
@@ -190,7 +199,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(1009, 546);
+            this.button6.Location = new System.Drawing.Point(6, 250);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 14;
@@ -208,13 +217,14 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
-            // textBox1
+            // tbFontName
             // 
-            this.textBox1.Location = new System.Drawing.Point(118, 19);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 12;
+            this.tbFontName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.form1BindingSource, "DFName", true));
+            this.tbFontName.Location = new System.Drawing.Point(118, 19);
+            this.tbFontName.Name = "tbFontName";
+            this.tbFontName.ReadOnly = true;
+            this.tbFontName.Size = new System.Drawing.Size(100, 20);
+            this.tbFontName.TabIndex = 12;
             // 
             // pbTypeset
             // 
@@ -334,16 +344,18 @@
             // lbSlides
             // 
             this.lbSlides.FormattingEnabled = true;
-            this.lbSlides.Location = new System.Drawing.Point(750, 546);
+            this.lbSlides.Location = new System.Drawing.Point(6, 19);
             this.lbSlides.Name = "lbSlides";
-            this.lbSlides.Size = new System.Drawing.Size(253, 225);
+            this.lbSlides.Size = new System.Drawing.Size(333, 225);
             this.lbSlides.TabIndex = 17;
             this.lbSlides.SelectedValueChanged += new System.EventHandler(this.lbSlides_SelectedValueChanged);
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.textBox2);
-            this.groupBox6.Controls.Add(this.textBox1);
+            this.groupBox6.Controls.Add(this.label9);
+            this.groupBox6.Controls.Add(this.label8);
+            this.groupBox6.Controls.Add(this.tbFontSize);
+            this.groupBox6.Controls.Add(this.tbFontName);
             this.groupBox6.Controls.Add(this.button5);
             this.groupBox6.Location = new System.Drawing.Point(6, 20);
             this.groupBox6.Name = "groupBox6";
@@ -352,13 +364,14 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Font";
             // 
-            // textBox2
+            // tbFontSize
             // 
-            this.textBox2.Location = new System.Drawing.Point(118, 45);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 14;
+            this.tbFontSize.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.form1BindingSource, "DFSize", true));
+            this.tbFontSize.Location = new System.Drawing.Point(118, 45);
+            this.tbFontSize.Name = "tbFontSize";
+            this.tbFontSize.ReadOnly = true;
+            this.tbFontSize.Size = new System.Drawing.Size(100, 20);
+            this.tbFontSize.TabIndex = 14;
             // 
             // nPaddingCol
             // 
@@ -438,13 +451,123 @@
             this.label7.TabIndex = 16;
             this.label7.Text = "Top";
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(77, 22);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(28, 13);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "Font";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(77, 48);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(27, 13);
+            this.label9.TabIndex = 16;
+            this.label9.Text = "Size";
+            // 
+            // tbinput
+            // 
+            this.tbinput.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tbinput.Location = new System.Drawing.Point(3, 48);
+            this.tbinput.Name = "tbinput";
+            this.tbinput.Size = new System.Drawing.Size(491, 446);
+            this.tbinput.TabIndex = 0;
+            this.tbinput.Text = "";
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(3, 19);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(115, 23);
+            this.button4.TabIndex = 1;
+            this.button4.Text = "Change Font";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click_1);
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(416, 19);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(75, 23);
+            this.button8.TabIndex = 2;
+            this.button8.Text = "Save";
+            this.button8.UseVisualStyleBackColor = true;
+            // 
+            // form1BindingSource
+            // 
+            this.form1BindingSource.DataSource = typeof(LSBgenerator.Form1);
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.lbSlides);
+            this.groupBox7.Controls.Add(this.button6);
+            this.groupBox7.Location = new System.Drawing.Point(750, 546);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(345, 282);
+            this.groupBox7.TabIndex = 18;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Slides";
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.listView1);
+            this.groupBox8.Controls.Add(this.button11);
+            this.groupBox8.Controls.Add(this.button10);
+            this.groupBox8.Controls.Add(this.button9);
+            this.groupBox8.Location = new System.Drawing.Point(1101, 546);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(362, 361);
+            this.groupBox8.TabIndex = 19;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Resources";
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(281, 19);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(75, 23);
+            this.button9.TabIndex = 0;
+            this.button9.Text = "Load Assets";
+            this.button9.UseVisualStyleBackColor = true;
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(281, 48);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(75, 23);
+            this.button10.TabIndex = 1;
+            this.button10.Text = "Add Asset";
+            this.button10.UseVisualStyleBackColor = true;
+            // 
+            // button11
+            // 
+            this.button11.Location = new System.Drawing.Point(281, 77);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(75, 23);
+            this.button11.TabIndex = 2;
+            this.button11.Text = "Save Assets";
+            this.button11.UseVisualStyleBackColor = true;
+            // 
+            // listView1
+            // 
+            this.listView1.HideSelection = false;
+            this.listView1.Location = new System.Drawing.Point(6, 20);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(269, 335);
+            this.listView1.TabIndex = 3;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1469, 919);
-            this.Controls.Add(this.lbSlides);
-            this.Controls.Add(this.button6);
+            this.Controls.Add(this.groupBox8);
+            this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -457,7 +580,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nHeight)).EndInit();
             this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbTypeset)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
@@ -471,6 +593,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nPaddingCol)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nPaddingBottom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nPaddingTop)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).EndInit();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox8.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -480,7 +605,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox tbinput;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button button2;
@@ -490,7 +614,7 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.PictureBox pbTypeset;
         private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox tbFontName;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.GroupBox groupBox4;
@@ -502,13 +626,25 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.ListBox lbSlides;
         private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox tbFontSize;
         private System.Windows.Forms.NumericUpDown nPaddingCol;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown nPaddingBottom;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown nPaddingTop;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.BindingSource form1BindingSource;
+        private System.Windows.Forms.RichTextBox tbinput;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button button9;
     }
 }
 

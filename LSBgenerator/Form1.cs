@@ -20,6 +20,8 @@ namespace LSBgenerator
 
         TextRenderer renderer;
         public Font DrawingFont { get; set; }
+        public string DFName { get => DrawingFont.Name; }
+        public string DFSize { get => DrawingFont.Size.ToString(); }
         private void Form1_Load(object sender, EventArgs e)
         {
             DrawingFont = Font;
@@ -32,6 +34,8 @@ namespace LSBgenerator
 
             }
             CreateRenderer();
+            tbFontName.Text = DrawingFont.Name;
+            tbFontSize.Text = DrawingFont.Size.ToString();
         }
 
         private void CreateRenderer()
@@ -85,6 +89,8 @@ namespace LSBgenerator
             DrawingFont = fd.Font;
             CreateRenderer();
             lbSlides.Items.Clear();
+            tbFontName.Text = DrawingFont.Name;
+            tbFontSize.Text = DrawingFont.Size.ToString();
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -157,6 +163,14 @@ namespace LSBgenerator
         private void lbSlides_SelectedValueChanged(object sender, EventArgs e)
         {
             ShowSlidePreview();
+        }
+
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            FontDialog fd = new FontDialog();
+            fd.Font = tbinput.Font;
+            fd.ShowDialog();
+            tbinput.Font = fd.Font;
         }
     }
 }

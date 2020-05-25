@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LSBgenerator
 {
-    class RenderSlide
+    public class RenderSlide
     {
 
         public List<RenderLine> RenderLines { get; set; } = new List<RenderLine>();

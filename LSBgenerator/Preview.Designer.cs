@@ -35,10 +35,9 @@
             // pbPreview
             // 
             this.pbPreview.BackColor = System.Drawing.Color.White;
-            this.pbPreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pbPreview.Location = new System.Drawing.Point(0, 0);
             this.pbPreview.Name = "pbPreview";
-            this.pbPreview.Size = new System.Drawing.Size(800, 450);
+            this.pbPreview.Size = new System.Drawing.Size(1920, 1080);
             this.pbPreview.TabIndex = 0;
             this.pbPreview.TabStop = false;
             // 
@@ -46,7 +45,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.ClientSize = new System.Drawing.Size(1920, 1081);
             this.Controls.Add(this.pbPreview);
             this.Name = "Preview";
             this.Text = "Preview";

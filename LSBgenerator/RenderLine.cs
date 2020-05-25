@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace LSBgenerator
 {
-    class RenderLine
+    public class RenderLine
     {
         public int RenderX { get; set; }
         public int RenderY { get; set; }
@@ -23,9 +24,13 @@ namespace LSBgenerator
         public LayoutMode RenderLayoutMode { get; set; }
 
         public int LineNum { get; set; }
+
+        public Font Font { get; set; }
+
+        public Brush TextBrush { get; set; } = Brushes.Black;
     }
 
-    enum LayoutMode
+    public enum LayoutMode
     {
         Auto,
         Fixed,
