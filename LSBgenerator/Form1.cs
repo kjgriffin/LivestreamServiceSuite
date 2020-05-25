@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,10 @@ namespace LSBgenerator
         public Font DrawingFont { get; set; }
         public string DFName { get => DrawingFont.Name; }
         public string DFSize { get => DrawingFont.Size.ToString(); }
+
+        ServiceProject proj = new ServiceProject();
+        
+
         private void Form1_Load(object sender, EventArgs e)
         {
             DrawingFont = Font;
@@ -58,7 +63,7 @@ namespace LSBgenerator
         private void button3_Click(object sender, EventArgs e)
         {
             td = new TextData();
-            td.ParseText(tbinput.Text);
+            td.ParseText(tbinput.Text, proj.Assets);
 
             //Bitmap bb = new Bitmap(renderer.DisplayWidth, renderer.DisplayHeight);
             //td.Render_PreviewText(Graphics.FromImage(bb), renderer, DrawingFont);
@@ -171,6 +176,89 @@ namespace LSBgenerator
             fd.Font = tbinput.Font;
             fd.ShowDialog();
             tbinput.Font = fd.Font;
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog savedialog = new SaveFileDialog();
+            savedialog.Title = "Save Program Source";
+            savedialog.Filter = "Text File|*.txt";
+            savedialog.FileName = DateTime.Now.ToString("yyyyMMdd") + "_LSBService";
+            savedialog.ShowDialog();
+            if (savedialog.FileName != "")
+            {
+                using (StreamWriter tw = new StreamWriter(savedialog.OpenFile()))
+                {
+                    tw.Write(tbinput.Text);
+                }
+            }
+
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Open Program Source";
+            openFileDialog.ShowDialog();
+            if (openFileDialog.FileName != "")
+            {
+                using (StreamReader rdr = new StreamReader(openFileDialog.OpenFile()))
+                {
+                    tbinput.Text = rdr.ReadToEnd();
+                }
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            ProjectAsset asset = new ProjectAsset();
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Select Image Asset";
+            openFileDialog.Filter = "JPeg Image|*.jpg|Bitmap Image|*.bmp|PNG Image|*.png";
+            openFileDialog.ShowDialog();
+
+            if (openFileDialog.FileName != "")
+            {
+                // based on filetype do different things
+
+                System.IO.FileStream fs = (FileStream)openFileDialog.OpenFile();
+                string ext = Path.GetExtension(openFileDialog.FileName);
+
+                asset.Type = ext;
+                asset.Name = openFileDialog.FileName;
+                asset.ResourcePath = openFileDialog.FileName;
+                // get image
+                asset.Image = (Bitmap)Image.FromStream(fs);
+
+                proj.Assets.Add(asset);
+
+
+                // add asset to assetbox
+                if (lvAssets.LargeImageList == null)
+                {
+                    lvAssets.LargeImageList = new ImageList();
+                    lvAssets.LargeImageList.ImageSize = new Size(100, 100);
+                }
+                lvAssets.LargeImageList.Images.Add(asset.Name, asset.Image);
+                ListViewItem i = new ListViewItem();
+                i.ImageKey = asset.Name;
+                i.Text = asset.Name;
+                lvAssets.Items.Add(i);
+
+            }
+
+
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            if (lvAssets.SelectedItems.Count == 1)
+            {
+                Preview wnd = new Preview();
+                wnd.SetImage(proj.Assets.First(a => a.Name == lvAssets.SelectedItems[0].Text).Image);
+                wnd.Show();
+            }
         }
     }
 }

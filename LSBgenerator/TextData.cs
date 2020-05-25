@@ -297,12 +297,60 @@ namespace LSBgenerator
         }
     }
 
+    public class InlineImage: ITypesettable
+    {
+        public ProjectAsset ImageAsset { get; set; }
+        public bool AutoScale { get; set; } = false;
+
+        public RenderSlide TypesetSlide(RenderSlide slide, TextRenderer r)
+        {
+            // will force a new slide
+            RenderSlide rslide = slide;
+            if (!slide.Blank)
+            {
+                r.Slides.Add(r.FinalizeSlide(slide));
+                rslide = new RenderSlide() { Order = slide.Order + 1 };
+            }
+
+            // uses default renderline
+            RenderInlineImage ril = new RenderInlineImage() { Image = ImageAsset.Image, Height = ImageAsset.Image.Height, Width = ImageAsset.Image.Width, RenderLayoutMode = AutoScale ? LayoutMode.Auto : LayoutMode.Fixed, RenderX = 0, RenderY = 0 };
+            rslide.RenderLines.Add(ril);
+
+            r.Slides.Add(r.FinalizeSlide(rslide));
+            return new RenderSlide() { Order = rslide.Order + 1 };
+
+        }
+    }
+
+    public class Fullimage: ITypesettable
+    {
+        public ProjectAsset ImageAsset { get; set; }
+
+        public RenderSlide TypesetSlide(RenderSlide slide, TextRenderer r)
+        {
+            // will force a new slide
+            RenderSlide rslide = slide;
+            if (!slide.Blank)
+            {
+                r.Slides.Add(r.FinalizeSlide(slide));
+                rslide = new RenderSlide() { Order = slide.Order + 1 };
+            }
+
+            // uses default renderline
+            RenderFullImage ril = new RenderFullImage() { Image = ImageAsset.Image, Height = ImageAsset.Image.Height, Width = ImageAsset.Image.Width, RenderLayoutMode = LayoutMode.Auto };
+            rslide.RenderLines.Add(ril);
+
+            r.Slides.Add(r.FinalizeSlide(rslide));
+            return new RenderSlide() { Order = rslide.Order + 1 };
+        }
+    }
+
     public class TextData
     {
 
         public List<ITypesettable> LineData = new List<ITypesettable>();
 
-        public void ParseText(string text)
+        public void ParseText(string text, List<ProjectAsset> assets)
         {
             // preprocessor to make linewraping more convenient
             text = text.Replace(@"\wrap", @"\\\wrap\\");
@@ -342,6 +390,25 @@ namespace LSBgenerator
                     var contents = tl.Split('(', ',', ')');
                     SermonTitle sermonTitle = new SermonTitle() { Title = "Sermon", SermonName = contents[1], SermonText = contents[2] };
                     LineData.Add(sermonTitle);
+                    continue;
+                }
+
+                if (tl.StartsWith(@"\image"))
+                {
+                    var args = tl.Split('(', ',', ')');
+                    InlineImage inlineImage = new InlineImage();
+                    inlineImage.ImageAsset = assets[int.Parse(args[1])];
+                    inlineImage.AutoScale = args[2] == "fill";
+                    LineData.Add(inlineImage);
+                    continue;
+                }
+
+                if (tl.StartsWith(@"\fullimage"))
+                {
+                    var args = tl.Split('(', ')');
+                    Fullimage img = new Fullimage();
+                    img.ImageAsset = assets[int.Parse(args[1])];
+                    LineData.Add(img);
                     continue;
                 }
 

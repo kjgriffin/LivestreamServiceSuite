@@ -10,7 +10,7 @@ namespace LSBgenerator
     public class RenderSlide
     {
 
-        public List<RenderLine> RenderLines { get; set; } = new List<RenderLine>();
+        public List<IRenderable> RenderLines { get; set; } = new List<IRenderable>();
 
         public int Order { get; set; } = 0;
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Windows.Forms.VisualStyles;
 
 namespace LSBgenerator
 {
@@ -50,7 +51,7 @@ namespace LSBgenerator
 
 
 
-        int blocksize;
+        public int blocksize;
 
         public TextRenderer(int displaywidth, int displayheight, int textboxwidth, int textboxheight, int pleft, int pright, int pcol, int ptop, int pbot, Font f)
         {
@@ -205,40 +206,42 @@ namespace LSBgenerator
 
             foreach (var target in slide.RenderLines)
             {
-                // draw text
-                slide.gfx.DrawString(target.Text, target.Font, target.TextBrush, new Rectangle(ETextRect.X + target.RenderX, ETextRect.Y + target.RenderY, ETextRect.Size.Width, ETextRect.Size.Height), format);
-                // draw speaker
-                if (target.ShowSpeaker)
-                {
-                    Font speakerfont = new Font(target.Font, FontStyle.Bold);
-                    int speakeroffsety = (int)Math.Floor(Math.Ceiling((slide.gfx.MeasureString(SpeakerText.TryGetVal(target.Speaker, "?"), speakerfont).Height - blocksize) / 2) - 1);
-                    Rectangle speakerblock = new Rectangle(TextboxRect.X + PaddingCol, ETextRect.Y + target.RenderY + speakeroffsety, blocksize, blocksize);
 
-                    if (target.Speaker == Speaker.None)
-                    {
-                        continue;
-                    }
+                target.Render(slide, this);
+                //// draw text
+                //slide.gfx.DrawString(target.Text, target.Font, target.TextBrush, new Rectangle(ETextRect.X + target.RenderX, ETextRect.Y + target.RenderY, ETextRect.Size.Width, ETextRect.Size.Height), format);
+                //// draw speaker
+                //if (target.ShowSpeaker)
+                //{
+                //    Font speakerfont = new Font(target.Font, FontStyle.Bold);
+                //    int speakeroffsety = (int)Math.Floor(Math.Ceiling((slide.gfx.MeasureString(SpeakerText.TryGetVal(target.Speaker, "?"), speakerfont).Height - blocksize) / 2) - 1);
+                //    Rectangle speakerblock = new Rectangle(TextboxRect.X + PaddingCol, ETextRect.Y + target.RenderY + speakeroffsety, blocksize, blocksize);
 
-                    if (SpeakerFills.TryGetVal(target.Speaker, false))
-                    {
-                        slide.gfx.FillPath(Brushes.Red, RoundedRect(speakerblock, 2));
-                        slide.gfx.DrawString(SpeakerText.TryGetVal(target.Speaker, "?"), speakerfont, Brushes.White, speakerblock, format);
-                    }
-                    else
-                    {
-                        slide.gfx.FillPath(Brushes.White, RoundedRect(speakerblock, 2));
-                        slide.gfx.DrawPath(Pens.Red, RoundedRect(speakerblock, 2));
-                        slide.gfx.DrawString(SpeakerText.TryGetVal(target.Speaker, "?"), speakerfont, Brushes.Red, speakerblock, format);
-                    }
+                //    if (target.Speaker == Speaker.None)
+                //    {
+                //        continue;
+                //    }
 
-                }
+                //    if (SpeakerFills.TryGetVal(target.Speaker, false))
+                //    {
+                //        slide.gfx.FillPath(Brushes.Red, RoundedRect(speakerblock, 2));
+                //        slide.gfx.DrawString(SpeakerText.TryGetVal(target.Speaker, "?"), speakerfont, Brushes.White, speakerblock, format);
+                //    }
+                //    else
+                //    {
+                //        slide.gfx.FillPath(Brushes.White, RoundedRect(speakerblock, 2));
+                //        slide.gfx.DrawPath(Pens.Red, RoundedRect(speakerblock, 2));
+                //        slide.gfx.DrawString(SpeakerText.TryGetVal(target.Speaker, "?"), speakerfont, Brushes.Red, speakerblock, format);
+                //    }
+
+                //}
             }
 
         }
 
 
 
-        private GraphicsPath RoundedRect(Rectangle bounds, int borderradius)
+        public GraphicsPath RoundedRect(Rectangle bounds, int borderradius)
         {
 
             int diameter = borderradius * 2;

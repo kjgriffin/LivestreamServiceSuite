@@ -63,6 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderLine.cs" />
     <Compile Include="RenderSlide.cs" />
+    <Compile Include="ServiceProject.cs" />
     <Compile Include="TextData.cs" />
     <Compile Include="TextRenderer.cs" />
     <EmbeddedResource Include="Form1.resx">
