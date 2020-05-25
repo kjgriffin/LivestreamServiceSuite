@@ -141,7 +141,6 @@ namespace LSBgenerator
                 Slides.Add(FinalizeSlide(currentSlide));
             }
 
-
         }
 
         private RenderSlide TypesetSlide(RenderSlide slide, LiturgyLine line)
