@@ -8,6 +8,8 @@ using System.IO;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace LSBgenerator
 {
@@ -306,7 +308,7 @@ namespace LSBgenerator
     }
 
     [Serializable]
-    public class InlineImage: ITypesettable
+    public class InlineImage : ITypesettable
     {
         public ProjectAsset ImageAsset { get; set; }
         public bool AutoScale { get; set; } = false;
@@ -333,9 +335,11 @@ namespace LSBgenerator
 
 
     [Serializable]
-    public class Fullimage: ITypesettable
+    public class Fullimage : ITypesettable
     {
         public ProjectAsset ImageAsset { get; set; }
+
+        public bool Streach { get; set; } = true;
 
         public RenderSlide TypesetSlide(RenderSlide slide, TextRenderer r)
         {
@@ -348,7 +352,7 @@ namespace LSBgenerator
             }
 
             // uses default renderline
-            RenderFullImage ril = new RenderFullImage() { Image = ImageAsset.Image, Height = ImageAsset.Image.Height, Width = ImageAsset.Image.Width, RenderLayoutMode = LayoutMode.Auto };
+            RenderFullImage ril = new RenderFullImage() { Image = ImageAsset.Image, Height = ImageAsset.Image.Height, Width = ImageAsset.Image.Width, RenderLayoutMode = Streach ? LayoutMode.Auto : LayoutMode.PreserveScale };
             rslide.RenderLines.Add(ril);
 
             r.Slides.Add(r.FinalizeSlide(rslide));
@@ -363,11 +367,51 @@ namespace LSBgenerator
 
         public List<ITypesettable> LineData = new List<ITypesettable>();
 
+
+        public string PreProcLine(string line)
+        {
+            // replace non-frivalous newlines with forced newlines
+            return Regex.Replace(line, @"(?<delimiter>[!?.,:;])(?<newline>[\n\r]+)(?<start>[A-Z])", @"${delimiter}\\${newline}${start}", RegexOptions.Multiline);
+        }
+
         public void ParseText(string text, List<ProjectAsset> assets)
         {
+
+            text = PreProcLine(text);
+
             // preprocessor to make linewraping more convenient
-            text = text.Replace(@"\wrap", @"\\\wrap\\");
-            var lines = text.Split(new[] { @"\\" }, StringSplitOptions.RemoveEmptyEntries);
+            text = text.Replace(@"\wrap", @"\\\wrap\\")
+                .Replace(@"\break", @"\\\break\\")
+                //.Replace(@"\reading", @"\\\reading")
+                //.Replace(@"\sermon", @"\\\sermon")
+                //.Replace(@"\image", @"\\\image")
+                //.Replace(@"\fullimage", @"\\\fullimage")
+                //.Replace(@"\fitimage", @"\\\fitimage")
+                .Replace(@"\apostlescreed", @"\\\apostlescreed")
+                .Replace(@"\nicenecreed", @"\\\nicenecreed")
+                .Replace(@"\lordsprayer", @"\\\lordsprayer")
+                .Replace(@"\morningprayer", @"\\\morningprayer")
+                .Replace(@"\copyright", @"\\\copyright")
+                .Replace(@"\viewseries", @"\\\viewseries")
+                .Replace(@"\viewservices", @"\\\viewservices")
+                .Replace(@"\hymn", @"\\\hymn");
+
+            // replace functions
+            text = Regex.Replace(text, @"(?<funct>\\\w+\(.*\))", @"\\\\${funct}\\\\", RegexOptions.Multiline);
+
+            var lines = text.Split(new[] { @"\\" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            // try to intelligently split lines by newlines after punctuation
+
+            // remove 'empty' lines (new lines)
+            //lines = lines.Where(s => s != "\n")
+                //.Where(s => s != "\r\n")
+                //.Where(s => s != Environment.NewLine).ToList();
+
+            lines = lines.Where(s => !Regex.Match(s, @"^\s$", RegexOptions.None).Success).ToList();
+
+
+
 
             foreach (var line in lines)
             {
@@ -425,11 +469,98 @@ namespace LSBgenerator
                     continue;
                 }
 
+                if (tl.StartsWith(@"\fitimage"))
+                {
+                    var args = tl.Split('(', ')');
+                    Fullimage img = new Fullimage();
+                    img.ImageAsset = assets.Find(a => a.Name == args[1]);
+                    img.Streach = false;
+                    LineData.Add(img);
+                    continue;
+                }
+
+                if (tl.StartsWith(@"\apostlescreed"))
+                {
+                    Fullimage ac = new Fullimage();
+                    ac.ImageAsset = new ProjectAsset();
+                    ac.ImageAsset.Image = Properties.Resources.apostlescreed;
+                    ac.ImageAsset.Name = "Apostle Creed - Prerendered";
+                    ac.Streach = true;
+                    LineData.Add(ac);
+                    continue;
+                }
+                if (tl.StartsWith(@"\nicenecreed"))
+                {
+
+                    TypesetCommand cmd = new TypesetCommand() { Command = Command.NewSlide };
+                    LineData.Add(cmd);
+                    continue;
+                }
+                if (tl.StartsWith(@"\lordsprayer"))
+                {
+                    Fullimage ac = new Fullimage();
+                    ac.ImageAsset = new ProjectAsset();
+                    ac.ImageAsset.Image = Properties.Resources.lordsprayer;
+                    ac.ImageAsset.Name = "Lords Prayer - Prerendered";
+                    ac.Streach = true;
+                    LineData.Add(ac);
+                    continue;
+                }
+                if (tl.StartsWith(@"\viewseries"))
+                {
+                    Fullimage ac = new Fullimage();
+                    ac.ImageAsset = new ProjectAsset();
+                    ac.ImageAsset.Image = Properties.Resources.sessions;
+                    ac.ImageAsset.Name = "View Series - Prerendered";
+                    ac.Streach = true;
+                    LineData.Add(ac);
+                    continue;
+                }
+                if (tl.StartsWith(@"\viewservices"))
+                {
+                    Fullimage ac = new Fullimage();
+                    ac.ImageAsset = new ProjectAsset();
+                    ac.ImageAsset.Image = Properties.Resources.services;
+                    ac.ImageAsset.Name = "View Services - Prerendered";
+                    ac.Streach = true;
+                    LineData.Add(ac);
+                    continue;
+                }
+                if (tl.StartsWith(@"\copyright"))
+                {
+                    Fullimage ac = new Fullimage();
+                    ac.ImageAsset = new ProjectAsset();
+                    ac.ImageAsset.Image = Properties.Resources.copyright;
+                    ac.ImageAsset.Name = "Copyright1 - Prerendered";
+                    ac.Streach = true;
+                    LineData.Add(ac);
+                    continue;
+                }
+                if (tl.StartsWith(@"\morningprayer"))
+                {
+
+                    TypesetCommand cmd = new TypesetCommand() { Command = Command.NewSlide };
+                    LineData.Add(cmd);
+                    continue;
+                }
+                if (tl.StartsWith(@"\hymn"))
+                {
+
+                    TypesetCommand cmd = new TypesetCommand() { Command = Command.NewSlide };
+                    LineData.Add(cmd);
+                    continue;
+                }
+
                 LiturgyLine l = new LiturgyLine();
                 if (tl.StartsWith("P"))
                 {
                     l.Text = tl.Replace(" T ", " + ").Substring(1).Trim();
                     l.Speaker = Speaker.Pastor;
+                }
+                else if (tl.StartsWith("L"))
+                {
+                    l.Text = tl.Replace(" T ", " + ").Substring(1).Trim();
+                    l.Speaker = Speaker.Leader;
                 }
                 else if (tl.StartsWith("C"))
                 {

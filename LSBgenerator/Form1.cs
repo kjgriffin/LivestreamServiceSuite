@@ -72,6 +72,7 @@ namespace LSBgenerator
         private void Typeset()
         {
             td = new TextData();
+            //tbinput.Text = td.PreProcLine(tbinput.Text);
             td.ParseText(tbinput.Text, proj.Assets);
 
             //Bitmap bb = new Bitmap(renderer.DisplayWidth, renderer.DisplayHeight);
@@ -434,6 +435,34 @@ namespace LSBgenerator
             files = Directory.GetFiles(path, "*.png").ToList();
 
             powerPointRenderer.RenderStillsToPowerpoint(saveppt.FileName, files);
+        }
+
+        private void button19_Click(object sender, EventArgs e)
+        {
+            Display d = new Display();
+            d.FormBorderStyle = FormBorderStyle.None;
+            d.WindowState = FormWindowState.Maximized;
+            d.Show();
+        }
+
+        private void button20_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sf = new SaveFileDialog();
+            sf.Title = "Save Luma Key";
+            sf.Filter = "PNG|*.PNG";
+            sf.FileName = "LumaKey";
+            sf.ShowDialog();
+            if (sf.FileName != "")
+            {
+                Bitmap bmp = renderer.Render_LayoutLumaKey();
+                FileStream fs = new FileStream(sf.FileName, FileMode.Create);
+                bmp.Save(fs, ImageFormat.Png);
+                fs.Close();
+            }
         }
     }
 }

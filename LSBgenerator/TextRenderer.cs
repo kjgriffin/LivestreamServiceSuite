@@ -134,7 +134,7 @@ namespace LSBgenerator
             bmp = new Bitmap(DisplayWidth, DisplayHeight);
             gfx = Graphics.FromImage(bmp);
             blocksize = (int)(Font.Size * gfx.DpiX / 72);
-            TextRect = new Rectangle(DisplayWidth - TextboxWidth + PaddingLeft, DisplayHeight - TextboxHeight + PaddingTop, TextboxWidth - (PaddingLeft + PaddingRight), TextboxHeight - (PaddingTop + PaddingBottom));
+            TextRect = new Rectangle((DisplayWidth - TextboxWidth + PaddingLeft) / 2, DisplayHeight - TextboxHeight + PaddingTop, TextboxWidth - (PaddingLeft + PaddingRight), TextboxHeight - (PaddingTop + PaddingBottom));
             ETextRect = new Rectangle(TextRect.X + blocksize + PaddingCol, TextRect.Y, TextRect.Width - blocksize - PaddingCol, TextRect.Height);
             TextboxRect = new Rectangle((DisplayWidth - TextboxWidth) / 2, DisplayHeight - TextboxHeight, TextboxWidth, TextboxHeight);
         }
@@ -142,14 +142,17 @@ namespace LSBgenerator
         private void createSpeakers()
         {
             SpeakerFonts.Add(Speaker.Pastor, new Font(Font, FontStyle.Regular));
+            SpeakerFonts.Add(Speaker.Leader, new Font(Font, FontStyle.Regular));
             SpeakerFonts.Add(Speaker.Congregation, new Font(Font, FontStyle.Bold));
             SpeakerFonts.Add(Speaker.Assistant, new Font(Font, FontStyle.Regular));
 
             SpeakerFills.Add(Speaker.Pastor, false);
+            SpeakerFills.Add(Speaker.Leader, false);
             SpeakerFills.Add(Speaker.Congregation, true);
             SpeakerFills.Add(Speaker.Assistant, false);
 
             SpeakerText.Add(Speaker.Pastor, "P");
+            SpeakerText.Add(Speaker.Leader, "L");
             SpeakerText.Add(Speaker.Congregation, "C");
             SpeakerText.Add(Speaker.Assistant, "A");
         }
@@ -178,6 +181,17 @@ namespace LSBgenerator
             gfx.DrawRectangle(p, ETextRect);
 
         }
+
+        public Bitmap Render_LayoutLumaKey()
+        {
+            Bitmap bmp = new Bitmap(DisplayWidth, DisplayHeight);
+            Graphics gfx = Graphics.FromImage(bmp);
+            gfx.Clear(Color.Black);
+            gfx.FillRectangle(Brushes.White, TextboxRect);
+            return bmp;
+        }
+
+
         public void Typeset_Text(TextData td)
         {
             // create a series of 'slides' given some liturgy lines

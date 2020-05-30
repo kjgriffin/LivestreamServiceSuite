@@ -58,6 +58,7 @@
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.tbFontName = new System.Windows.Forms.TextBox();
+            this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.pbTypeset = new System.Windows.Forms.PictureBox();
             this.button3 = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -67,6 +68,7 @@
             this.tbFontSize = new System.Windows.Forms.TextBox();
             this.lbSlides = new System.Windows.Forms.ListBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.button18 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.button15 = new System.Windows.Forms.Button();
@@ -79,10 +81,8 @@
             this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.button16 = new System.Windows.Forms.Button();
             this.button17 = new System.Windows.Forms.Button();
-            this.button18 = new System.Windows.Forms.Button();
-            this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.button16 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -95,13 +95,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nHeight)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTypeset)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox9.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -120,6 +120,7 @@
             this.button1.TabIndex = 1;
             this.button1.Text = "Export Luma Key";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label3
             // 
@@ -405,6 +406,7 @@
             // 
             // tbinput
             // 
+            this.tbinput.DetectUrls = false;
             this.tbinput.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tbinput.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbinput.Location = new System.Drawing.Point(3, 48);
@@ -441,6 +443,10 @@
             this.tbFontName.ReadOnly = true;
             this.tbFontName.Size = new System.Drawing.Size(100, 20);
             this.tbFontName.TabIndex = 12;
+            // 
+            // form1BindingSource
+            // 
+            this.form1BindingSource.DataSource = typeof(LSBgenerator.Form1);
             // 
             // pbTypeset
             // 
@@ -535,6 +541,16 @@
             this.groupBox7.TabIndex = 18;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Slides";
+            // 
+            // button18
+            // 
+            this.button18.Location = new System.Drawing.Point(136, 250);
+            this.button18.Name = "button18";
+            this.button18.Size = new System.Drawing.Size(75, 23);
+            this.button18.TabIndex = 19;
+            this.button18.Text = "Render Still";
+            this.button18.UseVisualStyleBackColor = true;
+            this.button18.Click += new System.EventHandler(this.button18_Click);
             // 
             // button12
             // 
@@ -651,16 +667,6 @@
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Project";
             // 
-            // button16
-            // 
-            this.button16.Location = new System.Drawing.Point(6, 53);
-            this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(75, 23);
-            this.button16.TabIndex = 0;
-            this.button16.Text = "Open";
-            this.button16.UseVisualStyleBackColor = true;
-            this.button16.Click += new System.EventHandler(this.button16_Click);
-            // 
             // button17
             // 
             this.button17.Location = new System.Drawing.Point(87, 53);
@@ -671,19 +677,15 @@
             this.button17.UseVisualStyleBackColor = true;
             this.button17.Click += new System.EventHandler(this.button17_Click);
             // 
-            // button18
+            // button16
             // 
-            this.button18.Location = new System.Drawing.Point(136, 250);
-            this.button18.Name = "button18";
-            this.button18.Size = new System.Drawing.Size(75, 23);
-            this.button18.TabIndex = 19;
-            this.button18.Text = "Render Still";
-            this.button18.UseVisualStyleBackColor = true;
-            this.button18.Click += new System.EventHandler(this.button18_Click);
-            // 
-            // form1BindingSource
-            // 
-            this.form1BindingSource.DataSource = typeof(LSBgenerator.Form1);
+            this.button16.Location = new System.Drawing.Point(6, 53);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(75, 23);
+            this.button16.TabIndex = 0;
+            this.button16.Text = "Open";
+            this.button16.UseVisualStyleBackColor = true;
+            this.button16.Click += new System.EventHandler(this.button16_Click);
             // 
             // Form1
             // 
@@ -697,7 +699,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pbTypeset);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Lower Thirds Service Builder";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -713,6 +715,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nHeight)).EndInit();
             this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTypeset)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
@@ -720,7 +723,6 @@
             this.groupBox7.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
