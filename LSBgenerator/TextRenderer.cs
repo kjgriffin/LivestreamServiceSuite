@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,29 +9,6 @@ using System.Windows.Forms.VisualStyles;
 
 namespace LSBgenerator
 {
-
-    [Serializable]
-    public class TextRendererLayout
-    {
-        public int DisplayWidth { get; set; }
-        public int DisplayHeight { get; set; }
-
-
-        public int TextboxWidth { get; set; }
-        public int TextboxHeight { get; set; }
-
-        //public int PaddingH { get; set; }
-        public int PaddingLeft { get; set; }
-        public int PaddingRight { get; set; }
-        //public int PaddingV { get; set; }
-        public int PaddingTop { get; set; }
-        public int PaddingBottom { get; set; }
-
-        public int PaddingCol { get; set; }
-
-        public Font Font { get; set; }
-
-    }
 
     public class TextRenderer
     {
@@ -64,9 +40,9 @@ namespace LSBgenerator
 
         public Graphics gfx;
         public StringFormat format = new StringFormat() { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near, Trimming = StringTrimming.Word };
-        public Rectangle ETextRect;
-        public Rectangle TextRect;
         public Rectangle TextboxRect;
+        public Rectangle LayoutRect;
+        public Rectangle KeyRect;
 
         public Dictionary<Speaker, Font> SpeakerFonts = new Dictionary<Speaker, Font>();
         public Dictionary<Speaker, string> SpeakerText = new Dictionary<Speaker, string>();
@@ -134,9 +110,9 @@ namespace LSBgenerator
             bmp = new Bitmap(DisplayWidth, DisplayHeight);
             gfx = Graphics.FromImage(bmp);
             blocksize = (int)(Font.Size * gfx.DpiX / 72);
-            TextRect = new Rectangle((DisplayWidth - TextboxWidth + PaddingLeft) / 2, DisplayHeight - TextboxHeight + PaddingTop, TextboxWidth - (PaddingLeft + PaddingRight), TextboxHeight - (PaddingTop + PaddingBottom));
-            ETextRect = new Rectangle(TextRect.X + blocksize + PaddingCol, TextRect.Y, TextRect.Width - blocksize - PaddingCol, TextRect.Height);
-            TextboxRect = new Rectangle((DisplayWidth - TextboxWidth) / 2, DisplayHeight - TextboxHeight, TextboxWidth, TextboxHeight);
+            LayoutRect = new Rectangle(DisplayWidth - TextboxWidth + PaddingLeft, DisplayHeight - TextboxHeight + PaddingTop, TextboxWidth - (PaddingLeft + PaddingRight), TextboxHeight - (PaddingTop + PaddingBottom));
+            TextboxRect = new Rectangle(LayoutRect.X + blocksize + PaddingCol, LayoutRect.Y, LayoutRect.Width - blocksize - PaddingCol, LayoutRect.Height);
+            KeyRect = new Rectangle((DisplayWidth - TextboxWidth) / 2, DisplayHeight - TextboxHeight, TextboxWidth, TextboxHeight);
         }
 
         private void createSpeakers()
@@ -166,19 +142,20 @@ namespace LSBgenerator
 
             // draw display
 
-            gfx.FillRectangle(Brushes.White, TextboxRect);
+            gfx.FillRectangle(Brushes.White, KeyRect);
 
             // draw layout padding
             Pen p = new Pen(Brushes.Red);
             p.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
 
-            //gfx.DrawRectangle(p, TextRect);
+            gfx.FillRectangle(Brushes.LightGray, LayoutRect);
+
 
             // draw column
-            gfx.DrawRectangle(p, new Rectangle(TextRect.X, TextRect.Y, blocksize, TextRect.Height));
+            gfx.DrawRectangle(p, new Rectangle(LayoutRect.X, LayoutRect.Y, blocksize, LayoutRect.Height));
 
             // draw overlap for effective text
-            gfx.DrawRectangle(p, ETextRect);
+            gfx.DrawRectangle(p, TextboxRect);
 
         }
 
@@ -187,7 +164,7 @@ namespace LSBgenerator
             Bitmap bmp = new Bitmap(DisplayWidth, DisplayHeight);
             Graphics gfx = Graphics.FromImage(bmp);
             gfx.Clear(Color.Black);
-            gfx.FillRectangle(Brushes.White, TextboxRect);
+            gfx.FillRectangle(Brushes.White, KeyRect);
             return bmp;
         }
 
@@ -215,8 +192,8 @@ namespace LSBgenerator
             int slideCount = 0;
             RenderSlide currentSlide = new RenderSlide() { Order = slideCount++ };
 
-            int linestartX = ETextRect.X;
-            int linestartY = ETextRect.Y;
+            int linestartX = TextboxRect.X;
+            int linestartY = TextboxRect.Y;
 
 
             foreach (var line in td.LineData)
@@ -238,7 +215,7 @@ namespace LSBgenerator
 
             // compute vertical spacing height that's spare
             // divide this up
-            int spareheight = ETextRect.Height;
+            int spareheight = TextboxRect.Height;
             foreach (var rl in slide.RenderLines)
             {
                 if (rl.RenderLayoutMode == LayoutMode.Auto)
@@ -282,7 +259,7 @@ namespace LSBgenerator
             // clear background
             slide.gfx.Clear(Color.Black);
             // draw textbox
-            slide.gfx.FillRectangle(Brushes.White, TextboxRect);
+            slide.gfx.FillRectangle(Brushes.White, KeyRect);
 
 
             // go through the renderlist and display it

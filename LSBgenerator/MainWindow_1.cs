@@ -13,9 +13,9 @@ using System.Windows.Forms;
 
 namespace LSBgenerator
 {
-    public partial class Form1 : Form
+    public partial class MainWindow_1 : Form
     {
-        public Form1()
+        public MainWindow_1()
         {
             InitializeComponent();
         }
@@ -149,7 +149,7 @@ namespace LSBgenerator
             }
             catch (Exception)
             {
-                throw;
+                //throw;
             }
         }
 
@@ -347,6 +347,14 @@ namespace LSBgenerator
 
                 // create new renderer
                 renderer = new TextRenderer(proj.Layout);
+
+                nHeight.Value = (int)(renderer.DisplayHeight / 1080 * 100);
+                nWidth.Value = (int)(renderer.DisplayWidth / 1920 * 100);
+                nPaddingLeft.Value = renderer.PaddingLeft;
+                nPaddingRight.Value = renderer.PaddingRight;
+                nPaddingTop.Value = renderer.PaddingTop;
+                nPaddingBottom.Value = renderer.PaddingBottom;
+                nPaddingCol.Value = renderer.PaddingCol;
                 // load assets
                 lvAssets.Items.Clear();
                 foreach (var a in proj.Assets)
@@ -374,6 +382,7 @@ namespace LSBgenerator
             SaveFileDialog savefiles = new SaveFileDialog();
             savefiles.Title = "Save Stillframes";
             savefiles.Filter = "Bitmap|*.BMP|PNG|*.PNG|JPEG|*.JPG";
+            savefiles.FilterIndex = 2;
             savefiles.FileName = "slide_#";
             savefiles.ShowDialog();
 
@@ -463,6 +472,24 @@ namespace LSBgenerator
                 bmp.Save(fs, ImageFormat.Png);
                 fs.Close();
             }
+        }
+
+        private void button19_Click_1(object sender, EventArgs e)
+        {
+            // copies renderer params
+            renderer = new TextRenderer(renderer.GetLayoutParams());
+            lvAssets.Items.Clear();
+            proj.Assets.Clear();
+            proj.Layout = renderer.GetLayoutParams();
+            proj.SourceText = "";
+            tbinput.Text = "";
+            lbSlides.Items.Clear();
+            pbTypeset.Image = renderer.bmp;
+        }
+
+        private void button20_Click_1(object sender, EventArgs e)
+        {
+            proj.Assets.RemoveAll(a => a.guid.ToString() == lvAssets.SelectedItems[0].SubItems[3].ToString());
         }
     }
 }

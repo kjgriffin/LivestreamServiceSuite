@@ -7,97 +7,6 @@ using System.Threading.Tasks;
 
 namespace LSBgenerator
 {
-
-    public interface IRenderable
-    {
-        int RenderX { get; set; }
-        int RenderY { get; set; }
-        int Height { get; set; }
-        int Width { get; set; }
-        LayoutMode RenderLayoutMode { get; set; }
-        void Render(RenderSlide slide, TextRenderer r);
-    }
-
-    [Serializable]
-    public class RenderInlineImage : IRenderable
-    {
-        public int RenderX { get; set; }
-        public int RenderY { get; set; }
-        public int Height { get; set; }
-        public int Width { get; set; }
-        public LayoutMode RenderLayoutMode { get; set; }
-
-        public Bitmap Image { get; set; }
-        public void Render(RenderSlide slide, TextRenderer r)
-        {
-            if (RenderLayoutMode == LayoutMode.Auto)
-            {
-                // center image in textrect
-                slide.gfx.DrawImage(Image, r.TextboxRect, new Rectangle(new Point(0, 0), Image.Size), GraphicsUnit.Pixel);
-            }
-            else
-            {
-                // scale image to fit height, may not fit center
-                int oldw = Image.Width;
-                int oldh = Image.Height;
-
-                float scale = (float)r.ETextRect.Height / (float)oldh;
-                RectangleF imgr = new RectangleF(0, 0, oldw * scale, oldh * scale);
-
-                // center
-                imgr.Location = new PointF((r.ETextRect.Width - imgr.Width) / 2, r.ETextRect.Y);
-
-                slide.gfx.DrawImage(Image, imgr);
-            }
-        }
-    }
-
-
-    public class RenderFullImage : IRenderable
-    {
-        public int RenderX { get; set; }
-        public int RenderY { get; set; }
-        public int Height { get; set; }
-        public int Width { get; set; }
-        public LayoutMode RenderLayoutMode { get; set; }
-
-        public Bitmap Image { get; set; }
-        public void Render(RenderSlide slide, TextRenderer r)
-        {
-            if (RenderLayoutMode == LayoutMode.Auto)
-            {
-                slide.gfx.DrawImage(Image, new Rectangle(0, 0, r.DisplayWidth, r.DisplayHeight), new Rectangle(new Point(0, 0), Image.Size), GraphicsUnit.Pixel);
-            }
-            else if (RenderLayoutMode == LayoutMode.PreserveScale)
-            {
-                double scale = 1;
-                Point p;
-                Size s;
-                // scale by either width or height
-                if (Image.Width < Image.Height)
-                {
-                    // scale by width
-                    scale = (double)r.DisplayWidth / (double)Image.Width;
-                    s = new Size((int)(Image.Width * scale), (int)(Image.Height * scale));
-                    p = new Point(0, (r.DisplayHeight - s.Height) / 2);
-                }
-                else
-                {
-                    // scale by height
-                    scale = (double)r.DisplayHeight / (double)Image.Height;
-                    s = new Size((int)(Image.Width * scale), (int)(Image.Height * scale));
-                    p = new Point((r.DisplayWidth - s.Width) / 2, 0);
-                }
-
-
-                // clear background
-                slide.gfx.Clear(Color.White);
-
-                // draw image scaled fullscrean
-                slide.gfx.DrawImage(Image, new Rectangle(p, s), new Rectangle(new Point(0, 0), Image.Size), GraphicsUnit.Pixel);
-            }
-        }
-    }
     public class RenderLine : IRenderable
     {
         public int RenderX { get; set; }
@@ -125,13 +34,14 @@ namespace LSBgenerator
         {
             RenderLine target = this;
             // draw text
-            slide.gfx.DrawString(target.Text, target.Font, target.TextBrush, new Rectangle(r.ETextRect.X + target.RenderX, r.ETextRect.Y + target.RenderY, r.ETextRect.Size.Width, r.ETextRect.Size.Height), r.format);
+            slide.gfx.DrawString(target.Text, target.Font, target.TextBrush, new Rectangle(r.TextboxRect.X + target.RenderX, r.TextboxRect.Y + target.RenderY, r.TextboxRect.Width - target.RenderX, r.TextboxRect.Height - target.RenderY), r.format);
+            //slide.gfx.FillRectangle(Brushes.Red, new Rectangle(r.TextboxRect.X + target.RenderX, r.TextboxRect.Y + target.RenderY, r.TextboxRect.Width - target.RenderX, r.TextboxRect.Height - target.RenderY));
             // draw speaker
             if (target.ShowSpeaker)
             {
                 Font speakerfont = new Font(target.Font, FontStyle.Bold);
                 int speakeroffsety = (int)Math.Floor(Math.Ceiling((slide.gfx.MeasureString(r.SpeakerText.TryGetVal(target.Speaker, "?"), speakerfont).Height - r.blocksize) / 2) - 1);
-                Rectangle speakerblock = new Rectangle(r.TextboxRect.X + r.PaddingCol, r.ETextRect.Y + target.RenderY + speakeroffsety, r.blocksize, r.blocksize);
+                Rectangle speakerblock = new Rectangle(r.LayoutRect.X, r.TextboxRect.Y + target.RenderY + speakeroffsety, r.blocksize, r.blocksize);
 
                 if (target.Speaker == Speaker.None)
                 {
@@ -154,12 +64,5 @@ namespace LSBgenerator
 
         }
 
-    }
-
-    public enum LayoutMode
-    {
-        Auto,
-        PreserveScale,
-        Fixed,
     }
 }
