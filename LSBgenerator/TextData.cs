@@ -63,6 +63,7 @@ namespace LSBgenerator
                 //.Where(s => s != Environment.NewLine).ToList();
 
             lines = lines.Where(s => !Regex.Match(s, @"^\s$", RegexOptions.None).Success).ToList();
+            lines = lines.Where(s => s.Trim() != string.Empty).Select(s => s.Trim()).ToList();
 
 
 
@@ -90,8 +91,13 @@ namespace LSBgenerator
                 // eg. \reading(<Title>,<Reference>)
                 if (tl.StartsWith(@"\reading"))
                 {
-                    var contents = tl.Split('(', ',', ')');
-                    ReadingLine rl = new ReadingLine() { Title = contents[1], Reference = contents[2] };
+                    //var contents = tl.Split(new char[] { '(', ',', ')' }, 4, StringSplitOptions.RemoveEmptyEntries);
+                    var a = tl.Split('(')[1];
+                    var b = a.Split(')')[0];
+                    var contents = b.Split(new char[] { ',' }, 2, StringSplitOptions.RemoveEmptyEntries);
+
+
+                    ReadingLine rl = new ReadingLine() { Title = contents[0].Trim(), Reference = contents[1].Trim() };
                     LineData.Add(rl);
                     continue;
                 }

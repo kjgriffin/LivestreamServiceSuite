@@ -23,20 +23,17 @@ namespace LSBgenerator
                 Point p;
                 Size s;
                 // scale by either width or height
-                if (Image.Width < Image.Height)
-                {
-                    // scale by width
-                    scale = (double)r.DisplayWidth / (double)Image.Width;
-                    s = new Size((int)(Image.Width * scale), (int)(Image.Height * scale));
-                    p = new Point(0, (r.DisplayHeight - s.Height) / 2);
-                }
-                else
-                {
-                    // scale by height
-                    scale = (double)r.DisplayHeight / (double)Image.Height;
-                    s = new Size((int)(Image.Width * scale), (int)(Image.Height * scale));
-                    p = new Point((r.DisplayWidth - s.Width) / 2, 0);
-                }
+
+                double xscale = 1;
+                double yscale = 1;
+
+                xscale = (double)r.DisplayWidth / (double)Image.Width;
+                yscale = (double)r.DisplayHeight / (double)Image.Height;
+
+                scale = xscale < yscale ? xscale : yscale;
+
+                s = new Size((int)(Image.Width * scale), (int)(Image.Height * scale));
+                p = new Point((r.DisplayWidth - s.Width) / 2, (r.DisplayHeight - s.Height) /2);
 
 
                 // clear background
