@@ -48,6 +48,12 @@
   <ItemGroup>
     <Compile Include="AssetListSerilizer.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="CommandHelpList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CommandHelpList.Designer.cs">
+      <DependentUpon>CommandHelpList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Display.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +104,9 @@
     <Compile Include="TextRenderer.cs" />
     <Compile Include="TextRendererLayout.cs" />
     <Compile Include="TypesetCommand.cs" />
+    <EmbeddedResource Include="CommandHelpList.resx">
+      <DependentUpon>CommandHelpList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Display.resx">
       <DependentUpon>Display.cs</DependentUpon>
     </EmbeddedResource>

@@ -28,6 +28,48 @@ namespace LSBgenerator
             return Regex.Replace(line, @"(?<delimiter>[!?.,:;])(?<newline>[\n\r]+)(?<start>[A-Z])", @"${delimiter}\\${newline}${start}", RegexOptions.Multiline);
         }
 
+
+        public static void ShowCommands()
+        {
+            MessageBox.Show(@"
+\wrap
+\break
+
+\apostlescreed
+\lordsprayer
+
+\copyright
+\viewseries
+\viewservices
+
+\reading(a, b)
+\sermon(a, b)
+
+\image(a)
+\fullimage(a)
+\fitimage(a)
+", "Supported Commands", MessageBoxButtons.OK);
+        }
+
+        public static List<string> ListCommands()
+        {
+            return new List<string>()
+            {
+                @"\wrap",
+                @"\break",
+                @"\apostlescreed",
+                @"\lordsprayer",
+                @"\copyright",
+                @"\viewservices",
+                @"\viewseries",
+                @"\reading(a, b)",
+                @"\sermon(a, b)",
+                @"\image(a)",
+                @"\fullimage(a)",
+                @"\fitimage(a)",
+            };
+        }
+
         public void ParseText(string text, List<ProjectAsset> assets)
         {
 

@@ -78,9 +78,10 @@
             this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.button19 = new System.Windows.Forms.Button();
             this.button17 = new System.Windows.Forms.Button();
             this.button16 = new System.Windows.Forms.Button();
-            this.button19 = new System.Windows.Forms.Button();
+            this.button14 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -362,6 +363,7 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox2.Controls.Add(this.button14);
             this.groupBox2.Controls.Add(this.button13);
             this.groupBox2.Controls.Add(this.button8);
             this.groupBox2.Controls.Add(this.button4);
@@ -666,6 +668,16 @@
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Project";
             // 
+            // button19
+            // 
+            this.button19.Location = new System.Drawing.Point(6, 48);
+            this.button19.Name = "button19";
+            this.button19.Size = new System.Drawing.Size(75, 23);
+            this.button19.TabIndex = 2;
+            this.button19.Text = "New";
+            this.button19.UseVisualStyleBackColor = true;
+            this.button19.Click += new System.EventHandler(this.button19_Click_1);
+            // 
             // button17
             // 
             this.button17.Location = new System.Drawing.Point(87, 19);
@@ -686,17 +698,17 @@
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
             // 
-            // button19
+            // button14
             // 
-            this.button19.Location = new System.Drawing.Point(6, 48);
-            this.button19.Name = "button19";
-            this.button19.Size = new System.Drawing.Size(75, 23);
-            this.button19.TabIndex = 2;
-            this.button19.Text = "New";
-            this.button19.UseVisualStyleBackColor = true;
-            this.button19.Click += new System.EventHandler(this.button19_Click_1);
+            this.button14.Location = new System.Drawing.Point(124, 19);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(115, 23);
+            this.button14.TabIndex = 4;
+            this.button14.Text = "Show Commands";
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
-            // Form1
+            // MainWindow_1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -708,7 +720,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pbTypeset);
-            this.Name = "Form1";
+            this.Name = "MainWindow_1";
             this.Text = "Lower Thirds Service Builder";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -791,6 +803,7 @@
         private System.Windows.Forms.Button button16;
         private System.Windows.Forms.Button button18;
         private System.Windows.Forms.Button button19;
+        private System.Windows.Forms.Button button14;
     }
 }
 

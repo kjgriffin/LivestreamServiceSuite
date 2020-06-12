@@ -491,5 +491,12 @@ namespace LSBgenerator
         {
             proj.Assets.RemoveAll(a => a.guid.ToString() == lvAssets.SelectedItems[0].SubItems[3].ToString());
         }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            //TextData.ShowCommands();
+            CommandHelpList chl = new CommandHelpList(TextData.ListCommands());
+            chl.Show();
+        }
     }
 }
