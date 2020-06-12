@@ -83,13 +83,13 @@ namespace LSBgenerator
                 //.Replace(@"\image", @"\\\image")
                 //.Replace(@"\fullimage", @"\\\fullimage")
                 //.Replace(@"\fitimage", @"\\\fitimage")
-                .Replace(@"\apostlescreed", @"\\\apostlescreed")
+                .Replace(@"\apostlescreed", @"\\\apostlescreed\\")
                 .Replace(@"\nicenecreed", @"\\\nicenecreed")
-                .Replace(@"\lordsprayer", @"\\\lordsprayer")
+                .Replace(@"\lordsprayer", @"\\\lordsprayer\\")
                 .Replace(@"\morningprayer", @"\\\morningprayer")
-                .Replace(@"\copyright", @"\\\copyright")
-                .Replace(@"\viewseries", @"\\\viewseries")
-                .Replace(@"\viewservices", @"\\\viewservices")
+                .Replace(@"\copyright", @"\\\copyright\\")
+                .Replace(@"\viewseries", @"\\\viewseries\\")
+                .Replace(@"\viewservices", @"\\\viewservices\\")
                 .Replace(@"\hymn", @"\\\hymn");
 
             // replace functions
