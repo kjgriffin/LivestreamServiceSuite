@@ -50,6 +50,7 @@
             this.nHeight = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button14 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
@@ -81,7 +82,6 @@
             this.button19 = new System.Windows.Forms.Button();
             this.button17 = new System.Windows.Forms.Button();
             this.button16 = new System.Windows.Forms.Button();
-            this.button14 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -374,6 +374,16 @@
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Program";
+            // 
+            // button14
+            // 
+            this.button14.Location = new System.Drawing.Point(124, 19);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(115, 23);
+            this.button14.TabIndex = 4;
+            this.button14.Text = "Show Commands";
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // button13
             // 
@@ -697,16 +707,6 @@
             this.button16.Text = "Open";
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
-            // 
-            // button14
-            // 
-            this.button14.Location = new System.Drawing.Point(124, 19);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(115, 23);
-            this.button14.TabIndex = 4;
-            this.button14.Text = "Show Commands";
-            this.button14.UseVisualStyleBackColor = true;
-            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // MainWindow_1
             // 

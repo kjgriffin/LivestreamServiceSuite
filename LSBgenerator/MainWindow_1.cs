@@ -498,5 +498,10 @@ namespace LSBgenerator
             CommandHelpList chl = new CommandHelpList(TextData.ListCommands());
             chl.Show();
         }
+
+        private void button20_Click_2(object sender, EventArgs e)
+        {
+
+        }
     }
 }

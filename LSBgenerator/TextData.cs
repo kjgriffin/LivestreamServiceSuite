@@ -146,8 +146,8 @@ namespace LSBgenerator
 
                 if (tl.StartsWith(@"\sermon"))
                 {
-                    var contents = tl.Split('(', ',', ')');
-                    SermonTitle sermonTitle = new SermonTitle() { Title = "Sermon", SermonName = contents[1], SermonText = contents[2] };
+                    var matches = Regex.Match(tl, @"\\sermon\((?<title>.*),(?<source>.*)\)");
+                    SermonTitle sermonTitle = new SermonTitle() { Title = "Sermon", SermonName = matches.Groups["title"].Value, SermonText = matches.Groups["source"].Value };
                     LineData.Add(sermonTitle);
                     continue;
                 }
