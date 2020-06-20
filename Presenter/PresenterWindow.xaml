@@ -1,15 +1,14 @@
-﻿<Window x:Class="LSBPresenter.MainWindow"
+﻿<Window x:Class="Presenter.PresenterWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LSBPresenter"
+        xmlns:local="clr-namespace:Presenter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
         KeyDown="Window_KeyDown"
-        >
+        Title="Presenter" Height="450" Width="800">
     <Grid>
-        <MediaElement x:Name="videoPlayer" Visibility="Hidden" />
-        <Image x:Name="slidePlayer" />
+        <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close"></MediaElement>
+        <Image x:Name="imagePlayer"></Image>
     </Grid>
 </Window>

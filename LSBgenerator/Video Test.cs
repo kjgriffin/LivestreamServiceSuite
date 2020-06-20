@@ -60,6 +60,7 @@ namespace LSBgenerator
             {
                 _videoPlayer.Visibility = System.Windows.Visibility.Hidden;
                 pictureBox1.Image = Image.FromFile(slide.path.LocalPath);
+                pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
                 pictureBox1.Visible = true;
             }
             else
@@ -81,7 +82,42 @@ namespace LSBgenerator
             showSlide();
         }
 
+        private void Video_Test_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                ExitFullScreen();
+            }
+            if (e.KeyCode == Keys.F)
+            {
+                ToggleFullscreen();
+            }
+        }
 
+        private void ToggleFullscreen()
+        {
+            if (WindowState == FormWindowState.Maximized)
+            {
+                FormBorderStyle = FormBorderStyle.None;
+                WindowState = FormWindowState.Maximized;
+            }
+            else
+            {
+                FormBorderStyle = FormBorderStyle.Sizable;
+                WindowState = FormWindowState.Normal;
+            }
+        }
+
+        private void ExitFullScreen()
+        {
+            FormBorderStyle = FormBorderStyle.None;
+            WindowState = FormWindowState.Maximized;
+        }
+
+        private void Video_Test_DoubleClick(object sender, EventArgs e)
+        {
+            ToggleFullscreen();
+        }
 
     }
 }

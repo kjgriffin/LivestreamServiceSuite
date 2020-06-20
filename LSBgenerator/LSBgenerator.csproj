@@ -102,10 +102,12 @@
     <Compile Include="RenderInlineImage.cs" />
     <Compile Include="RenderLine.cs" />
     <Compile Include="RenderSlide.cs" />
+    <Compile Include="RenderVideo.cs" />
     <Compile Include="SermonTitle.cs" />
     <Compile Include="ServiceProject.cs" />
     <Compile Include="Speaker.cs" />
     <Compile Include="StillFrameRenderer.cs" />
+    <Compile Include="StillVideoSlideRenderer.cs" />
     <Compile Include="TextData.cs" />
     <Compile Include="TextRenderer.cs" />
     <Compile Include="TextRendererLayout.cs" />
@@ -204,6 +206,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\video.mp4" />
+    <None Include="Resources\videofile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

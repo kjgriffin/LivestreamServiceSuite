@@ -7,6 +7,8 @@ namespace LSBgenerator
     {
         public Command Command { get; set; }
 
+        public string Data { get; set; } = string.Empty;
+
         public RenderSlide TypesetSlide(RenderSlide slide, TextRenderer r)
         {
             if (Command == Command.NewSlide)

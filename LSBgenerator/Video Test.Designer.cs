@@ -60,8 +60,11 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.elementHost1);
+            this.KeyPreview = true;
             this.Name = "Video_Test";
             this.Text = "Video_Test";
+            this.DoubleClick += new System.EventHandler(this.Video_Test_DoubleClick);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Video_Test_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
