@@ -5,7 +5,11 @@ VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LSBgenerator", "LSBgenerator\LSBgenerator.csproj", "{3D83C2A8-7682-4271-B787-0E0B2482E8E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFSlideBuilder", "WPFSlideBuilder\WPFSlideBuilder.csproj", "{C29D696F-126B-4365-8094-0B6F4356ED72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFSlideBuilder", "WPFSlideBuilder\WPFSlideBuilder.csproj", "{C29D696F-126B-4365-8094-0B6F4356ED72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LSBPresenter", "LSBPresenter\LSBPresenter.csproj", "{76503FB8-6BF2-45A5-B554-4766C517D225}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfControlLibrary1", "WpfControlLibrary1\WpfControlLibrary1.csproj", "{278186FE-1A8D-4B97-9C4E-6ECCE61E3292}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{C29D696F-126B-4365-8094-0B6F4356ED72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C29D696F-126B-4365-8094-0B6F4356ED72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C29D696F-126B-4365-8094-0B6F4356ED72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76503FB8-6BF2-45A5-B554-4766C517D225}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76503FB8-6BF2-45A5-B554-4766C517D225}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76503FB8-6BF2-45A5-B554-4766C517D225}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76503FB8-6BF2-45A5-B554-4766C517D225}.Release|Any CPU.Build.0 = Release|Any CPU
+		{278186FE-1A8D-4B97-9C4E-6ECCE61E3292}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{278186FE-1A8D-4B97-9C4E-6ECCE61E3292}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{278186FE-1A8D-4B97-9C4E-6ECCE61E3292}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{278186FE-1A8D-4B97-9C4E-6ECCE61E3292}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
