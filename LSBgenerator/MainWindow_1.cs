@@ -503,5 +503,48 @@ namespace LSBgenerator
         {
 
         }
+
+        private void button20_Click_3(object sender, EventArgs e)
+        {
+            Video_Test vt = new Video_Test();
+            vt.Show();
+            vt.play();
+        }
+
+        private void button21_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                string path = fbd.SelectedPath;
+
+                // find all files in path and create uri's for all files in order
+                List<(Uri path, string type)> slides = new List<(Uri path, string type)>();
+
+                foreach (var file in Directory.GetFiles(path).OrderBy(s => s))
+                {
+                    if (Path.GetExtension(file) == ".mp4")
+                    {
+                        slides.Add((new Uri(file), "video"));
+                    }
+                    else
+                    {
+                        slides.Add((new Uri(file), "image"));
+                    }
+                }
+                _presentation = new Video_Test();
+                _presentation.Show();
+                _presentation.startPresentation(slides);
+            }
+        }
+
+        Video_Test _presentation;
+        private void button22_Click(object sender, EventArgs e)
+        {
+            if (_presentation != null)
+            {
+                _presentation.nextSlide();
+            } 
+        }
     }
 }
