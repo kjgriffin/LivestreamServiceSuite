@@ -5,10 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Presenter"
         mc:Ignorable="d"
-        Title="Presenter" Height="450" Width="800">
+        Title="Presenter Setup" Height="300" Width="400">
     <Grid>
-        <Button Content="Select Presentation Folder" HorizontalAlignment="Left" Margin="50,52,0,0" VerticalAlignment="Top" Click="Select_Presentation_Folder"/>
-        <Button Content="Start Presentation" HorizontalAlignment="Left" Margin="50,102,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.338,-0.196" Click="Start_Presentation"/>
+        <StackPanel>
+            <Button Content="Select Presentation Folder" Click="Select_Presentation_Folder" MinHeight="50" Margin="10,10,10,10"/>
+            <Label Name="FolderName" HorizontalAlignment="Center">Select Folder</Label>
+            <Button Name="Start" IsEnabled="False" Content="Start Presentation" Click="Start_Presentation" MinHeight="50" Margin="10,10,10,10"/>
+        </StackPanel>
 
     </Grid>
 </Window>

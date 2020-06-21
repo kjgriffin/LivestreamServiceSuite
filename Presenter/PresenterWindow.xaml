@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Presenter"
         mc:Ignorable="d"
+        Closing="Window_Closing"
         KeyDown="Window_KeyDown"
         Title="Presenter" Height="450" Width="800">
     <Grid>
-        <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close"></MediaElement>
-        <Image x:Name="imagePlayer"></Image>
+        <local:MediaPlayer x:Name="mediaPlayer"></local:MediaPlayer>
     </Grid>
 </Window>

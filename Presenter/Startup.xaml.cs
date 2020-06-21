@@ -34,12 +34,22 @@ namespace Presenter
             ofd.Title = "Select Presentation Files";
             if (ofd.ShowDialog() == true)
             {
-                _slides = new List<(string path, SlideType type)>();
-                // get all image and video files
-                foreach (var file in Directory.GetFiles(System.IO.Path.GetDirectoryName(ofd.FileName)).OrderBy(s => int.Parse(Regex.Match(System.IO.Path.GetFileName(s), @"(?<order>\d+)_.*").Groups["order"].Value)))
+                try
                 {
-                    // TODO: validate image files
-                    _slides.Add((file, System.IO.Path.GetExtension(file) == ".mp4" ? SlideType.Video: SlideType.Image));
+
+                    FolderName.Content = System.IO.Path.GetDirectoryName(ofd.FileName);
+                    _slides = new List<(string path, SlideType type)>();
+                    Start.IsEnabled = true;
+                    // get all image and video files
+                    foreach (var file in Directory.GetFiles(System.IO.Path.GetDirectoryName(ofd.FileName)).OrderBy(s => int.Parse(Regex.Match(System.IO.Path.GetFileName(s), @"(?<order>\d+)_.*").Groups["order"].Value)))
+                    {
+                        // TODO: validate image files
+                        _slides.Add((file, System.IO.Path.GetExtension(file) == ".mp4" ? SlideType.Video : SlideType.Image));
+                    }
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Unable To Load Slides", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

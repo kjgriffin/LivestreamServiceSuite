@@ -5,6 +5,7 @@ using System.Net.Cache;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -17,32 +18,69 @@ using System.Windows.Shapes;
 
 namespace Presenter
 {
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class PresenterWindow : Window
     {
         public List<(string path, SlideType type)> Slides { get; set; }
+        public int CurrentSlideNum { get => _slideNum + 1; }
+
+        public (string path, SlideType type) CurrentSlide { get => Slides[_slideNum]; }
+
 
         private int _slideNum;
+
+
+
+        private PresenterControl _controlPanel;
+
+        public event EventHandler<MediaPlaybackTimeEventArgs> OnMediaPlaybackTimeUpdated;
+
         public PresenterWindow(List<(string path, SlideType type)> slides)
         {
             InitializeComponent();
             _slideNum = 0;
             Slides = slides;
 
-            // open control panel
-            PresenterControl controlPanel = new PresenterControl(this);
-            controlPanel.Show();
+
+            AttachControlPanel();
 
 
             // start presentation at slide 0
             ShowSlide();
+
+            
+        }
+
+        private void AttachControlPanel()
+        {
+            // open control panel
+            _controlPanel = new PresenterControl(this);
+            _controlPanel.Show();
+            _controlPanel.OnWindowClosing += _controlPanel_OnWindowClosing;
+            mediaPlayer.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdate;
+        }
+
+        private void _controlPanel_OnWindowClosing(object sender, EventArgs e)
+        {
+            mediaPlayer.OnMediaPlaybackTimeUpdate -= MediaPlayer_OnMediaPlaybackTimeUpdate;
+            _controlPanel.OnWindowClosing -= _controlPanel_OnWindowClosing;
+            _controlPanel = null;
+        }
+
+        private void MediaPlayer_OnMediaPlaybackTimeUpdate(object sender, MediaPlaybackTimeEventArgs e)
+        {
+            _controlPanel.Dispatcher.Invoke(() =>
+            {
+                OnMediaPlaybackTimeUpdated?.Invoke(this, e); 
+            });
         }
 
         public void NextSlide()
         {
-            if (_slideNum + 1 <= Slides.Count - 1)
+            if (_slideNum + 1 < Slides.Count)
             {
                 _slideNum += 1;
                 ShowSlide();
@@ -62,7 +100,7 @@ namespace Presenter
         {
             if (Slides[_slideNum].type == SlideType.Video)
             {
-                videoPlayer.Play();
+                mediaPlayer.PlayMedia();
             }
         }
 
@@ -70,7 +108,7 @@ namespace Presenter
         {
             if (Slides[_slideNum].type == SlideType.Video)
             {
-                videoPlayer.Pause();
+                mediaPlayer.PauseMedia();
             }
         }
 
@@ -78,15 +116,14 @@ namespace Presenter
         {
             if (Slides[_slideNum].type == SlideType.Video)
             {
-                videoPlayer.Position = TimeSpan.Zero;
-                videoPlayer.Play();
+                mediaPlayer.ReplayMedia();
             }
         }
 
 
         private void ShowSlide()
         {
-            if (_slideNum >= 0 && _slideNum < Slides.Count - 1)
+            if (_slideNum >= 0 && _slideNum < Slides.Count)
             {
                 // try showing either picture or video
                 if (Slides[_slideNum].type == SlideType.Image)
@@ -103,24 +140,12 @@ namespace Presenter
 
         private void ShowImage()
         {
-            // arrest all video playback
-            videoPlayer.Stop();
-            // hide videoplayer
-            videoPlayer.Visibility = Visibility.Hidden;
-            // show image
-            imagePlayer.Visibility = Visibility.Visible;
-            imagePlayer.Source = new BitmapImage(new Uri(Slides[_slideNum].path));
-
+            mediaPlayer.SetMedia(new Uri(Slides[_slideNum].path), SlideType.Image);
         }
 
         private void ShowVideo()
         {
-            // hide image
-            imagePlayer.Visibility = Visibility.Hidden;
-            // show videoplayer
-            videoPlayer.Position = TimeSpan.Zero;
-            videoPlayer.Visibility = Visibility.Visible;
-            videoPlayer.Source = new Uri(Slides[_slideNum].path);
+            mediaPlayer.SetMedia(new Uri(Slides[_slideNum].path), SlideType.Video);
         }
 
 
@@ -135,6 +160,13 @@ namespace Presenter
             if (e.Key == Key.Escape)
             {
                 ExitFullscreen();
+            }
+            if (e.Key == Key.C)
+            {
+                if (_controlPanel == null)
+                {
+                    AttachControlPanel();
+                }
             }
 
         }
@@ -161,6 +193,11 @@ namespace Presenter
             {
                 ExitFullscreen();
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _controlPanel?.Close();
         }
     }
 }
