@@ -141,6 +141,14 @@ namespace Presenter
 
         }
 
+        public void ResetMedia()
+        {
+            if (_type == SlideType.Video)
+            {
+                videoPlayer.Stop();
+            }
+        }
+
         public void ShowBlackSource()
         {
             BlackSource.Visibility = Visibility.Visible;

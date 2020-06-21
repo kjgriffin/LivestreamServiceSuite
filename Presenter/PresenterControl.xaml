@@ -31,8 +31,8 @@
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="1" Height="Auto">
-            <Grid Name="MediaControls">
+        <Grid Grid.Row="1">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
@@ -42,23 +42,37 @@
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <Button Content="Play" Click="Play_Media" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
-                <Button Content="Pause" Click="Pause_Media" Grid.Row="0" Grid.Column="1" Margin="5,5,5,5"/>
-                <Button Content="Restart" Click="Replay_Media" Grid.Row="0" Grid.Column="2" Margin="5,5,5,5"/>
+                <Grid Name="PlaybackControls" Grid.Row="0" Grid.ColumnSpan="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Play" Click="Play_Media" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5"/>
+                    <Button Content="Pause" Click="Pause_Media" Grid.Row="0" Grid.Column="1" Margin="5,5,5,5"/>
+                    <Button Content="Restart" Click="Replay_Media" Grid.Row="0" Grid.Column="2" Margin="5,5,5,5"/>
+                    <Button Content="Reset" Click="Reset_Media" Grid.Row="0" Grid.Column="3" Margin="5,5,5,5"/>
+                </Grid>
 
-                <Grid Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid Name="PlaybackTime" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
                         <Label Content="T+ "></Label>
-                        <Label Name="Media_at" FontStyle="Oblique">00:00</Label>
+                        <Label Name="Media_at" FontWeight="Bold">00:00</Label>
                         <Label Content=" / "></Label>
-                        <Label Name="Media_length" FontStyle="Oblique">00:00</Label>
+                        <Label Name="Media_length">00:00</Label>
                     </StackPanel>
                 </Grid>
-                <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel Name="PlaybackTime_1" Grid.Row="1" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                     <Label Grid.Row="1">T-</Label>
-                    <Label Name="Media_rem">00:00</Label>
+                    <Label Name="Media_rem" FontWeight="Bold">00:00</Label>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Label>Time:</Label>
+                    <Label Name="LocalTime" FontStyle="Oblique">00:00:00</Label>
                 </StackPanel>
             </Grid>
         </Grid>
