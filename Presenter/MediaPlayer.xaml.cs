@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,20 +13,25 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Schema;
 
 namespace Presenter
 {
 
 
-    public class MediaPlaybackEventArgs : EventArgs
+    public class MediaPlaybackTimeEventArgs : EventArgs
     {
-        public Duration Length { get; set; }
-        public TimeSpan Current { get; set; }
-        public Duration Remaining { get; set; }
-
+        public TimeSpan Current { get; }
+        public TimeSpan Length { get; }
+        public TimeSpan Remaining { get; }
+        public MediaPlaybackTimeEventArgs(TimeSpan current, TimeSpan length, TimeSpan remaining)
+        {
+            Current = current;
+            Length = length;
+            Remaining = remaining;
+        }
     }
 
-    public delegate void MediaPlaybackEventHandler(object source, MediaPlaybackEventArgs e);
 
     /// <summary>
     /// Interaction logic for MediaPlayer.xaml
@@ -40,18 +46,14 @@ namespace Presenter
             _playbacktimer.Elapsed += _playbacktimer_Elapsed;
         }
 
-        public event MediaPlaybackEventHandler OnMediaPlayback;
+        public event EventHandler<MediaPlaybackTimeEventArgs> OnMediaPlaybackTimeUpdate;
 
         private void _playbacktimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (_type == SlideType.Video)
+            this.Parent.Dispatcher.Invoke(() =>
             {
-                TimeSpan currentpos = videoPlayer.Position;
-                Duration total = videoPlayer.NaturalDuration;
-                Duration remaining = total - currentpos.Duration();
-
-                OnMediaPlayback(this, new MediaPlaybackEventArgs() { Current = currentpos, Length = total, Remaining = remaining });
-            }
+                OnMediaPlaybackTimeUpdate?.Invoke(this, new MediaPlaybackTimeEventArgs(videoPlayer.Position, videoPlayer.NaturalDuration.TimeSpan, (videoPlayer.NaturalDuration - videoPlayer.Position).TimeSpan));
+            });
         }
 
         public void PlayMedia()
@@ -79,13 +81,12 @@ namespace Presenter
             }
         }
 
+
         Uri _source;
         SlideType _type;
 
-        TimeSpan length;
-        TimeSpan _remaining;
-
         Timer _playbacktimer;
+
         public void SetMedia(Uri source, SlideType type)
         {
             _source = source;
@@ -105,25 +106,46 @@ namespace Presenter
 
         private void ShowImage()
         {
+            BlackSource.Visibility = Visibility.Hidden;
             _playbacktimer.Stop();
             videoPlayer.Stop();
             videoPlayer.Visibility = Visibility.Hidden;
 
             imagePlayer.Visibility = Visibility.Visible;
-            imagePlayer.Source = new BitmapImage(_source);
+            try
+            {
+                imagePlayer.Source = new BitmapImage(_source);
+            }
+            catch (Exception)
+            {
+                ShowBlackSource();
+            }
         }
 
         private void ShowVideo()
         {
+            BlackSource.Visibility = Visibility.Hidden;
+            _playbacktimer.Start();
             imagePlayer.Visibility = Visibility.Hidden;
 
             videoPlayer.Position = TimeSpan.Zero;
             videoPlayer.Visibility = Visibility.Visible;
-            videoPlayer.Source = _source;
+            try
+            {
+                videoPlayer.Source = _source;
+            }
+            catch (Exception)
+            {
+                ShowBlackSource();
+            }
 
-            // enable and reset timer
-            _playbacktimer.Start();
         }
+
+        public void ShowBlackSource()
+        {
+            BlackSource.Visibility = Visibility.Visible;
+        }
+
 
     }
 }

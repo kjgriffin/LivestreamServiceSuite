@@ -9,5 +9,6 @@
     <Grid>
         <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close"></MediaElement>
         <Image Name="imagePlayer"></Image>
+        <Rectangle Name="BlackSource" Fill="Black"></Rectangle>
     </Grid>
 </UserControl>
