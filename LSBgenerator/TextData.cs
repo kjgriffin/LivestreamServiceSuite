@@ -132,11 +132,18 @@ namespace LSBgenerator
 
                 if (tl.StartsWith(@"\video"))
                 {
-                    // add a non-rendered slide to copy video output to slides
-                    var matches = Regex.Match(tl, @"\\video\((?<name>.*)\)");
-                    RenderVideo rc = new RenderVideo();
-                    rc.Asset = assets.First(s => s.Name == matches.Groups["name"].Value); 
-                    LineData.Add(rc);
+                    try
+                    {
+                        // add a non-rendered slide to copy video output to slides
+                        var matches = Regex.Match(tl, @"\\video\((?<name>.*)\)");
+                        RenderVideo rc = new RenderVideo();
+                        rc.Asset = assets.First(s => s.Name == matches.Groups["name"].Value);
+                        LineData.Add(rc);
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
                     continue;
                 }
 
