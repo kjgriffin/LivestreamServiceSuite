@@ -36,6 +36,9 @@ namespace Presenter
             realtimeclk.Elapsed += Realtimeclk_Elapsed;
             realtimeclk.Start();
 
+            // mute playback monitor
+            NowSlide.Mute();
+
             SlideChanged();
         }
 
@@ -168,16 +171,19 @@ namespace Presenter
         private void Play_Media(object sender, RoutedEventArgs e)
         {
             _window.StartMediaPlayback();
+            NowSlide.PlayMedia();
         }
 
         private void Pause_Media(object sender, RoutedEventArgs e)
         {
             _window.PauseMediaPlayback();
+            NowSlide.PauseMedia();
         }
 
         private void Replay_Media(object sender, RoutedEventArgs e)
         {
             _window.RestartMediaPlayback();
+            NowSlide.ReplayMedia();
         }
 
         public event EventHandler OnWindowClosing;
@@ -192,6 +198,12 @@ namespace Presenter
         private void Reset_Media(object sender, RoutedEventArgs e)
         {
             _window.ResetMediaPlayback();
+            NowSlide.ResetMedia();
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+
         }
     }
 }

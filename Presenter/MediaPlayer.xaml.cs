@@ -154,6 +154,15 @@ namespace Presenter
             BlackSource.Visibility = Visibility.Visible;
         }
 
+        public void Mute()
+        {
+            videoPlayer.Volume = 0;
+        }
+        public void UnMute()
+        {
+            videoPlayer.Volume = 0.5;
+        }
+
 
     }
 }
