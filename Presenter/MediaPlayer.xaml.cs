@@ -104,9 +104,34 @@ namespace Presenter
             }
         }
 
-        private void ShowImage()
+        public void SetMediaUnderBlack(Uri source, SlideType type)
         {
-            BlackSource.Visibility = Visibility.Hidden;
+            _source = source;
+            _type = type;
+            switch (type)
+            {
+                case SlideType.Video:
+                    ShowVideo(underBlack: true);
+                    break;
+                case SlideType.Image:
+                    ShowImage(underBlack: true);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void ShowImage(bool underBlack = false)
+        {
+            if (underBlack)
+            {
+                BlackSource.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                BlackSource.Visibility = Visibility.Hidden;
+            }
+
             _playbacktimer.Stop();
             videoPlayer.Stop();
             videoPlayer.Visibility = Visibility.Hidden;
@@ -122,9 +147,16 @@ namespace Presenter
             }
         }
 
-        private void ShowVideo()
+        private void ShowVideo(bool underBlack = false)
         {
-            BlackSource.Visibility = Visibility.Hidden;
+            if (underBlack)
+            {
+                BlackSource.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                BlackSource.Visibility = Visibility.Hidden;
+            }
             _playbacktimer.Start();
             imagePlayer.Visibility = Visibility.Hidden;
 
@@ -154,12 +186,21 @@ namespace Presenter
             BlackSource.Visibility = Visibility.Visible;
         }
 
+        public void HideBlackSource()
+        {
+            BlackSource.Visibility = Visibility.Hidden;
+        }
+
+        public bool IsMute { get; private set; }
+
         public void Mute()
         {
+            IsMute = true;
             videoPlayer.Volume = 0;
         }
         public void UnMute()
         {
+            IsMute = false;
             videoPlayer.Volume = 0.5;
         }
 

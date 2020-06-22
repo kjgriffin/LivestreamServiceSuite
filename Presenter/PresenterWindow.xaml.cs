@@ -29,6 +29,7 @@ namespace Presenter
 
         public (string path, SlideType type) CurrentSlide { get => Slides[_slideNum]; }
 
+        public bool IsMute { get => mediaPlayer.IsMute; }
 
         private int _slideNum;
 
@@ -51,7 +52,7 @@ namespace Presenter
             // start presentation at slide 0
             ShowSlide();
 
-            
+
         }
 
         private void AttachControlPanel()
@@ -74,7 +75,7 @@ namespace Presenter
         {
             _controlPanel.Dispatcher.Invoke(() =>
             {
-                OnMediaPlaybackTimeUpdated?.Invoke(this, e); 
+                OnMediaPlaybackTimeUpdated?.Invoke(this, e);
             });
         }
 
@@ -149,16 +150,55 @@ namespace Presenter
 
         private void ShowImage()
         {
-            mediaPlayer.SetMedia(new Uri(Slides[_slideNum].path), SlideType.Image);
+            if (FillBlack)
+            {
+                mediaPlayer.SetMediaUnderBlack(new Uri(Slides[_slideNum].path), SlideType.Image);
+            }
+            else
+            {
+                mediaPlayer.SetMedia(new Uri(Slides[_slideNum].path), SlideType.Image);
+            }
         }
 
         private void ShowVideo()
         {
-            mediaPlayer.SetMedia(new Uri(Slides[_slideNum].path), SlideType.Video);
+            if (FillBlack)
+            {
+                mediaPlayer.SetMediaUnderBlack(new Uri(Slides[_slideNum].path), SlideType.Video);
+            }
+            else
+            {
+                mediaPlayer.SetMedia(new Uri(Slides[_slideNum].path), SlideType.Video);
+            }
         }
 
 
+        public void Mute()
+        {
+            mediaPlayer.Mute();
+        }
 
+        public void UnMute()
+        {
+            mediaPlayer.UnMute();
+        }
+
+
+        public bool FillBlack { get; private set; } = false;
+        public void ToggleFillBlack()
+        {
+            FillBlack = !FillBlack;
+
+            if (FillBlack)
+            {
+                mediaPlayer.ShowBlackSource();
+            }
+            else
+            {
+                mediaPlayer.HideBlackSource();
+            }
+
+        }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {

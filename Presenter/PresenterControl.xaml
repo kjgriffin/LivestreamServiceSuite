@@ -8,7 +8,7 @@
         Topmost="True"
         Closing="Window_Closing"
         PreviewKeyDown="Window_PreviewKeyDown"
-        Title="Presentation Controls" Height="280" Width="522">
+        Title="Amature Presenter Controls" Height="280" Width="522">
     <Grid>
 
         <Grid.RowDefinitions>
@@ -22,6 +22,7 @@
                 <ColumnDefinition Width="2*"></ColumnDefinition>
                 <ColumnDefinition Width="2*"></ColumnDefinition>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <Button Click="Prev_Slide" Grid.Column="0" Margin="5,5,5,5">
@@ -39,6 +40,46 @@
                 <Viewbox StretchDirection="Both" Stretch="Uniform">
                     <Label Name="slidenumview_label" HorizontalAlignment="Center" VerticalAlignment="Center" Content="1/0"/>
                 </Viewbox>
+            </Grid>
+
+            <Grid Grid.Column="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition> 
+                    <RowDefinition></RowDefinition> 
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition> 
+                    <ColumnDefinition></ColumnDefinition> 
+                </Grid.ColumnDefinitions>
+
+                <Button Click="Fork_btn_Click" x:Name="Fork_btn" IsEnabled="True" Margin="5,5,5,5">
+                    <Viewbox>
+                        <ContentControl x:Name="ForkState">
+                            Fork 
+                        </ContentControl>
+                    </Viewbox>     
+                </Button>
+                <Button Click="Merge_btn_Click" x:Name="Merge_btn" IsEnabled="False" Grid.Column="0" Grid.Row="1" Margin="5,5,5,5">
+                    <Viewbox>
+                        <ContentControl>
+                            Merge 
+                        </ContentControl>
+                    </Viewbox>     
+                </Button>
+                <Button Click="FillBlack_Click" Foreground="Black"  x:Name="FillBlack" Grid.Row="0" Grid.Column="1" Margin="5,5,5,5">
+                    <Viewbox>
+                        <ContentControl>
+                            Black
+                        </ContentControl>
+                    </Viewbox>
+                </Button>
+                <Button x:Name="FillWhite" Grid.Row="2" Grid.Column="2" IsEnabled="False" Margin="5,5,5,5">
+                    <Viewbox>
+                        <ContentControl>
+                            White
+                        </ContentControl>
+                    </Viewbox>
+                </Button>
             </Grid>
         </Grid>
 
@@ -62,6 +103,8 @@
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Button Click="Play_Media" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5">
                         <Image Source="/icons/icons8-play-100.png"></Image>
@@ -79,6 +122,14 @@
                     <Button Click="Replay_Media" Grid.Row="0" Grid.Column="3" Margin="5,5,5,5">
                         <Viewbox StretchDirection="Both" Stretch="Uniform">
                             <Image Source="/icons/icons8-restart-100.png"/>
+                        </Viewbox>
+                    </Button>
+                    <Button Click="ToggleMute" Grid.Row="0" Grid.Column="5" Margin="5,5,5,5">
+                        <Viewbox StretchDirection="Both" Stretch="Uniform">
+                            <Grid>
+                                <Image x:Name="Unmuted_icon" Source="/icons/icons8-audio-100.png"/>
+                                <Image x:Name="Muted_icon" Source="/icons/icons8-mute-100.png"/>
+                            </Grid>
                         </Viewbox>
                     </Button>
                 </Grid>
@@ -127,7 +178,7 @@
                         <local:MediaPlayer x:Name="NowSlide" ></local:MediaPlayer>
                     </Border>
                     <Border Grid.Row="0" Grid.Column="0" Panel.ZIndex="1" BorderBrush="Yellow" BorderThickness="2,2,2,2" Margin="2,2,2,2">
-                        <local:MediaPlayer x:Name="PrevSlide" Panel.ZIndex="1"></local:MediaPlayer>
+                        <local:MediaPlayer x:Name="PrevSlide" Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="1"></local:MediaPlayer>
                     </Border>
                 </Grid>
                 <Grid Grid.Column="1">

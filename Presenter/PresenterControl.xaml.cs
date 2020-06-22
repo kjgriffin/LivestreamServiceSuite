@@ -36,8 +36,11 @@ namespace Presenter
             realtimeclk.Elapsed += Realtimeclk_Elapsed;
             realtimeclk.Start();
 
+            UpdateFillState();
+
             // mute playback monitor
             NowSlide.Mute();
+            UpdateMuteButton();
 
             SlideChanged();
         }
@@ -71,6 +74,8 @@ namespace Presenter
         {
             Media_at.Content = cur.ToString("mm\\:ss");
         }
+
+        public bool IsMuted { get => _window.IsMute; }
 
         string slideNumView = "";
         public string SlideNumView
@@ -158,11 +163,21 @@ namespace Presenter
 
         private void Next_Slide(object sender, RoutedEventArgs e)
         {
+            GoNextSlide();
+        }
+
+        private void Prev_Slide(object sender, RoutedEventArgs e)
+        {
+            GoPrevSlide();
+        }
+
+        private void GoNextSlide()
+        {
             _window.NextSlide();
             SlideChanged();
         }
 
-        private void Prev_Slide(object sender, RoutedEventArgs e)
+        private void GoPrevSlide()
         {
             _window.PrevSlide();
             SlideChanged();
@@ -202,6 +217,71 @@ namespace Presenter
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Left)
+            {
+                GoPrevSlide();
+            }
+            if (e.Key == Key.Right)
+            {
+                GoNextSlide(); 
+            }
+        }
+
+        private void ToggleMute(object sender, RoutedEventArgs e)
+        {
+            if (IsMuted)
+            {
+                _window.UnMute();
+            }
+            else
+            {
+                _window.Mute();
+            }
+            UpdateMuteButton();
+        }
+
+        private void UpdateMuteButton()
+        {
+            if (IsMuted)
+            {
+                Muted_icon.Visibility = Visibility.Visible;
+                Unmuted_icon.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                Muted_icon.Visibility = Visibility.Hidden;
+                Unmuted_icon.Visibility = Visibility.Visible;
+            }
+        }
+
+
+        private void FillBlack_Click(object sender, RoutedEventArgs e)
+        {
+            _window.ToggleFillBlack();
+            UpdateFillState();
+        }
+
+        private void UpdateFillState()
+        {
+            if (_window.FillBlack)
+            {
+                FillBlack.Foreground = Brushes.Red;
+            }
+            else
+            {
+                FillBlack.Foreground = Brushes.Black;
+            }
+        }
+
+        
+
+        private void Merge_btn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Fork_btn_Click(object sender, RoutedEventArgs e)
         {
 
         }

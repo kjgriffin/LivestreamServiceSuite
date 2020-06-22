@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Presenter"
         mc:Ignorable="d"
-        Title="Presenter Setup" Height="300" Width="400">
+        Title="Amature Presenter Setup" Height="300" Width="400">
     <Grid>
         <StackPanel>
             <Button Content="Select Presentation Folder" Click="Select_Presentation_Folder" MinHeight="50" Margin="10,10,10,10"/>
