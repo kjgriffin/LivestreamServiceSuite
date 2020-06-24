@@ -8,11 +8,12 @@
         Topmost="True"
         Closing="Window_Closing"
         PreviewKeyDown="Window_PreviewKeyDown"
+        KeyboardNavigation.TabNavigation="None"
         Title="Amature Presenter Controls" Height="280" Width="522">
     <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*" MaxHeight="300"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
         </Grid.RowDefinitions>
@@ -37,34 +38,43 @@
             </Button>
 
             <Grid Grid.Column="2">
-                <Viewbox StretchDirection="Both" Stretch="Uniform">
-                    <Label Name="slidenumview_label" HorizontalAlignment="Center" VerticalAlignment="Center" Content="1/0"/>
-                </Viewbox>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1.5*"></RowDefinition>
+                        <RowDefinition Name="forkedsliderow" Height="1*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="0">
+                        <Label Name="true_slidenumview_label" HorizontalAlignment="Center" VerticalAlignment="Center" Content="1/0"/>
+                    </Viewbox>
+                    <Viewbox Grid.Row="1">
+                        <Label Foreground="Red" Name="slidenumview_label" HorizontalAlignment="Center" VerticalAlignment="Center" Content="(1/0)"/>
+                    </Viewbox>
+                </Grid>
             </Grid>
 
             <Grid Grid.Column="3">
                 <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition> 
-                    <RowDefinition></RowDefinition> 
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition> 
-                    <ColumnDefinition></ColumnDefinition> 
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
                 <Button Click="Fork_btn_Click" x:Name="Fork_btn" IsEnabled="True" Margin="5,5,5,5">
                     <Viewbox>
                         <ContentControl x:Name="ForkState">
-                            Fork 
+                            Fork
                         </ContentControl>
-                    </Viewbox>     
+                    </Viewbox>
                 </Button>
                 <Button Click="Merge_btn_Click" x:Name="Merge_btn" IsEnabled="False" Grid.Column="0" Grid.Row="1" Margin="5,5,5,5">
                     <Viewbox>
                         <ContentControl>
-                            Merge 
+                            Merge
                         </ContentControl>
-                    </Viewbox>     
+                    </Viewbox>
                 </Button>
                 <Button Click="FillBlack_Click" Foreground="Black"  x:Name="FillBlack" Grid.Row="0" Grid.Column="1" Margin="5,5,5,5">
                     <Viewbox>
@@ -73,7 +83,8 @@
                         </ContentControl>
                     </Viewbox>
                 </Button>
-                <Button x:Name="FillWhite" Grid.Row="2" Grid.Column="2" IsEnabled="False" Margin="5,5,5,5">
+                <Button x:Name="FillWhite" Grid.Row="2" Grid.Column="2" IsEnabled="False" Margin="5,5,5,5" Visibility="Hidden">
+                    <!--hide until functionality built in-->
                     <Viewbox>
                         <ContentControl>
                             White

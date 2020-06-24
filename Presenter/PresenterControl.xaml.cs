@@ -42,6 +42,15 @@ namespace Presenter
             NowSlide.Mute();
             UpdateMuteButton();
 
+            if (window.IsForked)
+            {
+                showForked();
+            }
+            else
+            {
+                showMerged();
+            }
+
             SlideChanged();
         }
 
@@ -88,6 +97,17 @@ namespace Presenter
             }
         }
 
+        private string trueSlideNumView = "";
+        public string TrueSlideNumView
+        {
+            get => trueSlideNumView;
+            set
+            {
+                trueSlideNumView = value;
+                true_slidenumview_label.Content = value;
+            }
+        }
+
         private void ShowHideMediaControls()
         {
             if (_window.CurrentSlide.type == SlideType.Video)
@@ -109,6 +129,9 @@ namespace Presenter
         private void SlideChanged()
         {
             SlideNumView = $"{_window.CurrentSlideNum}/{_window.Slides.Count}";
+            TrueSlideNumView = $"{_window.OutputSlideNum}/{_window.Slides.Count}";
+
+
             ShowHideMediaControls();
 
 
@@ -121,7 +144,7 @@ namespace Presenter
 
         private void UpdateNowSlide()
         {
-            NowSlide.SetMedia(new Uri(_window.CurrentSlide.path), _window.CurrentSlide.type);
+            NowSlide.SetMedia(new Uri(_window.Slides[_window.CurrentSlideNum - 1].path), _window.Slides[_window.CurrentSlideNum - 1].type);
         }
 
         private void UpdatePrevSlide()
@@ -224,7 +247,7 @@ namespace Presenter
             }
             if (e.Key == Key.Right)
             {
-                GoNextSlide(); 
+                GoNextSlide();
             }
         }
 
@@ -274,16 +297,33 @@ namespace Presenter
             }
         }
 
-        
+
 
         private void Merge_btn_Click(object sender, RoutedEventArgs e)
         {
+            _window.Merge();
+            showMerged();
+            SlideChanged();
+        }
 
+        private void showForked()
+        {
+            Merge_btn.IsEnabled = true;
+            Fork_btn.Foreground = Brushes.Red;
+            forkedsliderow.Height = new GridLength(1, GridUnitType.Star);
+        }
+
+        private void showMerged()
+        {
+            Merge_btn.IsEnabled = false;
+            Fork_btn.Foreground = Brushes.Black;
+            forkedsliderow.Height = new GridLength(0, GridUnitType.Star);
         }
 
         private void Fork_btn_Click(object sender, RoutedEventArgs e)
         {
-
+            _window.Fork();
+            showForked();
         }
     }
 }

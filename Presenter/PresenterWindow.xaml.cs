@@ -25,12 +25,30 @@ namespace Presenter
     public partial class PresenterWindow : Window
     {
         public List<(string path, SlideType type)> Slides { get; set; }
-        public int CurrentSlideNum { get => _slideNum + 1; }
+        public int CurrentSlideNum
+        {
+            get
+            {
+                return IsForked ? _slideNum + 1 : _trueSlideNum + 1;
+            }
+        }
 
-        public (string path, SlideType type) CurrentSlide { get => Slides[_slideNum]; }
+        public int OutputSlideNum
+        {
+            get
+            {
+                return _trueSlideNum + 1;
+            }
+        }
+
+
+        public (string path, SlideType type) CurrentSlide { get => Slides[_trueSlideNum]; }
+
+        public bool IsForked { get; private set; }
 
         public bool IsMute { get => mediaPlayer.IsMute; }
 
+        private int _trueSlideNum;
         private int _slideNum;
 
 
@@ -42,7 +60,7 @@ namespace Presenter
         public PresenterWindow(List<(string path, SlideType type)> slides)
         {
             InitializeComponent();
-            _slideNum = 0;
+            _trueSlideNum = 0;
             Slides = slides;
 
 
@@ -81,25 +99,58 @@ namespace Presenter
 
         public void NextSlide()
         {
-            if (_slideNum + 1 < Slides.Count)
+            if (IsForked)
             {
-                _slideNum += 1;
-                ShowSlide();
+                if (_slideNum + 1 < Slides.Count)
+                {
+                    _slideNum += 1;
+                }
+            }
+            else
+            {
+                if (_trueSlideNum + 1 < Slides.Count)
+                {
+                    _trueSlideNum += 1;
+                    ShowSlide();
+                }
             }
         }
 
         public void PrevSlide()
         {
-            if (_slideNum - 1 >= 0)
+            if (IsForked)
             {
-                _slideNum -= 1;
-                ShowSlide();
+                if (_slideNum - 1 >= 0)
+                {
+                    _slideNum -= 1;
+                }
             }
+            else
+            {
+                if (_trueSlideNum - 1 >= 0)
+                {
+                    _trueSlideNum -= 1;
+                    ShowSlide();
+                }
+            }
+        }
+
+        public void Fork()
+        {
+            IsForked = true;
+            _slideNum = _trueSlideNum;
+        }
+
+        public void Merge()
+        {
+            _trueSlideNum = _slideNum;
+            IsForked = false;
+            ShowSlide();
         }
 
         public void StartMediaPlayback()
         {
-            if (Slides[_slideNum].type == SlideType.Video)
+            if (Slides[_trueSlideNum].type == SlideType.Video)
             {
                 mediaPlayer.PlayMedia();
             }
@@ -107,7 +158,7 @@ namespace Presenter
 
         public void PauseMediaPlayback()
         {
-            if (Slides[_slideNum].type == SlideType.Video)
+            if (Slides[_trueSlideNum].type == SlideType.Video)
             {
                 mediaPlayer.PauseMedia();
             }
@@ -115,7 +166,7 @@ namespace Presenter
 
         public void RestartMediaPlayback()
         {
-            if (Slides[_slideNum].type == SlideType.Video)
+            if (Slides[_trueSlideNum].type == SlideType.Video)
             {
                 mediaPlayer.ReplayMedia();
             }
@@ -124,7 +175,7 @@ namespace Presenter
         public void ResetMediaPlayback()
         {
 
-            if (Slides[_slideNum].type == SlideType.Video)
+            if (Slides[_trueSlideNum].type == SlideType.Video)
             {
                 mediaPlayer.ResetMedia();
             }
@@ -133,10 +184,10 @@ namespace Presenter
 
         private void ShowSlide()
         {
-            if (_slideNum >= 0 && _slideNum < Slides.Count)
+            if (_trueSlideNum >= 0 && _trueSlideNum < Slides.Count)
             {
                 // try showing either picture or video
-                if (Slides[_slideNum].type == SlideType.Image)
+                if (Slides[_trueSlideNum].type == SlideType.Image)
                 {
                     ShowImage();
                 }
@@ -152,11 +203,11 @@ namespace Presenter
         {
             if (FillBlack)
             {
-                mediaPlayer.SetMediaUnderBlack(new Uri(Slides[_slideNum].path), SlideType.Image);
+                mediaPlayer.SetMediaUnderBlack(new Uri(Slides[_trueSlideNum].path), SlideType.Image);
             }
             else
             {
-                mediaPlayer.SetMedia(new Uri(Slides[_slideNum].path), SlideType.Image);
+                mediaPlayer.SetMedia(new Uri(Slides[_trueSlideNum].path), SlideType.Image);
             }
         }
 
@@ -164,11 +215,11 @@ namespace Presenter
         {
             if (FillBlack)
             {
-                mediaPlayer.SetMediaUnderBlack(new Uri(Slides[_slideNum].path), SlideType.Video);
+                mediaPlayer.SetMediaUnderBlack(new Uri(Slides[_trueSlideNum].path), SlideType.Video);
             }
             else
             {
-                mediaPlayer.SetMedia(new Uri(Slides[_slideNum].path), SlideType.Video);
+                mediaPlayer.SetMedia(new Uri(Slides[_trueSlideNum].path), SlideType.Video);
             }
         }
 

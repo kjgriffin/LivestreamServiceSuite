@@ -160,6 +160,7 @@ namespace Presenter
             _playbacktimer.Start();
             imagePlayer.Visibility = Visibility.Hidden;
 
+            videoPlayer.Stop();
             videoPlayer.Position = TimeSpan.Zero;
             videoPlayer.Visibility = Visibility.Visible;
             try
