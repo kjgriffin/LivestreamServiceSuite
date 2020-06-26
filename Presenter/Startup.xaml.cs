@@ -26,6 +26,7 @@ namespace Presenter
             InitializeComponent();
         }
 
+
         List<(string path, SlideType type)> _slides;
 
         private void Select_Presentation_Folder(object sender, RoutedEventArgs e)
@@ -36,7 +37,6 @@ namespace Presenter
             {
                 try
                 {
-
                     FolderName.Content = System.IO.Path.GetDirectoryName(ofd.FileName);
                     _slides = new List<(string path, SlideType type)>();
                     Start.IsEnabled = true;
@@ -44,7 +44,9 @@ namespace Presenter
                     foreach (var file in Directory.GetFiles(System.IO.Path.GetDirectoryName(ofd.FileName)).OrderBy(s => int.Parse(Regex.Match(System.IO.Path.GetFileName(s), @"(?<order>\d+)_.*").Groups["order"].Value)))
                     {
                         // TODO: validate image files
-                        _slides.Add((file, System.IO.Path.GetExtension(file) == ".mp4" ? SlideType.Video : SlideType.Image));
+                        (string path, SlideType type) slide = (file, System.IO.Path.GetExtension(file) == ".mp4" ? SlideType.Video : SlideType.Image);
+                        _slides.Add(slide);
+                        mediaPreview.SetMedia(new Uri(slide.path), slide.type);
                     }
                 }
                 catch (Exception)

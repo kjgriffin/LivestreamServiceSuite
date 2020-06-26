@@ -36,6 +36,7 @@ namespace Presenter
             realtimeclk.Elapsed += Realtimeclk_Elapsed;
             realtimeclk.Start();
 
+
             UpdateFillState();
 
             // mute playback monitor
@@ -51,7 +52,16 @@ namespace Presenter
                 showMerged();
             }
 
+            UpdateOverlays();
             SlideChanged();
+        }
+
+        private void UpdateOverlays()
+        {
+            PrevSlide.ShowOverlay = false;
+            NowSlide.ShowOverlay = false;
+            NextSlide.ShowOverlay = false;
+            AfterSlide.ShowOverlay = false;
         }
 
         private void Realtimeclk_Elapsed(object sender, ElapsedEventArgs e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net.Cache;
 using System.Runtime.CompilerServices;
@@ -41,6 +42,20 @@ namespace Presenter
             }
         }
 
+        public int NextVideoSlideNum
+        {
+            get
+            {
+                for (int i = _trueSlideNum; i < Slides.Count; i++)
+                {
+                    if (Slides[i].type == SlideType.Video)
+                    {
+                        return i + 1;
+                    }
+                }
+                return 0;
+            }
+        }
 
         public (string path, SlideType type) CurrentSlide { get => Slides[_trueSlideNum]; }
 
@@ -60,6 +75,7 @@ namespace Presenter
         public PresenterWindow(List<(string path, SlideType type)> slides)
         {
             InitializeComponent();
+            mediaPlayer.ShowOverlay = false;
             _trueSlideNum = 0;
             Slides = slides;
 

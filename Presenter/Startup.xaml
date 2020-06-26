@@ -11,6 +11,7 @@
             <Button Content="Select Presentation Folder" Click="Select_Presentation_Folder" MinHeight="50" Margin="10,10,10,10"/>
             <Label Name="FolderName" HorizontalAlignment="Center">Select Folder</Label>
             <Button Name="Start" IsEnabled="False" Content="Start Presentation" Click="Start_Presentation" MinHeight="50" Margin="10,10,10,10"/>
+            <local:MediaPlayer x:Name="mediaPreview" Visibility="Hidden"></local:MediaPlayer>
         </StackPanel>
 
     </Grid>

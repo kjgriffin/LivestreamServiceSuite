@@ -7,9 +7,38 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <MediaElement Name="videoPlayer" Panel.ZIndex="10" LoadedBehavior="Manual" UnloadedBehavior="Close" ScrubbingEnabled="True"></MediaElement>
-        <Image Name="imagePlayer" Panel.ZIndex="10"></Image>
-        <Rectangle Name="BlackSource" Panel.ZIndex="10" Fill="Black"></Rectangle>
-        <Rectangle Name="GrayBack" Panel.ZIndex="0" Fill="Gray"></Rectangle>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <MediaElement Grid.RowSpan="4" Grid.ColumnSpan="4" Name="videoPlayer" Panel.ZIndex="10" LoadedBehavior="Manual" UnloadedBehavior="Close" ScrubbingEnabled="True"></MediaElement>
+        <Image Grid.RowSpan="4" Grid.ColumnSpan="4" Name="imagePlayer" Panel.ZIndex="10"></Image>
+        <Rectangle Grid.RowSpan="4" Grid.ColumnSpan="4" Name="BlackSource" Panel.ZIndex="10" Fill="Black"></Rectangle>
+        <Rectangle Grid.RowSpan="4" Grid.ColumnSpan="4" Name="GrayBack" Panel.ZIndex="0" Fill="Gray"></Rectangle>
+        <Viewbox Name="VideoIcon" Panel.ZIndex="1000" Grid.Row="2" Grid.Column="0">
+            <Grid Background="Gray">
+                <Image Source="/icons/icons8-video-100.png"></Image>
+            </Grid>
+        </Viewbox>
+        <Viewbox Name="ImageIcon" Panel.ZIndex="1000" Grid.Row="2" Grid.Column="0">
+            <Grid>
+                <Image Source="/icons/icons8-full-image-100.png"></Image>
+            </Grid>
+        </Viewbox>
+
+        <Viewbox Name="VideoLength" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Panel.ZIndex="10000">
+            <StackPanel Orientation="Horizontal">
+                <Label Name="VideoLengthDuration" Content="Duration" Background="Gray" Foreground="White"/>
+                <Label Content="00:00" Background="Gray" Foreground="White"/>
+            </StackPanel>
+        </Viewbox>
     </Grid>
 </UserControl>

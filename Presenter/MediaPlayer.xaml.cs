@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FFmpeg.AutoGen;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -38,6 +39,48 @@ namespace Presenter
     /// </summary>
     public partial class MediaPlayer : UserControl
     {
+        /// <summary>
+        /// Show Icons/Info over media player
+        /// </summary>
+        private bool _showOverlay = false;
+        public bool ShowOverlay
+        {
+            get => _showOverlay; set
+            {
+                _showOverlay = value;
+                //show/hide
+                if (_showOverlay)
+                {
+                    DisplayOverlay();
+                }
+                else
+                {
+                    HideOverlay();
+                }
+            }
+        }
+
+        private void DisplayOverlay()
+        {
+            if (_type == SlideType.Video)
+            {
+                ImageIcon.Visibility = Visibility.Hidden;
+                //VideoLength.Visibility = Visibility.Visible;
+                VideoIcon.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                VideoLength.Visibility = Visibility.Hidden;
+                VideoIcon.Visibility = Visibility.Hidden;
+                ImageIcon.Visibility = Visibility.Visible;
+            }
+        }
+        private void HideOverlay()
+        {
+            VideoLength.Visibility = Visibility.Hidden;
+            VideoIcon.Visibility = Visibility.Hidden;
+            ImageIcon.Visibility = Visibility.Hidden;
+        }
 
         public MediaPlayer()
         {
@@ -54,6 +97,8 @@ namespace Presenter
             {
                 OnMediaPlaybackTimeUpdate?.Invoke(this, new MediaPlaybackTimeEventArgs(videoPlayer.Position, videoPlayer.NaturalDuration.TimeSpan, (videoPlayer.NaturalDuration - videoPlayer.Position).TimeSpan));
             });
+            // update video length
+            //VideoLengthDuration.Content = videoPlayer.NaturalDuration.TimeSpan.ToString("mm:\\ss");
         }
 
         public void PlayMedia()
@@ -136,6 +181,11 @@ namespace Presenter
             videoPlayer.Stop();
             videoPlayer.Visibility = Visibility.Hidden;
 
+            if (ShowOverlay)
+            {
+                DisplayOverlay();
+            }
+
             imagePlayer.Visibility = Visibility.Visible;
             try
             {
@@ -159,6 +209,11 @@ namespace Presenter
             }
             _playbacktimer.Start();
             imagePlayer.Visibility = Visibility.Hidden;
+
+            if (ShowOverlay)
+            {
+                DisplayOverlay();
+            }
 
             videoPlayer.Stop();
             videoPlayer.Position = TimeSpan.Zero;
