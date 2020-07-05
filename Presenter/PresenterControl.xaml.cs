@@ -218,17 +218,32 @@ namespace Presenter
 
         private void Play_Media(object sender, RoutedEventArgs e)
         {
+            Media_Play();
+        }
+
+        private void Media_Play()
+        {
             _window.StartMediaPlayback();
             NowSlide.PlayMedia();
         }
 
         private void Pause_Media(object sender, RoutedEventArgs e)
         {
+            Media_Pause();
+        }
+
+        private void Media_Pause()
+        {
             _window.PauseMediaPlayback();
             NowSlide.PauseMedia();
         }
 
         private void Replay_Media(object sender, RoutedEventArgs e)
+        {
+            Media_Replay();
+        }
+
+        private void Media_Replay()
         {
             _window.RestartMediaPlayback();
             NowSlide.ReplayMedia();
@@ -258,6 +273,18 @@ namespace Presenter
             if (e.Key == Key.Right)
             {
                 GoNextSlide();
+            }
+            if (e.Key == Key.Up)
+            {
+                Media_Play();
+            }
+            if (e.Key == Key.Down)
+            {
+                Media_Replay();
+            }
+            if (e.Key == Key.Space)
+            {
+                Media_Pause();
             }
         }
 
