@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -49,6 +48,7 @@
             this.nWidth = new System.Windows.Forms.NumericUpDown();
             this.nHeight = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button14 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
@@ -58,7 +58,6 @@
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.tbFontName = new System.Windows.Forms.TextBox();
-            this.pbTypeset = new System.Windows.Forms.PictureBox();
             this.button3 = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
@@ -82,7 +81,11 @@
             this.button19 = new System.Windows.Forms.Button();
             this.button17 = new System.Windows.Forms.Button();
             this.button16 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.pbTypeset = new System.Windows.Forms.PictureBox();
+            this.button20 = new System.Windows.Forms.Button();
+            this.button21 = new System.Windows.Forms.Button();
+            this.button22 = new System.Windows.Forms.Button();
+            this.button23 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nPaddingBottom)).BeginInit();
@@ -93,22 +96,15 @@
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nHeight)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTypeset)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTypeset)).BeginInit();
             this.SuspendLayout();
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(6, 19);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(480, 270);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
             // 
             // button1
             // 
@@ -359,6 +355,14 @@
             this.label1.TabIndex = 9;
             this.label1.Text = "Width %";
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(6, 19);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(480, 270);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            // 
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -432,9 +436,9 @@
             this.button6.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button6.Location = new System.Drawing.Point(6, 341);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(124, 23);
+            this.button6.Size = new System.Drawing.Size(65, 23);
             this.button6.TabIndex = 14;
-            this.button6.Text = "Fullscreen View";
+            this.button6.Text = "View";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
@@ -455,15 +459,6 @@
             this.tbFontName.ReadOnly = true;
             this.tbFontName.Size = new System.Drawing.Size(100, 20);
             this.tbFontName.TabIndex = 12;
-            // 
-            // pbTypeset
-            // 
-            this.pbTypeset.BackColor = System.Drawing.Color.White;
-            this.pbTypeset.Location = new System.Drawing.Point(503, 0);
-            this.pbTypeset.Name = "pbTypeset";
-            this.pbTypeset.Size = new System.Drawing.Size(960, 540);
-            this.pbTypeset.TabIndex = 10;
-            this.pbTypeset.TabStop = false;
             // 
             // button3
             // 
@@ -541,6 +536,7 @@
             // 
             this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox7.Controls.Add(this.button23);
             this.groupBox7.Controls.Add(this.button18);
             this.groupBox7.Controls.Add(this.button12);
             this.groupBox7.Controls.Add(this.lbSlides);
@@ -555,11 +551,11 @@
             // button18
             // 
             this.button18.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button18.Location = new System.Drawing.Point(136, 341);
+            this.button18.Location = new System.Drawing.Point(77, 341);
             this.button18.Name = "button18";
             this.button18.Size = new System.Drawing.Size(75, 23);
             this.button18.TabIndex = 19;
-            this.button18.Text = "Render Still";
+            this.button18.Text = "Render Stills";
             this.button18.UseVisualStyleBackColor = true;
             this.button18.Click += new System.EventHandler(this.button18_Click);
             // 
@@ -651,7 +647,7 @@
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(75, 23);
             this.button10.TabIndex = 1;
-            this.button10.Text = "Add Images";
+            this.button10.Text = "Add Assets";
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
@@ -708,11 +704,63 @@
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
             // 
+            // pbTypeset
+            // 
+            this.pbTypeset.BackColor = System.Drawing.Color.White;
+            this.pbTypeset.Location = new System.Drawing.Point(503, 0);
+            this.pbTypeset.Name = "pbTypeset";
+            this.pbTypeset.Size = new System.Drawing.Size(960, 540);
+            this.pbTypeset.TabIndex = 10;
+            this.pbTypeset.TabStop = false;
+            // 
+            // button20
+            // 
+            this.button20.Location = new System.Drawing.Point(1299, 801);
+            this.button20.Name = "button20";
+            this.button20.Size = new System.Drawing.Size(75, 25);
+            this.button20.TabIndex = 21;
+            this.button20.Text = "PlayVideo";
+            this.button20.UseVisualStyleBackColor = true;
+            this.button20.Click += new System.EventHandler(this.button20_Click_3);
+            // 
+            // button21
+            // 
+            this.button21.Location = new System.Drawing.Point(1299, 860);
+            this.button21.Name = "button21";
+            this.button21.Size = new System.Drawing.Size(107, 47);
+            this.button21.TabIndex = 22;
+            this.button21.Text = "Present";
+            this.button21.UseVisualStyleBackColor = true;
+            this.button21.Click += new System.EventHandler(this.button21_Click);
+            // 
+            // button22
+            // 
+            this.button22.Location = new System.Drawing.Point(1388, 831);
+            this.button22.Name = "button22";
+            this.button22.Size = new System.Drawing.Size(75, 23);
+            this.button22.TabIndex = 23;
+            this.button22.Text = "next";
+            this.button22.UseVisualStyleBackColor = true;
+            this.button22.Click += new System.EventHandler(this.button22_Click);
+            // 
+            // button23
+            // 
+            this.button23.Location = new System.Drawing.Point(158, 341);
+            this.button23.Name = "button23";
+            this.button23.Size = new System.Drawing.Size(53, 23);
+            this.button23.TabIndex = 20;
+            this.button23.Text = "Render";
+            this.button23.UseVisualStyleBackColor = true;
+            this.button23.Click += new System.EventHandler(this.button23_Click);
+            // 
             // MainWindow_1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1469, 919);
+            this.Controls.Add(this.button22);
+            this.Controls.Add(this.button21);
+            this.Controls.Add(this.button20);
             this.Controls.Add(this.groupBox9);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox8);
@@ -723,7 +771,6 @@
             this.Name = "MainWindow_1";
             this.Text = "Lower Thirds Service Builder";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -736,14 +783,15 @@
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nHeight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pbTypeset)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbTypeset)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -804,6 +852,10 @@
         private System.Windows.Forms.Button button18;
         private System.Windows.Forms.Button button19;
         private System.Windows.Forms.Button button14;
+        private System.Windows.Forms.Button button20;
+        private System.Windows.Forms.Button button21;
+        private System.Windows.Forms.Button button22;
+        private System.Windows.Forms.Button button23;
     }
 }
 

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+using LSBgenerator.Properties;
 
 namespace LSBgenerator
 {
@@ -67,6 +68,7 @@ namespace LSBgenerator
                 @"\image(a)",
                 @"\fullimage(a)",
                 @"\fitimage(a)",
+                @"\video(a)"
             };
         }
 
@@ -101,8 +103,8 @@ namespace LSBgenerator
 
             // remove 'empty' lines (new lines)
             //lines = lines.Where(s => s != "\n")
-                //.Where(s => s != "\r\n")
-                //.Where(s => s != Environment.NewLine).ToList();
+            //.Where(s => s != "\r\n")
+            //.Where(s => s != Environment.NewLine).ToList();
 
             lines = lines.Where(s => !Regex.Match(s, @"^\s$", RegexOptions.None).Success).ToList();
             lines = lines.Where(s => s.Trim() != string.Empty).Select(s => s.Trim()).ToList();
@@ -125,6 +127,23 @@ namespace LSBgenerator
                 {
                     TypesetCommand cmd = new TypesetCommand() { Command = Command.WrapSpeakerText };
                     LineData.Add(cmd);
+                    continue;
+                }
+
+                if (tl.StartsWith(@"\video"))
+                {
+                    try
+                    {
+                        // add a non-rendered slide to copy video output to slides
+                        var matches = Regex.Match(tl, @"\\video\((?<name>.*)\)");
+                        RenderVideo rc = new RenderVideo();
+                        rc.Asset = assets.First(s => s.Name == matches.Groups["name"].Value);
+                        LineData.Add(rc);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
                     continue;
                 }
 

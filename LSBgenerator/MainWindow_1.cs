@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LSBgenerator.Properties;
+using Microsoft.Office.Interop.PowerPoint;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,7 +24,7 @@ namespace LSBgenerator
 
 
         TextRenderer renderer;
-        public Font DrawingFont { get; set; }
+        public System.Drawing.Font DrawingFont { get; set; }
         public string DFName { get => DrawingFont.Name; }
         public string DFSize { get => DrawingFont.Size.ToString(); }
 
@@ -35,7 +37,7 @@ namespace LSBgenerator
             DrawingFont = Font;
             try
             {
-                DrawingFont = new Font("Arial", 36, FontStyle.Regular);
+                DrawingFont = new System.Drawing.Font("Arial", 36, FontStyle.Regular);
             }
             finally
             {
@@ -226,7 +228,7 @@ namespace LSBgenerator
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Multiselect = true;
             openFileDialog.Title = "Select Image Asset";
-            openFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG";
+            openFileDialog.Filter = "Media Files(*.BMP;*.JPG;*.PNG;*.mp4)|*.BMP;*.JPG;*.PNG;*.mp4";
             openFileDialog.ShowDialog();
 
             foreach (var filename in openFileDialog.FileNames)
@@ -239,12 +241,26 @@ namespace LSBgenerator
                 asset.Type = ext;
                 asset.Name = Path.GetFileNameWithoutExtension(filename);
                 asset.ResourcePath = filename;
-                // get image
-                asset.Image = (Bitmap)Image.FromFile(filename);
 
-                proj.Assets.Add(asset);
+                if (asset.Type == ".mp4") {
 
-                AddProjectAsset(asset);
+                    // create thumbnail from video?
+
+                    asset.Image = Resources.videofile;
+
+                    proj.Assets.Add(asset);
+                    AddProjectAsset(asset);
+
+                }
+                else
+                {
+                    // get image
+                    asset.Image = (Bitmap)Image.FromFile(filename);
+
+                    proj.Assets.Add(asset);
+
+                    AddProjectAsset(asset);
+                }
             }
 
         }
@@ -374,7 +390,12 @@ namespace LSBgenerator
 
         private void button18_Click(object sender, EventArgs e)
         {
+            RenderSlides();
 
+        }
+
+        private void RenderSlides(bool stills_only = true)
+        {
             // select folder to save into
             //FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
             //folderBrowser.ShowDialog();
@@ -404,14 +425,24 @@ namespace LSBgenerator
                         format = ImageFormat.Png;
                         break;
                 }
-                StillFrameRenderer sfr = new StillFrameRenderer() { Format = format };
+                if (stills_only)
+                {
+                    StillFrameRenderer sfr = new StillFrameRenderer() { Format = format };
 
-                List<Bitmap> slides = renderer.Slides.Select(p => p.rendering).ToList();
+                    List<Bitmap> slides = renderer.Slides.Select(p => p.rendering).ToList();
 
-                sfr.ExportStillFrames(Path.GetDirectoryName(savefiles.FileName), slides);
+                    sfr.ExportStillFrames(Path.GetDirectoryName(savefiles.FileName), slides);
+                }
+                else
+                {
+                    StillVideoSlideRenderer svsr = new StillVideoSlideRenderer() { Format = format };
+
+                    List<(SlideType type, object slide)> slides = renderer.Slides.Select(p => p.IsMediaReference ? (SlideType.Video, (object)p.MediaReference) : (SlideType.Still, p.rendering)).ToList();
+
+                    svsr.ExportStillFramesAndVideos(Path.GetDirectoryName(savefiles.FileName), slides);
+                }
 
             }
-
         }
 
         private void button12_Click(object sender, EventArgs e)
@@ -500,6 +531,59 @@ namespace LSBgenerator
         }
 
         private void button20_Click_2(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button20_Click_3(object sender, EventArgs e)
+        {
+            Video_Test vt = new Video_Test();
+            vt.Show();
+            vt.play();
+        }
+
+        private void button21_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                string path = fbd.SelectedPath;
+
+                // find all files in path and create uri's for all files in order
+                List<(Uri path, string type)> slides = new List<(Uri path, string type)>();
+
+                foreach (var file in Directory.GetFiles(path).OrderBy(s => s))
+                {
+                    if (Path.GetExtension(file) == ".mp4")
+                    {
+                        slides.Add((new Uri(file), "video"));
+                    }
+                    else
+                    {
+                        slides.Add((new Uri(file), "image"));
+                    }
+                }
+                _presentation = new Video_Test();
+                _presentation.Show();
+                _presentation.startPresentation(slides);
+            }
+        }
+
+        Video_Test _presentation;
+        private void button22_Click(object sender, EventArgs e)
+        {
+            if (_presentation != null)
+            {
+                _presentation.nextSlide();
+            } 
+        }
+
+        private void button23_Click(object sender, EventArgs e)
+        {
+            RenderSlides(false);
+        }
+
+        private void button24_Click(object sender, EventArgs e)
         {
 
         }
