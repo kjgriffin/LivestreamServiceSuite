@@ -112,12 +112,6 @@
     <Compile Include="TextRenderer.cs" />
     <Compile Include="TextRendererLayout.cs" />
     <Compile Include="TypesetCommand.cs" />
-    <Compile Include="Video Test.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Video Test.Designer.cs">
-      <DependentUpon>Video Test.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="CommandHelpList.resx">
       <DependentUpon>CommandHelpList.cs</DependentUpon>
     </EmbeddedResource>
@@ -143,9 +137,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Video Test.resx">
-      <DependentUpon>Video Test.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\DataSources\Form1.datasource" />
     <None Include="Properties\DataSources\ProjectAsset.datasource" />
     <None Include="Properties\DataSources\ServiceProject.datasource" />
@@ -197,12 +188,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Slide33.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WpfControlLibrary1\WpfControlLibrary1.csproj">
-      <Project>{278186FE-1A8D-4B97-9C4E-6ECCE61E3292}</Project>
-      <Name>WpfControlLibrary1</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\video.mp4" />

@@ -537,9 +537,6 @@ namespace LSBgenerator
 
         private void button20_Click_3(object sender, EventArgs e)
         {
-            Video_Test vt = new Video_Test();
-            vt.Show();
-            vt.play();
         }
 
         private void button21_Click(object sender, EventArgs e)
@@ -563,19 +560,11 @@ namespace LSBgenerator
                         slides.Add((new Uri(file), "image"));
                     }
                 }
-                _presentation = new Video_Test();
-                _presentation.Show();
-                _presentation.startPresentation(slides);
             }
         }
 
-        Video_Test _presentation;
         private void button22_Click(object sender, EventArgs e)
         {
-            if (_presentation != null)
-            {
-                _presentation.nextSlide();
-            } 
         }
 
         private void button23_Click(object sender, EventArgs e)
