@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,26 +23,14 @@ namespace Presenter
     {
         PresenterWindow _window;
 
-        System.Timers.Timer realtimeclk;
         public PresenterControl(PresenterWindow window)
         {
             InitializeComponent();
             _window = window;
             SlideNumView = $"{_window.CurrentSlideNum}/{_window.Slides.Count}";
             _window.OnMediaPlaybackTimeUpdated += _window_OnMediaPlaybackTimeUpdated;
-            realtimeclk = new System.Timers.Timer(1000);
-            realtimeclk.Elapsed += Realtimeclk_Elapsed;
-            realtimeclk.Start();
 
             SlideChanged();
-        }
-
-        private void Realtimeclk_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            LocalTime.Dispatcher.Invoke(() =>
-            {
-                LocalTime.Content = DateTime.Now.ToString("hh:mm:ss tt");
-            });
         }
 
         private void _window_OnMediaPlaybackTimeUpdated(object sender, MediaPlaybackTimeEventArgs e)
@@ -58,7 +44,7 @@ namespace Presenter
         {
             Media_length.Content = length.ToString("mm\\:ss");
         }
-
+        
         public void UpdateTimeRemaining(TimeSpan rem)
         {
             Media_rem.Content = rem.ToString("mm\\:ss");
@@ -85,16 +71,12 @@ namespace Presenter
             if (_window.CurrentSlide.type == SlideType.Video)
             {
                 // show media controls
-                PlaybackControls.Visibility = Visibility.Visible;
-                PlaybackTime.Visibility = Visibility.Visible;
-                PlaybackTime_1.Visibility = Visibility.Visible;
+                MediaControls.Visibility = Visibility.Visible;
             }
             else
             {
                 // hide media controls
-                PlaybackControls.Visibility = Visibility.Hidden;
-                PlaybackTime.Visibility = Visibility.Hidden;
-                PlaybackTime_1.Visibility = Visibility.Hidden;
+                MediaControls.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -187,11 +169,6 @@ namespace Presenter
             {
                 OnWindowClosing?.Invoke(this, e);
             });
-        }
-
-        private void Reset_Media(object sender, RoutedEventArgs e)
-        {
-            _window.ResetMediaPlayback();
         }
     }
 }

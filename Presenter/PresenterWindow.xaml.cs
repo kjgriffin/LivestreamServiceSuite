@@ -120,15 +120,6 @@ namespace Presenter
             }
         }
 
-        public void ResetMediaPlayback()
-        {
-
-            if (Slides[_slideNum].type == SlideType.Video)
-            {
-                mediaPlayer.ResetMedia();
-            }
-        }
-
 
         private void ShowSlide()
         {

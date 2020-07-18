@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close" ScrubbingEnabled="True"></MediaElement>
+        <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close"></MediaElement>
         <Image Name="imagePlayer"></Image>
         <Rectangle Name="BlackSource" Fill="Black"></Rectangle>
     </Grid>
