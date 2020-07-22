@@ -33,8 +33,11 @@
             </Grid>
             <Grid Grid.Column="2">
                 <StackPanel>
-                    <Image x:Name="ImageBox" Height="600" Stretch="Uniform"></Image>
-                    <Button Click="Test_Button">Test</Button>
+                    <Border Background="HotPink">
+                        <Image x:Name="ImageBox" Height="600" Stretch="Uniform"></Image>
+                    </Border>
+                    <Button Click="Test_Button">Render</Button>
+                    <Button Click="Show">Show</Button>
                 </StackPanel>
             </Grid>
         </Grid>

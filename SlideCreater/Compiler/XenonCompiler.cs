@@ -1,7 +1,10 @@
-﻿using System;
+﻿using SlideCreater.SlideAssembly;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace SlideCreater.Compiler
@@ -38,11 +41,19 @@ namespace SlideCreater.Compiler
             Lexer = new Lexer(); 
         }
 
-        public void Compile(string input)
+        public Project Compile(string input)
         {
             Lexer.Tokenize(input);
 
             XenonASTProgram p = Program();
+
+            Project proj = new Project();
+            p.Generate(proj);
+
+            string jsonproj = JsonSerializer.Serialize<Project>(proj);
+            Debug.WriteLine(jsonproj);
+
+            return proj;
         }
 
         private XenonASTProgram Program()
@@ -63,14 +74,14 @@ namespace SlideCreater.Compiler
             {
                 Lexer.Gobble("#video");
                 expr.Command = Video();
+                return expr;
             }
 
-            else
-            {
-                // else assume its liturgy
-                expr.Command = Liturgy();
-            }
 
+
+            
+            // else assume its liturgy
+            expr.Command = Liturgy();
             return expr;
         }
 
@@ -92,7 +103,8 @@ namespace SlideCreater.Compiler
             // assume all tokens until we find one starting with # are to be considred the content
             while(!Lexer.InspectEOF() && !Lexer.Inspect("#", false))
             {
-                liturgy.Content.Add(Lexer.Consume());
+                XenonASTContent content = new XenonASTContent() { TextContent = Lexer.Consume() };
+                liturgy.Content.Add(content);
             }
             return liturgy;
         }

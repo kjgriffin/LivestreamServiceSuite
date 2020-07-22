@@ -1,4 +1,6 @@
 ﻿using SlideCreater.Compiler;
+using SlideCreater.Renderer;
+using SlideCreater.SlideAssembly;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -46,10 +48,25 @@ namespace SlideCreater
 
             // compile text
             XenonCompiler compiler = new XenonCompiler();
-            compiler.Compile(TbInput.Text);
+            Project proj = compiler.Compile(TbInput.Text);
 
+            SlideRenderer sr = new SlideRenderer();
+            sr.project = proj;
 
+            slides = sr.Render();
+        }
 
+        List<Bitmap> slides;
+
+        int slide = 0;
+
+        private void Show(object sender, RoutedEventArgs e)
+        {
+            ImageBox.Source = slides[slide].ConvertToBitmapImage();
+            if (slide + 1 < slides.Count)
+            {
+                slide += 1;
+            }
         }
     }
 }

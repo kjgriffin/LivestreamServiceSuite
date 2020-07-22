@@ -140,7 +140,7 @@ namespace LSBgenerator
                         rc.Asset = assets.First(s => s.Name == matches.Groups["name"].Value);
                         LineData.Add(rc);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
 
                     }
