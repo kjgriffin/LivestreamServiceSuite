@@ -213,7 +213,7 @@
                                 <StackPanel>
                                     <TextBlock TextAlignment="Center" Margin="0,5,0,0">PIP</TextBlock>
                                     <Button Style="{StaticResource InactiveSwitcherButton}">KEY 1</Button>
-                                    <Button Style="{StaticResource SwitcherButton}">PIP</Button>
+                                    <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton}">PIP</Button>
                                 </StackPanel>
                             </Border>
                         </Grid>

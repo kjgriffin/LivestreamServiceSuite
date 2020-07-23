@@ -407,6 +407,11 @@ namespace Integrated_Presenter
             }
         }
 
+        public void PerformToggleUSK1()
+        {
+            _BMDSwitcherUpstreamKey1.SetOnAir(_state.USK1OnAir ? 0 : 1);
+        }
+
         public void PerformToggleDSK1()
         {
             _BMDSwitcherDownstreamKey1.SetOnAir(_state.DSK1OnAir ? 0 : 1);

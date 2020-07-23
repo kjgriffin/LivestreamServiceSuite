@@ -114,6 +114,11 @@ namespace Integrated_Presenter
             switcherManager?.PerformProgramSelect(button);
         }
 
+        private void ToggleUSK1()
+        {
+            switcherManager?.PerformToggleUSK1();
+        }
+
         private void ToggleDSK1()
         {
             switcherManager?.PerformToggleDSK1();
@@ -145,6 +150,7 @@ namespace Integrated_Presenter
         {
             UpdatePresetButtonStyles();
             UpdateProgramButtonStyles();
+            UpdateUSK1Styles();
             UpdateDSK1Styles();
             UpdateDSK2Styles();
             UpdateFTBButtonStyle();
@@ -152,7 +158,7 @@ namespace Integrated_Presenter
 
         private void UpdateUSK1Styles()
         {
-
+            
         }
 
         private void UpdateDSK1Styles()
@@ -654,5 +660,9 @@ namespace Integrated_Presenter
             switcherManager?.PerformToggleFTB();
         }
 
+        private void ClickUSK1Toggle(object sender, RoutedEventArgs e)
+        {
+            ToggleUSK1();
+        }
     }
 }

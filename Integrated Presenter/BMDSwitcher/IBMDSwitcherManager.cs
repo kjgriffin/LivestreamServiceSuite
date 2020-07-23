@@ -26,5 +26,6 @@ namespace Integrated_Presenter
         void PerformToggleDSK2();
         void PerformToggleFTB();
         bool TryConnect(string address);
+        void PerformToggleUSK1();
     }
 }

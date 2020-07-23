@@ -158,5 +158,12 @@ namespace Integrated_Presenter.BMDSwitcher
             mockMultiviewer.SetDSK1(true);
             SwitcherStateChanged?.Invoke(_state);
         }
+
+        public void PerformToggleUSK1()
+        {
+            _state.USK1OnAir = !_state.USK1OnAir;
+            // update multiviewer
+            SwitcherStateChanged?.Invoke(_state);
+        }
     }
 }
