@@ -26,6 +26,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         private int PresetSource;
 
         private bool DSK1;
+        private bool DSK2;
 
         private ImageSource InputSourceToImage(int inputID)
         {
@@ -74,6 +75,10 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             {
                 UpdateSourceFromAux(ImgProgramLowerThird, slide);
             }
+            if (DSK2)
+            {
+                UpdateSourceFromAux(ImgProgramSplit, slide);
+            }
         }
 
         private void UpdateSourceFromAux(Image control, Slide slide)
@@ -94,16 +99,28 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         }
 
-        public void ShowLowerThird()
+        public void ShowProgramDSK1()
         {
             DSK1 = true;
             ImgProgramLowerThird.Source = ImgSlide.Source;
         }
 
-        public void HideLowerThird()
+        public void HideProgramDSK1()
         {
             DSK1 = false;
             ImgProgramLowerThird.Source = null;
+        }
+
+        public void ShowProgramDSK2()
+        {
+            DSK2 = true;
+            ImgProgramSplit.Source = ImgSlide.Source;
+        }
+
+        public void HideProgramDSK2()
+        {
+            DSK2 = false;
+            ImgProgramSplit.Source = null;
         }
 
 

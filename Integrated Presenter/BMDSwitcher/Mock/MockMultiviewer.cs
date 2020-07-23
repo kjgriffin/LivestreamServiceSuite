@@ -35,17 +35,24 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             if (onair)
             {
-                multiviewerWindow.ShowLowerThird();
+                multiviewerWindow.ShowProgramDSK1();
             }
             else
             {
-                multiviewerWindow.HideLowerThird();
+                multiviewerWindow.HideProgramDSK1();
             }
         }
 
         public void SetDSK2(bool onair)
         {
-
+            if (onair)
+            {
+                multiviewerWindow.ShowProgramDSK2();
+            }
+            else
+            {
+                multiviewerWindow.HideProgramDSK2();
+            }
         }
 
         public void SetFTB(bool onair)

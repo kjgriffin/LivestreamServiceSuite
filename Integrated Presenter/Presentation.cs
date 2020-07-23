@@ -53,6 +53,8 @@ namespace Integrated_Presenter
 
         public int SlideCount { get => Slides.Count; }
 
+        public int CurrentSlide { get => _currentSlide + 1; }
+
         private int _currentSlide = 0;
 
         public Slide Prev

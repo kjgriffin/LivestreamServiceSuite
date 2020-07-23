@@ -37,6 +37,16 @@
                         </Image.Clip>
                     </Image>
                 </Viewbox>
+                <Viewbox>
+                    <Image Name="ImgProgramSplit" Stretch="None">
+                        <Image.RenderTransform>
+                            <TranslateTransform X="0" Y="0"></TranslateTransform>
+                        </Image.RenderTransform>
+                        <Image.Clip>
+                            <RectangleGeometry Rect="960 0 1920 1080"></RectangleGeometry> 
+                        </Image.Clip>
+                    </Image>
+                </Viewbox>
                 <Rectangle Name="ProgramFTB" Visibility="Hidden" Panel.ZIndex="1000">
                     <Rectangle.Fill>Black</Rectangle.Fill>
                 </Rectangle>

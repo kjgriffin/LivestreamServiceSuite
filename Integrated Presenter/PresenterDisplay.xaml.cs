@@ -26,6 +26,7 @@ namespace Integrated_Presenter
         {
             InitializeComponent();
             _control = parent;
+            mediaPlayer.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdate;
         }
 
         private void _controlPanel_OnWindowClosing(object sender, EventArgs e)

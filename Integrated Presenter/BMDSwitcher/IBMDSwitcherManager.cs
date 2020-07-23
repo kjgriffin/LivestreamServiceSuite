@@ -12,6 +12,8 @@ namespace Integrated_Presenter
         BMDSwitcherState GetCurrentState();
         void PerformAutoOffAirDSK2();
         void PerformAutoOnAirDSK2();
+        void PerformAutoOffAirDSK1();
+        void PerformAutoOnAirDSK1();
         void PerformAutoTransition();
         void PerformCutTransition();
         void PerformPresetSelect(int sourceID);

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,12 +26,30 @@ namespace Integrated_Presenter
     /// </summary>
     public partial class MainWindow : Window
     {
+
+
+        Timer system_second_timer = new Timer();
         public MainWindow()
         {
             DataContext = this;
             InitializeComponent();
+
+            this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
+            system_second_timer.Elapsed += System_second_timer_Elapsed;
+            system_second_timer.Interval = 1000;
+            //system_second_timer.Start();
         }
 
+        private void System_second_timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            TbTime.Text = DateTime.Now.ToString("hh:mm:ss");
+        }
+
+        private void MainWindow_PresentationStateUpdated(Slide currentslide)
+        {
+            UpdateSlideNums();
+            ResetSlideMediaTimes();
+        }
 
         IBMDSwitcherManager switcherManager;
         BMDSwitcherState switcherState = new BMDSwitcherState();
@@ -121,6 +140,11 @@ namespace Integrated_Presenter
             UpdateFTBButtonStyle();
         }
 
+        private void UpdateUSK1Styles()
+        {
+            
+        }
+
         private void UpdateDSK1Styles()
         {
             BtnDSK1OnOffAir.Background = (switcherState.DSK1OnAir ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
@@ -164,6 +188,19 @@ namespace Integrated_Presenter
         private void UpdateDriveButtonStyle()
         {
             BtnDrive.Background = (SlideDriveVideo ? Resources["YellowLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+        }
+
+        private void UpdateSlideNums()
+        {
+            TbCurrSlide.Text = Presentation?.CurrentSlide.ToString() ?? "0";
+            TbSlideCount.Text = Presentation?.SlideCount.ToString() ?? "0";
+        }
+
+        private void ResetSlideMediaTimes()
+        {
+            TbMediaTimeRemaining.Text = "0:00";  
+            TbMediaTimeCurrent.Text = "0:00";  
+            TbMediaTimeDurration.Text = "0:00";  
         }
 
 
@@ -448,6 +485,9 @@ namespace Integrated_Presenter
         private void _display_OnMediaPlaybackTimeUpdated(object sender, MediaPlaybackTimeEventArgs e)
         {
             // update textblocks
+            TbMediaTimeRemaining.Text = e.Remaining.ToString("m\\:ss");
+            TbMediaTimeCurrent.Text = e.Current.ToString("m\\:ss");
+            TbMediaTimeDurration.Text = e.Length.ToString("m\\:ss");
         }
 
         private void slidesUpdated()

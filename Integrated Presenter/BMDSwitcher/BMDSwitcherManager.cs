@@ -18,11 +18,13 @@ namespace Integrated_Presenter
         private IBMDSwitcher _BMDSwitcher;
 
         private IBMDSwitcherMixEffectBlock _BMDSwitcherMixEffectBlock1;
+        private IBMDSwitcherKey _BMDSwitcherUpstreamKey1;
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey1;
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey2;
 
         private SwitcherMonitor _switcherMonitor;
         private MixEffectBlockMonitor _mixEffectBlockMonitor;
+        private UpstreamKeyMonitor _upstreamKey1Monitor;
         private DownstreamKeyMonitor _dsk1Monitor;
         private DownstreamKeyMonitor _dsk2Monitor;
 
@@ -42,6 +44,10 @@ namespace Integrated_Presenter
             _mixEffectBlockMonitor = new MixEffectBlockMonitor();
             _mixEffectBlockMonitor.PreviewInputChanged += _mixEffectBlockMonitor_PreviewInputChanged;
             _mixEffectBlockMonitor.ProgramInputChanged += _mixEffectBlockMonitor_ProgramInputChanged;
+            _mixEffectBlockMonitor.FateToBlackFullyChanged += _mixEffectBlockMonitor_FateToBlackFullyChanged;
+
+            _upstreamKey1Monitor = new UpstreamKeyMonitor();
+            _upstreamKey1Monitor.UpstreamKeyOnAirChanged += _upstreamKey1Monitor_UpstreamKeyOnAirChanged;
 
             _dsk1Monitor = new DownstreamKeyMonitor();
             _dsk1Monitor.OnAirChanged += _dsk1Manager_OnAirChanged;
@@ -57,6 +63,18 @@ namespace Integrated_Presenter
             }
             _state = new BMDSwitcherState();
             SwitcherDisconnected();
+        }
+
+        private void _upstreamKey1Monitor_UpstreamKeyOnAirChanged(object sender, object args)
+        {
+            ForceStateUpdate_USK1();
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        private void _mixEffectBlockMonitor_FateToBlackFullyChanged(object sender, object args)
+        {
+            ForceStateUpdate_FTB();
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         private void _dsk2Manager_TieChanged(object sender, object args)
@@ -129,11 +147,8 @@ namespace Integrated_Presenter
 
         }
 
-        private void SwitcherConnected()
+        private bool InitializeMixEffectBlock()
         {
-            // add callbacks
-            _BMDSwitcher.AddCallback(_switcherMonitor);
-
             // get mixeffectblock1
             IBMDSwitcherMixEffectBlockIterator meIterator = null;
             IntPtr meIteratorPtr;
@@ -144,7 +159,7 @@ namespace Integrated_Presenter
                 meIterator = (IBMDSwitcherMixEffectBlockIterator)Marshal.GetObjectForIUnknown(meIteratorPtr);
             }
             if (meIterator == null)
-                return;
+                return false;
 
             if (meIterator != null)
             {
@@ -154,12 +169,46 @@ namespace Integrated_Presenter
             if (_BMDSwitcherMixEffectBlock1 == null)
             {
                 MessageBox.Show("Unexpected: Could not get first mix effect block", "Error");
-                return;
+                return false;
             }
 
             // add callbacks
             _BMDSwitcherMixEffectBlock1.AddCallback(_mixEffectBlockMonitor);
 
+            return true;
+        }
+
+        private bool InitializeUpstreamKeyers()
+        {
+            // get upstream keyer
+            IBMDSwitcherKeyIterator keyIterator = null;
+            IntPtr keyIteratorPtr;
+            Guid keyIteratorIID = typeof(IBMDSwitcherKeyIterator).GUID;
+            _BMDSwitcher.CreateIterator(ref keyIteratorIID, out keyIteratorPtr);
+            if (keyIteratorPtr != null)
+            {
+                keyIterator = (IBMDSwitcherKeyIterator)Marshal.GetObjectForIUnknown(keyIteratorPtr);
+            }
+            if (keyIterator == null)
+                return false;
+            if (keyIterator != null)
+            {
+                keyIterator.Next(out _BMDSwitcherUpstreamKey1);
+            }
+            if (_BMDSwitcherUpstreamKey1 == null)
+            {
+                MessageBox.Show("Unexpected: Could not get upstream keyer 1", "Error");
+                return false;
+            }
+
+            // add callbacks
+            _BMDSwitcherUpstreamKey1.AddCallback(_upstreamKey1Monitor);
+
+            return true;
+        }
+
+        private bool InitializeDownstreamKeyers()
+        {
             // get downstream keyers
             IBMDSwitcherDownstreamKeyIterator dskIterator = null;
             IntPtr dskIteratorPtr;
@@ -170,7 +219,7 @@ namespace Integrated_Presenter
                 dskIterator = (IBMDSwitcherDownstreamKeyIterator)Marshal.GetObjectForIUnknown(dskIteratorPtr);
             }
             if (dskIterator == null)
-                return;
+                return false;
 
             if (dskIterator != null)
             {
@@ -186,30 +235,64 @@ namespace Integrated_Presenter
             if (_BMDSwitcherDownstreamKey1 == null || _BMDSwitcherDownstreamKey2 == null)
             {
                 MessageBox.Show("Unexpected: Could not get one of the downstream keyers", "Error");
-                return;
+                return false;
             }
 
             // add callbacks
             _BMDSwitcherDownstreamKey1.AddCallback(_dsk1Monitor);
             _BMDSwitcherDownstreamKey2.AddCallback(_dsk2Monitor);
 
+            return true;
 
-            GoodConnection = true;
         }
+
+        private void SwitcherConnected()
+        {
+            // add callbacks (monitors switcher connection)
+            _BMDSwitcher.AddCallback(_switcherMonitor);
+
+
+            bool mixeffects = InitializeMixEffectBlock();
+            bool upstreamkeyers = InitializeUpstreamKeyers();
+            bool downstreamkeyers = InitializeDownstreamKeyers();
+
+            GoodConnection = mixeffects && upstreamkeyers && downstreamkeyers;
+
+            // update state
+            ForceStateUpdate();
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
         private void SwitcherDisconnected()
         {
             GoodConnection = false;
 
+            // remove callbacks
             if (_BMDSwitcherMixEffectBlock1 != null)
             {
-                // remove callbacks
                 _BMDSwitcherMixEffectBlock1.RemoveCallback(_mixEffectBlockMonitor);
                 _BMDSwitcherMixEffectBlock1 = null;
             }
 
+            if (_BMDSwitcherUpstreamKey1 != null)
+            {
+                _BMDSwitcherUpstreamKey1.RemoveCallback(_upstreamKey1Monitor);
+                _BMDSwitcherUpstreamKey1 = null;
+            }
+
+            if (_BMDSwitcherDownstreamKey1 != null)
+            {
+                _BMDSwitcherDownstreamKey1.RemoveCallback(_dsk1Monitor);
+                _BMDSwitcherDownstreamKey1 = null;
+            }
+            if (_BMDSwitcherDownstreamKey2 != null)
+            {
+                _BMDSwitcherDownstreamKey2.RemoveCallback(_dsk2Monitor);
+                _BMDSwitcherDownstreamKey2 = null;
+            }
+
             if (_BMDSwitcher != null)
             {
-                // remove callbacks
                 _BMDSwitcher.RemoveCallback(_switcherMonitor);
                 _switcherMonitor = null;
             }
@@ -225,10 +308,19 @@ namespace Integrated_Presenter
                 // update state
                 ForceStateUpdate_ProgramInput();
                 ForceStateUpdate_PreviewInput();
+                ForceStateUpdate_USK1();
                 ForceStateUpdate_DSK1();
                 ForceStateUpdate_DSK2();
+                ForceStateUpdate_FTB();
             }
             return _state;
+        }
+
+        private void ForceStateUpdate_USK1()
+        {
+            int onair;
+            _BMDSwitcherUpstreamKey1.GetOnAir(out onair);
+            _state.USK1OnAir = onair != 0;
         }
 
         private void ForceStateUpdate_DSK1()
@@ -266,6 +358,13 @@ namespace Integrated_Presenter
             _BMDSwitcherMixEffectBlock1.GetPreviewInput(out presetid);
             _state.PresetID = presetid;
 
+        }
+
+        private void ForceStateUpdate_FTB()
+        {
+            int ftb;
+            _BMDSwitcherMixEffectBlock1.GetFadeToBlackFullyBlack(out ftb);
+            _state.FTB = ftb != 0;
         }
 
         public BMDSwitcherState GetCurrentState()
@@ -351,7 +450,7 @@ namespace Integrated_Presenter
 
         public void PerformToggleFTB()
         {
-
+            _BMDSwitcherMixEffectBlock1.PerformFadeToBlack();
         }
     }
 }
