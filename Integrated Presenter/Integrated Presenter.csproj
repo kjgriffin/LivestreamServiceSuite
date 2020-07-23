@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Integrated_Presenter</RootNamespace>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="BMDSwitcher\Mock\Images\black.png" />
+    <None Remove="BMDSwitcher\Mock\Images\centercam.PNG" />
+    <None Remove="BMDSwitcher\Mock\Images\leftcam.PNG" />
+    <None Remove="BMDSwitcher\Mock\Images\organcam.PNG" />
+    <None Remove="BMDSwitcher\Mock\Images\rightcam.PNG" />
+    <None Remove="BMDSwitcher\Mock\Images\videofile.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="BMDSwitcherAPI.dll">
+      <Guid>8a92b919-156c-4d61-94ef-03f9be4004b0</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="BMDSwitcher\Mock\Images\black.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="BMDSwitcher\Mock\Images\centercam.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="BMDSwitcher\Mock\Images\leftcam.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="BMDSwitcher\Mock\Images\organcam.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="BMDSwitcher\Mock\Images\rightcam.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="BMDSwitcher\Mock\Images\videofile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+</Project>

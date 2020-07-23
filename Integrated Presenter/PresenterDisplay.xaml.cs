@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Cache;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,38 +8,24 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Presenter
+namespace Integrated_Presenter
 {
-
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for PresenterDisplay.xaml
     /// </summary>
-    public partial class PresenterWindow : Window
+    public partial class PresenterDisplay : Window
     {
-        public List<(string path, SlideType type)> Slides { get; set; }
-        public int CurrentSlideNum { get => _slideNum + 1; }
 
-        public (string path, SlideType type) CurrentSlide { get => Slides[_slideNum]; }
-
-
-        private int _slideNum;
+        MainWindow _control;
 
         public event EventHandler<MediaPlaybackTimeEventArgs> OnMediaPlaybackTimeUpdated;
 
-        public PresenterWindow(List<(string path, SlideType type)> slides)
+        public PresenterDisplay(MainWindow parent)
         {
             InitializeComponent();
-            _slideNum = 0;
-            Slides = slides;
-
-
-            // start presentation at slide 0
-            ShowSlide();
-
-            
+            _control = parent;
         }
 
         private void _controlPanel_OnWindowClosing(object sender, EventArgs e)
@@ -54,30 +35,15 @@ namespace Presenter
 
         private void MediaPlayer_OnMediaPlaybackTimeUpdate(object sender, MediaPlaybackTimeEventArgs e)
         {
-
-        }
-
-        public void NextSlide()
-        {
-            if (_slideNum + 1 < Slides.Count)
+            _control.Dispatcher.Invoke(() =>
             {
-                _slideNum += 1;
-                ShowSlide();
-            }
-        }
-
-        public void PrevSlide()
-        {
-            if (_slideNum - 1 >= 0)
-            {
-                _slideNum -= 1;
-                ShowSlide();
-            }
+                OnMediaPlaybackTimeUpdated?.Invoke(this, e);
+            });
         }
 
         public void StartMediaPlayback()
         {
-            if (Slides[_slideNum].type == SlideType.Video)
+            if (_control.Presentation.Current.Type == Integrated_Presenter.SlideType.Video)
             {
                 mediaPlayer.PlayMedia();
             }
@@ -85,7 +51,7 @@ namespace Presenter
 
         public void PauseMediaPlayback()
         {
-            if (Slides[_slideNum].type == SlideType.Video)
+            if (_control.Presentation.Current.Type == Integrated_Presenter.SlideType.Video)
             {
                 mediaPlayer.PauseMedia();
             }
@@ -93,41 +59,35 @@ namespace Presenter
 
         public void RestartMediaPlayback()
         {
-            if (Slides[_slideNum].type == SlideType.Video)
+            if (_control.Presentation.Current.Type == Integrated_Presenter.SlideType.Video)
             {
                 mediaPlayer.ReplayMedia();
             }
         }
 
 
-        private void ShowSlide()
+        public void ShowSlide()
         {
-            if (_slideNum >= 0 && _slideNum < Slides.Count)
+            if (_control.Presentation.Current.Type == SlideType.Video)
             {
-                // try showing either picture or video
-                if (Slides[_slideNum].type == SlideType.Image)
-                {
-                    ShowImage();
-                }
-                else
-                {
-                    ShowVideo();
-                }
+                ShowVideo();
+            }
+            else
+            {
+                ShowImage();
             }
         }
 
 
         private void ShowImage()
         {
-            mediaPlayer.SetMedia(new Uri(Slides[_slideNum].path), SlideType.Image);
+            mediaPlayer.SetMedia(_control.Presentation.Current);
         }
 
         private void ShowVideo()
         {
-            mediaPlayer.SetMedia(new Uri(Slides[_slideNum].path), SlideType.Video);
+            mediaPlayer.SetMedia(_control.Presentation.Current);
         }
-
-
 
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -168,6 +128,11 @@ namespace Presenter
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+        }
+
+        private void Window_KeyDown_1(object sender, KeyEventArgs e)
+        {
+
         }
     }
 }
