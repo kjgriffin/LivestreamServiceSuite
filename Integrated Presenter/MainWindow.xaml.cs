@@ -34,13 +34,23 @@ namespace Integrated_Presenter
             DataContext = this;
             InitializeComponent();
 
+            UpdateRealTimeClock();
+
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
             system_second_timer.Elapsed += System_second_timer_Elapsed;
             system_second_timer.Interval = 1000;
-            //system_second_timer.Start();
+            system_second_timer.Start();
         }
 
         private void System_second_timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            TbTime.Dispatcher.Invoke(() =>
+            {
+                UpdateRealTimeClock();
+            });
+        }
+
+        private void UpdateRealTimeClock()
         {
             TbTime.Text = DateTime.Now.ToString("hh:mm:ss");
         }
@@ -142,7 +152,7 @@ namespace Integrated_Presenter
 
         private void UpdateUSK1Styles()
         {
-            
+
         }
 
         private void UpdateDSK1Styles()
@@ -198,9 +208,9 @@ namespace Integrated_Presenter
 
         private void ResetSlideMediaTimes()
         {
-            TbMediaTimeRemaining.Text = "0:00";  
-            TbMediaTimeCurrent.Text = "0:00";  
-            TbMediaTimeDurration.Text = "0:00";  
+            TbMediaTimeRemaining.Text = "0:00";
+            TbMediaTimeCurrent.Text = "0:00";
+            TbMediaTimeDurration.Text = "0:00";
         }
 
 
