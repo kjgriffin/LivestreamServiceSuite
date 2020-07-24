@@ -66,6 +66,14 @@ namespace Integrated_Presenter
             }
         }
 
+        public void StopMediaPlayback()
+        {
+            if (_control.Presentation.Current.Type == SlideType.Video)
+            {
+                mediaPlayer.StopMedia();
+            }
+        }
+
 
         public void ShowSlide()
         {

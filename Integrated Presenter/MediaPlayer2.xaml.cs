@@ -79,6 +79,14 @@ namespace Integrated_Presenter
             }
         }
 
+        public void StopMedia()
+        {
+            if (_type == SlideType.Video)
+            {
+                videoPlayer.Stop();
+            }
+        }
+
 
         Uri _source;
         SlideType _type;

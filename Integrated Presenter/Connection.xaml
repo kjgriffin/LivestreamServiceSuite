@@ -10,7 +10,7 @@
         <StackPanel VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="10,10,10,10">Switcher IP Address:</TextBlock>
-                <TextBox Name="tbIP" Width="200" Margin="10,10,10,10"></TextBox>
+                <TextBox Name="tbIP" Width="200" Margin="10,10,10,10">192.168.2.120</TextBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Click="Cancel" Margin="10,10,10,10" Width="100" Height="30">Cancel</Button>

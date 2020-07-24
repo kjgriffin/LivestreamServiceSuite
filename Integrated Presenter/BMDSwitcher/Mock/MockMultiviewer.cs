@@ -10,9 +10,9 @@ namespace Integrated_Presenter.BMDSwitcher
 
         MockMultiviewerWindow multiviewerWindow;
 
-        public MockMultiviewer()
+        public MockMultiviewer(Dictionary<int, string> sourcemap)
         {
-            multiviewerWindow = new MockMultiviewerWindow();
+            multiviewerWindow = new MockMultiviewerWindow(sourcemap);
             multiviewerWindow.Show();
         }
 

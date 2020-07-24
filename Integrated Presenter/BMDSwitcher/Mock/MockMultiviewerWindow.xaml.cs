@@ -17,9 +17,11 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
     /// </summary>
     public partial class MockMultiviewerWindow : Window
     {
-        public MockMultiviewerWindow()
+        private Dictionary<int, string> SourceMap;
+        public MockMultiviewerWindow(Dictionary<int, string> sourcemap)
         {
             InitializeComponent();
+            SourceMap = sourcemap;
         }
 
         private int ProgramSource;
@@ -30,20 +32,27 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         private ImageSource InputSourceToImage(int inputID)
         {
-            switch (inputID)
+            if (SourceMap.ContainsKey(inputID))
             {
-                case 1:
-                    return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/leftcam.png"));
-                case 2:
-                    return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/centercam.png"));
-                case 3:
-                    return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/rightcam.png"));
-                case 4:
-                    return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/organcam.png"));
-                case 5:
-                    return ImgSlide.Source;
-                default:
-                    return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                switch (SourceMap[inputID])
+                {
+                    case "left":
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/leftcam.png"));
+                    case "center":
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/centercam.png"));
+                    case "right":
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/rightcam.png"));
+                    case "organ":
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/organcam.png"));
+                    case "slide":
+                        return ImgSlide.Source;
+                    default:
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                }
+            }
+            else
+            {
+                return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
             }
         }
 
@@ -62,11 +71,11 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         public void UpdateAuxSource(Slide slide)
         {
             UpdateSourceFromAux(ImgSlide, slide);
-            if (ProgramSource == 5)
+            if (ProgramSource == 4)
             {
                 UpdateSourceFromAux(ImgProgram, slide);
             }
-            if (PresetSource == 5)
+            if (PresetSource == 4)
             {
                 UpdateSourceFromAux(ImgPreset, slide);
             }

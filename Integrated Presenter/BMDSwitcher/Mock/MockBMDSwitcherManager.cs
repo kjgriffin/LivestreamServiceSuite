@@ -19,7 +19,7 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             _state = new BMDSwitcherState();
             _state.SetDefault();
-            mockMultiviewer = new MockMultiviewer();
+            mockMultiviewer = new MockMultiviewer(parent.LabelSourceMappings);
             parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
         }
 

@@ -106,17 +106,14 @@ namespace Integrated_Presenter
             UpdateSwitcherUI();
         }
 
-
-        #endregion
-
         private void ClickPreset(int button)
         {
-            switcherManager?.PerformPresetSelect(button);
+            switcherManager?.PerformPresetSelect(ConvertButtonToSourceID(button));
         }
 
         private void ClickProgram(int button)
         {
-            switcherManager?.PerformProgramSelect(button);
+            switcherManager?.PerformProgramSelect(ConvertButtonToSourceID(button));
         }
 
         private void ToggleUSK1()
@@ -151,6 +148,74 @@ namespace Integrated_Presenter
         }
 
 
+        private int ConvertButtonToSourceID(int button)
+        {
+            return SourceLabelMappings[ButtonSourceMappings[button]];
+        }
+
+        private int ConvertSourceIDToButton(long sourceId)
+        {
+            return SourceButtonMappings[LabelSourceMappings[(int)sourceId]];
+        }
+
+        private Dictionary<string, int> SourceLabelMappings = new Dictionary<string, int>
+        {
+            ["left"] = 5,
+            ["center"] = 1,
+            ["right"] = 6,
+            ["organ"] = 2,
+            ["slide"] = 4,
+            ["cam3"] = 3,
+            ["cam7"] = 7,
+            ["cam8"] = 8,
+            ["null"] = -1,
+        };
+
+        public Dictionary<int, string> LabelSourceMappings = new Dictionary<int, string>()
+        {
+            [1] = "center",
+            [2] = "organ",
+            [3] = "cam3",
+            [4] = "slide",
+            [5] = "left",
+            [6] = "right",
+            [7] = "cam7",
+            [8] = "cam8",
+            [-1] = "null"
+        };
+
+
+        public Dictionary<int, string> ButtonSourceMappings = new Dictionary<int, string>()
+        {
+            [1] = "left",
+            [2] = "center",
+            [3] = "right",
+            [4] = "organ",
+            [5] = "slide",
+            [6] = "cam3",
+            [7] = "cam7",
+            [8] = "cam8",
+            [-1] = "null"
+        };
+
+        public Dictionary<string, int> SourceButtonMappings = new Dictionary<string, int>()
+        {
+            ["left"] = 1,
+            ["center"] = 2,
+            ["right"] = 3,
+            ["organ"] = 4,
+            ["slide"] = 5,
+            ["cam3"] = 6,
+            ["cam7"] = 7,
+            ["cam8"] = 8,
+            ["null"] = -1
+        };
+
+
+
+        #endregion
+
+
         private void UpdateSwitcherUI()
         {
             UpdatePresetButtonStyles();
@@ -179,26 +244,26 @@ namespace Integrated_Presenter
 
         private void UpdatePresetButtonStyles()
         {
-            BtnPreset1.Background = (switcherState.PresetID == 1 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset2.Background = (switcherState.PresetID == 2 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset3.Background = (switcherState.PresetID == 3 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset4.Background = (switcherState.PresetID == 4 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset5.Background = (switcherState.PresetID == 5 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset6.Background = (switcherState.PresetID == 6 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset7.Background = (switcherState.PresetID == 7 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset8.Background = (switcherState.PresetID == 8 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnPreset1.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 1 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnPreset2.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 2 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnPreset3.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 3 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnPreset4.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 4 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnPreset5.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 5 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnPreset6.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 6 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnPreset7.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 7 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnPreset8.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 8 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
         }
 
         private void UpdateProgramButtonStyles()
         {
-            BtnProgram1.Background = (switcherState.ProgramID == 1 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram2.Background = (switcherState.ProgramID == 2 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram3.Background = (switcherState.ProgramID == 3 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram4.Background = (switcherState.ProgramID == 4 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram5.Background = (switcherState.ProgramID == 5 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram6.Background = (switcherState.ProgramID == 6 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram7.Background = (switcherState.ProgramID == 7 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram8.Background = (switcherState.ProgramID == 8 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnProgram1.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 1 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnProgram2.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 2 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnProgram3.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 3 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnProgram4.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 4 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnProgram5.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 5 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnProgram6.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 6 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnProgram7.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 7 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnProgram8.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 8 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
         }
 
         private void UpdateFTBButtonStyle()
@@ -249,12 +314,14 @@ namespace Integrated_Presenter
                     BtnPlayMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
                     BtnPauseMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
                     BtnRestartMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
+                    BtnStopMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
                     return;
                 }
             }
             BtnPlayMedia.Background = Resources["OffLight"] as RadialGradientBrush;
             BtnPauseMedia.Background = Resources["OffLight"] as RadialGradientBrush;
             BtnRestartMedia.Background = Resources["OffLight"] as RadialGradientBrush;
+            BtnStopMedia.Background = Resources["OffLight"] as RadialGradientBrush;
         }
 
 
@@ -555,6 +622,22 @@ namespace Integrated_Presenter
         }
 
 
+        bool displayPrevAfter = true;
+        private void UIUpdateDisplayPrevAfter()
+        {
+            if (displayPrevAfter)
+            {
+                AfterPreviewDisplay.Visibility = Visibility.Visible;
+                PrevPreviewDisplay.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AfterPreviewDisplay.Visibility = Visibility.Hidden;
+                PrevPreviewDisplay.Visibility = Visibility.Hidden;
+            }
+        }
+
+
         #region slideshow commands
         private void nextSlide()
         {
@@ -597,7 +680,9 @@ namespace Integrated_Presenter
         {
             if (activepresentation)
             {
-
+                _display.StopMediaPlayback();
+                CurrentPreview.videoPlayer.Volume = 0;
+                CurrentPreview.videoPlayer.Stop();
             }
         }
         private void restartMedia()
@@ -701,6 +786,12 @@ namespace Integrated_Presenter
         private void ClickUSK1Toggle(object sender, RoutedEventArgs e)
         {
             ToggleUSK1();
+        }
+
+        private void ClickViewPrevAfter(object sender, RoutedEventArgs e)
+        {
+            displayPrevAfter = !displayPrevAfter;
+            UIUpdateDisplayPrevAfter();
         }
     }
 }

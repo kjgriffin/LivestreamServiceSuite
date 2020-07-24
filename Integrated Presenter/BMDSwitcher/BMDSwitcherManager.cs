@@ -71,38 +71,56 @@ namespace Integrated_Presenter
 
         private void _upstreamKey1Monitor_UpstreamKeyOnAirChanged(object sender, object args)
         {
-            ForceStateUpdate_USK1();
-            SwitcherStateChanged?.Invoke(_state);
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_USK1();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _mixEffectBlockMonitor_FateToBlackFullyChanged(object sender, object args)
         {
-            ForceStateUpdate_FTB();
-            SwitcherStateChanged?.Invoke(_state);
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_FTB();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _dsk2Manager_TieChanged(object sender, object args)
         {
-            ForceStateUpdate_DSK2();
-            SwitcherStateChanged?.Invoke(_state);
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_DSK2();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _dsk2Manager_OnAirChanged(object sender, object args)
         {
-            ForceStateUpdate_DSK2();
-            SwitcherStateChanged?.Invoke(_state);
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_DSK2();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _dsk1Manager_TieChanged(object sender, object args)
         {
-            ForceStateUpdate_DSK1();
-            SwitcherStateChanged?.Invoke(_state);
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_DSK1();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _dsk1Manager_OnAirChanged(object sender, object args)
         {
-            ForceStateUpdate_DSK1();
-            SwitcherStateChanged?.Invoke(_state);
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_DSK1();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _mixEffectBlockMonitor_ProgramInputChanged(object sender, object args)
@@ -185,6 +203,7 @@ namespace Integrated_Presenter
 
             return true;
         }
+
 
         private bool InitializeUpstreamKeyers()
         {
@@ -323,9 +342,9 @@ namespace Integrated_Presenter
                 ForceStateUpdate_ProgramInput();
                 ForceStateUpdate_PreviewInput();
                 //ForceStateUpdate_USK1();
-                //ForceStateUpdate_DSK1();
-                //ForceStateUpdate_DSK2();
-                //ForceStateUpdate_FTB();
+                ForceStateUpdate_DSK1();
+                ForceStateUpdate_DSK2();
+                ForceStateUpdate_FTB();
             }
             return _state;
         }
@@ -360,34 +379,24 @@ namespace Integrated_Presenter
         private void ForceStateUpdate_ProgramInput()
         {
             // get current program source
-            if (_BMDSwitcherMixEffectBlock1 != null)
-            {
-                long programid;
-                _BMDSwitcherMixEffectBlock1.GetProgramInput(out programid);
-                _state.ProgramID = programid;
-            }
+            long programid;
+            _BMDSwitcherMixEffectBlock1.GetProgramInput(out programid);
+            _state.ProgramID = programid;
         }
 
         private void ForceStateUpdate_PreviewInput()
         {
-            if (_BMDSwitcherMixEffectBlock1 != null)
-            {
-                // get current preset source
-                long presetid;
-                _BMDSwitcherMixEffectBlock1.GetPreviewInput(out presetid);
-                _state.PresetID = presetid;
-            }
-
+            // get current preset source
+            long presetid;
+            _BMDSwitcherMixEffectBlock1.GetPreviewInput(out presetid);
+            _state.PresetID = presetid;
         }
 
         private void ForceStateUpdate_FTB()
         {
-            if (_BMDSwitcherMixEffectBlock1 != null)
-            {
-                int ftb;
-                _BMDSwitcherMixEffectBlock1.GetFadeToBlackFullyBlack(out ftb);
-                _state.FTB = ftb != 0;
-            }
+            int ftb;
+            _BMDSwitcherMixEffectBlock1.GetFadeToBlackFullyBlack(out ftb);
+            _state.FTB = ftb != 0;
         }
 
         public BMDSwitcherState GetCurrentState()

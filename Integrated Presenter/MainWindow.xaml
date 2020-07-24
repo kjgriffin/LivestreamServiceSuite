@@ -39,8 +39,8 @@
             <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
             <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
             <RadialGradientBrush.GradientStops>
-                <GradientStop Color="Green" Offset="3.0"></GradientStop>
-                <GradientStop Color="LightGreen" Offset="0"></GradientStop>
+                <GradientStop Color="#096900" Offset="1.9"></GradientStop>
+                <GradientStop Color="#b4ffad" Offset="0"></GradientStop>
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
         <RadialGradientBrush x:Key="YellowLight">
@@ -114,6 +114,9 @@
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
                 </MenuItem>
+                <MenuItem Header="View" IsTabStop="False">
+                    <MenuItem Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem> 
+                </MenuItem>
             </Menu>
         </Grid>
 
@@ -145,9 +148,9 @@
                                         <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton}">LECTERN</Button>
                                         <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton}">ORGAN</Button>
                                         <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton}">SLIDE</Button>
-                                        <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton}"></Button>
-                                        <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton}"></Button>
-                                        <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton}"></Button>
+                                        <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton}">CAM 3</Button>
+                                        <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton}">CAM 7</Button>
+                                        <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton}">CAM 8</Button>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -162,9 +165,9 @@
                                         <Button Name="BtnProgram3" Click="ClickProgram3" Style="{StaticResource SwitcherButton}">LECTERN</Button>
                                         <Button Name="BtnProgram4" Click="ClickProgram4" Style="{StaticResource SwitcherButton}">ORGAN</Button>
                                         <Button Name="BtnProgram5" Click="ClickProgram5" Style="{StaticResource SwitcherButton}">SLIDE</Button>
-                                        <Button Name="BtnProgram6" Click="ClickProgram6" Style="{StaticResource SwitcherButton}"></Button>
-                                        <Button Name="BtnProgram7" Click="ClickProgram7" Style="{StaticResource SwitcherButton}"></Button>
-                                        <Button Name="BtnProgram8" Click="ClickProgram8" Style="{StaticResource SwitcherButton}"></Button>
+                                        <Button Name="BtnProgram6" Click="ClickProgram6" Style="{StaticResource SwitcherButton}">CAM 3</Button>
+                                        <Button Name="BtnProgram7" Click="ClickProgram7" Style="{StaticResource SwitcherButton}">CAM 7</Button>
+                                        <Button Name="BtnProgram8" Click="ClickProgram8" Style="{StaticResource SwitcherButton}">CAM 8</Button>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -213,7 +216,7 @@
                                 <StackPanel>
                                     <TextBlock TextAlignment="Center" Margin="0,5,0,0">PIP</TextBlock>
                                     <Button Style="{StaticResource InactiveSwitcherButton}">KEY 1</Button>
-                                    <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton}">PIP</Button>
+                                    <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource InactiveSwitcherButton}">PIP</Button>
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -270,7 +273,7 @@
                                             <TextBlock TextAlignment="Right" Margin="0,5,20,0">MEDIA PLAYBACK CONTROLS</TextBlock>
                                             <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
                                                 <Button Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton}">RESTART</Button>
-                                                <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource InactiveSwitcherButton}">STOP</Button>
+                                                <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource SwitcherButton}">STOP</Button>
                                                 <Button Name="BtnPauseMedia" Click="ClickPauseMedia" Style="{StaticResource SwitcherButton}">PAUSE</Button>
                                                 <Button Name="BtnPlayMedia" Click="ClickPlayMedia" Style="{StaticResource SwitcherButton}">PLAY</Button>
                                             </StackPanel>
@@ -303,20 +306,47 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="270"></RowDefinition>
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
-                        <local:MediaPlayer2 x:Name="PrevPreview" Height="108" Width="192"></local:MediaPlayer2>
-                    </Grid>
-                    <Grid Grid.Row="1">
-                        <local:MediaPlayer2 x:Name="CurrentPreview" Height="270" Width="480"></local:MediaPlayer2>
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Viewbox Panel.ZIndex="10" Grid.Row="0" Grid.Column="2">
+                            <Border Name="PrevPreviewDisplay" BorderBrush="Orange" BorderThickness="2,2,2,2">
+                                <local:MediaPlayer2 Opacity="0.5" x:Name="PrevPreview" Height="108" Width="192"></local:MediaPlayer2>
+                            </Border>
+                        </Viewbox>
+                        <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2">
+                            <Border BorderBrush="Red" BorderThickness="2,2,2,2">
+                                <local:MediaPlayer2  x:Name="CurrentPreview" Height="270" Width="480"></local:MediaPlayer2>
+                            </Border>
+                        </Viewbox>
                     </Grid>
                     <Grid Grid.Row="2">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <local:MediaPlayer2 x:Name="NextPreview" Height="108" Width="192" Margin="5,5,5,5"></local:MediaPlayer2>
-                            <local:MediaPlayer2 x:Name="AfterPreview" Height="108" Width="192" Margin="5,5,5,5"></local:MediaPlayer2>
-                        </StackPanel>
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2">
+                            <Border BorderBrush="Green" BorderThickness="2,2,2,2">
+                                <local:MediaPlayer2 x:Name="NextPreview" Height="108" Width="192"></local:MediaPlayer2>
+                            </Border>
+                        </Viewbox>
+                        <Viewbox Grid.Row="2" Grid.Column="2">
+                            <Border Name="AfterPreviewDisplay" BorderBrush="Blue" BorderThickness="2,2,2,2">
+                                <local:MediaPlayer2 Opacity="0.5" x:Name="AfterPreview" Height="108" Width="192"></local:MediaPlayer2>
+                            </Border>
+                        </Viewbox>
                     </Grid>
                 </Grid>
             </Grid>
