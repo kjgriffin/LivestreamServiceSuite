@@ -252,9 +252,9 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Right" Margin="0,5,20,0">SLIDE CONTROLS</TextBlock>
                                             <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
-                                                <Button Click="ClickNextSlide" Style="{StaticResource SwitcherButton}">NEXT</Button>
-                                                <Button Click="ClickPrevSlide" Style="{StaticResource SwitcherButton}">PREV</Button>
-                                                <Button x:Name="BtnDrive" Click="ClickSlideDriveVideo" Style="{StaticResource SwitcherButton}">DRIVE</Button>
+                                                <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton}">NEXT</Button>
+                                                <Button Name="BtnPrev" Click="ClickPrevSlide" Style="{StaticResource SwitcherButton}">PREV</Button>
+                                                <Button Name="BtnDrive" Click="ClickSlideDriveVideo" Style="{StaticResource SwitcherButton}">DRIVE</Button>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                 <TextBlock Name="TbCurrSlide" Foreground="Orange">0</TextBlock>
@@ -269,10 +269,10 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Right" Margin="0,5,20,0">MEDIA PLAYBACK CONTROLS</TextBlock>
                                             <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
-                                                <Button Click="ClickRestartMedia" Style="{StaticResource SwitcherButton}">RESTART</Button>
-                                                <Button Click="ClickStopMedia" Style="{StaticResource InactiveSwitcherButton}">STOP</Button>
-                                                <Button Click="ClickPauseMedia" Style="{StaticResource SwitcherButton}">PAUSE</Button>
-                                                <Button Click="ClickPlayMedia" Style="{StaticResource SwitcherButton}">PLAY</Button>
+                                                <Button Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton}">RESTART</Button>
+                                                <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource InactiveSwitcherButton}">STOP</Button>
+                                                <Button Name="BtnPauseMedia" Click="ClickPauseMedia" Style="{StaticResource SwitcherButton}">PAUSE</Button>
+                                                <Button Name="BtnPlayMedia" Click="ClickPlayMedia" Style="{StaticResource SwitcherButton}">PLAY</Button>
                                             </StackPanel>
                                             <Grid>
                                                 <Grid.ColumnDefinitions>

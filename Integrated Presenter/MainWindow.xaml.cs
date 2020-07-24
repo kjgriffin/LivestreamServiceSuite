@@ -35,6 +35,8 @@ namespace Integrated_Presenter
             InitializeComponent();
 
             UpdateRealTimeClock();
+            UpdateSlideControls();
+            UpdateMediaControls();
 
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
             system_second_timer.Elapsed += System_second_timer_Elapsed;
@@ -59,6 +61,8 @@ namespace Integrated_Presenter
         {
             UpdateSlideNums();
             ResetSlideMediaTimes();
+            UpdateSlideControls();
+            UpdateMediaControls();
         }
 
         IBMDSwitcherManager switcherManager;
@@ -158,7 +162,7 @@ namespace Integrated_Presenter
 
         private void UpdateUSK1Styles()
         {
-            
+            BtnUSK1OnOffAir.Background = (switcherState.USK1OnAir ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
         }
 
         private void UpdateDSK1Styles()
@@ -217,6 +221,39 @@ namespace Integrated_Presenter
             TbMediaTimeRemaining.Text = "0:00";
             TbMediaTimeCurrent.Text = "0:00";
             TbMediaTimeDurration.Text = "0:00";
+        }
+
+        private void UpdateSlideControls()
+        {
+            if (Presentation != null)
+            {
+                if (Presentation.SlideCount > 0)
+                {
+                    BtnNext.Background = Resources["GrayLight"] as RadialGradientBrush;
+                    BtnPrev.Background = Resources["GrayLight"] as RadialGradientBrush;
+                    BtnDrive.Background = Resources["GrayLight"] as RadialGradientBrush;
+                    return;
+                }
+            }
+            BtnNext.Background = Resources["OffLight"] as RadialGradientBrush;
+            BtnPrev.Background = Resources["OffLight"] as RadialGradientBrush;
+            BtnDrive.Background = Resources["OffLight"] as RadialGradientBrush;
+        }
+        private void UpdateMediaControls()
+        {
+            if (Presentation != null)
+            {
+                if (Presentation.Current.Type == SlideType.Video)
+                {
+                    BtnPlayMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
+                    BtnPauseMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
+                    BtnRestartMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
+                    return;
+                }
+            }
+            BtnPlayMedia.Background = Resources["OffLight"] as RadialGradientBrush;
+            BtnPauseMedia.Background = Resources["OffLight"] as RadialGradientBrush;
+            BtnRestartMedia.Background = Resources["OffLight"] as RadialGradientBrush;
         }
 
 
