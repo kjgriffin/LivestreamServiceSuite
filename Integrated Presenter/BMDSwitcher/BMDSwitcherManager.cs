@@ -171,7 +171,7 @@ namespace Integrated_Presenter
             if (meIterator == null)
                 return false;
 
-            
+
             meIterator.Next(out _BMDSwitcherMixEffectBlock1);
 
             if (_BMDSwitcherMixEffectBlock1 == null)
@@ -270,9 +270,9 @@ namespace Integrated_Presenter
             MessageBox.Show("Connected to Switcher", "Connection Success");
 
             // update state
-            ForceStateUpdate();
             _parent.Dispatcher.Invoke(() =>
             {
+                ForceStateUpdate();
                 SwitcherStateChanged?.Invoke(_state);
             });
         }

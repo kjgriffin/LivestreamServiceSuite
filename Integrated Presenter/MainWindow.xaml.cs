@@ -78,16 +78,16 @@ namespace Integrated_Presenter
             if (res == true)
             {
                 switcherManager = new BMDSwitcherManager(this);
-                switcherManager.TryConnect(connectWindow.IP);
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
+                switcherManager.TryConnect(connectWindow.IP);
             }
         }
 
         private void MockConnectSwitcher()
         {
             switcherManager = new MockBMDSwitcherManager(this);
-            switcherManager.TryConnect("localhost");
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
+            switcherManager.TryConnect("localhost");
         }
 
         private void TakeAutoTransition()
