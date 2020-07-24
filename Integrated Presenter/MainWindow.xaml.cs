@@ -74,9 +74,10 @@ namespace Integrated_Presenter
         private void ConnectSwitcher()
         {
             Connection connectWindow = new Connection();
-            if (connectWindow.ShowDialog() == true)
+            bool? res = connectWindow.ShowDialog();
+            if (res == true)
             {
-                switcherManager = new BMDSwitcherManager();
+                switcherManager = new BMDSwitcherManager(this);
                 switcherManager.TryConnect(connectWindow.IP);
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             }

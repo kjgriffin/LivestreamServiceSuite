@@ -2,6 +2,7 @@
 using Integrated_Presenter.BMDSwitcher;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -35,8 +36,11 @@ namespace Integrated_Presenter
 
         public bool GoodConnection { get; set; } = false;
 
-        public BMDSwitcherManager()
+        public Window _parent;
+
+        public BMDSwitcherManager(Window parent)
         {
+            _parent = parent;
             _switcherMonitor = new SwitcherMonitor();
             _switcherMonitor.SwitcherDisconnected += _switcherMonitor_SwitcherDisconnected;
 
@@ -103,14 +107,20 @@ namespace Integrated_Presenter
 
         private void _mixEffectBlockMonitor_ProgramInputChanged(object sender, object args)
         {
-            ForceStateUpdate_ProgramInput();
-            SwitcherStateChanged?.Invoke(_state);
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_ProgramInput();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _mixEffectBlockMonitor_PreviewInputChanged(object sender, object args)
         {
-            ForceStateUpdate_PreviewInput();
-            SwitcherStateChanged?.Invoke(_state);
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_PreviewInput();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _switcherMonitor_SwitcherDisconnected(object sender, object args)
@@ -161,10 +171,8 @@ namespace Integrated_Presenter
             if (meIterator == null)
                 return false;
 
-            if (meIterator != null)
-            {
-                meIterator.Next(out _BMDSwitcherMixEffectBlock1);
-            }
+            
+            meIterator.Next(out _BMDSwitcherMixEffectBlock1);
 
             if (_BMDSwitcherMixEffectBlock1 == null)
             {
@@ -253,14 +261,20 @@ namespace Integrated_Presenter
 
 
             bool mixeffects = InitializeMixEffectBlock();
-            bool upstreamkeyers = InitializeUpstreamKeyers();
+            //bool upstreamkeyers = InitializeUpstreamKeyers();
             bool downstreamkeyers = InitializeDownstreamKeyers();
 
-            GoodConnection = mixeffects && upstreamkeyers && downstreamkeyers;
+            //GoodConnection = mixeffects && upstreamkeyers && downstreamkeyers;
+            GoodConnection = mixeffects && downstreamkeyers;
+
+            MessageBox.Show("Connected to Switcher", "Connection Success");
 
             // update state
             ForceStateUpdate();
-            SwitcherStateChanged?.Invoke(_state);
+            _parent.Dispatcher.Invoke(() =>
+            {
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void SwitcherDisconnected()
@@ -308,19 +322,19 @@ namespace Integrated_Presenter
                 // update state
                 ForceStateUpdate_ProgramInput();
                 ForceStateUpdate_PreviewInput();
-                ForceStateUpdate_USK1();
-                ForceStateUpdate_DSK1();
-                ForceStateUpdate_DSK2();
-                ForceStateUpdate_FTB();
+                //ForceStateUpdate_USK1();
+                //ForceStateUpdate_DSK1();
+                //ForceStateUpdate_DSK2();
+                //ForceStateUpdate_FTB();
             }
             return _state;
         }
 
         private void ForceStateUpdate_USK1()
         {
-            int onair;
-            _BMDSwitcherUpstreamKey1.GetOnAir(out onair);
-            _state.USK1OnAir = onair != 0;
+            //int onair;
+            //_BMDSwitcherUpstreamKey1.GetOnAir(out onair);
+            //_state.USK1OnAir = onair != 0;
         }
 
         private void ForceStateUpdate_DSK1()
@@ -346,25 +360,34 @@ namespace Integrated_Presenter
         private void ForceStateUpdate_ProgramInput()
         {
             // get current program source
-            long programid;
-            _BMDSwitcherMixEffectBlock1.GetProgramInput(out programid);
-            _state.ProgramID = programid;
+            if (_BMDSwitcherMixEffectBlock1 != null)
+            {
+                long programid;
+                _BMDSwitcherMixEffectBlock1.GetProgramInput(out programid);
+                _state.ProgramID = programid;
+            }
         }
 
         private void ForceStateUpdate_PreviewInput()
         {
-            // get current preset source
-            long presetid;
-            _BMDSwitcherMixEffectBlock1.GetPreviewInput(out presetid);
-            _state.PresetID = presetid;
+            if (_BMDSwitcherMixEffectBlock1 != null)
+            {
+                // get current preset source
+                long presetid;
+                _BMDSwitcherMixEffectBlock1.GetPreviewInput(out presetid);
+                _state.PresetID = presetid;
+            }
 
         }
 
         private void ForceStateUpdate_FTB()
         {
-            int ftb;
-            _BMDSwitcherMixEffectBlock1.GetFadeToBlackFullyBlack(out ftb);
-            _state.FTB = ftb != 0;
+            if (_BMDSwitcherMixEffectBlock1 != null)
+            {
+                int ftb;
+                _BMDSwitcherMixEffectBlock1.GetFadeToBlackFullyBlack(out ftb);
+                _state.FTB = ftb != 0;
+            }
         }
 
         public BMDSwitcherState GetCurrentState()
