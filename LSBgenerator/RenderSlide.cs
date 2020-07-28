@@ -22,6 +22,8 @@ namespace LSBgenerator
         public int Lines { get; set; } = 0;
 
         public Bitmap rendering { get; set; } = new Bitmap(1920, 1080);
+
+        public bool IsFullscreen { get; set; } = false;
         public Graphics gfx { get => Graphics.FromImage(rendering); }
 
         public bool IsMediaReference { get; set; } = false;

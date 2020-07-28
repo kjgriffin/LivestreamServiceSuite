@@ -437,7 +437,7 @@ namespace LSBgenerator
                 {
                     StillVideoSlideRenderer svsr = new StillVideoSlideRenderer() { Format = format };
 
-                    List<(SlideType type, object slide)> slides = renderer.Slides.Select(p => p.IsMediaReference ? (SlideType.Video, (object)p.MediaReference) : (SlideType.Still, p.rendering)).ToList();
+                    List<(SlideType type, object slide, bool isfullscreen)> slides = renderer.Slides.Select(p => p.IsMediaReference ? (SlideType.Video, (object)p.MediaReference, p.IsFullscreen) : (SlideType.Still, p.rendering, p.IsFullscreen)).ToList();
 
                     svsr.ExportStillFramesAndVideos(Path.GetDirectoryName(savefiles.FileName), slides);
                 }

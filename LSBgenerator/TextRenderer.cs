@@ -241,6 +241,19 @@ namespace LSBgenerator
 
             // replace characters
 
+
+            // determine if slide is fullscreen
+            if (slide.RenderLines.Count == 1)
+            {
+                IRenderable rl = slide.RenderLines[0];
+
+                if (rl is RenderFullImage)
+                {
+                    slide.IsFullscreen = true;
+                }
+            }
+
+
             return slide;
 
         }
@@ -268,34 +281,8 @@ namespace LSBgenerator
             {
 
                 target.Render(slide, this);
-                //// draw text
-                //slide.gfx.DrawString(target.Text, target.Font, target.TextBrush, new Rectangle(ETextRect.X + target.RenderX, ETextRect.Y + target.RenderY, ETextRect.Size.Width, ETextRect.Size.Height), format);
-                //// draw speaker
-                //if (target.ShowSpeaker)
-                //{
-                //    Font speakerfont = new Font(target.Font, FontStyle.Bold);
-                //    int speakeroffsety = (int)Math.Floor(Math.Ceiling((slide.gfx.MeasureString(SpeakerText.TryGetVal(target.Speaker, "?"), speakerfont).Height - blocksize) / 2) - 1);
-                //    Rectangle speakerblock = new Rectangle(TextboxRect.X + PaddingCol, ETextRect.Y + target.RenderY + speakeroffsety, blocksize, blocksize);
-
-                //    if (target.Speaker == Speaker.None)
-                //    {
-                //        continue;
-                //    }
-
-                //    if (SpeakerFills.TryGetVal(target.Speaker, false))
-                //    {
-                //        slide.gfx.FillPath(Brushes.Red, RoundedRect(speakerblock, 2));
-                //        slide.gfx.DrawString(SpeakerText.TryGetVal(target.Speaker, "?"), speakerfont, Brushes.White, speakerblock, format);
-                //    }
-                //    else
-                //    {
-                //        slide.gfx.FillPath(Brushes.White, RoundedRect(speakerblock, 2));
-                //        slide.gfx.DrawPath(Pens.Red, RoundedRect(speakerblock, 2));
-                //        slide.gfx.DrawString(SpeakerText.TryGetVal(target.Speaker, "?"), speakerfont, Brushes.Red, speakerblock, format);
-                //    }
-
-                //}
             }
+
 
         }
 

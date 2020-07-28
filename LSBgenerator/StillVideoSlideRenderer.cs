@@ -22,14 +22,15 @@ namespace LSBgenerator
 
         public ImageFormat Format { get; set; } = ImageFormat.Png;
 
-        public void ExportStillFramesAndVideos(string filepath, List<(SlideType type, object slide)> slides)
+        public void ExportStillFramesAndVideos(string filepath, List<(SlideType type, object slide, bool isfullscreen)> slides)
         {
             int contentnum = 0;
             foreach (var item in slides)
             {
                 if (item.type == SlideType.Still)
                 {
-                    FileStream s = new FileStream(Path.Combine(filepath, $"{contentnum++}_Slide.{Format}"), FileMode.OpenOrCreate, FileAccess.Write);
+                    string slidetype = item.isfullscreen ? "Full" : "Liturgy";
+                    FileStream s = new FileStream(Path.Combine(filepath, $"{contentnum++}_{slidetype}.{Format}"), FileMode.OpenOrCreate, FileAccess.Write);
                     (item.slide as Bitmap).Save(s, Format);
                     s.Close();
                 }
