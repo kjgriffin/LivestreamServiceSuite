@@ -572,8 +572,44 @@ namespace Integrated_Presenter
 
         #region SlideDriveVideo
 
-            
 
+        private void SlideDriveVideo_Next()
+        {
+            if (Presentation?.Next != null)
+            {
+                if (Presentation.Next.Type == SlideType.Liturgy)
+                {
+                    // make sure slides aren't the program source
+                    if (switcherState.ProgramID == SourceLabelMappings["slide"])
+                    {
+                        switcherManager.PerformAutoTransition();
+                    }
+                    Presentation.NextSlide();
+                    switcherManager.PerformAutoOnAirDSK1();
+
+                }
+                else
+                {
+                    switcherManager.PerformAutoOffAirDSK1();
+                    Presentation.NextSlide();
+                    if (switcherState.ProgramID != SourceLabelMappings["slide"])
+                    {
+                        ClickPreset(SourceButtonMappings["slide"]);
+                        switcherManager.PerformAutoTransition();
+                    }
+                }
+            }
+        }
+
+        private void SlideDriveVideo_Prev()
+        {
+
+        }
+
+        private void SlideDriveVideo_Current()
+        {
+
+        }
 
 
         #endregion
@@ -651,7 +687,14 @@ namespace Integrated_Presenter
         {
             if (activepresentation)
             {
-                Presentation.NextSlide();
+                if (SlideDriveVideo)
+                {
+                    SlideDriveVideo_Next();
+                }
+                else
+                {
+                    Presentation.NextSlide();
+                }
                 slidesUpdated();
                 PresentationStateUpdated?.Invoke(Presentation.Current);
             }

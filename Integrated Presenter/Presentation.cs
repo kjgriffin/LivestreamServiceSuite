@@ -30,7 +30,7 @@ namespace Integrated_Presenter
                 // look at the name to determine the type
                 switch (name)
                 {
-                    case "Slide":
+                    case "Full":
                         type = SlideType.Full;
                         break;
                     case "Liturgy":
