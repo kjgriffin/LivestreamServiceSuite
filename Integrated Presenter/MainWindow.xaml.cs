@@ -573,7 +573,7 @@ namespace Integrated_Presenter
         #region SlideDriveVideo
 
 
-        private void SlideDriveVideo_Next()
+        private async void SlideDriveVideo_Next()
         {
             if (Presentation?.Next != null)
             {
@@ -583,20 +583,35 @@ namespace Integrated_Presenter
                     if (switcherState.ProgramID == SourceLabelMappings["slide"])
                     {
                         switcherManager.PerformAutoTransition();
+                        await Task.Delay(1000);
                     }
                     Presentation.NextSlide();
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.Current);
                     switcherManager.PerformAutoOnAirDSK1();
 
                 }
                 else
                 {
-                    switcherManager.PerformAutoOffAirDSK1();
+                    if (switcherState.DSK1OnAir)
+                    {
+                        switcherManager.PerformAutoOffAirDSK1();
+                        await Task.Delay(500);
+                    }
                     Presentation.NextSlide();
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.Current);
                     if (switcherState.ProgramID != SourceLabelMappings["slide"])
                     {
                         ClickPreset(SourceButtonMappings["slide"]);
+                        await Task.Delay(500);
                         switcherManager.PerformAutoTransition();
                     }
+                    if (Presentation.Current.Type == SlideType.Video)
+                    {
+                        playMedia();
+                    }
+
                 }
             }
         }
@@ -713,9 +728,12 @@ namespace Integrated_Presenter
         {
             if (activepresentation)
             {
-                _display.StartMediaPlayback();
-                CurrentPreview.videoPlayer.Volume = 0;
-                CurrentPreview.PlayMedia();
+                Dispatcher.Invoke(() =>
+                {
+                    _display.StartMediaPlayback();
+                    CurrentPreview.videoPlayer.Volume = 0;
+                    CurrentPreview.PlayMedia();
+                });
             }
         }
         private void pauseMedia()
