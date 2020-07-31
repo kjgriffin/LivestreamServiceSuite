@@ -457,6 +457,12 @@ namespace Integrated_Presenter
 
             #endregion
 
+            // fade to black
+            if (e.Key == Key.B)
+            {
+                switcherManager?.PerformToggleFTB();
+            }
+
             // transition controls
             if (e.Key == Key.Space)
             {
