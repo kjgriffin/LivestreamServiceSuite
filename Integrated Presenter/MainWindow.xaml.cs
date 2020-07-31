@@ -37,6 +37,7 @@ namespace Integrated_Presenter
             UpdateRealTimeClock();
             UpdateSlideControls();
             UpdateMediaControls();
+            UpdateDriveButtonStyle();
 
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
             system_second_timer.Elapsed += System_second_timer_Elapsed;
@@ -297,13 +298,12 @@ namespace Integrated_Presenter
                 {
                     BtnNext.Background = Resources["GrayLight"] as RadialGradientBrush;
                     BtnPrev.Background = Resources["GrayLight"] as RadialGradientBrush;
-                    BtnDrive.Background = Resources["GrayLight"] as RadialGradientBrush;
                     return;
                 }
             }
             BtnNext.Background = Resources["OffLight"] as RadialGradientBrush;
             BtnPrev.Background = Resources["OffLight"] as RadialGradientBrush;
-            BtnDrive.Background = Resources["OffLight"] as RadialGradientBrush;
+            UpdateDriveButtonStyle();
         }
         private void UpdateMediaControls()
         {
@@ -471,7 +471,7 @@ namespace Integrated_Presenter
             // modifier alt for drive commands
             if (e.Key == Key.RightCtrl)
             {
-                SlideDriveVideo = true;
+                SlideDriveVideoCTRL = false;
             }
 
         }
@@ -479,20 +479,36 @@ namespace Integrated_Presenter
         {
             if (e.Key == Key.RightCtrl)
             {
-                SlideDriveVideo = false;
+                SlideDriveVideoCTRL = true;
             }
         }
 
-        bool _slideDriveVideo = false;
-        bool SlideDriveVideo
+
+        bool _slideDriveVideo_CTRL = true;
+
+        bool SlideDriveVideoBTN
         {
-            get => _slideDriveVideo;
             set
             {
-                _slideDriveVideo = value;
-                // update drive button state
+                _slideDriveVideo_BTN = value;
                 UpdateDriveButtonStyle();
             }
+        }
+
+        bool SlideDriveVideoCTRL
+        {
+            set
+            {
+                _slideDriveVideo_CTRL = value;
+                UpdateDriveButtonStyle();
+            }
+        }
+
+        bool _slideDriveVideo_BTN = true;
+
+        bool SlideDriveVideo
+        {
+            get => _slideDriveVideo_BTN && _slideDriveVideo_CTRL;
         }
 
         #region ButtonClicks
@@ -809,7 +825,7 @@ namespace Integrated_Presenter
 
         private void ClickSlideDriveVideo(object sender, RoutedEventArgs e)
         {
-            SlideDriveVideo = !SlideDriveVideo;
+            SlideDriveVideoBTN = !SlideDriveVideo;
         }
 
         private void ClickCutTrans(object sender, RoutedEventArgs e)
