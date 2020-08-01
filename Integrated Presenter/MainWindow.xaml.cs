@@ -420,6 +420,10 @@ namespace Integrated_Presenter
                     pauseMedia();
                 }
             }
+            if (e.Key == Key.T)
+            {
+                SlideDriveVideo_Current();
+            }
             #endregion
 
             // numpad controls keyers
@@ -618,7 +622,7 @@ namespace Integrated_Presenter
                     if (switcherState.DSK1OnAir)
                     {
                         switcherManager.PerformAutoOffAirDSK1();
-                        await Task.Delay(500);
+                        await Task.Delay(1000);
                     }
                     Presentation.NextSlide();
                     slidesUpdated();
@@ -643,8 +647,45 @@ namespace Integrated_Presenter
 
         }
 
-        private void SlideDriveVideo_Current()
+        private async void SlideDriveVideo_Current()
         {
+            if (Presentation?.Current != null)
+            {
+                if (Presentation.Current.Type == SlideType.Liturgy)
+                {
+                    // make sure slides aren't the program source
+                    if (switcherState.ProgramID == SourceLabelMappings["slide"])
+                    {
+                        switcherManager.PerformAutoTransition();
+                        await Task.Delay(1000);
+                    }
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                    switcherManager.PerformAutoOnAirDSK1();
+
+                }
+                else
+                {
+                    if (switcherState.DSK1OnAir)
+                    {
+                        switcherManager.PerformAutoOffAirDSK1();
+                        await Task.Delay(1000);
+                    }
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                    if (switcherState.ProgramID != SourceLabelMappings["slide"])
+                    {
+                        ClickPreset(SourceButtonMappings["slide"]);
+                        await Task.Delay(500);
+                        switcherManager.PerformAutoTransition();
+                    }
+                    if (Presentation.Current.Type == SlideType.Video)
+                    {
+                        playMedia();
+                    }
+
+                }
+            }
 
         }
 
@@ -883,6 +924,11 @@ namespace Integrated_Presenter
         {
             displayPrevAfter = !displayPrevAfter;
             UIUpdateDisplayPrevAfter();
+        }
+
+        private void ClickTakeSlide(object sender, RoutedEventArgs e)
+        {
+            SlideDriveVideo_Current();
         }
     }
 }

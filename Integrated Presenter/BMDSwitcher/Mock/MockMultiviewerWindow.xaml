@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Integrated_Presenter.BMDSwitcher.Mock"
         mc:Ignorable="d"
-        Title="MockMultiviewerWindow" Height="1000" Width="1900">
+        Title="MockMultiviewer" Height="1000" Width="1750">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -21,13 +21,15 @@
 
         <Border Background="Black" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Green" BorderThickness="2,2,2,2">
             <Grid>
-                <Image Name="ImgPreset"></Image>
+                <Image Name="ImgPreset" Panel.ZIndex="2"></Image>
+                <Image Name="ImgPreset_pgmbgnd" Panel.ZIndex="1"></Image>
             </Grid>
         </Border>
         <Border Background="Black" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" BorderBrush="Red" BorderThickness="2,2,2,2">
             <Grid>
-                <Image Name="ImgProgram" Grid.RowSpan="2"></Image>
-                <Viewbox>
+                <Image Name="ImgProgram" Grid.RowSpan="2" Panel.ZIndex="2"></Image>
+                <Image Name="ImgProgram_presetbgnd" Grid.RowSpan="2" Panel.ZIndex="1"></Image>
+                <Viewbox Panel.ZIndex="3">
                     <Image Name="ImgProgramLowerThird" Stretch="None">
                         <Image.RenderTransform>
                             <TranslateTransform X="0" Y="0"></TranslateTransform>
@@ -37,7 +39,7 @@
                         </Image.Clip>
                     </Image>
                 </Viewbox>
-                <Viewbox>
+                <Viewbox Panel.ZIndex="4">
                     <Image Name="ImgProgramSplit" Stretch="None">
                         <Image.RenderTransform>
                             <TranslateTransform X="0" Y="0"></TranslateTransform>
@@ -67,7 +69,7 @@
             <Image Name="ImgOrgan" Grid.ColumnSpan="1" Source="/BMDSwitcher/Mock/Images/organcam.png"></Image>
         </Border>
         <Border Background="Black" Grid.Row="2" Grid.Column="0" BorderBrush="Gray" BorderThickness="2,2,2,2">
-            <Image Name="ImgSlide" Grid.ColumnSpan="1"></Image>
+            <Image Name="ImgSlide" Grid.ColumnSpan="1" Source="/BMDSwitcher/Mock/Images/black.png"></Image>
         </Border>
         <Border Background="Black" Grid.Row="2" Grid.Column="1" BorderBrush="Gray" BorderThickness="2,2,2,2">
             <Image Grid.ColumnSpan="1"></Image>

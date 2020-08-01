@@ -257,6 +257,7 @@
                                                 <StackPanel>
                                                     <TextBlock TextAlignment="Right" Margin="0,5,20,0">SLIDE CONTROLS</TextBlock>
                                                     <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
+                                                        <Button Name="BtnTake" Click="ClickTakeSlide" Style="{StaticResource SwitcherButton}">TAKE</Button>
                                                         <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton}">NEXT</Button>
                                                         <Button Name="BtnPrev" Click="ClickPrevSlide" Style="{StaticResource SwitcherButton}">PREV</Button>
                                                         <Button Name="BtnDrive" Click="ClickSlideDriveVideo" Style="{StaticResource SwitcherButton}">DRIVE</Button>

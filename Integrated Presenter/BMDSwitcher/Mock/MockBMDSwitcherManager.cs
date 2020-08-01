@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Integrated_Presenter.BMDSwitcher
 {
@@ -40,6 +41,12 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformAutoTransition()
         {
+            _state = mockMultiviewer.PerformAutoTransition(_state);
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        public void PerformCutTransition()
+        {
             // take all tied keyers
             if (_state.DSK1Tie)
             {
@@ -51,11 +58,6 @@ namespace Integrated_Presenter.BMDSwitcher
                 _state.DSK2OnAir = !_state.DSK2OnAir;
                 mockMultiviewer.SetDSK2(_state.DSK2OnAir);
             }
-            PerformCutTransition();
-        }
-
-        public void PerformCutTransition()
-        {
             long presetid = _state.PresetID;
             long programid = _state.ProgramID;
 
@@ -109,9 +111,12 @@ namespace Integrated_Presenter.BMDSwitcher
             SwitcherStateChanged?.Invoke(_state);
         }
 
-        public void PerformTakeAutoDSK1()
+        public async void PerformTakeAutoDSK1()
         {
-            PerformToggleDSK1();
+            _state.DSK1OnAir = !_state.DSK1OnAir;
+            mockMultiviewer.FadeDSK1(_state.DSK1OnAir);
+            await Task.Delay(1000);
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformTakeAutoDSK2()
@@ -148,14 +153,14 @@ namespace Integrated_Presenter.BMDSwitcher
         public void PerformAutoOffAirDSK1()
         {
             _state.DSK1OnAir = false;
-            mockMultiviewer.SetDSK1(false);
+            mockMultiviewer.FadeDSK1(false);
             SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformAutoOnAirDSK1()
         {
             _state.DSK1OnAir = true;
-            mockMultiviewer.SetDSK1(true);
+            mockMultiviewer.FadeDSK1(true);
             SwitcherStateChanged?.Invoke(_state);
         }
 

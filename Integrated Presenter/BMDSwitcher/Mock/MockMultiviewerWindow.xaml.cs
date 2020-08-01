@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace Integrated_Presenter.BMDSwitcher.Mock
 {
+
     /// <summary>
     /// Interaction logic for MockMultiviewerWindow.xaml
     /// </summary>
@@ -23,6 +26,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             InitializeComponent();
             SourceMap = sourcemap;
         }
+
 
         private int ProgramSource;
         private int PresetSource;
@@ -60,12 +64,14 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         {
             PresetSource = inputID;
             ImgPreset.Source = InputSourceToImage(inputID);
+            ImgProgram_presetbgnd.Source = InputSourceToImage(inputID);
         }
 
         public void SetProgramSource(int inputID)
         {
             ProgramSource = inputID;
             ImgProgram.Source = InputSourceToImage(inputID);
+            ImgPreset_pgmbgnd.Source = InputSourceToImage(inputID);
         }
 
         public void UpdateAuxSource(Slide slide)
@@ -112,10 +118,58 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         {
             DSK1 = true;
             ImgProgramLowerThird.Source = ImgSlide.Source;
+            ImgProgramLowerThird.Opacity = 1;
+        }
+
+        public async void FadeInProgramDSK1()
+        {
+            ImgProgramLowerThird.Source = ImgSlide.Source;
+            if (DSK1 != true)
+            {
+                ImgProgramLowerThird.Opacity = 0;
+                var fadein = new DoubleAnimation()
+                {
+                    From = 0,
+                    To = 1,
+                    Duration = TimeSpan.FromSeconds(1)
+                };
+                Storyboard.SetTarget(fadein, ImgProgramLowerThird);
+                Storyboard.SetTargetProperty(fadein, new PropertyPath(Image.OpacityProperty));
+                var sb = new Storyboard();
+                sb.Children.Add(fadein);
+                sb.Begin();
+                await Task.Delay(1000);
+                ImgProgramLowerThird.Opacity = 1;
+                sb.Stop();
+            }
+            DSK1 = true;
         }
 
         public void HideProgramDSK1()
         {
+            DSK1 = false;
+            ImgProgramLowerThird.Source = null;
+        }
+
+        public async void FadeOutProgramDSK1()
+        {
+            if (DSK1 != false)
+            {
+                var fadeout = new DoubleAnimation()
+                {
+                    From = 1,
+                    To = 0,
+                    Duration = TimeSpan.FromSeconds(1)
+                };
+                Storyboard.SetTarget(fadeout, ImgProgramLowerThird);
+                Storyboard.SetTargetProperty(fadeout, new PropertyPath(Image.OpacityProperty));
+                var sb = new Storyboard();
+                sb.Children.Add(fadeout);
+                sb.Begin();
+                await Task.Delay(1000);
+                ImgProgramLowerThird.Source = null;
+                sb.Stop();
+            }
             DSK1 = false;
             ImgProgramLowerThird.Source = null;
         }
@@ -143,6 +197,49 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             {
                 ProgramFTB.Visibility = Visibility.Hidden;
             }
+        }
+
+        public async void CrossFadeTransition(BMDSwitcherState finalstate)
+        {
+            // cross fade
+            var pgmtopresetfade = new DoubleAnimation()
+            {
+                From = 1,
+                To = 0,
+                Duration = TimeSpan.FromSeconds(1)
+            };
+            Storyboard.SetTarget(pgmtopresetfade, ImgProgram);
+            Storyboard.SetTargetProperty(pgmtopresetfade, new PropertyPath(Image.OpacityProperty));
+            var sb_pgm = new Storyboard();
+            sb_pgm.Children.Add(pgmtopresetfade);
+            sb_pgm.Begin();
+
+
+            var presettopgmfade = new DoubleAnimation()
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromSeconds(1)
+            };
+            Storyboard.SetTarget(presettopgmfade, ImgProgram_presetbgnd);
+            Storyboard.SetTargetProperty(presettopgmfade, new PropertyPath(Image.OpacityProperty));
+            var sb_preset = new Storyboard();
+            sb_preset.Children.Add(presettopgmfade);
+            sb_preset.Begin();
+
+            await Task.Delay(1000);
+
+            ProgramSource = (int)finalstate.ProgramID;
+            PresetSource = (int)finalstate.PresetID;
+            ImgProgram.Source = InputSourceToImage((int)finalstate.ProgramID);
+            ImgProgram.Opacity = 1;
+            ImgProgram_presetbgnd.Opacity = 0;
+            sb_pgm.Stop();
+            sb_preset.Stop();
+            ImgProgram_presetbgnd.Source = InputSourceToImage((int)finalstate.PresetID);
+            ImgPreset.Source = InputSourceToImage((int)finalstate.PresetID);
+            ImgPreset_pgmbgnd.Source = InputSourceToImage((int)finalstate.ProgramID);
+
         }
 
     }
