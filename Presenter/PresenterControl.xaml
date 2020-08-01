@@ -1,0 +1,218 @@
+﻿<Window x:Class="Presenter.PresenterControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Presenter"
+        mc:Ignorable="d"
+        Topmost="True"
+        Closing="Window_Closing"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        KeyboardNavigation.TabNavigation="None"
+        Title="Amature Presenter Controls" Height="280" Width="522">
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" MaxHeight="300"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Button Click="Prev_Slide" Grid.Column="0" Margin="5,5,5,5">
+                <Viewbox StretchDirection="Both" Stretch="Uniform">
+                    <Image Source="/icons/icons8-chevron-left-100.png"/>
+                </Viewbox>
+            </Button>
+            <Button Click="Next_Slide" Grid.Column="1" Margin="5,5,5,5">
+                <Viewbox StretchDirection="Both" Stretch="Uniform">
+                    <Image Source="/icons/icons8-chevron-right-100.png"/>
+                </Viewbox>
+            </Button>
+
+            <Grid Grid.Column="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1.5*"></RowDefinition>
+                        <RowDefinition Name="forkedsliderow" Height="1*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="0">
+                        <Label Name="true_slidenumview_label" HorizontalAlignment="Center" VerticalAlignment="Center" Content="1/0"/>
+                    </Viewbox>
+                    <Viewbox Grid.Row="1">
+                        <Label Foreground="Red" Name="slidenumview_label" HorizontalAlignment="Center" VerticalAlignment="Center" Content="(1/0)"/>
+                    </Viewbox>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Button Click="Fork_btn_Click" x:Name="Fork_btn" IsEnabled="True" Margin="5,5,5,5">
+                    <Viewbox>
+                        <ContentControl x:Name="ForkState">
+                            Fork
+                        </ContentControl>
+                    </Viewbox>
+                </Button>
+                <Button Click="Merge_btn_Click" x:Name="Merge_btn" IsEnabled="False" Grid.Column="0" Grid.Row="1" Margin="5,5,5,5">
+                    <Viewbox>
+                        <ContentControl>
+                            Merge
+                        </ContentControl>
+                    </Viewbox>
+                </Button>
+                <Button Click="FillBlack_Click" Foreground="Black"  x:Name="FillBlack" Grid.Row="0" Grid.Column="1" Margin="5,5,5,5">
+                    <Viewbox>
+                        <ContentControl>
+                            Black
+                        </ContentControl>
+                    </Viewbox>
+                </Button>
+                <Button x:Name="FillWhite" Grid.Row="2" Grid.Column="2" IsEnabled="False" Margin="5,5,5,5" Visibility="Hidden">
+                    <!--hide until functionality built in-->
+                    <Viewbox>
+                        <ContentControl>
+                            White
+                        </ContentControl>
+                    </Viewbox>
+                </Button>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Grid Name="PlaybackControls" Grid.Row="0" Grid.ColumnSpan="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Button Click="Play_Media" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5">
+                        <Image Source="/icons/icons8-play-100.png"></Image>
+                    </Button>
+                    <Button Click="Pause_Media" Grid.Row="0" Grid.Column="1" Margin="5,5,5,5">
+                        <Viewbox StretchDirection="Both" Stretch="Uniform">
+                            <Image Source="/icons/icons8-pause-100.png"/>
+                        </Viewbox>
+                    </Button>
+                    <Button Click="Reset_Media" Grid.Row="0" Grid.Column="2" Margin="5,5,5,5">
+                        <Viewbox StretchDirection="Both" Stretch="Uniform">
+                            <Image Source="/icons/icons8-stop-100.png"/>
+                        </Viewbox>
+                    </Button>
+                    <Button Click="Replay_Media" Grid.Row="0" Grid.Column="3" Margin="5,5,5,5">
+                        <Viewbox StretchDirection="Both" Stretch="Uniform">
+                            <Image Source="/icons/icons8-restart-100.png"/>
+                        </Viewbox>
+                    </Button>
+                    <Button Click="ToggleMute" Grid.Row="0" Grid.Column="5" Margin="5,5,5,5">
+                        <Viewbox StretchDirection="Both" Stretch="Uniform">
+                            <Grid>
+                                <Image x:Name="Unmuted_icon" Source="/icons/icons8-audio-100.png"/>
+                                <Image x:Name="Muted_icon" Source="/icons/icons8-mute-100.png"/>
+                            </Grid>
+                        </Viewbox>
+                    </Button>
+                </Grid>
+
+                <Grid Name="PlaybackTime" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Viewbox Stretch="Uniform" StretchDirection="Both">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="T+ "></Label>
+                            <Label Name="Media_at" FontWeight="Bold">00:00</Label>
+                            <Label Content=" / "></Label>
+                            <Label Name="Media_length">00:00</Label>
+                        </StackPanel>
+                    </Viewbox>
+                </Grid>
+                <Viewbox Grid.Row="1" Grid.Column="2" Stretch="Uniform" StretchDirection="Both">
+                    <StackPanel Name="PlaybackTime_1"  Orientation="Horizontal" VerticalAlignment="Center">
+                        <Label Grid.Row="1">T-</Label>
+                        <Label Name="Media_rem" FontWeight="Bold">00:00</Label>
+                    </StackPanel>
+                </Viewbox>
+                <Viewbox Grid.Row="1" Grid.Column="3" Stretch="Uniform" StretchDirection="Both">
+                    <StackPanel  Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Label>Time:</Label>
+                        <Label Name="LocalTime" FontStyle="Oblique">00:00:00</Label>
+                    </StackPanel>
+                </Viewbox>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="0" BorderThickness="2,2,2,2" BorderBrush="Red">
+                        <local:MediaPlayer x:Name="NowSlide" ></local:MediaPlayer>
+                    </Border>
+                    <Border Grid.Row="0" Grid.Column="0" Panel.ZIndex="1" BorderBrush="Yellow" BorderThickness="2,2,2,2" Margin="2,2,2,2">
+                        <local:MediaPlayer x:Name="PrevSlide" Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="1"></local:MediaPlayer>
+                    </Border>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="0" BorderThickness="2,2,2,2" BorderBrush="LimeGreen">
+                        <local:MediaPlayer x:Name="NextSlide" Grid.Column="0"></local:MediaPlayer>
+                    </Border>
+                    <Border Grid.Row="0" Grid.Column="1" Panel.ZIndex="1" BorderBrush="LightBlue" BorderThickness="2,2,2,2" Margin="2,2,2,2">
+                        <local:MediaPlayer x:Name="AfterSlide" Grid.Column="1"></local:MediaPlayer>
+                    </Border>
+
+                </Grid>
+            </Grid>
+        </Grid>
+
+
+
+    </Grid>
+</Window>
