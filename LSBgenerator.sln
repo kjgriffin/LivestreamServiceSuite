@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Integrated Presenter", "Int
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presenter", "Presenter\Presenter.csproj", "{6FBCFE85-BF9C-4F9A-A8FA-3641D2A9259D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlideCreater", "SlideCreater\SlideCreater.csproj", "{F3F50481-509F-45AE-AF3B-379D93F4F187}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{6FBCFE85-BF9C-4F9A-A8FA-3641D2A9259D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FBCFE85-BF9C-4F9A-A8FA-3641D2A9259D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FBCFE85-BF9C-4F9A-A8FA-3641D2A9259D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3F50481-509F-45AE-AF3B-379D93F4F187}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3F50481-509F-45AE-AF3B-379D93F4F187}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3F50481-509F-45AE-AF3B-379D93F4F187}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3F50481-509F-45AE-AF3B-379D93F4F187}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
