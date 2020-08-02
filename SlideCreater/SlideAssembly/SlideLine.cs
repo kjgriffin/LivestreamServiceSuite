@@ -7,7 +7,6 @@ namespace SlideCreater.SlideAssembly
 {
     public class SlideLine 
     {
-        public List<string> Content { get; set; } = new List<string>();
-
+        public List<SlideLineContent> Content { get; set; } = new List<SlideLineContent>();
     }
 }

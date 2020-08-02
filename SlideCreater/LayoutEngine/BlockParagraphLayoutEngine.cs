@@ -14,6 +14,7 @@ namespace SlideCreater.LayoutEngine
             List<(List<string>, float, float)> res = new List<(List<string>, float, float)>();
             Bitmap layoutbmp = new Bitmap(textblock.Width, textblock.Height);
             Graphics gfx = Graphics.FromImage(layoutbmp);
+            StringFormat sf = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Near };
 
             int startwords = 0;
 
@@ -22,7 +23,7 @@ namespace SlideCreater.LayoutEngine
                 int wordcount = 1;
                 // split into as many layout lines as required. uses word level granularity
                 var linewords = words.Skip(startwords).Take(wordcount);
-                var measure = gfx.MeasureString(string.Join("", linewords), font);
+                var measure = gfx.MeasureString(string.Join("", linewords), font, textblock.Width, sf);
                 while (measure.Width < textblock.Width && wordcount <= words.Count)
                 {
                     wordcount++;
@@ -30,9 +31,9 @@ namespace SlideCreater.LayoutEngine
                     measure = gfx.MeasureString(string.Join("", linewords), font);
                 }
                 // this many words fit into the sentence
-                res.Add((linewords.ToList(), measure.Width, measure.Height));
+                res.Add((linewords.SkipLast(1).ToList(), measure.Width, measure.Height));
 
-                startwords += wordcount;
+                startwords += wordcount - 1;
             }
 
             return res;

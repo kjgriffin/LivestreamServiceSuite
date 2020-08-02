@@ -60,7 +60,15 @@ namespace SlideCreater.Compiler
                     lineheight = 0;
                 }
                 lineheight += project.Layouts.LiturgyLayout.InterLineSpacing + line.height;
-                liturgyslide.Lines.Add(new SlideLine() { Content = { line.speaker, string.Join("", line.words) } });
+                liturgyslide.Lines.Add(
+                    new SlideLine()
+                    {
+                        Content = {
+                            new SlideLineContent() { Data = line.speaker, Attributes = { ["width"] = line.width, ["height"] = line.height } },
+                            new SlideLineContent() { Data = string.Join("", line.words).Trim(), Attributes = { ["width"] = line.width, ["height"] = line.height  } }
+                        }
+                    }
+                );
             }
             // add slide to project
             project.Slides.Add(liturgyslide);

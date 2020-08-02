@@ -8,6 +8,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace SlideCreater.Renderer
 {
@@ -42,21 +43,29 @@ namespace SlideCreater.Renderer
                     Font bf = new Font("Arial", 36, System.Drawing.FontStyle.Bold);
                     Font f = new Font("Arial", 36, System.Drawing.FontStyle.Regular);
 
-                    StringFormat sf = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
+                    StringFormat sf = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Near };
 
-                    Rectangle text = new Rectangle(project.Layouts.LiturgyLayout.Text.Location.Add(project.Layouts.LiturgyLayout.Key.Location), project.Layouts.LiturgyLayout.Text.Size);
+                    System.Drawing.Rectangle text = project.Layouts.LiturgyLayout.Text.Move(project.Layouts.LiturgyLayout.Key.Location);
 
-                    Rectangle speaker = new Rectangle(project.Layouts.LiturgyLayout.Speaker.Location.Add(project.Layouts.LiturgyLayout.Key.Location), project.Layouts.LiturgyLayout.Speaker.Size);
+                    System.Drawing.Rectangle speaker = project.Layouts.LiturgyLayout.Speaker.Move(project.Layouts.LiturgyLayout.Key.Location);
 
-                    int lineheight = 50;
 
-                    // just draw all text for now
-                    int linenum = 0;
+                    // compute line spacing
+                    int textlinecombinedheight = 0;
                     foreach (var line in slide.Lines)
                     {
-                        gfx.DrawString(line.Content[0], f, Brushes.Red, speaker.Move(0, lineheight * linenum), sf);
-                        gfx.DrawString(line.Content[1], f, Brushes.Black, text.Move(0, lineheight * linenum), sf);
+                        textlinecombinedheight += (int)(float)line.Content[1].Attributes["height"];
+                    }
+                    int interspace = (renderInfo.TextBox.Height - textlinecombinedheight) / slide.Lines.Count;
+
+                    int linenum = 0;
+                    int linepos = 0;
+                    foreach (var line in slide.Lines)
+                    {
+                        gfx.DrawString(line.Content[0].Data, f, Brushes.Red, speaker.Move(0, linepos + interspace * linenum), sf);
+                        gfx.DrawString(line.Content[1].Data, f, Brushes.Black, text.Move(0, linepos + interspace * linenum), sf);
                         linenum++;
+                        linepos += (int)(float)line.Content[1].Attributes["height"];
                     }
 
                     slides.Add(bmp);
