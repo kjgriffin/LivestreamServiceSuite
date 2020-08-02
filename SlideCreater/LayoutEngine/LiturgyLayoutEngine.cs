@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Controls.Ribbon.Primitives;
 
 namespace SlideCreater.LayoutEngine
 {
@@ -37,6 +39,7 @@ namespace SlideCreater.LayoutEngine
     {
 
         public List<(string speaker, List<string> words)> Lines { get; set; } = new List<(string, List<string>)>();
+        public List<(string speaker, List<string> words, float width, float height)> LayoutLines { get; set; } = new List<(string, List<string>, float, float)>();
 
 
         private List<string> SentenceEnds = new List<string>()
@@ -101,11 +104,11 @@ namespace SlideCreater.LayoutEngine
             // copy words
             words.ForEach(w => result.Add(w));
             // remove whitespace
-            while(result.FindIndex(r => Regex.Match(r, "\\s").Success) == 0)
+            while (result.FindIndex(r => Regex.Match(r, "\\s").Success) == 0)
             {
                 result.RemoveAt(0);
             }
-            while(result.FindLastIndex(r => Regex.Match(r, "\\s").Success) == result.Count - 1)
+            while (result.FindLastIndex(r => Regex.Match(r, "\\s").Success) == result.Count - 1)
             {
                 result.RemoveAt(result.Count - 1);
             }
@@ -113,10 +116,35 @@ namespace SlideCreater.LayoutEngine
             return result;
         }
 
-        public void BuildSlideLines()
+        public void BuildSlideLines(LiturgyLayoutRenderInfo renderInfo)
         {
-            // start with lines and see if we can fit them
+            /*
+            Basic algorithm:
 
+            Every speaker line is rendered in paragraphs (that fit to the line size)
+
+            Thus:
+
+            p aasdfasdfas. asdfasdfa. asdf. asdf.
+            P short.
+            P more stuff here.
+
+            should be rendered where the first 'line' is recognized as a paragraph and renders as many words as fit per line
+            the next line starts on a new line (repeated speaker forces new line)
+            
+            etc.
+            */
+
+            foreach (var line in Lines)
+            {
+                var par = BlockParagraphLayoutEngine.LayoutParagraph(renderInfo.TextBox, renderInfo.RegularFont, line.words);
+
+                foreach (var l in par)
+                {
+                    LayoutLines.Add((line.speaker, l.words, l.width, l.height));
+                }
+
+            }
 
         }
 

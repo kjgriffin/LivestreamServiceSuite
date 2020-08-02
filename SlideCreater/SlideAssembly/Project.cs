@@ -8,5 +8,12 @@ namespace SlideCreater.SlideAssembly
     {
         public SlideLayout Layouts { get; set; } = new SlideLayout();
         public List<Slide> Slides { get; set; } = new List<Slide>();
+
+
+        private int slidenum = 0;
+        public int GetNewSlideNumber()
+        {
+            return slidenum++;
+        }
     }
 }

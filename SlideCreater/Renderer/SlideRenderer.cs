@@ -1,8 +1,10 @@
-﻿using SlideCreater.SlideAssembly;
+﻿using SlideCreater.LayoutEngine;
+using SlideCreater.SlideAssembly;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +16,7 @@ namespace SlideCreater.Renderer
 
         public Project project { get; set; }
         
-        public List<Bitmap> Render()
+        public List<Bitmap> Render(LiturgyLayoutRenderInfo renderInfo)
         {
             // iterate through all slides and generate images
             List<Bitmap> slides = new List<Bitmap>();
@@ -37,18 +39,24 @@ namespace SlideCreater.Renderer
 
                     gfx.FillRectangle(Brushes.White, project.Layouts.LiturgyLayout.Key);
 
-                    Font f = new Font("Arial", 36, System.Drawing.FontStyle.Bold);
+                    Font bf = new Font("Arial", 36, System.Drawing.FontStyle.Bold);
+                    Font f = new Font("Arial", 36, System.Drawing.FontStyle.Regular);
 
                     StringFormat sf = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
 
                     Rectangle text = new Rectangle(project.Layouts.LiturgyLayout.Text.Location.Add(project.Layouts.LiturgyLayout.Key.Location), project.Layouts.LiturgyLayout.Text.Size);
 
                     Rectangle speaker = new Rectangle(project.Layouts.LiturgyLayout.Speaker.Location.Add(project.Layouts.LiturgyLayout.Key.Location), project.Layouts.LiturgyLayout.Speaker.Size);
+
+                    int lineheight = 50;
+
                     // just draw all text for now
+                    int linenum = 0;
                     foreach (var line in slide.Lines)
                     {
-                        gfx.DrawString(line.Content[0], f, Brushes.Red, speaker, sf);
-                        gfx.DrawString(line.Content[1], f, Brushes.Black, text, sf);
+                        gfx.DrawString(line.Content[0], f, Brushes.Red, speaker.Move(0, lineheight * linenum), sf);
+                        gfx.DrawString(line.Content[1], f, Brushes.Black, text.Move(0, lineheight * linenum), sf);
+                        linenum++;
                     }
 
                     slides.Add(bmp);
