@@ -16,7 +16,7 @@ namespace SlideCreater.Renderer
     {
 
         public Project project { get; set; }
-        
+
         public List<Bitmap> Render(LiturgyLayoutRenderInfo renderInfo)
         {
             // iterate through all slides and generate images
@@ -40,11 +40,8 @@ namespace SlideCreater.Renderer
 
                     gfx.FillRectangle(Brushes.White, project.Layouts.LiturgyLayout.Key);
 
-
-                    Font bf = new Font("Arial", 36, System.Drawing.FontStyle.Bold);
-                    Font f = new Font("Arial", 36, System.Drawing.FontStyle.Regular);
-
-                    StringFormat sf = new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };
+                    StringFormat topleftalign = new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };
+                    StringFormat centeralign = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
 
                     System.Drawing.Rectangle text = project.Layouts.LiturgyLayout.Text.Move(project.Layouts.LiturgyLayout.Key.Location);
 
@@ -65,8 +62,20 @@ namespace SlideCreater.Renderer
                     int linepos = interspace;
                     foreach (var line in slide.Lines)
                     {
-                        gfx.DrawString(line.Content[0].Data, f, Brushes.Red, speaker.Move(0, linepos + interspace * linenum).Location, sf);
-                        gfx.DrawString(line.Content[1].Data, f, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, sf);
+                        System.Drawing.Rectangle speakerblock = new System.Drawing.Rectangle(speaker.Move(0, linepos + interspace * linenum).Location, new System.Drawing.Size(60, 60));
+                        switch (line.Content[0].Data)
+                        {
+                            case "C":
+                                gfx.FillRectangle(Brushes.Red, speakerblock);
+                                gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
+                                gfx.DrawString(line.Content[1].Data, renderInfo.BoldFont, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
+                                break;
+                            default:
+                                gfx.DrawRectangle(Pens.Red, speakerblock);
+                                gfx.DrawString(line.Content[0].Data, renderInfo.RegularFont, Brushes.Red, speakerblock, centeralign);
+                                gfx.DrawString(line.Content[1].Data, renderInfo.RegularFont, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
+                                break;
+                        }
                         linenum++;
                         linepos += (int)(float)line.Content[1].Attributes["height"];
                     }
@@ -75,7 +84,7 @@ namespace SlideCreater.Renderer
 
                 }
 
-                
+
             }
 
             return slides;

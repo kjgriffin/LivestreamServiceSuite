@@ -21,7 +21,7 @@ namespace SlideCreater.Compiler
         public Lexer()
         {
             // initialize SplitWords
-            SplitWords = new List<string>() { "\r\n", ",", ".", " ", "(", ")", "#break", "#image", "#video" };
+            SplitWords = new List<string>() { "\r\n", "?", ";", ",", ".", " ", "(", ")", "#break", "#image", "#video" };
         }
 
         private void SplitAndKeep(string text, List<string> splitwords)

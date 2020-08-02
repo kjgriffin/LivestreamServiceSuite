@@ -76,6 +76,12 @@ namespace SlideCreater.Compiler
                 expr.Command = Video();
                 return expr;
             }
+            if (Lexer.Inspect("#break"))
+            {
+                Lexer.Gobble("#break");
+                expr.Command = SlideBreak();
+                return expr;
+            }
 
 
 
@@ -94,6 +100,13 @@ namespace SlideCreater.Compiler
             Lexer.GobbleWhitespace();
             Lexer.Gobble(")");
             return video;
+        }
+
+        private XenonASTSlideBreak SlideBreak()
+        {
+            XenonASTSlideBreak slidebreak = new XenonASTSlideBreak();
+            Lexer.GobbleWhitespace();
+            return slidebreak;
         }
 
 

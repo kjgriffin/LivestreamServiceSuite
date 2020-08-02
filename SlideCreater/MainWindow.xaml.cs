@@ -54,6 +54,7 @@ namespace SlideCreater
             sr.project = proj;
 
             slides = sr.Render(proj.Layouts.LiturgyLayout.GetRenderInfo());
+            slide = 0;
         }
 
         List<Bitmap> slides;

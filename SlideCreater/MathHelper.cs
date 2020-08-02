@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Windows.Controls.Ribbon;
 
 namespace SlideCreater
 {
@@ -23,6 +22,16 @@ namespace SlideCreater
         public static Rectangle Move(this Rectangle r, int offsetx, int offsety)
         {
             return new Rectangle(r.X + offsetx, r.Y + offsety, r.Width, r.Height);
+        }
+
+        public static Rectangle Center(this Rectangle r)
+        {
+            return new Rectangle(r.CenterPoint(), r.Size);
+        }
+
+        public static System.Drawing.Point CenterPoint(this Rectangle r)
+        {
+            return new System.Drawing.Point(r.X + r.Width / 2, r.Y + r.Height / 2);
         }
     }
 }

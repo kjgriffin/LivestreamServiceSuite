@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -39,7 +38,7 @@ namespace SlideCreater.LayoutEngine
     {
 
         public List<(string speaker, List<string> words)> Lines { get; set; } = new List<(string, List<string>)>();
-        public List<(string speaker, List<string> words, float width, float height)> LayoutLines { get; set; } = new List<(string, List<string>, float, float)>();
+        public List<LiturgyLayoutLine> LayoutLines { get; set; } = new List<LiturgyLayoutLine>();
 
 
         private List<string> SentenceEnds = new List<string>()
@@ -137,11 +136,21 @@ namespace SlideCreater.LayoutEngine
 
             foreach (var line in Lines)
             {
-                var par = BlockParagraphLayoutEngine.LayoutParagraph(renderInfo.TextBox, renderInfo.RegularFont, line.words);
+                Font f;
+                switch (line.speaker)
+                {
+                    case "C":
+                        f = renderInfo.BoldFont;
+                        break;
+                    default:
+                        f = renderInfo.RegularFont;
+                        break;
+                }
+                var par = BlockParagraphLayoutEngine.LayoutParagraph(renderInfo.TextBox, f, line.words);
 
                 foreach (var l in par)
                 {
-                    LayoutLines.Add((line.speaker, l.words, l.width, l.height));
+                    LayoutLines.Add((line.speaker, l.words, l.width, l.height, l.linestart, l.fulltextonline));
                 }
 
             }

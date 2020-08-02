@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Shapes;
 
 namespace SlideCreater.Compiler
 {
@@ -31,10 +32,11 @@ namespace SlideCreater.Compiler
                 Add this to the running total height of the slide's lines + min interline spacing
                 Once we can't fit any more declare a slide, figure out the slide 
 
-                Also must follow the 2 golden rules of slide layout
+                Also must follow the 3 golden rules of slide layout
 
                 1. If the starting speaker is [C] Congregation, no other speaker allowed on the slide
                 2. There may be no more than 2 speakers per slide
+                3. If a logical-line requires wrapping the line must be the first line of the slide
              */
 
             Slide liturgyslide = new Slide();
@@ -45,9 +47,22 @@ namespace SlideCreater.Compiler
 
             double lineheight = -project.Layouts.LiturgyLayout.InterLineSpacing;
 
+            string lastspeaker = "";
+            int speakers = 0;
+            string startspeaker = layoutEngine.LayoutLines.FirstOrDefault().speaker ?? "";
+
             foreach (var line in layoutEngine.LayoutLines)
             {
-                if (lineheight + project.Layouts.LiturgyLayout.InterLineSpacing + line.height > project.Layouts.LiturgyLayout.GetRenderInfo().TextBox.Height)
+                if (lastspeaker != line.speaker)
+                {
+                    speakers++;
+                }
+
+                bool overheight = lineheight + project.Layouts.LiturgyLayout.InterLineSpacing + line.height > project.Layouts.LiturgyLayout.GetRenderInfo().TextBox.Height;
+                bool overspeakerswitch = speakers > 2; // Rule 2
+                bool incorrrectspeakerorder = startspeaker == "C" && line.speaker != "C"; // Rule 1
+                bool paragraphwrapissue = speakers > 1 && !line.fulltextonline; // Rule 3
+                if (overheight || overspeakerswitch || incorrrectspeakerorder || paragraphwrapissue)
                 {
                     // need to start a new slide for this one
                     project.Slides.Add(liturgyslide);
@@ -58,7 +73,11 @@ namespace SlideCreater.Compiler
                     liturgyslide.Number = project.GetNewSlideNumber();
                     liturgyslide.Format = "LITURGY";
                     lineheight = 0;
+                    startspeaker = line.speaker;
+                    lastspeaker = line.speaker;
+                    speakers = 1;
                 }
+                lastspeaker = line.speaker;
                 lineheight += project.Layouts.LiturgyLayout.InterLineSpacing + line.height;
                 liturgyslide.Lines.Add(
                     new SlideLine()
