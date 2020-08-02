@@ -40,15 +40,18 @@ namespace SlideCreater.Renderer
 
                     gfx.FillRectangle(Brushes.White, project.Layouts.LiturgyLayout.Key);
 
+
                     Font bf = new Font("Arial", 36, System.Drawing.FontStyle.Bold);
                     Font f = new Font("Arial", 36, System.Drawing.FontStyle.Regular);
 
-                    StringFormat sf = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Near };
+                    StringFormat sf = new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };
 
                     System.Drawing.Rectangle text = project.Layouts.LiturgyLayout.Text.Move(project.Layouts.LiturgyLayout.Key.Location);
 
                     System.Drawing.Rectangle speaker = project.Layouts.LiturgyLayout.Speaker.Move(project.Layouts.LiturgyLayout.Key.Location);
 
+                    //gfx.DrawRectangle(Pens.Red, text);
+                    //gfx.DrawRectangle(Pens.Purple, speaker);
 
                     // compute line spacing
                     int textlinecombinedheight = 0;
@@ -56,14 +59,14 @@ namespace SlideCreater.Renderer
                     {
                         textlinecombinedheight += (int)(float)line.Content[1].Attributes["height"];
                     }
-                    int interspace = (renderInfo.TextBox.Height - textlinecombinedheight) / slide.Lines.Count;
+                    int interspace = (renderInfo.TextBox.Height - textlinecombinedheight) / (slide.Lines.Count + 1);
 
                     int linenum = 0;
-                    int linepos = 0;
+                    int linepos = interspace;
                     foreach (var line in slide.Lines)
                     {
-                        gfx.DrawString(line.Content[0].Data, f, Brushes.Red, speaker.Move(0, linepos + interspace * linenum), sf);
-                        gfx.DrawString(line.Content[1].Data, f, Brushes.Black, text.Move(0, linepos + interspace * linenum), sf);
+                        gfx.DrawString(line.Content[0].Data, f, Brushes.Red, speaker.Move(0, linepos + interspace * linenum).Location, sf);
+                        gfx.DrawString(line.Content[1].Data, f, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, sf);
                         linenum++;
                         linepos += (int)(float)line.Content[1].Attributes["height"];
                     }
