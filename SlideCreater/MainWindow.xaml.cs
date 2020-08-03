@@ -50,7 +50,7 @@ namespace SlideCreater
             XenonCompiler compiler = new XenonCompiler();
             Project proj = compiler.Compile(TbInput.Text);
 
-            SlideRenderer sr = new SlideRenderer();
+            LiturgySlideRenderer sr = new LiturgySlideRenderer();
             sr.project = proj;
 
             slides = sr.Render(proj.Layouts.LiturgyLayout.GetRenderInfo());

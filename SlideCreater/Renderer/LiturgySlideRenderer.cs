@@ -12,7 +12,7 @@ using System.Windows.Shapes;
 
 namespace SlideCreater.Renderer
 {
-    public class SlideRenderer
+    public class LiturgySlideRenderer
     {
 
         public Project project { get; set; }
