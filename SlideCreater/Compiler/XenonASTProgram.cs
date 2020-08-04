@@ -1,6 +1,7 @@
 ﻿using SlideCreater.SlideAssembly;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace SlideCreater.Compiler
@@ -16,6 +17,16 @@ namespace SlideCreater.Compiler
             {
                 item.Generate(project);    
             }
+        }
+
+        public void GenerateDebug(Project project)
+        {
+            Debug.WriteLine("<XenonASTProgram>");
+            foreach (var item in Expressions)
+            {
+                item.GenerateDebug(project);
+            }
+            Debug.WriteLine("</XenonASTProgram>");
         }
 
     }

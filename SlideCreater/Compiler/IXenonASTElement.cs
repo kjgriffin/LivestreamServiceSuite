@@ -9,6 +9,8 @@ namespace SlideCreater.Compiler
     {
 
         public void Generate(Project project);
+
+        public void GenerateDebug(Project project);
         
     }
 }

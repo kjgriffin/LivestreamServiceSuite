@@ -21,7 +21,21 @@ namespace SlideCreater.Compiler
         public Lexer()
         {
             // initialize SplitWords
-            SplitWords = new List<string>() { "\r\n", "?", ";", ",", ".", " ", "(", ")", "#break", "#image", "#video" };
+            SplitWords = new List<string>() {
+                "#break",
+                "#image",
+                "#video",
+                "//",
+                "\r\n",
+                "?",
+                ";",
+                ",",
+                ".",
+                " ",
+                "(",
+                ")",
+                "#",
+            };
         }
 
         private void SplitAndKeep(string text, List<string> splitwords)
@@ -69,7 +83,7 @@ namespace SlideCreater.Compiler
                     }
                 }
             }
-            return textindex+1;
+            return textindex + 1;
         }
 
         public void Tokenize(string input)

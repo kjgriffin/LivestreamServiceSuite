@@ -50,6 +50,9 @@ namespace SlideCreater.Compiler
             Project proj = new Project();
             p.Generate(proj);
 
+            p.GenerateDebug(proj);
+            
+
             string jsonproj = JsonSerializer.Serialize<Project>(proj);
             Debug.WriteLine(jsonproj);
 
@@ -82,6 +85,12 @@ namespace SlideCreater.Compiler
                 expr.Command = SlideBreak();
                 return expr;
             }
+            if (Lexer.Inspect("//"))
+            {
+                Lexer.Gobble("//");
+                expr.Command = Comment();
+                return expr;
+            }
 
 
 
@@ -89,6 +98,17 @@ namespace SlideCreater.Compiler
             // else assume its liturgy
             expr.Command = Liturgy();
             return expr;
+        }
+
+        private XenonAstComment Comment()
+        {
+            XenonAstComment comment = new XenonAstComment();
+            while (!Lexer.Inspect("\r\n"))
+            {
+                comment.AppendCommentText(Lexer.Consume());
+            }
+            comment.AppendCommentText(Lexer.Consume());
+            return comment;
         }
 
         private XenonASTVideo Video()
@@ -114,7 +134,7 @@ namespace SlideCreater.Compiler
         {
             XenonASTLiturgy liturgy = new XenonASTLiturgy();
             // assume all tokens until we find one starting with # are to be considred the content
-            while(!Lexer.InspectEOF() && !Lexer.Inspect("#", false))
+            while(!Lexer.InspectEOF() && !Lexer.Inspect("#", false) && !Lexer.Inspect("\\/\\/"))
             {
                 XenonASTContent content = new XenonASTContent() { TextContent = Lexer.Consume() };
                 liturgy.Content.Add(content);

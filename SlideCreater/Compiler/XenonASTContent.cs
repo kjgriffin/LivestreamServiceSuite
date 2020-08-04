@@ -1,6 +1,7 @@
 ﻿using SlideCreater.SlideAssembly;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace SlideCreater.Compiler
@@ -12,6 +13,13 @@ namespace SlideCreater.Compiler
         public void Generate(Project project)
         {
             throw new NotImplementedException();
+        }
+
+        public void GenerateDebug(Project project)
+        {
+            Debug.WriteLine("<XenonASTContent>");
+            Debug.WriteLine(TextContent);
+            Debug.WriteLine("</XenonASTContent>");
         }
     }
 }

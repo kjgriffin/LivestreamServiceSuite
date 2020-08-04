@@ -2,6 +2,7 @@
 using SlideCreater.SlideAssembly;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Shapes;
@@ -42,7 +43,7 @@ namespace SlideCreater.Compiler
             Slide liturgyslide = new Slide();
             liturgyslide.Asset = string.Empty;
             liturgyslide.Name = "UNNAMED_liturgy";
-            liturgyslide.Number = project.GetNewSlideNumber();
+            liturgyslide.Number = project.NewSlideNumber;
             liturgyslide.Format = "LITURGY";
 
             double lineheight = -project.Layouts.LiturgyLayout.InterLineSpacing;
@@ -70,7 +71,7 @@ namespace SlideCreater.Compiler
                     liturgyslide = new Slide();
                     liturgyslide.Asset = string.Empty;
                     liturgyslide.Name = "UNNAMED_liturgy";
-                    liturgyslide.Number = project.GetNewSlideNumber();
+                    liturgyslide.Number = project.NewSlideNumber;
                     liturgyslide.Format = "LITURGY";
                     lineheight = 0;
                     startspeaker = line.speaker;
@@ -93,6 +94,16 @@ namespace SlideCreater.Compiler
             project.Slides.Add(liturgyslide);
         }
 
+
+        public void GenerateDebug(Project project)
+        {
+            Debug.WriteLine("<XenonASTLiturgy>");
+            foreach (var c in Content)
+            {
+                c.GenerateDebug(project);
+            }
+            Debug.WriteLine("</XenonASTLiturgy>");
+        }
 
     }
 }

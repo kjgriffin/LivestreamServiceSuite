@@ -1,4 +1,5 @@
 ﻿using SlideCreater.SlideAssembly;
+using System.Diagnostics;
 using System.Runtime;
 
 namespace SlideCreater.Compiler
@@ -18,6 +19,13 @@ namespace SlideCreater.Compiler
             videoslide.Asset = AssetName;
 
             project.Slides.Add(videoslide);
+        }
+
+        public void GenerateDebug(Project project)
+        {
+            Debug.WriteLine("<XenonASTVideo>");
+            Debug.WriteLine(AssetName);
+            Debug.WriteLine("</XenonASTVideo>");
         }
     }
 }
