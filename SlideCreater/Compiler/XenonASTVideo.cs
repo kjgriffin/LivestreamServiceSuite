@@ -17,6 +17,7 @@ namespace SlideCreater.Compiler
             videoslide.Lines = new System.Collections.Generic.List<SlideLine>();
             videoslide.Format = "VIDEO";
             videoslide.Asset = AssetName;
+            videoslide.MediaType = MediaType.Video;
 
             project.Slides.Add(videoslide);
         }

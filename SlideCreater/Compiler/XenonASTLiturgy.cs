@@ -45,6 +45,7 @@ namespace SlideCreater.Compiler
             liturgyslide.Name = "UNNAMED_liturgy";
             liturgyslide.Number = project.NewSlideNumber;
             liturgyslide.Format = "LITURGY";
+            liturgyslide.MediaType = MediaType.Image;
 
             double lineheight = -project.Layouts.LiturgyLayout.InterLineSpacing;
 
@@ -73,6 +74,7 @@ namespace SlideCreater.Compiler
                     liturgyslide.Name = "UNNAMED_liturgy";
                     liturgyslide.Number = project.NewSlideNumber;
                     liturgyslide.Format = "LITURGY";
+                    liturgyslide.MediaType = MediaType.Image;
                     lineheight = 0;
                     startspeaker = line.speaker;
                     lastspeaker = line.speaker;

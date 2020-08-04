@@ -34,8 +34,13 @@
             <Grid Grid.Column="2">
                 <StackPanel>
                     <Border Background="HotPink">
-                        <Image x:Name="ImageBox" Height="600" Stretch="Uniform"></Image>
+                        <local:SlideContentPresenter x:Name="FocusSlide"></local:SlideContentPresenter>
                     </Border>
+                    <ScrollViewer Height="300">
+                        <StackPanel Name="slidelist">
+                            
+                        </StackPanel> 
+                    </ScrollViewer>
                     <Button Click="Test_Button">Render</Button>
                     <Button Click="Show">Show</Button>
                 </StackPanel>

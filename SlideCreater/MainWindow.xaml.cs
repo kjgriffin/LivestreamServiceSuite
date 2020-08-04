@@ -32,41 +32,45 @@ namespace SlideCreater
 
         private void Test_Button(object sender, RoutedEventArgs e)
         {
-            // put a system.drawing bitmap into image source
-
-            Bitmap bmp = new Bitmap(1920, 1080);
-
-            Graphics gfx = Graphics.FromImage(bmp);
-
-            gfx.FillRectangle(System.Drawing.Brushes.Blue, 0, 0, 1920, 1080);
-
-            // put it in image
-            ImageBox.Source = bmp.ConvertToBitmapImage();
-
-
-
-
             // compile text
             XenonCompiler compiler = new XenonCompiler();
             Project proj = compiler.Compile(TbInput.Text);
 
-            LiturgySlideRenderer sr = new LiturgySlideRenderer();
-            sr.project = proj;
+            SlideRenderer sr = new SlideRenderer(proj);
 
-            slides = sr.Render(proj.Layouts.LiturgyLayout.GetRenderInfo());
-            slide = 0;
+
+            slides.Clear();
+            for (int i = 0; i < proj.Slides.Count; i++)
+            {
+                slides.Add(sr.RenderSlide(i));
+            }
+
+            slidelist.Children.Clear();
+            // add all slides to list
+            foreach (var slide in slides)
+            {
+                SlideContentPresenter slideContentPresenter = new SlideContentPresenter();
+                slideContentPresenter.Slide = slide;
+                slideContentPresenter.ShowSlide();
+                slidelist.Children.Add(slideContentPresenter);
+            }
         }
 
-        List<Bitmap> slides;
+        List<RenderedSlide> slides = new List<RenderedSlide>();
 
         int slide = 0;
 
         private void Show(object sender, RoutedEventArgs e)
         {
-            ImageBox.Source = slides[slide].ConvertToBitmapImage();
+            FocusSlide.Slide = slides[slide];
+            FocusSlide.ShowSlide();
             if (slide + 1 < slides.Count)
             {
                 slide += 1;
+            }
+            else
+            {
+                slide = 0;
             }
         }
     }

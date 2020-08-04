@@ -10,6 +10,7 @@ namespace SlideCreater.SlideAssembly
         public string Name { get; set; }
         public int Number { get; set; }
         public string Format { get; set; }
+        public MediaType MediaType {get; set;}
         public string Asset { get; set; }
         public List<SlideLine> Lines { get; set; } = new List<SlideLine>();
     }
