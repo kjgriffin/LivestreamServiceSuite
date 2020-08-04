@@ -10,40 +10,60 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Menu>
+        <Menu Grid.Row="0">
             <MenuItem Header="File">
                 <MenuItem Header="New"></MenuItem>
             </MenuItem>
         </Menu>
 
-        <Grid Grid.Row="1">
+        <ToolBar Grid.Row="1">
+            <Button Click="RenderSlides">Render</Button>
+            <Button>Export</Button>
+        </ToolBar>
+
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="5"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"></GridSplitter>
+            <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch"></GridSplitter>
 
-            <Grid Grid.Column="0">
+            <Grid Grid.Column="2">
                 <TextBox x:Name="TbInput" TextWrapping="WrapWithOverflow" SpellCheck.IsEnabled="True" AcceptsReturn="True" AcceptsTab="True"></TextBox>
             </Grid>
-            <Grid Grid.Column="2">
-                <StackPanel>
-                    <Border Background="HotPink">
+            <Grid Grid.Column="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <GridSplitter Grid.Column="1"></GridSplitter>
+
+                <ScrollViewer Grid.Column="0">
+                    <StackPanel Name="slidelist">
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Grid Grid.Column="2">
+                    <Border VerticalAlignment="Top">
                         <local:SlideContentPresenter x:Name="FocusSlide"></local:SlideContentPresenter>
                     </Border>
-                    <ScrollViewer Height="300">
-                        <StackPanel Name="slidelist">
-                            
-                        </StackPanel> 
-                    </ScrollViewer>
-                    <Button Click="Test_Button">Render</Button>
-                    <Button Click="Show">Show</Button>
-                </StackPanel>
+                </Grid>
+
+
             </Grid>
         </Grid>
     </Grid>

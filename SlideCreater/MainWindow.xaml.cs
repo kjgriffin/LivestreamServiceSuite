@@ -30,7 +30,7 @@ namespace SlideCreater
             InitializeComponent();
         }
 
-        private void Test_Button(object sender, RoutedEventArgs e)
+        private void RenderSlides(object sender, RoutedEventArgs e)
         {
             // compile text
             XenonCompiler compiler = new XenonCompiler();
@@ -46,14 +46,36 @@ namespace SlideCreater
             }
 
             slidelist.Children.Clear();
+            slidepreviews.Clear();
             // add all slides to list
             foreach (var slide in slides)
             {
                 SlideContentPresenter slideContentPresenter = new SlideContentPresenter();
+                slideContentPresenter.Width = slidelist.Width;
                 slideContentPresenter.Slide = slide;
                 slideContentPresenter.ShowSlide();
+                slideContentPresenter.OnSlideClicked += SlideContentPresenter_OnSlideClicked;
                 slidelist.Children.Add(slideContentPresenter);
+                slidepreviews.Add(slideContentPresenter);
             }
+        }
+
+        List<SlideContentPresenter> slidepreviews = new List<SlideContentPresenter>();
+
+        private void SlideContentPresenter_OnSlideClicked(object sender, RenderedSlide slide)
+        {
+            foreach (var spv in slidepreviews)
+            {
+                spv.ShowSelected(false);
+            }
+            FocusSlide.Slide = slide;
+            FocusSlide.ShowSlide();
+            this.slide = slides.FindIndex(s => s == slide) + 1;
+            if (this.slide >= slides.Count)
+            {
+                this.slide = 0;
+            }
+            (sender as SlideContentPresenter).ShowSelected(true);
         }
 
         List<RenderedSlide> slides = new List<RenderedSlide>();

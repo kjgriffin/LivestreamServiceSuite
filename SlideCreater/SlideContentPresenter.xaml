@@ -7,15 +7,25 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Viewbox Stretch="Uniform">
-            <Border>
-                <Grid Height="1080" Width="1920">
-                    <Rectangle Fill="LightGray"></Rectangle>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100" Opacity="0.5">Empty Slide</TextBlock>
-                    <Image Name="ImgDisplay"></Image>
-                    <MediaElement Name="VideoDisplay"></MediaElement>
-                </Grid>
-            </Border>
-        </Viewbox>
+        <Border Name="SelectionBorder" Margin="5,5,5,5">
+            <Viewbox Stretch="Uniform" UIElement.PreviewMouseDown="OnControlMouseDown">
+                <Border>
+                    <Grid Height="1080" Width="1920">
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <DrawingBrush TileMode="Tile" Viewport="0,0,32,32" ViewportUnits="Absolute">
+                                    <DrawingBrush.Drawing>
+                                        <GeometryDrawing Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0z" Brush="LightGray"/>
+                                    </DrawingBrush.Drawing>
+                                </DrawingBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="200" Opacity="0.5">Empty Slide</TextBlock>
+                        <Image Name="ImgDisplay"></Image>
+                        <MediaElement Name="VideoDisplay"></MediaElement>
+                    </Grid>
+                </Border>
+            </Viewbox>
+        </Border>
     </Grid>
 </UserControl>
