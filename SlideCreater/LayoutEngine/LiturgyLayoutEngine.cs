@@ -107,7 +107,7 @@ namespace SlideCreater.LayoutEngine
             {
                 result.RemoveAt(0);
             }
-            while (result.FindLastIndex(r => Regex.Match(r, "\\s").Success) == result.Count - 1)
+            while (result.Count > 0 && result.FindLastIndex(r => Regex.Match(r, "\\s").Success) == result.Count - 1)
             {
                 result.RemoveAt(result.Count - 1);
             }

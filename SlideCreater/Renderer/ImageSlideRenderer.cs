@@ -13,7 +13,7 @@ namespace SlideCreater.Renderer
 
         public SlideLayout Layout { get; set; }
 
-        public RenderedSlide RenderFullImageSlide(Slide slide)
+        public RenderedSlide RenderImageSlide(Slide slide)
         {
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
@@ -37,6 +37,10 @@ namespace SlideCreater.Renderer
             else if (slide.Format == SlideFormat.ScaledImage)
             {
                 res.Bitmap = RenderUniformScale(sourceimage);
+            }
+            else if (slide.Format == SlideFormat.LiturgyImage)
+            {
+                res.Bitmap = RenderLiturgyImage(sourceimage);
             }
 
             return res;
@@ -73,6 +77,34 @@ namespace SlideCreater.Renderer
             p = new Point((Layout.FullImageLayout.Size.Width - s.Width) / 2, (Layout.FullImageLayout.Size.Height - s.Height) / 2);
 
             gfx.Clear(System.Drawing.Color.White);
+            gfx.DrawImage(sourceimage, new Rectangle(p, s), new Rectangle(new Point(0, 0), sourceimage.Size), GraphicsUnit.Pixel);
+            return bmp;
+
+        }
+
+        private Bitmap RenderLiturgyImage(Bitmap sourceimage)
+        {
+            Bitmap bmp = new Bitmap(Layout.LiturgyLayout.Size.Width, Layout.LiturgyLayout.Size.Height);
+
+            Graphics gfx = Graphics.FromImage(bmp);
+
+            double scale = 1;
+            Point p;
+            Size s;
+
+            double xscale = 1;
+            double yscale = 1;
+
+            xscale = (double)Layout.LiturgyLayout.Key.Width / sourceimage.Width;
+            yscale = (double)Layout.LiturgyLayout.Key.Height / sourceimage.Height;
+
+            scale = xscale < yscale ? xscale : yscale;
+
+            s = new Size((int)(sourceimage.Width * scale), (int)(sourceimage.Height * scale));
+            p = new Point((Layout.LiturgyLayout.Key.Width - s.Width) / 2, (Layout.LiturgyLayout.Key.Height - s.Height) / 2).Add(Layout.LiturgyLayout.Key.Location);
+
+            gfx.Clear(System.Drawing.Color.Black);
+            gfx.FillRectangle(System.Drawing.Brushes.White, Layout.LiturgyLayout.Key);
             gfx.DrawImage(sourceimage, new Rectangle(p, s), new Rectangle(new Point(0, 0), sourceimage.Size), GraphicsUnit.Pixel);
             return bmp;
 

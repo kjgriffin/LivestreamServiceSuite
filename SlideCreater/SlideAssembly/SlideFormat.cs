@@ -11,6 +11,10 @@ namespace SlideCreater.SlideAssembly
         UnscaledImage,
         LiturgyImage,
         Liturgy,
+        Reading,
+        SermonTitle,
+        FullText,
+
 
     }
 }

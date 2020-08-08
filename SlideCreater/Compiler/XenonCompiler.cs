@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Security.Permissions;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -70,7 +71,11 @@ namespace SlideCreater.Compiler
             XenonASTProgram p = new XenonASTProgram();
             do
             {
-                p.Expressions.Add(Expression());
+                XenonASTExpression expr = Expression();
+                if (expr != null)
+                {
+                    p.Expressions.Add(expr);
+                }
             } while (!Lexer.InspectEOF());
 
             return p;
@@ -78,17 +83,21 @@ namespace SlideCreater.Compiler
 
         private XenonASTExpression Expression()
         {
-            XenonASTExpression expr = new XenonASTExpression();
             if (Lexer.Inspect("#"))
             {
                 Lexer.Gobble("#");
                 return Command();
             }
+            else if (Lexer.Inspect("\\/\\/"))
+            {
+                Lexer.Gobble("//");
+                return new XenonASTExpression() { Command = Comment() };
+            }
 
             // eat all inter-command whitespace
             Lexer.GobbleWhitespace();
 
-            return expr;
+            return null;
         }
 
         private XenonASTExpression Command()
@@ -114,7 +123,9 @@ namespace SlideCreater.Compiler
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]))
             {
-                throw new NotImplementedException("litimage command not implemented");
+                Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]);
+                expr.Command = LiturgyImage();
+                return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Break]))
             {
@@ -128,6 +139,12 @@ namespace SlideCreater.Compiler
                 expr.Command = Liturgy();
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Reading]))
+            {
+                Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Reading]);
+                expr.Command = Reading();
+                return expr;
+            }
             else if (Lexer.Inspect("//"))
             {
                 Lexer.Gobble("//");
@@ -138,6 +155,40 @@ namespace SlideCreater.Compiler
             {
                 throw new ArgumentException($"Unexpected Command. Symbol: '{Lexer.Peek()}' is not a recognized command");
             }
+        }
+
+        private IXenonASTCommand Reading()
+        {
+            XenonASTReading reading = new XenonASTReading();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("(");
+            StringBuilder sb = new StringBuilder();
+            while (!Lexer.Inspect(","))
+            {
+                sb.Append(Lexer.Consume());
+            }
+            reading.Name = sb.ToString().Trim();
+            Lexer.Gobble(",");
+            sb.Clear();
+            while (!Lexer.Inspect("\\)"))
+            {
+                sb.Append(Lexer.Consume());
+            }
+            reading.Reference = sb.ToString().Trim();
+            Lexer.Gobble(")");
+            return reading;
+        }
+
+        private IXenonASTCommand LiturgyImage()
+        {
+            XenonASTLiturgyImage litimage = new XenonASTLiturgyImage();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("(");
+            Lexer.GobbleWhitespace();
+            litimage.AssetName = Lexer.Consume();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble(")");
+            return litimage;
         }
 
         private XenonASTFullImage FullImage()
@@ -182,9 +233,12 @@ namespace SlideCreater.Compiler
             XenonASTVideo video = new XenonASTVideo();
             Lexer.GobbleWhitespace();
             Lexer.Gobble("(");
-            Lexer.GobbleWhitespace();
-            video.AssetName = Lexer.Consume();
-            Lexer.GobbleWhitespace();
+            StringBuilder sb = new StringBuilder();
+            while(!Lexer.Inspect("\\)"))
+            {
+                sb.Append(Lexer.Consume());
+            }
+            video.AssetName = sb.ToString().Trim();
             Lexer.Gobble(")");
             return video;
         }

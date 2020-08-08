@@ -16,6 +16,8 @@ namespace SlideCreater.Compiler
             [LanguageKeywordCommand.FitImage] = "fitimage", 
             [LanguageKeywordCommand.LiturgyImage] = "litimage", 
             [LanguageKeywordCommand.Liturgy] = "liturgy", 
+            [LanguageKeywordCommand.Reading] = "reading", 
+            [LanguageKeywordCommand.Sermon] = "sermon", 
         };
 
 
@@ -30,6 +32,8 @@ namespace SlideCreater.Compiler
         FitImage,
         LiturgyImage,
         Liturgy,
+        Reading,
+        Sermon,
     }
 
 }

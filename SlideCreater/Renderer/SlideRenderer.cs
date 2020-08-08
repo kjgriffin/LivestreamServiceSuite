@@ -1,6 +1,7 @@
 ﻿using SlideCreater.SlideAssembly;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace SlideCreater.Renderer
@@ -14,12 +15,14 @@ namespace SlideCreater.Renderer
         LiturgySlideRenderer lsr = new LiturgySlideRenderer();
         VideoSlideRenderer vsr = new VideoSlideRenderer();
         ImageSlideRenderer isr = new ImageSlideRenderer();
+        ReadingSlideRenderer rsr = new ReadingSlideRenderer();
 
         public SlideRenderer(Project proj)
         {
             _project = proj;
             lsr.Layouts = proj.Layouts;
             isr.Layout = proj.Layouts;
+            rsr.Layouts = proj.Layouts;
         }
 
         public RenderedSlide RenderSlide(int slidenum)
@@ -42,9 +45,13 @@ namespace SlideCreater.Renderer
                 case SlideFormat.Video:
                     return vsr.RenderSlide(slide);
                 case SlideFormat.UnscaledImage:
-                    return isr.RenderFullImageSlide(slide);
+                    return isr.RenderImageSlide(slide);
                 case SlideFormat.ScaledImage:
-                    return isr.RenderFullImageSlide(slide);
+                    return isr.RenderImageSlide(slide);
+                case SlideFormat.LiturgyImage:
+                    return isr.RenderImageSlide(slide);
+                case SlideFormat.Reading:
+                    return rsr.RenderSlide(_project.Layouts.ReadingLayout.GetRenderInfo(), slide);
                 default:
                     return RenderedSlide.Default();
             }
