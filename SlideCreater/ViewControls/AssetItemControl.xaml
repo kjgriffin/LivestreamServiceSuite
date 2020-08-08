@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="SlideCreater.AssetItemControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SlideCreater"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="800">
+    <Grid Margin="5,5,5,5">
+        <Border BorderBrush="Black" BorderThickness="1,1,1,1">
+            <Viewbox Stretch="Uniform">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" BorderThickness="1,1,1,1" BorderBrush="Black">
+                        <Grid>
+                            <Rectangle Stretch="Fill" Fill="{StaticResource BackgroundTileBrush}"></Rectangle>
+                            <Viewbox>
+                                <TextBlock Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.4">Unloaded Asset</TextBlock>
+                            </Viewbox>
+                            <Image Name="ImgAsset" Stretch="Uniform"></Image>
+                            <MediaElement LoadedBehavior="Stop" Name="VideoAsset"></MediaElement>
+                        </Grid>
+                    </Border>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Viewbox Grid.Row="0" Stretch="Uniform">
+                            <TextBlock Name="AssetName" Margin="5,5,5,5">Asset name</TextBlock>
+                        </Viewbox>
+                        <Viewbox Grid.Row="1" Stretch="Uniform">
+                            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                <Label FontSize="10">
+                                    <Hyperlink>
+                                        Insert
+                                    </Hyperlink>
+                                </Label>
+                                <Label FontSize="10">
+                                    <Hyperlink Click="ClickFitInsert">
+                                        Fit Insert
+                                    </Hyperlink>
+                                </Label>
+                            </StackPanel>
+                        </Viewbox>
+                    </Grid>
+                </Grid>
+            </Viewbox>
+        </Border>
+    </Grid>
+</UserControl>

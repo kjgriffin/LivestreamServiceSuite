@@ -22,20 +22,37 @@
 
         <ToolBar Grid.Row="1">
             <Button Click="RenderSlides">Render</Button>
-            <Button>Export</Button>
+            <Button Click="ExportSlides">Export</Button>
         </ToolBar>
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"></GridSplitter>
             <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch"></GridSplitter>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
+                        <Button Click="ClickAddAssets" Width="80" Height="30">Add Assets</Button>
+                    </StackPanel>
+                </Grid>
+                <ScrollViewer Grid.Row="1">
+                    <StackPanel Name="AssetList">
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
 
             <Grid Grid.Column="2">
                 <TextBox x:Name="TbInput" TextWrapping="WrapWithOverflow" SpellCheck.IsEnabled="True" AcceptsReturn="True" AcceptsTab="True"></TextBox>

@@ -12,11 +12,14 @@ namespace SlideCreater.Renderer
 
 
         LiturgySlideRenderer lsr = new LiturgySlideRenderer();
+        VideoSlideRenderer vsr = new VideoSlideRenderer();
+        ImageSlideRenderer isr = new ImageSlideRenderer();
 
         public SlideRenderer(Project proj)
         {
             _project = proj;
             lsr.Layouts = proj.Layouts;
+            isr.Layout = proj.Layouts;
         }
 
         public RenderedSlide RenderSlide(int slidenum)
@@ -34,8 +37,14 @@ namespace SlideCreater.Renderer
             // use an appropriate slide render for the task
             switch (slide.Format)
             {
-                case "LITURGY":
+                case SlideFormat.Liturgy:
                     return lsr.RenderSlide(_project.Layouts.LiturgyLayout.GetRenderInfo(), slide);
+                case SlideFormat.Video:
+                    return vsr.RenderSlide(slide);
+                case SlideFormat.UnscaledImage:
+                    return isr.RenderFullImageSlide(slide);
+                case SlideFormat.ScaledImage:
+                    return isr.RenderFullImageSlide(slide);
                 default:
                     return RenderedSlide.Default();
             }

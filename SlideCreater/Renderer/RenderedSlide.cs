@@ -10,11 +10,12 @@ namespace SlideCreater.Renderer
     {
         public MediaType MediaType { get; set; }
         public string AssetPath { get; set; }
+        public string RenderedAs { get; set; }
         public System.Drawing.Bitmap? Bitmap {get; set;}
 
         public static RenderedSlide Default()
         {
-            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "" };
+            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", RenderedAs = "Default" };
         }
     }
 }

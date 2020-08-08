@@ -12,13 +12,13 @@ namespace SlideCreater.Compiler
 
         public void Generate(Project project)
         {
-            Command.Generate(project);
+            Command?.Generate(project);
         }
 
         public void GenerateDebug(Project project)
         {
             Debug.WriteLine("<XenonASTExperession>");
-            Command.GenerateDebug(project);
+            Command?.GenerateDebug(project);
             Debug.WriteLine("</XenonASTExperession>");
         }
     }

@@ -13,12 +13,17 @@ namespace SlideCreater.SlideAssembly
         public Rectangle Speaker { get; set; }
         public Rectangle Text { get; set; }
         public int InterLineSpacing { get; set; }
+        public Font Font { get; set; }
 
         public LiturgyLayoutRenderInfo GetRenderInfo()
         {
-            var res = new LiturgyLayoutRenderInfo();
-            res.SpeakerBox = Speaker;
-            res.TextBox = Text;
+            var res = new LiturgyLayoutRenderInfo
+            {
+                BoldFont = new Font(Font, FontStyle.Bold),
+                RegularFont = Font,
+                SpeakerBox = Speaker,
+                TextBox = Text
+            };
             return res;
         }
     }

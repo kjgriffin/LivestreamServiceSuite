@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.DirectoryServices;
 using System.Drawing;
 using System.IO;
@@ -23,9 +24,6 @@ namespace SlideCreater
             res.EndInit();
             return res;
         }
-
-
-
 
 
 

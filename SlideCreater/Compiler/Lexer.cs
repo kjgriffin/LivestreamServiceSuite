@@ -18,15 +18,17 @@ namespace SlideCreater.Compiler
 
         private int _tokenpos = 0;
 
+        public string CurrentToken => _tokens[_tokenpos];
+
         public Lexer()
         {
             // initialize SplitWords
-            SplitWords = new List<string>() {
-                "#break",
-                "#image",
-                "#video",
-                "//",
+
+            SplitWords = new List<string>();
+            SplitWords.AddRange(LanguageKeywords.Commands.Values);
+            List<string> Seperators = new List<string>() {
                 "\r\n",
+                "//",
                 "?",
                 ";",
                 ",",
@@ -34,8 +36,11 @@ namespace SlideCreater.Compiler
                 " ",
                 "(",
                 ")",
+                "{",
+                "}",
                 "#",
             };
+            SplitWords.AddRange(Seperators);
         }
 
         private void SplitAndKeep(string text, List<string> splitwords)
@@ -63,7 +68,7 @@ namespace SlideCreater.Compiler
 
         private int InnerCheck(ref string text, List<string> splitwords, int textindex)
         {
-            for (int splitwordindex = 0; splitwordindex < splitwords.Count - 1; splitwordindex++)
+            for (int splitwordindex = 0; splitwordindex < splitwords.Count; splitwordindex++)
             {
                 if (textindex + splitwords[splitwordindex].Length <= text.Length)
                 {
@@ -126,6 +131,29 @@ namespace SlideCreater.Compiler
             var m = Regex.Match(_tokens[_tokenpos], pattern);
 
             return m.Success;
+        }
+
+        
+        /// <summary>
+        /// View the current token without consuming it
+        /// </summary>
+        /// <returns>The current token</returns>
+        public string Peek()
+        {
+            return _tokens[_tokenpos];
+        }
+
+        /// <summary>
+        /// View the next token without consuming it.
+        /// </summary>
+        /// <returns>The next token</returns>
+        public string PeekNext()
+        {
+            if (_tokenpos + 1 < _tokens.Count)
+            {
+                return _tokens[_tokenpos + 1];
+            }
+            return "";
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
-﻿using SlideCreater.Compiler;
+﻿using Microsoft.Win32;
+using SlideCreater.AssetManagment;
+using SlideCreater.Compiler;
 using SlideCreater.Renderer;
 using SlideCreater.SlideAssembly;
 using System;
@@ -7,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,13 +37,13 @@ namespace SlideCreater
         {
             // compile text
             XenonCompiler compiler = new XenonCompiler();
-            Project proj = compiler.Compile(TbInput.Text);
+            _proj = compiler.Compile(TbInput.Text, Assets);
 
-            SlideRenderer sr = new SlideRenderer(proj);
+            SlideRenderer sr = new SlideRenderer(_proj);
 
 
             slides.Clear();
-            for (int i = 0; i < proj.Slides.Count; i++)
+            for (int i = 0; i < _proj.Slides.Count; i++)
             {
                 slides.Add(sr.RenderSlide(i));
             }
@@ -60,6 +63,7 @@ namespace SlideCreater
             }
         }
 
+        Project _proj = new Project();
         List<SlideContentPresenter> slidepreviews = new List<SlideContentPresenter>();
 
         private void SlideContentPresenter_OnSlideClicked(object sender, RenderedSlide slide)
@@ -70,6 +74,7 @@ namespace SlideCreater
             }
             FocusSlide.Slide = slide;
             FocusSlide.ShowSlide();
+            FocusSlide.PlaySlide();
             this.slide = slides.FindIndex(s => s == slide) + 1;
             if (this.slide >= slides.Count)
             {
@@ -93,6 +98,74 @@ namespace SlideCreater
             else
             {
                 slide = 0;
+            }
+        }
+
+
+        List<ProjectAsset> Assets = new List<ProjectAsset>();
+        private void ClickAddAssets(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Add Assets";
+            ofd.Filter = "Images and Video (*.png;*.mp4)|*.png;*.mp4";
+            ofd.Multiselect = true;
+            if (ofd.ShowDialog() == true)
+            {
+                // add assets
+                foreach (var file in ofd.FileNames)
+                {
+                    ProjectAsset asset = new ProjectAsset();
+                    if (Regex.IsMatch(System.IO.Path.GetExtension(file), "\\.mp4", RegexOptions.IgnoreCase))
+                    {
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), RelativePath = file, Type = AssetType.Video };
+                    }
+                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file), "\\.png", RegexOptions.IgnoreCase))
+                    {
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), RelativePath = file, Type = AssetType.Image };
+                    }
+                    Assets.Add(asset);
+                    _proj.Assets = Assets;
+                    ShowProjectAssets();
+                }
+            }
+        }
+
+        private void ShowProjectAssets()
+        {
+            AssetList.Children.Clear();
+            foreach (var asset in _proj.Assets)
+            {
+                AssetItemControl assetItemCtrl = new AssetItemControl(asset);
+                assetItemCtrl.OnFitInsertRequest += AssetItemCtrl_OnFitInsertRequest;
+
+                AssetList.Children.Add(assetItemCtrl);
+            }
+        }
+
+        private void AssetItemCtrl_OnFitInsertRequest(object sender, ProjectAsset asset)
+        {
+            string InsertCommand = "";
+            if (asset.Type == AssetType.Video)
+            {
+                InsertCommand = $"\r\n#video({asset.Name})\r\n";
+            }
+            if (asset.Type == AssetType.Image)
+            {
+                InsertCommand = $"\r\n#fitimage({asset.Name})\r\n";
+            }
+            int newindex = TbInput.CaretIndex + InsertCommand.Length;
+            TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
+            TbInput.CaretIndex = newindex;
+        }
+
+        private void ExportSlides(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog ofd = new SaveFileDialog();
+            ofd.Title = "Select Output Folder";
+            ofd.FileName = "Slide";
+            if (ofd.ShowDialog() == true)
+            {
+                SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj);
             }
         }
     }

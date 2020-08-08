@@ -1,22 +1,24 @@
 ﻿using SlideCreater.SlideAssembly;
 using System;
-using System.Diagnostics;
-using System.Runtime;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using System.Windows.Media;
 
 namespace SlideCreater.Compiler
 {
-    class XenonASTVideo : IXenonASTCommand
+    class XenonASTFullImage : IXenonASTCommand
     {
 
         public string AssetName { get; set; }
+
         public void Generate(Project project)
         {
-            // create a video slide
-            Slide videoslide = new Slide();
-            videoslide.Name = "UNNAMED_video";
-            videoslide.Number = project.NewSlideNumber;
-            videoslide.Lines = new List<SlideLine>();
+            // create a full image slide
+            Slide imageslide = new Slide();
+            imageslide.Name = "UNNAMED_image";
+            imageslide.Number = project.NewSlideNumber;
+            imageslide.Lines = new List<SlideLine>();
             string assetpath = "";
             var asset = project.Assets.Find(p => p.Name == AssetName);
             if (asset != null)
@@ -25,19 +27,19 @@ namespace SlideCreater.Compiler
             }
             SlideLineContent slc = new SlideLineContent() { Data = assetpath };
             SlideLine sl = new SlideLine() { Content = new List<SlideLineContent>() { slc } };
-            videoslide.Lines.Add(sl);
-            videoslide.Format = SlideFormat.Video;
-            videoslide.Asset = AssetName;
-            videoslide.MediaType = MediaType.Video;
+            imageslide.Lines.Add(sl);
+            imageslide.Format = SlideFormat.UnscaledImage;
+            imageslide.Asset = assetpath;
+            imageslide.MediaType = MediaType.Image;
 
-            project.Slides.Add(videoslide);
+            project.Slides.Add(imageslide);
         }
 
         public void GenerateDebug(Project project)
         {
-            Debug.WriteLine("<XenonASTVideo>");
+            Debug.WriteLine("<XenonASTFullImage>");
             Debug.WriteLine(AssetName);
-            Debug.WriteLine("</XenonASTVideo>");
+            Debug.WriteLine("</XenonASTFullImage>");
         }
     }
 }

@@ -22,6 +22,7 @@ namespace SlideCreater.Renderer
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = "";
+            res.RenderedAs = "Liturgy";
             // draw it
 
             // for now just draw the layout
@@ -54,19 +55,32 @@ namespace SlideCreater.Renderer
 
             int linenum = 0;
             int linepos = interspace;
+            string lastspeaker = "";
             foreach (var line in slide.Lines)
             {
+                bool drawspeaker = false;
+                if (line.Content[0].Data != lastspeaker)
+                {
+                    drawspeaker = true;
+                }
+                lastspeaker = line.Content[0].Data;
                 System.Drawing.Rectangle speakerblock = new System.Drawing.Rectangle(speaker.Move(0, linepos + interspace * linenum).Location, new System.Drawing.Size(60, 60));
                 switch (line.Content[0].Data)
                 {
                     case "C":
-                        gfx.FillRectangle(Brushes.Red, speakerblock);
-                        gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
+                        if (drawspeaker)
+                        {
+                            gfx.FillRectangle(Brushes.Red, speakerblock);
+                            gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
+                        }
                         gfx.DrawString(line.Content[1].Data, renderInfo.BoldFont, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
                         break;
                     default:
-                        gfx.DrawRectangle(Pens.Red, speakerblock);
-                        gfx.DrawString(line.Content[0].Data, renderInfo.RegularFont, Brushes.Red, speakerblock, centeralign);
+                        if (drawspeaker)
+                        {
+                            gfx.DrawRectangle(Pens.Red, speakerblock);
+                            gfx.DrawString(line.Content[0].Data, renderInfo.RegularFont, Brushes.Red, speakerblock, centeralign);
+                        }
                         gfx.DrawString(line.Content[1].Data, renderInfo.RegularFont, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
                         break;
                 }
