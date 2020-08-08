@@ -33,20 +33,27 @@ namespace SlideCreater
             InitializeComponent();
         }
 
-        private void RenderSlides(object sender, RoutedEventArgs e)
+        private async void RenderSlides(object sender, RoutedEventArgs e)
         {
-            // compile text
-            XenonCompiler compiler = new XenonCompiler();
-            _proj = compiler.Compile(TbInput.Text, Assets);
 
-            SlideRenderer sr = new SlideRenderer(_proj);
+            string text = TbInput.Text;
 
-
-            slides.Clear();
-            for (int i = 0; i < _proj.Slides.Count; i++)
+            await Task.Run(() =>
             {
-                slides.Add(sr.RenderSlide(i));
-            }
+
+                // compile text
+                XenonCompiler compiler = new XenonCompiler();
+                _proj = compiler.Compile(text, Assets);
+
+                SlideRenderer sr = new SlideRenderer(_proj);
+
+
+                slides.Clear();
+                for (int i = 0; i < _proj.Slides.Count; i++)
+                {
+                    slides.Add(sr.RenderSlide(i));
+                }
+            });
 
             slidelist.Children.Clear();
             slidepreviews.Clear();
@@ -158,14 +165,17 @@ namespace SlideCreater
             TbInput.CaretIndex = newindex;
         }
 
-        private void ExportSlides(object sender, RoutedEventArgs e)
+        private async void ExportSlides(object sender, RoutedEventArgs e)
         {
             SaveFileDialog ofd = new SaveFileDialog();
             ofd.Title = "Select Output Folder";
             ofd.FileName = "Slide";
             if (ofd.ShowDialog() == true)
             {
-                SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj);
+                await Task.Run(() =>
+                {
+                    SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj);
+                });
             }
         }
     }
