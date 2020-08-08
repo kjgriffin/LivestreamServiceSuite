@@ -205,7 +205,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 ImgPresetSplit.Source = null;
             }
         }
-        
+
         public void ForcePresetTieDSK1(bool show)
         {
             if (show)
@@ -287,14 +287,44 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
 
 
-        public void SetFTB(bool black)
+        public async void SetFTB(bool black)
         {
             if (black)
             {
+                ProgramFTB.Opacity = 0;
                 ProgramFTB.Visibility = Visibility.Visible;
+                var fadein = new DoubleAnimation()
+                {
+                    From = 0,
+                    To = 1,
+                    Duration = TimeSpan.FromSeconds(1)
+                };
+                Storyboard.SetTarget(fadein, ProgramFTB);
+                Storyboard.SetTargetProperty(fadein, new PropertyPath(Image.OpacityProperty));
+                var sb = new Storyboard();
+                sb.Children.Add(fadein);
+                sb.Begin();
+                await Task.Delay(1000);
+                sb.Stop();
+                ProgramFTB.Opacity = 1;
             }
             else
             {
+                ProgramFTB.Opacity = 1;
+                ProgramFTB.Visibility = Visibility.Visible;
+                var fadeout = new DoubleAnimation()
+                {
+                    From = 1,
+                    To = 0,
+                    Duration = TimeSpan.FromSeconds(1)
+                };
+                Storyboard.SetTarget(fadeout, ProgramFTB);
+                Storyboard.SetTargetProperty(fadeout, new PropertyPath(Image.OpacityProperty));
+                var sb = new Storyboard();
+                sb.Children.Add(fadeout);
+                sb.Begin();
+                await Task.Delay(1000);
+                sb.Stop();
                 ProgramFTB.Visibility = Visibility.Hidden;
             }
         }

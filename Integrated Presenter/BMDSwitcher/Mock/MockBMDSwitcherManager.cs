@@ -150,10 +150,11 @@ namespace Integrated_Presenter.BMDSwitcher
             SwitcherStateChanged?.Invoke(_state);
         }
 
-        public void PerformToggleFTB()
+        public async void PerformToggleFTB()
         {
             _state.FTB = !_state.FTB;
             mockMultiviewer.SetFTB(_state.FTB);
+            await Task.Delay(1000);
             SwitcherStateChanged?.Invoke(_state);
         }
 
