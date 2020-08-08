@@ -32,5 +32,30 @@ namespace Integrated_Presenter.BMDSwitcher
             FTB = false;
         }
 
+        public bool IsDifferentShot(BMDSwitcherState oldstate)
+        {
+            // for now only look at program output
+            if (this.ProgramID != oldstate.ProgramID)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public BMDSwitcherState Copy()
+        {
+            return new BMDSwitcherState() { 
+                PresetID = this.PresetID,
+                ProgramID = this.ProgramID,
+                USK1OnAir = this.USK1OnAir,
+                DSK1OnAir = this.DSK1OnAir,
+                DSK1Tie = this.DSK1Tie,
+                DSK2OnAir = this.DSK2OnAir,
+                DSK2Tie = this.DSK2Tie,
+                FTB = this.FTB
+            };
+
+        }
+
     }
 }

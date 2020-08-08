@@ -68,18 +68,30 @@ namespace Integrated_Presenter.BMDSwitcher
             }
         }
 
+        public void FadeDSK2(bool onair)
+        {
+            if (onair)
+            {
+                multiviewerWindow.FadeInProgramDSK2();
+            }
+            else
+            {
+                multiviewerWindow.FadeOutProgramDSK2();
+            }
+        }
+
         public BMDSwitcherState PerformAutoTransition(BMDSwitcherState state)
         {
             // take all tied keyers
             if (state.DSK1Tie)
             {
                 state.DSK1OnAir = !state.DSK1OnAir;
-                SetDSK1(state.DSK1OnAir);
+                FadeDSK1(state.DSK1OnAir);
             }
             if (state.DSK2Tie)
             {
                 state.DSK2OnAir = !state.DSK2OnAir;
-                SetDSK2(state.DSK2OnAir);
+                FadeDSK2(state.DSK2OnAir);
             }
 
             // swap sources

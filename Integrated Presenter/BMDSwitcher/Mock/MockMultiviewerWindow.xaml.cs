@@ -179,12 +179,60 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             DSK2 = true;
             ImgProgramSplit.Source = ImgSlide.Source;
         }
+        public async void FadeInProgramDSK2()
+        {
+            ImgProgramSplit.Source = ImgSlide.Source;
+            if (DSK2 != true)
+            {
+                ImgProgramSplit.Opacity = 0;
+                var fadein = new DoubleAnimation()
+                {
+                    From = 0,
+                    To = 1,
+                    Duration = TimeSpan.FromSeconds(1)
+                };
+                Storyboard.SetTarget(fadein, ImgProgramSplit);
+                Storyboard.SetTargetProperty(fadein, new PropertyPath(Image.OpacityProperty));
+                var sb = new Storyboard();
+                sb.Children.Add(fadein);
+                sb.Begin();
+                await Task.Delay(1000);
+                ImgProgramSplit.Opacity = 1;
+                sb.Stop();
+            }
+            DSK2 = true;
+        }
+
 
         public void HideProgramDSK2()
         {
             DSK2 = false;
             ImgProgramSplit.Source = null;
         }
+
+        public async void FadeOutProgramDSK2()
+        {
+            if (DSK2 != false)
+            {
+                var fadeout = new DoubleAnimation()
+                {
+                    From = 1,
+                    To = 0,
+                    Duration = TimeSpan.FromSeconds(1)
+                };
+                Storyboard.SetTarget(fadeout, ImgProgramSplit);
+                Storyboard.SetTargetProperty(fadeout, new PropertyPath(Image.OpacityProperty));
+                var sb = new Storyboard();
+                sb.Children.Add(fadeout);
+                sb.Begin();
+                await Task.Delay(1000);
+                ImgProgramSplit.Source = null;
+                sb.Stop();
+            }
+            DSK2 = false;
+            ImgProgramSplit.Source = null;
+        }
+
 
 
         public void SetFTB(bool black)

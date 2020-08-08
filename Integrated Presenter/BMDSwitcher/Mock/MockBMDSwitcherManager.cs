@@ -100,14 +100,14 @@ namespace Integrated_Presenter.BMDSwitcher
         public void PerformAutoOffAirDSK2()
         {
             _state.DSK2OnAir = false;
-            mockMultiviewer.SetDSK2(false);
+            mockMultiviewer.FadeDSK2(false);
             SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformAutoOnAirDSK2()
         {
             _state.DSK2OnAir = true;
-            mockMultiviewer.SetDSK2(true);
+            mockMultiviewer.FadeDSK2(true);
             SwitcherStateChanged?.Invoke(_state);
         }
 
@@ -119,9 +119,12 @@ namespace Integrated_Presenter.BMDSwitcher
             SwitcherStateChanged?.Invoke(_state);
         }
 
-        public void PerformTakeAutoDSK2()
+        public async void PerformTakeAutoDSK2()
         {
-            PerformToggleDSK2();
+            _state.DSK2OnAir = !_state.DSK2OnAir;
+            mockMultiviewer.FadeDSK2(_state.DSK2OnAir);
+            await Task.Delay(1000);
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformTieDSK1()

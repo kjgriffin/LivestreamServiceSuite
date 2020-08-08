@@ -29,6 +29,9 @@ namespace Integrated_Presenter
 
 
         Timer system_second_timer = new Timer();
+        Timer shot_clock_timer = new Timer();
+        TimeSpan timeonshot = TimeSpan.Zero;
+        TimeSpan warnShottime = new TimeSpan(0, 2, 30);
         public MainWindow()
         {
             DataContext = this;
@@ -40,9 +43,38 @@ namespace Integrated_Presenter
             UpdateDriveButtonStyle();
 
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
+
             system_second_timer.Elapsed += System_second_timer_Elapsed;
             system_second_timer.Interval = 1000;
             system_second_timer.Start();
+
+
+            _lastState.SetDefault();
+            shot_clock_timer.Elapsed += Shot_clock_timer_Elapsed;
+            shot_clock_timer.Interval = 1000;
+
+        }
+
+        private void Shot_clock_timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            timeonshot = timeonshot.Add(new TimeSpan(0, 0, 1));
+            TbShotClock.Dispatcher.Invoke(() =>
+            {
+                UpdateShotClock();
+            });
+        }
+
+        private void UpdateShotClock()
+        {
+            if (timeonshot > warnShottime)
+            {
+                TbShotClock.Foreground = Brushes.Red;
+            }
+            else
+            {
+                TbShotClock.Foreground = Brushes.Orange;
+            }
+            TbShotClock.Text = timeonshot.ToString("mm\\:ss");
         }
 
         private void System_second_timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -81,6 +113,10 @@ namespace Integrated_Presenter
                 switcherManager = new BMDSwitcherManager(this);
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
                 switcherManager.TryConnect(connectWindow.IP);
+                if (!shot_clock_timer.Enabled)
+                {
+                    shot_clock_timer.Start();
+                }
             }
         }
 
@@ -89,6 +125,10 @@ namespace Integrated_Presenter
             switcherManager = new MockBMDSwitcherManager(this);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.TryConnect("localhost");
+            if (!shot_clock_timer.Enabled)
+            {
+                shot_clock_timer.Start();
+            }
         }
 
         private void TakeAutoTransition()
@@ -100,10 +140,19 @@ namespace Integrated_Presenter
             switcherManager?.PerformCutTransition();
         }
 
+
+        BMDSwitcherState _lastState = new BMDSwitcherState();
         private void SwitcherManager_SwitcherStateChanged(BMDSwitcherState args)
         {
+            // update shot clock
+            if (args.IsDifferentShot(_lastState))
+            {
+                timeonshot = TimeSpan.Zero;
+                UpdateShotClock();
+            }
             // update ui
             switcherState = args;
+            _lastState = switcherState.Copy();
             UpdateSwitcherUI();
         }
 
