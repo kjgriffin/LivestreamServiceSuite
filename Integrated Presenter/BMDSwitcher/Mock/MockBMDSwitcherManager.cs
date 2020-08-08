@@ -88,6 +88,7 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             _state.DSK1OnAir = !_state.DSK1OnAir;
             mockMultiviewer.SetDSK1(_state.DSK1OnAir);
+            mockMultiviewer.SetTieDSK1(_state.DSK1Tie);
             SwitcherStateChanged?.Invoke(_state);
         }
 
@@ -147,6 +148,7 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             _state.DSK2OnAir = !_state.DSK2OnAir;
             mockMultiviewer.SetDSK2(_state.DSK2OnAir);
+            mockMultiviewer.SetTieDSK2(_state.DSK2Tie);
             SwitcherStateChanged?.Invoke(_state);
         }
 
