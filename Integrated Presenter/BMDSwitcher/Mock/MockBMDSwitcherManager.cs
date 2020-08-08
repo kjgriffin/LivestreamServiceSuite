@@ -52,11 +52,13 @@ namespace Integrated_Presenter.BMDSwitcher
             {
                 _state.DSK1OnAir = !_state.DSK1OnAir;
                 mockMultiviewer.SetDSK1(_state.DSK1OnAir);
+                mockMultiviewer.SetTieDSK1(_state.DSK1Tie);
             }
             if (_state.DSK2Tie)
             {
                 _state.DSK2OnAir = !_state.DSK2OnAir;
                 mockMultiviewer.SetDSK2(_state.DSK2OnAir);
+                mockMultiviewer.SetTieDSK2(_state.DSK2Tie);
             }
             long presetid = _state.PresetID;
             long programid = _state.ProgramID;
@@ -130,12 +132,14 @@ namespace Integrated_Presenter.BMDSwitcher
         public void PerformTieDSK1()
         {
             _state.DSK1Tie = !_state.DSK1Tie;
+            mockMultiviewer.SetTieDSK1(_state.DSK1Tie);
             SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformTieDSK2()
         {
             _state.DSK2Tie = !_state.DSK2Tie;
+            mockMultiviewer.SetTieDSK2(_state.DSK2Tie);
             SwitcherStateChanged?.Invoke(_state);
         }
 

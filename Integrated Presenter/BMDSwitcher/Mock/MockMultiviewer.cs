@@ -32,6 +32,16 @@ namespace Integrated_Presenter.BMDSwitcher
             multiviewerWindow.SetPreviewSource(inputID);
         }
 
+        public void SetTieDSK1(bool tie)
+        {
+            multiviewerWindow.ShowPresetTieDSK1(tie);
+        }
+
+        public void SetTieDSK2(bool tie)
+        {
+            multiviewerWindow.ShowPresetTieDSK2(tie);
+        }
+
         public void SetDSK1(bool onair)
         {
             if (onair)
@@ -87,11 +97,13 @@ namespace Integrated_Presenter.BMDSwitcher
             {
                 state.DSK1OnAir = !state.DSK1OnAir;
                 FadeDSK1(state.DSK1OnAir);
+                multiviewerWindow.ForcePresetTieDSK1(state.DSK1Tie && !state.DSK1OnAir);
             }
             if (state.DSK2Tie)
             {
                 state.DSK2OnAir = !state.DSK2OnAir;
                 FadeDSK2(state.DSK2OnAir);
+                multiviewerWindow.ForcePresetTieDSK2(state.DSK2Tie && !state.DSK2OnAir);
             }
 
             // swap sources

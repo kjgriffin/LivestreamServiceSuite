@@ -121,6 +121,19 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             ImgProgramLowerThird.Opacity = 1;
         }
 
+        public void ShowPresetTieDSK1(bool tie)
+        {
+            // only show if dsk1 not on air
+            if (!DSK1 && tie)
+            {
+                ImgPresetLowerThird.Source = ImgSlide.Source;
+            }
+            else
+            {
+                ImgPresetLowerThird.Source = null;
+            }
+        }
+
         public async void FadeInProgramDSK1()
         {
             ImgProgramLowerThird.Source = ImgSlide.Source;
@@ -179,6 +192,45 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             DSK2 = true;
             ImgProgramSplit.Source = ImgSlide.Source;
         }
+
+        public void ShowPresetTieDSK2(bool tie)
+        {
+            // only show if dsk2 not on air
+            if (!DSK2 && tie)
+            {
+                ImgPresetSplit.Source = ImgSlide.Source;
+            }
+            else
+            {
+                ImgPresetSplit.Source = null;
+            }
+        }
+        
+        public void ForcePresetTieDSK1(bool show)
+        {
+            if (show)
+            {
+                ImgPresetLowerThird.Source = ImgSlide.Source;
+            }
+            else
+            {
+                ImgPresetLowerThird.Source = null;
+            }
+        }
+
+        public void ForcePresetTieDSK2(bool show)
+        {
+            if (show)
+            {
+                ImgPresetSplit.Source = ImgSlide.Source;
+            }
+            else
+            {
+                ImgPresetSplit.Source = null;
+            }
+        }
+
+
         public async void FadeInProgramDSK2()
         {
             ImgProgramSplit.Source = ImgSlide.Source;

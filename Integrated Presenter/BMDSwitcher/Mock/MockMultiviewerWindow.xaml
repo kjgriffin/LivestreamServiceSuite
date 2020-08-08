@@ -23,6 +23,27 @@
             <Grid>
                 <Image Name="ImgPreset" Panel.ZIndex="2"></Image>
                 <Image Name="ImgPreset_pgmbgnd" Panel.ZIndex="1"></Image>
+                <Viewbox Panel.ZIndex="3">
+                    <Image Name="ImgPresetLowerThird" Stretch="None">
+                        <Image.RenderTransform>
+                            <TranslateTransform X="0" Y="0"></TranslateTransform>
+                        </Image.RenderTransform>
+                        <Image.Clip>
+                            <RectangleGeometry Rect="0 816 1920 1296"></RectangleGeometry>
+                        </Image.Clip>
+                    </Image>
+                </Viewbox>
+                <Viewbox Panel.ZIndex="4">
+                    <Image Name="ImgPresetSplit" Stretch="None">
+                        <Image.RenderTransform>
+                            <TranslateTransform X="0" Y="0"></TranslateTransform>
+                        </Image.RenderTransform>
+                        <Image.Clip>
+                            <RectangleGeometry Rect="960 0 1920 1080"></RectangleGeometry>
+                        </Image.Clip>
+                    </Image>
+                </Viewbox>
+
             </Grid>
         </Border>
         <Border Background="Black" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" BorderBrush="Red" BorderThickness="2,2,2,2">
@@ -45,7 +66,7 @@
                             <TranslateTransform X="0" Y="0"></TranslateTransform>
                         </Image.RenderTransform>
                         <Image.Clip>
-                            <RectangleGeometry Rect="960 0 1920 1080"></RectangleGeometry> 
+                            <RectangleGeometry Rect="960 0 1920 1080"></RectangleGeometry>
                         </Image.Clip>
                     </Image>
                 </Viewbox>
