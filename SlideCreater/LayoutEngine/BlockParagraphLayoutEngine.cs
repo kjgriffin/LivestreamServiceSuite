@@ -16,6 +16,8 @@ namespace SlideCreater.LayoutEngine
             Graphics gfx = Graphics.FromImage(layoutbmp);
             StringFormat sf = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Near };
 
+            List<string> illegalLinestarts = new List<string>() { "!", "?", ":", "-", ".", ",", ";" };
+
             int startwords = 0;
 
             while (startwords < words.Count)
@@ -31,7 +33,17 @@ namespace SlideCreater.LayoutEngine
                     measure = gfx.MeasureString(string.Join("", linewords), font);
                 }
                 // this many words fit into the sentence
-                res.Add((linewords.Take(wordcount-1).ToList(), measure.Width, measure.Height, startwords == 0, wordcount - 1 == words.Count));
+
+                // prevent starting new lines from 
+                if (startwords + wordcount <= words.Count)
+                {
+                    if (illegalLinestarts.Contains(words[startwords + wordcount - 1]))
+                    {
+                        wordcount -= 1;
+                    }
+                }
+
+                res.Add((linewords.Take(wordcount - 1).ToList(), measure.Width, measure.Height, startwords == 0, wordcount - 1 == words.Count));
 
                 startwords += wordcount - 1;
             }
