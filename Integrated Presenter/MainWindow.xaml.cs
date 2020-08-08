@@ -278,7 +278,7 @@ namespace Integrated_Presenter
 
         private void UpdateUSK1Styles()
         {
-            BtnUSK1OnOffAir.Background = (switcherState.USK1OnAir ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            //BtnUSK1OnOffAir.Background = (switcherState.USK1OnAir ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
         }
 
         private void UpdateDSK1Styles()
