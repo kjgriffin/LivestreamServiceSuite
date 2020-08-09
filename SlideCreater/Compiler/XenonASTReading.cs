@@ -13,7 +13,7 @@ namespace SlideCreater.Compiler
         public string Name { get; set; }
         public string Reference { get; set; }
 
-        public void Generate(Project project)
+        public void Generate(Project project, IXenonASTElement _Parent)
         {
             Slide readingslide = new Slide();
             readingslide.Name = "UNNAMED_reading";

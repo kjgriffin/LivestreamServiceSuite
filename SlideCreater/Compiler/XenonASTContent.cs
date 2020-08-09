@@ -10,7 +10,7 @@ namespace SlideCreater.Compiler
     {
         public string TextContent { get; set; }
 
-        public void Generate(Project project)
+        public void Generate(Project project, IXenonASTElement _Parent)
         {
             throw new NotImplementedException();
         }

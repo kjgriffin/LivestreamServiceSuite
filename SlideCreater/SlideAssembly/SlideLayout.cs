@@ -43,5 +43,15 @@ namespace SlideCreater.SlideAssembly
             MainLine = new Rectangle(0, 70, 1820, 140)
         };
 
+        public TextHymnLayout TextHymnLayout { get; set; } = new TextHymnLayout()
+        {
+            Size = new Size(1920, 1080),
+            NameBox = new Rectangle(576, 0, 768, 162),
+            TitleBox = new Rectangle(0, 0, 576, 162),
+            NumberBox = new Rectangle(1344, 0, 576, 162),
+            CopyrightBox = new Rectangle(0, 1026, 1920, 54),
+            TextBox = new Rectangle(0, 162, 1920, 864)
+        };
+
     }
 }

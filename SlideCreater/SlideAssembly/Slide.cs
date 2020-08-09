@@ -13,5 +13,6 @@ namespace SlideCreater.SlideAssembly
         public MediaType MediaType {get; set;}
         public string Asset { get; set; }
         public List<SlideLine> Lines { get; set; } = new List<SlideLine>();
+        public Dictionary<string, object> Data { get; set; } = new Dictionary<string, object>();
     }
 }

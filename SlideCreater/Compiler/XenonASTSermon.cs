@@ -11,7 +11,7 @@ namespace SlideCreater.Compiler
 
         public string Title { get; set; }
         public string Reference { get; set; }
-        public void Generate(Project project)
+        public void Generate(Project project, IXenonASTElement _Parent)
         {
             Slide sermonslide = new Slide();
             sermonslide.Name = "UNNAMED_sermon";

@@ -133,7 +133,7 @@ namespace SlideCreater.Compiler
             return m.Success;
         }
 
-        
+
         /// <summary>
         /// View the current token without consuming it
         /// </summary>
@@ -177,6 +177,21 @@ namespace SlideCreater.Compiler
         public string Consume()
         {
             return _tokens[_tokenpos++];
+        }
+
+        /// <summary>
+        /// Returns a compound string of all tokens until the current token matches the test
+        /// </summary>
+        /// <param name="test">A regex test pattern</param>
+        /// <returns></returns>
+        public string ConsumeUntil(string test)
+        {
+            StringBuilder sb = new StringBuilder();
+            while(!Inspect(test))
+            {
+                sb.Append(Consume());
+            }
+            return sb.ToString();
         }
 
         /// <summary>

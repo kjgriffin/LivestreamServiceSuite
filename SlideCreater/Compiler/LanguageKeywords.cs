@@ -18,6 +18,8 @@ namespace SlideCreater.Compiler
             [LanguageKeywordCommand.Liturgy] = "liturgy", 
             [LanguageKeywordCommand.Reading] = "reading", 
             [LanguageKeywordCommand.Sermon] = "sermon", 
+            [LanguageKeywordCommand.TextHymn] = "texthymn", 
+            [LanguageKeywordCommand.Verse] = "verse", 
         };
 
 
@@ -34,6 +36,8 @@ namespace SlideCreater.Compiler
         Liturgy,
         Reading,
         Sermon,
+        TextHymn,
+        Verse,
     }
 
 }

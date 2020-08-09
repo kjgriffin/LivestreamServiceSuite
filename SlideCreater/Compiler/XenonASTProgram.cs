@@ -11,11 +11,11 @@ namespace SlideCreater.Compiler
 
         public List<XenonASTExpression> Expressions { get; set; } = new List<XenonASTExpression>();
 
-        public void Generate(Project project)
+        public void Generate(Project project, IXenonASTElement _Parent)
         {
             foreach (var item in Expressions)
             {
-                item.Generate(project);    
+                item.Generate(project, this);    
             }
         }
 

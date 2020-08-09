@@ -13,7 +13,7 @@ namespace SlideCreater.Compiler
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
 
-        public void Generate(Project project)
+        public void Generate(Project project, IXenonASTElement _Parent)
         {
 
             //liturgyslide.Lines = Content.Select(p => new SlideLine { Content = new List<string> { p.TextContent } }).ToList();

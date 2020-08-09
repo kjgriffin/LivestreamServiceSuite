@@ -10,7 +10,7 @@ namespace SlideCreater.Compiler
     {
 
         public string AssetName { get; set; }
-        public void Generate(Project project)
+        public void Generate(Project project, IXenonASTElement _Parent)
         {
             // create a video slide
             Slide videoslide = new Slide();

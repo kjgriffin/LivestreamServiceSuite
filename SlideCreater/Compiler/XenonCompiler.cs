@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Permissions;
 using System.Text;
 using System.Text.Json;
@@ -55,7 +56,7 @@ namespace SlideCreater.Compiler
 
             try
             {
-                p.Generate(proj);
+                p.Generate(proj, null);
             }
             catch (Exception)
             {
@@ -156,6 +157,12 @@ namespace SlideCreater.Compiler
                 expr.Command = Sermon();
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]))
+            {
+                Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]);
+                expr.Command = TextHymn();
+                return expr;
+            }
             else if (Lexer.Inspect("//"))
             {
                 Lexer.Gobble("//");
@@ -166,6 +173,64 @@ namespace SlideCreater.Compiler
             {
                 throw new ArgumentException($"Unexpected Command. Symbol: '{Lexer.Peek()}' is not a recognized command");
             }
+        }
+
+        private IXenonASTCommand TextHymn()
+        {
+            XenonASTTextHymn textHymn = new XenonASTTextHymn();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("(");
+            Lexer.GobbleWhitespace();
+            textHymn.HymnTitle = Lexer.ConsumeUntil(",").Trim();
+            Lexer.Gobble(",");
+            textHymn.HymnName = Lexer.ConsumeUntil(",");
+            Lexer.Gobble(",");
+            textHymn.Tune = Lexer.ConsumeUntil(",");
+            Lexer.Gobble(",");
+            textHymn.Number = Lexer.ConsumeUntil(",");
+            Lexer.Gobble(",");
+            textHymn.CopyrightInfo = Lexer.ConsumeUntil("\\)");
+            Lexer.Gobble(")");
+
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("{");
+            Lexer.GobbleWhitespace();
+
+            while (Lexer.Inspect("#"))
+            {
+                Lexer.Gobble("#");
+                // only valid command at this point (so far) is a verse
+                if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Verse]))
+                {
+                    Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Verse]);
+                    textHymn.Verses.Add(Verse());
+                }
+                Lexer.GobbleWhitespace();
+            }
+
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("}");
+
+
+            return textHymn;
+        }
+
+        private XenonASTHymnVerse Verse()
+        {
+            XenonASTHymnVerse verse = new XenonASTHymnVerse();
+            Lexer.GobbleWhitespace();
+
+            Lexer.Gobble("{");
+
+            while (!Lexer.Inspect("}"))
+            {
+                XenonASTContent content = new XenonASTContent() { TextContent = Lexer.Consume() };
+                verse.Content.Add(content);
+            }
+
+            Lexer.Gobble("}");
+
+            return verse;
         }
 
         private IXenonASTCommand Sermon()

@@ -9,7 +9,7 @@ namespace SlideCreater.Compiler
     class XenonASTLiturgyImage : IXenonASTCommand
     {
         public string AssetName { get; set; }
-        public void Generate(Project project)
+        public void Generate(Project project, IXenonASTElement _Parent)
         {
             // create a liturgy image slide
             Slide imageslide = new Slide();

@@ -10,9 +10,9 @@ namespace SlideCreater.Compiler
     {
         public IXenonASTCommand Command { get; set; }
 
-        public void Generate(Project project)
+        public void Generate(Project project, IXenonASTElement _Parent)
         {
-            Command?.Generate(project);
+            Command?.Generate(project, _Parent);
         }
 
         public void GenerateDebug(Project project)

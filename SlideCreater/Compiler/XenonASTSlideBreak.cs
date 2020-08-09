@@ -8,7 +8,7 @@ namespace SlideCreater.Compiler
 {
     class XenonASTSlideBreak : IXenonASTCommand
     {
-        public void Generate(Project project)
+        public void Generate(Project project, IXenonASTElement _Parent)
         {
 
         }
