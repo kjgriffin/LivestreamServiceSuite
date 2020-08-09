@@ -18,7 +18,6 @@ namespace SlideCreater.Renderer
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = slide.Asset;
-            res.RenderedAs = "Full";
 
             Bitmap sourceimage;
             try
@@ -33,14 +32,17 @@ namespace SlideCreater.Renderer
             if (slide.Format == SlideFormat.UnscaledImage)
             {
                 res.Bitmap = RenderUnscaled(sourceimage);
+                res.RenderedAs = "Full";
             }
             else if (slide.Format == SlideFormat.ScaledImage)
             {
                 res.Bitmap = RenderUniformScale(sourceimage);
+                res.RenderedAs = "Full";
             }
             else if (slide.Format == SlideFormat.LiturgyImage)
             {
                 res.Bitmap = RenderLiturgyImage(sourceimage);
+                res.RenderedAs = "Liturgy";
             }
 
             return res;
