@@ -33,37 +33,14 @@ namespace SlideCreater.Renderer
                 case PrefabSlides.Copyright:
                     src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/copyright.PNG")).ConvertToBitmap();
                     break;
-                case PrefabSlides.ViewSeries:
-                    src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/series.PNG")).ConvertToBitmap();
-                    break;
                 case PrefabSlides.ViewServices:
                     src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/services.PNG")).ConvertToBitmap();
                     break;
+                case PrefabSlides.ViewSeries:
+                    src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/series.PNG")).ConvertToBitmap();
+                    break;
             }
 
-            if (src != null)
-            {
-                gfx.DrawImage(src, new Rectangle(new Point(0, 0), Layouts.PrefabLayout.Size));
-            }
-
-            res.Bitmap = bmp;
-            return res;
-        }
-    }
-}
-            }
-
-            if (src != null)
-            {
-                gfx.DrawImage(src, new Rectangle(new Point(0, 0), Layouts.PrefabLayout.Size));
-            }
-
-            res.Bitmap = bmp;
-            return res;
-        }
-    }
-}
-            }
 
             if (src != null)
             {
