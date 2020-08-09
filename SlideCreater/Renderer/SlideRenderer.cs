@@ -16,6 +16,7 @@ namespace SlideCreater.Renderer
         VideoSlideRenderer vsr = new VideoSlideRenderer();
         ImageSlideRenderer isr = new ImageSlideRenderer();
         ReadingSlideRenderer rsr = new ReadingSlideRenderer();
+        SermonTitleSlideRenderer ssr = new SermonTitleSlideRenderer();
 
         public SlideRenderer(Project proj)
         {
@@ -23,6 +24,7 @@ namespace SlideCreater.Renderer
             lsr.Layouts = proj.Layouts;
             isr.Layout = proj.Layouts;
             rsr.Layouts = proj.Layouts;
+            ssr.Layouts = proj.Layouts;
         }
 
         public RenderedSlide RenderSlide(int slidenum)
@@ -52,6 +54,8 @@ namespace SlideCreater.Renderer
                     return isr.RenderImageSlide(slide);
                 case SlideFormat.Reading:
                     return rsr.RenderSlide(_project.Layouts.ReadingLayout.GetRenderInfo(), slide);
+                case SlideFormat.SermonTitle:
+                    return ssr.RenderSlide(_project.Layouts.SermonLayout.GetRenderInfo(), slide);
                 default:
                     return RenderedSlide.Default();
             }

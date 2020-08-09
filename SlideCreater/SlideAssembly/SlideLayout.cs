@@ -32,5 +32,16 @@ namespace SlideCreater.SlideAssembly
             Key = new Rectangle(0, 864, 1920, 216),
             TextAera = new Rectangle(50, 3, 1820, 210)
         };
+
+        public SermonTitleLayout SermonLayout { get; set; } = new SermonTitleLayout()
+        {
+            Size = new Size(1920, 1080),
+            Font = new Font("Arial", 36, FontStyle.Regular),
+            Key = new Rectangle(0, 864, 1920, 216),
+            TextAera = new Rectangle(50, 3, 1820, 210),
+            TopLine = new Rectangle(0, 20, 1820, 70),
+            MainLine = new Rectangle(0, 70, 1820, 140)
+        };
+
     }
 }

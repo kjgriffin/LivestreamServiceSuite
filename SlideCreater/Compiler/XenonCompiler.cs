@@ -53,10 +53,15 @@ namespace SlideCreater.Compiler
             proj.Assets = assets;
 
 
-            p.GenerateDebug(proj);
-
-
-            p.Generate(proj);
+            try
+            {
+                p.Generate(proj);
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine("Generation Failed");
+                p.GenerateDebug(proj);
+            }
 
 
 
@@ -145,6 +150,12 @@ namespace SlideCreater.Compiler
                 expr.Command = Reading();
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Sermon]))
+            {
+                Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Sermon]);
+                expr.Command = Sermon();
+                return expr;
+            }
             else if (Lexer.Inspect("//"))
             {
                 Lexer.Gobble("//");
@@ -155,6 +166,28 @@ namespace SlideCreater.Compiler
             {
                 throw new ArgumentException($"Unexpected Command. Symbol: '{Lexer.Peek()}' is not a recognized command");
             }
+        }
+
+        private IXenonASTCommand Sermon()
+        {
+            XenonASTSermon sermon = new XenonASTSermon();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("(");
+            StringBuilder sb = new StringBuilder();
+            while (!Lexer.Inspect(","))
+            {
+                sb.Append(Lexer.Consume());
+            }
+            sermon.Title = sb.ToString().Trim();
+            sb.Clear();
+            Lexer.Gobble(",");
+            while (!Lexer.Inspect("\\)"))
+            {
+                sb.Append(Lexer.Consume());
+            }
+            sermon.Reference = sb.ToString().Trim();
+            Lexer.Gobble(")");
+            return sermon;
         }
 
         private IXenonASTCommand Reading()
@@ -234,7 +267,7 @@ namespace SlideCreater.Compiler
             Lexer.GobbleWhitespace();
             Lexer.Gobble("(");
             StringBuilder sb = new StringBuilder();
-            while(!Lexer.Inspect("\\)"))
+            while (!Lexer.Inspect("\\)"))
             {
                 sb.Append(Lexer.Consume());
             }
