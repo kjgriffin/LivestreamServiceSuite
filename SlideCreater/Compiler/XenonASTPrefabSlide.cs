@@ -10,6 +10,8 @@ namespace SlideCreater.Compiler
         Copyright,
         ViewServices,
         ViewSeries,
+        ApostlesCreed,
+        LordsPrayer,
     }
 
     class XenonASTPrefabSlide : IXenonASTCommand

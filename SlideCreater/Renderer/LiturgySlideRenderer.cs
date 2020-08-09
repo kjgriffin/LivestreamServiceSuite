@@ -59,7 +59,7 @@ namespace SlideCreater.Renderer
             foreach (var line in slide.Lines)
             {
                 bool drawspeaker = false;
-                if (line.Content[0].Data != lastspeaker)
+                if (line.Content[0].Data != lastspeaker && line.Content[0].Data != "$")
                 {
                     drawspeaker = true;
                 }

@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ImageResources\apostlescreed.PNG" />
     <None Remove="ImageResources\copyright.PNG" />
+    <None Remove="ImageResources\lordsprayer.PNG" />
     <None Remove="ImageResources\series.PNG" />
     <None Remove="ImageResources\services.PNG" />
   </ItemGroup>
@@ -17,6 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="ImageResources\apostlescreed.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ImageResources\lordsprayer.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="ImageResources\series.PNG">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

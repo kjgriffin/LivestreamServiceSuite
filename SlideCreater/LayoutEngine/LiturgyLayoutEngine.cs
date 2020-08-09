@@ -53,7 +53,8 @@ namespace SlideCreater.LayoutEngine
             "P",
             "A",
             "L",
-            "C"
+            "C",
+            "$",
         };
 
         public void BuildLines(List<string> words)

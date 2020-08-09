@@ -181,6 +181,18 @@ namespace SlideCreater.Compiler
                 expr.Command = PrefabSlide(PrefabSlides.ViewSeries);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.ApostlesCreed]))
+            {
+                Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.ApostlesCreed]);
+                expr.Command = PrefabSlide(PrefabSlides.ApostlesCreed);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LordsPrayer]))
+            {
+                Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.LordsPrayer]);
+                expr.Command = PrefabSlide(PrefabSlides.LordsPrayer);
+                return expr;
+            }
             else if (Lexer.Inspect("//"))
             {
                 Lexer.Gobble("//");

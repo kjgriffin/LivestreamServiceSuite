@@ -39,7 +39,14 @@ namespace SlideCreater.Renderer
                 case PrefabSlides.ViewSeries:
                     src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/series.PNG")).ConvertToBitmap();
                     break;
+                case PrefabSlides.ApostlesCreed:
+                    src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/apostlescreed.PNG")).ConvertToBitmap();
+                    break;
+                case PrefabSlides.LordsPrayer:
+                    src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/lordsprayer.PNG")).ConvertToBitmap();
+                    break;
             }
+
 
 
             if (src != null)

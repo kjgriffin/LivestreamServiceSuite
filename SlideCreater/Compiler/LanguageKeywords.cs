@@ -23,6 +23,8 @@ namespace SlideCreater.Compiler
             [LanguageKeywordCommand.Copyright] = "copyright", 
             [LanguageKeywordCommand.ViewServices] = "viewservices", 
             [LanguageKeywordCommand.ViewSeries] = "viewseries", 
+            [LanguageKeywordCommand.ApostlesCreed] = "apostlescreed", 
+            [LanguageKeywordCommand.LordsPrayer] = "lordsprayer", 
         };
 
 
@@ -44,6 +46,8 @@ namespace SlideCreater.Compiler
         Copyright,
         ViewServices,
         ViewSeries,
+        ApostlesCreed,
+        LordsPrayer,
     }
 
 }
