@@ -15,6 +15,7 @@ namespace SlideCreater.SlideAssembly
         SermonTitle,
         FullText,
         HymnTextVerse,
+        Prefab,
 
 
     }

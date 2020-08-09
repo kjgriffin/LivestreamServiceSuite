@@ -163,6 +163,24 @@ namespace SlideCreater.Compiler
                 expr.Command = TextHymn();
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Copyright]))
+            {
+                Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Copyright]);
+                expr.Command = PrefabSlide(PrefabSlides.Copyright);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.ViewServices]))
+            {
+                Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.ViewServices]);
+                expr.Command = PrefabSlide(PrefabSlides.ViewServices);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.ViewSeries]))
+            {
+                Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.ViewSeries]);
+                expr.Command = PrefabSlide(PrefabSlides.ViewSeries);
+                return expr;
+            }
             else if (Lexer.Inspect("//"))
             {
                 Lexer.Gobble("//");
@@ -173,6 +191,11 @@ namespace SlideCreater.Compiler
             {
                 throw new ArgumentException($"Unexpected Command. Symbol: '{Lexer.Peek()}' is not a recognized command");
             }
+        }
+
+        private IXenonASTCommand PrefabSlide(PrefabSlides type)
+        {
+            return new XenonASTPrefabSlide() { PrefabSlide = type };
         }
 
         private IXenonASTCommand TextHymn()

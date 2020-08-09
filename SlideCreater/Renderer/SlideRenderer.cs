@@ -18,6 +18,7 @@ namespace SlideCreater.Renderer
         ReadingSlideRenderer rsr = new ReadingSlideRenderer();
         SermonTitleSlideRenderer ssr = new SermonTitleSlideRenderer();
         HymnTextVerseRenderer hvsr = new HymnTextVerseRenderer();
+        PrefabSlideRenderer psr = new PrefabSlideRenderer();
 
         public SlideRenderer(Project proj)
         {
@@ -27,6 +28,7 @@ namespace SlideCreater.Renderer
             rsr.Layouts = proj.Layouts;
             ssr.Layouts = proj.Layouts;
             hvsr.Layouts = proj.Layouts;
+            psr.Layouts = proj.Layouts;
         }
 
         public RenderedSlide RenderSlide(int slidenum)
@@ -60,6 +62,8 @@ namespace SlideCreater.Renderer
                     return ssr.RenderSlide(_project.Layouts.SermonLayout.GetRenderInfo(), slide);
                 case SlideFormat.HymnTextVerse:
                     return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide);
+                case SlideFormat.Prefab:
+                    return psr.RenderSlide(slide);
                 default:
                     return RenderedSlide.Default();
             }

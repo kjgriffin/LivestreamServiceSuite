@@ -53,5 +53,10 @@ namespace SlideCreater.SlideAssembly
             TextBox = new Rectangle(0, 162, 1920, 864)
         };
 
+        public PrefabLayout PrefabLayout { get; set; } = new PrefabLayout()
+        {
+            Size = new Size(1920, 1080)
+        };
+
     }
 }

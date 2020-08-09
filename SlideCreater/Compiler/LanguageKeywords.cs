@@ -20,6 +20,9 @@ namespace SlideCreater.Compiler
             [LanguageKeywordCommand.Sermon] = "sermon", 
             [LanguageKeywordCommand.TextHymn] = "texthymn", 
             [LanguageKeywordCommand.Verse] = "verse", 
+            [LanguageKeywordCommand.Copyright] = "copyright", 
+            [LanguageKeywordCommand.ViewServices] = "viewservices", 
+            [LanguageKeywordCommand.ViewSeries] = "viewseries", 
         };
 
 
@@ -38,6 +41,9 @@ namespace SlideCreater.Compiler
         Sermon,
         TextHymn,
         Verse,
+        Copyright,
+        ViewServices,
+        ViewSeries,
     }
 
 }
