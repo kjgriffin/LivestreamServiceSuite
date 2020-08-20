@@ -8,97 +8,11 @@
         PreviewKeyDown="WindowKeyDown"
         PreviewKeyUp="WindowKeyUp"
         Background="#3f3f3f"
-        Title="Integrated Presenter" Height="700" Width="1200">
+        Title="Integrated Presenter" Height="600" Width="1200">
     <Window.Resources>
-        <RadialGradientBrush x:Key="RedLight">
-            <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
-            <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
-            <RadialGradientBrush.GradientStops>
-                <GradientStop Color="#FF930505" Offset="1.9"></GradientStop>
-                <GradientStop Color="#FFFFAEAE" Offset="0"></GradientStop>
-            </RadialGradientBrush.GradientStops>
-        </RadialGradientBrush>
-        <RadialGradientBrush x:Key="GrayLight">
-            <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
-            <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
-            <RadialGradientBrush.GradientStops>
-                <GradientStop Color="Black" Offset="2.0"></GradientStop>
-                <GradientStop Color="DarkGray" Offset="0"></GradientStop>
-            </RadialGradientBrush.GradientStops>
-        </RadialGradientBrush>
-        <RadialGradientBrush x:Key="OffLight">
-            <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
-            <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
-            <RadialGradientBrush.GradientStops>
-                <GradientStop Color="Black" Offset="2.0"></GradientStop>
-                <GradientStop Color="Gray" Offset="0"></GradientStop>
-            </RadialGradientBrush.GradientStops>
-        </RadialGradientBrush>
-
-        <RadialGradientBrush x:Key="GreenLight">
-            <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
-            <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
-            <RadialGradientBrush.GradientStops>
-                <GradientStop Color="#096900" Offset="1.9"></GradientStop>
-                <GradientStop Color="#b4ffad" Offset="0"></GradientStop>
-            </RadialGradientBrush.GradientStops>
-        </RadialGradientBrush>
-        <RadialGradientBrush x:Key="YellowLight">
-            <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
-            <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
-            <RadialGradientBrush.GradientStops>
-                <GradientStop Color="#d9d500" Offset="2.0"></GradientStop>
-                <GradientStop Color="#c4c10c" Offset="0.8"></GradientStop>
-                <GradientStop Color="#fffecc" Offset="0"></GradientStop>
-            </RadialGradientBrush.GradientStops>
-        </RadialGradientBrush>
-
-        <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#5f5f5f"></Setter>
-        </Style>
-
-        <Style x:Key="GroupBorder" TargetType="Border">
-            <Setter Property="Background" Value="#2f2f30"></Setter>
-            <Setter Property="Margin" Value="10"></Setter>
-            <Setter Property="Padding" Value="0"></Setter>
-            <Setter Property="CornerRadius" Value="4,4,4,4"></Setter>
-        </Style>
-
-        <Style x:Key="SwitcherButton"  TargetType="{x:Type Button}">
-            <Setter Property="Width" Value="60"></Setter>
-            <Setter Property="Height" Value="60"></Setter>
-            <Setter Property="Margin" Value="10"></Setter>
-            <Setter Property="Background" Value="{StaticResource GrayLight}"></Setter>
-            <Setter Property="IsTabStop" Value="False"></Setter>
-            <Setter Property="Focusable" Value="False"></Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="Black"></Setter>
-                    <Setter Property="BorderThickness" Value="2,2,2,2"></Setter>
-                    <Setter Property="Background" Value="Transparent"></Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="InactiveSwitcherButton"  TargetType="{x:Type Button}">
-            <Setter Property="Width" Value="60"></Setter>
-            <Setter Property="Height" Value="60"></Setter>
-            <Setter Property="Margin" Value="10"></Setter>
-            <Setter Property="Background" Value="{StaticResource OffLight}"></Setter>
-            <Setter Property="IsTabStop" Value="False"></Setter>
-            <Setter Property="Focusable" Value="False"></Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="Black"></Setter>
-                    <Setter Property="BorderThickness" Value="2,2,2,2"></Setter>
-                    <Setter Property="Background" Value="Transparent"></Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
+        
     </Window.Resources>
     <Grid>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="20"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
@@ -116,14 +30,16 @@
                 </MenuItem>
                 <MenuItem Header="View" IsTabStop="False">
                     <MenuItem Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
+                    <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewAdvancedPresentation"></MenuItem>
                 </MenuItem>
             </Menu>
         </Grid>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="*" Name="gcAdvancedPresentation"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Viewbox Stretch="Uniform">
@@ -145,7 +61,7 @@
                                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                         <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="200">
                                             <StackPanel>
-                                                <TextBlock HorizontalAlignment="Center">TIME</TextBlock>
+                                                <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME</TextBlock>
                                                 <Viewbox>
                                                     <TextBlock Name="TbTime" Foreground="Orange">00:00:00</TextBlock>
                                                 </Viewbox>
@@ -153,7 +69,7 @@
                                         </Border>
                                         <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="150">
                                             <StackPanel>
-                                                <TextBlock HorizontalAlignment="Center">TIME ON SHOT</TextBlock>
+                                                <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME ON SHOT</TextBlock>
                                                 <Viewbox>
                                                     <TextBlock Name="TbShotClock" Foreground="Orange">00:00</TextBlock>
                                                 </Viewbox>
@@ -165,7 +81,7 @@
                                 <Grid Grid.Row="1">
                                     <Border Style="{StaticResource GroupBorder}">
                                         <StackPanel>
-                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0">PRESET</TextBlock>
+                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PRESET</TextBlock>
                                             <StackPanel Orientation="Horizontal">
                                                 <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton}">PULPIT</Button>
                                                 <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton}">CENTER</Button>
@@ -182,7 +98,7 @@
                                 <Grid Grid.Row="2">
                                     <Border Style="{StaticResource GroupBorder}">
                                         <StackPanel>
-                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0">PROGRAM</TextBlock>
+                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PROGRAM</TextBlock>
                                             <StackPanel Orientation="Horizontal">
                                                 <Button Name="BtnProgram1" Click="ClickProgram1" Style="{StaticResource SwitcherButton}">PULPIT</Button>
                                                 <Button Name="BtnProgram2" Click="ClickProgram2" Style="{StaticResource SwitcherButton}">CENTER</Button>
@@ -200,7 +116,7 @@
                                     <Grid>
                                         <Border Style="{StaticResource GroupBorder}" Width="160" HorizontalAlignment="Left">
                                             <StackPanel>
-                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0">AUX SOURCES</TextBlock>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">AUX SOURCES</TextBlock>
                                                 <StackPanel Orientation="Horizontal">
                                                     <Button Name="BtnFTB" Click="ClickFTB" Style="{StaticResource SwitcherButton}">FTB</Button>
                                                     <Button Style="{StaticResource InactiveSwitcherButton}">BARS</Button>
@@ -209,7 +125,7 @@
                                         </Border>
                                         <Border Style="{StaticResource GroupBorder}" Width="160" HorizontalAlignment="Right">
                                             <StackPanel>
-                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0">TRANSITION</TextBlock>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">TRANSITION</TextBlock>
                                                 <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                                                     <Button Click="ClickAutoTrans" Style="{StaticResource SwitcherButton}">AUTO</Button>
                                                     <Button Click="ClickCutTrans" Style="{StaticResource SwitcherButton}">CUT</Button>
@@ -230,7 +146,7 @@
                                 <Grid Grid.Column="0">
                                     <Border Style="{StaticResource GroupBorder}">
                                         <StackPanel>
-                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0">PIP</TextBlock>
+                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PIP</TextBlock>
                                             <Button Style="{StaticResource InactiveSwitcherButton}">KEY 1</Button>
                                             <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource InactiveSwitcherButton}">PIP</Button>
                                         </StackPanel>
@@ -244,7 +160,7 @@
                                         </Grid.ColumnDefinitions>
                                         <Grid Grid.Column="0">
                                             <StackPanel>
-                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0">LITURGY</TextBlock>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">LITURGY</TextBlock>
                                                 <Button Name="BtnDSK1Tie" Click="ClickDSK1Tie" Style="{StaticResource SwitcherButton}">TIE</Button>
                                                 <Button Name="BtnDSK1OnOffAir" Click="ClickDSK1Toggle" Style="{StaticResource SwitcherButton}">LITURGY</Button>
                                                 <Button Click="ClickDSK1Auto" Style="{StaticResource SwitcherButton}">AUTO</Button>
@@ -252,7 +168,7 @@
                                         </Grid>
                                         <Grid Grid.Column="1">
                                             <StackPanel>
-                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0">SPLIT</TextBlock>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">SPLIT</TextBlock>
                                                 <Button Name="BtnDSK2Tie" Click="ClickDSK2Tie" Style="{StaticResource SwitcherButton}">TIE</Button>
                                                 <Button Name="BtnDSK2OnOffAir" Click="ClickDSK2Toggle" Style="{StaticResource SwitcherButton}">SPLIT</Button>
                                                 <Button Click="ClickDSK2Auto" Style="{StaticResource SwitcherButton}">AUTO</Button>
@@ -269,7 +185,7 @@
                                         <Grid Grid.Row="0">
                                             <Border Style="{StaticResource GroupBorder}">
                                                 <StackPanel>
-                                                    <TextBlock TextAlignment="Right" Margin="0,5,20,0">SLIDE CONTROLS</TextBlock>
+                                                    <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">SLIDE CONTROLS</TextBlock>
                                                     <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
                                                         <Button Name="BtnTake" Click="ClickTakeSlide" Style="{StaticResource SwitcherButton}">TAKE</Button>
                                                         <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton}">NEXT</Button>
@@ -287,7 +203,7 @@
                                         <Grid Grid.Row="1">
                                             <Border Style="{StaticResource GroupBorder}">
                                                 <StackPanel>
-                                                    <TextBlock TextAlignment="Right" Margin="0,5,20,0">MEDIA PLAYBACK CONTROLS</TextBlock>
+                                                    <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">MEDIA PLAYBACK CONTROLS</TextBlock>
                                                     <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
                                                         <Button Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton}">RESTART</Button>
                                                         <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource SwitcherButton}">STOP</Button>
@@ -336,14 +252,17 @@
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <Viewbox Panel.ZIndex="10" Grid.Row="0" Grid.Column="2">
-                            <Border Name="PrevPreviewDisplay" BorderBrush="Orange" BorderThickness="2,2,2,2">
-                                <local:MediaPlayer2 Opacity="0.5" x:Name="PrevPreview" Height="108" Width="192"></local:MediaPlayer2>
-                            </Border>
-                        </Viewbox>
-                        <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2">
+                        <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
                             <Border BorderBrush="Red" BorderThickness="2,2,2,2">
-                                <local:MediaPlayer2  x:Name="CurrentPreview" Height="270" Width="480"></local:MediaPlayer2>
+                                <Grid>
+                                    <local:MediaPlayer2  x:Name="CurrentPreview" Height="270" Width="480"></local:MediaPlayer2>
+                                    <Border Name="PrevPreviewDisplay" BorderBrush="Orange" Height="108" Width="192" BorderThickness="2,2,2,2">
+                                        <Border.RenderTransform>
+                                            <TranslateTransform X="144" Y="-81"></TranslateTransform>
+                                        </Border.RenderTransform>
+                                        <local:MediaPlayer2 Opacity="0.5" x:Name="PrevPreview"></local:MediaPlayer2>
+                                    </Border>
+                                </Grid>
                             </Border>
                         </Viewbox>
                     </Grid>
@@ -356,17 +275,34 @@
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2">
+                        <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Top">
                             <Border BorderBrush="Green" BorderThickness="2,2,2,2">
-                                <local:MediaPlayer2 x:Name="NextPreview" Height="270" Width="480"></local:MediaPlayer2>
-                            </Border>
-                        </Viewbox>
-                        <Viewbox Grid.Row="2" Grid.Column="2">
-                            <Border Name="AfterPreviewDisplay" BorderBrush="Blue" BorderThickness="2,2,2,2">
-                                <local:MediaPlayer2 Opacity="0.5" x:Name="AfterPreview" Height="108" Width="192"></local:MediaPlayer2>
+                                <Grid>
+                                    <local:MediaPlayer2 x:Name="NextPreview" Height="270" Width="480"></local:MediaPlayer2>
+                                    <Border Name="AfterPreviewDisplay" BorderBrush="Blue" Height="108" Width="192" BorderThickness="2,2,2,2">
+                                        <Border.RenderTransform>
+                                            <TranslateTransform X="144" Y="81"></TranslateTransform>
+                                        </Border.RenderTransform>
+                                        <local:MediaPlayer2 Opacity="0.5" x:Name="AfterPreview" ></local:MediaPlayer2>
+                                    </Border>
+                                </Grid>
                             </Border>
                         </Viewbox>
                     </Grid>
+                </Grid>
+            </Grid>
+            <Grid Grid.Column="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <local:SlidePoolSource Grid.Row="0"></local:SlidePoolSource>
+                    <local:SlidePoolSource Grid.Row="1"></local:SlidePoolSource>
+                    <local:SlidePoolSource Grid.Row="2"></local:SlidePoolSource>
+                    <local:SlidePoolSource Grid.Row="3"></local:SlidePoolSource>
                 </Grid>
             </Grid>
         </Grid>

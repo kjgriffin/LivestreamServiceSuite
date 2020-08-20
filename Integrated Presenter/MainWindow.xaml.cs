@@ -278,52 +278,52 @@ namespace Integrated_Presenter
 
         private void UpdateUSK1Styles()
         {
-            //BtnUSK1OnOffAir.Background = (switcherState.USK1OnAir ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            //BtnUSK1OnOffAir.Background = (switcherState.USK1OnAir ? Application.Current.FindResource("RedLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateDSK1Styles()
         {
-            BtnDSK1OnOffAir.Background = (switcherState.DSK1OnAir ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnDSK1Tie.Background = (switcherState.DSK1Tie ? Resources["YellowLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnDSK1OnOffAir.Background = (switcherState.DSK1OnAir ? Application.Current.FindResource("RedLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnDSK1Tie.Background = (switcherState.DSK1Tie ? Application.Current.FindResource("YellowLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
         private void UpdateDSK2Styles()
         {
-            BtnDSK2OnOffAir.Background = (switcherState.DSK2OnAir ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnDSK2Tie.Background = (switcherState.DSK2Tie ? Resources["YellowLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnDSK2OnOffAir.Background = (switcherState.DSK2OnAir ? Application.Current.FindResource("RedLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnDSK2Tie.Background = (switcherState.DSK2Tie ? Application.Current.FindResource("YellowLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdatePresetButtonStyles()
         {
-            BtnPreset1.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 1 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset2.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 2 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset3.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 3 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset4.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 4 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset5.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 5 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset6.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 6 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset7.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 7 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnPreset8.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 8 ? Resources["GreenLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnPreset1.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 1 ? Application.Current.FindResource("GreenLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPreset2.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 2 ? Application.Current.FindResource("GreenLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPreset3.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 3 ? Application.Current.FindResource("GreenLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPreset4.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 4 ? Application.Current.FindResource("GreenLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPreset5.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 5 ? Application.Current.FindResource("GreenLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPreset6.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 6 ? Application.Current.FindResource("GreenLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPreset7.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 7 ? Application.Current.FindResource("GreenLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPreset8.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 8 ? Application.Current.FindResource("GreenLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateProgramButtonStyles()
         {
-            BtnProgram1.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 1 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram2.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 2 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram3.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 3 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram4.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 4 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram5.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 5 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram6.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 6 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram7.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 7 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
-            BtnProgram8.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 8 ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnProgram1.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 1 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnProgram2.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 2 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnProgram3.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 3 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnProgram4.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 4 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnProgram5.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 5 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnProgram6.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 6 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnProgram7.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnProgram8.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateFTBButtonStyle()
         {
-            BtnFTB.Background = (switcherState.FTB ? Resources["RedLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnFTB.Background = (switcherState.FTB ? Application.Current.FindResource("RedLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateDriveButtonStyle()
         {
-            BtnDrive.Background = (SlideDriveVideo ? Resources["YellowLight"] : Resources["GrayLight"]) as RadialGradientBrush;
+            BtnDrive.Background = (SlideDriveVideo ? Application.Current.FindResource("YellowLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateSlideNums()
@@ -345,13 +345,13 @@ namespace Integrated_Presenter
             {
                 if (Presentation.SlideCount > 0)
                 {
-                    BtnNext.Background = Resources["GrayLight"] as RadialGradientBrush;
-                    BtnPrev.Background = Resources["GrayLight"] as RadialGradientBrush;
+                    BtnNext.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
+                    BtnPrev.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
                     return;
                 }
             }
-            BtnNext.Background = Resources["OffLight"] as RadialGradientBrush;
-            BtnPrev.Background = Resources["OffLight"] as RadialGradientBrush;
+            BtnNext.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
+            BtnPrev.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
             UpdateDriveButtonStyle();
         }
         private void UpdateMediaControls()
@@ -360,17 +360,17 @@ namespace Integrated_Presenter
             {
                 if (Presentation.Current.Type == SlideType.Video)
                 {
-                    BtnPlayMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
-                    BtnPauseMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
-                    BtnRestartMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
-                    BtnStopMedia.Background = Resources["GrayLight"] as RadialGradientBrush;
+                    BtnPlayMedia.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
+                    BtnPauseMedia.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
+                    BtnRestartMedia.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
+                    BtnStopMedia.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
                     return;
                 }
             }
-            BtnPlayMedia.Background = Resources["OffLight"] as RadialGradientBrush;
-            BtnPauseMedia.Background = Resources["OffLight"] as RadialGradientBrush;
-            BtnRestartMedia.Background = Resources["OffLight"] as RadialGradientBrush;
-            BtnStopMedia.Background = Resources["OffLight"] as RadialGradientBrush;
+            BtnPlayMedia.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
+            BtnPauseMedia.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
+            BtnRestartMedia.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
+            BtnStopMedia.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
         }
 
 
@@ -663,14 +663,14 @@ namespace Integrated_Presenter
                     Presentation.NextSlide();
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.Current);
-                    switcherManager.PerformAutoOnAirDSK1();
+                    switcherManager?.PerformAutoOnAirDSK1();
 
                 }
                 else
                 {
                     if (switcherState.DSK1OnAir)
                     {
-                        switcherManager.PerformAutoOffAirDSK1();
+                        switcherManager?.PerformAutoOffAirDSK1();
                         await Task.Delay(1000);
                     }
                     Presentation.NextSlide();
@@ -680,7 +680,7 @@ namespace Integrated_Presenter
                     {
                         ClickPreset(SourceButtonMappings["slide"]);
                         await Task.Delay(500);
-                        switcherManager.PerformAutoTransition();
+                        switcherManager?.PerformAutoTransition();
                     }
                     if (Presentation.Current.Type == SlideType.Video)
                     {
@@ -986,6 +986,30 @@ namespace Integrated_Presenter
         private void ClickTakeSlide(object sender, RoutedEventArgs e)
         {
             SlideDriveVideo_Current();
+        }
+
+
+        bool _viewAdvancedPresentation = true;
+        private void ClickViewAdvancedPresentation(object sender, RoutedEventArgs e)
+        {
+            _viewAdvancedPresentation = !_viewAdvancedPresentation;
+
+            if (_viewAdvancedPresentation)
+                ShowAdvancedPresControls();
+            else
+                HideAdvancedPresControls();
+        }
+
+        private void ShowAdvancedPresControls()
+        {
+            Width = Width + Width / 4;
+            gcAdvancedPresentation.Width = new GridLength(1, GridUnitType.Star);
+        }
+
+        private void HideAdvancedPresControls()
+        {
+            Width = Width - Width / 5;
+            gcAdvancedPresentation.Width = new GridLength(0);
         }
     }
 }

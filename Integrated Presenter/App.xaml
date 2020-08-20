@@ -4,5 +4,109 @@
              xmlns:local="clr-namespace:Integrated_Presenter"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <RadialGradientBrush x:Key="RedLight">
+            <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
+            <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
+            <RadialGradientBrush.GradientStops>
+                <GradientStop Color="#FF930505" Offset="1.9"></GradientStop>
+                <GradientStop Color="#FFFFAEAE" Offset="0"></GradientStop>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+        <RadialGradientBrush x:Key="GrayLight">
+            <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
+            <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
+            <RadialGradientBrush.GradientStops>
+                <GradientStop Color="Black" Offset="2.0"></GradientStop>
+                <GradientStop Color="DarkGray" Offset="0"></GradientStop>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+        <RadialGradientBrush x:Key="OffLight">
+            <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
+            <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
+            <RadialGradientBrush.GradientStops>
+                <GradientStop Color="Black" Offset="2.0"></GradientStop>
+                <GradientStop Color="Gray" Offset="0"></GradientStop>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="GreenLight">
+            <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
+            <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
+            <RadialGradientBrush.GradientStops>
+                <GradientStop Color="#096900" Offset="1.9"></GradientStop>
+                <GradientStop Color="#b4ffad" Offset="0"></GradientStop>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+        <RadialGradientBrush x:Key="YellowLight">
+            <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
+            <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
+            <RadialGradientBrush.GradientStops>
+                <GradientStop Color="#d9d500" Offset="2.0"></GradientStop>
+                <GradientStop Color="#c4c10c" Offset="0.8"></GradientStop>
+                <GradientStop Color="#fffecc" Offset="0"></GradientStop>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+
+        <Style x:Key="GrayText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#5f5f5f"></Setter>
+        </Style>
+
+        <Style x:Key="GroupBorder" TargetType="Border">
+            <Setter Property="Background" Value="#2f2f30"></Setter>
+            <Setter Property="Margin" Value="10"></Setter>
+            <Setter Property="Padding" Value="0"></Setter>
+            <Setter Property="CornerRadius" Value="4,4,4,4"></Setter>
+        </Style>
+
+        <Style x:Key="SwitcherButton"  TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="60"></Setter>
+            <Setter Property="Height" Value="60"></Setter>
+            <Setter Property="Margin" Value="10"></Setter>
+            <Setter Property="Background" Value="{StaticResource GrayLight}"></Setter>
+            <Setter Property="Foreground" Value="#2a2a2a"></Setter>
+            <Setter Property="IsTabStop" Value="False"></Setter>
+            <Setter Property="Focusable" Value="False"></Setter>
+            <Setter Property="Cursor" Value="Hand"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Border" BorderBrush="Transparent" BorderThickness="1,1,1,1" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="Orange" TargetName="Border"></Setter>
+                                <Setter Property="BorderThickness" Value="1,1,1,1" TargetName="Border"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="InactiveSwitcherButton"  TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="60"></Setter>
+            <Setter Property="Height" Value="60"></Setter>
+            <Setter Property="Margin" Value="10"></Setter>
+            <Setter Property="Background" Value="Transparent"></Setter>
+            <Setter Property="Foreground" Value="Gray"></Setter>
+            <Setter Property="IsTabStop" Value="False"></Setter>
+            <Setter Property="Focusable" Value="False"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border BorderBrush="Gray" BorderThickness="1,1,1,1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
     </Application.Resources>
 </Application>
