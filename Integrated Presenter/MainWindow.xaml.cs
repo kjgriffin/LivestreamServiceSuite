@@ -764,10 +764,18 @@ namespace Integrated_Presenter
                 _pres = pres;
                 activepresentation = true;
 
-                // start display
-                _display = new PresenterDisplay(this);
-                _display.OnMediaPlaybackTimeUpdated += _display_OnMediaPlaybackTimeUpdated;
-                _display.Show();
+                // overwrite display of old presentation if already open
+                if (_display != null)
+                {
+
+                }
+                else
+                {
+                    _display = new PresenterDisplay(this);
+                    _display.OnMediaPlaybackTimeUpdated += _display_OnMediaPlaybackTimeUpdated;
+                    // start display
+                    _display.Show();
+                }
                 slidesUpdated();
 
                 PresentationStateUpdated?.Invoke(Presentation.Current);
