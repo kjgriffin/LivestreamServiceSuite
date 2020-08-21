@@ -82,6 +82,51 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SwitcherButton_Disabled"  TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="60"></Setter>
+            <Setter Property="Height" Value="60"></Setter>
+            <Setter Property="Margin" Value="10"></Setter>
+            <Setter Property="Background" Value="{StaticResource GrayLight}"></Setter>
+            <Setter Property="Foreground" Value="#2a2a2a"></Setter>
+            <Setter Property="IsTabStop" Value="False"></Setter>
+            <Setter Property="Focusable" Value="False"></Setter>
+            <Setter Property="Cursor" Value="Hand"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Border" BorderBrush="Transparent" BorderThickness="1,1,1,1" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="TextButton"  TargetType="{x:Type Button}">
+            <Setter Property="IsTabStop" Value="False"></Setter>
+            <Setter Property="Focusable" Value="False"></Setter>
+            <Setter Property="Cursor" Value="Hand"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Border" BorderBrush="Transparent" BorderThickness="1,1,1,1" Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="Orange" TargetName="Border"></Setter>
+                                <Setter Property="BorderThickness" Value="1,1,1,1" TargetName="Border"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
 

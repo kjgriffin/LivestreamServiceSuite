@@ -10,7 +10,7 @@
         Background="#3f3f3f"
         Title="Integrated Presenter" Height="600" Width="1200">
     <Window.Resources>
-        
+
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -72,6 +72,14 @@
                                                 <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME ON SHOT</TextBlock>
                                                 <Viewbox>
                                                     <TextBlock Name="TbShotClock" Foreground="Orange">00:00</TextBlock>
+                                                </Viewbox>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="150">
+                                            <StackPanel>
+                                                <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 1</TextBlock>
+                                                <Viewbox>
+                                                    <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer1" Name="TbGPTimer1" Foreground="Orange">00:00</TextBlock>
                                                 </Viewbox>
                                             </StackPanel>
                                         </Border>

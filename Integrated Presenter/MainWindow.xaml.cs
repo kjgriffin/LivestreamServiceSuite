@@ -1,4 +1,5 @@
 ﻿using Integrated_Presenter.BMDSwitcher;
+using Integrated_Presenter.ViewModels;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -30,12 +31,22 @@ namespace Integrated_Presenter
 
         Timer system_second_timer = new Timer();
         Timer shot_clock_timer = new Timer();
+        Timer gp_timer_1 = new Timer();
+
+        TimeSpan timer1span = TimeSpan.Zero;
+
         TimeSpan timeonshot = TimeSpan.Zero;
         TimeSpan warnShottime = new TimeSpan(0, 2, 30);
+
+        SwitcherBusViewModel PresetRow;
+
         public MainWindow()
         {
             DataContext = this;
             InitializeComponent();
+
+            PresetRow = new SwitcherBusViewModel(8, SourceLabelMappings.Select(p => (p.Value, p.Key)).ToList());
+
 
             UpdateRealTimeClock();
             UpdateSlideControls();
@@ -53,6 +64,23 @@ namespace Integrated_Presenter
             shot_clock_timer.Elapsed += Shot_clock_timer_Elapsed;
             shot_clock_timer.Interval = 1000;
 
+            gp_timer_1.Interval = 1000;
+            gp_timer_1.Elapsed += Gp_timer_1_Elapsed;
+            gp_timer_1.Start();
+        }
+
+        private void Gp_timer_1_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            timer1span = timer1span.Add(new TimeSpan(0, 0, 1));
+            UpdateGPTimer1();
+        }
+
+        private void UpdateGPTimer1()
+        {
+            TbGPTimer1.Dispatcher.Invoke(() =>
+            {
+                TbGPTimer1.Text = timer1span.ToString("mm\\:ss");
+            });
         }
 
         private void Shot_clock_timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -112,6 +140,7 @@ namespace Integrated_Presenter
             {
                 switcherManager = new BMDSwitcherManager(this);
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
+                switcherManager.SwitcherStateChanged += PresetRow.OnSwitcherStateChanged;
                 switcherManager.TryConnect(connectWindow.IP);
                 if (!shot_clock_timer.Enabled)
                 {
@@ -124,6 +153,7 @@ namespace Integrated_Presenter
         {
             switcherManager = new MockBMDSwitcherManager(this);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
+            switcherManager.SwitcherStateChanged += PresetRow.OnSwitcherStateChanged;
             switcherManager.TryConnect("localhost");
             if (!shot_clock_timer.Enabled)
             {
@@ -153,6 +183,8 @@ namespace Integrated_Presenter
             // update ui
             switcherState = args;
             _lastState = switcherState.Copy();
+            // update viewmodels
+
             UpdateSwitcherUI();
         }
 
@@ -265,7 +297,6 @@ namespace Integrated_Presenter
 
         #endregion
 
-
         private void UpdateSwitcherUI()
         {
             UpdatePresetButtonStyles();
@@ -283,13 +314,13 @@ namespace Integrated_Presenter
 
         private void UpdateDSK1Styles()
         {
-            BtnDSK1OnOffAir.Background = (switcherState.DSK1OnAir ? Application.Current.FindResource("RedLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnDSK1Tie.Background = (switcherState.DSK1Tie ? Application.Current.FindResource("YellowLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnDSK1OnOffAir.Background = (switcherState.DSK1OnAir ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnDSK1Tie.Background = (switcherState.DSK1Tie ? Application.Current.FindResource("YellowLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
         private void UpdateDSK2Styles()
         {
-            BtnDSK2OnOffAir.Background = (switcherState.DSK2OnAir ? Application.Current.FindResource("RedLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnDSK2Tie.Background = (switcherState.DSK2Tie ? Application.Current.FindResource("YellowLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnDSK2OnOffAir.Background = (switcherState.DSK2OnAir ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnDSK2Tie.Background = (switcherState.DSK2Tie ? Application.Current.FindResource("YellowLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdatePresetButtonStyles()
@@ -318,12 +349,12 @@ namespace Integrated_Presenter
 
         private void UpdateFTBButtonStyle()
         {
-            BtnFTB.Background = (switcherState.FTB ? Application.Current.FindResource("RedLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnFTB.Background = (switcherState.FTB ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateDriveButtonStyle()
         {
-            BtnDrive.Background = (SlideDriveVideo ? Application.Current.FindResource("YellowLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnDrive.Background = (SlideDriveVideo ? Application.Current.FindResource("YellowLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateSlideNums()
@@ -345,13 +376,13 @@ namespace Integrated_Presenter
             {
                 if (Presentation.SlideCount > 0)
                 {
-                    BtnNext.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
-                    BtnPrev.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
+                    BtnNext.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
+                    BtnPrev.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
                     return;
                 }
             }
-            BtnNext.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
-            BtnPrev.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
+            BtnNext.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnPrev.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
             UpdateDriveButtonStyle();
         }
         private void UpdateMediaControls()
@@ -360,17 +391,17 @@ namespace Integrated_Presenter
             {
                 if (Presentation.Current.Type == SlideType.Video)
                 {
-                    BtnPlayMedia.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
-                    BtnPauseMedia.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
-                    BtnRestartMedia.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
-                    BtnStopMedia.Background = Application.Current.FindResource("GrayLight")as RadialGradientBrush;
+                    BtnPlayMedia.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
+                    BtnPauseMedia.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
+                    BtnRestartMedia.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
+                    BtnStopMedia.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
                     return;
                 }
             }
-            BtnPlayMedia.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
-            BtnPauseMedia.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
-            BtnRestartMedia.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
-            BtnStopMedia.Background = Application.Current.FindResource("OffLight")as RadialGradientBrush;
+            BtnPlayMedia.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnPauseMedia.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnRestartMedia.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnStopMedia.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
         }
 
 
@@ -1010,6 +1041,16 @@ namespace Integrated_Presenter
         {
             Width = Width - Width / 5;
             gcAdvancedPresentation.Width = new GridLength(0);
+        }
+
+
+
+        private void ClickResetgpTimer1(object sender, MouseButtonEventArgs e)
+        {
+            gp_timer_1.Stop();
+            timer1span = TimeSpan.Zero;
+            UpdateGPTimer1();
+            gp_timer_1.Start();
         }
     }
 }

@@ -18,6 +18,7 @@
                         <RadioButton IsChecked="True" Foreground="Orange">Slide</RadioButton>
                         <RadioButton Foreground="Orange">Liturgy</RadioButton>
                         <RadioButton Foreground="Orange">Video</RadioButton>
+                        <Button Margin="10,5,10,5">Load</Button>
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Column="2">
