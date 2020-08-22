@@ -21,10 +21,10 @@
 
         <Grid Grid.Row="0">
             <Menu IsTabStop="False">
-                <MenuItem Header="Switcher" IsTabStop="False">
-                    <MenuItem Click="ClickConnect" Header="Connect" IsTabStop="False"></MenuItem>
-                    <MenuItem Click="ClickConnectMock" Header="Connect Mock" IsTabStop="False"></MenuItem>
-                    <MenuItem Header="Load Config" IsTabStop="False"></MenuItem>
+                <MenuItem Header="Connections" IsTabStop="False">
+                    <MenuItem Click="ClickConnect" Header="Switcher" IsTabStop="False"></MenuItem>
+                    <MenuItem Click="ClickConnectMock" Header="Mock Switcher" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load Config" IsEnabled="False" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
