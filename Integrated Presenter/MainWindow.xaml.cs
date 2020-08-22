@@ -366,7 +366,7 @@ namespace Integrated_Presenter
             BtnAutoTrans.Style = (Style)Application.Current.FindResource(style);
             BtnCutTrans.Style = (Style)Application.Current.FindResource(style);
 
-            
+
 
         }
 
@@ -800,7 +800,7 @@ namespace Integrated_Presenter
 
         private async void SlideDriveVideo_ToSlide(Slide s)
         {
-            if (s != null)
+            if (s != null && Presentation != null)
             {
                 if (s.Type == SlideType.Liturgy)
                 {
@@ -854,6 +854,7 @@ namespace Integrated_Presenter
             if (Presentation?.Current != null)
             {
                 DisableSlidePoolOverrides();
+                currentpoolsource = null;
                 if (Presentation.Current.Type == SlideType.Liturgy)
                 {
                     // make sure slides aren't the program source
@@ -882,6 +883,7 @@ namespace Integrated_Presenter
                         await Task.Delay(500);
                         switcherManager.PerformAutoTransition();
                     }
+
                     if (Presentation.Current.Type == SlideType.Video)
                     {
                         playMedia();
@@ -1012,6 +1014,10 @@ namespace Integrated_Presenter
                         CurrentPreview.videoPlayer.Volume = 0;
                         CurrentPreview.PlayMedia();
                     }
+                    else
+                    {
+                        currentpoolsource.PlayMedia();
+                    }
                 });
             }
         }
@@ -1025,6 +1031,10 @@ namespace Integrated_Presenter
                     CurrentPreview.videoPlayer.Volume = 0;
                     CurrentPreview.PauseMedia();
                 }
+                else
+                {
+                    currentpoolsource.PauseMedia();
+                }
             }
         }
         private void stopMedia()
@@ -1037,6 +1047,10 @@ namespace Integrated_Presenter
                     CurrentPreview.videoPlayer.Volume = 0;
                     CurrentPreview.videoPlayer.Stop();
                 }
+                else
+                {
+                    currentpoolsource.StopMedia();
+                }
             }
         }
         private void restartMedia()
@@ -1048,6 +1062,10 @@ namespace Integrated_Presenter
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
                     CurrentPreview.ReplayMedia();
+                }
+                else
+                {
+                    currentpoolsource.RestartMedia();
                 }
             }
         }
@@ -1191,6 +1209,8 @@ namespace Integrated_Presenter
         }
 
 
+        SlidePoolSource currentpoolsource = null;
+
         private void TakeSlidePoolSlide(Slide s, int num, bool slideoverride)
         {
 
@@ -1202,6 +1222,10 @@ namespace Integrated_Presenter
                 }
             }
 
+            if (slideoverride)
+            {
+                currentpoolsource = SlidePoolButtons[num];
+            }
 
             if (slideoverride)
             {
@@ -1222,6 +1246,7 @@ namespace Integrated_Presenter
                 SlidePoolButtons[i].Selected = false;
             }
             Presentation.OverridePres = false;
+            currentpoolsource?.StopMedia();
             UpdateMediaControls();
         }
 

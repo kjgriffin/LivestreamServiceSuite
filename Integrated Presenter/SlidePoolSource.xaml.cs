@@ -75,6 +75,30 @@ namespace Integrated_Presenter
             Type = SlideType.Video;
         }
 
+        public void PlayMedia()
+        {
+            mediapreview.videoPlayer.Volume = 0;
+            mediapreview.PlayMedia();
+        }
+
+        public void PauseMedia()
+        {
+            mediapreview.videoPlayer.Volume = 0;
+            mediapreview.PauseMedia();
+        }
+
+        public void StopMedia()
+        {
+            mediapreview.videoPlayer.Volume = 0;
+            mediapreview.StopMedia();
+        }
+
+        public void RestartMedia()
+        {
+            mediapreview.videoPlayer.Volume = 0;
+            mediapreview.ReplayMedia();
+        }
+
         private void ClickLoadMedia(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
