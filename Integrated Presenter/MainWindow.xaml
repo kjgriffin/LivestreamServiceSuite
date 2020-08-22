@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Integrated_Presenter"
         mc:Ignorable="d"
+        Closing="OnClosing"
         PreviewKeyDown="WindowKeyDown"
         PreviewKeyUp="WindowKeyUp"
         Background="#3f3f3f"
@@ -91,14 +92,14 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PRESET</TextBlock>
                                             <StackPanel Orientation="Horizontal">
-                                                <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton}">PULPIT</Button>
-                                                <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton}">CENTER</Button>
-                                                <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton}">LECTERN</Button>
-                                                <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton}">ORGAN</Button>
-                                                <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton}">SLIDE</Button>
-                                                <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton}">CAM 3</Button>
-                                                <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton}">CAM 7</Button>
-                                                <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton}">CAM 8</Button>
+                                                <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
+                                                <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
+                                                <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
+                                                <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
+                                                <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
+                                                <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
@@ -108,14 +109,14 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PROGRAM</TextBlock>
                                             <StackPanel Orientation="Horizontal">
-                                                <Button Name="BtnProgram1" Click="ClickProgram1" Style="{StaticResource SwitcherButton}">PULPIT</Button>
-                                                <Button Name="BtnProgram2" Click="ClickProgram2" Style="{StaticResource SwitcherButton}">CENTER</Button>
-                                                <Button Name="BtnProgram3" Click="ClickProgram3" Style="{StaticResource SwitcherButton}">LECTERN</Button>
-                                                <Button Name="BtnProgram4" Click="ClickProgram4" Style="{StaticResource SwitcherButton}">ORGAN</Button>
-                                                <Button Name="BtnProgram5" Click="ClickProgram5" Style="{StaticResource SwitcherButton}">SLIDE</Button>
-                                                <Button Name="BtnProgram6" Click="ClickProgram6" Style="{StaticResource SwitcherButton}">CAM 3</Button>
-                                                <Button Name="BtnProgram7" Click="ClickProgram7" Style="{StaticResource SwitcherButton}">CAM 7</Button>
-                                                <Button Name="BtnProgram8" Click="ClickProgram8" Style="{StaticResource SwitcherButton}">CAM 8</Button>
+                                                <Button Name="BtnProgram1" Click="ClickProgram1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
+                                                <Button Name="BtnProgram2" Click="ClickProgram2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
+                                                <Button Name="BtnProgram3" Click="ClickProgram3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
+                                                <Button Name="BtnProgram4" Click="ClickProgram4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
+                                                <Button Name="BtnProgram5" Click="ClickProgram5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
+                                                <Button Name="BtnProgram6" Click="ClickProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button Name="BtnProgram7" Click="ClickProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                <Button Name="BtnProgram8" Click="ClickProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
@@ -126,7 +127,7 @@
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">AUX SOURCES</TextBlock>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <Button Name="BtnFTB" Click="ClickFTB" Style="{StaticResource SwitcherButton}">FTB</Button>
+                                                    <Button Name="BtnFTB" Click="ClickFTB" Style="{StaticResource SwitcherButton_Disabled}">FTB</Button>
                                                     <Button Style="{StaticResource InactiveSwitcherButton}">BARS</Button>
                                                 </StackPanel>
                                             </StackPanel>
@@ -135,8 +136,8 @@
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">TRANSITION</TextBlock>
                                                 <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                                                    <Button Click="ClickAutoTrans" Style="{StaticResource SwitcherButton}">AUTO</Button>
-                                                    <Button Click="ClickCutTrans" Style="{StaticResource SwitcherButton}">CUT</Button>
+                                                    <Button Name="BtnAutoTrans" Click="ClickAutoTrans" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
+                                                    <Button Name="BtnCutTrans" Click="ClickCutTrans" Style="{StaticResource SwitcherButton_Disabled}">CUT</Button>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
@@ -169,17 +170,17 @@
                                         <Grid Grid.Column="0">
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">LITURGY</TextBlock>
-                                                <Button Name="BtnDSK1Tie" Click="ClickDSK1Tie" Style="{StaticResource SwitcherButton}">TIE</Button>
-                                                <Button Name="BtnDSK1OnOffAir" Click="ClickDSK1Toggle" Style="{StaticResource SwitcherButton}">LITURGY</Button>
-                                                <Button Click="ClickDSK1Auto" Style="{StaticResource SwitcherButton}">AUTO</Button>
+                                                <Button Name="BtnDSK1Tie" Click="ClickDSK1Tie" Style="{StaticResource SwitcherButton_Disabled}">TIE</Button>
+                                                <Button Name="BtnDSK1OnOffAir" Click="ClickDSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">LITURGY</Button>
+                                                <Button Name="BtnDSK1Auto" Click="ClickDSK1Auto" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
                                             </StackPanel>
                                         </Grid>
                                         <Grid Grid.Column="1">
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">SPLIT</TextBlock>
-                                                <Button Name="BtnDSK2Tie" Click="ClickDSK2Tie" Style="{StaticResource SwitcherButton}">TIE</Button>
-                                                <Button Name="BtnDSK2OnOffAir" Click="ClickDSK2Toggle" Style="{StaticResource SwitcherButton}">SPLIT</Button>
-                                                <Button Click="ClickDSK2Auto" Style="{StaticResource SwitcherButton}">AUTO</Button>
+                                                <Button Name="BtnDSK2Tie" Click="ClickDSK2Tie" Style="{StaticResource SwitcherButton_Disabled}">TIE</Button>
+                                                <Button Name="BtnDSK2OnOffAir" Click="ClickDSK2Toggle" Style="{StaticResource SwitcherButton_Disabled}">SPLIT</Button>
+                                                <Button Name="BtnDSK2Auto" Click="ClickDSK2Auto" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
                                             </StackPanel>
                                         </Grid>
                                     </Grid>
@@ -195,9 +196,9 @@
                                                 <StackPanel>
                                                     <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">SLIDE CONTROLS</TextBlock>
                                                     <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
-                                                        <Button Name="BtnTake" Click="ClickTakeSlide" Style="{StaticResource SwitcherButton}">TAKE</Button>
-                                                        <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton}">NEXT</Button>
-                                                        <Button Name="BtnPrev" Click="ClickPrevSlide" Style="{StaticResource SwitcherButton}">PREV</Button>
+                                                        <Button Name="BtnTake" Click="ClickTakeSlide" Style="{StaticResource SwitcherButton_Disabled}">TAKE</Button>
+                                                        <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton_Disabled}">NEXT</Button>
+                                                        <Button Name="BtnPrev" Click="ClickPrevSlide" Style="{StaticResource SwitcherButton_Disabled}">PREV</Button>
                                                         <Button Name="BtnDrive" Click="ClickSlideDriveVideo" Style="{StaticResource SwitcherButton}">DRIVE</Button>
                                                     </StackPanel>
                                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -213,10 +214,10 @@
                                                 <StackPanel>
                                                     <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">MEDIA PLAYBACK CONTROLS</TextBlock>
                                                     <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
-                                                        <Button Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton}">RESTART</Button>
-                                                        <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource SwitcherButton}">STOP</Button>
-                                                        <Button Name="BtnPauseMedia" Click="ClickPauseMedia" Style="{StaticResource SwitcherButton}">PAUSE</Button>
-                                                        <Button Name="BtnPlayMedia" Click="ClickPlayMedia" Style="{StaticResource SwitcherButton}">PLAY</Button>
+                                                        <Button Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
+                                                        <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource SwitcherButton_Disabled}">STOP</Button>
+                                                        <Button Name="BtnPauseMedia" Click="ClickPauseMedia" Style="{StaticResource SwitcherButton_Disabled}">PAUSE</Button>
+                                                        <Button Name="BtnPlayMedia" Click="ClickPlayMedia" Style="{StaticResource SwitcherButton_Disabled}">PLAY</Button>
                                                     </StackPanel>
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
@@ -307,10 +308,10 @@
                         <RowDefinition></RowDefinition>
                         <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
-                    <local:SlidePoolSource Grid.Row="0"></local:SlidePoolSource>
-                    <local:SlidePoolSource Grid.Row="1"></local:SlidePoolSource>
-                    <local:SlidePoolSource Grid.Row="2"></local:SlidePoolSource>
-                    <local:SlidePoolSource Grid.Row="3"></local:SlidePoolSource>
+                    <local:SlidePoolSource x:Name="SlidePoolSource0" ClickTakeEvent="ClickTakeSP0" Grid.Row="0"></local:SlidePoolSource>
+                    <local:SlidePoolSource x:Name="SlidePoolSource1" ClickTakeEvent="ClickTakeSP1" Grid.Row="1"></local:SlidePoolSource>
+                    <local:SlidePoolSource x:Name="SlidePoolSource2" ClickTakeEvent="ClickTakeSP2"  Grid.Row="2"></local:SlidePoolSource>
+                    <local:SlidePoolSource x:Name="SlidePoolSource3" ClickTakeEvent="ClickTakeSP3" Grid.Row="3"></local:SlidePoolSource>
                 </Grid>
             </Grid>
         </Grid>

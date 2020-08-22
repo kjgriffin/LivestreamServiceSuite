@@ -489,5 +489,10 @@ namespace Integrated_Presenter
         {
             _BMDSwitcherMixEffectBlock1.PerformFadeToBlack();
         }
+
+        public void Close()
+        {
+            SwitcherDisconnected();
+        }
     }
 }

@@ -40,10 +40,15 @@ namespace Integrated_Presenter
 
         SwitcherBusViewModel PresetRow;
 
+
+        List<SlidePoolSource> SlidePoolButtons;
+
         public MainWindow()
         {
             DataContext = this;
             InitializeComponent();
+
+            SlidePoolButtons = new List<SlidePoolSource>() { SlidePoolSource0, SlidePoolSource1, SlidePoolSource2, SlidePoolSource3 };
 
             PresetRow = new SwitcherBusViewModel(8, SourceLabelMappings.Select(p => (p.Value, p.Key)).ToList());
 
@@ -141,7 +146,10 @@ namespace Integrated_Presenter
                 switcherManager = new BMDSwitcherManager(this);
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
                 switcherManager.SwitcherStateChanged += PresetRow.OnSwitcherStateChanged;
-                switcherManager.TryConnect(connectWindow.IP);
+                if (switcherManager.TryConnect(connectWindow.IP))
+                {
+                    EnableSwitcherControls();
+                }
                 if (!shot_clock_timer.Enabled)
                 {
                     shot_clock_timer.Start();
@@ -155,6 +163,7 @@ namespace Integrated_Presenter
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.SwitcherStateChanged += PresetRow.OnSwitcherStateChanged;
             switcherManager.TryConnect("localhost");
+            EnableSwitcherControls();
             if (!shot_clock_timer.Enabled)
             {
                 shot_clock_timer.Start();
@@ -323,6 +332,57 @@ namespace Integrated_Presenter
             BtnDSK2Tie.Background = (switcherState.DSK2Tie ? Application.Current.FindResource("YellowLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
+        private void EnableSwitcherControls()
+        {
+            string style = "SwitcherButton";
+            BtnPreset1.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset2.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset3.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset4.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset5.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset6.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset7.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset8.Style = (Style)Application.Current.FindResource(style);
+
+            BtnProgram1.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram2.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram3.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram4.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram5.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram6.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram7.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram8.Style = (Style)Application.Current.FindResource(style);
+
+            BtnDSK1Tie.Style = (Style)Application.Current.FindResource(style);
+            BtnDSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
+            BtnDSK1Auto.Style = (Style)Application.Current.FindResource(style);
+
+            BtnDSK2Tie.Style = (Style)Application.Current.FindResource(style);
+            BtnDSK2OnOffAir.Style = (Style)Application.Current.FindResource(style);
+            BtnDSK2Auto.Style = (Style)Application.Current.FindResource(style);
+
+            BtnFTB.Style = (Style)Application.Current.FindResource(style);
+
+            BtnAutoTrans.Style = (Style)Application.Current.FindResource(style);
+            BtnCutTrans.Style = (Style)Application.Current.FindResource(style);
+
+            
+
+        }
+
+        private void DisableSwitcherControls()
+        {
+
+            BtnPreset1.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
+            BtnPreset2.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
+            BtnPreset3.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
+            BtnPreset4.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
+            BtnPreset5.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
+            BtnPreset6.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
+            BtnPreset7.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
+            BtnPreset8.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
+        }
+
         private void UpdatePresetButtonStyles()
         {
             BtnPreset1.Background = (ConvertSourceIDToButton(switcherState.PresetID) == 1 ? Application.Current.FindResource("GreenLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
@@ -376,21 +436,33 @@ namespace Integrated_Presenter
             {
                 if (Presentation.SlideCount > 0)
                 {
+
+                    BtnNext.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                    BtnPrev.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                    BtnTake.Style = Application.Current.FindResource("SwitcherButton") as Style;
+
                     BtnNext.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
                     BtnPrev.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
+                    BtnTake.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
                     return;
                 }
             }
-            BtnNext.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
-            BtnPrev.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnNext.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnPrev.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnTake.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
             UpdateDriveButtonStyle();
         }
+
         private void UpdateMediaControls()
         {
             if (Presentation != null)
             {
-                if (Presentation.Current.Type == SlideType.Video)
+                if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                 {
+                    BtnPlayMedia.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                    BtnPauseMedia.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                    BtnRestartMedia.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                    BtnStopMedia.Style = Application.Current.FindResource("SwitcherButton") as Style;
                     BtnPlayMedia.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
                     BtnPauseMedia.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
                     BtnRestartMedia.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
@@ -402,6 +474,10 @@ namespace Integrated_Presenter
             BtnPauseMedia.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
             BtnRestartMedia.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
             BtnStopMedia.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnPlayMedia.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnPauseMedia.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnRestartMedia.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnStopMedia.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
         }
 
 
@@ -722,6 +798,52 @@ namespace Integrated_Presenter
             }
         }
 
+        private async void SlideDriveVideo_ToSlide(Slide s)
+        {
+            if (s != null)
+            {
+                if (s.Type == SlideType.Liturgy)
+                {
+                    // make sure slides aren't the program source
+                    if (switcherState.ProgramID == SourceLabelMappings["slide"])
+                    {
+                        switcherManager.PerformAutoTransition();
+                        await Task.Delay(1000);
+                    }
+                    Presentation.Override = s;
+                    Presentation.OverridePres = true;
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                    switcherManager?.PerformAutoOnAirDSK1();
+
+                }
+                else
+                {
+                    if (switcherState.DSK1OnAir)
+                    {
+                        switcherManager?.PerformAutoOffAirDSK1();
+                        await Task.Delay(1000);
+                    }
+                    Presentation.Override = s;
+                    Presentation.OverridePres = true;
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                    if (switcherState.ProgramID != SourceLabelMappings["slide"])
+                    {
+                        ClickPreset(SourceButtonMappings["slide"]);
+                        await Task.Delay(500);
+                        switcherManager?.PerformAutoTransition();
+                    }
+                    if (Presentation.EffectiveCurrent.Type == SlideType.Video)
+                    {
+                        playMedia();
+                    }
+
+                }
+            }
+
+        }
+
         private void SlideDriveVideo_Prev()
         {
 
@@ -731,6 +853,7 @@ namespace Integrated_Presenter
         {
             if (Presentation?.Current != null)
             {
+                DisableSlidePoolOverrides();
                 if (Presentation.Current.Type == SlideType.Liturgy)
                 {
                     // make sure slides aren't the program source
@@ -853,6 +976,7 @@ namespace Integrated_Presenter
         {
             if (activepresentation)
             {
+                DisableSlidePoolOverrides();
                 if (SlideDriveVideo)
                 {
                     SlideDriveVideo_Next();
@@ -869,6 +993,7 @@ namespace Integrated_Presenter
         {
             if (activepresentation)
             {
+                DisableSlidePoolOverrides();
                 Presentation.PrevSlide();
                 slidesUpdated();
                 PresentationStateUpdated?.Invoke(Presentation.Current);
@@ -882,8 +1007,11 @@ namespace Integrated_Presenter
                 Dispatcher.Invoke(() =>
                 {
                     _display.StartMediaPlayback();
-                    CurrentPreview.videoPlayer.Volume = 0;
-                    CurrentPreview.PlayMedia();
+                    if (!Presentation.OverridePres)
+                    {
+                        CurrentPreview.videoPlayer.Volume = 0;
+                        CurrentPreview.PlayMedia();
+                    }
                 });
             }
         }
@@ -892,8 +1020,11 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.PauseMediaPlayback();
-                CurrentPreview.videoPlayer.Volume = 0;
-                CurrentPreview.PauseMedia();
+                if (!Presentation.OverridePres)
+                {
+                    CurrentPreview.videoPlayer.Volume = 0;
+                    CurrentPreview.PauseMedia();
+                }
             }
         }
         private void stopMedia()
@@ -901,8 +1032,11 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.StopMediaPlayback();
-                CurrentPreview.videoPlayer.Volume = 0;
-                CurrentPreview.videoPlayer.Stop();
+                if (!Presentation.OverridePres)
+                {
+                    CurrentPreview.videoPlayer.Volume = 0;
+                    CurrentPreview.videoPlayer.Stop();
+                }
             }
         }
         private void restartMedia()
@@ -910,8 +1044,11 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.RestartMediaPlayback();
-                CurrentPreview.videoPlayer.Volume = 0;
-                CurrentPreview.ReplayMedia();
+                if (!Presentation.OverridePres)
+                {
+                    CurrentPreview.videoPlayer.Volume = 0;
+                    CurrentPreview.ReplayMedia();
+                }
             }
         }
 
@@ -1051,6 +1188,75 @@ namespace Integrated_Presenter
             timer1span = TimeSpan.Zero;
             UpdateGPTimer1();
             gp_timer_1.Start();
+        }
+
+
+        private void TakeSlidePoolSlide(Slide s, int num, bool slideoverride)
+        {
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (num != i)
+                {
+                    SlidePoolButtons[i].Selected = false;
+                }
+            }
+
+
+            if (slideoverride)
+            {
+                SlideDriveVideo_ToSlide(s);
+                slidesUpdated();
+                PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+            }
+            else
+            {
+                SlideDriveVideo_Current();
+            }
+        }
+
+        private void DisableSlidePoolOverrides()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                SlidePoolButtons[i].Selected = false;
+            }
+            Presentation.OverridePres = false;
+            UpdateMediaControls();
+        }
+
+        private void OnClosing(object sender, CancelEventArgs e)
+        {
+            _display?.Close();
+            switcherManager?.Close();
+        }
+
+        private void ClickTakeSP0(object sender, EventArgs e)
+        {
+            SlidePoolSource sps = sender as SlidePoolSource;
+            Slide s = new Slide() { Source = sps.Source.ToString(), Type = sps.Type };
+            TakeSlidePoolSlide(s, 0, sps.Selected);
+        }
+
+        private void ClickTakeSP1(object sender, EventArgs e)
+        {
+            SlidePoolSource sps = sender as SlidePoolSource;
+            Slide s = new Slide() { Source = sps.Source.ToString(), Type = sps.Type };
+            TakeSlidePoolSlide(s, 1, sps.Selected);
+        }
+
+        private void ClickTakeSP2(object sender, EventArgs e)
+        {
+            SlidePoolSource sps = sender as SlidePoolSource;
+            Slide s = new Slide() { Source = sps.Source.ToString(), Type = sps.Type };
+            TakeSlidePoolSlide(s, 2, sps.Selected);
+        }
+
+        private void ClickTakeSP3(object sender, EventArgs e)
+        {
+            SlidePoolSource sps = sender as SlidePoolSource;
+            Slide s = new Slide() { Source = sps.Source.ToString(), Type = sps.Type };
+            TakeSlidePoolSlide(s, 3, sps.Selected);
         }
     }
 }

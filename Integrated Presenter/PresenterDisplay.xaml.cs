@@ -44,7 +44,7 @@ namespace Integrated_Presenter
 
         public void StartMediaPlayback()
         {
-            if (_control.Presentation.Current.Type == Integrated_Presenter.SlideType.Video)
+            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video)
             {
                 mediaPlayer.PlayMedia();
             }
@@ -52,7 +52,7 @@ namespace Integrated_Presenter
 
         public void PauseMediaPlayback()
         {
-            if (_control.Presentation.Current.Type == Integrated_Presenter.SlideType.Video)
+            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video)
             {
                 mediaPlayer.PauseMedia();
             }
@@ -60,7 +60,7 @@ namespace Integrated_Presenter
 
         public void RestartMediaPlayback()
         {
-            if (_control.Presentation.Current.Type == Integrated_Presenter.SlideType.Video)
+            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video)
             {
                 mediaPlayer.ReplayMedia();
             }
@@ -68,7 +68,7 @@ namespace Integrated_Presenter
 
         public void StopMediaPlayback()
         {
-            if (_control.Presentation.Current.Type == SlideType.Video)
+            if (_control.Presentation.EffectiveCurrent.Type == SlideType.Video)
             {
                 mediaPlayer.StopMedia();
             }
@@ -77,7 +77,7 @@ namespace Integrated_Presenter
 
         public void ShowSlide()
         {
-            if (_control.Presentation.Current.Type == SlideType.Video)
+            if (_control.Presentation.EffectiveCurrent.Type == SlideType.Video)
             {
                 ShowVideo();
             }
@@ -90,12 +90,12 @@ namespace Integrated_Presenter
 
         private void ShowImage()
         {
-            mediaPlayer.SetMedia(_control.Presentation.Current);
+            mediaPlayer.SetMedia(_control.Presentation.EffectiveCurrent);
         }
 
         private void ShowVideo()
         {
-            mediaPlayer.SetMedia(_control.Presentation.Current);
+            mediaPlayer.SetMedia(_control.Presentation.EffectiveCurrent);
         }
 
 

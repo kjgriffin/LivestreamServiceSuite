@@ -180,5 +180,10 @@ namespace Integrated_Presenter.BMDSwitcher
             // update multiviewer
             SwitcherStateChanged?.Invoke(_state);
         }
+
+        public void Close()
+        {
+            mockMultiviewer.Close();
+        }
     }
 }

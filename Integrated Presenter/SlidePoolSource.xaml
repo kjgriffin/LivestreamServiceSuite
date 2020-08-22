@@ -7,24 +7,28 @@
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="300">
     <Grid>
-        <Border Grid.Row="3" Margin="10,10,10,10" CornerRadius="5,5,5,5" Background="#2d2d2d" Padding="5,5,5,5">
+        <Border Grid.Row="3" Margin="5" CornerRadius="5,5,5,5" Background="#2d2d2d" Padding="5,5,5,5">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60"></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="80"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0">
-                    <StackPanel>
-                        <RadioButton IsChecked="True" Foreground="Orange">Slide</RadioButton>
-                        <RadioButton Foreground="Orange">Liturgy</RadioButton>
-                        <RadioButton Foreground="Orange">Video</RadioButton>
-                        <Button Margin="10,5,10,5">Load</Button>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Grid.Column="0" Grid.ColumnSpan="2">
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton Name="rbslide" Click="ClickSlideMode" VerticalAlignment="Center" IsChecked="True" Foreground="Orange">Slide</RadioButton>
+                        <RadioButton Name="rbliturgy" Click="ClickLiturgyMode" VerticalAlignment="Center" Foreground="Orange">Liturgy</RadioButton>
+                        <RadioButton Name="rbvideo" Click="ClickVideoMode" VerticalAlignment="Center" Foreground="Orange">Video</RadioButton>
+                        <Button Click="ClickLoadMedia" Margin="10,3,0,3" Padding="5,3,3,5">Load</Button>
                     </StackPanel>
                 </Grid>
-                <Grid Grid.Column="2">
-                    <local:MediaPlayer2></local:MediaPlayer2>
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <local:MediaPlayer2 x:Name="mediapreview"></local:MediaPlayer2>
                 </Grid>
-                <Button Style="{StaticResource SwitcherButton}" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top">Take</Button>
+                <Button Name="BtnTake" Click="ClickTake" Grid.Column="0" Grid.Row="1" Style="{StaticResource SwitcherButton_Disabled}">Take</Button>
             </Grid>
         </Border>
     </Grid>

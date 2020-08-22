@@ -123,5 +123,9 @@ namespace Integrated_Presenter.BMDSwitcher
             multiviewerWindow.SetFTB(onair);
         }
 
+        internal void Close()
+        {
+            multiviewerWindow?.Close();
+        }
     }
 }

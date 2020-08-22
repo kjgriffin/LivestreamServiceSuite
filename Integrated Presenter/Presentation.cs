@@ -72,6 +72,22 @@ namespace Integrated_Presenter
             }
         }
 
+
+        public Slide Override { get; set; }
+        public bool OverridePres { get; set; } = false;
+
+        public Slide EffectiveCurrent
+        {
+            get
+            {
+                if (OverridePres && Override != null)
+                {
+                    return Override;
+                }
+                return Current;
+            }
+        }
+
         public Slide Current { get => Slides[_currentSlide]; }
         public Slide Next
         {
