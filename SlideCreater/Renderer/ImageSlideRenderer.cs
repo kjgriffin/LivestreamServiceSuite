@@ -24,9 +24,9 @@ namespace SlideCreater.Renderer
             {
                 sourceimage = new Bitmap(slide.Asset);
             }
-            catch (IOException)
+            catch (Exception ex)
             {
-                throw new Exception("Unable to load image");
+                throw new Exception($"Unable to load image <{slide.Asset}> for slide {slide}");
             }
 
             if (slide.Format == SlideFormat.UnscaledImage)

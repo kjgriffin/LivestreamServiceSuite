@@ -31,12 +31,17 @@ namespace SlideCreater
         public CreaterEditorWindow()
         {
             InitializeComponent();
+            sbStatus.Background = System.Windows.Media.Brushes.Gray;
+            tbStatusText.Text = "Open Project";
         }
 
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
 
+            sbStatus.Background = System.Windows.Media.Brushes.Orange;
+            tbStatusText.Text = "Rendering Project";
             string text = TbInput.Text;
+            _proj.SourceCode = text;
 
             await Task.Run(() =>
             {
@@ -53,6 +58,12 @@ namespace SlideCreater
                 {
                     slides.Add(sr.RenderSlide(i));
                 }
+
+                sbStatus.Dispatcher.Invoke(() =>
+                {
+                    sbStatus.Background = System.Windows.Media.Brushes.Green;
+                    tbStatusText.Text = "Project Rendered";
+                });
             });
 
             slidelist.Children.Clear();
@@ -177,6 +188,83 @@ namespace SlideCreater
                     SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj);
                 });
             }
+        }
+
+        private void ClickSave(object sender, RoutedEventArgs e)
+        {
+            SaveProject();
+        }
+
+        private void SaveProject()
+        {
+            _proj.SourceCode = TbInput.Text;
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Save Project";
+            sfd.DefaultExt = "json";
+            sfd.AddExtension = true;
+            sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
+            if (sfd.ShowDialog() == true)
+            {
+                _proj.Save(sfd.FileName);
+                sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
+                tbStatusText.Text = "Project Saved";
+                dirty = false;
+            }
+        }
+
+        private void OpenProject()
+        {
+            dirty = false;
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Load Project";
+            ofd.DefaultExt = "json";
+            ofd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
+            if (ofd.ShowDialog() == true)
+            {
+                Assets.Clear();
+                slidelist.Children.Clear();
+                slidepreviews.Clear();
+                _proj = Project.Load(ofd.FileName);
+                TbInput.Text = _proj.SourceCode;
+                Assets = _proj.Assets;
+                ShowProjectAssets();
+                sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
+                tbStatusText.Text = "Project Saved";
+            }
+
+        }
+
+        private void NewProject()
+        {
+            dirty = false;
+            slidelist.Children.Clear();
+            slidepreviews.Clear();
+            Assets.Clear();
+            AssetList.Children.Clear();
+            TbInput.Text = string.Empty;
+            _proj = new Project();
+
+            sbStatus.Background = System.Windows.Media.Brushes.Gray;
+            tbStatusText.Text = "Empty Project";
+
+        }
+
+        private void ClickOpen(object sender, RoutedEventArgs e)
+        {
+            OpenProject();
+        }
+
+        private void ClickNew(object sender, RoutedEventArgs e)
+        {
+            NewProject();
+        }
+
+        private bool dirty = false;
+        private void SourceTextChanged(object sender, TextChangedEventArgs e)
+        {
+            dirty = true;
+            sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+            tbStatusText.Text = "Project Unsaved";
         }
     }
 }

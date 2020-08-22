@@ -12,11 +12,14 @@
             <RowDefinition Height="20"></RowDefinition>
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0">
             <MenuItem Header="File">
-                <MenuItem Header="New"></MenuItem>
+                <MenuItem Click="ClickNew" Header="New"></MenuItem>
+                <MenuItem Click="ClickOpen" Header="Open"></MenuItem>
+                <MenuItem Click="ClickSave" Header="Save"></MenuItem>
             </MenuItem>
         </Menu>
 
@@ -55,7 +58,9 @@
             </Grid>
 
             <Grid Grid.Column="2">
-                <TextBox x:Name="TbInput" TextWrapping="WrapWithOverflow" SpellCheck.IsEnabled="True" AcceptsReturn="True" AcceptsTab="True"></TextBox>
+                <ScrollViewer>
+                    <TextBox x:Name="TbInput" TextChanged="SourceTextChanged" TextWrapping="WrapWithOverflow" SpellCheck.IsEnabled="True" AcceptsReturn="True" AcceptsTab="True"></TextBox>
+                </ScrollViewer>
             </Grid>
             <Grid Grid.Column="4">
                 <Grid.ColumnDefinitions>
@@ -82,6 +87,13 @@
 
 
             </Grid>
+
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <StatusBar Name="sbStatus" Background="Red">
+                <TextBlock Name="tbStatusText" Foreground="White" FontSize="15" FontWeight="Bold">New Project</TextBlock>
+            </StatusBar>
         </Grid>
     </Grid>
 </Window>

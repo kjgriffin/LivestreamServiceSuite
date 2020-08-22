@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace SlideCreater.SlideAssembly
 {
@@ -13,7 +14,13 @@ namespace SlideCreater.SlideAssembly
         public Rectangle Speaker { get; set; }
         public Rectangle Text { get; set; }
         public int InterLineSpacing { get; set; }
+        [JsonIgnore]
         public Font Font { get; set; }
+
+        public LiturgyLayout()
+        {
+            Font = new Font("Arial", 36, FontStyle.Regular);
+        }
 
         public LiturgyLayoutRenderInfo GetRenderInfo()
         {
