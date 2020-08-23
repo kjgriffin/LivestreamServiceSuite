@@ -72,10 +72,23 @@ namespace SlideCreater
 
                 SlideRenderer sr = new SlideRenderer(_proj);
 
-                slides.Clear();
-                for (int i = 0; i < _proj.Slides.Count; i++)
+                try
                 {
-                    slides.Add(sr.RenderSlide(i));
+                    slides.Clear();
+                    for (int i = 0; i < _proj.Slides.Count; i++)
+                    {
+                        slides.Add(sr.RenderSlide(i));
+                    }
+                }
+                catch (Exception)
+                {
+                    sbStatus.Dispatcher.Invoke(() =>
+                    {
+                        sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+                        tbStatusText.Text = "Render Failed";
+                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: Unknown Reason?";
+                    });
+                    return;
                 }
 
                 sbStatus.Dispatcher.Invoke(() =>
