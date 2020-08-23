@@ -44,24 +44,43 @@ namespace SlideCreater.Compiler
             Lexer = new Lexer();
         }
 
-        public Project Compile(string input, List<ProjectAsset> assets)
+        public Project Compile(string input, List<ProjectAsset> assets, out bool success, out List<string> errormsg)
         {
-            Lexer.Tokenize(input);
 
-            XenonASTProgram p = Program();
-
+            errormsg = new List<string>();
+            success = false;
+            
             Project proj = new Project();
             proj.Assets = assets;
+
+            Lexer.Tokenize(input);
+
+            XenonASTProgram p;
+            try
+            {
+                p = Program();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Compilation Failed");
+                errormsg.Add($"Failed to compile project.");
+                success = false;
+                return proj;
+            }
+
 
 
             try
             {
                 p.Generate(proj, null);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Debug.WriteLine("Generation Failed");
+                errormsg.Add("Failed to build project.");
                 p.GenerateDebug(proj);
+                success = false;
+                return proj;
             }
 
 
@@ -69,12 +88,19 @@ namespace SlideCreater.Compiler
             string jsonproj = JsonSerializer.Serialize<Project>(proj);
             Debug.WriteLine(jsonproj);
 
+            errormsg.Add($"Lexer Status::Max inspections: {Lexer.MaxChecks}");
+            success = true;
             return proj;
         }
 
         private XenonASTProgram Program()
         {
             XenonASTProgram p = new XenonASTProgram();
+            // gaurd against empty file
+            if (Lexer.InspectEOF())
+            {
+                return p;
+            }
             do
             {
                 XenonASTExpression expr = Expression();

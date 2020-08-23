@@ -31,9 +31,10 @@ namespace SlideCreater
         public CreaterEditorWindow()
         {
             InitializeComponent();
-            sbStatus.Background = System.Windows.Media.Brushes.Gray;
+            sbStatus.Background = System.Windows.Media.Brushes.LightGray;
             tbStatusText.Text = "Open Project";
         }
+
 
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
@@ -48,10 +49,28 @@ namespace SlideCreater
 
                 // compile text
                 XenonCompiler compiler = new XenonCompiler();
-                _proj = compiler.Compile(text, Assets);
+                bool compiled;
+                List<string> CompilerErrors;
+                _proj = compiler.Compile(text, Assets, out compiled, out CompilerErrors);
+
+                if (!compiled)
+                {
+                    sbStatus.Dispatcher.Invoke(() =>
+                    {
+                        sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+                        tbStatusText.Text = "Build Failed";
+                    });
+                    tbConsole.Dispatcher.Invoke(() =>
+                    {
+                        foreach (var msg in CompilerErrors)
+                        {
+                            tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: {msg}";
+                        }
+                    });
+                    return;
+                }
 
                 SlideRenderer sr = new SlideRenderer(_proj);
-
 
                 slides.Clear();
                 for (int i = 0; i < _proj.Slides.Count; i++)
@@ -63,6 +82,11 @@ namespace SlideCreater
                 {
                     sbStatus.Background = System.Windows.Media.Brushes.Green;
                     tbStatusText.Text = "Project Rendered";
+                    foreach (var msg in CompilerErrors)
+                    {
+                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Message]: {msg}";
+                    }
+                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Succeded]: Slides built!";
                 });
             });
 
@@ -178,6 +202,8 @@ namespace SlideCreater
 
         private async void ExportSlides(object sender, RoutedEventArgs e)
         {
+            sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
+            tbStatusText.Text = "Exporting Slides";
             SaveFileDialog ofd = new SaveFileDialog();
             ofd.Title = "Select Output Folder";
             ofd.FileName = "Slide";
@@ -187,6 +213,13 @@ namespace SlideCreater
                 {
                     SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj);
                 });
+                sbStatus.Background = System.Windows.Media.Brushes.GreenYellow;
+                tbStatusText.Text = "Slides Exported";
+            }
+            else
+            {
+                sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
+                tbStatusText.Text = "Abort Export";
             }
         }
 
@@ -214,6 +247,13 @@ namespace SlideCreater
 
         private void OpenProject()
         {
+            if (dirty)
+            {
+                if (!CheckSaveChanges())
+                {
+                    return;
+                }
+            }
             dirty = false;
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Load Project";
@@ -236,6 +276,13 @@ namespace SlideCreater
 
         private void NewProject()
         {
+            if (dirty)
+            {
+                if (!CheckSaveChanges())
+                {
+                    return;
+                }
+            }
             dirty = false;
             slidelist.Children.Clear();
             slidepreviews.Clear();
@@ -244,9 +291,28 @@ namespace SlideCreater
             TbInput.Text = string.Empty;
             _proj = new Project();
 
-            sbStatus.Background = System.Windows.Media.Brushes.Gray;
+            sbStatus.Background = System.Windows.Media.Brushes.LightGray;
             tbStatusText.Text = "Empty Project";
 
+        }
+
+        /// <summary>
+        /// Return true if should proceed, false to abort
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckSaveChanges()
+        {
+            var res = MessageBox.Show("Do you want to save your changes?", "Save Changes", MessageBoxButton.YesNoCancel);
+            if (res == MessageBoxResult.Yes)
+            {
+                SaveProject();
+                return true;
+            }
+            else if (res == MessageBoxResult.No)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void ClickOpen(object sender, RoutedEventArgs e)
@@ -263,8 +329,19 @@ namespace SlideCreater
         private void SourceTextChanged(object sender, TextChangedEventArgs e)
         {
             dirty = true;
-            sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+            sbStatus.Background = System.Windows.Media.Brushes.Brown;
             tbStatusText.Text = "Project Unsaved";
+        }
+
+        private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (dirty)
+            {
+                if (!CheckSaveChanges())
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 }

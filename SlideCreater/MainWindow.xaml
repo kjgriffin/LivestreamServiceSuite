@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SlideCreater"
         mc:Ignorable="d"
+        Closing="OnWindowClosing"
         Title="Slide Creater" Height="800" Width="1000">
     <Grid>
 
@@ -12,7 +13,7 @@
             <RowDefinition Height="20"></RowDefinition>
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition></RowDefinition>
-            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="20"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0">
@@ -23,7 +24,7 @@
             </MenuItem>
         </Menu>
 
-        <ToolBar Grid.Row="1">
+        <ToolBar Grid.Row="1" Background="#fafafa">
             <Button Click="RenderSlides">Render</Button>
             <Button Click="ExportSlides">Export</Button>
         </ToolBar>
@@ -58,31 +59,55 @@
             </Grid>
 
             <Grid Grid.Column="2">
-                <ScrollViewer>
-                    <TextBox x:Name="TbInput" TextChanged="SourceTextChanged" TextWrapping="WrapWithOverflow" SpellCheck.IsEnabled="True" AcceptsReturn="True" AcceptsTab="True"></TextBox>
-                </ScrollViewer>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4*"></RowDefinition>
+                        <RowDefinition Height="5"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <ScrollViewer Grid.Row="0">
+                        <TextBox x:Name="TbInput" TextChanged="SourceTextChanged" TextWrapping="WrapWithOverflow" SpellCheck.IsEnabled="True" AcceptsReturn="True" AcceptsTab="True"></TextBox>
+                    </ScrollViewer>
+                    <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"></GridSplitter>
+                    <Grid Grid.Row="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0" Background="LightGray">
+                            <TextBlock>
+                                Render Output:
+                            </TextBlock>
+                        </Grid>
+                        <ScrollViewer Grid.Row="1">
+                            <TextBlock Name="tbConsole"></TextBlock>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
             </Grid>
             <Grid Grid.Column="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
                     <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <GridSplitter Grid.Column="1"></GridSplitter>
-
-                <ScrollViewer Grid.Column="0">
-                    <StackPanel Name="slidelist">
-                    </StackPanel>
-                </ScrollViewer>
-
-                <Grid Grid.Column="2">
-                    <Border VerticalAlignment="Top">
-                        <local:SlideContentPresenter x:Name="FocusSlide"></local:SlideContentPresenter>
-                    </Border>
+                <Viewbox Grid.Row="0">
+                    <Grid>
+                        <Border VerticalAlignment="Top">
+                            <local:SlideContentPresenter x:Name="FocusSlide"></local:SlideContentPresenter>
+                        </Border>
+                    </Grid>
+                </Viewbox>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <ScrollViewer Grid.Column="1">
+                        <StackPanel Name="slidelist">
+                        </StackPanel>
+                    </ScrollViewer>
                 </Grid>
 
 
@@ -91,8 +116,8 @@
         </Grid>
 
         <Grid Grid.Row="3">
-            <StatusBar Name="sbStatus" Background="Red">
-                <TextBlock Name="tbStatusText" Foreground="White" FontSize="15" FontWeight="Bold">New Project</TextBlock>
+            <StatusBar Name="sbStatus" Background="LightGray">
+                <TextBlock Name="tbStatusText" Foreground="White">New Project</TextBlock>
             </StatusBar>
         </Grid>
     </Grid>

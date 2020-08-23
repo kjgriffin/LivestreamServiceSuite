@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Printing;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,6 +20,24 @@ namespace SlideCreater.Compiler
         private int _tokenpos = 0;
 
         public string CurrentToken => _tokens[_tokenpos];
+
+        public int MaxChecks { get; private set; }
+
+        private int peeks = 0;
+        private int peeknexts = 0;
+        private int inspections = 0;
+        public void ClearInspectionState()
+        {
+            MaxChecks = new List<int>() { peeks, peeknexts, inspections, MaxChecks }.OrderByDescending(p => p).First();
+            peeks = 0;
+            peeknexts = 0;
+            inspections = 0;
+        }
+
+        /// <summary>
+        /// Max number of times a token can be inspected before an error is thrown. Usually indicative of unexpected token.
+        /// </summary>
+        public int MaxInspections { get; set; } = 10000;
 
         public Lexer()
         {
@@ -119,6 +138,10 @@ namespace SlideCreater.Compiler
         /// <param name="test"></param>
         public bool Inspect(string test, bool strict = true)
         {
+            if (inspections > MaxInspections)
+            {
+                throw new Exception($"Too many inspections of token '{_tokens[_tokenpos]}'");
+            }
             if (InspectEOF())
             {
                 throw new ArgumentOutOfRangeException($"Unexpected token {test}. EOF");
@@ -130,6 +153,7 @@ namespace SlideCreater.Compiler
             }
             var m = Regex.Match(_tokens[_tokenpos], pattern);
 
+            inspections++;
             return m.Success;
         }
 
@@ -140,6 +164,11 @@ namespace SlideCreater.Compiler
         /// <returns>The current token</returns>
         public string Peek()
         {
+            if (peeks > MaxInspections)
+            {
+                throw new Exception($"Too many peeks of token '{_tokens[_tokenpos]}'");
+            }
+            peeks++;
             return _tokens[_tokenpos];
         }
 
@@ -149,6 +178,11 @@ namespace SlideCreater.Compiler
         /// <returns>The next token</returns>
         public string PeekNext()
         {
+            if (peeknexts > MaxInspections)
+            {
+                throw new Exception($"Too many peeks of token '{_tokens[_tokenpos]}'");
+            }
+            peeknexts++;
             if (_tokenpos + 1 < _tokens.Count)
             {
                 return _tokens[_tokenpos + 1];
@@ -164,6 +198,7 @@ namespace SlideCreater.Compiler
         {
             if (_tokens[_tokenpos] == text)
             {
+                ClearInspectionState();
                 _tokenpos++;
                 return true;
             }
@@ -176,6 +211,7 @@ namespace SlideCreater.Compiler
         /// <returns></returns>
         public string Consume()
         {
+            ClearInspectionState();
             return _tokens[_tokenpos++];
         }
 
@@ -187,7 +223,7 @@ namespace SlideCreater.Compiler
         public string ConsumeUntil(string test)
         {
             StringBuilder sb = new StringBuilder();
-            while(!Inspect(test))
+            while (!Inspect(test))
             {
                 sb.Append(Consume());
             }
@@ -203,6 +239,7 @@ namespace SlideCreater.Compiler
             {
                 if (Regex.Match(_tokens[_tokenpos], "\\s").Success)
                 {
+                    ClearInspectionState();
                     _tokenpos += 1;
                 }
                 else
