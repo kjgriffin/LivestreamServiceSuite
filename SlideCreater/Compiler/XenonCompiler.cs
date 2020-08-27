@@ -58,7 +58,7 @@ namespace SlideCreater.Compiler
             XenonASTProgram p;
             try
             {
-                p = Program();
+                p = Program(errormsg);
             }
             catch (Exception ex)
             {
@@ -93,8 +93,9 @@ namespace SlideCreater.Compiler
             return proj;
         }
 
-        private XenonASTProgram Program()
+        private XenonASTProgram Program(List<string> errormsg)
         {
+            errormsg.Add("[XenonCompiler]: Trying to build program.");
             XenonASTProgram p = new XenonASTProgram();
             // gaurd against empty file
             if (Lexer.InspectEOF())
