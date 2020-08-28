@@ -19,16 +19,16 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Column="0" Grid.ColumnSpan="2">
                     <StackPanel Orientation="Horizontal">
-                        <RadioButton Name="rbslide" Click="ClickSlideMode" VerticalAlignment="Center" IsChecked="True" Foreground="Orange">Slide</RadioButton>
-                        <RadioButton Name="rbliturgy" Click="ClickLiturgyMode" VerticalAlignment="Center" Foreground="Orange">Liturgy</RadioButton>
-                        <RadioButton Name="rbvideo" Click="ClickVideoMode" VerticalAlignment="Center" Foreground="Orange">Video</RadioButton>
-                        <Button Click="ClickLoadMedia" Margin="10,3,0,3" Padding="5,3,3,5">Load</Button>
+                        <RadioButton Focusable="false" IsTabStop="False" Name="rbslide" Click="ClickSlideMode" VerticalAlignment="Center" IsChecked="True" Foreground="Orange">Slide</RadioButton>
+                        <RadioButton Focusable="false" IsTabStop="False" Name="rbliturgy" Click="ClickLiturgyMode" VerticalAlignment="Center" Foreground="Orange">Liturgy</RadioButton>
+                        <RadioButton Focusable="false" IsTabStop="False" Name="rbvideo" Click="ClickVideoMode" VerticalAlignment="Center" Foreground="Orange">Video</RadioButton>
+                        <Button Focusable="false" IsTabStop="False" Click="ClickLoadMedia" Margin="10,3,0,3" Padding="5,3,3,5">Load</Button>
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="1">
                     <local:MediaPlayer2 x:Name="mediapreview"></local:MediaPlayer2>
                 </Grid>
-                <Button Name="BtnTake" Click="ClickTake" Grid.Column="0" Grid.Row="1" Style="{StaticResource SwitcherButton_Disabled}">Take</Button>
+                <Button Focusable="false" IsTabStop="False" Name="BtnTake" Click="ClickTake" Grid.Column="0" Grid.Row="1" Style="{StaticResource SwitcherButton_Disabled}">Take</Button>
             </Grid>
         </Border>
     </Grid>

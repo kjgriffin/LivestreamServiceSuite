@@ -308,10 +308,10 @@
                         <RowDefinition></RowDefinition>
                         <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
-                    <local:SlidePoolSource x:Name="SlidePoolSource0" ClickTakeEvent="ClickTakeSP0" Grid.Row="0"></local:SlidePoolSource>
-                    <local:SlidePoolSource x:Name="SlidePoolSource1" ClickTakeEvent="ClickTakeSP1" Grid.Row="1"></local:SlidePoolSource>
-                    <local:SlidePoolSource x:Name="SlidePoolSource2" ClickTakeEvent="ClickTakeSP2"  Grid.Row="2"></local:SlidePoolSource>
-                    <local:SlidePoolSource x:Name="SlidePoolSource3" ClickTakeEvent="ClickTakeSP3" Grid.Row="3"></local:SlidePoolSource>
+                    <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource0" ClickTakeEvent="ClickTakeSP0" Grid.Row="0"></local:SlidePoolSource>
+                    <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource1" ClickTakeEvent="ClickTakeSP1" Grid.Row="1"></local:SlidePoolSource>
+                    <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource2" ClickTakeEvent="ClickTakeSP2"  Grid.Row="2"></local:SlidePoolSource>
+                    <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource3" ClickTakeEvent="ClickTakeSP3" Grid.Row="3"></local:SlidePoolSource>
                 </Grid>
             </Grid>
         </Grid>
