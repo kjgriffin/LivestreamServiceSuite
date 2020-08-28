@@ -57,6 +57,11 @@ namespace SlideCreater.LayoutEngine
             "$",
         };
 
+        private List<string> Escape = new List<string>()
+        {
+            "\\",
+        };
+
         public void BuildLines(List<string> words)
         {
             // go through all the words and assemble into sentences.
@@ -67,9 +72,16 @@ namespace SlideCreater.LayoutEngine
 
             List<string> line = new List<string>();
 
+            bool skipnext = false;
+
             foreach (var word in words)
             {
-                if (Speakers.Contains(word))
+                if (Escape.Contains(word))
+                {
+                    skipnext = true;
+                    continue;
+                }
+                if (Speakers.Contains(word) && !skipnext)
                 {
                     if (speaker != string.Empty)
                     {
@@ -92,6 +104,7 @@ namespace SlideCreater.LayoutEngine
                         line.Add(" ");
                     }
                 }
+                skipnext = false;
             }
             Lines.Add((speaker, finalizeline(line)));
 

@@ -44,12 +44,13 @@ namespace SlideCreater.Compiler
             Lexer = new Lexer();
         }
 
-        public Project Compile(string input, List<ProjectAsset> assets, out bool success, out List<string> errormsg)
-        {
+        public List<XenonCompilerMessage> Messages { get; set; } = new List<XenonCompilerMessage>();
 
-            errormsg = new List<string>();
-            success = false;
-            
+        public bool CompilerSucess { get; set; } = false;
+
+        public Project Compile(string input, List<ProjectAsset> assets)
+        {
+            CompilerSucess = false; 
             Project proj = new Project();
             proj.Assets = assets;
 
@@ -58,13 +59,11 @@ namespace SlideCreater.Compiler
             XenonASTProgram p;
             try
             {
-                p = Program(errormsg);
+                p = Program();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Compilation Failed");
-                errormsg.Add($"Failed to compile project.");
-                success = false;
                 return proj;
             }
 
@@ -77,9 +76,7 @@ namespace SlideCreater.Compiler
             catch (Exception ex)
             {
                 Debug.WriteLine("Generation Failed");
-                errormsg.Add("Failed to build project.");
                 p.GenerateDebug(proj);
-                success = false;
                 return proj;
             }
 
@@ -88,18 +85,17 @@ namespace SlideCreater.Compiler
             string jsonproj = JsonSerializer.Serialize<Project>(proj);
             Debug.WriteLine(jsonproj);
 
-            errormsg.Add($"Lexer Status::Max inspections: {Lexer.MaxChecks}");
-            success = true;
+            CompilerSucess = true;
             return proj;
         }
 
-        private XenonASTProgram Program(List<string> errormsg)
+        private XenonASTProgram Program()
         {
-            errormsg.Add("[XenonCompiler]: Trying to build program.");
             XenonASTProgram p = new XenonASTProgram();
             // gaurd against empty file
             if (Lexer.InspectEOF())
             {
+                Messages.Add(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Message, ErrorName = "Empty Project", ErrorMessage = "Program contains no symbols.", Token = Lexer.EOFText });
                 return p;
             }
             do
@@ -228,6 +224,7 @@ namespace SlideCreater.Compiler
             }
             else
             {
+                Messages.Add(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Error, ErrorName = "Unknown Command", ErrorMessage = $"{Lexer.Peek()} is not a recognized command", Token = Lexer.Peek() });
                 throw new ArgumentException($"Unexpected Command. Symbol: '{Lexer.Peek()}' is not a recognized command");
             }
         }

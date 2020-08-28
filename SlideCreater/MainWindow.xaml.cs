@@ -49,11 +49,9 @@ namespace SlideCreater
 
                 // compile text
                 XenonCompiler compiler = new XenonCompiler();
-                bool compiled;
-                List<string> CompilerErrors;
-                _proj = compiler.Compile(text, Assets, out compiled, out CompilerErrors);
+                _proj = compiler.Compile(text, Assets);
 
-                if (!compiled)
+                if (!compiler.CompilerSucess)
                 {
                     sbStatus.Dispatcher.Invoke(() =>
                     {
@@ -62,7 +60,7 @@ namespace SlideCreater
                     });
                     tbConsole.Dispatcher.Invoke(() =>
                     {
-                        foreach (var msg in CompilerErrors)
+                        foreach (var msg in compiler.Messages)
                         {
                             tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: {msg}";
                         }
@@ -95,7 +93,7 @@ namespace SlideCreater
                 {
                     sbStatus.Background = System.Windows.Media.Brushes.Green;
                     tbStatusText.Text = "Project Rendered";
-                    foreach (var msg in CompilerErrors)
+                    foreach (var msg in compiler.Messages)
                     {
                         tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Message]: {msg}";
                     }

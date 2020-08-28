@@ -11,6 +11,8 @@ namespace SlideCreater.Compiler
     class Lexer
     {
 
+        public static readonly string EOFText = "$EOF$";
+
         public string Text { get; private set; } = string.Empty;
 
         public List<string> SplitWords { get; private set; }
@@ -58,6 +60,8 @@ namespace SlideCreater.Compiler
                 "{",
                 "}",
                 "#",
+                "\\",
+                "$",
             };
             SplitWords.AddRange(Seperators);
         }

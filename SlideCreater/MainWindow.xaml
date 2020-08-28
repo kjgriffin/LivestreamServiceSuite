@@ -66,7 +66,7 @@
                         <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
                     <ScrollViewer Grid.Row="0">
-                        <TextBox x:Name="TbInput" TextChanged="SourceTextChanged" TextWrapping="WrapWithOverflow" SpellCheck.IsEnabled="True" AcceptsReturn="True" AcceptsTab="True"></TextBox>
+                        <TextBox x:Name="TbInput" FontFamily="Arial" FontSize="12" TextChanged="SourceTextChanged" TextWrapping="WrapWithOverflow" SpellCheck.IsEnabled="True" AcceptsReturn="True" AcceptsTab="True"></TextBox>
                     </ScrollViewer>
                     <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"></GridSplitter>
                     <Grid Grid.Row="2">
