@@ -12,10 +12,11 @@ namespace Xenon.Renderer
         public string AssetPath { get; set; }
         public string RenderedAs { get; set; }
         public Bitmap Bitmap {get; set;}
+        public int Number { get; set; }
 
         public static RenderedSlide Default()
         {
-            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", RenderedAs = "Default" };
+            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", RenderedAs = "Default", Number = 0 };
         }
     }
 }

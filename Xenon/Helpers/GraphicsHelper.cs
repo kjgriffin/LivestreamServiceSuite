@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Text;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
@@ -37,6 +39,11 @@ namespace Xenon.Helpers
                 return new Bitmap(bitmap);
             }
         }
+
+        //public static Font LoadLSBSymbolFont()
+        //{
+
+        //}
 
 
         internal static StringFormat TopLeftAlign => new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };

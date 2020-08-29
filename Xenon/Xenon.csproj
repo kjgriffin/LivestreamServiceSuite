@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\LSBSymbol.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\LSBSymbol.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 
@@ -16,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="ImageResources\PrefabSlides.Designer.cs">
+    <Compile Update="ProjectResources\PrefabSlides.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>PrefabSlides.resx</DependentUpon>
@@ -24,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="ImageResources\PrefabSlides.resx">
+    <EmbeddedResource Update="ProjectResources\PrefabSlides.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>PrefabSlides.Designer.cs</LastGenOutput>
     </EmbeddedResource>

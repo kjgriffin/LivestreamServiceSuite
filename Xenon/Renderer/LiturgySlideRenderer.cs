@@ -13,7 +13,7 @@ using Xenon.Helpers;
 
 namespace Xenon.Renderer
 {
-     class LiturgySlideRenderer
+    class LiturgySlideRenderer
     {
 
         public SlideLayout Layouts { get; set; }
@@ -31,6 +31,7 @@ namespace Xenon.Renderer
 
             Graphics gfx = Graphics.FromImage(bmp);
 
+            Font LSBSymbolFont = new System.Drawing.Font("LSBSymbol", 36, System.Drawing.FontStyle.Regular);
 
             gfx.Clear(Color.Black);
 
@@ -65,26 +66,33 @@ namespace Xenon.Renderer
                     drawspeaker = true;
                 }
                 lastspeaker = line.Content[0].Data;
+
                 System.Drawing.Rectangle speakerblock = new System.Drawing.Rectangle(speaker.Move(0, linepos + interspace * linenum).Location, new System.Drawing.Size(60, 60));
+
                 switch (line.Content[0].Data)
                 {
                     case "C":
                         if (drawspeaker)
                         {
-                            gfx.FillRectangle(Brushes.Red, speakerblock);
-                            gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
+                            gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, topleftalign);
+                            //gfx.FillRectangle(Brushes.Red, speakerblock);
+                            //gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
                         }
                         gfx.DrawString(line.Content[1].Data, renderInfo.BoldFont, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
                         break;
                     default:
                         if (drawspeaker)
                         {
-                            gfx.DrawRectangle(Pens.Red, speakerblock);
-                            gfx.DrawString(line.Content[0].Data, renderInfo.RegularFont, Brushes.Red, speakerblock, centeralign);
+                            gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, topleftalign);
+                            //gfx.DrawRectangle(Pens.Red, speakerblock);
+                            //gfx.DrawString(line.Content[0].Data, renderInfo.RegularFont, Brushes.Red, speakerblock, centeralign);
                         }
                         gfx.DrawString(line.Content[1].Data, renderInfo.RegularFont, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
                         break;
                 }
+
+                //gfx.DrawString(line.Content[0].Data, f, Brushes.Red, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
+
                 linenum++;
                 linepos += (int)(float)line.Content[1].Attributes["height"];
             }

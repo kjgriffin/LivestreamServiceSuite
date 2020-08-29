@@ -37,11 +37,11 @@ namespace Xenon.Renderer
                 {
                     case PrefabSlides.Copyright:
                         //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/copyright.PNG")).ConvertToBitmap();
-                        src = ImageResources.PrefabSlides.copyright_png;
+                        src = ProjectResources.PrefabSlides.copyright_png;
                         break;
                     case PrefabSlides.ViewServices:
                         //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/services.PNG")).ConvertToBitmap();
-                        src = ImageResources.PrefabSlides.viewservices_png;
+                        src = ProjectResources.PrefabSlides.viewservices_png;
                         break;
                     case PrefabSlides.ViewSeries:
                         //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/series.PNG")).ConvertToBitmap();
@@ -49,11 +49,11 @@ namespace Xenon.Renderer
                         break;
                     case PrefabSlides.ApostlesCreed:
                         //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/apostlescreed.PNG")).ConvertToBitmap();
-                        src = ImageResources.PrefabSlides.apostlescreed_png;
+                        src = ProjectResources.PrefabSlides.apostlescreed_png;
                         break;
                     case PrefabSlides.LordsPrayer:
                         //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/lordsprayer.PNG")).ConvertToBitmap();
-                        src = ImageResources.PrefabSlides.lordsprayer_png;
+                        src = ProjectResources.PrefabSlides.lordsprayer_png;
                         break;
                 }
 

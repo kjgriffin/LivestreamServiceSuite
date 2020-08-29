@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Xenon.ImageResources {
+namespace Xenon.ProjectResources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Xenon.ImageResources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Xenon.ImageResources.PrefabSlides", typeof(PrefabSlides).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Xenon.ProjectResources.PrefabSlides", typeof(PrefabSlides).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

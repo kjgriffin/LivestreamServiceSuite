@@ -54,10 +54,12 @@ namespace Xenon.Compiler
             Project proj = new Project();
             proj.Assets = assets;
 
+            progress.Report(0);
+
             string preproc = Lexer.StripComments(input);
             Lexer.Tokenize(preproc);
 
-            progress.Report(0);
+            progress.Report(10);
 
             XenonASTProgram p = new XenonASTProgram();
             try

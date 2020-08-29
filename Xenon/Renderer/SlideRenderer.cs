@@ -39,7 +39,9 @@ namespace Xenon.Renderer
                 throw new ArgumentOutOfRangeException("slidenum");
                 //return RenderedSlide.Default();
             }
-            return RenderSlide(_project.Slides[slidenum], Messages);
+            var s = RenderSlide(_project.Slides[slidenum], Messages);
+            s.Number = slidenum;
+            return s;
         }
 
         public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> Messages)
