@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xenon.AssetManagment;
 using Xenon.SlideAssembly;
 
@@ -16,12 +17,13 @@ namespace Xenon.Compiler
 
         XenonCompiler compiler = new XenonCompiler();
 
-        public bool BuildProject(string inputtext, List<ProjectAsset> Assets)
+        public async Task<bool> BuildProject(string inputtext, List<ProjectAsset> Assets, IProgress<int> progress)
         {
 
-            Project = compiler.Compile(inputtext, Assets);
-
-
+            await Task.Run(() =>
+            {
+                Project = compiler.Compile(inputtext, Assets, progress);
+            });
 
             return compiler.CompilerSucess;
         }

@@ -48,7 +48,7 @@ namespace Xenon.Compiler
 
         public bool CompilerSucess { get; set; } = false;
 
-        public Project Compile(string input, List<ProjectAsset> assets)
+        public Project Compile(string input, List<ProjectAsset> assets, IProgress<int> progress)
         {
             CompilerSucess = false; 
             Project proj = new Project();
@@ -56,6 +56,8 @@ namespace Xenon.Compiler
 
             string preproc = Lexer.StripComments(input);
             Lexer.Tokenize(preproc);
+
+            progress.Report(0);
 
             XenonASTProgram p = new XenonASTProgram();
             try
@@ -68,6 +70,7 @@ namespace Xenon.Compiler
                 return proj;
             }
 
+            progress.Report(50);
 
 
             try
@@ -85,6 +88,8 @@ namespace Xenon.Compiler
 
             string jsonproj = JsonSerializer.Serialize<Project>(proj);
             Debug.WriteLine(jsonproj);
+
+            progress.Report(100);
 
             CompilerSucess = true;
             return proj;

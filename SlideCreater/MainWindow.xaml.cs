@@ -46,32 +46,43 @@ namespace SlideCreater
             string text = TbInput.Text;
             _proj.SourceCode = text;
 
+
+            var progress = new Progress<int>(percent =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    tbStatusText.Text = $"Compiling Project: {percent}%";
+                });
+            });
+
+
+            // compile text
+            XenonBuildService builder = new XenonBuildService();
+            bool success = await builder.BuildProject(_proj.SourceCode, Assets, progress);
+
+            if (!success)
+            {
+                sbStatus.Dispatcher.Invoke(() =>
+                {
+                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+                    tbStatusText.Text = "Build Failed";
+                });
+                tbConsole.Dispatcher.Invoke(() =>
+                {
+                    foreach (var msg in builder.Messages)
+                    {
+                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: {msg}";
+                    }
+                });
+                return;
+            }
+            else
+            {
+                _proj = builder.Project;
+            }
+
             await Task.Run(() =>
             {
-
-                // compile text
-                XenonBuildService builder = new XenonBuildService();
-
-                if (!builder.BuildProject(_proj.SourceCode, Assets))
-                {
-                    sbStatus.Dispatcher.Invoke(() =>
-                    {
-                        sbStatus.Background = System.Windows.Media.Brushes.Crimson;
-                        tbStatusText.Text = "Build Failed";
-                    });
-                    tbConsole.Dispatcher.Invoke(() =>
-                    {
-                        foreach (var msg in builder.Messages)
-                        {
-                            tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: {msg}";
-                        }
-                    });
-                    return;
-                }
-                else
-                {
-                    _proj = builder.Project;
-                }
 
                 SlideRenderer sr = new SlideRenderer(_proj);
 
