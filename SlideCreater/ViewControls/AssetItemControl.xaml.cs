@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 namespace SlideCreater
 {
     public delegate void InsertAssetEvent(object sender, ProjectAsset asset);
+    public delegate void DeleteAssetEvent(object sender, ProjectAsset asset);
     /// <summary>
     /// Interaction logic for AssetItemControl.xaml
     /// </summary>
@@ -23,6 +24,7 @@ namespace SlideCreater
 
 
         public event InsertAssetEvent OnFitInsertRequest;
+        public event DeleteAssetEvent OnDeleteAssetRequest;
 
         ProjectAsset Asset;
 
@@ -54,6 +56,11 @@ namespace SlideCreater
         private void ClickFitInsert(object sender, RoutedEventArgs e)
         {
             Dispatcher.Invoke(() => OnFitInsertRequest?.Invoke(this, Asset)); 
+        }
+
+        private void ClickDeleteAsset(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.Invoke(() => OnDeleteAssetRequest?.Invoke(this, Asset));
         }
     }
 }

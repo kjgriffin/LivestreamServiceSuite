@@ -164,6 +164,7 @@ namespace SlideCreater
             ofd.Multiselect = true;
             if (ofd.ShowDialog() == true)
             {
+                AssetsChanged();
                 // add assets
                 foreach (var file in ofd.FileNames)
                 {
@@ -190,9 +191,18 @@ namespace SlideCreater
             {
                 AssetItemControl assetItemCtrl = new AssetItemControl(asset);
                 assetItemCtrl.OnFitInsertRequest += AssetItemCtrl_OnFitInsertRequest;
+                assetItemCtrl.OnDeleteAssetRequest += AssetItemCtrl_OnDeleteAssetRequest;
 
                 AssetList.Children.Add(assetItemCtrl);
             }
+        }
+
+        private void AssetItemCtrl_OnDeleteAssetRequest(object sender, ProjectAsset asset)
+        {
+            AssetsChanged();
+            Assets.Remove(asset);
+            _proj.Assets = Assets;
+            ShowProjectAssets();
         }
 
         private void AssetItemCtrl_OnFitInsertRequest(object sender, ProjectAsset asset)
@@ -344,6 +354,13 @@ namespace SlideCreater
             tbStatusText.Text = "Project Unsaved";
         }
 
+        private void AssetsChanged()
+        {
+            dirty = true;
+            sbStatus.Background = System.Windows.Media.Brushes.Brown;
+            tbStatusText.Text = "Project Unsaved";
+        }
+
         private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (dirty)
@@ -353,6 +370,14 @@ namespace SlideCreater
                     e.Cancel = true;
                 }
             }
+        }
+
+        private void ClickClearAssets(object sender, RoutedEventArgs e)
+        {
+            Assets.Clear();
+            _proj.Assets = Assets;
+            ShowProjectAssets();
+            AssetsChanged();
         }
     }
 }

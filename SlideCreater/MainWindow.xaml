@@ -31,7 +31,7 @@
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="1.5*"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
@@ -48,7 +48,8 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
-                        <Button Click="ClickAddAssets" Width="80" Height="30">Add Assets</Button>
+                        <Button Margin="5" Click="ClickAddAssets" Width="80" Height="30">Add Assets</Button>
+                        <Button Margin="5" Click="ClickClearAssets" Width="80" Height="30">ClearAssets</Button>
                     </StackPanel>
                 </Grid>
                 <ScrollViewer Grid.Row="1">
