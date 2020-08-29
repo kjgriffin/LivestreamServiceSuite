@@ -41,24 +41,32 @@ namespace SlideCreater
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
 
-            sbStatus.Background = System.Windows.Media.Brushes.Orange;
-            tbStatusText.Text = "Rendering Project";
             string text = TbInput.Text;
             _proj.SourceCode = text;
 
 
-            var progress = new Progress<int>(percent =>
+            var compileprogress = new Progress<int>(percent =>
             {
                 Dispatcher.Invoke(() =>
                 {
+                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
                     tbStatusText.Text = $"Compiling Project: {percent}%";
+                });
+            });
+
+            var rendererprogress = new Progress<int>(percent =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
+                    tbStatusText.Text = $"Rendering Project: {percent}%";
                 });
             });
 
 
             // compile text
             XenonBuildService builder = new XenonBuildService();
-            bool success = await builder.BuildProject(_proj.SourceCode, Assets, progress);
+            bool success = await builder.BuildProject(_proj.SourceCode, Assets, compileprogress);
 
             if (!success)
             {
@@ -81,46 +89,37 @@ namespace SlideCreater
                 _proj = builder.Project;
             }
 
-            await Task.Run(() =>
+
+
+
+            try
             {
-
-                SlideRenderer sr = new SlideRenderer(_proj);
-
-
-                List<XenonCompilerMessage> RenderErrors = new List<XenonCompilerMessage>();
-                try
-                {
-                    slides.Clear();
-                    for (int i = 0; i < _proj.Slides.Count; i++)
-                    {
-                        slides.Add(sr.RenderSlide(i, RenderErrors));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    sbStatus.Dispatcher.Invoke(() =>
-                    {
-                        sbStatus.Background = System.Windows.Media.Brushes.Crimson;
-                        tbStatusText.Text = "Render Failed";
-                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: Unknown Reason? {ex}";
-                        foreach (var err in RenderErrors)
-                        {
-                            tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Error]: {err}";
-                        }
-                    });
-                    return;
-                }
-
+                slides = await builder.RenderProject(_proj, rendererprogress);
+            }
+            catch (Exception ex)
+            {
                 sbStatus.Dispatcher.Invoke(() =>
                 {
-                    sbStatus.Background = System.Windows.Media.Brushes.Green;
-                    tbStatusText.Text = "Project Rendered";
-                    foreach (var msg in builder.Messages)
+                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+                    tbStatusText.Text = "Render Failed";
+                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: Unknown Reason? {ex}";
+                    foreach (var err in builder.Messages)
                     {
-                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Message]: {msg}";
+                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Error]: {err}";
                     }
-                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Succeded]: Slides built!";
                 });
+                return;
+            }
+
+            sbStatus.Dispatcher.Invoke(() =>
+            {
+                sbStatus.Background = System.Windows.Media.Brushes.Green;
+                tbStatusText.Text = "Project Rendered";
+                foreach (var msg in builder.Messages)
+                {
+                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Message]: {msg}";
+                }
+                tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Succeded]: Slides built!";
             });
 
             slidelist.Children.Clear();
