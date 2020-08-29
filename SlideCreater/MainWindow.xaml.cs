@@ -1,8 +1,4 @@
 ﻿using Microsoft.Win32;
-using SlideCreater.AssetManagment;
-using SlideCreater.Compiler;
-using SlideCreater.Renderer;
-using SlideCreater.SlideAssembly;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -20,6 +16,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+using Xenon.Compiler;
+using Xenon.Renderer;
+using Xenon.Helpers;
+using Xenon.SlideAssembly;
+using Xenon.AssetManagment;
 
 namespace SlideCreater
 {
@@ -48,10 +50,9 @@ namespace SlideCreater
             {
 
                 // compile text
-                XenonCompiler compiler = new XenonCompiler();
-                _proj = compiler.Compile(text, Assets);
+                XenonBuildService builder = new XenonBuildService();
 
-                if (!compiler.CompilerSucess)
+                if (!builder.BuildProject(_proj.SourceCode, Assets))
                 {
                     sbStatus.Dispatcher.Invoke(() =>
                     {
@@ -60,31 +61,41 @@ namespace SlideCreater
                     });
                     tbConsole.Dispatcher.Invoke(() =>
                     {
-                        foreach (var msg in compiler.Messages)
+                        foreach (var msg in builder.Messages)
                         {
                             tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: {msg}";
                         }
                     });
                     return;
                 }
+                else
+                {
+                    _proj = builder.Project;
+                }
 
                 SlideRenderer sr = new SlideRenderer(_proj);
 
+
+                List<XenonCompilerMessage> RenderErrors = new List<XenonCompilerMessage>();
                 try
                 {
                     slides.Clear();
                     for (int i = 0; i < _proj.Slides.Count; i++)
                     {
-                        slides.Add(sr.RenderSlide(i));
+                        slides.Add(sr.RenderSlide(i, RenderErrors));
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     sbStatus.Dispatcher.Invoke(() =>
                     {
                         sbStatus.Background = System.Windows.Media.Brushes.Crimson;
                         tbStatusText.Text = "Render Failed";
-                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: Unknown Reason?";
+                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: Unknown Reason? {ex}";
+                        foreach (var err in RenderErrors)
+                        {
+                            tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Error]: {err}";
+                        }
                     });
                     return;
                 }
@@ -93,7 +104,7 @@ namespace SlideCreater
                 {
                     sbStatus.Background = System.Windows.Media.Brushes.Green;
                     tbStatusText.Text = "Project Rendered";
-                    foreach (var msg in compiler.Messages)
+                    foreach (var msg in builder.Messages)
                     {
                         tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Message]: {msg}";
                     }
@@ -232,7 +243,7 @@ namespace SlideCreater
             {
                 await Task.Run(() =>
                 {
-                    SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj);
+                    SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>()); // for now ignore messages
                 });
                 sbStatus.Background = System.Windows.Media.Brushes.GreenYellow;
                 tbStatusText.Text = "Slides Exported";

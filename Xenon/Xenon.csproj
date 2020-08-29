@@ -6,14 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ImageResources\apostlescreed.PNG" />
-    <None Remove="ImageResources\copyright.PNG" />
-    <None Remove="ImageResources\lordsprayer.PNG" />
-    <None Remove="ImageResources\series.PNG" />
-    <None Remove="ImageResources\services.PNG" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 
@@ -24,21 +16,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="ImageResources\apostlescreed.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="ImageResources\copyright.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="ImageResources\lordsprayer.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="ImageResources\series.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="ImageResources\services.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    <Compile Update="ImageResources\PrefabSlides.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PrefabSlides.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="ImageResources\PrefabSlides.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>PrefabSlides.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

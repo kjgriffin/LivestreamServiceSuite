@@ -14,6 +14,28 @@ namespace Xenon.Compiler
         LordsPrayer,
     }
 
+    internal static class PrefabSlideConverter
+    {
+        internal static string Convert(this PrefabSlides slide)
+        {
+            switch (slide)
+            {
+                case PrefabSlides.Copyright:
+                    return "Copyright";
+                case PrefabSlides.ViewServices:
+                    return "ViewServices";
+                case PrefabSlides.ViewSeries:
+                    return "ViewSeries";
+                case PrefabSlides.ApostlesCreed:
+                    return "ApostlesCreed";
+                case PrefabSlides.LordsPrayer:
+                    return "LordsPrayer";
+                default:
+                    return "?";
+            }
+        }
+    }
+
     class XenonASTPrefabSlide : IXenonASTCommand
     {
         public PrefabSlides PrefabSlide { get; set; }

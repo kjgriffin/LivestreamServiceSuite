@@ -7,6 +7,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Windows.Media.Imaging;
 using Xenon.Helpers;
+using System.Linq.Expressions;
 
 namespace Xenon.Renderer
 {
@@ -14,7 +15,7 @@ namespace Xenon.Renderer
     {
         public SlideLayout Layouts { get; set; }
 
-        public RenderedSlide RenderSlide(Slide slide)
+        public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages)
         {
             RenderedSlide res = new RenderedSlide();
             res.AssetPath = "";
@@ -29,26 +30,47 @@ namespace Xenon.Renderer
 
             Bitmap src = null;
 
-            switch ((PrefabSlides)slide.Data["prefabtype"])
+            try
             {
-                case PrefabSlides.Copyright:
-                    src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/copyright.PNG")).ConvertToBitmap();
-                    break;
-                case PrefabSlides.ViewServices:
-                    src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/services.PNG")).ConvertToBitmap();
-                    break;
-                case PrefabSlides.ViewSeries:
-                    src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/series.PNG")).ConvertToBitmap();
-                    break;
-                case PrefabSlides.ApostlesCreed:
-                    src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/apostlescreed.PNG")).ConvertToBitmap();
-                    break;
-                case PrefabSlides.LordsPrayer:
-                    src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/lordsprayer.PNG")).ConvertToBitmap();
-                    break;
+
+                switch ((PrefabSlides)slide.Data["prefabtype"])
+                {
+                    case PrefabSlides.Copyright:
+                        //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/copyright.PNG")).ConvertToBitmap();
+                        src = ImageResources.PrefabSlides.copyright_png;
+                        break;
+                    case PrefabSlides.ViewServices:
+                        //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/services.PNG")).ConvertToBitmap();
+                        src = ImageResources.PrefabSlides.viewservices_png;
+                        break;
+                    case PrefabSlides.ViewSeries:
+                        //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/series.PNG")).ConvertToBitmap();
+                        throw new MissingFieldException();
+                        break;
+                    case PrefabSlides.ApostlesCreed:
+                        //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/apostlescreed.PNG")).ConvertToBitmap();
+                        src = ImageResources.PrefabSlides.apostlescreed_png;
+                        break;
+                    case PrefabSlides.LordsPrayer:
+                        //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/lordsprayer.PNG")).ConvertToBitmap();
+                        src = ImageResources.PrefabSlides.lordsprayer_png;
+                        break;
+                }
+
             }
-
-
+            catch (Exception ex)
+            {
+                res.Bitmap = bmp;
+                string tmp = "KEY ERROR on data attribute";
+                object a;
+                slide.Data.TryGetValue("prefabtype", out a);
+                if (a is PrefabSlides && a != null)
+                {
+                    tmp = ((PrefabSlides)a).Convert();
+                }
+                messages.Add(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Error, ErrorMessage = $"Requested prefab image not loaded. While rendering slide {slide.Number}", ErrorName = "Prefab not found", Token = tmp });
+                throw ex;
+            }
 
             if (src != null)
             {

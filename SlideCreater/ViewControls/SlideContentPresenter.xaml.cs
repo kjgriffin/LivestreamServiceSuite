@@ -1,6 +1,4 @@
-﻿using SlideCreater.Renderer;
-using SlideCreater.SlideAssembly;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +11,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+using Xenon.Renderer;
+using Xenon.SlideAssembly;
+using Xenon.Helpers;
 
 namespace SlideCreater
 {

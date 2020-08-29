@@ -13,7 +13,7 @@ namespace Xenon.Helpers
     {
 
 
-        internal static BitmapImage ConvertToBitmapImage(this Bitmap bmp)
+        public static BitmapImage ConvertToBitmapImage(this Bitmap bmp)
         {
             BitmapImage res = new BitmapImage();
             MemoryStream ms = new MemoryStream();
@@ -25,7 +25,7 @@ namespace Xenon.Helpers
             return res;
         }
 
-        internal static Bitmap ConvertToBitmap(this BitmapImage bitmapImage)
+        public static Bitmap ConvertToBitmap(this BitmapImage bitmapImage)
         {
             using (MemoryStream outStream = new MemoryStream())
             {

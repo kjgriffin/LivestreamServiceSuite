@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Xenon.SlideAssembly
 {
-    class Slide
+    public class Slide
     {
         public string Name { get; set; }
         public int Number { get; set; }
-        public SlideFormat Format { get; set; }
+        internal SlideFormat Format { get; set; }
         public MediaType MediaType {get; set;}
         public string Asset { get; set; }
-        public List<SlideLine> Lines { get; set; } = new List<SlideLine>();
+        internal List<SlideLine> Lines { get; set; } = new List<SlideLine>();
         public Dictionary<string, object> Data { get; set; } = new Dictionary<string, object>();
     }
 }

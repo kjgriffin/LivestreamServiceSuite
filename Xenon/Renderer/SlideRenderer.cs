@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Xenon.Compiler;
 
 namespace Xenon.Renderer
 {
-    class SlideRenderer
+    public class SlideRenderer
     {
         Project _project { get; set; }
 
@@ -31,39 +32,39 @@ namespace Xenon.Renderer
             psr.Layouts = proj.Layouts;
         }
 
-        public RenderedSlide RenderSlide(int slidenum)
+        public RenderedSlide RenderSlide(int slidenum, List<XenonCompilerMessage> Messages)
         {
             if (slidenum >= _project.Slides.Count)
             {
                 throw new ArgumentOutOfRangeException("slidenum");
                 //return RenderedSlide.Default();
             }
-            return RenderSlide(_project.Slides[slidenum]);
+            return RenderSlide(_project.Slides[slidenum], Messages);
         }
 
-        public RenderedSlide RenderSlide(Slide slide)
+        public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> Messages)
         {
             // use an appropriate slide render for the task
             switch (slide.Format)
             {
                 case SlideFormat.Liturgy:
-                    return lsr.RenderSlide(_project.Layouts.LiturgyLayout.GetRenderInfo(), slide);
+                    return lsr.RenderSlide(_project.Layouts.LiturgyLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.Video:
-                    return vsr.RenderSlide(slide);
+                    return vsr.RenderSlide(slide, Messages);
                 case SlideFormat.UnscaledImage:
-                    return isr.RenderImageSlide(slide);
+                    return isr.RenderImageSlide(slide, Messages);
                 case SlideFormat.ScaledImage:
-                    return isr.RenderImageSlide(slide);
+                    return isr.RenderImageSlide(slide, Messages);
                 case SlideFormat.LiturgyImage:
-                    return isr.RenderImageSlide(slide);
+                    return isr.RenderImageSlide(slide, Messages);
                 case SlideFormat.Reading:
-                    return rsr.RenderSlide(_project.Layouts.ReadingLayout.GetRenderInfo(), slide);
+                    return rsr.RenderSlide(_project.Layouts.ReadingLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.SermonTitle:
-                    return ssr.RenderSlide(_project.Layouts.SermonLayout.GetRenderInfo(), slide);
+                    return ssr.RenderSlide(_project.Layouts.SermonLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.HymnTextVerse:
-                    return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide);
+                    return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.Prefab:
-                    return psr.RenderSlide(slide);
+                    return psr.RenderSlide(slide, Messages);
                 default:
                     return RenderedSlide.Default();
             }

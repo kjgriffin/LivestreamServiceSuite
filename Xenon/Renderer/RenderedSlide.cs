@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Xenon.Renderer
 {
-    class RenderedSlide
+    public class RenderedSlide
     {
         public MediaType MediaType { get; set; }
         public string AssetPath { get; set; }

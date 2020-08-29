@@ -9,9 +9,9 @@ using System.Windows;
 
 namespace Xenon.SlideAssembly
 {
-    class Project
+    public class Project
     {
-        public SlideLayout Layouts { get; set; } = new SlideLayout();
+        internal SlideLayout Layouts { get; set; } = new SlideLayout();
         public List<Slide> Slides { get; set; } = new List<Slide>();
 
         public List<ProjectAsset> Assets { get; set; } = new List<ProjectAsset>();
@@ -19,7 +19,7 @@ namespace Xenon.SlideAssembly
 
 
         private int slidenum = 0;
-        public int NewSlideNumber => slidenum++;
+        internal int NewSlideNumber => slidenum++;
 
 
         public void Save(string filename)

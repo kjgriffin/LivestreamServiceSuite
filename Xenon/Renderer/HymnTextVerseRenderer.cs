@@ -9,7 +9,7 @@ namespace Xenon.Renderer
     {
         public SlideLayout Layouts { get; set; }
 
-        public RenderedSlide RenderSlide(HymnTextVerseRenderInfo renderInfo, Slide slide)
+        public RenderedSlide RenderSlide(HymnTextVerseRenderInfo renderInfo, Slide slide, System.Collections.Generic.List<Compiler.XenonCompilerMessage> messages)
         {
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;

@@ -1,6 +1,6 @@
 ﻿namespace Xenon.SlideAssembly
 {
-    enum MediaType
+    public enum MediaType
     {
         Video,
         Image,

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Xenon.Compiler
 {
-    enum XenonCompilerMessageType
+    public enum XenonCompilerMessageType
     {
         Debug,
         Message,
@@ -37,7 +37,7 @@ namespace Xenon.Compiler
     }
 
 
-    class XenonCompilerMessage
+    public class XenonCompilerMessage
     {
         public string ErrorName { get; set; }
         public string ErrorMessage { get; set; }

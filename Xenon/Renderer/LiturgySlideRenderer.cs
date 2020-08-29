@@ -18,7 +18,7 @@ namespace Xenon.Renderer
 
         public SlideLayout Layouts { get; set; }
 
-        public RenderedSlide RenderSlide(LiturgyLayoutRenderInfo renderInfo, Slide slide)
+        public RenderedSlide RenderSlide(LiturgyLayoutRenderInfo renderInfo, Slide slide, List<Compiler.XenonCompilerMessage> messages)
         {
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
