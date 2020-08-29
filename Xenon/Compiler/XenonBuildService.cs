@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xenon.AssetManagment;
+using Xenon.Helpers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
@@ -37,18 +39,28 @@ namespace Xenon.Compiler
             await Task.Run(() =>
             {
 
-                SlideRenderer sr = new SlideRenderer(project);
+            SlideRenderer sr = new SlideRenderer(project);
 
-                progress.Report(0);
+            progress.Report(0);
 
-                for (int i = 0; i < project.Slides.Count; i++)
-                {
-                    slides.Add(sr.RenderSlide(i, Messages));
-                    int prog = (int)(i / (double)project.Slides.Count * 100);
-                    progress.Report(prog);
-                }
+            //for (int i = 0; i < project.Slides.Count; i++)
+            //{
+            //    slides.Add(sr.RenderSlide(i, Messages));
+            //    int prog = (int)(i / (double)project.Slides.Count * 100);
+            //    progress.Report(prog);
+            //}
 
-            });
+            int completedslidecount = 0;
+
+            Parallel.ForEach(project.Slides, new ParallelOptions() { MaxDegreeOfParallelism = 4 } , (Slide s) =>
+              {
+                  slides.Add(sr.RenderSlide(s.Number, Messages));
+                  Interlocked.Increment(ref completedslidecount);
+                  int prog = (int)(completedslidecount / (double)project.Slides.Count * 100);
+                  progress.Report(prog);
+              });
+
+        });
 
             return slides;
 
@@ -58,5 +70,5 @@ namespace Xenon.Compiler
 
 
 
-    }
+}
 }
