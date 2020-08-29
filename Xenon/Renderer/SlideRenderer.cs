@@ -7,7 +7,7 @@ using Xenon.Compiler;
 
 namespace Xenon.Renderer
 {
-    public class SlideRenderer
+    class SlideRenderer
     {
         Project _project { get; set; }
 
