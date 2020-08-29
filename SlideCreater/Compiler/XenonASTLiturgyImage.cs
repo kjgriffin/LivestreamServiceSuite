@@ -9,6 +9,20 @@ namespace SlideCreater.Compiler
     class XenonASTLiturgyImage : IXenonASTCommand
     {
         public string AssetName { get; set; }
+
+        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        {
+            XenonASTLiturgyImage litimage = new XenonASTLiturgyImage();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("(");
+            Lexer.GobbleWhitespace();
+            litimage.AssetName = Lexer.Consume();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble(")");
+            return litimage;
+
+        }
+
         public void Generate(Project project, IXenonASTElement _Parent)
         {
             // create a liturgy image slide
@@ -38,6 +52,11 @@ namespace SlideCreater.Compiler
             Debug.WriteLine("<XenonASTLiturgyImage>");
             Debug.WriteLine(AssetName);
             Debug.WriteLine("</XenonASTLiturgyImage>");
+        }
+
+        public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -13,6 +13,32 @@ namespace SlideCreater.Compiler
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
 
+        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        {
+            XenonASTLiturgy liturgy = new XenonASTLiturgy();
+            // assume all tokens inside braces are litrugy commands
+            // only excpetions are we will gobble all leading whitespace in braces, and will remove the last 
+            // character of whitespace before last brace
+
+
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("{");
+            Lexer.GobbleWhitespace();
+            while (!Lexer.InspectEOF() && !Lexer.Inspect("\\/\\/") && !Lexer.Inspect("}"))
+            {
+                if (Lexer.PeekNext() == "}")
+                {
+                    Lexer.GobbleWhitespace();
+                    continue;
+                }
+                XenonASTContent content = new XenonASTContent() { TextContent = Lexer.Consume() };
+                liturgy.Content.Add(content);
+            }
+            Lexer.Gobble("}");
+            return liturgy;
+
+        }
+
         public void Generate(Project project, IXenonASTElement _Parent)
         {
 
@@ -107,5 +133,9 @@ namespace SlideCreater.Compiler
             Debug.WriteLine("</XenonASTLiturgy>");
         }
 
+        public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

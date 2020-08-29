@@ -12,6 +12,18 @@ namespace SlideCreater.Compiler
 
         public string AssetName { get; set; }
 
+        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        {
+            XenonASTFullImage fullimage = new XenonASTFullImage();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("(");
+            Lexer.GobbleWhitespace();
+            fullimage.AssetName = Lexer.Consume();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble(")");
+            return fullimage;
+        }
+
         public void Generate(Project project, IXenonASTElement _Parent)
         {
             // create a full image slide
@@ -40,6 +52,11 @@ namespace SlideCreater.Compiler
             Debug.WriteLine("<XenonASTFullImage>");
             Debug.WriteLine(AssetName);
             Debug.WriteLine("</XenonASTFullImage>");
+        }
+
+        public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

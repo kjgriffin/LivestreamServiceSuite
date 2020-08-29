@@ -18,6 +18,11 @@ namespace SlideCreater.Compiler
     {
         public PrefabSlides PrefabSlide { get; set; }
 
+        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        {
+            return this;
+        }
+
         public void Generate(Project project, IXenonASTElement _Parent)
         {
             Slide slide = new Slide();
@@ -37,6 +42,11 @@ namespace SlideCreater.Compiler
             Debug.WriteLine("<XenonASTPrefabSlide>");
             Debug.WriteLine(PrefabSlide.ToString());
             Debug.WriteLine("</XenonASTPrefabSlide>");
+        }
+
+        public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

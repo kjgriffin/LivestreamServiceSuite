@@ -8,6 +8,14 @@ namespace SlideCreater.Compiler
 {
     class XenonASTSlideBreak : IXenonASTCommand
     {
+        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        {
+            XenonASTSlideBreak slidebreak = new XenonASTSlideBreak();
+            Lexer.GobbleWhitespace();
+            return slidebreak;
+
+        }
+
         public void Generate(Project project, IXenonASTElement _Parent)
         {
 
@@ -16,6 +24,11 @@ namespace SlideCreater.Compiler
         public void GenerateDebug(Project project)
         {
             Debug.WriteLine("</XenonASTSlideBreak>");
+        }
+
+        public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

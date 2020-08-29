@@ -11,6 +11,30 @@ namespace SlideCreater.Compiler
 
         public string Title { get; set; }
         public string Reference { get; set; }
+
+        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        {
+            XenonASTSermon sermon = new XenonASTSermon();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("(");
+            StringBuilder sb = new StringBuilder();
+            while (!Lexer.Inspect(","))
+            {
+                sb.Append(Lexer.Consume());
+            }
+            sermon.Title = sb.ToString().Trim();
+            sb.Clear();
+            Lexer.Gobble(",");
+            while (!Lexer.Inspect("\\)"))
+            {
+                sb.Append(Lexer.Consume());
+            }
+            sermon.Reference = sb.ToString().Trim();
+            Lexer.Gobble(")");
+            return sermon;
+
+        }
+
         public void Generate(Project project, IXenonASTElement _Parent)
         {
             Slide sermonslide = new Slide();
@@ -41,6 +65,11 @@ namespace SlideCreater.Compiler
             Debug.WriteLine($"Title='{Title}'");
             Debug.WriteLine($"Reference='{Reference}'");
             Debug.WriteLine("</XenonASTSermon>");
+        }
+
+        public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

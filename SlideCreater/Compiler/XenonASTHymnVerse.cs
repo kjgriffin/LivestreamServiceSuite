@@ -12,6 +12,25 @@ namespace SlideCreater.Compiler
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
 
+        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        {
+            XenonASTHymnVerse verse = new XenonASTHymnVerse();
+            Lexer.GobbleWhitespace();
+
+            Lexer.Gobble("{");
+
+            while (!Lexer.Inspect("}"))
+            {
+                XenonASTContent content = new XenonASTContent() { TextContent = Lexer.Consume() };
+                verse.Content.Add(content);
+            }
+
+            Lexer.Gobble("}");
+
+            return verse;
+
+        }
+
         public void Generate(Project project, IXenonASTElement _Parent)
         {
             VerseLayoutEngine vle = new VerseLayoutEngine();
@@ -53,6 +72,11 @@ namespace SlideCreater.Compiler
                 c.GenerateDebug(project);
             }
             Debug.WriteLine("</XenonASTHymnVerse>");
+        }
+
+        public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -38,5 +38,53 @@ namespace SlideCreater.Compiler
             }
             Debug.WriteLine("</XenonASTTextHymn>");
         }
+
+        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        {
+            XenonASTTextHymn textHymn = new XenonASTTextHymn();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("(");
+            Lexer.GobbleWhitespace();
+            textHymn.HymnTitle = Lexer.ConsumeUntil(",").Trim();
+            Lexer.Gobble(",");
+            textHymn.HymnName = Lexer.ConsumeUntil(",");
+            Lexer.Gobble(",");
+            textHymn.Tune = Lexer.ConsumeUntil(",");
+            Lexer.Gobble(",");
+            textHymn.Number = Lexer.ConsumeUntil(",");
+            Lexer.Gobble(",");
+            textHymn.CopyrightInfo = Lexer.ConsumeUntil("\\)");
+            Lexer.Gobble(")");
+
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("{");
+            Lexer.GobbleWhitespace();
+
+            while (Lexer.Inspect("#"))
+            {
+                Lexer.Gobble("#");
+                // only valid command at this point (so far) is a verse
+                if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Verse]))
+                {
+                    Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Verse]);
+                    XenonASTHymnVerse verse = new XenonASTHymnVerse();
+                    textHymn.Verses.Add((XenonASTHymnVerse)verse.Compile(Lexer, Messages));
+                }
+                Lexer.GobbleWhitespace();
+            }
+
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("}");
+
+
+            return textHymn;
+
+        }
+
+        public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

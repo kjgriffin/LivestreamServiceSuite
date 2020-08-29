@@ -79,7 +79,7 @@
                                 Render Output:
                             </TextBlock>
                         </Grid>
-                        <ScrollViewer Grid.Row="1">
+                        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                             <TextBlock Name="tbConsole"></TextBlock>
                         </ScrollViewer>
                     </Grid>

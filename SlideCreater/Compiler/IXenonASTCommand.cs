@@ -1,7 +1,8 @@
-﻿namespace SlideCreater.Compiler
+﻿using System.Collections.Generic;
+
+namespace SlideCreater.Compiler
 {
-    interface IXenonASTCommand : IXenonASTElement
+    public interface IXenonASTCommand : IXenonASTElement
     {
-         
     }
 }

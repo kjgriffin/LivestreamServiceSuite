@@ -8,14 +8,19 @@ using System.Text.RegularExpressions;
 
 namespace SlideCreater.Compiler
 {
-    class Lexer
+    public class Lexer
     {
 
         public static readonly string EOFText = "$EOF$";
 
+        public string SingleLineComment { get; } = "//";
+        public string BeginBlockComment { get; } = "/*";
+        public string EndBlockComment { get; } = "*/";
+
         public string Text { get; private set; } = string.Empty;
 
         public List<string> SplitWords { get; private set; }
+
 
         private List<string> _tokens;
 
@@ -34,6 +39,15 @@ namespace SlideCreater.Compiler
             peeks = 0;
             peeknexts = 0;
             inspections = 0;
+        }
+
+        /// <summary>
+        /// Restores all the state of the lexer
+        /// </summary>
+        public void Reset()
+        {
+            ClearInspectionState();
+            _tokenpos = 0;
         }
 
         /// <summary>
@@ -66,30 +80,34 @@ namespace SlideCreater.Compiler
             SplitWords.AddRange(Seperators);
         }
 
-        private void SplitAndKeep(string text, List<string> splitwords)
+        private List<string> SplitAndKeep(string text, List<string> splitwords)
         {
-            _tokens = new List<string>();
+            //_tokens = new List<string>();
 
+            List<string> tokens = new List<string>();
 
             for (int textindex = 0; textindex < text.Length;)
             {
-                textindex = InnerCheck(ref text, splitwords, textindex);
+                textindex = InnerCheck(ref text, splitwords, textindex, tokens);
             }
 
 
             // add the rest
-            _tokens.Add(text);
+            //_tokens.Add(text);
+            tokens.Add(text);
 
             // remove empty tokens
-            _tokens.RemoveAll(p => p == string.Empty);
+            //_tokens.RemoveAll(p => p == string.Empty);
+            tokens.RemoveAll(p => p == string.Empty);
 
 
             // debug
-            _tokens.ForEach((string t) => { Debug.WriteLine(t); });
+            //_tokens.ForEach((string t) => { Debug.WriteLine(t); });
+            return tokens;
 
         }
 
-        private int InnerCheck(ref string text, List<string> splitwords, int textindex)
+        private int InnerCheck(ref string text, List<string> splitwords, int textindex, List<string> tokens)
         {
             for (int splitwordindex = 0; splitwordindex < splitwords.Count; splitwordindex++)
             {
@@ -103,8 +121,8 @@ namespace SlideCreater.Compiler
                         string word = splitwords[splitwordindex];
                         text = text.Substring(textindex + word.Length);
 
-                        _tokens.Add(before);
-                        _tokens.Add(word);
+                        tokens.Add(before);
+                        tokens.Add(word);
 
                         // advance to check against next char starting from start of split list
                         return 0;
@@ -114,11 +132,85 @@ namespace SlideCreater.Compiler
             return textindex + 1;
         }
 
+
+        /// <summary>
+        /// Removes all comment lines from source input.
+        /// </summary>
+        /// <param name="input">Text</param>
+        /// <returns>Source input without comments.</returns>
+        public string StripComments(string input)
+        {
+            List<string> seperators = new List<string>()
+            {
+                System.Environment.NewLine,
+                //"\r\n",
+                //"\n",
+                //"\r",
+                BeginBlockComment,
+                EndBlockComment,
+                SingleLineComment,
+            };
+
+            List<string> parts = SplitAndKeep(input, seperators);
+
+            List<string> noblocks = new List<string>();
+            List<string> nocomments = new List<string>();
+            // remove all block comments
+
+            bool inblock = false;
+            foreach (var p in parts)
+            {
+                if (p == BeginBlockComment)
+                {
+                    inblock = true;
+                }
+
+                if (!inblock)
+                {
+                    noblocks.Add(p); 
+                }
+
+                if (p == EndBlockComment)
+                {
+                    inblock = false;
+                }
+            }
+
+            // remove single line comments
+            bool iscomment = false;
+            foreach (var b in noblocks)
+            {
+                if (b == SingleLineComment)
+                {
+                    iscomment = true;
+                }
+
+                if (!iscomment)
+                {
+                    nocomments.Add(b);
+                }
+
+                if (b == System.Environment.NewLine)
+                {
+                    iscomment = false;
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var w in nocomments)
+            {
+                sb.Append(w);
+            }
+
+            return sb.ToString();
+
+        }
+
         public void Tokenize(string input)
         {
             Text = input;
             // split based on split words
-            SplitAndKeep(Text, SplitWords);
+            _tokens = SplitAndKeep(Text, SplitWords);
             _tokenpos = 0;
         }
 

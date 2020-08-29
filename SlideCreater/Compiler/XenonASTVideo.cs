@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SlideCreater.Compiler
 {
@@ -10,6 +11,23 @@ namespace SlideCreater.Compiler
     {
 
         public string AssetName { get; set; }
+
+        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        {
+            XenonASTVideo video = new XenonASTVideo();
+            Lexer.GobbleWhitespace();
+            Lexer.Gobble("(");
+            StringBuilder sb = new StringBuilder();
+            while (!Lexer.Inspect("\\)"))
+            {
+                sb.Append(Lexer.Consume());
+            }
+            video.AssetName = sb.ToString().Trim();
+            Lexer.Gobble(")");
+            return video;
+
+        }
+
         public void Generate(Project project, IXenonASTElement _Parent)
         {
             // create a video slide
@@ -38,6 +56,11 @@ namespace SlideCreater.Compiler
             Debug.WriteLine("<XenonASTVideo>");
             Debug.WriteLine(AssetName);
             Debug.WriteLine("</XenonASTVideo>");
+        }
+
+        public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
+        {
+            throw new NotImplementedException();
         }
     }
 }
