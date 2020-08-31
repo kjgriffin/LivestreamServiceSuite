@@ -17,7 +17,7 @@ namespace Xenon.Compiler
             Lexer.Gobble("(");
             Lexer.GobbleWhitespace();
             StringBuilder sb = new StringBuilder();
-            while (!Lexer.Inspect(")"))
+            while (!Lexer.Inspect("\\)"))
             {
                 sb.Append(Lexer.Consume());
             }
