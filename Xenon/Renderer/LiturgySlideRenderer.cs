@@ -74,7 +74,7 @@ namespace Xenon.Renderer
                     case "C":
                         if (drawspeaker)
                         {
-                            gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, topleftalign);
+                            gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, centeralign);
                             //gfx.FillRectangle(Brushes.Red, speakerblock);
                             //gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
                         }
@@ -83,7 +83,7 @@ namespace Xenon.Renderer
                     default:
                         if (drawspeaker)
                         {
-                            gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, topleftalign);
+                            gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, centeralign);
                             //gfx.DrawRectangle(Pens.Red, speakerblock);
                             //gfx.DrawString(line.Content[0].Data, renderInfo.RegularFont, Brushes.Red, speakerblock, centeralign);
                         }

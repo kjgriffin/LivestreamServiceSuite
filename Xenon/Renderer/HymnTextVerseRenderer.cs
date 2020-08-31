@@ -21,6 +21,14 @@ namespace Xenon.Renderer
 
             gfx.Clear(Color.White);
 
+            // debug
+
+            //gfx.DrawRectangle(Pens.Green, Layouts.TextHymnLayout.CopyrightBox);
+            //gfx.DrawRectangle(Pens.Blue, Layouts.TextHymnLayout.NameBox);
+            //gfx.DrawRectangle(Pens.Blue, Layouts.TextHymnLayout.NumberBox);
+            //gfx.DrawRectangle(Pens.Blue, Layouts.TextHymnLayout.TitleBox);
+            //gfx.DrawRectangle(Pens.Red, Layouts.TextHymnLayout.TextBox);
+
             // draw name
             gfx.DrawString((string)slide.Data["name"], renderInfo.NameFont, Brushes.Black, Layouts.TextHymnLayout.NameBox, GraphicsHelper.CenterAlign);
 
@@ -39,14 +47,17 @@ namespace Xenon.Renderer
 
             double spacing = Layouts.TextHymnLayout.TextBox.Height / (slide.Lines.Count + 1);
 
-            double offset = spacing;
 
-            Rectangle vline = new Rectangle(0, (int)offset, Layouts.TextHymnLayout.TextBox.Width, (int)spacing);
+            double lineheight = gfx.MeasureString(slide.Lines[0].Content[0].Data, renderInfo.VerseFont).Height;
+            double interspace = (Layouts.TextHymnLayout.TextBox.Height - (slide.Lines.Count * lineheight)) / (slide.Lines.Count + 1);
+
+            double offset = 0;
+            Rectangle vline = new Rectangle(0, Layouts.TextHymnLayout.TextBox.Y, Layouts.TextHymnLayout.TextBox.Width, (int)lineheight).Move(new Point(0, (int)interspace));
 
             foreach (var line in slide.Lines)
             {
                 gfx.DrawString(line.Content[0].Data, renderInfo.VerseFont, Brushes.Black, vline.Move(new Point(0, (int)offset)), GraphicsHelper.CenterAlign );
-                offset += spacing;
+                offset += interspace;
             }
 
 
