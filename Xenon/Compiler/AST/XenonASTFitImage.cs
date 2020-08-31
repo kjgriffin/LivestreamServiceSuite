@@ -16,8 +16,12 @@ namespace Xenon.Compiler
             Lexer.GobbleWhitespace();
             Lexer.Gobble("(");
             Lexer.GobbleWhitespace();
-            fullimage.AssetName = Lexer.Consume();
-            Lexer.GobbleWhitespace();
+            StringBuilder sb = new StringBuilder();
+            while (!Lexer.Inspect(")"))
+            {
+                sb.Append(Lexer.Consume());
+            }
+            fullimage.AssetName = sb.ToString().Trim();
             Lexer.Gobble(")");
             return fullimage;
 
