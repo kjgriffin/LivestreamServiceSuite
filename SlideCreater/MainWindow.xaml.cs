@@ -309,7 +309,19 @@ namespace SlideCreater
                 _proj = Project.Load(ofd.FileName);
                 TbInput.Text = _proj.SourceCode;
                 Assets = _proj.Assets;
-                ShowProjectAssets();
+                try
+                {
+                    ShowProjectAssets();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to load project assets");
+                    Assets.Clear();
+                    _proj.Assets.Clear();
+                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+                    tbStatusText.Text = "Failed to Load Project";
+                    return;
+                }
                 sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
                 tbStatusText.Text = "Project Saved";
             }
