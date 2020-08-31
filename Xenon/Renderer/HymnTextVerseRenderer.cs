@@ -45,7 +45,6 @@ namespace Xenon.Renderer
             // draw text
             // compute interline spacing
 
-            double spacing = Layouts.TextHymnLayout.TextBox.Height / (slide.Lines.Count + 1);
 
 
             double lineheight = gfx.MeasureString(slide.Lines[0].Content[0].Data, renderInfo.VerseFont).Height;
@@ -57,7 +56,7 @@ namespace Xenon.Renderer
             foreach (var line in slide.Lines)
             {
                 gfx.DrawString(line.Content[0].Data, renderInfo.VerseFont, Brushes.Black, vline.Move(new Point(0, (int)offset)), GraphicsHelper.CenterAlign );
-                offset += interspace;
+                offset += interspace + lineheight;
             }
 
 
