@@ -49,7 +49,7 @@ namespace Xenon.LayoutEngine
                 startwords += wordcount - 1;
             }
 
-            Debug.WriteLine($"foramtting\n{string.Join(System.Environment.NewLine, words)}\n[produced]");
+            Debug.WriteLine($"Foramtting\n{string.Join(System.Environment.NewLine, words)}\nwith: {font} in {textblock}\n[produced]");
             foreach (var b in res)
             {
                 Debug.WriteLine(b);
