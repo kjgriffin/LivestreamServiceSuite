@@ -19,6 +19,10 @@ namespace Xenon.LayoutEngine
 
             List<string> illegalLinestarts = new List<string>() { "!", "?", ":", "-", ".", ",", ";" };
 
+
+            float zoomx = (float)gfx.DpiX / 96f;
+            float zoomy = (float)gfx.DpiY / 96f;
+
             int startwords = 0;
 
             while (startwords < words.Count)
@@ -27,7 +31,7 @@ namespace Xenon.LayoutEngine
                 // split into as many layout lines as required. uses word level granularity
                 var linewords = words.Skip(startwords).Take(wordcount);
                 var measure = gfx.MeasureString(string.Join("", linewords), font, textblock.Width, sf);
-                while (measure.Width < textblock.Width && startwords + wordcount <= words.Count)
+                while ((measure.Width * zoomx ) < textblock.Width && startwords + wordcount <= words.Count)
                 {
                     wordcount++;
                     linewords = words.Skip(startwords).Take(wordcount);
