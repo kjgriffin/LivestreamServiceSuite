@@ -2,7 +2,7 @@
 
 namespace Xenon.SlideAssembly
 {
-    class PrefabLayout
+    public class PrefabLayout
     {
         public Size Size { get; set; }
     }

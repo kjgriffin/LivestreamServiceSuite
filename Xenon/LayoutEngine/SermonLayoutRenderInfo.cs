@@ -6,7 +6,7 @@ using System.Windows.Documents;
 
 namespace Xenon.LayoutEngine
 {
-    class SermonLayoutRenderInfo
+    public class SermonLayoutRenderInfo
     {
         public SermonLayoutRenderInfo(string fontname = "Arial", int fontsize = 36)
         {

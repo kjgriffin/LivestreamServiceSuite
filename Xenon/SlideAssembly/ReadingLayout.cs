@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Xenon.SlideAssembly
 {
-    class ReadingLayout
+    public class ReadingLayout
     {
         public Size Size { get; set; }
         public Rectangle Key { get; set; }

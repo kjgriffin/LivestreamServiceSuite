@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Xenon.SlideAssembly
 {
-    class SlideLine 
+    public class SlideLine 
     {
         public List<SlideLineContent> Content { get; set; } = new List<SlideLineContent>();
     }

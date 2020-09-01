@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Xenon.SlideAssembly
 {
-    class TextHymnLayout
+    public class TextHymnLayout
     {
         public Size Size { get; set; }
         public Rectangle NameBox { get; set; }

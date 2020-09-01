@@ -11,7 +11,7 @@ namespace Xenon.SlideAssembly
 {
     public class Project
     {
-        internal SlideLayout Layouts { get; set; } = new SlideLayout();
+        public SlideLayout Layouts { get; set; } = new SlideLayout();
         public List<Slide> Slides { get; set; } = new List<Slide>();
 
         public List<ProjectAsset> Assets { get; set; } = new List<ProjectAsset>();
@@ -19,7 +19,7 @@ namespace Xenon.SlideAssembly
 
 
         private int slidenum = 0;
-        internal int NewSlideNumber => slidenum++;
+        public int NewSlideNumber => slidenum++;
 
 
         public void Save(string filename)

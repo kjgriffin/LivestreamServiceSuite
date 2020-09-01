@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Xenon.SlideAssembly
 {
-    class VideoLayout
+    public class VideoLayout
     {
         public Size Size { get; set; }
     }

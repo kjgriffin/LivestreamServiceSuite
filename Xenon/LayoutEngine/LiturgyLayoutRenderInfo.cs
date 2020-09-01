@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace Xenon.LayoutEngine
 {
-    class LiturgyLayoutRenderInfo
+    public class LiturgyLayoutRenderInfo
     {
 
         public LiturgyLayoutRenderInfo(string fontname = "Arial", int fontsize = 36)

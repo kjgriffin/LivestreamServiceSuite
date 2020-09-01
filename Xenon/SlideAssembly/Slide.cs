@@ -9,10 +9,10 @@ namespace Xenon.SlideAssembly
     {
         public string Name { get; set; }
         public int Number { get; set; }
-        internal SlideFormat Format { get; set; }
+        public SlideFormat Format { get; set; }
         public MediaType MediaType {get; set;}
         public string Asset { get; set; }
-        internal List<SlideLine> Lines { get; set; } = new List<SlideLine>();
+        public List<SlideLine> Lines { get; set; } = new List<SlideLine>();
         public Dictionary<string, object> Data { get; set; } = new Dictionary<string, object>();
     }
 }

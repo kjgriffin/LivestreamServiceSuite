@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Xenon.LayoutEngine
 {
-    class ReadingLayoutRenderInfo
+    public class ReadingLayoutRenderInfo
     {
 
         public ReadingLayoutRenderInfo(string fontname = "Arial", int fontsize = 36)

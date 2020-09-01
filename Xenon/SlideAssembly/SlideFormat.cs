@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Xenon.SlideAssembly
 {
-    enum SlideFormat
+    public enum SlideFormat
     {
         Video,
         ScaledImage,

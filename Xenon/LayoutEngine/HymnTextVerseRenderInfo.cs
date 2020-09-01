@@ -2,7 +2,7 @@
 
 namespace Xenon.LayoutEngine
 {
-    class HymnTextVerseRenderInfo
+    public class HymnTextVerseRenderInfo
     {
         public HymnTextVerseRenderInfo(string fontname = "Arial", int fontsize = 36)
         {

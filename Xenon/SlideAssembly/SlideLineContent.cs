@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Xenon.SlideAssembly
 {
-    class SlideLineContent
+    public class SlideLineContent
     {
         public string Data { get; set; }
         public Dictionary<string, object> Attributes { get; set; } = new Dictionary<string, object>();

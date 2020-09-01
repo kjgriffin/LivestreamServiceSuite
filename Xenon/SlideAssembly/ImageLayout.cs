@@ -2,7 +2,7 @@
 
 namespace Xenon.SlideAssembly
 {
-    class ImageLayout
+    public class ImageLayout
     {
         public Size Size { get; set; }
     }
