@@ -51,7 +51,7 @@ namespace Xenon.Compiler
         public Project Compile(string input, List<ProjectAsset> assets, IProgress<int> progress)
         {
             CompilerSucess = false; 
-            Project proj = new Project();
+            Project proj = new Project(true);
             proj.Assets = assets;
 
             progress.Report(0);

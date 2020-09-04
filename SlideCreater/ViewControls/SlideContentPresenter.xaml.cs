@@ -39,11 +39,11 @@ namespace SlideCreater
         {
             ImgDisplay.Source = null;
             VideoDisplay.Source = null;
-            if (Slide.MediaType == MediaType.Image)
+            if (Slide?.MediaType == MediaType.Image)
             {
                 ImgDisplay.Source = Slide.Bitmap.ConvertToBitmapImage();
             }
-            if (Slide.MediaType == MediaType.Video)
+            if (Slide?.MediaType == MediaType.Video)
             {
                 VideoDisplay.Source = new Uri(Slide.AssetPath);
                 VideoDisplay.Play();
@@ -59,6 +59,12 @@ namespace SlideCreater
             {
                 VideoDisplay.Play();
             }
+        }
+
+        public void Clear()
+        {
+            Slide = null;
+            ShowSlide();
         }
 
         public void ShowSelected(bool isselected)
