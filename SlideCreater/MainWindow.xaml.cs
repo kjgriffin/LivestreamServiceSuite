@@ -135,9 +135,14 @@ namespace SlideCreater
                 slidelist.Children.Add(slideContentPresenter);
                 slidepreviews.Add(slideContentPresenter);
             }
+
+            // update focusslide
+            FocusSlide.Slide = slides.First();
+            FocusSlide.ShowSlide();
+            slidepreviews.First().ShowSelected(true);
         }
 
-        Project _proj = new Project();
+        Project _proj = new Project(true);
         List<SlideContentPresenter> slidepreviews = new List<SlideContentPresenter>();
 
         private void SlideContentPresenter_OnSlideClicked(object sender, RenderedSlide slide)
@@ -189,15 +194,21 @@ namespace SlideCreater
                 // add assets
                 foreach (var file in ofd.FileNames)
                 {
+                    // copy to tmp folder
+                    string tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, "assets", System.IO.Path.GetFileName(file));
+                    File.Copy(file, tmpassetpath);
+
                     ProjectAsset asset = new ProjectAsset();
                     if (Regex.IsMatch(System.IO.Path.GetExtension(file), "\\.mp4", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), RelativePath = file, Type = AssetType.Video };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
                     }
                     else if (Regex.IsMatch(System.IO.Path.GetExtension(file), "\\.png", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), RelativePath = file, Type = AssetType.Image };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
                     }
+
+                    
                     Assets.Add(asset);
                     _proj.Assets = Assets;
                     ShowProjectAssets();
@@ -275,6 +286,27 @@ namespace SlideCreater
             _proj.SourceCode = TbInput.Text;
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
+            //sfd.DefaultExt = "json";
+            sfd.DefaultExt = "zip";
+            sfd.AddExtension = false;
+            sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
+            if (sfd.ShowDialog() == true)
+            {
+                _proj.SaveProject(sfd.FileName);
+                Dispatcher.Invoke(() =>
+                {
+                    sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
+                    tbStatusText.Text = "Project Saved";
+                    dirty = false;
+                });
+            }
+        }
+
+        private void SaveAsJSON()
+        {
+            _proj.SourceCode = TbInput.Text;
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Save Project";
             sfd.DefaultExt = "json";
             sfd.AddExtension = true;
             sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
@@ -287,7 +319,8 @@ namespace SlideCreater
             }
         }
 
-        private void OpenProject()
+
+        private void OpenProjectJSON()
         {
             if (dirty)
             {
@@ -328,6 +361,47 @@ namespace SlideCreater
 
         }
 
+        private async void OpenProject()
+        {
+            if (dirty)
+            {
+                if (!CheckSaveChanges())
+                {
+                    return;
+                }
+            }
+            dirty = false;
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Load Project";
+            ofd.DefaultExt = "zip";
+            if (ofd.ShowDialog() == true)
+            {
+                Assets.Clear();
+                slidelist.Children.Clear();
+                slidepreviews.Clear();
+                _proj = await Project.LoadProject(ofd.FileName);
+                TbInput.Text = _proj.SourceCode;
+                Assets = _proj.Assets;
+                try
+                {
+                    ShowProjectAssets();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to load project assets");
+                    Assets.Clear();
+                    _proj.Assets.Clear();
+                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+                    tbStatusText.Text = "Failed to Load Project";
+                    return;
+                }
+                sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
+                tbStatusText.Text = "Project Saved";
+            }
+
+        }
+
+
         private void NewProject()
         {
             if (dirty)
@@ -342,6 +416,7 @@ namespace SlideCreater
             slidepreviews.Clear();
             Assets.Clear();
             AssetList.Children.Clear();
+            FocusSlide.Clear(); 
             TbInput.Text = string.Empty;
             _proj = new Project();
 
@@ -411,6 +486,16 @@ namespace SlideCreater
             _proj.Assets = Assets;
             ShowProjectAssets();
             AssetsChanged();
+        }
+
+        private void ClickSaveJSON(object sender, RoutedEventArgs e)
+        {
+            SaveAsJSON();
+        }
+
+        private void ClickOpenJSON(object sender, RoutedEventArgs e)
+        {
+            OpenProjectJSON();
         }
     }
 }

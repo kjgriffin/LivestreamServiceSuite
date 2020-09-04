@@ -38,7 +38,7 @@ namespace Xenon.Compiler
             var asset = project.Assets.Find(p => p.Name == AssetName);
             if (asset != null)
             {
-                assetpath = asset.RelativePath;
+                assetpath = asset.CurrentPath;
             }
             SlideLineContent slc = new SlideLineContent() { Data = assetpath };
             SlideLine sl = new SlideLine() { Content = new List<SlideLineContent>() { slc } };

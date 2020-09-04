@@ -20,7 +20,9 @@
             <MenuItem Header="File">
                 <MenuItem Click="ClickNew" Header="New"></MenuItem>
                 <MenuItem Click="ClickOpen" Header="Open"></MenuItem>
+                <MenuItem Click="ClickOpenJSON" Header="Open from JSON"></MenuItem>
                 <MenuItem Click="ClickSave" Header="Save"></MenuItem>
+                <MenuItem Click="ClickSaveJSON" Header="Save JSON"></MenuItem>
             </MenuItem>
         </Menu>
 

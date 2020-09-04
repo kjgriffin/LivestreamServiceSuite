@@ -45,18 +45,18 @@ namespace SlideCreater
             VideoAsset.Source = null;
             if (Asset.Type == AssetType.Image)
             {
-                ImgAsset.Source = new BitmapImage(new Uri(Asset.RelativePath));
+                ImgAsset.Source = new BitmapImage(new Uri(Asset.CurrentPath));
             }
             if (Asset.Type == AssetType.Video)
             {
-                VideoAsset.Source = new Uri(Asset.RelativePath);
+                VideoAsset.Source = new Uri(Asset.CurrentPath);
             }
 
         }
 
         private void ClickFitInsert(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() => OnFitInsertRequest?.Invoke(this, Asset)); 
+            Dispatcher.Invoke(() => OnFitInsertRequest?.Invoke(this, Asset));
         }
 
         private void ClickDeleteAsset(object sender, RoutedEventArgs e)
