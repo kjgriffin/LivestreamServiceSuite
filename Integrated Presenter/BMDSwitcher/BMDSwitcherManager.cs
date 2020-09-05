@@ -287,30 +287,13 @@ namespace Integrated_Presenter
 
         private bool InitializeUpstreamKeyers()
         {
-            return true;
-            // get upstream keyer
-            IBMDSwitcherKeyIterator keyIterator = null;
-            IntPtr keyIteratorPtr;
-            Guid keyIteratorIID = typeof(IBMDSwitcherKeyIterator).GUID;
-            _BMDSwitcher.CreateIterator(ref keyIteratorIID, out keyIteratorPtr);
-            if (keyIteratorPtr != null)
-            {
-                keyIterator = (IBMDSwitcherKeyIterator)Marshal.GetObjectForIUnknown(keyIteratorPtr);
-            }
-            if (keyIterator == null)
-                return false;
-            if (keyIterator != null)
-            {
-                keyIterator.Next(out _BMDSwitcherUpstreamKey1);
-            }
-            if (_BMDSwitcherUpstreamKey1 == null)
-            {
-                MessageBox.Show("Unexpected: Could not get upstream keyer 1", "Error");
-                return false;
-            }
+            IBMDSwitcherKeyIterator keyIterator;
+            IntPtr keyItrPtr;
+            Guid keyItrIID = typeof(IBMDSwitcherKeyIterator).GUID;
+            _BMDSwitcherMixEffectBlock1.CreateIterator(ref keyItrIID, out keyItrPtr);
 
-            // add callbacks
-            _BMDSwitcherUpstreamKey1.AddCallback(_upstreamKey1Monitor);
+            keyIterator = (IBMDSwitcherKeyIterator)Marshal.GetObjectForIUnknown(keyItrPtr);
+            keyIterator.Next(out _BMDSwitcherUpstreamKey1);
 
             return true;
         }
