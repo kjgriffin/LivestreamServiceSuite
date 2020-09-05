@@ -29,5 +29,6 @@ namespace Integrated_Presenter
         void PerformToggleUSK1();
 
         void Close();
+        void ConfigureSwitcher();
     }
 }

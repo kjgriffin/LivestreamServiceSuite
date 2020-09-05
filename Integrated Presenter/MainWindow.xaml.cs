@@ -1285,5 +1285,10 @@ namespace Integrated_Presenter
             Slide s = new Slide() { Source = sps.Source.ToString(), Type = sps.Type };
             TakeSlidePoolSlide(s, 3, sps.Selected);
         }
+
+        private void ClickConfigureSwitcher(object sender, RoutedEventArgs e)
+        {
+            switcherManager.ConfigureSwitcher();
+        }
     }
 }

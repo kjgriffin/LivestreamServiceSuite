@@ -185,5 +185,10 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             mockMultiviewer.Close();
         }
+
+        public void ConfigureSwitcher()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -198,7 +198,7 @@ namespace Integrated_Presenter
             {
                 IBMDSwitcherInput input;
                 inputIterator.Next(out input);
-                while(input != null)
+                while (input != null)
                 {
                     _BMDSwitcherInputs.Add(input);
                     InputMonitor inputMonitor = new InputMonitor(input);
@@ -499,13 +499,75 @@ namespace Integrated_Presenter
 
         public void ConfigureSwitcher()
         {
+            ConfigureMixEffectBlock();
             ConfigureCameraSources();
+            ConfigureDownstreamKeys();
+        }
+
+        private void ConfigureMixEffectBlock()
+        {
+            _BMDSwitcherMixEffectBlock1.SetFadeToBlackRate(30);
         }
 
         private void ConfigureCameraSources()
         {
             // set input source names
-            
+            foreach (var inputsource in _BMDSwitcherInputs)
+            {
+                long sourceid;
+                inputsource.GetInputId(out sourceid);
+
+                // rename it if required
+                if (sourceid == (long)BMDSwitcherSources.Input5)
+                {
+                    inputsource.SetLongName("LECTERN");
+                    inputsource.SetShortName("LTRN");
+                }
+                if (sourceid == (long)BMDSwitcherSources.Input1)
+                {
+                    inputsource.SetLongName("CENTER");
+                    inputsource.SetShortName("CNTR");
+                }
+                if (sourceid == (long)BMDSwitcherSources.Input6)
+                {
+                    inputsource.SetLongName("PULPIT");
+                    inputsource.SetShortName("PLPT");
+                }
+                if (sourceid == (long)BMDSwitcherSources.Input2)
+                {
+                    inputsource.SetLongName("ORGAN");
+                    inputsource.SetShortName("ORGN");
+                }
+                if (sourceid == (long)BMDSwitcherSources.Input4)
+                {
+                    inputsource.SetLongName("SLIDESHOW");
+                    inputsource.SetShortName("SLIDE");
+                }
+            }
+        }
+
+        private void ConfigureDownstreamKeys()
+        {
+            ConfigureDSK1Liturgy();
+            ConfigureDSK2Split();
+        }
+
+        private void ConfigureDSK1Liturgy()
+        {
+            _BMDSwitcherDownstreamKey1.SetInputFill((long)BMDSwitcherSources.Input4);
+            _BMDSwitcherDownstreamKey1.SetInputCut((long)BMDSwitcherSources.MediaPlayer1);
+            _BMDSwitcherDownstreamKey1.SetRate(30);
+            _BMDSwitcherDownstreamKey1.SetPreMultiplied(0);
+            _BMDSwitcherDownstreamKey1.SetMasked(0);
+        }
+
+        private void ConfigureDSK2Split()
+        {
+            _BMDSwitcherDownstreamKey2.SetInputFill((long)BMDSwitcherSources.Input4);
+            _BMDSwitcherDownstreamKey2.SetInputCut((long)BMDSwitcherSources.MediaPlayer2);
+            _BMDSwitcherDownstreamKey2.SetRate(30);
+            _BMDSwitcherDownstreamKey2.SetPreMultiplied(0);
+            _BMDSwitcherDownstreamKey2.SetMasked(0);
         }
 
 
