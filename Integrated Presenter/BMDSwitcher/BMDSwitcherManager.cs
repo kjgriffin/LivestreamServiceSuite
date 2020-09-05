@@ -23,6 +23,7 @@ namespace Integrated_Presenter
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey1;
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey2;
         private List<IBMDSwitcherInput> _BMDSwitcherInputs = new List<IBMDSwitcherInput>();
+        private IBMDSwitcherMultiView _BMDSwitcherMultiView;
 
         private SwitcherMonitor _switcherMonitor;
         private MixEffectBlockMonitor _mixEffectBlockMonitor;
@@ -30,6 +31,7 @@ namespace Integrated_Presenter
         private DownstreamKeyMonitor _dsk1Monitor;
         private DownstreamKeyMonitor _dsk2Monitor;
         private List<InputMonitor> _inputMonitors = new List<InputMonitor>();
+        // prehaps don't need to monitor multiviewer
 
         private BMDSwitcherState _state;
 
@@ -215,6 +217,27 @@ namespace Integrated_Presenter
             return true;
         }
 
+        private bool InitializeMultiView()
+        {
+            IBMDSwitcherMultiViewIterator multiViewIterator = null;
+            IntPtr multiViewPtr;
+            Guid multiViewIID = typeof(IBMDSwitcherMultiView).GUID;
+            _BMDSwitcher.CreateIterator(ref multiViewIID, out multiViewPtr);
+            if (multiViewPtr == null)
+            {
+                return false;
+            }
+            multiViewIterator = (IBMDSwitcherMultiViewIterator)Marshal.GetObjectForIUnknown(multiViewPtr);
+            if (multiViewIterator == null)
+            {
+                return false;
+            }
+
+            multiViewIterator.Next(out _BMDSwitcherMultiView);
+
+            return true;
+        }
+
         private void InputMonitor_ShortNameChanged(object sender, object args)
         {
             //throw new NotImplementedException();
@@ -334,9 +357,10 @@ namespace Integrated_Presenter
             bool downstreamkeyers = InitializeDownstreamKeyers();
 
             bool inputsources = InitializeInputSources();
+            bool multiviewer = InitializeMultiView();
 
             //GoodConnection = mixeffects && upstreamkeyers && downstreamkeyers;
-            GoodConnection = mixeffects && downstreamkeyers && inputsources;
+            GoodConnection = mixeffects && downstreamkeyers && inputsources && multiviewer;
 
             MessageBox.Show("Connected to Switcher", "Connection Success");
 
@@ -389,6 +413,12 @@ namespace Integrated_Presenter
             }
             _inputMonitors.Clear();
             _BMDSwitcherInputs.Clear();
+
+            if (_BMDSwitcherMultiView != null)
+            {
+                // no callback yet
+                _BMDSwitcherMultiView = null;
+            }
 
         }
 
