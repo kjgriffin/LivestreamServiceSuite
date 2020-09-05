@@ -2,9 +2,11 @@
 using Integrated_Presenter.BMDSwitcher;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Integrated_Presenter
@@ -24,6 +26,9 @@ namespace Integrated_Presenter
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey2;
         private List<IBMDSwitcherInput> _BMDSwitcherInputs = new List<IBMDSwitcherInput>();
         private IBMDSwitcherMultiView _BMDSwitcherMultiView;
+        private IBMDSwitcherMediaPlayer _BMDSwitcherMediaPlayer1;
+        private IBMDSwitcherMediaPlayer _BMDSwitcherMediaPlayer2;
+        private IBMDSwitcherMediaPool _BMDSwitcherMediaPool;
 
         private SwitcherMonitor _switcherMonitor;
         private MixEffectBlockMonitor _mixEffectBlockMonitor;
@@ -32,6 +37,7 @@ namespace Integrated_Presenter
         private DownstreamKeyMonitor _dsk2Monitor;
         private List<InputMonitor> _inputMonitors = new List<InputMonitor>();
         // prehaps don't need to monitor multiviewer
+        // for now won't have mediaplayer monitors
 
         private BMDSwitcherState _state;
 
@@ -348,6 +354,34 @@ namespace Integrated_Presenter
 
         }
 
+        private bool InitializeMediaPool()
+        {
+            _BMDSwitcherMediaPool = (IBMDSwitcherMediaPool)_BMDSwitcher;
+            return true;
+        }
+
+        private bool InitializeMediaPlayers()
+        {
+            IBMDSwitcherMediaPlayerIterator mediaPlayerIterator = null;
+            IntPtr mediaPlayerPtr;
+            Guid mediaPlayerIID = typeof(IBMDSwitcherMediaPlayerIterator).GUID;
+            _BMDSwitcher.CreateIterator(ref mediaPlayerIID, out mediaPlayerPtr);
+            if (mediaPlayerPtr == null)
+            {
+                return false;
+            }
+            mediaPlayerIterator = (IBMDSwitcherMediaPlayerIterator)Marshal.GetObjectForIUnknown(mediaPlayerPtr);
+            if (mediaPlayerIterator == null)
+            {
+                return false;
+            }
+
+            mediaPlayerIterator.Next(out _BMDSwitcherMediaPlayer1);
+            mediaPlayerIterator.Next(out _BMDSwitcherMediaPlayer2);
+
+            return true;
+        }
+
         private void SwitcherConnected()
         {
             // add callbacks (monitors switcher connection)
@@ -361,7 +395,10 @@ namespace Integrated_Presenter
             bool inputsources = InitializeInputSources();
             bool multiviewer = InitializeMultiView();
 
-            GoodConnection = mixeffects && downstreamkeyers && upstreamkeyers && inputsources && multiviewer;
+            bool mediapool = InitializeMediaPool();
+            bool mediaplayers = InitializeMediaPlayers();
+
+            GoodConnection = mixeffects && downstreamkeyers && upstreamkeyers && inputsources && multiviewer && mediaplayers && mediapool;
 
             MessageBox.Show("Connected to Switcher", "Connection Success");
 
@@ -503,6 +540,7 @@ namespace Integrated_Presenter
             ConfigureCameraSources();
             ConfigureDownstreamKeys();
             ConfigureMultiviewer();
+            ConfigureMediaPool();
         }
 
         private void ConfigureMixEffectBlock()
@@ -570,7 +608,7 @@ namespace Integrated_Presenter
             _BMDSwitcherDownstreamKey2.SetPreMultiplied(0);
             _BMDSwitcherDownstreamKey2.SetMasked(0);
         }
-        
+
         private void ConfigureMultiviewer()
         {
             _BMDSwitcherMultiView.SetLayout(_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop);
@@ -584,6 +622,25 @@ namespace Integrated_Presenter
             _BMDSwitcherMultiView.SetWindowInput(9, (long)BMDSwitcherSources.Input8);
         }
 
+        private async void ConfigureMediaPool()
+        {
+            // for now load the key files we need
+            Upload splitscreenkey = new Upload(_parent.Dispatcher, _BMDSwitcher, @"C:\Users\Kristopher_User\Pictures\SermonLumaRight.PNG", 0);
+
+            splitscreenkey.Start();
+            // TODO FIX THIS PROPERLY
+
+            // for now we'll assume that 5 seconds is enough to load (or fail to load)
+            await Task.Delay(5000);
+
+            Upload liturgykey = new Upload(_parent.Dispatcher, _BMDSwitcher, @"C:\Users\Kristopher_User\Pictures\SermonLumaLeft.PNG", 1);
+            liturgykey.Start();
+            // TODO FIX THIS PROPERLY
+
+            // for now we'll assume that 5 seconds is enough to load (or fail to load)
+            await Task.Delay(5000);
+
+        }
 
 
         public void PerformPresetSelect(int sourceID)
