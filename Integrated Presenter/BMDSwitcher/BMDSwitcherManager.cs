@@ -22,12 +22,14 @@ namespace Integrated_Presenter
         private IBMDSwitcherKey _BMDSwitcherUpstreamKey1;
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey1;
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey2;
+        private List<IBMDSwitcherInput> _BMDSwitcherInputs = new List<IBMDSwitcherInput>();
 
         private SwitcherMonitor _switcherMonitor;
         private MixEffectBlockMonitor _mixEffectBlockMonitor;
         private UpstreamKeyMonitor _upstreamKey1Monitor;
         private DownstreamKeyMonitor _dsk1Monitor;
         private DownstreamKeyMonitor _dsk2Monitor;
+        private List<InputMonitor> _inputMonitors = new List<InputMonitor>();
 
         private BMDSwitcherState _state;
 
@@ -175,6 +177,54 @@ namespace Integrated_Presenter
 
         }
 
+        private bool InitializeInputSources()
+        {
+            // get all input sources
+            IBMDSwitcherInputIterator inputIterator = null;
+            IntPtr inputIteratorPtr;
+            Guid inputIteratorIID = typeof(IBMDSwitcherInputIterator).GUID;
+            _BMDSwitcher.CreateIterator(ref inputIteratorIID, out inputIteratorPtr);
+            if (inputIteratorPtr != null)
+            {
+                inputIterator = (IBMDSwitcherInputIterator)Marshal.GetObjectForIUnknown(inputIteratorPtr);
+            }
+            else
+            {
+                return false;
+            }
+            if (inputIterator != null)
+            {
+                IBMDSwitcherInput input;
+                inputIterator.Next(out input);
+                while(input != null)
+                {
+                    _BMDSwitcherInputs.Add(input);
+                    InputMonitor inputMonitor = new InputMonitor(input);
+                    input.AddCallback(inputMonitor);
+                    inputMonitor.LongNameChanged += InputMonitor_LongNameChanged;
+                    inputMonitor.ShortNameChanged += InputMonitor_ShortNameChanged;
+                    _inputMonitors.Add(inputMonitor);
+                    inputIterator.Next(out input);
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void InputMonitor_ShortNameChanged(object sender, object args)
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void InputMonitor_LongNameChanged(object sender, object args)
+        {
+            //throw new NotImplementedException();
+        }
+
         private bool InitializeMixEffectBlock()
         {
             // get mixeffectblock1
@@ -283,8 +333,10 @@ namespace Integrated_Presenter
             //bool upstreamkeyers = InitializeUpstreamKeyers();
             bool downstreamkeyers = InitializeDownstreamKeyers();
 
+            bool inputsources = InitializeInputSources();
+
             //GoodConnection = mixeffects && upstreamkeyers && downstreamkeyers;
-            GoodConnection = mixeffects && downstreamkeyers;
+            GoodConnection = mixeffects && downstreamkeyers && inputsources;
 
             MessageBox.Show("Connected to Switcher", "Connection Success");
 
@@ -329,6 +381,14 @@ namespace Integrated_Presenter
                 _BMDSwitcher.RemoveCallback(_switcherMonitor);
                 _switcherMonitor = null;
             }
+
+            int i = 0;
+            foreach (var input in _BMDSwitcherInputs)
+            {
+                input.RemoveCallback(_inputMonitors[i++]);
+            }
+            _inputMonitors.Clear();
+            _BMDSwitcherInputs.Clear();
 
         }
 
@@ -404,6 +464,18 @@ namespace Integrated_Presenter
             return _state;
         }
 
+
+
+        public void ConfigureSwitcher()
+        {
+            ConfigureCameraSources();
+        }
+
+        private void ConfigureCameraSources()
+        {
+            // set input source names
+            
+        }
 
 
 
