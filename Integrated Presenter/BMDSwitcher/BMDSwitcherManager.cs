@@ -73,6 +73,17 @@ namespace Integrated_Presenter
             SwitcherDisconnected();
         }
 
+        private void InputMonitor_ShortNameChanged(object sender, object args)
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void InputMonitor_LongNameChanged(object sender, object args)
+        {
+            //throw new NotImplementedException();
+        }
+
+
         private void _upstreamKey1Monitor_UpstreamKeyOnAirChanged(object sender, object args)
         {
             _parent.Dispatcher.Invoke(() =>
@@ -219,15 +230,14 @@ namespace Integrated_Presenter
 
         private bool InitializeMultiView()
         {
-            IBMDSwitcherMultiViewIterator multiViewIterator = null;
             IntPtr multiViewPtr;
-            Guid multiViewIID = typeof(IBMDSwitcherMultiView).GUID;
+            Guid multiViewIID = typeof(IBMDSwitcherMultiViewIterator).GUID;
             _BMDSwitcher.CreateIterator(ref multiViewIID, out multiViewPtr);
             if (multiViewPtr == null)
             {
                 return false;
             }
-            multiViewIterator = (IBMDSwitcherMultiViewIterator)Marshal.GetObjectForIUnknown(multiViewPtr);
+            IBMDSwitcherMultiViewIterator multiViewIterator = (IBMDSwitcherMultiViewIterator)Marshal.GetObjectForIUnknown(multiViewPtr);
             if (multiViewIterator == null)
             {
                 return false;
@@ -238,15 +248,6 @@ namespace Integrated_Presenter
             return true;
         }
 
-        private void InputMonitor_ShortNameChanged(object sender, object args)
-        {
-            //throw new NotImplementedException();
-        }
-
-        private void InputMonitor_LongNameChanged(object sender, object args)
-        {
-            //throw new NotImplementedException();
-        }
 
         private bool InitializeMixEffectBlock()
         {
@@ -280,6 +281,7 @@ namespace Integrated_Presenter
 
         private bool InitializeUpstreamKeyers()
         {
+            return true;
             // get upstream keyer
             IBMDSwitcherKeyIterator keyIterator = null;
             IntPtr keyIteratorPtr;
@@ -353,15 +355,13 @@ namespace Integrated_Presenter
 
 
             bool mixeffects = InitializeMixEffectBlock();
-            //bool upstreamkeyers = InitializeUpstreamKeyers();
+            bool upstreamkeyers = InitializeUpstreamKeyers();
             bool downstreamkeyers = InitializeDownstreamKeyers();
 
             bool inputsources = InitializeInputSources();
-            //bool multiviewer = InitializeMultiView();
+            bool multiviewer = InitializeMultiView();
 
-            //GoodConnection = mixeffects && upstreamkeyers && downstreamkeyers;
-            //GoodConnection = mixeffects && downstreamkeyers && inputsources && multiviewer;
-            GoodConnection = mixeffects && downstreamkeyers && inputsources;
+            GoodConnection = mixeffects && downstreamkeyers && upstreamkeyers && inputsources && multiviewer;
 
             MessageBox.Show("Connected to Switcher", "Connection Success");
 
@@ -502,6 +502,7 @@ namespace Integrated_Presenter
             ConfigureMixEffectBlock();
             ConfigureCameraSources();
             ConfigureDownstreamKeys();
+            ConfigureMultiviewer();
         }
 
         private void ConfigureMixEffectBlock()
@@ -568,6 +569,19 @@ namespace Integrated_Presenter
             _BMDSwitcherDownstreamKey2.SetRate(30);
             _BMDSwitcherDownstreamKey2.SetPreMultiplied(0);
             _BMDSwitcherDownstreamKey2.SetMasked(0);
+        }
+        
+        private void ConfigureMultiviewer()
+        {
+            _BMDSwitcherMultiView.SetLayout(_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop);
+            _BMDSwitcherMultiView.SetWindowInput(2, (long)BMDSwitcherSources.Input5);
+            _BMDSwitcherMultiView.SetWindowInput(3, (long)BMDSwitcherSources.Input1);
+            _BMDSwitcherMultiView.SetWindowInput(4, (long)BMDSwitcherSources.Input6);
+            _BMDSwitcherMultiView.SetWindowInput(5, (long)BMDSwitcherSources.Input2);
+            _BMDSwitcherMultiView.SetWindowInput(6, (long)BMDSwitcherSources.Input4);
+            _BMDSwitcherMultiView.SetWindowInput(7, (long)BMDSwitcherSources.Input3);
+            _BMDSwitcherMultiView.SetWindowInput(8, (long)BMDSwitcherSources.Input7);
+            _BMDSwitcherMultiView.SetWindowInput(9, (long)BMDSwitcherSources.Input8);
         }
 
 
