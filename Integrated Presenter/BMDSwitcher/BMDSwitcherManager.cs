@@ -540,7 +540,8 @@ namespace Integrated_Presenter
             ConfigureCameraSources();
             ConfigureDownstreamKeys();
             ConfigureMultiviewer();
-            ConfigureMediaPool();
+            // disable for now - doesn't work
+            //ConfigureMediaPool();
         }
 
         private void ConfigureMixEffectBlock()
