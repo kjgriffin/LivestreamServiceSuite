@@ -31,7 +31,7 @@
                 </MenuItem>
                 <MenuItem Header="View" IsTabStop="False">
                     <MenuItem Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
-                    <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewAdvancedPresentation"></MenuItem>
+                    <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
                 </MenuItem>
             </Menu>
         </Grid>

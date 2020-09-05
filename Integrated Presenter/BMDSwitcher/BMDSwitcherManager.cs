@@ -357,10 +357,11 @@ namespace Integrated_Presenter
             bool downstreamkeyers = InitializeDownstreamKeyers();
 
             bool inputsources = InitializeInputSources();
-            bool multiviewer = InitializeMultiView();
+            //bool multiviewer = InitializeMultiView();
 
             //GoodConnection = mixeffects && upstreamkeyers && downstreamkeyers;
-            GoodConnection = mixeffects && downstreamkeyers && inputsources && multiviewer;
+            //GoodConnection = mixeffects && downstreamkeyers && inputsources && multiviewer;
+            GoodConnection = mixeffects && downstreamkeyers && inputsources;
 
             MessageBox.Show("Connected to Switcher", "Connection Success");
 

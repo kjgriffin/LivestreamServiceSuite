@@ -48,6 +48,8 @@ namespace Integrated_Presenter
             DataContext = this;
             InitializeComponent();
 
+            HideAdvancedPresControls();
+
             SlidePoolButtons = new List<SlidePoolSource>() { SlidePoolSource0, SlidePoolSource1, SlidePoolSource2, SlidePoolSource3 };
 
             PresetRow = new SwitcherBusViewModel(8, SourceLabelMappings.Select(p => (p.Value, p.Key)).ToList());
@@ -1175,7 +1177,7 @@ namespace Integrated_Presenter
         }
 
 
-        bool _viewAdvancedPresentation = true;
+        bool _viewAdvancedPresentation = false;
         private void ClickViewAdvancedPresentation(object sender, RoutedEventArgs e)
         {
             _viewAdvancedPresentation = !_viewAdvancedPresentation;
