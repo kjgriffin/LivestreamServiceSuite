@@ -19,6 +19,7 @@ namespace Xenon.Renderer
             };
             if (!System.IO.File.Exists(res.AssetPath))
             {
+                messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = $"Could not find file {res.AssetPath}", ErrorName = "Missing Video File", Level = Compiler.XenonCompilerMessageType.Error });
                 throw new FileNotFoundException();
             }
             return res;

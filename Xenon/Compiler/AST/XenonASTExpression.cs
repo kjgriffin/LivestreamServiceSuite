@@ -1,8 +1,7 @@
-﻿using Xenon.SlideAssembly;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler
 {
@@ -29,7 +28,7 @@ namespace Xenon.Compiler
                 Lexer.Gobble("#");
                 return CompileCommand(Lexer, Messages);
             }
-            
+
             // eat all inter-command whitespace
             Lexer.GobbleWhitespace();
 
@@ -92,7 +91,7 @@ namespace Xenon.Compiler
             {
                 XenonASTSermon sermon = new XenonASTSermon();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Sermon]);
-                expr.Command = (IXenonASTCommand)sermon.Compile(Lexer,Messages);
+                expr.Command = (IXenonASTCommand)sermon.Compile(Lexer, Messages);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]))
@@ -104,7 +103,6 @@ namespace Xenon.Compiler
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Copyright]))
             {
-                XenonASTPrefabSlide prefab = new XenonASTPrefabSlide();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Copyright]);
                 expr.Command = new XenonASTPrefabSlide() { PrefabSlide = PrefabSlides.Copyright };
                 return expr;

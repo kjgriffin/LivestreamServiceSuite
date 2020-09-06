@@ -31,10 +31,12 @@ namespace Xenon.Compiler
         public void Generate(Project project, IXenonASTElement _Parent)
         {
             // create a video slide
-            Slide videoslide = new Slide();
-            videoslide.Name = "UNNAMED_video";
-            videoslide.Number = project.NewSlideNumber;
-            videoslide.Lines = new List<SlideLine>();
+            Slide videoslide = new Slide
+            {
+                Name = "UNNAMED_video",
+                Number = project.NewSlideNumber,
+                Lines = new List<SlideLine>()
+            };
             string assetpath = "";
             var asset = project.Assets.Find(p => p.Name == AssetName);
             if (asset != null)

@@ -29,10 +29,8 @@ namespace Xenon.SlideAssembly
             try
             {
                 var sobj = JsonSerializer.Serialize<Project>(this);
-                using (var sw = new StreamWriter(filename))
-                {
-                    sw.Write(sobj);
-                }
+                using var sw = new StreamWriter(filename);
+                sw.Write(sobj);
             }
             catch (Exception)
             {
@@ -43,42 +41,38 @@ namespace Xenon.SlideAssembly
 
         public async void SaveProject(string filename)
         {
-            using (FileStream ziptoopen = new FileStream($"{filename}", FileMode.OpenOrCreate))
+            using FileStream ziptoopen = new FileStream($"{filename}", FileMode.OpenOrCreate);
+            using ZipArchive archive = new ZipArchive(ziptoopen, ZipArchiveMode.Update);
+            // create readme
+            ZipArchiveEntry readmeEntry = archive.CreateEntry("Readme.txt");
+            using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
             {
-                using (ZipArchive archive = new ZipArchive(ziptoopen, ZipArchiveMode.Update))
-                {
-                    // create readme
-                    ZipArchiveEntry readmeEntry = archive.CreateEntry("Readme.txt");
-                    using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                    {
-                        writer.WriteLine("Information about this package.");
-                        writer.WriteLine("===============================");
-                    }
+                writer.WriteLine("Information about this package.");
+                writer.WriteLine("===============================");
+            }
 
 
 
-                    // create assets folder
-                    string assetsfolderpath = $"assets{Path.DirectorySeparatorChar}";
-                    var assetsfolder = archive.CreateEntry(assetsfolderpath);
+            // create assets folder
+            string assetsfolderpath = $"assets{Path.DirectorySeparatorChar}";
+            var assetsfolder = archive.CreateEntry(assetsfolderpath);
 
-                    // copy assets
-                    foreach (var asset in Assets)
-                    {
-                        ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
-                    }
+            // copy assets
+            foreach (var asset in Assets)
+            {
+                ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
+            }
 
-                    // update project assets to point to zip
+            // update project assets to point to zip
 
 
 
-                    // save json format
-                    ZipArchiveEntry jsonfile = archive.CreateEntry("Project.json");
-                    var sobj = JsonSerializer.Serialize(this);
-                    using (StreamWriter writer = new StreamWriter(jsonfile.Open()))
-                    {
-                        await writer.WriteAsync(sobj);
-                    }
-                }
+            // save json format
+            ZipArchiveEntry jsonfile = archive.CreateEntry("Project.json");
+            var sobj = JsonSerializer.Serialize(this);
+            using (StreamWriter writer = new StreamWriter(jsonfile.Open()))
+            {
+                await writer.WriteAsync(sobj);
             }
         }
 
@@ -93,7 +87,7 @@ namespace Xenon.SlideAssembly
             {
                 try
                 {
-                    Directory.Delete(_loadTmpPath, true);
+                    //Directory.Delete(_loadTmpPath, true);
                 }
                 catch (Exception)
                 {

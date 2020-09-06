@@ -16,8 +16,7 @@ namespace Xenon.Compiler
             Lexer.GobbleWhitespace();
             Lexer.Gobble("(");
             Lexer.GobbleWhitespace();
-            litimage.AssetName = Lexer.Consume();
-            Lexer.GobbleWhitespace();
+            litimage.AssetName = Lexer.ConsumeUntil("\\)").Trim();
             Lexer.Gobble(")");
             return litimage;
 
@@ -26,10 +25,12 @@ namespace Xenon.Compiler
         public void Generate(Project project, IXenonASTElement _Parent)
         {
             // create a liturgy image slide
-            Slide imageslide = new Slide();
-            imageslide.Name = "UNNAMED_image";
-            imageslide.Number = project.NewSlideNumber;
-            imageslide.Lines = new List<SlideLine>();
+            Slide imageslide = new Slide
+            {
+                Name = "UNNAMED_image",
+                Number = project.NewSlideNumber,
+                Lines = new List<SlideLine>()
+            };
             string assetpath = "";
             var asset = project.Assets.Find(p => p.Name == AssetName);
             if (asset != null)

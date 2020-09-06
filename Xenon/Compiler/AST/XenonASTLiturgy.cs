@@ -1,10 +1,9 @@
-﻿using Xenon.LayoutEngine;
-using Xenon.SlideAssembly;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using Xenon.LayoutEngine;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler
 {
@@ -65,12 +64,14 @@ namespace Xenon.Compiler
                 3. If a logical-line requires wrapping the line must be the first line of the slide
              */
 
-            Slide liturgyslide = new Slide();
-            liturgyslide.Asset = string.Empty;
-            liturgyslide.Name = "UNNAMED_liturgy";
-            liturgyslide.Number = project.NewSlideNumber;
-            liturgyslide.Format = SlideFormat.Liturgy;
-            liturgyslide.MediaType = MediaType.Image;
+            Slide liturgyslide = new Slide
+            {
+                Asset = string.Empty,
+                Name = "UNNAMED_liturgy",
+                Number = project.NewSlideNumber,
+                Format = SlideFormat.Liturgy,
+                MediaType = MediaType.Image
+            };
 
             double lineheight = -project.Layouts.LiturgyLayout.InterLineSpacing;
 
@@ -94,12 +95,14 @@ namespace Xenon.Compiler
                     // need to start a new slide for this one
                     project.Slides.Add(liturgyslide);
                     // create new slide
-                    liturgyslide = new Slide();
-                    liturgyslide.Asset = string.Empty;
-                    liturgyslide.Name = "UNNAMED_liturgy";
-                    liturgyslide.Number = project.NewSlideNumber;
-                    liturgyslide.Format = SlideFormat.Liturgy;
-                    liturgyslide.MediaType = MediaType.Image;
+                    liturgyslide = new Slide
+                    {
+                        Asset = string.Empty,
+                        Name = "UNNAMED_liturgy",
+                        Number = project.NewSlideNumber,
+                        Format = SlideFormat.Liturgy,
+                        MediaType = MediaType.Image
+                    };
                     lineheight = 0;
                     startspeaker = line.speaker;
                     lastspeaker = line.speaker;

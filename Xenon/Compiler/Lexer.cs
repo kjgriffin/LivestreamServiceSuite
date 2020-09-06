@@ -75,6 +75,7 @@ namespace Xenon.Compiler
                 "#",
                 "\\",
                 "$",
+                "\"",
             };
             SplitWords.AddRange(Seperators);
         }

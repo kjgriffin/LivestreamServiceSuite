@@ -18,21 +18,15 @@ namespace Xenon.Compiler
     {
         public static string ToString(this XenonCompilerMessageType type)
         {
-            switch (type)
+            return type switch
             {
-                case XenonCompilerMessageType.Debug:
-                    return "Debug";
-                case XenonCompilerMessageType.Message:
-                    return "Message";
-                case XenonCompilerMessageType.Info:
-                    return "Info";
-                case XenonCompilerMessageType.Warning:
-                    return "Warning";
-                case XenonCompilerMessageType.Error:
-                    return "Error";
-                default:
-                    return "Default";
-            }
+                XenonCompilerMessageType.Debug => "Debug",
+                XenonCompilerMessageType.Message => "Message",
+                XenonCompilerMessageType.Info => "Info",
+                XenonCompilerMessageType.Warning => "Warning",
+                XenonCompilerMessageType.Error => "Error",
+                _ => "Default",
+            };
         }
     }
 
