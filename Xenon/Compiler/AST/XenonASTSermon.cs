@@ -16,19 +16,10 @@ namespace Xenon.Compiler
         {
             XenonASTSermon sermon = new XenonASTSermon();
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("(");
-            Lexer.GobbleWhitespace();
-            Lexer.Gobble("\"");
-            sermon.Title = Lexer.ConsumeUntil("\"");
-            Lexer.Gobble("\"");
-            Lexer.GobbleWhitespace();
-            Lexer.Gobble(",");
-            Lexer.GobbleWhitespace();
-            Lexer.Gobble("\"");
-            sermon.Reference = Lexer.ConsumeUntil("\"");
-            Lexer.Gobble("\"");
-            Lexer.GobbleWhitespace();
-            Lexer.Gobble(")");
+
+            var args = Lexer.ConsumeArgList(true, "title", "reference");
+            sermon.Title = args["title"];
+            sermon.Reference = args["reference"];
             return sermon;
 
         }

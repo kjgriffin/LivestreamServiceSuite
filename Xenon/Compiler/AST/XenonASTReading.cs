@@ -17,21 +17,9 @@ namespace Xenon.Compiler
         {
             XenonASTReading reading = new XenonASTReading();
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("(");
-            StringBuilder sb = new StringBuilder();
-            while (!Lexer.Inspect(","))
-            {
-                sb.Append(Lexer.Consume());
-            }
-            reading.Name = sb.ToString().Trim();
-            Lexer.Gobble(",");
-            sb.Clear();
-            while (!Lexer.Inspect("\\)"))
-            {
-                sb.Append(Lexer.Consume());
-            }
-            reading.Reference = sb.ToString().Trim();
-            Lexer.Gobble(")");
+            var args = Lexer.ConsumeArgList(true, "name", "reference");
+            reading.Name = args["name"];
+            reading.Reference = args["reference"];
             return reading;
 
         }

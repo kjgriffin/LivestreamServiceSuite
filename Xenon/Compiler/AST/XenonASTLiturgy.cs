@@ -20,19 +20,14 @@ namespace Xenon.Compiler
 
 
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("{");
+            Lexer.GobbleandLog("{", "Expected opening brace at start of liturgy.");
             Lexer.GobbleWhitespace();
-            while (!Lexer.InspectEOF() && !Lexer.Inspect("\\/\\/") && !Lexer.Inspect("}"))
+            while (!Lexer.Inspect("}"))
             {
-                if (Lexer.PeekNext() == "}")
-                {
-                    Lexer.GobbleWhitespace();
-                    continue;
-                }
                 XenonASTContent content = new XenonASTContent() { TextContent = Lexer.Consume() };
                 liturgy.Content.Add(content);
             }
-            Lexer.Gobble("}");
+            Lexer.GobbleandLog("}", "Missing closing brace for liturgy.");
             return liturgy;
 
         }

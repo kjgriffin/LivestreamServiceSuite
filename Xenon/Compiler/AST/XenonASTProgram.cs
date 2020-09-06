@@ -41,11 +41,13 @@ namespace Xenon.Compiler
             do
             {
                 XenonASTExpression expr = new XenonASTExpression();
+                Lexer.GobbleWhitespace();
                 expr = (XenonASTExpression)expr.Compile(Lexer, Logger);
                 if (expr != null)
                 {
                     p.Expressions.Add(expr);
                 }
+                Lexer.GobbleWhitespace();
             } while (!Lexer.InspectEOF());
 
             return p;

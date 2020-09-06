@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -351,46 +352,51 @@ namespace Xenon.Compiler
             }
         }
 
+
+        public string ConsumeArgList_StartSeq {get; set;} = "(";
+        public string ConsumeArgList_EndSeq { get; set; } = ")";
+        public string ConsumeArgList_SepSeq { get; set; } = ",";
+        public string ConsumeArgList_EncSeq { get; set; } = "\"";
+    
         /// <summary>
         /// Will consume all tokens starting with '(' and ending with ')'. Will assign values to paramaters.
         /// </summary>
-        /// <param name="argsep">Parameter seperator. default ','</param>
-        /// <param name="enclosed">Are the parameter values enclosed? default false</param>
-        /// <param name="enclosedby">What the parameters are enclosed by. default '"'</param>
-        /// <param name="paramnames">Names of parameters to capture</param>
         /// <returns>Values captured for each parameter</returns>
-        public Dictionary<string, string> ConsumeArgList(string startlist = "(", string endlist = ")", string argsep = ",", bool enclosed = false, string enclosedby = "\"", params string[] paramnames)
+        public Dictionary<string, string> ConsumeArgList(bool areenclosed = false, params string[] paramnames)
         {
             Dictionary<string, string> res = new Dictionary<string, string>();
 
-            GobbleandLog(startlist);
+            GobbleandLog(ConsumeArgList_StartSeq);
 
             int pnum = 0;
             foreach (var p in paramnames)
             {
+                string helpmsg = $"while trying to parse parameter: {p}";
                 GobbleWhitespace();
                 
-                if (enclosed)
+                if (areenclosed)
                 {
-                    GobbleandLog(enclosedby);
-                    res[p] = ConsumeUntil(enclosedby);
-                    GobbleandLog(enclosedby);
+                    GobbleandLog(ConsumeArgList_EncSeq, helpmsg);
+                    res[p] = ConsumeUntil(ConsumeArgList_EncSeq);
+                    GobbleandLog(ConsumeArgList_EncSeq, helpmsg);
                     GobbleWhitespace();
                 }
                 else
                 {
-                    res[p] = ConsumeUntil(argsep).Trim();
+                    res[p] = ConsumeUntil(pnum < paramnames.Length - 1 ? ConsumeArgList_SepSeq : ConsumeArgList_EndSeq).Trim();
                 }
 
                 if (pnum < paramnames.Length - 1)
                 {
-                    GobbleandLog(argsep); 
+                    GobbleandLog(ConsumeArgList_SepSeq, helpmsg); 
                 }
+
+                pnum++;
 
             }
 
             GobbleWhitespace();
-            GobbleandLog(endlist);
+            GobbleandLog(ConsumeArgList_EndSeq);
 
             return res;
         }
@@ -401,12 +407,12 @@ namespace Xenon.Compiler
         /// <param name="text">Test to check token against</param>
         /// <param name="messages">List of messages to log to</param>
         /// <returns>True if matched. False if no match</returns>
-        public bool GobbleandLog(string text)
+        public bool GobbleandLog(string text, string additionalinfo = "")
         {
             bool val = Gobble(text);
             if (!val)
             {
-                Logger.Log(new XenonCompilerMessage() { ErrorName = "Syntax: Unexpected Token", ErrorMessage = $"Expecting '{Regex.Unescape(text)}', got {Peek()}", Level = XenonCompilerMessageType.Error, Token = Peek() });
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Syntax: Unexpected Token", ErrorMessage = $"Expecting '{text}', got '{Peek()}'", Level = XenonCompilerMessageType.Error, Token = Peek(), Generator = "Lexer", Inner = additionalinfo });
             }
             return val;
         }

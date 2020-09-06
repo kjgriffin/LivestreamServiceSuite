@@ -14,15 +14,8 @@ namespace Xenon.Compiler
         {
             XenonASTFitImage fullimage = new XenonASTFitImage();
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("(");
-            Lexer.GobbleWhitespace();
-            StringBuilder sb = new StringBuilder();
-            while (!Lexer.Inspect("\\)"))
-            {
-                sb.Append(Lexer.Consume());
-            }
-            fullimage.AssetName = sb.ToString().Trim();
-            Lexer.Gobble(")");
+            var args = Lexer.ConsumeArgList(false, "asset");
+            fullimage.AssetName = args["asset"];
             return fullimage;
 
         }

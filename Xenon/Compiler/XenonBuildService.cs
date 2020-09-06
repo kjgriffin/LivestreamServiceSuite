@@ -23,7 +23,6 @@ namespace Xenon.Compiler
 
         public async Task<bool> BuildProject(string inputtext, List<ProjectAsset> Assets, IProgress<int> progress)
         {
-
             await Task.Run(() =>
             {
                 Project = compiler.Compile(inputtext, Assets, progress);

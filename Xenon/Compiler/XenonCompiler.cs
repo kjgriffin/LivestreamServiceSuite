@@ -68,6 +68,7 @@ namespace Xenon.Compiler
             }
             catch (Exception ex)
             {
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Failed", ErrorMessage = "Failed to compile project. Check syntax.", Generator = "Compiler", Level = XenonCompilerMessageType.Message });
                 Debug.WriteLine($"Compilation Failed \n{ex}");
                 return proj;
             }

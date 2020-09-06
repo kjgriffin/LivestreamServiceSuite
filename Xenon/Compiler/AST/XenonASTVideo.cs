@@ -16,14 +16,9 @@ namespace Xenon.Compiler
         {
             XenonASTVideo video = new XenonASTVideo();
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("(");
             StringBuilder sb = new StringBuilder();
-            while (!Lexer.Inspect("\\)"))
-            {
-                sb.Append(Lexer.Consume());
-            }
-            video.AssetName = sb.ToString().Trim();
-            Lexer.Gobble(")");
+            var args = Lexer.ConsumeArgList(false, "assetname");
+            video.AssetName = args["assetname"];
             return video;
 
         }

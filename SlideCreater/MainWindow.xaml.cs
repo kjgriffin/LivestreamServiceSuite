@@ -44,6 +44,8 @@ namespace SlideCreater
             string text = TbInput.Text;
             _proj.SourceCode = text;
 
+            tbConsole.Text = string.Empty;
+
 
             var compileprogress = new Progress<int>(percent =>
             {

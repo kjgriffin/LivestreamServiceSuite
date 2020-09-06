@@ -23,16 +23,12 @@ namespace Xenon.Compiler
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
-            if (Lexer.Inspect("#"))
+            if (Lexer.GobbleandLog("#"))
             {
-                Lexer.Gobble("#");
                 return CompileCommand(Lexer, Logger);
             }
 
-            // eat all inter-command whitespace
-            Lexer.GobbleWhitespace();
-
-            return null;
+            throw new XenonCompilerException();
         }
 
         private XenonASTExpression CompileCommand(Lexer Lexer, XenonErrorLogger Logger)
@@ -133,8 +129,8 @@ namespace Xenon.Compiler
             }
             else
             {
-                Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Error, ErrorName = "Unknown Command", ErrorMessage = $"{Lexer.Peek()} is not a recognized command", Token = Lexer.Peek() });
-                throw new ArgumentException($"Unexpected Command. Symbol: '{Lexer.Peek()}' is not a recognized command");
+                Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Error, ErrorName = "Unknown Command", ErrorMessage = $"{Lexer.Peek()} is not a recognized command", Token = Lexer.Peek(), Generator = "Compiler" });
+                throw new XenonCompilerException();
             }
         }
 

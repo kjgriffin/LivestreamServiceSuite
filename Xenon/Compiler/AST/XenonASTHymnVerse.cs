@@ -17,7 +17,7 @@ namespace Xenon.Compiler
             XenonASTHymnVerse verse = new XenonASTHymnVerse();
             Lexer.GobbleWhitespace();
 
-            Lexer.Gobble("{");
+            Lexer.GobbleandLog("{", "Expect opening brace at start of verse.");
 
             while (!Lexer.Inspect("}"))
             {
@@ -25,7 +25,7 @@ namespace Xenon.Compiler
                 verse.Content.Add(content);
             }
 
-            Lexer.Gobble("}");
+            Lexer.GobbleandLog("}", "Missing closing brace for verse.");
 
             return verse;
 

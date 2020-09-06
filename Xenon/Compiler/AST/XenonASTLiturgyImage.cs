@@ -14,10 +14,8 @@ namespace Xenon.Compiler
         {
             XenonASTLiturgyImage litimage = new XenonASTLiturgyImage();
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("(");
-            Lexer.GobbleWhitespace();
-            litimage.AssetName = Lexer.ConsumeUntil("\\)").Trim();
-            Lexer.Gobble(")");
+            var args = Lexer.ConsumeArgList(false, "asset");
+            litimage.AssetName = args["asset"];
             return litimage;
 
         }
