@@ -39,41 +39,65 @@ namespace Xenon.SlideAssembly
             }
         }
 
-        public async void SaveProject(string filename)
+        public async Task SaveProject(string filename, IProgress<int> progress)
         {
-            using FileStream ziptoopen = new FileStream($"{filename}", FileMode.OpenOrCreate);
-            using ZipArchive archive = new ZipArchive(ziptoopen, ZipArchiveMode.Update);
-            // create readme
-            ZipArchiveEntry readmeEntry = archive.CreateEntry("Readme.txt");
-            using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
+            await Task.Run(async () =>
             {
-                writer.WriteLine("Information about this package.");
-                writer.WriteLine("===============================");
-            }
+                progress.Report(0);
+
+                using FileStream ziptoopen = new FileStream($"{filename}", FileMode.OpenOrCreate);
+                using ZipArchive archive = new ZipArchive(ziptoopen, ZipArchiveMode.Update);
+                // create readme
+                ZipArchiveEntry readmeEntry = archive.CreateEntry("Readme.txt");
+                using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
+                {
+                    writer.WriteLine("Information about this package.");
+                    writer.WriteLine("===============================");
+                }
+
+                progress.Report(1);
 
 
 
-            // create assets folder
-            string assetsfolderpath = $"assets{Path.DirectorySeparatorChar}";
-            var assetsfolder = archive.CreateEntry(assetsfolderpath);
+                // create assets folder
+                string assetsfolderpath = $"assets{Path.DirectorySeparatorChar}";
+                var assetsfolder = archive.CreateEntry(assetsfolderpath);
 
-            // copy assets
-            foreach (var asset in Assets)
-            {
-                ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
-            }
+                progress.Report(5);
 
-            // update project assets to point to zip
+                int count = Assets.Count;
+
+                int completed = 0;
+                // copy assets
+                foreach (var asset in Assets)
+                {
+                    ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
+                    completed++;
+                    progress.Report(5 + (int)((double)completed / (double)count * 100 * 0.9));
+                }
 
 
+                //Parallel.ForEach(Assets, (asset) =>
+                //{
+                //    ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
+                //    completed++;
+                //    progress.Report(5 + (int)((double)0 / (double)count * 100 * 0.9));
+                //});
 
-            // save json format
-            ZipArchiveEntry jsonfile = archive.CreateEntry("Project.json");
-            var sobj = JsonSerializer.Serialize(this);
-            using (StreamWriter writer = new StreamWriter(jsonfile.Open()))
-            {
-                await writer.WriteAsync(sobj);
-            }
+                // update project assets to point to zip
+
+
+                progress.Report(90);
+
+                // save json format
+                ZipArchiveEntry jsonfile = archive.CreateEntry("Project.json");
+                var sobj = JsonSerializer.Serialize(this);
+                using (StreamWriter writer = new StreamWriter(jsonfile.Open()))
+                {
+                    await writer.WriteAsync(sobj);
+                }
+                progress.Report(100);
+            });
         }
 
         private string _loadTmpPath = "";
