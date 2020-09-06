@@ -39,7 +39,7 @@ namespace Xenon.Compiler
             Debug.WriteLine("</XenonASTTextHymn>");
         }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTTextHymn textHymn = new XenonASTTextHymn();
             Lexer.GobbleWhitespace();
@@ -88,7 +88,7 @@ namespace Xenon.Compiler
                 {
                     Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Verse]);
                     XenonASTHymnVerse verse = new XenonASTHymnVerse();
-                    textHymn.Verses.Add((XenonASTHymnVerse)verse.Compile(Lexer, Messages));
+                    textHymn.Verses.Add((XenonASTHymnVerse)verse.Compile(Lexer, Logger));
                 }
                 Lexer.GobbleWhitespace();
             }

@@ -12,7 +12,7 @@ namespace Xenon.Compiler
 
         public string AssetName { get; set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTVideo video = new XenonASTVideo();
             Lexer.GobbleWhitespace();

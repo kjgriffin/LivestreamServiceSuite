@@ -29,6 +29,7 @@ namespace Xenon.Compiler
                 Project = compiler.Compile(inputtext, Assets, progress);
             });
 
+            Messages.AddRange(compiler.Logger.AllErrors);
             return compiler.CompilerSucess;
         }
 

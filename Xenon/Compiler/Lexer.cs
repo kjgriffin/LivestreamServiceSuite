@@ -54,8 +54,12 @@ namespace Xenon.Compiler
         /// </summary>
         public int MaxInspections { get; set; } = 10000;
 
-        public Lexer()
+        private ILexerLogger Logger;
+
+        public Lexer(ILexerLogger Logger)
         {
+
+            this.Logger = Logger;
             // initialize SplitWords
 
             SplitWords = new List<string>();
@@ -167,7 +171,7 @@ namespace Xenon.Compiler
 
                 if (!inblock)
                 {
-                    noblocks.Add(p); 
+                    noblocks.Add(p);
                 }
 
                 if (p == EndBlockComment)
@@ -236,16 +240,18 @@ namespace Xenon.Compiler
         {
             if (inspections > MaxInspections)
             {
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Possible stuck compiler. {inspections} concurrent inspections on token.", ErrorName = "Lexer Overflow", Generator = "Lexer", Level = XenonCompilerMessageType.Error, Token = CurrentToken });
                 throw new Exception($"Too many inspections of token '{_tokens[_tokenpos]}'");
             }
             if (InspectEOF())
             {
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Lexer asked to inspect for token {Regex.Escape(test)}. Got EOF instead.", ErrorName = "Unexpected EOF", Generator = "Lexer", Level = XenonCompilerMessageType.Debug, Token = CurrentToken });
                 throw new ArgumentOutOfRangeException($"Unexpected token {test}. EOF");
             }
             string pattern = test;
             if (strict)
             {
-                pattern = $"^{test}$";
+                pattern = $"^{Regex.Escape(test)}$";
             }
             var m = Regex.Match(_tokens[_tokenpos], pattern);
 
@@ -344,5 +350,66 @@ namespace Xenon.Compiler
                 }
             }
         }
+
+        /// <summary>
+        /// Will consume all tokens starting with '(' and ending with ')'. Will assign values to paramaters.
+        /// </summary>
+        /// <param name="argsep">Parameter seperator. default ','</param>
+        /// <param name="enclosed">Are the parameter values enclosed? default false</param>
+        /// <param name="enclosedby">What the parameters are enclosed by. default '"'</param>
+        /// <param name="paramnames">Names of parameters to capture</param>
+        /// <returns>Values captured for each parameter</returns>
+        public Dictionary<string, string> ConsumeArgList(string startlist = "(", string endlist = ")", string argsep = ",", bool enclosed = false, string enclosedby = "\"", params string[] paramnames)
+        {
+            Dictionary<string, string> res = new Dictionary<string, string>();
+
+            GobbleandLog(startlist);
+
+            int pnum = 0;
+            foreach (var p in paramnames)
+            {
+                GobbleWhitespace();
+                
+                if (enclosed)
+                {
+                    GobbleandLog(enclosedby);
+                    res[p] = ConsumeUntil(enclosedby);
+                    GobbleandLog(enclosedby);
+                    GobbleWhitespace();
+                }
+                else
+                {
+                    res[p] = ConsumeUntil(argsep).Trim();
+                }
+
+                if (pnum < paramnames.Length - 1)
+                {
+                    GobbleandLog(argsep); 
+                }
+
+            }
+
+            GobbleWhitespace();
+            GobbleandLog(endlist);
+
+            return res;
+        }
+
+        /// <summary>
+        /// Checks the current token matches 'text' and if so advances to next token. Logs messages on failure.
+        /// </summary>
+        /// <param name="text">Test to check token against</param>
+        /// <param name="messages">List of messages to log to</param>
+        /// <returns>True if matched. False if no match</returns>
+        public bool GobbleandLog(string text)
+        {
+            bool val = Gobble(text);
+            if (!val)
+            {
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Syntax: Unexpected Token", ErrorMessage = $"Expecting '{Regex.Unescape(text)}', got {Peek()}", Level = XenonCompilerMessageType.Error, Token = Peek() });
+            }
+            return val;
+        }
+
     }
 }

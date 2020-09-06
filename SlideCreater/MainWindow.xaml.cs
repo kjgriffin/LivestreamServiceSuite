@@ -137,9 +137,12 @@ namespace SlideCreater
             }
 
             // update focusslide
-            FocusSlide.Slide = slides.First();
-            FocusSlide.ShowSlide();
-            slidepreviews.First().ShowSelected(true);
+            if (slides?.Count > 0)
+            {
+                FocusSlide.Slide = slides.First();
+                FocusSlide.ShowSlide();
+                slidepreviews.First().ShowSelected(true);
+            }
         }
 
         Project _proj = new Project(true);

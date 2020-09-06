@@ -29,19 +29,19 @@ namespace Xenon.Compiler
             Debug.WriteLine("</XenonASTProgram>");
         }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTProgram p = new XenonASTProgram();
             // gaurd against empty file
             if (Lexer.InspectEOF())
             {
-                Messages.Add(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Message, ErrorName = "Empty Project", ErrorMessage = "Program contains no symbols.", Token = Lexer.EOFText });
+                Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Message, ErrorName = "Empty Project", ErrorMessage = "Program contains no symbols.", Token = Lexer.EOFText });
                 return p;
             }
             do
             {
                 XenonASTExpression expr = new XenonASTExpression();
-                expr = (XenonASTExpression)expr.Compile(Lexer, Messages);
+                expr = (XenonASTExpression)expr.Compile(Lexer, Logger);
                 if (expr != null)
                 {
                     p.Expressions.Add(expr);

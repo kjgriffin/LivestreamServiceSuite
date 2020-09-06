@@ -40,7 +40,7 @@ namespace Xenon.Compiler
     {
         public PrefabSlides PrefabSlide { get; set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             return this;
         }

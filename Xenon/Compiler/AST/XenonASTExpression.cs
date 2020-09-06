@@ -21,12 +21,12 @@ namespace Xenon.Compiler
             Debug.WriteLine("</XenonASTExperession>");
         }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             if (Lexer.Inspect("#"))
             {
                 Lexer.Gobble("#");
-                return CompileCommand(Lexer, Messages);
+                return CompileCommand(Lexer, Logger);
             }
 
             // eat all inter-command whitespace
@@ -35,70 +35,70 @@ namespace Xenon.Compiler
             return null;
         }
 
-        private XenonASTExpression CompileCommand(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        private XenonASTExpression CompileCommand(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTExpression expr = new XenonASTExpression();
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Video]))
             {
                 XenonASTVideo video = new XenonASTVideo();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Video]);
-                expr.Command = (IXenonASTCommand)video.Compile(Lexer, Messages);
+                expr.Command = (IXenonASTCommand)video.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.FullImage]))
             {
                 XenonASTFullImage fullimage = new XenonASTFullImage();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.FullImage]);
-                expr.Command = (IXenonASTCommand)fullimage.Compile(Lexer, Messages);
+                expr.Command = (IXenonASTCommand)fullimage.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.FitImage]))
             {
                 XenonASTFitImage fitimage = new XenonASTFitImage();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.FitImage]);
-                expr.Command = (IXenonASTCommand)fitimage.Compile(Lexer, Messages);
+                expr.Command = (IXenonASTCommand)fitimage.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]))
             {
                 XenonASTLiturgyImage liturgyimage = new XenonASTLiturgyImage();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]);
-                expr.Command = (IXenonASTCommand)liturgyimage.Compile(Lexer, Messages);
+                expr.Command = (IXenonASTCommand)liturgyimage.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Break]))
             {
                 XenonASTSlideBreak slidebreak = new XenonASTSlideBreak();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Break]);
-                expr.Command = (IXenonASTCommand)slidebreak.Compile(Lexer, Messages);
+                expr.Command = (IXenonASTCommand)slidebreak.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Liturgy]))
             {
                 XenonASTLiturgy liturgy = new XenonASTLiturgy();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Liturgy]);
-                expr.Command = (IXenonASTCommand)liturgy.Compile(Lexer, Messages);
+                expr.Command = (IXenonASTCommand)liturgy.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Reading]))
             {
                 XenonASTReading reading = new XenonASTReading();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Reading]);
-                expr.Command = (IXenonASTCommand)reading.Compile(Lexer, Messages);
+                expr.Command = (IXenonASTCommand)reading.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Sermon]))
             {
                 XenonASTSermon sermon = new XenonASTSermon();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Sermon]);
-                expr.Command = (IXenonASTCommand)sermon.Compile(Lexer, Messages);
+                expr.Command = (IXenonASTCommand)sermon.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]))
             {
                 XenonASTTextHymn texthymn = new XenonASTTextHymn();
                 Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]);
-                expr.Command = (IXenonASTCommand)texthymn.Compile(Lexer, Messages);
+                expr.Command = (IXenonASTCommand)texthymn.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Copyright]))
@@ -133,7 +133,7 @@ namespace Xenon.Compiler
             }
             else
             {
-                Messages.Add(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Error, ErrorName = "Unknown Command", ErrorMessage = $"{Lexer.Peek()} is not a recognized command", Token = Lexer.Peek() });
+                Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Error, ErrorName = "Unknown Command", ErrorMessage = $"{Lexer.Peek()} is not a recognized command", Token = Lexer.Peek() });
                 throw new ArgumentException($"Unexpected Command. Symbol: '{Lexer.Peek()}' is not a recognized command");
             }
         }

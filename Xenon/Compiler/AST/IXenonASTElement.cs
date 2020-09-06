@@ -10,7 +10,7 @@ namespace Xenon.Compiler
 
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer);
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages);
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger);
 
         public void Generate(Project project, IXenonASTElement _Parent);
 

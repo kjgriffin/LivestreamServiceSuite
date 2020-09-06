@@ -12,7 +12,7 @@ namespace Xenon.Compiler
         public string Title { get; set; }
         public string Reference { get; set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTSermon sermon = new XenonASTSermon();
             Lexer.GobbleWhitespace();

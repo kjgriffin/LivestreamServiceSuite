@@ -41,10 +41,10 @@ namespace Xenon.Compiler
 
         public XenonCompiler()
         {
-            Lexer = new Lexer();
+            Lexer = new Lexer(Logger);
         }
 
-        public List<XenonCompilerMessage> Messages { get; set; } = new List<XenonCompilerMessage>();
+        public XenonErrorLogger Logger { get; set; } = new XenonErrorLogger();
 
         public bool CompilerSucess { get; set; } = false;
 
@@ -64,7 +64,7 @@ namespace Xenon.Compiler
             XenonASTProgram p = new XenonASTProgram();
             try
             {
-                p = (XenonASTProgram)p.Compile(Lexer, Messages);
+                p = (XenonASTProgram)p.Compile(Lexer, Logger);
             }
             catch (Exception ex)
             {
