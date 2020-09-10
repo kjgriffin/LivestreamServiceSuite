@@ -243,6 +243,50 @@
 
                             </Grid>
                         </Grid>
+                        <Grid Grid.Row="2">
+                            <Border Style="{StaticResource GroupBorder}" >
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <StackPanel>
+                                            <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="5">PICTURE IN PICTURE CONTROLS</TextBlock>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <Button Width="80" Height="60">
+                                                    <Image Source="pack://application:,,,/Icons/keyframepushleft.png"></Image>
+                                                </Button>
+                                                <Button Width="80" Height="60">
+                                                    <Image Source="pack://application:,,,/Icons/keyframepushright.png"></Image>
+                                                </Button>
+                                                <Button Width="80" Height="60">
+                                                    <Image Source="pack://application:,,,/Icons/keyframetobox.png"></Image>
+                                                </Button>
+                                                <Button Width="80" Height="60">
+                                                    <Image Source="pack://application:,,,/Icons/keyframetofill.png"></Image>
+                                                </Button>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Grid.Row="1">
+                                        <StackPanel>
+                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">FILL SOURCE</TextBlock>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
+                                                <Button Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
+                                                <Button Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
+                                                <Button Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
+                                                <Button Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
+                                                <Button Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                <Button Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </Grid>
                     </Grid>
                 </Viewbox>
             </Grid>

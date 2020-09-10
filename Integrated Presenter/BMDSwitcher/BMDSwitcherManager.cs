@@ -29,6 +29,8 @@ namespace Integrated_Presenter
         private IBMDSwitcherMediaPlayer _BMDSwitcherMediaPlayer1;
         private IBMDSwitcherMediaPlayer _BMDSwitcherMediaPlayer2;
         private IBMDSwitcherMediaPool _BMDSwitcherMediaPool;
+        private IBMDSwitcherKeyDVEParameters _BMDSwitcherDVEParameters;
+        private IBMDSwitcherKeyFlyKeyFrameParameters _BMDSwitcherKeyFlyKeyFrameParamters;
 
         private SwitcherMonitor _switcherMonitor;
         private MixEffectBlockMonitor _mixEffectBlockMonitor;
@@ -295,6 +297,8 @@ namespace Integrated_Presenter
             keyIterator = (IBMDSwitcherKeyIterator)Marshal.GetObjectForIUnknown(keyItrPtr);
             keyIterator.Next(out _BMDSwitcherUpstreamKey1);
 
+            _BMDSwitcherUpstreamKey1.AddCallback(_upstreamKey1Monitor);
+
             return true;
         }
 
@@ -462,9 +466,9 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_USK1()
         {
-            //int onair;
-            //_BMDSwitcherUpstreamKey1.GetOnAir(out onair);
-            //_state.USK1OnAir = onair != 0;
+            int onair;
+            _BMDSwitcherUpstreamKey1.GetOnAir(out onair);
+            _state.USK1OnAir = onair != 0;
         }
 
         private void ForceStateUpdate_DSK1()
@@ -571,11 +575,11 @@ namespace Integrated_Presenter
 
         private void ConfigureDownstreamKeys()
         {
-            ConfigureDSK1Liturgy();
-            ConfigureDSK2Split();
+            ConfigureDSK1forLiturgy();
+            ConfigureDSK2forSplit();
         }
 
-        private void ConfigureDSK1Liturgy()
+        private void ConfigureDSK1forLiturgy()
         {
             _BMDSwitcherDownstreamKey1.SetInputFill((long)BMDSwitcherSources.Input4);
             _BMDSwitcherDownstreamKey1.SetInputCut((long)BMDSwitcherSources.MediaPlayer1);
@@ -584,7 +588,7 @@ namespace Integrated_Presenter
             _BMDSwitcherDownstreamKey1.SetMasked(0);
         }
 
-        private void ConfigureDSK2Split()
+        private void ConfigureDSK2forSplit()
         {
             _BMDSwitcherDownstreamKey2.SetInputFill((long)BMDSwitcherSources.Input4);
             _BMDSwitcherDownstreamKey2.SetInputCut((long)BMDSwitcherSources.MediaPlayer2);
@@ -606,23 +610,38 @@ namespace Integrated_Presenter
             _BMDSwitcherMultiView.SetWindowInput(9, (long)BMDSwitcherSources.Input8);
         }
 
+        private void ConfigureUpstreamKey()
+        {
+            ConfigureUSKforPictureInPicture();
+        }
+
+        private void ConfigureUSKforPictureInPicture()
+        {
+            _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
+
+            IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+
+            // set border with dveparams
+
+            IBMDSwitcherKeyFlyParameters flykeyparams = (IBMDSwitcherKeyFlyParameters)_BMDSwitcherUpstreamKey1;
+
+            // config keyframes
+
+            //flykeyparams.
+
+
+        }
+
         private async void ConfigureMediaPool()
         {
-            // for now load the key files we need
-            Upload splitscreenkey = new Upload(_parent.Dispatcher, _BMDSwitcher, @"C:\Users\Kristopher_User\Pictures\SermonLumaRight.PNG", 0);
+            string file1 = @"C:\Users\Kristopher_User\Pictures\SermonLumaRight.PNG";
+            string file2 = @"C:\Users\Kristopher_User\Pictures\SermonLumaLeft.PNG";
 
-            splitscreenkey.Start();
-            // TODO FIX THIS PROPERLY
+            SwitcherUploadManager upload1 = new SwitcherUploadManager(_parent.Dispatcher, _BMDSwitcher);
+            SwitcherUploadManager upload2 = new SwitcherUploadManager(_parent.Dispatcher, _BMDSwitcher);
 
-            // for now we'll assume that 5 seconds is enough to load (or fail to load)
-            await Task.Delay(5000);
-
-            Upload liturgykey = new Upload(_parent.Dispatcher, _BMDSwitcher, @"C:\Users\Kristopher_User\Pictures\SermonLumaLeft.PNG", 1);
-            liturgykey.Start();
-            // TODO FIX THIS PROPERLY
-
-            // for now we'll assume that 5 seconds is enough to load (or fail to load)
-            await Task.Delay(5000);
+            upload1.UploadImage(file1, 0);
+            upload2.UploadImage(file2, 1);
 
         }
 
