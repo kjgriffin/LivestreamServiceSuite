@@ -157,7 +157,7 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PIP</TextBlock>
                                             <Button Style="{StaticResource InactiveSwitcherButton}">KEY 1</Button>
-                                            <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource InactiveSwitcherButton}">PIP</Button>
+                                            <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">PIP</Button>
                                         </StackPanel>
                                     </Border>
                                 </Grid>
@@ -254,16 +254,16 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="5">PICTURE IN PICTURE CONTROLS</TextBlock>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Width="80" Height="60">
+                                                <Button Click="ClickPIPRunToOnScreenBox" Width="80" Height="60">
                                                     <Image Source="pack://application:,,,/Icons/keyframepushleft.png"></Image>
                                                 </Button>
-                                                <Button Width="80" Height="60">
+                                                <Button Click="ClickPIPRunToOffScreenBox" Width="80" Height="60">
                                                     <Image Source="pack://application:,,,/Icons/keyframepushright.png"></Image>
                                                 </Button>
                                                 <Button Width="80" Height="60">
                                                     <Image Source="pack://application:,,,/Icons/keyframetobox.png"></Image>
                                                 </Button>
-                                                <Button Width="80" Height="60">
+                                                <Button Click="ClickPIPRunToFull" Width="80" Height="60">
                                                     <Image Source="pack://application:,,,/Icons/keyframetofill.png"></Image>
                                                 </Button>
                                             </StackPanel>

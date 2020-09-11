@@ -190,5 +190,20 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             throw new NotImplementedException();
         }
+
+        public void PerformUSK1RunToKeyFrameA()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PerformUSK1RunToKeyFrameB()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PerformUSK1RunToKeyFrameFull()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

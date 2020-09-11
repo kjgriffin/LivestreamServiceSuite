@@ -27,6 +27,9 @@ namespace Integrated_Presenter
         void PerformToggleFTB();
         bool TryConnect(string address);
         void PerformToggleUSK1();
+        void PerformUSK1RunToKeyFrameA();
+        void PerformUSK1RunToKeyFrameB();
+        void PerformUSK1RunToKeyFrameFull();
 
         void Close();
         void ConfigureSwitcher();

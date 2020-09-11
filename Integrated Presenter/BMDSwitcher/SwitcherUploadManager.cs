@@ -1,6 +1,7 @@
 ﻿using BMDSwitcherAPI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -13,10 +14,14 @@ namespace Integrated_Presenter.BMDSwitcher
     class SwitcherUploadManager
     {
 
+        Dispatcher dispatcher;
+
         IBMDSwitcher m_switcher;
         IBMDSwitcherMediaPool m_mediapool;
         IBMDSwitcherStills m_stills;
         StillsMonitor m_stillsmonitor;
+        SwitcherMediaPoolLockMonitor m_lockmontior;
+
 
         IBMDSwitcherFrame m_frame;
         uint m_slot;
@@ -25,37 +30,64 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public SwitcherUploadManager(Dispatcher dispatcher, IBMDSwitcher switcher)
         {
+            this.dispatcher = dispatcher;
             m_switcher = switcher;
             m_mediapool = (IBMDSwitcherMediaPool)switcher;
             m_mediapool.GetStills(out m_stills);
-            m_stillsmonitor = new StillsMonitor() { OnTransferCompleted = OnTransferCompleted, OnTransferFailled = OnTransferFailled };
-            m_stills.AddCallback(m_stillsmonitor);
+            if (m_stills == null)
+            {
+                throw new Exception();
+            }
         }
 
         private void OnTransferFailled()
         {
-            SwitcherMediaPoolLockMonitor lockmonitor = new SwitcherMediaPoolLockMonitor() {};
-            m_stills.Unlock(lockmonitor);
+            dispatcher.Invoke(() =>
+            {
+                m_stills.Unlock(m_lockmontior);
+            });
         }
 
         private void OnTransferCompleted()
         {
-            SwitcherMediaPoolLockMonitor lockmonitor = new SwitcherMediaPoolLockMonitor() {};
-            m_stills.Unlock(lockmonitor);
+            dispatcher.Invoke(() =>
+            {
+                m_stills.Unlock(m_lockmontior);
+            });
         }
 
         public void UploadImage(string filename, uint slot)
         {
             m_slot = slot;
             m_imgname = Path.GetFileNameWithoutExtension(filename);
-            m_frame = CreateFrame(filename);
-            SwitcherMediaPoolLockMonitor uploadlockmonitor = new SwitcherMediaPoolLockMonitor() { OnLockObtained = StartUploadWithLock };
-            m_stills.Lock(uploadlockmonitor);
+            dispatcher.Invoke(() =>
+            {
+                m_frame = CreateFrame(filename);
+
+                m_stillsmonitor = new StillsMonitor() { OnLockIdle = GetLock };
+
+            });
+        }
+
+        public void GetLock()
+        {
+            dispatcher.Invoke(() =>
+            {
+                m_lockmontior = new SwitcherMediaPoolLockMonitor() { OnLockObtained = StartUploadWithLock };
+                m_stills.Lock(m_lockmontior);
+            });
         }
 
         private void StartUploadWithLock()
         {
-            m_stills.Upload(m_slot, m_imgname, m_frame);
+            dispatcher.Invoke(() =>
+            {
+                if (m_stillsmonitor != null)
+                    m_stills.RemoveCallback(m_stillsmonitor);
+                m_stillsmonitor = new StillsMonitor() { OnTransferCompleted = OnTransferCompleted, OnTransferFailled = OnTransferFailled };
+                m_stills.AddCallback(m_stillsmonitor);
+                m_stills.Upload(m_slot, m_imgname, m_frame);
+            });
         }
 
         private IBMDSwitcherFrame CreateFrame(string filename)

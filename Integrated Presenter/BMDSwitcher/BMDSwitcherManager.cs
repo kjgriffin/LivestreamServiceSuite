@@ -30,7 +30,7 @@ namespace Integrated_Presenter
         private IBMDSwitcherMediaPlayer _BMDSwitcherMediaPlayer2;
         private IBMDSwitcherMediaPool _BMDSwitcherMediaPool;
         private IBMDSwitcherKeyDVEParameters _BMDSwitcherDVEParameters;
-        private IBMDSwitcherKeyFlyKeyFrameParameters _BMDSwitcherKeyFlyKeyFrameParamters;
+        private IBMDSwitcherKeyFlyParameters _BMDSwitcherFlyKeyParamters;
 
         private SwitcherMonitor _switcherMonitor;
         private MixEffectBlockMonitor _mixEffectBlockMonitor;
@@ -299,6 +299,9 @@ namespace Integrated_Presenter
 
             _BMDSwitcherUpstreamKey1.AddCallback(_upstreamKey1Monitor);
 
+            _BMDSwitcherFlyKeyParamters = (IBMDSwitcherKeyFlyParameters)_BMDSwitcherUpstreamKey1;
+            
+
             return true;
         }
 
@@ -401,49 +404,52 @@ namespace Integrated_Presenter
         {
             GoodConnection = false;
 
-            // remove callbacks
-            if (_BMDSwitcherMixEffectBlock1 != null)
+            _parent.Dispatcher.Invoke(() =>
             {
-                _BMDSwitcherMixEffectBlock1.RemoveCallback(_mixEffectBlockMonitor);
-                _BMDSwitcherMixEffectBlock1 = null;
-            }
+                // remove callbacks
+                if (_BMDSwitcherMixEffectBlock1 != null)
+                {
+                    _BMDSwitcherMixEffectBlock1.RemoveCallback(_mixEffectBlockMonitor);
+                    _BMDSwitcherMixEffectBlock1 = null;
+                }
 
-            if (_BMDSwitcherUpstreamKey1 != null)
-            {
-                _BMDSwitcherUpstreamKey1.RemoveCallback(_upstreamKey1Monitor);
-                _BMDSwitcherUpstreamKey1 = null;
-            }
+                if (_BMDSwitcherUpstreamKey1 != null)
+                {
+                    _BMDSwitcherUpstreamKey1.RemoveCallback(_upstreamKey1Monitor);
+                    _BMDSwitcherUpstreamKey1 = null;
+                }
 
-            if (_BMDSwitcherDownstreamKey1 != null)
-            {
-                _BMDSwitcherDownstreamKey1.RemoveCallback(_dsk1Monitor);
-                _BMDSwitcherDownstreamKey1 = null;
-            }
-            if (_BMDSwitcherDownstreamKey2 != null)
-            {
-                _BMDSwitcherDownstreamKey2.RemoveCallback(_dsk2Monitor);
-                _BMDSwitcherDownstreamKey2 = null;
-            }
+                if (_BMDSwitcherDownstreamKey1 != null)
+                {
+                    _BMDSwitcherDownstreamKey1.RemoveCallback(_dsk1Monitor);
+                    _BMDSwitcherDownstreamKey1 = null;
+                }
+                if (_BMDSwitcherDownstreamKey2 != null)
+                {
+                    _BMDSwitcherDownstreamKey2.RemoveCallback(_dsk2Monitor);
+                    _BMDSwitcherDownstreamKey2 = null;
+                }
 
-            if (_BMDSwitcher != null)
-            {
-                _BMDSwitcher.RemoveCallback(_switcherMonitor);
-                _switcherMonitor = null;
-            }
+                if (_BMDSwitcher != null)
+                {
+                    _BMDSwitcher.RemoveCallback(_switcherMonitor);
+                    _switcherMonitor = null;
+                }
 
-            int i = 0;
-            foreach (var input in _BMDSwitcherInputs)
-            {
-                input.RemoveCallback(_inputMonitors[i++]);
-            }
-            _inputMonitors.Clear();
-            _BMDSwitcherInputs.Clear();
+                int i = 0;
+                foreach (var input in _BMDSwitcherInputs)
+                {
+                    input.RemoveCallback(_inputMonitors[i++]);
+                }
+                _inputMonitors.Clear();
+                _BMDSwitcherInputs.Clear();
 
-            if (_BMDSwitcherMultiView != null)
-            {
-                // no callback yet
-                _BMDSwitcherMultiView = null;
-            }
+                if (_BMDSwitcherMultiView != null)
+                {
+                    // no callback yet
+                    _BMDSwitcherMultiView = null;
+                }
+            });
 
         }
 
@@ -527,6 +533,7 @@ namespace Integrated_Presenter
             ConfigureCameraSources();
             ConfigureDownstreamKeys();
             ConfigureMultiviewer();
+            ConfigureUpstreamKey();
             // disable for now - doesn't work
             //ConfigureMediaPool();
         }
@@ -619,29 +626,50 @@ namespace Integrated_Presenter
         {
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
 
+            // set initial fill source to center
+            _BMDSwitcherUpstreamKey1.SetInputFill((long)BMDSwitcherSources.Input1);
+
             IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
 
             // set border with dveparams
-
-            IBMDSwitcherKeyFlyParameters flykeyparams = (IBMDSwitcherKeyFlyParameters)_BMDSwitcherUpstreamKey1;
-
-            // config keyframes
-
-            //flykeyparams.
+            dveparams.SetMasked(0);
+            dveparams.SetBorderEnabled(0);
 
 
+            // config size & base position
+            _BMDSwitcherFlyKeyParamters.SetPositionX(9.6);
+            _BMDSwitcherFlyKeyParamters.SetPositionY(-6.0);
+            _BMDSwitcherFlyKeyParamters.SetSizeX(0.4);
+            _BMDSwitcherFlyKeyParamters.SetSizeY(0.4);
+
+            // setup keyframes
+            IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
+            _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparams);
+
+            keyframeparams.SetPositionX(9.6);
+            keyframeparams.SetPositionY(-6.0);
+            keyframeparams.SetSizeX(0.4);
+            keyframeparams.SetSizeY(0.4);
+
+            _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparams);
+
+            keyframeparams.SetPositionX(23.0);
+            keyframeparams.SetPositionY(-6.0);
+            keyframeparams.SetSizeX(0.4);
+            keyframeparams.SetSizeY(0.4);
+            
         }
 
-        private async void ConfigureMediaPool()
+        private void ConfigureMediaPool()
         {
             string file1 = @"C:\Users\Kristopher_User\Pictures\SermonLumaRight.PNG";
             string file2 = @"C:\Users\Kristopher_User\Pictures\SermonLumaLeft.PNG";
 
             SwitcherUploadManager upload1 = new SwitcherUploadManager(_parent.Dispatcher, _BMDSwitcher);
-            SwitcherUploadManager upload2 = new SwitcherUploadManager(_parent.Dispatcher, _BMDSwitcher);
+            //SwitcherUploadManager upload2 = new SwitcherUploadManager(_parent.Dispatcher, _BMDSwitcher);
 
             upload1.UploadImage(file1, 0);
-            upload2.UploadImage(file2, 1);
+            //upload2.UploadImage(file2, 1);
 
         }
 
@@ -681,6 +709,11 @@ namespace Integrated_Presenter
         public void PerformToggleUSK1()
         {
             _BMDSwitcherUpstreamKey1.SetOnAir(_state.USK1OnAir ? 0 : 1);
+        }
+
+        public void PerformTieUSK1()
+        {
+            //_BMDSwitcherUpstreamKey1.set
         }
 
         public void PerformToggleDSK1()
@@ -732,6 +765,21 @@ namespace Integrated_Presenter
         public void Close()
         {
             SwitcherDisconnected();
+        }
+
+        public void PerformUSK1RunToKeyFrameA()
+        {
+            _BMDSwitcherFlyKeyParamters.RunToKeyFrame(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA);
+        }
+
+        public void PerformUSK1RunToKeyFrameB()
+        {
+            _BMDSwitcherFlyKeyParamters.RunToKeyFrame(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB);
+        }
+
+        public void PerformUSK1RunToKeyFrameFull()
+        {
+            _BMDSwitcherFlyKeyParamters.RunToKeyFrame(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameFull);
         }
     }
 }

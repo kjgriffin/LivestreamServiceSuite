@@ -11,6 +11,7 @@ namespace Integrated_Presenter.BMDSwitcher
         public long ProgramID { get; set; }
 
         public bool USK1OnAir { get; set; }
+        public long USKFillSource { get; set; }
 
         public bool DSK1OnAir { get; set; }
         public bool DSK1Tie { get; set; }
@@ -30,6 +31,7 @@ namespace Integrated_Presenter.BMDSwitcher
             DSK2OnAir = false;
             DSK2Tie = false;
             FTB = false;
+            USKFillSource = -1;
         }
 
         public bool IsDifferentShot(BMDSwitcherState oldstate)
@@ -44,10 +46,11 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public BMDSwitcherState Copy()
         {
-            return new BMDSwitcherState() { 
+            return new BMDSwitcherState() {
                 PresetID = this.PresetID,
                 ProgramID = this.ProgramID,
                 USK1OnAir = this.USK1OnAir,
+                USKFillSource = this.USKFillSource,
                 DSK1OnAir = this.DSK1OnAir,
                 DSK1Tie = this.DSK1Tie,
                 DSK2OnAir = this.DSK2OnAir,

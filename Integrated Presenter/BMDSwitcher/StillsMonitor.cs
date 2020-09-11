@@ -13,6 +13,8 @@ namespace Integrated_Presenter.BMDSwitcher
         public Action OnTransferFailled { get; set; }
         public Action OnTransferCancelled { get; set; }
 
+        public Action OnLockIdle { get; set; }
+
         void IBMDSwitcherStillsCallback.Notify(_BMDSwitcherMediaPoolEventType eventType, IBMDSwitcherFrame frame, int index)
         {
             switch (eventType)
@@ -32,6 +34,7 @@ namespace Integrated_Presenter.BMDSwitcher
                 case _BMDSwitcherMediaPoolEventType.bmdSwitcherMediaPoolEventTypeLockBusy:
                     break;
                 case _BMDSwitcherMediaPoolEventType.bmdSwitcherMediaPoolEventTypeLockIdle:
+                    OnLockIdle?.Invoke();
                     break;
                 case _BMDSwitcherMediaPoolEventType.bmdSwitcherMediaPoolEventTypeTransferCompleted:
                     OnTransferCompleted?.Invoke();

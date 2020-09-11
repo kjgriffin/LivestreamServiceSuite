@@ -1290,5 +1290,20 @@ namespace Integrated_Presenter
         {
             switcherManager.ConfigureSwitcher();
         }
+
+        private void ClickPIPRunToOnScreenBox(object sender, RoutedEventArgs e)
+        {
+            switcherManager.PerformUSK1RunToKeyFrameA();
+        }
+
+        private void ClickPIPRunToOffScreenBox(object sender, RoutedEventArgs e)
+        {
+            switcherManager.PerformUSK1RunToKeyFrameB();
+        }
+
+        private void ClickPIPRunToFull(object sender, RoutedEventArgs e)
+        {
+            switcherManager.PerformUSK1RunToKeyFrameFull();
+        }
     }
 }
