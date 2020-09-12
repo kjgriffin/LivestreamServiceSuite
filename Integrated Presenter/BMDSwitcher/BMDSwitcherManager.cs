@@ -871,6 +871,18 @@ namespace Integrated_Presenter
 
         void IBMDSwitcherManager.PerformToggleBackgroundForNextTrans()
         {
+            // only allow deselection if at least one layer is selected
+            if (_state.TransNextBackground)
+            {
+                // to disable background key1 needs to be selected
+                if (!_state.TransNextKey1)
+                {
+                    // dont' do anything
+                    return;
+                }
+            }
+
+
             int val = 0;
             if (!_state.TransNextBackground)
             {
@@ -885,6 +897,20 @@ namespace Integrated_Presenter
 
         void IBMDSwitcherManager.PerformToggleKey1ForNextTrans()
         {
+
+
+            // only allow deselection if at least one layer is selected
+            if (_state.TransNextKey1)
+            {
+                // to disable key1 background needs to be selected
+                if (!_state.TransNextBackground)
+                {
+                    // don't do anything
+                    return;
+                }
+            }
+
+
             int val = 0;
             if (_state.TransNextBackground)
             {
