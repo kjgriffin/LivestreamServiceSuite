@@ -39,42 +39,38 @@ namespace Xenon.Compiler
             Debug.WriteLine("</XenonASTTextHymn>");
         }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTTextHymn textHymn = new XenonASTTextHymn();
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("(");
-            Lexer.GobbleWhitespace();
-            textHymn.HymnTitle = Lexer.ConsumeUntil(",").Trim();
-            Lexer.Gobble(",");
-            textHymn.HymnName = Lexer.ConsumeUntil(",");
-            Lexer.Gobble(",");
-            textHymn.Tune = Lexer.ConsumeUntil(",");
-            Lexer.Gobble(",");
-            textHymn.Number = Lexer.ConsumeUntil(",");
-            Lexer.Gobble(",");
-            textHymn.CopyrightInfo = Lexer.ConsumeUntil("\\)");
-            Lexer.Gobble(")");
+
+            var args = Lexer.ConsumeArgList(true, "title", "name", "tune", "number", "copyright");
+            
+            textHymn.HymnTitle = args["title"];
+            textHymn.HymnName = args["name"];
+            textHymn.Tune = args["tune"];
+            textHymn.Number = args["number"];
+            textHymn.CopyrightInfo = args["copyright"];
 
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("{");
+            Lexer.GobbleandLog("{", "Expect opening brace for body of hymn. Verses go here");
             Lexer.GobbleWhitespace();
 
             while (Lexer.Inspect("#"))
             {
-                Lexer.Gobble("#");
+                Lexer.GobbleandLog("#", "Expecting '#verse' command");
                 // only valid command at this point (so far) is a verse
                 if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Verse]))
                 {
-                    Lexer.Gobble(LanguageKeywords.Commands[LanguageKeywordCommand.Verse]);
+                    Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Verse], "Only verse command is valid here");
                     XenonASTHymnVerse verse = new XenonASTHymnVerse();
-                    textHymn.Verses.Add((XenonASTHymnVerse)verse.Compile(Lexer, Messages));
+                    textHymn.Verses.Add((XenonASTHymnVerse)verse.Compile(Lexer, Logger));
                 }
                 Lexer.GobbleWhitespace();
             }
 
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("}");
+            Lexer.GobbleandLog("}", "Missing closing brace on hymn command.");
 
 
             return textHymn;

@@ -44,6 +44,8 @@ namespace SlideCreater
             string text = TbInput.Text;
             _proj.SourceCode = text;
 
+            tbConsole.Text = string.Empty;
+
 
             var compileprogress = new Progress<int>(percent =>
             {
@@ -137,9 +139,12 @@ namespace SlideCreater
             }
 
             // update focusslide
-            FocusSlide.Slide = slides.First();
-            FocusSlide.ShowSlide();
-            slidepreviews.First().ShowSelected(true);
+            if (slides?.Count > 0)
+            {
+                FocusSlide.Slide = slides.First();
+                FocusSlide.ShowSlide();
+                slidepreviews.First().ShowSelected(true);
+            }
         }
 
         Project _proj = new Project(true);
@@ -208,7 +213,7 @@ namespace SlideCreater
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
                     }
 
-                    
+
                     Assets.Add(asset);
                     _proj.Assets = Assets;
                     ShowProjectAssets();
@@ -281,8 +286,18 @@ namespace SlideCreater
             SaveProject();
         }
 
-        private void SaveProject()
+        private async void SaveProject()
         {
+
+            var saveprogress = new Progress<int>(percent =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
+                    tbStatusText.Text = $"Saving Project: {percent}%";
+                });
+            });
+
             _proj.SourceCode = TbInput.Text;
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
@@ -292,7 +307,7 @@ namespace SlideCreater
             sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
             if (sfd.ShowDialog() == true)
             {
-                _proj.SaveProject(sfd.FileName);
+                await _proj.SaveProject(sfd.FileName, saveprogress);
                 Dispatcher.Invoke(() =>
                 {
                     sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
@@ -416,7 +431,7 @@ namespace SlideCreater
             slidepreviews.Clear();
             Assets.Clear();
             AssetList.Children.Clear();
-            FocusSlide.Clear(); 
+            FocusSlide.Clear();
             TbInput.Text = string.Empty;
             _proj = new Project();
 

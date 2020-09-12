@@ -12,38 +12,29 @@ namespace Xenon.Compiler
         public string Title { get; set; }
         public string Reference { get; set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTSermon sermon = new XenonASTSermon();
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("(");
-            StringBuilder sb = new StringBuilder();
-            while (!Lexer.Inspect(","))
-            {
-                sb.Append(Lexer.Consume());
-            }
-            sermon.Title = sb.ToString().Trim();
-            sb.Clear();
-            Lexer.Gobble(",");
-            while (!Lexer.Inspect("\\)"))
-            {
-                sb.Append(Lexer.Consume());
-            }
-            sermon.Reference = sb.ToString().Trim();
-            Lexer.Gobble(")");
+
+            var args = Lexer.ConsumeArgList(true, "title", "reference");
+            sermon.Title = args["title"];
+            sermon.Reference = args["reference"];
             return sermon;
 
         }
 
         public void Generate(Project project, IXenonASTElement _Parent)
         {
-            Slide sermonslide = new Slide();
-            sermonslide.Name = "UNNAMED_sermon";
-            sermonslide.Number = project.NewSlideNumber;
-            sermonslide.Lines = new List<SlideLine>();
-            sermonslide.Asset = "";
-            sermonslide.Format = SlideFormat.SermonTitle;
-            sermonslide.MediaType = MediaType.Image;
+            Slide sermonslide = new Slide
+            {
+                Name = "UNNAMED_sermon",
+                Number = project.NewSlideNumber,
+                Lines = new List<SlideLine>(),
+                Asset = "",
+                Format = SlideFormat.SermonTitle,
+                MediaType = MediaType.Image
+            };
 
             SlideLineContent slcref = new SlideLineContent() { Data = Reference };
             SlideLineContent slctitle = new SlideLineContent() { Data = Title };

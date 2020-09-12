@@ -7,7 +7,7 @@ namespace Xenon.Compiler.AST
 {
     class XenonASTLiturgyVerse : IXenonASTCommand
     {
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             throw new NotImplementedException();
         }

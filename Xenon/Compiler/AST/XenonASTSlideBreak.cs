@@ -8,7 +8,7 @@ namespace Xenon.Compiler
 {
     class XenonASTSlideBreak : IXenonASTCommand
     {
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTSlideBreak slidebreak = new XenonASTSlideBreak();
             Lexer.GobbleWhitespace();

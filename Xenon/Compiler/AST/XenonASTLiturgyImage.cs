@@ -10,15 +10,12 @@ namespace Xenon.Compiler
     {
         public string AssetName { get; set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTLiturgyImage litimage = new XenonASTLiturgyImage();
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("(");
-            Lexer.GobbleWhitespace();
-            litimage.AssetName = Lexer.Consume();
-            Lexer.GobbleWhitespace();
-            Lexer.Gobble(")");
+            var args = Lexer.ConsumeArgList(false, "asset");
+            litimage.AssetName = args["asset"];
             return litimage;
 
         }
@@ -26,10 +23,12 @@ namespace Xenon.Compiler
         public void Generate(Project project, IXenonASTElement _Parent)
         {
             // create a liturgy image slide
-            Slide imageslide = new Slide();
-            imageslide.Name = "UNNAMED_image";
-            imageslide.Number = project.NewSlideNumber;
-            imageslide.Lines = new List<SlideLine>();
+            Slide imageslide = new Slide
+            {
+                Name = "UNNAMED_image",
+                Number = project.NewSlideNumber,
+                Lines = new List<SlideLine>()
+            };
             string assetpath = "";
             var asset = project.Assets.Find(p => p.Name == AssetName);
             if (asset != null)

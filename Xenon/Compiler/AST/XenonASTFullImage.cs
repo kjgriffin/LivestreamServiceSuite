@@ -11,15 +11,12 @@ namespace Xenon.Compiler
 
         public string AssetName { get; set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTFullImage fullimage = new XenonASTFullImage();
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("(");
-            Lexer.GobbleWhitespace();
-            fullimage.AssetName = Lexer.Consume();
-            Lexer.GobbleWhitespace();
-            Lexer.Gobble(")");
+            var args = Lexer.ConsumeArgList(false, "asset");
+            fullimage.AssetName = args["asset"];
             return fullimage;
         }
 

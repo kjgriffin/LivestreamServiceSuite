@@ -12,12 +12,12 @@ namespace Xenon.Compiler
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTHymnVerse verse = new XenonASTHymnVerse();
             Lexer.GobbleWhitespace();
 
-            Lexer.Gobble("{");
+            Lexer.GobbleandLog("{", "Expect opening brace at start of verse.");
 
             while (!Lexer.Inspect("}"))
             {
@@ -25,7 +25,7 @@ namespace Xenon.Compiler
                 verse.Content.Add(content);
             }
 
-            Lexer.Gobble("}");
+            Lexer.GobbleandLog("}", "Missing closing brace for verse.");
 
             return verse;
 

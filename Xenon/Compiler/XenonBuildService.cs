@@ -19,16 +19,16 @@ namespace Xenon.Compiler
 
         public List<XenonCompilerMessage> Messages { get; private set; } = new List<XenonCompilerMessage>();
 
-        XenonCompiler compiler = new XenonCompiler();
+        readonly XenonCompiler compiler = new XenonCompiler();
 
         public async Task<bool> BuildProject(string inputtext, List<ProjectAsset> Assets, IProgress<int> progress)
         {
-
             await Task.Run(() =>
             {
                 Project = compiler.Compile(inputtext, Assets, progress);
             });
 
+            Messages.AddRange(compiler.Logger.AllErrors);
             return compiler.CompilerSucess;
         }
 

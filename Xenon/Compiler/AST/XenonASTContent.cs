@@ -10,7 +10,7 @@ namespace Xenon.Compiler
     {
         public string TextContent { get; set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             throw new NotImplementedException();
         }

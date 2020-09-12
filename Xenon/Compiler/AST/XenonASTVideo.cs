@@ -12,18 +12,13 @@ namespace Xenon.Compiler
 
         public string AssetName { get; set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, List<XenonCompilerMessage> Messages)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTVideo video = new XenonASTVideo();
             Lexer.GobbleWhitespace();
-            Lexer.Gobble("(");
             StringBuilder sb = new StringBuilder();
-            while (!Lexer.Inspect("\\)"))
-            {
-                sb.Append(Lexer.Consume());
-            }
-            video.AssetName = sb.ToString().Trim();
-            Lexer.Gobble(")");
+            var args = Lexer.ConsumeArgList(false, "assetname");
+            video.AssetName = args["assetname"];
             return video;
 
         }
@@ -31,10 +26,12 @@ namespace Xenon.Compiler
         public void Generate(Project project, IXenonASTElement _Parent)
         {
             // create a video slide
-            Slide videoslide = new Slide();
-            videoslide.Name = "UNNAMED_video";
-            videoslide.Number = project.NewSlideNumber;
-            videoslide.Lines = new List<SlideLine>();
+            Slide videoslide = new Slide
+            {
+                Name = "UNNAMED_video",
+                Number = project.NewSlideNumber,
+                Lines = new List<SlideLine>()
+            };
             string assetpath = "";
             var asset = project.Assets.Find(p => p.Name == AssetName);
             if (asset != null)
