@@ -27,7 +27,14 @@ namespace Integrated_Presenter
         void PerformToggleFTB();
         bool TryConnect(string address);
         void PerformToggleUSK1();
+        void PerformUSK1RunToKeyFrameA();
+        void PerformUSK1RunToKeyFrameB();
+        void PerformUSK1RunToKeyFrameFull();
+        void PerformUSK1FillSourceSelect(int sourceID);
+        void PerformToggleBackgroundForNextTrans();
+        void PerformToggleKey1ForNextTrans();
 
         void Close();
+        void ConfigureSwitcher();
     }
 }

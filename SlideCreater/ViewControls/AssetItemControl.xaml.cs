@@ -1,5 +1,4 @@
-﻿using SlideCreater.AssetManagment;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -12,9 +11,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Xenon.AssetManagment;
+
 namespace SlideCreater
 {
     public delegate void InsertAssetEvent(object sender, ProjectAsset asset);
+    public delegate void DeleteAssetEvent(object sender, ProjectAsset asset);
     /// <summary>
     /// Interaction logic for AssetItemControl.xaml
     /// </summary>
@@ -23,6 +25,7 @@ namespace SlideCreater
 
 
         public event InsertAssetEvent OnFitInsertRequest;
+        public event DeleteAssetEvent OnDeleteAssetRequest;
 
         ProjectAsset Asset;
 
@@ -42,18 +45,23 @@ namespace SlideCreater
             VideoAsset.Source = null;
             if (Asset.Type == AssetType.Image)
             {
-                ImgAsset.Source = new BitmapImage(new Uri(Asset.RelativePath));
+                ImgAsset.Source = new BitmapImage(new Uri(Asset.CurrentPath));
             }
             if (Asset.Type == AssetType.Video)
             {
-                VideoAsset.Source = new Uri(Asset.RelativePath);
+                VideoAsset.Source = new Uri(Asset.CurrentPath);
             }
 
         }
 
         private void ClickFitInsert(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() => OnFitInsertRequest?.Invoke(this, Asset)); 
+            Dispatcher.Invoke(() => OnFitInsertRequest?.Invoke(this, Asset));
+        }
+
+        private void ClickDeleteAsset(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.Invoke(() => OnDeleteAssetRequest?.Invoke(this, Asset));
         }
     }
 }

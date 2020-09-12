@@ -152,5 +152,48 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="PIPControlButton" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="80"></Setter>
+            <Setter Property="Height" Value="60"></Setter>
+            <Setter Property="Margin" Value="5"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Name="BorderOnAir" BorderThickness="2" BorderBrush="{TemplateBinding Property=Background}">
+                            <Border Name="Border" BorderBrush="Gray" BorderThickness="1">
+                                <ContentPresenter Content="{TemplateBinding Property=ContentControl.Content}"></ContentPresenter>
+                            </Border>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="Orange" TargetName="Border"></Setter>
+                                <Setter Property="BorderThickness" Value="1,1,1,1" TargetName="Border"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="InactivePIPControlButton" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="80"></Setter>
+            <Setter Property="Height" Value="60"></Setter>
+            <Setter Property="Margin" Value="5"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Name="Border" BorderBrush="Gray" BorderThickness="1">
+                            <ContentPresenter Content="{TemplateBinding Property=ContentControl.Content}"></ContentPresenter>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
     </Application.Resources>
 </Application>

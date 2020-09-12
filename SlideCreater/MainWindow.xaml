@@ -20,7 +20,9 @@
             <MenuItem Header="File">
                 <MenuItem Click="ClickNew" Header="New"></MenuItem>
                 <MenuItem Click="ClickOpen" Header="Open"></MenuItem>
+                <MenuItem Click="ClickOpenJSON" Header="Open from JSON"></MenuItem>
                 <MenuItem Click="ClickSave" Header="Save"></MenuItem>
+                <MenuItem Click="ClickSaveJSON" Header="Save JSON"></MenuItem>
             </MenuItem>
         </Menu>
 
@@ -31,7 +33,7 @@
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="1.5*"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
@@ -48,7 +50,8 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
-                        <Button Click="ClickAddAssets" Width="80" Height="30">Add Assets</Button>
+                        <Button Margin="5" Click="ClickAddAssets" Width="80" Height="30">Add Assets</Button>
+                        <Button Margin="5" Click="ClickClearAssets" Width="80" Height="30">ClearAssets</Button>
                     </StackPanel>
                 </Grid>
                 <ScrollViewer Grid.Row="1">
@@ -79,7 +82,7 @@
                                 Render Output:
                             </TextBlock>
                         </Grid>
-                        <ScrollViewer Grid.Row="1">
+                        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                             <TextBlock Name="tbConsole"></TextBlock>
                         </ScrollViewer>
                     </Grid>

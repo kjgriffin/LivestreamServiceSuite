@@ -14,6 +14,10 @@
     <None Remove="BMDSwitcher\Mock\Images\organcam.PNG" />
     <None Remove="BMDSwitcher\Mock\Images\rightcam.PNG" />
     <None Remove="BMDSwitcher\Mock\Images\videofile.png" />
+    <None Remove="Icons\keyframepushleft.png" />
+    <None Remove="Icons\keyframepushright.png" />
+    <None Remove="Icons\keyframetobox.png" />
+    <None Remove="Icons\keyframetofill.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,10 +50,26 @@
     <Resource Include="BMDSwitcher\Mock\Images\videofile.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\keyframepushleft.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\keyframepushright.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\keyframetobox.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\keyframetofill.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Views\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 
 </Project>

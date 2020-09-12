@@ -97,6 +97,7 @@ namespace Integrated_Presenter.BMDSwitcher
             // we can connect to anything (since its a mock)
             GoodConnection = true;
             ForceStateUpdate();
+            SwitcherStateChanged?.Invoke(_state);
             return true;
         }
 
@@ -184,6 +185,73 @@ namespace Integrated_Presenter.BMDSwitcher
         public void Close()
         {
             mockMultiviewer.Close();
+        }
+
+        public void ConfigureSwitcher()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PerformUSK1RunToKeyFrameA()
+        {
+            _state.USK1KeyFrame = 1;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        public void PerformUSK1RunToKeyFrameB()
+        {
+            _state.USK1KeyFrame = 2;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        public void PerformUSK1RunToKeyFrameFull()
+        {
+            _state.USK1KeyFrame = 0;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        void IBMDSwitcherManager.PerformUSK1FillSourceSelect(int sourceID)
+        {
+            _state.USK1FillSource = sourceID;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        void IBMDSwitcherManager.PerformToggleBackgroundForNextTrans()
+        {
+
+            // only allow deselection if at least one layer is selected
+            if (_state.TransNextBackground)
+            {
+                // to disable background key1 needs to be selected
+                if (!_state.TransNextKey1)
+                {
+                    // dont' do anything
+                    return;
+                }
+            }
+
+
+
+            _state.TransNextBackground = !_state.TransNextBackground;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        void IBMDSwitcherManager.PerformToggleKey1ForNextTrans()
+        {
+
+            // only allow deselection if at least one layer is selected
+            if (_state.TransNextKey1)
+            {
+                // to disable key1 background needs to be selected
+                if (!_state.TransNextBackground)
+                {
+                    // don't do anything
+                    return;
+                }
+            }
+
+            _state.TransNextKey1 = !_state.TransNextKey1;
+            SwitcherStateChanged?.Invoke(_state);
         }
     }
 }

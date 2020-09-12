@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Integrated Presenter": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

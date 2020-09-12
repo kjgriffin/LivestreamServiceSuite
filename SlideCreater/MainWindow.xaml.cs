@@ -1,8 +1,4 @@
 ﻿using Microsoft.Win32;
-using SlideCreater.AssetManagment;
-using SlideCreater.Compiler;
-using SlideCreater.Renderer;
-using SlideCreater.SlideAssembly;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -20,6 +16,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+using Xenon.Compiler;
+using Xenon.Renderer;
+using Xenon.Helpers;
+using Xenon.SlideAssembly;
+using Xenon.AssetManagment;
 
 namespace SlideCreater
 {
@@ -39,66 +41,85 @@ namespace SlideCreater
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
 
-            sbStatus.Background = System.Windows.Media.Brushes.Orange;
-            tbStatusText.Text = "Rendering Project";
             string text = TbInput.Text;
             _proj.SourceCode = text;
 
-            await Task.Run(() =>
+
+            var compileprogress = new Progress<int>(percent =>
             {
-
-                // compile text
-                XenonCompiler compiler = new XenonCompiler();
-                _proj = compiler.Compile(text, Assets);
-
-                if (!compiler.CompilerSucess)
+                Dispatcher.Invoke(() =>
                 {
-                    sbStatus.Dispatcher.Invoke(() =>
-                    {
-                        sbStatus.Background = System.Windows.Media.Brushes.Crimson;
-                        tbStatusText.Text = "Build Failed";
-                    });
-                    tbConsole.Dispatcher.Invoke(() =>
-                    {
-                        foreach (var msg in compiler.Messages)
-                        {
-                            tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: {msg}";
-                        }
-                    });
-                    return;
-                }
+                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
+                    tbStatusText.Text = $"Compiling Project: {percent}%";
+                });
+            });
 
-                SlideRenderer sr = new SlideRenderer(_proj);
-
-                try
+            var rendererprogress = new Progress<int>(percent =>
+            {
+                Dispatcher.Invoke(() =>
                 {
-                    slides.Clear();
-                    for (int i = 0; i < _proj.Slides.Count; i++)
-                    {
-                        slides.Add(sr.RenderSlide(i));
-                    }
-                }
-                catch (Exception)
-                {
-                    sbStatus.Dispatcher.Invoke(() =>
-                    {
-                        sbStatus.Background = System.Windows.Media.Brushes.Crimson;
-                        tbStatusText.Text = "Render Failed";
-                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: Unknown Reason?";
-                    });
-                    return;
-                }
+                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
+                    tbStatusText.Text = $"Rendering Project: {percent}%";
+                });
+            });
 
+
+            // compile text
+            XenonBuildService builder = new XenonBuildService();
+            bool success = await builder.BuildProject(_proj.SourceCode, Assets, compileprogress);
+
+            if (!success)
+            {
                 sbStatus.Dispatcher.Invoke(() =>
                 {
-                    sbStatus.Background = System.Windows.Media.Brushes.Green;
-                    tbStatusText.Text = "Project Rendered";
-                    foreach (var msg in compiler.Messages)
-                    {
-                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Message]: {msg}";
-                    }
-                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Succeded]: Slides built!";
+                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+                    tbStatusText.Text = "Build Failed";
                 });
+                tbConsole.Dispatcher.Invoke(() =>
+                {
+                    foreach (var msg in builder.Messages)
+                    {
+                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: {msg}";
+                    }
+                });
+                return;
+            }
+            else
+            {
+                _proj = builder.Project;
+            }
+
+
+
+
+            try
+            {
+                slides = await builder.RenderProject(_proj, rendererprogress);
+            }
+            catch (Exception ex)
+            {
+                sbStatus.Dispatcher.Invoke(() =>
+                {
+                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+                    tbStatusText.Text = "Render Failed";
+                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: Unknown Reason? {ex}";
+                    foreach (var err in builder.Messages)
+                    {
+                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Error]: {err}";
+                    }
+                });
+                return;
+            }
+
+            sbStatus.Dispatcher.Invoke(() =>
+            {
+                sbStatus.Background = System.Windows.Media.Brushes.Green;
+                tbStatusText.Text = "Project Rendered";
+                foreach (var msg in builder.Messages)
+                {
+                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Message]: {msg}";
+                }
+                tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Succeded]: Slides built!";
             });
 
             slidelist.Children.Clear();
@@ -114,9 +135,14 @@ namespace SlideCreater
                 slidelist.Children.Add(slideContentPresenter);
                 slidepreviews.Add(slideContentPresenter);
             }
+
+            // update focusslide
+            FocusSlide.Slide = slides.First();
+            FocusSlide.ShowSlide();
+            slidepreviews.First().ShowSelected(true);
         }
 
-        Project _proj = new Project();
+        Project _proj = new Project(true);
         List<SlideContentPresenter> slidepreviews = new List<SlideContentPresenter>();
 
         private void SlideContentPresenter_OnSlideClicked(object sender, RenderedSlide slide)
@@ -164,18 +190,25 @@ namespace SlideCreater
             ofd.Multiselect = true;
             if (ofd.ShowDialog() == true)
             {
+                AssetsChanged();
                 // add assets
                 foreach (var file in ofd.FileNames)
                 {
+                    // copy to tmp folder
+                    string tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, "assets", System.IO.Path.GetFileName(file));
+                    File.Copy(file, tmpassetpath);
+
                     ProjectAsset asset = new ProjectAsset();
                     if (Regex.IsMatch(System.IO.Path.GetExtension(file), "\\.mp4", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), RelativePath = file, Type = AssetType.Video };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
                     }
                     else if (Regex.IsMatch(System.IO.Path.GetExtension(file), "\\.png", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), RelativePath = file, Type = AssetType.Image };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
                     }
+
+                    
                     Assets.Add(asset);
                     _proj.Assets = Assets;
                     ShowProjectAssets();
@@ -190,9 +223,18 @@ namespace SlideCreater
             {
                 AssetItemControl assetItemCtrl = new AssetItemControl(asset);
                 assetItemCtrl.OnFitInsertRequest += AssetItemCtrl_OnFitInsertRequest;
+                assetItemCtrl.OnDeleteAssetRequest += AssetItemCtrl_OnDeleteAssetRequest;
 
                 AssetList.Children.Add(assetItemCtrl);
             }
+        }
+
+        private void AssetItemCtrl_OnDeleteAssetRequest(object sender, ProjectAsset asset)
+        {
+            AssetsChanged();
+            Assets.Remove(asset);
+            _proj.Assets = Assets;
+            ShowProjectAssets();
         }
 
         private void AssetItemCtrl_OnFitInsertRequest(object sender, ProjectAsset asset)
@@ -222,7 +264,7 @@ namespace SlideCreater
             {
                 await Task.Run(() =>
                 {
-                    SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj);
+                    SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>()); // for now ignore messages
                 });
                 sbStatus.Background = System.Windows.Media.Brushes.GreenYellow;
                 tbStatusText.Text = "Slides Exported";
@@ -244,6 +286,27 @@ namespace SlideCreater
             _proj.SourceCode = TbInput.Text;
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
+            //sfd.DefaultExt = "json";
+            sfd.DefaultExt = "zip";
+            sfd.AddExtension = false;
+            sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
+            if (sfd.ShowDialog() == true)
+            {
+                _proj.SaveProject(sfd.FileName);
+                Dispatcher.Invoke(() =>
+                {
+                    sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
+                    tbStatusText.Text = "Project Saved";
+                    dirty = false;
+                });
+            }
+        }
+
+        private void SaveAsJSON()
+        {
+            _proj.SourceCode = TbInput.Text;
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Save Project";
             sfd.DefaultExt = "json";
             sfd.AddExtension = true;
             sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
@@ -256,7 +319,8 @@ namespace SlideCreater
             }
         }
 
-        private void OpenProject()
+
+        private void OpenProjectJSON()
         {
             if (dirty)
             {
@@ -278,12 +342,65 @@ namespace SlideCreater
                 _proj = Project.Load(ofd.FileName);
                 TbInput.Text = _proj.SourceCode;
                 Assets = _proj.Assets;
-                ShowProjectAssets();
+                try
+                {
+                    ShowProjectAssets();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to load project assets");
+                    Assets.Clear();
+                    _proj.Assets.Clear();
+                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+                    tbStatusText.Text = "Failed to Load Project";
+                    return;
+                }
                 sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
                 tbStatusText.Text = "Project Saved";
             }
 
         }
+
+        private async void OpenProject()
+        {
+            if (dirty)
+            {
+                if (!CheckSaveChanges())
+                {
+                    return;
+                }
+            }
+            dirty = false;
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Load Project";
+            ofd.DefaultExt = "zip";
+            if (ofd.ShowDialog() == true)
+            {
+                Assets.Clear();
+                slidelist.Children.Clear();
+                slidepreviews.Clear();
+                _proj = await Project.LoadProject(ofd.FileName);
+                TbInput.Text = _proj.SourceCode;
+                Assets = _proj.Assets;
+                try
+                {
+                    ShowProjectAssets();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to load project assets");
+                    Assets.Clear();
+                    _proj.Assets.Clear();
+                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
+                    tbStatusText.Text = "Failed to Load Project";
+                    return;
+                }
+                sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
+                tbStatusText.Text = "Project Saved";
+            }
+
+        }
+
 
         private void NewProject()
         {
@@ -299,6 +416,7 @@ namespace SlideCreater
             slidepreviews.Clear();
             Assets.Clear();
             AssetList.Children.Clear();
+            FocusSlide.Clear(); 
             TbInput.Text = string.Empty;
             _proj = new Project();
 
@@ -344,6 +462,13 @@ namespace SlideCreater
             tbStatusText.Text = "Project Unsaved";
         }
 
+        private void AssetsChanged()
+        {
+            dirty = true;
+            sbStatus.Background = System.Windows.Media.Brushes.Brown;
+            tbStatusText.Text = "Project Unsaved";
+        }
+
         private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (dirty)
@@ -353,6 +478,24 @@ namespace SlideCreater
                     e.Cancel = true;
                 }
             }
+        }
+
+        private void ClickClearAssets(object sender, RoutedEventArgs e)
+        {
+            Assets.Clear();
+            _proj.Assets = Assets;
+            ShowProjectAssets();
+            AssetsChanged();
+        }
+
+        private void ClickSaveJSON(object sender, RoutedEventArgs e)
+        {
+            SaveAsJSON();
+        }
+
+        private void ClickOpenJSON(object sender, RoutedEventArgs e)
+        {
+            OpenProjectJSON();
         }
     }
 }
