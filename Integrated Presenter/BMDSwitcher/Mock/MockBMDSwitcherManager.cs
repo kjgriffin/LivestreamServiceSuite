@@ -205,5 +205,10 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             throw new NotImplementedException();
         }
+
+        void IBMDSwitcherManager.PerformUSK1FillSourceSelect(int sourceID)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

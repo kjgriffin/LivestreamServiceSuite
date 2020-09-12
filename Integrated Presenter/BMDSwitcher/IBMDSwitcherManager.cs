@@ -30,6 +30,7 @@ namespace Integrated_Presenter
         void PerformUSK1RunToKeyFrameA();
         void PerformUSK1RunToKeyFrameB();
         void PerformUSK1RunToKeyFrameFull();
+        void PerformUSK1FillSourceSelect(int sourceID);
 
         void Close();
         void ConfigureSwitcher();

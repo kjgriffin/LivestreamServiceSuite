@@ -316,11 +316,13 @@ namespace Integrated_Presenter
             UpdateDSK1Styles();
             UpdateDSK2Styles();
             UpdateFTBButtonStyle();
+            UpdateUSK1Styles();
+            UpdatePIPButtonStyles();
         }
 
         private void UpdateUSK1Styles()
         {
-            //BtnUSK1OnOffAir.Background = (switcherState.USK1OnAir ? Application.Current.FindResource("RedLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnUSK1OnOffAir.Background = (switcherState.USK1OnAir ? Application.Current.FindResource("RedLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateDSK1Styles()
@@ -355,6 +357,16 @@ namespace Integrated_Presenter
             BtnProgram7.Style = (Style)Application.Current.FindResource(style);
             BtnProgram8.Style = (Style)Application.Current.FindResource(style);
 
+            BtnPIPFillProgram1.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram2.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram3.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram4.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram5.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram6.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram7.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram8.Style = (Style)Application.Current.FindResource(style);
+
+
             BtnDSK1Tie.Style = (Style)Application.Current.FindResource(style);
             BtnDSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
             BtnDSK1Auto.Style = (Style)Application.Current.FindResource(style);
@@ -368,6 +380,7 @@ namespace Integrated_Presenter
             BtnAutoTrans.Style = (Style)Application.Current.FindResource(style);
             BtnCutTrans.Style = (Style)Application.Current.FindResource(style);
 
+            BtnUSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
 
 
         }
@@ -407,6 +420,18 @@ namespace Integrated_Presenter
             BtnProgram6.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 6 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
             BtnProgram7.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
             BtnProgram8.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+        }
+
+        private void UpdatePIPButtonStyles()
+        {
+            BtnPIPFillProgram1.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 1 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPIPFillProgram2.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 2 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPIPFillProgram3.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 3 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPIPFillProgram4.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 4 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPIPFillProgram5.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 5 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPIPFillProgram6.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 6 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPIPFillProgram7.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnPIPFillProgram8.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateFTBButtonStyle()
@@ -1304,6 +1329,51 @@ namespace Integrated_Presenter
         private void ClickPIPRunToFull(object sender, RoutedEventArgs e)
         {
             switcherManager.PerformUSK1RunToKeyFrameFull();
+        }
+
+        private void ChangePIPFillSource(int source)
+        {
+            switcherManager.PerformUSK1FillSourceSelect(ConvertButtonToSourceID(source));
+        }
+
+        private void ClickPIP1(object sender, RoutedEventArgs e)
+        {
+            ChangePIPFillSource(1);
+        }
+
+        private void ClickPIP2(object sender, RoutedEventArgs e)
+        {
+            ChangePIPFillSource(2);
+        }
+
+        private void ClickPIP3(object sender, RoutedEventArgs e)
+        {
+            ChangePIPFillSource(3);
+        }
+
+        private void ClickPIP4(object sender, RoutedEventArgs e)
+        {
+            ChangePIPFillSource(4);
+        }
+
+        private void ClickPIP5(object sender, RoutedEventArgs e)
+        {
+            ChangePIPFillSource(5);
+        }
+
+        private void ClickPIP6(object sender, RoutedEventArgs e)
+        {
+            ChangePIPFillSource(6);
+        }
+
+        private void ClickPIP7(object sender, RoutedEventArgs e)
+        {
+            ChangePIPFillSource(7);
+        }
+
+        private void ClickPIP8(object sender, RoutedEventArgs e)
+        {
+            ChangePIPFillSource(8);
         }
     }
 }

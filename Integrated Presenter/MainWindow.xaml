@@ -260,7 +260,7 @@
                                                 <Button Click="ClickPIPRunToOffScreenBox" Width="80" Height="60">
                                                     <Image Source="pack://application:,,,/Icons/keyframepushright.png"></Image>
                                                 </Button>
-                                                <Button Width="80" Height="60">
+                                                <Button Width="80" Height="60" Visibility="Hidden">
                                                     <Image Source="pack://application:,,,/Icons/keyframetobox.png"></Image>
                                                 </Button>
                                                 <Button Click="ClickPIPRunToFull" Width="80" Height="60">
@@ -273,14 +273,14 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">FILL SOURCE</TextBlock>
                                             <StackPanel Orientation="Horizontal">
-                                                <Button Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
-                                                <Button Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
-                                                <Button Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
-                                                <Button Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
-                                                <Button Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
-                                                <Button Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
-                                                <Button Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
-                                                <Button Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                                                <Button Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
+                                                <Button Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
+                                                <Button Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
+                                                <Button Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
+                                                <Button Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
+                                                <Button Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button Click="ClickPIP7" Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                <Button Click="ClickPIP8" Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>

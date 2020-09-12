@@ -38,6 +38,7 @@ namespace Integrated_Presenter
         private DownstreamKeyMonitor _dsk1Monitor;
         private DownstreamKeyMonitor _dsk2Monitor;
         private List<InputMonitor> _inputMonitors = new List<InputMonitor>();
+        private SwitcherFlyKeyMonitor _flykeyMonitor;
         // prehaps don't need to monitor multiviewer
         // for now won't have mediaplayer monitors
 
@@ -65,6 +66,9 @@ namespace Integrated_Presenter
             _upstreamKey1Monitor = new UpstreamKeyMonitor();
             _upstreamKey1Monitor.UpstreamKeyOnAirChanged += _upstreamKey1Monitor_UpstreamKeyOnAirChanged;
 
+            _flykeyMonitor = new SwitcherFlyKeyMonitor();
+            _flykeyMonitor.KeyFrameChanged += _flykeyMonitor_KeyFrameChanged;
+
             _dsk1Monitor = new DownstreamKeyMonitor();
             _dsk1Monitor.OnAirChanged += _dsk1Manager_OnAirChanged;
             _dsk1Monitor.TieChanged += _dsk1Manager_TieChanged;
@@ -79,6 +83,15 @@ namespace Integrated_Presenter
             }
             _state = new BMDSwitcherState();
             SwitcherDisconnected();
+        }
+
+        private void _flykeyMonitor_KeyFrameChanged(object sender, int keyframe)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_USK1();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void InputMonitor_ShortNameChanged(object sender, object args)
@@ -300,6 +313,7 @@ namespace Integrated_Presenter
             _BMDSwitcherUpstreamKey1.AddCallback(_upstreamKey1Monitor);
 
             _BMDSwitcherFlyKeyParamters = (IBMDSwitcherKeyFlyParameters)_BMDSwitcherUpstreamKey1;
+            _BMDSwitcherFlyKeyParamters.AddCallback(_flykeyMonitor);
             
 
             return true;
@@ -462,7 +476,7 @@ namespace Integrated_Presenter
                 // update state
                 ForceStateUpdate_ProgramInput();
                 ForceStateUpdate_PreviewInput();
-                //ForceStateUpdate_USK1();
+                ForceStateUpdate_USK1();
                 ForceStateUpdate_DSK1();
                 ForceStateUpdate_DSK2();
                 ForceStateUpdate_FTB();
@@ -475,6 +489,30 @@ namespace Integrated_Presenter
             int onair;
             _BMDSwitcherUpstreamKey1.GetOnAir(out onair);
             _state.USK1OnAir = onair != 0;
+
+            _BMDSwitcherFlyKeyFrame frame;
+            _BMDSwitcherFlyKeyParamters.IsAtKeyFrames(out frame);
+
+            switch (frame)
+            {
+                case _BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameFull:
+                    _state.USK1KeyFrame = 0;
+                    break;
+                case _BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA:
+                    _state.USK1KeyFrame = 1;
+                    break;
+                case _BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB:
+                    _state.USK1KeyFrame = 2;
+                    break;
+                default:
+                    _state.USK1KeyFrame = -1;
+                    break;
+            }
+
+            long usk1fill;
+            _BMDSwitcherUpstreamKey1.GetInputFill(out usk1fill);
+            _state.USK1FillSource = usk1fill;
+
         }
 
         private void ForceStateUpdate_DSK1()
@@ -780,6 +818,11 @@ namespace Integrated_Presenter
         public void PerformUSK1RunToKeyFrameFull()
         {
             _BMDSwitcherFlyKeyParamters.RunToKeyFrame(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameFull);
+        }
+
+        public void PerformUSK1FillSourceSelect(int sourceID)
+        {
+            _BMDSwitcherUpstreamKey1.SetInputFill(sourceID);
         }
     }
 }
