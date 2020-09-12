@@ -13,6 +13,10 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public bool USK1OnAir { get; set; }
         public long USK1FillSource { get; set; }
+
+        public bool TransNextBackground { get; set; }
+        public bool TransNextKey1 { get; set; }
+
         /// <summary>
         /// 1 = A, 2 = B, 0 = Full, -1 = other
         /// </summary>
@@ -38,6 +42,8 @@ namespace Integrated_Presenter.BMDSwitcher
             FTB = false;
             USK1FillSource = -1;
             USK1KeyFrame = -1;
+            TransNextBackground = true;
+            TransNextKey1 = false;
         }
 
         public bool IsDifferentShot(BMDSwitcherState oldstate)
@@ -62,7 +68,9 @@ namespace Integrated_Presenter.BMDSwitcher
                 DSK1Tie = this.DSK1Tie,
                 DSK2OnAir = this.DSK2OnAir,
                 DSK2Tie = this.DSK2Tie,
-                FTB = this.FTB
+                FTB = this.FTB,
+                TransNextBackground = this.TransNextBackground,
+                TransNextKey1 = this.TransNextKey1
             };
 
         }

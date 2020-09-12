@@ -32,6 +32,7 @@
                 <MenuItem Header="View" IsTabStop="False">
                     <MenuItem Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
                     <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
+                    <MenuItem Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
                 </MenuItem>
             </Menu>
         </Grid>
@@ -48,7 +49,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="480"></RowDefinition>
                             <RowDefinition Height="280"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Name="grAdvancedPIP" Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0">
                             <Grid>
@@ -132,12 +133,13 @@
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
-                                        <Border Style="{StaticResource GroupBorder}" Width="160" HorizontalAlignment="Right">
+                                        <Border Style="{StaticResource GroupBorder}" Width="300" HorizontalAlignment="Right">
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">TRANSITION</TextBlock>
                                                 <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                                                     <Button Name="BtnAutoTrans" Click="ClickAutoTrans" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
                                                     <Button Name="BtnCutTrans" Click="ClickCutTrans" Style="{StaticResource SwitcherButton_Disabled}">CUT</Button>
+                                                    <Button Margin="70,0,0,0" Name="BtnBackgroundTrans" Click="ClickTransBkgd" Style="{StaticResource SwitcherButton_Disabled}">BKGD</Button>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
@@ -156,7 +158,7 @@
                                     <Border Style="{StaticResource GroupBorder}">
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PIP</TextBlock>
-                                            <Button Style="{StaticResource InactiveSwitcherButton}">KEY 1</Button>
+                                            <Button Name="BtnTransKey1" Click="ClickTransKey1" Style="{StaticResource SwitcherButton_Disabled}">KEY 1</Button>
                                             <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">PIP</Button>
                                         </StackPanel>
                                     </Border>
@@ -254,16 +256,16 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="5">PICTURE IN PICTURE CONTROLS</TextBlock>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Click="ClickPIPRunToOnScreenBox" Width="80" Height="60">
+                                                <Button Name="BtnPIPtoA" Click="ClickPIPRunToOnScreenBox" Style="{StaticResource InactivePIPControlButton}">
                                                     <Image Source="pack://application:,,,/Icons/keyframepushleft.png"></Image>
                                                 </Button>
-                                                <Button Click="ClickPIPRunToOffScreenBox" Width="80" Height="60">
+                                                <Button Name="BtnPIPtoB" Click="ClickPIPRunToOffScreenBox" Style="{StaticResource InactivePIPControlButton}">
                                                     <Image Source="pack://application:,,,/Icons/keyframepushright.png"></Image>
                                                 </Button>
                                                 <Button Width="80" Height="60" Visibility="Hidden">
                                                     <Image Source="pack://application:,,,/Icons/keyframetobox.png"></Image>
                                                 </Button>
-                                                <Button Click="ClickPIPRunToFull" Width="80" Height="60">
+                                                <Button Name="BtnPIPtoFull" Click="ClickPIPRunToFull" Style="{StaticResource InactivePIPControlButton}">
                                                     <Image Source="pack://application:,,,/Icons/keyframetofill.png"></Image>
                                                 </Button>
                                             </StackPanel>

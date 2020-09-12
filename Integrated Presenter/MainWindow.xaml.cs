@@ -49,6 +49,7 @@ namespace Integrated_Presenter
             InitializeComponent();
 
             HideAdvancedPresControls();
+            HideAdvancedPIPControls();
 
             SlidePoolButtons = new List<SlidePoolSource>() { SlidePoolSource0, SlidePoolSource1, SlidePoolSource2, SlidePoolSource3 };
 
@@ -312,6 +313,7 @@ namespace Integrated_Presenter
         {
             UpdatePresetButtonStyles();
             UpdateProgramButtonStyles();
+            UpdateTransButtonStyles();
             UpdateUSK1Styles();
             UpdateDSK1Styles();
             UpdateDSK2Styles();
@@ -322,7 +324,7 @@ namespace Integrated_Presenter
 
         private void UpdateUSK1Styles()
         {
-            BtnUSK1OnOffAir.Background = (switcherState.USK1OnAir ? Application.Current.FindResource("RedLight"): Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnUSK1OnOffAir.Background = (switcherState.USK1OnAir ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateDSK1Styles()
@@ -383,6 +385,15 @@ namespace Integrated_Presenter
             BtnUSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
 
 
+            string pipstyle = "PIPControlButton";
+            BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
+
+            BtnBackgroundTrans.Style = (Style)Application.Current.FindResource(style);
+            BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
+
+
         }
 
         private void DisableSwitcherControls()
@@ -422,6 +433,12 @@ namespace Integrated_Presenter
             BtnProgram8.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
+        private void UpdateTransButtonStyles()
+        {
+            BtnBackgroundTrans.Background = (switcherState.TransNextBackground ? Application.Current.FindResource("YellowLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnTransKey1.Background = (switcherState.TransNextKey1 ? Application.Current.FindResource("YellowLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+        }
+
         private void UpdatePIPButtonStyles()
         {
             BtnPIPFillProgram1.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 1 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
@@ -432,6 +449,10 @@ namespace Integrated_Presenter
             BtnPIPFillProgram6.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 6 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
             BtnPIPFillProgram7.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
             BtnPIPFillProgram8.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+
+            BtnPIPtoA.Background = switcherState.USK1KeyFrame == 1 ? Brushes.Red : Brushes.Transparent;
+            BtnPIPtoB.Background = switcherState.USK1KeyFrame == 2 ? Brushes.Red : Brushes.Transparent;
+            BtnPIPtoFull.Background = switcherState.USK1KeyFrame == 0 ? Brushes.Red : Brushes.Transparent;
         }
 
         private void UpdateFTBButtonStyle()
@@ -1374,6 +1395,43 @@ namespace Integrated_Presenter
         private void ClickPIP8(object sender, RoutedEventArgs e)
         {
             ChangePIPFillSource(8);
+        }
+
+
+        private bool showadvancedpipcontrols = false;
+        private void ClickViewAdvancedPIP(object sender, RoutedEventArgs e)
+        {
+            showadvancedpipcontrols = !showadvancedpipcontrols;
+
+            if (showadvancedpipcontrols)
+            {
+                ShowAdvancedPIPControls();
+            }
+            else
+            {
+                HideAdvancedPIPControls();
+            }
+
+        }
+
+        private void ShowAdvancedPIPControls()
+        {
+            grAdvancedPIP.Height = new GridLength(1, GridUnitType.Star);
+        }
+
+        private void HideAdvancedPIPControls()
+        {
+            grAdvancedPIP.Height = new GridLength(0);
+        }
+
+        private void ClickTransBkgd(object sender, RoutedEventArgs e)
+        {
+            switcherManager.PerformToggleBackgroundForNextTrans();
+        }
+
+        private void ClickTransKey1(object sender, RoutedEventArgs e)
+        {
+            switcherManager.PerformToggleKey1ForNextTrans();
         }
     }
 }

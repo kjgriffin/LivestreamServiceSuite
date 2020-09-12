@@ -31,6 +31,7 @@ namespace Integrated_Presenter
         private IBMDSwitcherMediaPool _BMDSwitcherMediaPool;
         private IBMDSwitcherKeyDVEParameters _BMDSwitcherDVEParameters;
         private IBMDSwitcherKeyFlyParameters _BMDSwitcherFlyKeyParamters;
+        private IBMDSwitcherTransitionParameters _BMDSwitcherTransitionParameters;
 
         private SwitcherMonitor _switcherMonitor;
         private MixEffectBlockMonitor _mixEffectBlockMonitor;
@@ -39,6 +40,7 @@ namespace Integrated_Presenter
         private DownstreamKeyMonitor _dsk2Monitor;
         private List<InputMonitor> _inputMonitors = new List<InputMonitor>();
         private SwitcherFlyKeyMonitor _flykeyMonitor;
+        private SwitcherTransitionMonitor _transitionMontitor;
         // prehaps don't need to monitor multiviewer
         // for now won't have mediaplayer monitors
 
@@ -48,6 +50,7 @@ namespace Integrated_Presenter
         public event SwitcherStateChange SwitcherStateChanged;
 
         public bool GoodConnection { get; set; } = false;
+        bool IBMDSwitcherManager.GoodConnection { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public Window _parent;
 
@@ -69,6 +72,9 @@ namespace Integrated_Presenter
             _flykeyMonitor = new SwitcherFlyKeyMonitor();
             _flykeyMonitor.KeyFrameChanged += _flykeyMonitor_KeyFrameChanged;
 
+            _transitionMontitor = new SwitcherTransitionMonitor();
+            _transitionMontitor.OnNextTransitionSelectionChanged += _transitionMontitor_OnNextTransitionSelectionChanged;
+
             _dsk1Monitor = new DownstreamKeyMonitor();
             _dsk1Monitor.OnAirChanged += _dsk1Manager_OnAirChanged;
             _dsk1Monitor.TieChanged += _dsk1Manager_TieChanged;
@@ -83,6 +89,28 @@ namespace Integrated_Presenter
             }
             _state = new BMDSwitcherState();
             SwitcherDisconnected();
+        }
+
+        private void _transitionMontitor_OnNextTransitionSelectionChanged(object sender)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_Transition();
+                SwitcherStateChanged?.Invoke(_state);
+            });
+        }
+
+        event SwitcherStateChange IBMDSwitcherManager.SwitcherStateChanged
+        {
+            add
+            {
+                throw new NotImplementedException();
+            }
+
+            remove
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private void _flykeyMonitor_KeyFrameChanged(object sender, int keyframe)
@@ -296,6 +324,10 @@ namespace Integrated_Presenter
             // add callbacks
             _BMDSwitcherMixEffectBlock1.AddCallback(_mixEffectBlockMonitor);
 
+            // get transitions
+            _BMDSwitcherTransitionParameters = (IBMDSwitcherTransitionParameters)_BMDSwitcherMixEffectBlock1;
+            _BMDSwitcherTransitionParameters.AddCallback(_transitionMontitor);
+
             return true;
         }
 
@@ -314,7 +346,7 @@ namespace Integrated_Presenter
 
             _BMDSwitcherFlyKeyParamters = (IBMDSwitcherKeyFlyParameters)_BMDSwitcherUpstreamKey1;
             _BMDSwitcherFlyKeyParamters.AddCallback(_flykeyMonitor);
-            
+
 
             return true;
         }
@@ -476,6 +508,7 @@ namespace Integrated_Presenter
                 // update state
                 ForceStateUpdate_ProgramInput();
                 ForceStateUpdate_PreviewInput();
+                ForceStateUpdate_Transition();
                 ForceStateUpdate_USK1();
                 ForceStateUpdate_DSK1();
                 ForceStateUpdate_DSK2();
@@ -549,6 +582,17 @@ namespace Integrated_Presenter
             long presetid;
             _BMDSwitcherMixEffectBlock1.GetPreviewInput(out presetid);
             _state.PresetID = presetid;
+        }
+
+        private void ForceStateUpdate_Transition()
+        {
+            _BMDSwitcherTransitionSelection sel;
+            _BMDSwitcherTransitionParameters.GetNextTransitionSelection(out sel);
+            int selection = (int)sel;
+
+            _state.TransNextBackground = (selection & (int)_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionBackground) == (int)_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionBackground;
+            _state.TransNextKey1 = (selection & (int)_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionKey1) == (int)_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionKey1;
+
         }
 
         private void ForceStateUpdate_FTB()
@@ -695,7 +739,7 @@ namespace Integrated_Presenter
             keyframeparams.SetPositionY(-6.0);
             keyframeparams.SetSizeX(0.4);
             keyframeparams.SetSizeY(0.4);
-            
+
         }
 
         private void ConfigureMediaPool()
@@ -823,6 +867,34 @@ namespace Integrated_Presenter
         public void PerformUSK1FillSourceSelect(int sourceID)
         {
             _BMDSwitcherUpstreamKey1.SetInputFill(sourceID);
+        }
+
+        void IBMDSwitcherManager.PerformToggleBackgroundForNextTrans()
+        {
+            int val = 0;
+            if (!_state.TransNextBackground)
+            {
+                val |= (int)_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionBackground;
+            }
+            if (_state.TransNextKey1)
+            {
+                val |= (int)_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionKey1;
+            }
+            _BMDSwitcherTransitionParameters.SetNextTransitionSelection((_BMDSwitcherTransitionSelection)val);
+        }
+
+        void IBMDSwitcherManager.PerformToggleKey1ForNextTrans()
+        {
+            int val = 0;
+            if (_state.TransNextBackground)
+            {
+                val |= (int)_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionBackground;
+            }
+            if (!_state.TransNextKey1)
+            {
+                val |= (int)_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionKey1;
+            }
+            _BMDSwitcherTransitionParameters.SetNextTransitionSelection((_BMDSwitcherTransitionSelection)val);
         }
     }
 }

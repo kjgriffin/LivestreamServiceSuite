@@ -97,6 +97,7 @@ namespace Integrated_Presenter.BMDSwitcher
             // we can connect to anything (since its a mock)
             GoodConnection = true;
             ForceStateUpdate();
+            SwitcherStateChanged?.Invoke(_state);
             return true;
         }
 
@@ -193,22 +194,38 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformUSK1RunToKeyFrameA()
         {
-            throw new NotImplementedException();
+            _state.USK1KeyFrame = 1;
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformUSK1RunToKeyFrameB()
         {
-            throw new NotImplementedException();
+            _state.USK1KeyFrame = 2;
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformUSK1RunToKeyFrameFull()
         {
-            throw new NotImplementedException();
+            _state.USK1KeyFrame = 0;
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         void IBMDSwitcherManager.PerformUSK1FillSourceSelect(int sourceID)
         {
-            throw new NotImplementedException();
+            _state.USK1FillSource = sourceID;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        void IBMDSwitcherManager.PerformToggleBackgroundForNextTrans()
+        {
+            _state.TransNextBackground = !_state.TransNextBackground;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        void IBMDSwitcherManager.PerformToggleKey1ForNextTrans()
+        {
+            _state.TransNextKey1 = !_state.TransNextKey1;
+            SwitcherStateChanged?.Invoke(_state);
         }
     }
 }

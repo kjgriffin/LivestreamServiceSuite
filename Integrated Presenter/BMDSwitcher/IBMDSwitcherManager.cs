@@ -31,6 +31,8 @@ namespace Integrated_Presenter
         void PerformUSK1RunToKeyFrameB();
         void PerformUSK1RunToKeyFrameFull();
         void PerformUSK1FillSourceSelect(int sourceID);
+        void PerformToggleBackgroundForNextTrans();
+        void PerformToggleKey1ForNextTrans();
 
         void Close();
         void ConfigureSwitcher();
