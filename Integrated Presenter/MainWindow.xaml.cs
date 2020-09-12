@@ -249,7 +249,8 @@ namespace Integrated_Presenter
 
         private int ConvertSourceIDToButton(long sourceId)
         {
-            return SourceButtonMappings[LabelSourceMappings[(int)sourceId]];
+            var res = SourceButtonMappings[LabelSourceMappings[(int)sourceId]];
+            return res;
         }
 
         private Dictionary<string, int> SourceLabelMappings = new Dictionary<string, int>
@@ -263,6 +264,7 @@ namespace Integrated_Presenter
             ["cam7"] = 7,
             ["cam8"] = 8,
             ["null"] = -1,
+            ["black"] = 0,
         };
 
         public Dictionary<int, string> LabelSourceMappings = new Dictionary<int, string>()
@@ -275,12 +277,14 @@ namespace Integrated_Presenter
             [6] = "right",
             [7] = "cam7",
             [8] = "cam8",
-            [-1] = "null"
+            [-1] = "null",
+            [0] = "black",
         };
 
 
         public Dictionary<int, string> ButtonSourceMappings = new Dictionary<int, string>()
         {
+            [0] = "black",
             [1] = "left",
             [2] = "center",
             [3] = "right",
@@ -294,6 +298,7 @@ namespace Integrated_Presenter
 
         public Dictionary<string, int> SourceButtonMappings = new Dictionary<string, int>()
         {
+            ["black"] = 0,
             ["left"] = 1,
             ["center"] = 2,
             ["right"] = 3,
@@ -318,7 +323,6 @@ namespace Integrated_Presenter
             UpdateDSK1Styles();
             UpdateDSK2Styles();
             UpdateFTBButtonStyle();
-            UpdateUSK1Styles();
             UpdatePIPButtonStyles();
         }
 

@@ -68,12 +68,13 @@ namespace Integrated_Presenter
 
             _upstreamKey1Monitor = new UpstreamKeyMonitor();
             _upstreamKey1Monitor.UpstreamKeyOnAirChanged += _upstreamKey1Monitor_UpstreamKeyOnAirChanged;
+            _upstreamKey1Monitor.UpstreamKeyFillChanged += _upstreamKey1Monitor_UpstreamKeyFillChanged;
 
             _flykeyMonitor = new SwitcherFlyKeyMonitor();
             _flykeyMonitor.KeyFrameChanged += _flykeyMonitor_KeyFrameChanged;
 
             _transitionMontitor = new SwitcherTransitionMonitor();
-            _transitionMontitor.OnNextTransitionSelectionChanged += _transitionMontitor_OnNextTransitionSelectionChanged;
+            _transitionMontitor.OnTransitionSelectionChanged += _transitionMontitor_OnNextTransitionSelectionChanged;
 
             _dsk1Monitor = new DownstreamKeyMonitor();
             _dsk1Monitor.OnAirChanged += _dsk1Manager_OnAirChanged;
@@ -91,6 +92,15 @@ namespace Integrated_Presenter
             SwitcherDisconnected();
         }
 
+        private void _upstreamKey1Monitor_UpstreamKeyFillChanged(object sender, object args)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_USK1();
+                SwitcherStateChanged?.Invoke(_state);
+            });
+        }
+
         private void _transitionMontitor_OnNextTransitionSelectionChanged(object sender)
         {
             _parent.Dispatcher.Invoke(() =>
@@ -98,19 +108,6 @@ namespace Integrated_Presenter
                 ForceStateUpdate_Transition();
                 SwitcherStateChanged?.Invoke(_state);
             });
-        }
-
-        event SwitcherStateChange IBMDSwitcherManager.SwitcherStateChanged
-        {
-            add
-            {
-                throw new NotImplementedException();
-            }
-
-            remove
-            {
-                throw new NotImplementedException();
-            }
         }
 
         private void _flykeyMonitor_KeyFrameChanged(object sender, int keyframe)

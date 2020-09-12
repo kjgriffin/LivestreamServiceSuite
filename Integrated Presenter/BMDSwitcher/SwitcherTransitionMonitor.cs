@@ -11,7 +11,7 @@ namespace Integrated_Presenter.BMDSwitcher
     class SwitcherTransitionMonitor : IBMDSwitcherTransitionParametersCallback
     {
 
-        public event SwitcherNextTransitionEventHandler OnNextTransitionSelectionChanged;
+        public event SwitcherNextTransitionEventHandler OnTransitionSelectionChanged;
 
         void IBMDSwitcherTransitionParametersCallback.Notify(_BMDSwitcherTransitionParametersEventType eventType)
         {
@@ -22,9 +22,9 @@ namespace Integrated_Presenter.BMDSwitcher
                 case _BMDSwitcherTransitionParametersEventType.bmdSwitcherTransitionParametersEventTypeNextTransitionStyleChanged:
                     break;
                 case _BMDSwitcherTransitionParametersEventType.bmdSwitcherTransitionParametersEventTypeTransitionSelectionChanged:
+                    OnTransitionSelectionChanged?.Invoke(this);
                     break;
                 case _BMDSwitcherTransitionParametersEventType.bmdSwitcherTransitionParametersEventTypeNextTransitionSelectionChanged:
-                    OnNextTransitionSelectionChanged?.Invoke(this);
                     break;
                 default:
                     break;
