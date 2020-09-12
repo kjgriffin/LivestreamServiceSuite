@@ -633,8 +633,8 @@ namespace Integrated_Presenter
                 // rename it if required
                 if (sourceid == (long)BMDSwitcherSources.Input5)
                 {
-                    inputsource.SetLongName("LECTERN");
-                    inputsource.SetShortName("LTRN");
+                    inputsource.SetLongName("PULPIT");
+                    inputsource.SetShortName("PLPT");
                 }
                 if (sourceid == (long)BMDSwitcherSources.Input1)
                 {
@@ -643,8 +643,8 @@ namespace Integrated_Presenter
                 }
                 if (sourceid == (long)BMDSwitcherSources.Input6)
                 {
-                    inputsource.SetLongName("PULPIT");
-                    inputsource.SetShortName("PLPT");
+                    inputsource.SetLongName("LECTERN");
+                    inputsource.SetShortName("LTRN");
                 }
                 if (sourceid == (long)BMDSwitcherSources.Input2)
                 {
