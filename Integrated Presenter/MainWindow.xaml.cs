@@ -542,6 +542,8 @@ namespace Integrated_Presenter
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(1);
+                else if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    ChangePIPFillSource(1);
                 else
                     ClickPreset(1);
             }
@@ -549,6 +551,8 @@ namespace Integrated_Presenter
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(2);
+                else if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    ChangePIPFillSource(2);
                 else
                     ClickPreset(2);
             }
@@ -556,6 +560,8 @@ namespace Integrated_Presenter
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(3);
+                else if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    ChangePIPFillSource(3);
                 else
                     ClickPreset(3);
             }
@@ -563,6 +569,8 @@ namespace Integrated_Presenter
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(4);
+                else if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    ChangePIPFillSource(4);
                 else
                     ClickPreset(4);
             }
@@ -570,6 +578,8 @@ namespace Integrated_Presenter
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(5);
+                else if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    ChangePIPFillSource(5);
                 else
                     ClickPreset(5);
             }
@@ -577,6 +587,8 @@ namespace Integrated_Presenter
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(6);
+                else if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    ChangePIPFillSource(6);
                 else
                     ClickPreset(6);
             }
@@ -584,6 +596,8 @@ namespace Integrated_Presenter
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(7);
+                else if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    ChangePIPFillSource(7);
                 else
                     ClickPreset(7);
             }
@@ -591,6 +605,8 @@ namespace Integrated_Presenter
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(8);
+                else if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    ChangePIPFillSource(8);
                 else
                     ClickPreset(8);
             }
@@ -665,6 +681,36 @@ namespace Integrated_Presenter
             if (e.Key == Key.NumPad3)
             {
                 AutoDSK2();
+            }
+
+            if (e.Key == Key.NumPad4)
+            {
+                ToggleUSK1();
+            }
+
+            if (e.Key == Key.Divide)
+            {
+                USK1RuntoA();
+            }
+            
+            if (e.Key == Key.Multiply)
+            {
+                USK1RuntoB();
+            }
+
+            if (e.Key == Key.Subtract)
+            {
+                USK1RuntoFull();
+            }
+
+            if (e.Key == Key.NumPad0)
+            {
+                ToggleTransBkgd();
+            }
+
+            if (e.Key == Key.Decimal)
+            {
+                ToggleTransKey1();
             }
 
             #endregion
@@ -1341,19 +1387,34 @@ namespace Integrated_Presenter
             switcherManager.ConfigureSwitcher();
         }
 
-        private void ClickPIPRunToOnScreenBox(object sender, RoutedEventArgs e)
+        private void USK1RuntoA()
         {
             switcherManager.PerformUSK1RunToKeyFrameA();
         }
-
-        private void ClickPIPRunToOffScreenBox(object sender, RoutedEventArgs e)
+        
+        private void USK1RuntoB()
         {
             switcherManager.PerformUSK1RunToKeyFrameB();
         }
 
-        private void ClickPIPRunToFull(object sender, RoutedEventArgs e)
+        private void USK1RuntoFull()
         {
             switcherManager.PerformUSK1RunToKeyFrameFull();
+        }
+
+        private void ClickPIPRunToOnScreenBox(object sender, RoutedEventArgs e)
+        {
+            USK1RuntoA();
+        }
+
+        private void ClickPIPRunToOffScreenBox(object sender, RoutedEventArgs e)
+        {
+            USK1RuntoB();
+        }
+
+        private void ClickPIPRunToFull(object sender, RoutedEventArgs e)
+        {
+            USK1RuntoFull();
         }
 
         private void ChangePIPFillSource(int source)
@@ -1428,14 +1489,24 @@ namespace Integrated_Presenter
             grAdvancedPIP.Height = new GridLength(0);
         }
 
-        private void ClickTransBkgd(object sender, RoutedEventArgs e)
+        private void ToggleTransBkgd()
         {
             switcherManager.PerformToggleBackgroundForNextTrans();
         }
 
-        private void ClickTransKey1(object sender, RoutedEventArgs e)
+        private void ToggleTransKey1()
         {
             switcherManager.PerformToggleKey1ForNextTrans();
+        }
+
+        private void ClickTransBkgd(object sender, RoutedEventArgs e)
+        {
+            ToggleTransBkgd();
+        }
+
+        private void ClickTransKey1(object sender, RoutedEventArgs e)
+        {
+            ToggleTransKey1();
         }
     }
 }
