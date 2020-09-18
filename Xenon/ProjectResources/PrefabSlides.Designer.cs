@@ -93,6 +93,16 @@ namespace Xenon.ProjectResources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap viewseries {
+            get {
+                object obj = ResourceManager.GetObject("viewseries", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap viewservices_png {
             get {
                 object obj = ResourceManager.GetObject("viewservices.png", resourceCulture);

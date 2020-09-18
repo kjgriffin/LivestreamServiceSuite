@@ -45,7 +45,7 @@ namespace Xenon.Renderer
                         break;
                     case PrefabSlides.ViewSeries:
                         //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/series.PNG")).ConvertToBitmap();
-                        throw new MissingFieldException();
+                        src = ProjectResources.PrefabSlides.viewseries;
                         break;
                     case PrefabSlides.ApostlesCreed:
                         //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/apostlescreed.PNG")).ConvertToBitmap();
