@@ -121,16 +121,49 @@
   <data name="apostlescreed.png" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\23_Full.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ApostlesCreed1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ApostlesCreed1.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ApostlesCreed2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ApostlesCreed2.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ApostlesCreed3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ApostlesCreed3.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="copyright.png" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\1_Full.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CopyrightLicense" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CopyrightLicense.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LordsPrayer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LordsPrayer.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="lordsprayer.png" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\24_Full.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="viewseries" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\viewseries.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="NiceneCreed1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NiceneCreed1.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NiceneCreed2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NiceneCreed2.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NiceneCreed3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NiceneCreed3.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NiceneCreed4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NiceneCreed4.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NiceneCreed5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NiceneCreed5.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ViewServices" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ViewServices.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="viewservices.png" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\53_Full.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ViewSessions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ViewSessions.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

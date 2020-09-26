@@ -24,6 +24,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.ViewServices] = "viewservices", 
             [LanguageKeywordCommand.ViewSeries] = "viewseries", 
             [LanguageKeywordCommand.ApostlesCreed] = "apostlescreed", 
+            [LanguageKeywordCommand.NiceneCreed] = "nicenecreed", 
             [LanguageKeywordCommand.LordsPrayer] = "lordsprayer", 
         };
 
@@ -47,6 +48,7 @@ namespace Xenon.Compiler
         ViewServices,
         ViewSeries,
         ApostlesCreed,
+        NiceneCreed,
         LordsPrayer,
     }
 

@@ -73,9 +73,59 @@ namespace Xenon.ProjectResources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ApostlesCreed1 {
+            get {
+                object obj = ResourceManager.GetObject("ApostlesCreed1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ApostlesCreed2 {
+            get {
+                object obj = ResourceManager.GetObject("ApostlesCreed2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ApostlesCreed3 {
+            get {
+                object obj = ResourceManager.GetObject("ApostlesCreed3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap copyright_png {
             get {
                 object obj = ResourceManager.GetObject("copyright.png", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CopyrightLicense {
+            get {
+                object obj = ResourceManager.GetObject("CopyrightLicense", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap LordsPrayer {
+            get {
+                object obj = ResourceManager.GetObject("LordsPrayer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +143,59 @@ namespace Xenon.ProjectResources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap viewseries {
+        internal static System.Drawing.Bitmap NiceneCreed1 {
             get {
-                object obj = ResourceManager.GetObject("viewseries", resourceCulture);
+                object obj = ResourceManager.GetObject("NiceneCreed1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NiceneCreed2 {
+            get {
+                object obj = ResourceManager.GetObject("NiceneCreed2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NiceneCreed3 {
+            get {
+                object obj = ResourceManager.GetObject("NiceneCreed3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NiceneCreed4 {
+            get {
+                object obj = ResourceManager.GetObject("NiceneCreed4", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NiceneCreed5 {
+            get {
+                object obj = ResourceManager.GetObject("NiceneCreed5", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ViewServices {
+            get {
+                object obj = ResourceManager.GetObject("ViewServices", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -106,6 +206,16 @@ namespace Xenon.ProjectResources {
         internal static System.Drawing.Bitmap viewservices_png {
             get {
                 object obj = ResourceManager.GetObject("viewservices.png", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ViewSessions {
+            get {
+                object obj = ResourceManager.GetObject("ViewSessions", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

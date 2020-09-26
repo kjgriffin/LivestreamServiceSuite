@@ -11,6 +11,7 @@ namespace Xenon.Compiler
         ViewServices,
         ViewSeries,
         ApostlesCreed,
+        NiceneCreed,
         LordsPrayer,
     }
 
@@ -28,6 +29,8 @@ namespace Xenon.Compiler
                     return "ViewSeries";
                 case PrefabSlides.ApostlesCreed:
                     return "ApostlesCreed";
+                case PrefabSlides.NiceneCreed:
+                    return "NiceneCreed";
                 case PrefabSlides.LordsPrayer:
                     return "LordsPrayer";
                 default:
@@ -35,6 +38,7 @@ namespace Xenon.Compiler
             }
         }
     }
+
 
     class XenonASTPrefabSlide : IXenonASTCommand
     {

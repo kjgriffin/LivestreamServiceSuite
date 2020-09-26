@@ -33,27 +33,53 @@ namespace Xenon.Renderer
             try
             {
 
-                switch ((PrefabSlides)slide.Data["prefabtype"])
+                switch (slide.Data["prefabtype"])
                 {
                     case PrefabSlides.Copyright:
-                        //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/copyright.PNG")).ConvertToBitmap();
-                        src = ProjectResources.PrefabSlides.copyright_png;
+                        src = ProjectResources.PrefabSlides.CopyrightLicense;
                         break;
                     case PrefabSlides.ViewServices:
-                        //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/services.PNG")).ConvertToBitmap();
-                        src = ProjectResources.PrefabSlides.viewservices_png;
+                        src = ProjectResources.PrefabSlides.ViewServices;
                         break;
                     case PrefabSlides.ViewSeries:
-                        //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/series.PNG")).ConvertToBitmap();
-                        src = ProjectResources.PrefabSlides.viewseries;
+                        src = ProjectResources.PrefabSlides.ViewSessions;
                         break;
                     case PrefabSlides.ApostlesCreed:
-                        //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/apostlescreed.PNG")).ConvertToBitmap();
-                        src = ProjectResources.PrefabSlides.apostlescreed_png;
+                        switch (slide.Data["layoutnum"])
+                        {
+                            case 1:
+                                src = ProjectResources.PrefabSlides.ApostlesCreed1;
+                                break;
+                            case 2:
+                                src = ProjectResources.PrefabSlides.ApostlesCreed2;
+                                break;
+                            case 3:
+                                src = ProjectResources.PrefabSlides.ApostlesCreed3;
+                                break;
+                        }
+                        break;
+                    case PrefabSlides.NiceneCreed:
+                        switch (slide.Data["layoutnum"])
+                        {
+                            case 1:
+                                src = ProjectResources.PrefabSlides.NiceneCreed1;
+                                break;
+                            case 2:
+                                src = ProjectResources.PrefabSlides.NiceneCreed2;
+                                break;
+                            case 3:
+                                src = ProjectResources.PrefabSlides.NiceneCreed3;
+                                break;
+                            case 4:
+                                src = ProjectResources.PrefabSlides.NiceneCreed4;
+                                break;
+                            case 5:
+                                src = ProjectResources.PrefabSlides.NiceneCreed5;
+                                break;
+                        }
                         break;
                     case PrefabSlides.LordsPrayer:
-                        //src = new BitmapImage(new Uri("pack://application:,,,/ImageResources/lordsprayer.PNG")).ConvertToBitmap();
-                        src = ProjectResources.PrefabSlides.lordsprayer_png;
+                        src = ProjectResources.PrefabSlides.LordsPrayer;
                         break;
                 }
 
