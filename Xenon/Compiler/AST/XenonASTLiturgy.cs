@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Xenon.Compiler.AST;
 using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
 
@@ -13,7 +14,7 @@ namespace Xenon.Compiler
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
-            XenonASTLiturgy liturgy = new XenonASTLiturgy();
+            XenonASTElementCollection liturgys = new XenonASTElementCollection();
             // assume all tokens inside braces are litrugy commands
             // only excpetions are we will gobble all leading whitespace in braces, and will remove the last 
             // character of whitespace before last brace
@@ -22,14 +23,38 @@ namespace Xenon.Compiler
             Lexer.GobbleWhitespace();
             Lexer.GobbleandLog("{", "Expected opening brace at start of liturgy.");
             Lexer.GobbleWhitespace();
+            XenonASTLiturgy liturgy = CompileSubContent(Lexer, Logger);
+            liturgys.Elements.Add(liturgy);
             while (!Lexer.Inspect("}"))
+            {
+                Lexer.GobbleandLog("#", "Only '#break' command recognized in '#liturgy' block");
+                if (Lexer.Inspect("break"))
+                {
+                    Lexer.GobbleandLog("break");
+                    Lexer.GobbleWhitespace();
+                }
+                else
+                {
+                    Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Expected Command 'break'", ErrorName = "Unrecognized Command", Generator = "Compiler - XenonASTLiturgy", Inner = "", Level = XenonCompilerMessageType.Error, Token = Lexer.CurrentToken });    
+                }
+                liturgy = CompileSubContent(Lexer, Logger);
+                liturgys.Elements.Add(liturgy);
+            }
+            Lexer.GobbleandLog("}", "Missing closing brace for liturgy.");
+            return liturgys;
+        }
+
+        private XenonASTLiturgy CompileSubContent(Lexer Lexer, XenonErrorLogger Logger)
+        {
+            XenonASTLiturgy liturgy = new XenonASTLiturgy();
+
+            while (!Lexer.Inspect("}") && !Lexer.Inspect("#"))
             {
                 XenonASTContent content = new XenonASTContent() { TextContent = Lexer.Consume() };
                 liturgy.Content.Add(content);
             }
-            Lexer.GobbleandLog("}", "Missing closing brace for liturgy.");
-            return liturgy;
 
+            return liturgy;
         }
 
         public void Generate(Project project, IXenonASTElement _Parent)
