@@ -11,6 +11,7 @@ namespace Xenon.SlideAssembly
         UnscaledImage,
         LiturgyImage,
         Liturgy,
+        LiturgyVerse,
         Reading,
         SermonTitle,
         FullText,

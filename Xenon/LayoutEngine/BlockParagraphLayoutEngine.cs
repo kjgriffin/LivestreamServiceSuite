@@ -10,6 +10,37 @@ namespace Xenon.LayoutEngine
     class BlockParagraphLayoutEngine
     {
 
+        static public List<BlockParagraph> LayoutVerseParagraph(Rectangle textblock, Font font, List<List<string>> lines)
+        {
+            List<BlockParagraph> res = new List<BlockParagraph>();
+
+            Bitmap layoutbmp = new Bitmap(textblock.Width, textblock.Height);
+            Graphics gfx = Graphics.FromImage(layoutbmp);
+            StringFormat sf = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Near };
+
+            float zoomx = (float)gfx.DpiX / 96f;
+            float zoomy = (float)gfx.DpiY / 96f;
+
+            /*
+                Try to put one line / line. If needed wrap lines
+             */
+
+            foreach (var line in lines)
+            {
+                int startwords = 0;
+                int wordcount = 1;
+                var measure = gfx.MeasureString(string.Join("", line.Skip(startwords).Take(wordcount)), font, textblock.Width, sf);
+                while (startwords < line.Count)
+                {
+                    wordcount++;
+                    
+                }
+            }
+
+
+
+        }
+
         static public List<BlockParagraph> LayoutParagraph(Rectangle textblock, Font font, List<string> words)
         {
             List<BlockParagraph> res = new List<BlockParagraph>();
@@ -31,7 +62,7 @@ namespace Xenon.LayoutEngine
                 // split into as many layout lines as required. uses word level granularity
                 var linewords = words.Skip(startwords).Take(wordcount);
                 var measure = gfx.MeasureString(string.Join("", linewords), font, textblock.Width, sf);
-                while ((measure.Width * zoomx ) < textblock.Width && startwords + wordcount <= words.Count)
+                while ((measure.Width * zoomx) < textblock.Width && startwords + wordcount <= words.Count)
                 {
                     wordcount++;
                     linewords = words.Skip(startwords).Take(wordcount);

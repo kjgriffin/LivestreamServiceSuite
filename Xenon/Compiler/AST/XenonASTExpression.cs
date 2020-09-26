@@ -77,6 +77,13 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)liturgy.Compile(Lexer, Logger);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyVerse]))
+            {
+                XenonASTLiturgyVerse litverse = new XenonASTLiturgyVerse();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyVerse]);
+                expr.Command = (IXenonASTCommand)litverse.Compile(Lexer, Logger);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Reading]))
             {
                 XenonASTReading reading = new XenonASTReading();

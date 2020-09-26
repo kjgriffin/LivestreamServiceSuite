@@ -20,6 +20,7 @@ namespace Xenon.Renderer
         SermonTitleSlideRenderer ssr = new SermonTitleSlideRenderer();
         HymnTextVerseRenderer hvsr = new HymnTextVerseRenderer();
         PrefabSlideRenderer psr = new PrefabSlideRenderer();
+        LiturgyVerseSlideRenderer lvsr = new LiturgyVerseSlideRenderer();
 
         public SlideRenderer(Project proj)
         {
@@ -30,6 +31,7 @@ namespace Xenon.Renderer
             ssr.Layouts = proj.Layouts;
             hvsr.Layouts = proj.Layouts;
             psr.Layouts = proj.Layouts;
+            lvsr.Layouts = proj.Layouts;
         }
 
         public RenderedSlide RenderSlide(int slidenum, List<XenonCompilerMessage> Messages)
@@ -51,6 +53,8 @@ namespace Xenon.Renderer
             {
                 case SlideFormat.Liturgy:
                     return lsr.RenderSlide(_project.Layouts.LiturgyLayout.GetRenderInfo(), slide, Messages);
+                case SlideFormat.LiturgyVerse:
+                    return lvsr.RenderSlide(_project.Layouts.LiturgyLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.Video:
                     return vsr.RenderSlide(slide, Messages);
                 case SlideFormat.UnscaledImage:
