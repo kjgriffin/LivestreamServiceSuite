@@ -256,16 +256,16 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="5">PICTURE IN PICTURE CONTROLS</TextBlock>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Name="BtnPIPtoA" Click="ClickPIPRunToOnScreenBox" Style="{StaticResource InactivePIPControlButton}">
+                                                <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoA" Click="ClickPIPRunToOnScreenBox" Style="{StaticResource InactivePIPControlButton}">
                                                     <Image Source="pack://application:,,,/Icons/keyframepushleft.png"></Image>
                                                 </Button>
-                                                <Button Name="BtnPIPtoB" Click="ClickPIPRunToOffScreenBox" Style="{StaticResource InactivePIPControlButton}">
+                                                <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoB" Click="ClickPIPRunToOffScreenBox" Style="{StaticResource InactivePIPControlButton}">
                                                     <Image Source="pack://application:,,,/Icons/keyframepushright.png"></Image>
                                                 </Button>
-                                                <Button Width="80" Height="60" Visibility="Hidden">
+                                                <Button Focusable="False" IsTabStop="False" Width="80" Height="60" Visibility="Hidden">
                                                     <Image Source="pack://application:,,,/Icons/keyframetobox.png"></Image>
                                                 </Button>
-                                                <Button Name="BtnPIPtoFull" Click="ClickPIPRunToFull" Style="{StaticResource InactivePIPControlButton}">
+                                                <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoFull" Click="ClickPIPRunToFull" Style="{StaticResource InactivePIPControlButton}">
                                                     <Image Source="pack://application:,,,/Icons/keyframetofill.png"></Image>
                                                 </Button>
                                             </StackPanel>
@@ -275,14 +275,14 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">FILL SOURCE</TextBlock>
                                             <StackPanel Orientation="Horizontal">
-                                                <Button Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
-                                                <Button Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
-                                                <Button Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
-                                                <Button Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
-                                                <Button Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
-                                                <Button Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
-                                                <Button Click="ClickPIP7" Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
-                                                <Button Click="ClickPIP8" Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP7" Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP8" Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
