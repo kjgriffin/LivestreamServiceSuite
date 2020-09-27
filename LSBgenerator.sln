@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presenter", "Presenter\Pres
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlideCreater", "SlideCreater\SlideCreater.csproj", "{F3F50481-509F-45AE-AF3B-379D93F4F187}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xenon", "Xenon\Xenon.csproj", "{F6A028CA-ED5B-4EEB-9CE6-30ABD9850730}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenon", "Xenon\Xenon.csproj", "{F6A028CA-ED5B-4EEB-9CE6-30ABD9850730}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Midnight", "Midnight\Midnight.csproj", "{891CF39F-8ADA-42AC-8E5F-3B53DE3A0381}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{F6A028CA-ED5B-4EEB-9CE6-30ABD9850730}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6A028CA-ED5B-4EEB-9CE6-30ABD9850730}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6A028CA-ED5B-4EEB-9CE6-30ABD9850730}.Release|Any CPU.Build.0 = Release|Any CPU
+		{891CF39F-8ADA-42AC-8E5F-3B53DE3A0381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{891CF39F-8ADA-42AC-8E5F-3B53DE3A0381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{891CF39F-8ADA-42AC-8E5F-3B53DE3A0381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{891CF39F-8ADA-42AC-8E5F-3B53DE3A0381}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

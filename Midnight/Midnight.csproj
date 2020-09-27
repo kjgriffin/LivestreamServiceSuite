@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Compiler\" />
+    <Folder Include="Generator\" />
+    <Folder Include="Renderer\" />
+    <Folder Include="PreProc\" />
+  </ItemGroup>
+
+</Project>
