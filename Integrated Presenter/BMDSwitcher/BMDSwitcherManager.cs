@@ -54,9 +54,17 @@ namespace Integrated_Presenter
 
         public Window _parent;
 
-        public BMDSwitcherManager(Window parent)
+        private DSKMaskSettings dSKMask1Settings;
+        private DSKMaskSettings dSKMask2Settings;
+
+        public BMDSwitcherManager(Window parent, DSKMaskSettings dsk1mask, DSKMaskSettings dsk2mask)
         {
             _parent = parent;
+
+            dSKMask1Settings = dsk1mask;
+            dSKMask2Settings = dsk2mask;
+            
+
             _switcherMonitor = new SwitcherMonitor();
             _switcherMonitor.SwitcherDisconnected += _switcherMonitor_SwitcherDisconnected;
 
@@ -671,15 +679,15 @@ namespace Integrated_Presenter
             _BMDSwitcherDownstreamKey1.SetInputCut((long)BMDSwitcherSources.Black);
             _BMDSwitcherDownstreamKey1.SetRate(30);
 
-            _BMDSwitcherDownstreamKey1.SetPreMultiplied(1);
-            _BMDSwitcherDownstreamKey1.SetClip(1);
-            _BMDSwitcherDownstreamKey1.SetGain(1);
-            _BMDSwitcherDownstreamKey1.SetInverse(1);
+            _BMDSwitcherDownstreamKey1.SetPreMultiplied(dSKMask1Settings.PreMultipled);
+            _BMDSwitcherDownstreamKey1.SetClip(dSKMask1Settings.Clip);
+            _BMDSwitcherDownstreamKey1.SetGain(dSKMask1Settings.Gain);
+            _BMDSwitcherDownstreamKey1.SetInverse(dSKMask1Settings.Invert);
             _BMDSwitcherDownstreamKey1.SetMasked(1);
-            _BMDSwitcherDownstreamKey1.SetMaskTop(-5.4);
-            _BMDSwitcherDownstreamKey1.SetMaskBottom(-9);
-            _BMDSwitcherDownstreamKey1.SetMaskLeft(-16);
-            _BMDSwitcherDownstreamKey1.SetMaskRight(16);
+            _BMDSwitcherDownstreamKey1.SetMaskTop(dSKMask1Settings.MaskTop);
+            _BMDSwitcherDownstreamKey1.SetMaskBottom(dSKMask1Settings.MaskBottom);
+            _BMDSwitcherDownstreamKey1.SetMaskLeft(dSKMask1Settings.MaskLeft);
+            _BMDSwitcherDownstreamKey1.SetMaskRight(dSKMask1Settings.MaskRight);
         }
 
         private void ConfigureDSK2forSplit()
@@ -688,15 +696,15 @@ namespace Integrated_Presenter
             _BMDSwitcherDownstreamKey2.SetInputCut((long)BMDSwitcherSources.Black);
             _BMDSwitcherDownstreamKey2.SetRate(30);
 
-            _BMDSwitcherDownstreamKey2.SetPreMultiplied(1);
-            _BMDSwitcherDownstreamKey2.SetClip(1);
-            _BMDSwitcherDownstreamKey2.SetGain(1);
-            _BMDSwitcherDownstreamKey2.SetInverse(1);
+            _BMDSwitcherDownstreamKey2.SetPreMultiplied(dSKMask2Settings.PreMultipled);
+            _BMDSwitcherDownstreamKey2.SetClip(dSKMask2Settings.Clip);
+            _BMDSwitcherDownstreamKey2.SetGain(dSKMask2Settings.Gain);
+            _BMDSwitcherDownstreamKey2.SetInverse(dSKMask2Settings.Invert);
             _BMDSwitcherDownstreamKey2.SetMasked(1);
-            _BMDSwitcherDownstreamKey2.SetMaskTop(9);
-            _BMDSwitcherDownstreamKey2.SetMaskBottom(-9);
-            _BMDSwitcherDownstreamKey2.SetMaskLeft(0);
-            _BMDSwitcherDownstreamKey2.SetMaskRight(16);
+            _BMDSwitcherDownstreamKey2.SetMaskTop(dSKMask2Settings.MaskTop);
+            _BMDSwitcherDownstreamKey2.SetMaskBottom(dSKMask2Settings.MaskBottom);
+            _BMDSwitcherDownstreamKey2.SetMaskLeft(dSKMask2Settings.MaskLeft);
+            _BMDSwitcherDownstreamKey2.SetMaskRight(dSKMask2Settings.MaskRight);
 
         }
 
