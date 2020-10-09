@@ -404,9 +404,10 @@ namespace Xenon.Compiler
                 }
 
 
+                string paramendseq = areenclosed ? ConsumeArgList_EncSeq : pnum < paramnames.Length - 1 ? ConsumeArgList_SepSeq : ConsumeArgList_EndSeq;
                 try
                 {
-                    res[p] = ConsumeUntil(ConsumeArgList_EncSeq);
+                    res[p] = ConsumeUntil(paramendseq);
                 }
                 catch (Exception ex)
                 {
