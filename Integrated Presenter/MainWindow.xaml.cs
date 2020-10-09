@@ -6,19 +6,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Integrated_Presenter
 {
@@ -54,7 +46,7 @@ namespace Integrated_Presenter
             InitializeComponent();
 
             dsk1mask = new DSKMaskSettings() { Clip = 1, Gain = 1, Invert = 1, PreMultipled = 0, MaskTop = -5.4, MaskBottom = -9, MaskLeft = -16, MaskRight = 16 };
-            dsk1mask = new DSKMaskSettings() { Clip = 1, Gain = 1, Invert = 1, PreMultipled = 0, MaskTop = 9, MaskBottom = -9, MaskLeft = 0, MaskRight = 16 };
+            dsk2mask = new DSKMaskSettings() { Clip = 1, Gain = 1, Invert = 1, PreMultipled = 0, MaskTop = 9, MaskBottom = -9, MaskLeft = 0, MaskRight = 16 };
 
             HideAdvancedPresControls();
             HideAdvancedPIPControls();
@@ -1517,53 +1509,53 @@ namespace Integrated_Presenter
             ToggleTransKey1();
         }
 
-        private void SetDSK1Mask(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            if (ofd.ShowDialog() == true)
-            {
-                using var sr = new StreamReader(ofd.FileName);
-                var sobj = JsonSerializer.Deserialize<DSKMaskSettings>(sr.ReadToEnd());
-                dsk1mask = sobj;
-            }
-        }
+        //private void SetDSK1Mask(object sender, RoutedEventArgs e)
+        //{
+        //    OpenFileDialog ofd = new OpenFileDialog();
+        //    if (ofd.ShowDialog() == true)
+        //    {
+        //        using var sr = new StreamReader(ofd.FileName);
+        //        var sobj = System.Text.Json.JsonSerializer.Deserialize<DSKMaskSettings>(sr.ReadToEnd());
+        //        dsk1mask = sobj;
+        //    }
+        //}
 
-        private void SetDSK2Mask(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            if (ofd.ShowDialog() == true)
-            {
-                using var sr = new StreamReader(ofd.FileName);
-                var sobj = JsonSerializer.Deserialize<DSKMaskSettings>(sr.ReadToEnd());
-                dsk2mask = sobj;
-            }
+        //private void SetDSK2Mask(object sender, RoutedEventArgs e)
+        //{
+        //    OpenFileDialog ofd = new OpenFileDialog();
+        //    if (ofd.ShowDialog() == true)
+        //    {
+        //        using var sr = new StreamReader(ofd.FileName);
+        //        var sobj = System.Text.Json.JsonSerializer.Deserialize<DSKMaskSettings>(sr.ReadToEnd());
+        //        dsk2mask = sobj;
+        //    }
 
-        }
+        //}
 
-        private void SaveDSK1Mask(object sender, RoutedEventArgs e)
-        {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.FileName = "DSK1Mask";
-            sfd.DefaultExt = "json";
-            if (sfd.ShowDialog() == true)
-            {
-                var sobj = JsonSerializer.Serialize<DSKMaskSettings>(dsk1mask);
-                using var sw = new StreamWriter(sfd.FileName);
-                sw.Write(sobj);
-            }
-        }
+        //private void SaveDSK1Mask(object sender, RoutedEventArgs e)
+        //{
+        //    SaveFileDialog sfd = new SaveFileDialog();
+        //    sfd.FileName = "DSK1Mask";
+        //    sfd.DefaultExt = "json";
+        //    if (sfd.ShowDialog() == true)
+        //    {
+        //        var sobj = System.Text.Json.JsonSerializer.Serialize<DSKMaskSettings>(dsk1mask);
+        //        using var sw = new StreamWriter(sfd.FileName);
+        //        sw.Write(sobj);
+        //    }
+        //}
 
-        private void SaveDSK2Mask(object sender, RoutedEventArgs e)
-        {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.FileName = "DSK2Mask";
-            sfd.DefaultExt = "json";
-            if (sfd.ShowDialog() == true)
-            {
-                var sobj = JsonSerializer.Serialize<DSKMaskSettings>(dsk2mask);
-                using var sw = new StreamWriter(sfd.FileName);
-                sw.Write(sobj);
-            }
-        }
+        //private void SaveDSK2Mask(object sender, RoutedEventArgs e)
+        //{
+        //    SaveFileDialog sfd = new SaveFileDialog();
+        //    sfd.FileName = "DSK2Mask";
+        //    sfd.DefaultExt = "json";
+        //    if (sfd.ShowDialog() == true)
+        //    {
+        //        var sobj = System.Text.Json.JsonSerializer.Serialize<DSKMaskSettings>(dsk2mask);
+        //        using var sw = new StreamWriter(sfd.FileName);
+        //        sw.Write(sobj);
+        //    }
+        //}
     }
 }

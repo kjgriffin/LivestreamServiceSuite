@@ -764,19 +764,6 @@ namespace Integrated_Presenter
 
         }
 
-        private void ConfigureMediaPool()
-        {
-            string file1 = @"C:\Users\Kristopher_User\Pictures\SermonLumaRight.PNG";
-            string file2 = @"C:\Users\Kristopher_User\Pictures\SermonLumaLeft.PNG";
-
-            SwitcherUploadManager upload1 = new SwitcherUploadManager(_parent.Dispatcher, _BMDSwitcher);
-            //SwitcherUploadManager upload2 = new SwitcherUploadManager(_parent.Dispatcher, _BMDSwitcher);
-
-            upload1.UploadImage(file1, 0);
-            //upload2.UploadImage(file2, 1);
-
-        }
-
 
         public void PerformPresetSelect(int sourceID)
         {
