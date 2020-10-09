@@ -54,9 +54,17 @@ namespace Integrated_Presenter
 
         public Window _parent;
 
-        public BMDSwitcherManager(Window parent)
+        private DSKMaskSettings dSKMask1Settings;
+        private DSKMaskSettings dSKMask2Settings;
+
+        public BMDSwitcherManager(Window parent, DSKMaskSettings dsk1mask, DSKMaskSettings dsk2mask)
         {
             _parent = parent;
+
+            dSKMask1Settings = dsk1mask;
+            dSKMask2Settings = dsk2mask;
+            
+
             _switcherMonitor = new SwitcherMonitor();
             _switcherMonitor.SwitcherDisconnected += _switcherMonitor_SwitcherDisconnected;
 
@@ -668,19 +676,36 @@ namespace Integrated_Presenter
         private void ConfigureDSK1forLiturgy()
         {
             _BMDSwitcherDownstreamKey1.SetInputFill((long)BMDSwitcherSources.Input4);
-            _BMDSwitcherDownstreamKey1.SetInputCut((long)BMDSwitcherSources.MediaPlayer1);
+            _BMDSwitcherDownstreamKey1.SetInputCut((long)BMDSwitcherSources.Black);
             _BMDSwitcherDownstreamKey1.SetRate(30);
-            _BMDSwitcherDownstreamKey1.SetPreMultiplied(0);
-            _BMDSwitcherDownstreamKey1.SetMasked(0);
+
+            _BMDSwitcherDownstreamKey1.SetPreMultiplied(dSKMask1Settings.PreMultipled);
+            _BMDSwitcherDownstreamKey1.SetClip(dSKMask1Settings.Clip);
+            _BMDSwitcherDownstreamKey1.SetGain(dSKMask1Settings.Gain);
+            _BMDSwitcherDownstreamKey1.SetInverse(dSKMask1Settings.Invert);
+            _BMDSwitcherDownstreamKey1.SetMasked(1);
+            _BMDSwitcherDownstreamKey1.SetMaskTop(dSKMask1Settings.MaskTop);
+            _BMDSwitcherDownstreamKey1.SetMaskBottom(dSKMask1Settings.MaskBottom);
+            _BMDSwitcherDownstreamKey1.SetMaskLeft(dSKMask1Settings.MaskLeft);
+            _BMDSwitcherDownstreamKey1.SetMaskRight(dSKMask1Settings.MaskRight);
         }
 
         private void ConfigureDSK2forSplit()
         {
             _BMDSwitcherDownstreamKey2.SetInputFill((long)BMDSwitcherSources.Input4);
-            _BMDSwitcherDownstreamKey2.SetInputCut((long)BMDSwitcherSources.MediaPlayer2);
+            _BMDSwitcherDownstreamKey2.SetInputCut((long)BMDSwitcherSources.Black);
             _BMDSwitcherDownstreamKey2.SetRate(30);
-            _BMDSwitcherDownstreamKey2.SetPreMultiplied(0);
-            _BMDSwitcherDownstreamKey2.SetMasked(0);
+
+            _BMDSwitcherDownstreamKey2.SetPreMultiplied(dSKMask2Settings.PreMultipled);
+            _BMDSwitcherDownstreamKey2.SetClip(dSKMask2Settings.Clip);
+            _BMDSwitcherDownstreamKey2.SetGain(dSKMask2Settings.Gain);
+            _BMDSwitcherDownstreamKey2.SetInverse(dSKMask2Settings.Invert);
+            _BMDSwitcherDownstreamKey2.SetMasked(1);
+            _BMDSwitcherDownstreamKey2.SetMaskTop(dSKMask2Settings.MaskTop);
+            _BMDSwitcherDownstreamKey2.SetMaskBottom(dSKMask2Settings.MaskBottom);
+            _BMDSwitcherDownstreamKey2.SetMaskLeft(dSKMask2Settings.MaskLeft);
+            _BMDSwitcherDownstreamKey2.SetMaskRight(dSKMask2Settings.MaskRight);
+
         }
 
         private void ConfigureMultiviewer()
@@ -736,19 +761,6 @@ namespace Integrated_Presenter
             keyframeparams.SetPositionY(-6.0);
             keyframeparams.SetSizeX(0.4);
             keyframeparams.SetSizeY(0.4);
-
-        }
-
-        private void ConfigureMediaPool()
-        {
-            string file1 = @"C:\Users\Kristopher_User\Pictures\SermonLumaRight.PNG";
-            string file2 = @"C:\Users\Kristopher_User\Pictures\SermonLumaLeft.PNG";
-
-            SwitcherUploadManager upload1 = new SwitcherUploadManager(_parent.Dispatcher, _BMDSwitcher);
-            //SwitcherUploadManager upload2 = new SwitcherUploadManager(_parent.Dispatcher, _BMDSwitcher);
-
-            upload1.UploadImage(file1, 0);
-            //upload2.UploadImage(file2, 1);
 
         }
 

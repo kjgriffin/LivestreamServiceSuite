@@ -34,6 +34,12 @@
                     <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
                     <MenuItem Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
                 </MenuItem>
+                <!--<MenuItem Header="Settings" IsTabStop="False">
+                    <MenuItem Header="DSK 1 Mask" Click="SetDSK1Mask" IsTabStop="False"></MenuItem> 
+                    <MenuItem Header="DSK 2 Mask" Click="SetDSK2Mask" IsTabStop="False"></MenuItem> 
+                    <MenuItem Header="Export DSK 1 Settings" Click="SaveDSK1Mask" IsTabStop="False"></MenuItem> 
+                    <MenuItem Header="Export DSK 2 Settings" Click="SaveDSK2Mask" IsTabStop="False"></MenuItem> 
+                </MenuItem>-->
             </Menu>
         </Grid>
 

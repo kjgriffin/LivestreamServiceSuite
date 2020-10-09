@@ -64,6 +64,7 @@ namespace Xenon.Compiler
             XenonASTProgram p = new XenonASTProgram();
             try
             {
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Started", ErrorMessage = "Starting to compile", Generator = "Compiler", Level = XenonCompilerMessageType.Debug });
                 p = (XenonASTProgram)p.Compile(Lexer, Logger);
             }
             catch (Exception ex)
