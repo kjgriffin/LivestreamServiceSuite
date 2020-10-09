@@ -26,7 +26,17 @@ namespace Xenon.Compiler
 
         private int _tokenpos = 0;
 
-        public string CurrentToken => _tokens[_tokenpos];
+        public string CurrentToken
+        {
+            get
+            {
+                if (_tokenpos >= _tokens.Count)
+                {
+                    return EOFText;
+                }
+                return _tokens[_tokenpos];
+            }
+        }
 
         public int MaxChecks { get; private set; }
 
@@ -246,7 +256,7 @@ namespace Xenon.Compiler
             }
             if (InspectEOF())
             {
-                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Lexer asked to inspect for token {Regex.Escape(test)}. Got EOF instead.", ErrorName = "Unexpected EOF", Generator = "Lexer", Level = XenonCompilerMessageType.Debug, Token = CurrentToken });
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Lexer asked to inspect for token <'{Regex.Escape(test)}'>. Got EOF instead.", ErrorName = "Unexpected EOF", Generator = "Lexer", Level = XenonCompilerMessageType.Debug, Token = EOFText });
                 throw new ArgumentOutOfRangeException($"Unexpected token {test}. EOF");
             }
             string pattern = test;
@@ -299,6 +309,11 @@ namespace Xenon.Compiler
         /// <param name="text"></param>
         public bool Gobble(string text)
         {
+            if (InspectEOF())
+            {
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Lexer expecting token: '{text}'", ErrorName = "Unexpected eof", Generator = "Lexer.Gobble", Inner = "", Level = XenonCompilerMessageType.Error, Token = EOFText });
+                throw new Exception();
+            }
             if (_tokens[_tokenpos] == text)
             {
                 ClearInspectionState();
@@ -326,10 +341,19 @@ namespace Xenon.Compiler
         public string ConsumeUntil(string test)
         {
             StringBuilder sb = new StringBuilder();
-            while (!Inspect(test))
+            try
             {
-                sb.Append(Consume());
+                while (!Inspect(test))
+                {
+                    sb.Append(Consume());
+                }
             }
+            catch (Exception ex)
+            {
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Expecting missing token", ErrorMessage = $"Expecting token <'{test}'>", Generator = "Lexer.ConsumeUnti", Inner = ex.Message, Level = XenonCompilerMessageType.Error, Token = CurrentToken });
+                throw ex;
+            }
+
             return sb.ToString();
         }
 
@@ -353,11 +377,11 @@ namespace Xenon.Compiler
         }
 
 
-        public string ConsumeArgList_StartSeq {get; set;} = "(";
+        public string ConsumeArgList_StartSeq { get; set; } = "(";
         public string ConsumeArgList_EndSeq { get; set; } = ")";
         public string ConsumeArgList_SepSeq { get; set; } = ",";
         public string ConsumeArgList_EncSeq { get; set; } = "\"";
-    
+
         /// <summary>
         /// Will consume all tokens starting with '(' and ending with ')'. Will assign values to paramaters.
         /// </summary>
@@ -373,22 +397,33 @@ namespace Xenon.Compiler
             {
                 string helpmsg = $"while trying to parse parameter: {p}";
                 GobbleWhitespace();
-                
+
                 if (areenclosed)
                 {
                     GobbleandLog(ConsumeArgList_EncSeq, helpmsg);
+                }
+
+
+                try
+                {
                     res[p] = ConsumeUntil(ConsumeArgList_EncSeq);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(new XenonCompilerMessage() { ErrorName = "Bad parameter", ErrorMessage = $"Mal-formed parameter {helpmsg}.", Generator = "Lexer.ConsumeArgList", Inner = ex.Message, Level = XenonCompilerMessageType.Error, Token = CurrentToken });
+                    throw ex;
+                }
+
+
+                if (areenclosed)
+                {
                     GobbleandLog(ConsumeArgList_EncSeq, helpmsg);
                     GobbleWhitespace();
-                }
-                else
-                {
-                    res[p] = ConsumeUntil(pnum < paramnames.Length - 1 ? ConsumeArgList_SepSeq : ConsumeArgList_EndSeq).Trim();
                 }
 
                 if (pnum < paramnames.Length - 1)
                 {
-                    GobbleandLog(ConsumeArgList_SepSeq, helpmsg); 
+                    GobbleandLog(ConsumeArgList_SepSeq, helpmsg);
                 }
 
                 pnum++;
