@@ -246,7 +246,7 @@ namespace Integrated_Presenter
             var res = _config.Routing.Where(r => r.ButtonId == button).FirstOrDefault();
             if (res != null)
             {
-                return res.ButtonId;
+                return res.PhysicalInputId;
             }
             return -1;
         }
@@ -1584,13 +1584,13 @@ namespace Integrated_Presenter
             {
                 Routing = new List<ButtonSourceMapping>() {
                     new ButtonSourceMapping() { KeyName = "left", ButtonId = 1, ButtonName = "PULPIT", PhysicalInputId = 5, LongName = "PULPIT", ShortName = "PLPT" },
-                    new ButtonSourceMapping() { KeyName = "center", ButtonId = 2, ButtonName = "CENTER", PhysicalInputId = 5, LongName = "CENTER", ShortName = "CNTR" },
-                    new ButtonSourceMapping() { KeyName = "right", ButtonId = 3, ButtonName = "LECTERN", PhysicalInputId = 5, LongName = "LECTERN", ShortName = "LTRN" },
-                    new ButtonSourceMapping() { KeyName = "organ", ButtonId = 4, ButtonName = "ORGAN", PhysicalInputId = 5, LongName = "ORGAN", ShortName = "ORGN" },
-                    new ButtonSourceMapping() { KeyName = "slide", ButtonId = 5, ButtonName = "SLIDE", PhysicalInputId = 5, LongName = "SLIDESHOW", ShortName = "SLDE" },
-                    new ButtonSourceMapping() { KeyName = "c3", ButtonId = 6, ButtonName = "CAM3", PhysicalInputId = 5, LongName = "CAMERA 3", ShortName = "CAM3" },
-                    new ButtonSourceMapping() { KeyName = "c7", ButtonId = 7, ButtonName = "CAM7", PhysicalInputId = 5, LongName = "CAMERA 7", ShortName = "CAM7" },
-                    new ButtonSourceMapping() { KeyName = "c8", ButtonId = 8, ButtonName = "CAM8", PhysicalInputId = 5, LongName = "CAMERA 8", ShortName = "CAM8" },
+                    new ButtonSourceMapping() { KeyName = "center", ButtonId = 2, ButtonName = "CENTER", PhysicalInputId = 1, LongName = "CENTER", ShortName = "CNTR" },
+                    new ButtonSourceMapping() { KeyName = "right", ButtonId = 3, ButtonName = "LECTERN", PhysicalInputId = 6, LongName = "LECTERN", ShortName = "LTRN" },
+                    new ButtonSourceMapping() { KeyName = "organ", ButtonId = 4, ButtonName = "ORGAN", PhysicalInputId = 2, LongName = "ORGAN", ShortName = "ORGN" },
+                    new ButtonSourceMapping() { KeyName = "slide", ButtonId = 5, ButtonName = "SLIDE", PhysicalInputId = 4, LongName = "SLIDESHOW", ShortName = "SLDE" },
+                    new ButtonSourceMapping() { KeyName = "c3", ButtonId = 6, ButtonName = "CAM3", PhysicalInputId = 3, LongName = "CAMERA 3", ShortName = "CAM3" },
+                    new ButtonSourceMapping() { KeyName = "c7", ButtonId = 7, ButtonName = "CAM7", PhysicalInputId = 7, LongName = "CAMERA 7", ShortName = "CAM7" },
+                    new ButtonSourceMapping() { KeyName = "c8", ButtonId = 8, ButtonName = "CAM8", PhysicalInputId = 8, LongName = "CAMERA 8", ShortName = "CAM8" },
                 },
                 MixEffectSettings = new BMDMixEffectSettings()
                 {

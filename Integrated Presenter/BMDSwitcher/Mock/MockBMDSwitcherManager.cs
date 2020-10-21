@@ -24,16 +24,16 @@ namespace Integrated_Presenter.BMDSwitcher
             _state.SetDefault();
             Dictionary<int, string> mapping = new Dictionary<int, string>()
             {
-                [1] = parent.Config.Routing.Where(r => r.ButtonId == 1).First().KeyName,
-                [2] = parent.Config.Routing.Where(r => r.ButtonId == 2).First().KeyName,
-                [3] = parent.Config.Routing.Where(r => r.ButtonId == 3).First().KeyName,
-                [4] = parent.Config.Routing.Where(r => r.ButtonId == 4).First().KeyName,
-                [5] = parent.Config.Routing.Where(r => r.ButtonId == 5).First().KeyName,
-                [6] = parent.Config.Routing.Where(r => r.ButtonId == 6).First().KeyName,
-                [7] = parent.Config.Routing.Where(r => r.ButtonId == 7).First().KeyName,
-                [8] = parent.Config.Routing.Where(r => r.ButtonId == 8).First().KeyName,
+                [1] = "center",
+                [2] = "organ",
+                [3] = "cam3",
+                [4] = "slide",
+                [5] = "left",
+                [6] = "right",
+                [7] = "cam7",
+                [8] = "cam8"
             };
-            mockMultiviewer = new MockMultiviewer(mapping);
+            mockMultiviewer = new MockMultiviewer(mapping, parent.Config);
             parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
         }
 

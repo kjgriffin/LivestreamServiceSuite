@@ -1,4 +1,5 @@
-﻿using Integrated_Presenter.BMDSwitcher.Mock;
+﻿using Integrated_Presenter.BMDSwitcher.Config;
+using Integrated_Presenter.BMDSwitcher.Mock;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,10 +11,12 @@ namespace Integrated_Presenter.BMDSwitcher
     {
 
         MockMultiviewerWindow multiviewerWindow;
+        BMDSwitcherConfigSettings _config;
 
-        public MockMultiviewer(Dictionary<int, string> sourcemap)
+        public MockMultiviewer(Dictionary<int, string> sourcemap, BMDSwitcherConfigSettings config)
         {
             multiviewerWindow = new MockMultiviewerWindow(sourcemap);
+            _config = config;
             multiviewerWindow.Show();
         }
 
