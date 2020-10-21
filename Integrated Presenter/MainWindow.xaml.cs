@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -50,6 +51,7 @@ namespace Integrated_Presenter
 
             HideAdvancedPresControls();
             HideAdvancedPIPControls();
+            HideAdvancedProjectorControls();
 
             SlidePoolButtons = new List<SlidePoolSource>() { SlidePoolSource0, SlidePoolSource1, SlidePoolSource2, SlidePoolSource3 };
 
@@ -57,6 +59,7 @@ namespace Integrated_Presenter
             UpdateSlideControls();
             UpdateMediaControls();
             UpdateDriveButtonStyle();
+            UpdateProjectorButtonStyles();
 
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
 
@@ -1669,8 +1672,124 @@ namespace Integrated_Presenter
 
         public BMDSwitcherConfigSettings Config { get => _config; }
 
+        bool showAdvancedProjector = false;
+        private void ClickViewAdvancedProjector(object sender, RoutedEventArgs e)
+        {
+            showAdvancedProjector = !showAdvancedProjector;
+            if (showAdvancedProjector)
+            {
+                ShowAdvancedProjectorControls();
+            }
+            else
+            {
+                HideAdvancedProjectorControls();
+            }
+        }
+
+        private void ClickProjector1(object sender, RoutedEventArgs e)
+        {
+            ClickProjectorButton(1);
+        }
+
+        private void ClickProjector2(object sender, RoutedEventArgs e)
+        {
+            ClickProjectorButton(2);
+        }
+
+        private void ClickProjector3(object sender, RoutedEventArgs e)
+        {
+            ClickProjectorButton(3);
+        }
+
+        private void ClickProjector4(object sender, RoutedEventArgs e)
+        {
+            ClickProjectorButton(4);
+        }
+
+        private void ClickProjector5(object sender, RoutedEventArgs e)
+        {
+            ClickProjectorButton(5);
+        }
+
+        private void ClickProjector6(object sender, RoutedEventArgs e)
+        {
+            ClickProjectorButton(6);
+        }
 
 
+        private void ClickProjectorButton(int btn)
+        {
+            if (projectorconnected)
+            {
+                projectorSerialPort.Write(btn.ToString());
+            }
+        }
 
+        private void UpdateProjectorButtonNames()
+        {
+
+        }
+
+        private void UpdateProjectorButtonStyles()
+        {
+            if (projectorconnected)
+            {
+                BtnProjector1.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                BtnProjector2.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                BtnProjector3.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                BtnProjector4.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                BtnProjector5.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                BtnProjector6.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                return;
+            }
+            BtnProjector1.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnProjector2.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnProjector3.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnProjector4.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnProjector5.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnProjector6.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+        }
+
+        private void ShowAdvancedProjectorControls()
+        {
+            gridbtns.Width = 770;
+            gcAdvancedProjector.Width = new GridLength(1.2, GridUnitType.Star);
+        }
+
+        private void HideAdvancedProjectorControls()
+        {
+            gridbtns.Width = 660;
+            gcAdvancedProjector.Width = new GridLength(0);
+        }
+
+        bool projectorconnected = false;
+        SerialPort? projectorSerialPort;
+        private void ConnectProjector()
+        {
+            var ports = SerialPort.GetPortNames();
+            ConnectComPort dialog = new ConnectComPort(ports.ToList());
+            dialog.ShowDialog();
+            if (dialog.Selected)
+            {
+                string port = dialog.Port;
+
+                if (projectorSerialPort != null)
+                {
+                    if (projectorSerialPort.IsOpen)
+                    {
+                        projectorSerialPort.Close();
+                    }
+                }
+                projectorSerialPort = new SerialPort(port, 9600);
+                projectorSerialPort.Open();
+                projectorconnected = true;
+            }
+            UpdateProjectorButtonStyles();
+        }
+
+        private void ClickConnectProjector(object sender, RoutedEventArgs e)
+        {
+            ConnectProjector();
+        }
     }
 }
