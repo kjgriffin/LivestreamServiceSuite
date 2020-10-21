@@ -1,9 +1,11 @@
 ﻿using BMDSwitcherAPI;
 using Integrated_Presenter.BMDSwitcher;
+using Integrated_Presenter.BMDSwitcher.Config;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,16 +56,11 @@ namespace Integrated_Presenter
 
         public Window _parent;
 
-        private DSKMaskSettings dSKMask1Settings;
-        private DSKMaskSettings dSKMask2Settings;
+        private BMDSwitcherConfigSettings _config;
 
-        public BMDSwitcherManager(Window parent, DSKMaskSettings dsk1mask, DSKMaskSettings dsk2mask)
+        public BMDSwitcherManager(Window parent)
         {
             _parent = parent;
-
-            dSKMask1Settings = dsk1mask;
-            dSKMask2Settings = dsk2mask;
-            
 
             _switcherMonitor = new SwitcherMonitor();
             _switcherMonitor.SwitcherDisconnected += _switcherMonitor_SwitcherDisconnected;
@@ -614,8 +611,9 @@ namespace Integrated_Presenter
 
 
 
-        public void ConfigureSwitcher()
+        public void ConfigureSwitcher(BMDSwitcherConfigSettings config)
         {
+            _config = config;
             ConfigureMixEffectBlock();
             ConfigureCameraSources();
             ConfigureDownstreamKeys();
@@ -627,98 +625,80 @@ namespace Integrated_Presenter
 
         private void ConfigureMixEffectBlock()
         {
-            _BMDSwitcherMixEffectBlock1.SetFadeToBlackRate(30);
+            _BMDSwitcherMixEffectBlock1.SetFadeToBlackRate((uint)_config.MixEffectSettings.Rate);
         }
 
         private void ConfigureCameraSources()
         {
+
             // set input source names
             foreach (var inputsource in _BMDSwitcherInputs)
             {
                 long sourceid;
                 inputsource.GetInputId(out sourceid);
 
-                // rename it if required
-                if (sourceid == (long)BMDSwitcherSources.Input5)
+                var map = _config.Routing.Where(r => (long)r.PhysicalInputId == sourceid).First();
+                if (map != null)
                 {
-                    inputsource.SetLongName("PULPIT");
-                    inputsource.SetShortName("PLPT");
+                    inputsource.SetLongName(map.LongName);
+                    inputsource.SetShortName(map.ShortName);
                 }
-                if (sourceid == (long)BMDSwitcherSources.Input1)
-                {
-                    inputsource.SetLongName("CENTER");
-                    inputsource.SetShortName("CNTR");
-                }
-                if (sourceid == (long)BMDSwitcherSources.Input6)
-                {
-                    inputsource.SetLongName("LECTERN");
-                    inputsource.SetShortName("LTRN");
-                }
-                if (sourceid == (long)BMDSwitcherSources.Input2)
-                {
-                    inputsource.SetLongName("ORGAN");
-                    inputsource.SetShortName("ORGN");
-                }
-                if (sourceid == (long)BMDSwitcherSources.Input4)
-                {
-                    inputsource.SetLongName("SLIDESHOW");
-                    inputsource.SetShortName("SLIDE");
-                }
+
             }
         }
 
         private void ConfigureDownstreamKeys()
         {
-            ConfigureDSK1forLiturgy();
-            ConfigureDSK2forSplit();
+            ConfigureDownstreamKey1();
+            ConfigureDownstreamKey2();
         }
 
-        private void ConfigureDSK1forLiturgy()
+        private void ConfigureDownstreamKey1()
         {
-            _BMDSwitcherDownstreamKey1.SetInputFill((long)BMDSwitcherSources.Input4);
-            _BMDSwitcherDownstreamKey1.SetInputCut((long)BMDSwitcherSources.Black);
-            _BMDSwitcherDownstreamKey1.SetRate(30);
+            _BMDSwitcherDownstreamKey1.SetInputFill(_config.DownstreamKey1Config.InputFill);
+            _BMDSwitcherDownstreamKey1.SetInputCut(_config.DownstreamKey1Config.InputCut);
+            _BMDSwitcherDownstreamKey1.SetRate((uint)_config.DownstreamKey1Config.Rate);
 
-            _BMDSwitcherDownstreamKey1.SetPreMultiplied(dSKMask1Settings.PreMultipled);
-            _BMDSwitcherDownstreamKey1.SetClip(dSKMask1Settings.Clip);
-            _BMDSwitcherDownstreamKey1.SetGain(dSKMask1Settings.Gain);
-            _BMDSwitcherDownstreamKey1.SetInverse(dSKMask1Settings.Invert);
-            _BMDSwitcherDownstreamKey1.SetMasked(1);
-            _BMDSwitcherDownstreamKey1.SetMaskTop(dSKMask1Settings.MaskTop);
-            _BMDSwitcherDownstreamKey1.SetMaskBottom(dSKMask1Settings.MaskBottom);
-            _BMDSwitcherDownstreamKey1.SetMaskLeft(dSKMask1Settings.MaskLeft);
-            _BMDSwitcherDownstreamKey1.SetMaskRight(dSKMask1Settings.MaskRight);
+            _BMDSwitcherDownstreamKey1.SetPreMultiplied(_config.DownstreamKey1Config.IsPremultipled);
+            _BMDSwitcherDownstreamKey1.SetClip(_config.DownstreamKey1Config.Clip);
+            _BMDSwitcherDownstreamKey1.SetGain(_config.DownstreamKey1Config.Gain);
+            _BMDSwitcherDownstreamKey1.SetInverse(_config.DownstreamKey1Config.Invert);
+            _BMDSwitcherDownstreamKey1.SetMasked(_config.DownstreamKey1Config.IsMasked);
+            _BMDSwitcherDownstreamKey1.SetMaskTop(_config.DownstreamKey1Config.MaskTop);
+            _BMDSwitcherDownstreamKey1.SetMaskBottom(_config.DownstreamKey1Config.MaskBottom);
+            _BMDSwitcherDownstreamKey1.SetMaskLeft(_config.DownstreamKey1Config.MaskLeft);
+            _BMDSwitcherDownstreamKey1.SetMaskRight(_config.DownstreamKey1Config.MaskRight);
         }
 
-        private void ConfigureDSK2forSplit()
+        private void ConfigureDownstreamKey2()
         {
-            _BMDSwitcherDownstreamKey2.SetInputFill((long)BMDSwitcherSources.Input4);
-            _BMDSwitcherDownstreamKey2.SetInputCut((long)BMDSwitcherSources.Black);
-            _BMDSwitcherDownstreamKey2.SetRate(30);
+            _BMDSwitcherDownstreamKey2.SetInputFill(_config.DownstreamKey2Config.InputFill);
+            _BMDSwitcherDownstreamKey2.SetInputCut(_config.DownstreamKey2Config.InputCut);
+            _BMDSwitcherDownstreamKey2.SetRate((uint)_config.DownstreamKey2Config.Rate);
 
-            _BMDSwitcherDownstreamKey2.SetPreMultiplied(dSKMask2Settings.PreMultipled);
-            _BMDSwitcherDownstreamKey2.SetClip(dSKMask2Settings.Clip);
-            _BMDSwitcherDownstreamKey2.SetGain(dSKMask2Settings.Gain);
-            _BMDSwitcherDownstreamKey2.SetInverse(dSKMask2Settings.Invert);
-            _BMDSwitcherDownstreamKey2.SetMasked(1);
-            _BMDSwitcherDownstreamKey2.SetMaskTop(dSKMask2Settings.MaskTop);
-            _BMDSwitcherDownstreamKey2.SetMaskBottom(dSKMask2Settings.MaskBottom);
-            _BMDSwitcherDownstreamKey2.SetMaskLeft(dSKMask2Settings.MaskLeft);
-            _BMDSwitcherDownstreamKey2.SetMaskRight(dSKMask2Settings.MaskRight);
+            _BMDSwitcherDownstreamKey2.SetPreMultiplied(_config.DownstreamKey2Config.IsPremultipled);
+            _BMDSwitcherDownstreamKey2.SetClip(_config.DownstreamKey2Config.Clip);
+            _BMDSwitcherDownstreamKey2.SetGain(_config.DownstreamKey2Config.Gain);
+            _BMDSwitcherDownstreamKey2.SetInverse(_config.DownstreamKey2Config.Invert);
+            _BMDSwitcherDownstreamKey2.SetMasked(_config.DownstreamKey2Config.IsMasked);
+            _BMDSwitcherDownstreamKey2.SetMaskTop(_config.DownstreamKey2Config.MaskTop);
+            _BMDSwitcherDownstreamKey2.SetMaskBottom(_config.DownstreamKey2Config.MaskBottom);
+            _BMDSwitcherDownstreamKey2.SetMaskLeft(_config.DownstreamKey2Config.MaskLeft);
+            _BMDSwitcherDownstreamKey2.SetMaskRight(_config.DownstreamKey2Config.MaskRight);
 
         }
 
         private void ConfigureMultiviewer()
         {
-            _BMDSwitcherMultiView.SetLayout(_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop);
-            _BMDSwitcherMultiView.SetWindowInput(2, (long)BMDSwitcherSources.Input5);
-            _BMDSwitcherMultiView.SetWindowInput(3, (long)BMDSwitcherSources.Input1);
-            _BMDSwitcherMultiView.SetWindowInput(4, (long)BMDSwitcherSources.Input6);
-            _BMDSwitcherMultiView.SetWindowInput(5, (long)BMDSwitcherSources.Input2);
-            _BMDSwitcherMultiView.SetWindowInput(6, (long)BMDSwitcherSources.Input4);
-            _BMDSwitcherMultiView.SetWindowInput(7, (long)BMDSwitcherSources.Input3);
-            _BMDSwitcherMultiView.SetWindowInput(8, (long)BMDSwitcherSources.Input7);
-            _BMDSwitcherMultiView.SetWindowInput(9, (long)BMDSwitcherSources.Input8);
+            _BMDSwitcherMultiView.SetLayout((_BMDSwitcherMultiViewLayout)_config.MultiviewerConfig.Layout);
+            _BMDSwitcherMultiView.SetWindowInput(2, _config.MultiviewerConfig.Window2);
+            _BMDSwitcherMultiView.SetWindowInput(3, _config.MultiviewerConfig.Window3);
+            _BMDSwitcherMultiView.SetWindowInput(4, _config.MultiviewerConfig.Window4);
+            _BMDSwitcherMultiView.SetWindowInput(5, _config.MultiviewerConfig.Window5);
+            _BMDSwitcherMultiView.SetWindowInput(6, _config.MultiviewerConfig.Window6);
+            _BMDSwitcherMultiView.SetWindowInput(7, _config.MultiviewerConfig.Window7);
+            _BMDSwitcherMultiView.SetWindowInput(8, _config.MultiviewerConfig.Window8);
+            _BMDSwitcherMultiView.SetWindowInput(9, _config.MultiviewerConfig.Window9);
         }
 
         private void ConfigureUpstreamKey()
@@ -731,36 +711,36 @@ namespace Integrated_Presenter
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
 
             // set initial fill source to center
-            _BMDSwitcherUpstreamKey1.SetInputFill((long)BMDSwitcherSources.Input1);
+            _BMDSwitcherUpstreamKey1.SetInputFill(_config.PIPSettings.DefaultFillSource);
 
             IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
 
             // set border with dveparams
-            dveparams.SetMasked(0);
-            dveparams.SetBorderEnabled(0);
+            dveparams.SetMasked(_config.PIPSettings.IsMasked);
+            dveparams.SetBorderEnabled(_config.PIPSettings.IsBordered);
 
 
             // config size & base position
-            _BMDSwitcherFlyKeyParamters.SetPositionX(9.6);
-            _BMDSwitcherFlyKeyParamters.SetPositionY(-6.0);
-            _BMDSwitcherFlyKeyParamters.SetSizeX(0.4);
-            _BMDSwitcherFlyKeyParamters.SetSizeY(0.4);
+            _BMDSwitcherFlyKeyParamters.SetPositionX(_config.PIPSettings.Current.PositionX);
+            _BMDSwitcherFlyKeyParamters.SetPositionY(_config.PIPSettings.Current.PositionY);
+            _BMDSwitcherFlyKeyParamters.SetSizeX(_config.PIPSettings.Current.SizeX);
+            _BMDSwitcherFlyKeyParamters.SetSizeY(_config.PIPSettings.Current.SizeY);
 
             // setup keyframes
             IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
             _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparams);
 
-            keyframeparams.SetPositionX(9.6);
-            keyframeparams.SetPositionY(-6.0);
-            keyframeparams.SetSizeX(0.4);
-            keyframeparams.SetSizeY(0.4);
+            keyframeparams.SetPositionX(_config.PIPSettings.KeyFrameA.PositionX);
+            keyframeparams.SetPositionY(_config.PIPSettings.KeyFrameA.PositionY);
+            keyframeparams.SetSizeX(_config.PIPSettings.KeyFrameA.SizeX);
+            keyframeparams.SetSizeY(_config.PIPSettings.KeyFrameA.SizeY);
 
             _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparams);
 
-            keyframeparams.SetPositionX(23.0);
-            keyframeparams.SetPositionY(-6.0);
-            keyframeparams.SetSizeX(0.4);
-            keyframeparams.SetSizeY(0.4);
+            keyframeparams.SetPositionX(_config.PIPSettings.KeyFrameB.PositionX);
+            keyframeparams.SetPositionY(_config.PIPSettings.KeyFrameB.PositionY);
+            keyframeparams.SetSizeX(_config.PIPSettings.KeyFrameB.SizeX);
+            keyframeparams.SetSizeY(_config.PIPSettings.KeyFrameB.SizeY);
 
         }
 

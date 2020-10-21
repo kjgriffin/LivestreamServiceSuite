@@ -24,7 +24,6 @@
                 <MenuItem Header="Connections" IsTabStop="False">
                     <MenuItem Click="ClickConnect" Header="Switcher" IsTabStop="False"></MenuItem>
                     <MenuItem Click="ClickConnectMock" Header="Mock Switcher" IsTabStop="False"></MenuItem>
-                    <MenuItem Click="ClickConfigureSwitcher" Header="Load Config" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
@@ -34,12 +33,10 @@
                     <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
                     <MenuItem Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
                 </MenuItem>
-                <!--<MenuItem Header="Settings" IsTabStop="False">
-                    <MenuItem Header="DSK 1 Mask" Click="SetDSK1Mask" IsTabStop="False"></MenuItem> 
-                    <MenuItem Header="DSK 2 Mask" Click="SetDSK2Mask" IsTabStop="False"></MenuItem> 
-                    <MenuItem Header="Export DSK 1 Settings" Click="SaveDSK1Mask" IsTabStop="False"></MenuItem> 
-                    <MenuItem Header="Export DSK 2 Settings" Click="SaveDSK2Mask" IsTabStop="False"></MenuItem> 
-                </MenuItem>-->
+                <MenuItem Header="Settings" IsTabStop="False">
+                    <MenuItem Header="Export Settings" Click="SaveSettings" IsTabStop="False"></MenuItem> 
+                    <MenuItem Header="Load Settings" Click="LoadSettings" IsTabStop="False"></MenuItem> 
+                </MenuItem>
             </Menu>
         </Grid>
 
@@ -99,12 +96,12 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PRESET</TextBlock>
                                             <StackPanel Orientation="Horizontal">
-                                                <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
-                                                <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
-                                                <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
-                                                <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
-                                                <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
-                                                <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
                                                 <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
                                                 <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                             </StackPanel>
@@ -116,12 +113,12 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PROGRAM</TextBlock>
                                             <StackPanel Orientation="Horizontal">
-                                                <Button Name="BtnProgram1" Click="ClickProgram1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
-                                                <Button Name="BtnProgram2" Click="ClickProgram2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
-                                                <Button Name="BtnProgram3" Click="ClickProgram3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
-                                                <Button Name="BtnProgram4" Click="ClickProgram4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
-                                                <Button Name="BtnProgram5" Click="ClickProgram5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
-                                                <Button Name="BtnProgram6" Click="ClickProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button Name="BtnProgram1" Click="ClickProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                <Button Name="BtnProgram2" Click="ClickProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                <Button Name="BtnProgram3" Click="ClickProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button Name="BtnProgram4" Click="ClickProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                <Button Name="BtnProgram5" Click="ClickProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                <Button Name="BtnProgram6" Click="ClickProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
                                                 <Button Name="BtnProgram7" Click="ClickProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
                                                 <Button Name="BtnProgram8" Click="ClickProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                             </StackPanel>
@@ -281,12 +278,12 @@
                                         <StackPanel>
                                             <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">FILL SOURCE</TextBlock>
                                             <StackPanel Orientation="Horizontal">
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
                                                 <Button IsTabStop="False" Focusable="False" Click="ClickPIP7" Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
                                                 <Button IsTabStop="False" Focusable="False" Click="ClickPIP8" Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                             </StackPanel>

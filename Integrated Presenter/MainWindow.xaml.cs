@@ -1,4 +1,6 @@
-﻿using Integrated_Presenter.BMDSwitcher;
+﻿using BMDSwitcherAPI;
+using Integrated_Presenter.BMDSwitcher;
+using Integrated_Presenter.BMDSwitcher.Config;
 using Integrated_Presenter.ViewModels;
 using Microsoft.Win32;
 using System;
@@ -32,11 +34,7 @@ namespace Integrated_Presenter
         TimeSpan timeonshot = TimeSpan.Zero;
         TimeSpan warnShottime = new TimeSpan(0, 2, 30);
 
-        SwitcherBusViewModel PresetRow;
-
-        DSKMaskSettings dsk1mask;
-        DSKMaskSettings dsk2mask;
-
+        BMDSwitcherConfigSettings _config;
 
         List<SlidePoolSource> SlidePoolButtons;
 
@@ -45,16 +43,15 @@ namespace Integrated_Presenter
             DataContext = this;
             InitializeComponent();
 
-            dsk1mask = new DSKMaskSettings() { Clip = 1, Gain = 1, Invert = 1, PreMultipled = 0, MaskTop = -5.4, MaskBottom = -9, MaskLeft = -16, MaskRight = 16 };
-            dsk2mask = new DSKMaskSettings() { Clip = 1, Gain = 1, Invert = 1, PreMultipled = 0, MaskTop = 9, MaskBottom = -9, MaskLeft = 0, MaskRight = 16 };
+
+            // set a default config
+            SetDefaultConfig();
+
 
             HideAdvancedPresControls();
             HideAdvancedPIPControls();
 
             SlidePoolButtons = new List<SlidePoolSource>() { SlidePoolSource0, SlidePoolSource1, SlidePoolSource2, SlidePoolSource3 };
-
-            PresetRow = new SwitcherBusViewModel(8, SourceLabelMappings.Select(p => (p.Value, p.Key)).ToList());
-
 
             UpdateRealTimeClock();
             UpdateSlideControls();
@@ -146,9 +143,8 @@ namespace Integrated_Presenter
             bool? res = connectWindow.ShowDialog();
             if (res == true)
             {
-                switcherManager = new BMDSwitcherManager(this, dsk1mask, dsk2mask);
+                switcherManager = new BMDSwitcherManager(this);
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
-                switcherManager.SwitcherStateChanged += PresetRow.OnSwitcherStateChanged;
                 if (switcherManager.TryConnect(connectWindow.IP))
                 {
                     EnableSwitcherControls();
@@ -158,19 +154,22 @@ namespace Integrated_Presenter
                     shot_clock_timer.Start();
                 }
             }
+            // load current config
+            SetSwitcherSettings();
         }
 
         private void MockConnectSwitcher()
         {
             switcherManager = new MockBMDSwitcherManager(this);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
-            switcherManager.SwitcherStateChanged += PresetRow.OnSwitcherStateChanged;
             switcherManager.TryConnect("localhost");
             EnableSwitcherControls();
             if (!shot_clock_timer.Enabled)
             {
                 shot_clock_timer.Start();
             }
+            // load current config
+            SetSwitcherSettings();
         }
 
         private void TakeAutoTransition()
@@ -244,73 +243,23 @@ namespace Integrated_Presenter
 
         private int ConvertButtonToSourceID(int button)
         {
-            return SourceLabelMappings[ButtonSourceMappings[button]];
+            var res = _config.Routing.Where(r => r.ButtonId == button).FirstOrDefault();
+            if (res != null)
+            {
+                return res.ButtonId;
+            }
+            return -1;
         }
 
         private int ConvertSourceIDToButton(long sourceId)
         {
-            var res = SourceButtonMappings[LabelSourceMappings[(int)sourceId]];
-            return res;
+            var res = _config.Routing.Where(r => r.PhysicalInputId == sourceId).FirstOrDefault();
+            if (res != null)
+            {
+                return res.ButtonId;
+            }
+            return -1;
         }
-
-        private Dictionary<string, int> SourceLabelMappings = new Dictionary<string, int>
-        {
-            ["left"] = 5,
-            ["center"] = 1,
-            ["right"] = 6,
-            ["organ"] = 2,
-            ["slide"] = 4,
-            ["cam3"] = 3,
-            ["cam7"] = 7,
-            ["cam8"] = 8,
-            ["null"] = -1,
-            ["black"] = 0,
-        };
-
-        public Dictionary<int, string> LabelSourceMappings = new Dictionary<int, string>()
-        {
-            [1] = "center",
-            [2] = "organ",
-            [3] = "cam3",
-            [4] = "slide",
-            [5] = "left",
-            [6] = "right",
-            [7] = "cam7",
-            [8] = "cam8",
-            [-1] = "null",
-            [0] = "black",
-        };
-
-
-        public Dictionary<int, string> ButtonSourceMappings = new Dictionary<int, string>()
-        {
-            [0] = "black",
-            [1] = "left",
-            [2] = "center",
-            [3] = "right",
-            [4] = "organ",
-            [5] = "slide",
-            [6] = "cam3",
-            [7] = "cam7",
-            [8] = "cam8",
-            [-1] = "null"
-        };
-
-        public Dictionary<string, int> SourceButtonMappings = new Dictionary<string, int>()
-        {
-            ["black"] = 0,
-            ["left"] = 1,
-            ["center"] = 2,
-            ["right"] = 3,
-            ["organ"] = 4,
-            ["slide"] = 5,
-            ["cam3"] = 6,
-            ["cam7"] = 7,
-            ["cam8"] = 8,
-            ["null"] = -1
-        };
-
-
 
         #endregion
 
@@ -860,7 +809,7 @@ namespace Integrated_Presenter
                 if (Presentation.Next.Type == SlideType.Liturgy)
                 {
                     // make sure slides aren't the program source
-                    if (switcherState.ProgramID == SourceLabelMappings["slide"])
+                    if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         switcherManager.PerformAutoTransition();
                         await Task.Delay(1000);
@@ -881,9 +830,9 @@ namespace Integrated_Presenter
                     Presentation.NextSlide();
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.Current);
-                    if (switcherState.ProgramID != SourceLabelMappings["slide"])
+                    if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        ClickPreset(SourceButtonMappings["slide"]);
+                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                         await Task.Delay(500);
                         switcherManager?.PerformAutoTransition();
                     }
@@ -903,7 +852,7 @@ namespace Integrated_Presenter
                 if (s.Type == SlideType.Liturgy)
                 {
                     // make sure slides aren't the program source
-                    if (switcherState.ProgramID == SourceLabelMappings["slide"])
+                    if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         switcherManager.PerformAutoTransition();
                         await Task.Delay(1000);
@@ -926,9 +875,9 @@ namespace Integrated_Presenter
                     Presentation.OverridePres = true;
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
-                    if (switcherState.ProgramID != SourceLabelMappings["slide"])
+                    if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        ClickPreset(SourceButtonMappings["slide"]);
+                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                         await Task.Delay(500);
                         switcherManager?.PerformAutoTransition();
                     }
@@ -956,7 +905,7 @@ namespace Integrated_Presenter
                 if (Presentation.Current.Type == SlideType.Liturgy)
                 {
                     // make sure slides aren't the program source
-                    if (switcherState.ProgramID == SourceLabelMappings["slide"])
+                    if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         switcherManager.PerformAutoTransition();
                         await Task.Delay(1000);
@@ -975,9 +924,9 @@ namespace Integrated_Presenter
                     }
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.Current);
-                    if (switcherState.ProgramID != SourceLabelMappings["slide"])
+                    if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        ClickPreset(SourceButtonMappings["slide"]);
+                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                         await Task.Delay(500);
                         switcherManager.PerformAutoTransition();
                     }
@@ -1384,7 +1333,7 @@ namespace Integrated_Presenter
 
         private void ClickConfigureSwitcher(object sender, RoutedEventArgs e)
         {
-            switcherManager.ConfigureSwitcher();
+            SetSwitcherSettings();
         }
 
         private void USK1RuntoA()
@@ -1509,53 +1458,219 @@ namespace Integrated_Presenter
             ToggleTransKey1();
         }
 
-        //private void SetDSK1Mask(object sender, RoutedEventArgs e)
-        //{
-        //    OpenFileDialog ofd = new OpenFileDialog();
-        //    if (ofd.ShowDialog() == true)
-        //    {
-        //        using var sr = new StreamReader(ofd.FileName);
-        //        var sobj = System.Text.Json.JsonSerializer.Deserialize<DSKMaskSettings>(sr.ReadToEnd());
-        //        dsk1mask = sobj;
-        //    }
-        //}
+        private void SaveSettings(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.FileName = "BMDSwitcherConfig";
+            sfd.AddExtension = true;
+            sfd.DefaultExt = "json";
+            sfd.Filter = "JSON Files (*.json)|*.json";
+            if (sfd.ShowDialog() == true)
+            {
+                _config?.Save(sfd.FileName);
+            }
+        }
 
-        //private void SetDSK2Mask(object sender, RoutedEventArgs e)
-        //{
-        //    OpenFileDialog ofd = new OpenFileDialog();
-        //    if (ofd.ShowDialog() == true)
-        //    {
-        //        using var sr = new StreamReader(ofd.FileName);
-        //        var sobj = System.Text.Json.JsonSerializer.Deserialize<DSKMaskSettings>(sr.ReadToEnd());
-        //        dsk2mask = sobj;
-        //    }
+        private void LoadSettings(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "JSON Files (*.json)|*.json";
+            if (ofd.ShowDialog() == true)
+            {
+                _config = BMDSwitcherConfigSettings.Load(ofd.FileName);
+            }
+            SetSwitcherSettings();
+        }
 
-        //}
+        private void SetSwitcherSettings()
+        {
+            // update UI
+            UpdateUIButtonLabels();
+            // config switcher
+            switcherManager?.ConfigureSwitcher(_config);
+        }
 
-        //private void SaveDSK1Mask(object sender, RoutedEventArgs e)
-        //{
-        //    SaveFileDialog sfd = new SaveFileDialog();
-        //    sfd.FileName = "DSK1Mask";
-        //    sfd.DefaultExt = "json";
-        //    if (sfd.ShowDialog() == true)
-        //    {
-        //        var sobj = System.Text.Json.JsonSerializer.Serialize<DSKMaskSettings>(dsk1mask);
-        //        using var sw = new StreamWriter(sfd.FileName);
-        //        sw.Write(sobj);
-        //    }
-        //}
+        private void UpdateUIButtonLabels()
+        {
+            foreach (var btn in _config.Routing)
+            {
+                switch (btn.ButtonId)
+                {
+                    case 1:
+                        UpdateButton1Labels(btn);
+                        break;
+                    case 2:
+                        UpdateButton2Labels(btn);
+                        break;
+                    case 3:
+                        UpdateButton3Labels(btn);
+                        break;
+                    case 4:
+                        UpdateButton4Labels(btn);
+                        break;
+                    case 5:
+                        UpdateButton5Labels(btn);
+                        break;
+                    case 6:
+                        UpdateButton6Labels(btn);
+                        break;
+                    case 7:
+                        UpdateButton7Labels(btn);
+                        break;
+                    case 8:
+                        UpdateButton8Labels(btn);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
 
-        //private void SaveDSK2Mask(object sender, RoutedEventArgs e)
-        //{
-        //    SaveFileDialog sfd = new SaveFileDialog();
-        //    sfd.FileName = "DSK2Mask";
-        //    sfd.DefaultExt = "json";
-        //    if (sfd.ShowDialog() == true)
-        //    {
-        //        var sobj = System.Text.Json.JsonSerializer.Serialize<DSKMaskSettings>(dsk2mask);
-        //        using var sw = new StreamWriter(sfd.FileName);
-        //        sw.Write(sobj);
-        //    }
-        //}
+        private void UpdateButton1Labels(ButtonSourceMapping config)
+        {
+            BtnPreset1.Content = config.ButtonName;
+            BtnProgram1.Content = config.ButtonName;
+            BtnPIPFillProgram1.Content = config.ButtonName;
+        }
+
+        private void UpdateButton2Labels(ButtonSourceMapping config)
+        {
+            BtnPreset2.Content = config.ButtonName;
+            BtnProgram2.Content = config.ButtonName;
+            BtnPIPFillProgram2.Content = config.ButtonName;
+        }
+        private void UpdateButton3Labels(ButtonSourceMapping config)
+        {
+            BtnPreset3.Content = config.ButtonName;
+            BtnProgram3.Content = config.ButtonName;
+            BtnPIPFillProgram3.Content = config.ButtonName;
+        }
+        private void UpdateButton4Labels(ButtonSourceMapping config)
+        {
+            BtnPreset4.Content = config.ButtonName;
+            BtnProgram4.Content = config.ButtonName;
+            BtnPIPFillProgram4.Content = config.ButtonName;
+        }
+
+        private void UpdateButton5Labels(ButtonSourceMapping config)
+        {
+            BtnPreset5.Content = config.ButtonName;
+            BtnProgram5.Content = config.ButtonName;
+            BtnPIPFillProgram5.Content = config.ButtonName;
+        }
+        private void UpdateButton6Labels(ButtonSourceMapping config)
+        {
+            BtnPreset6.Content = config.ButtonName;
+            BtnProgram6.Content = config.ButtonName;
+            BtnPIPFillProgram6.Content = config.ButtonName;
+        }
+        private void UpdateButton7Labels(ButtonSourceMapping config)
+        {
+            BtnPreset7.Content = config.ButtonName;
+            BtnProgram7.Content = config.ButtonName;
+            BtnPIPFillProgram7.Content = config.ButtonName;
+        }
+        private void UpdateButton8Labels(ButtonSourceMapping config)
+        {
+            BtnPreset8.Content = config.ButtonName;
+            BtnProgram8.Content = config.ButtonName;
+            BtnPIPFillProgram8.Content = config.ButtonName;
+        }
+
+
+        private void SetDefaultConfig()
+        {
+            BMDSwitcherConfigSettings cfg = new BMDSwitcherConfigSettings()
+            {
+                Routing = new List<ButtonSourceMapping>() {
+                    new ButtonSourceMapping() { KeyName = "left", ButtonId = 1, ButtonName = "PULPIT", PhysicalInputId = 5, LongName = "PULPIT", ShortName = "PLPT" },
+                    new ButtonSourceMapping() { KeyName = "center", ButtonId = 2, ButtonName = "CENTER", PhysicalInputId = 5, LongName = "CENTER", ShortName = "CNTR" },
+                    new ButtonSourceMapping() { KeyName = "right", ButtonId = 3, ButtonName = "LECTERN", PhysicalInputId = 5, LongName = "LECTERN", ShortName = "LTRN" },
+                    new ButtonSourceMapping() { KeyName = "organ", ButtonId = 4, ButtonName = "ORGAN", PhysicalInputId = 5, LongName = "ORGAN", ShortName = "ORGN" },
+                    new ButtonSourceMapping() { KeyName = "slide", ButtonId = 5, ButtonName = "SLIDE", PhysicalInputId = 5, LongName = "SLIDESHOW", ShortName = "SLDE" },
+                    new ButtonSourceMapping() { KeyName = "c3", ButtonId = 6, ButtonName = "CAM3", PhysicalInputId = 5, LongName = "CAMERA 3", ShortName = "CAM3" },
+                    new ButtonSourceMapping() { KeyName = "c7", ButtonId = 7, ButtonName = "CAM7", PhysicalInputId = 5, LongName = "CAMERA 7", ShortName = "CAM7" },
+                    new ButtonSourceMapping() { KeyName = "c8", ButtonId = 8, ButtonName = "CAM8", PhysicalInputId = 5, LongName = "CAMERA 8", ShortName = "CAM8" },
+                },
+                MixEffectSettings = new BMDMixEffectSettings()
+                {
+                    Rate = 30
+                },
+                MultiviewerConfig = new BMDMultiviewerSettings()
+                {
+                    Layout = (int)_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop // 12
+                },
+                DownstreamKey1Config = new BMDDSKSettings()
+                {
+                    InputFill = 4,
+                    InputCut = 0,
+                    Clip = 1,
+                    Gain = 1,
+                    Rate = 30,
+                    Invert = 1,
+                    IsPremultipled = 0,
+                    IsMasked = 1,
+                    MaskTop = -5.4f,
+                    MaskBottom = -9,
+                    MaskLeft = -16,
+                    MaskRight = 16
+                },
+                DownstreamKey2Config = new BMDDSKSettings()
+                {
+                    InputFill = 4,
+                    InputCut = 0,
+                    Clip = 1,
+                    Gain = 1,
+                    Rate = 30,
+                    Invert = 1,
+                    IsPremultipled = 0,
+                    IsMasked = 1,
+                    MaskTop = 9,
+                    MaskBottom = -9,
+                    MaskLeft = 0,
+                    MaskRight = 16
+                },
+                PIPSettings = new BMDUSKSettings()
+                {
+                    DefaultFillSource = 1,
+                    IsBordered = 0,
+                    IsMasked = 0,
+                    MaskTop = 0,
+                    MaskBottom = 0,
+                    MaskLeft = 0,
+                    MaskRight = 0,
+                    Current = new KeyFrameSettings()
+                    {
+                        PositionX = 9.6,
+                        PositionY = -6,
+                        SizeX = 0.4,
+                        SizeY = 0.4
+                    },
+                    KeyFrameA = new KeyFrameSettings()
+                    {
+                        PositionX = 9.6,
+                        PositionY = -6,
+                        SizeX = 0.4,
+                        SizeY = 0.4
+                    },
+                    KeyFrameB = new KeyFrameSettings()
+                    {
+                        PositionX = 23,
+                        PositionY = -6,
+                        SizeX = 0.4,
+                        SizeY = 0.4
+                    }
+                }
+            };
+
+
+            _config = cfg;
+        }
+
+        public BMDSwitcherConfigSettings Config { get => _config; }
+
+
+
+
     }
 }

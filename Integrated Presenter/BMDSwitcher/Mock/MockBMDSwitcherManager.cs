@@ -1,6 +1,8 @@
 ﻿using BMDSwitcherAPI;
+using Integrated_Presenter.BMDSwitcher.Config;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,7 +22,18 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             _state = new BMDSwitcherState();
             _state.SetDefault();
-            mockMultiviewer = new MockMultiviewer(parent.LabelSourceMappings);
+            Dictionary<int, string> mapping = new Dictionary<int, string>()
+            {
+                [1] = parent.Config.Routing.Where(r => r.ButtonId == 1).First().KeyName,
+                [2] = parent.Config.Routing.Where(r => r.ButtonId == 2).First().KeyName,
+                [3] = parent.Config.Routing.Where(r => r.ButtonId == 3).First().KeyName,
+                [4] = parent.Config.Routing.Where(r => r.ButtonId == 4).First().KeyName,
+                [5] = parent.Config.Routing.Where(r => r.ButtonId == 5).First().KeyName,
+                [6] = parent.Config.Routing.Where(r => r.ButtonId == 6).First().KeyName,
+                [7] = parent.Config.Routing.Where(r => r.ButtonId == 7).First().KeyName,
+                [8] = parent.Config.Routing.Where(r => r.ButtonId == 8).First().KeyName,
+            };
+            mockMultiviewer = new MockMultiviewer(mapping);
             parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
         }
 
@@ -187,9 +200,8 @@ namespace Integrated_Presenter.BMDSwitcher
             mockMultiviewer.Close();
         }
 
-        public void ConfigureSwitcher()
+        public void ConfigureSwitcher(BMDSwitcherConfigSettings config)
         {
-            throw new NotImplementedException();
         }
 
         public void PerformUSK1RunToKeyFrameA()
