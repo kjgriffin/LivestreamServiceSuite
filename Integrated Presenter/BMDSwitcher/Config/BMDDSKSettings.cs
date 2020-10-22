@@ -10,8 +10,8 @@ namespace Integrated_Presenter.BMDSwitcher.Config
         public int InputCut { get; set; }
         public int Rate { get; set; }
         public int IsPremultipled { get; set; }
-        public int Clip { get; set; }
-        public int Gain { get; set; }
+        public double Clip { get; set; }
+        public double Gain { get; set; }
         public int Invert { get; set; }
         public int IsMasked { get; set; }
         public float MaskTop { get; set; }
