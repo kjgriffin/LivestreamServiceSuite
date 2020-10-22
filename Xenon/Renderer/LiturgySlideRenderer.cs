@@ -33,9 +33,9 @@ namespace Xenon.Renderer
 
             Font LSBSymbolFont = new System.Drawing.Font("LSBSymbol", 36, System.Drawing.FontStyle.Regular);
 
-            gfx.Clear(Color.Black);
+            gfx.Clear(Color.Gray);
 
-            gfx.FillRectangle(Brushes.White, Layouts.LiturgyLayout.Key);
+            gfx.FillRectangle(Brushes.Black, Layouts.LiturgyLayout.Key);
 
             StringFormat topleftalign = new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };
             StringFormat centeralign = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
@@ -78,7 +78,7 @@ namespace Xenon.Renderer
                             //gfx.FillRectangle(Brushes.Red, speakerblock);
                             //gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
                         }
-                        gfx.DrawString(line.Content[1].Data, renderInfo.BoldFont, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
+                        gfx.DrawString(line.Content[1].Data, renderInfo.BoldFont, Brushes.White, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
                         break;
                     default:
                         if (drawspeaker)
@@ -87,7 +87,7 @@ namespace Xenon.Renderer
                             //gfx.DrawRectangle(Pens.Red, speakerblock);
                             //gfx.DrawString(line.Content[0].Data, renderInfo.RegularFont, Brushes.Red, speakerblock, centeralign);
                         }
-                        gfx.DrawString(line.Content[1].Data, renderInfo.RegularFont, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
+                        gfx.DrawString(line.Content[1].Data, renderInfo.RegularFont, Brushes.White, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
                         break;
                 }
 
