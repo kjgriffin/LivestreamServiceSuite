@@ -1,4 +1,5 @@
 ﻿using Integrated_Presenter.BMDSwitcher;
+using Integrated_Presenter.BMDSwitcher.Config;
 
 namespace Integrated_Presenter
 {
@@ -35,6 +36,6 @@ namespace Integrated_Presenter
         void PerformToggleKey1ForNextTrans();
 
         void Close();
-        void ConfigureSwitcher();
+        void ConfigureSwitcher(BMDSwitcherConfigSettings config);
     }
 }

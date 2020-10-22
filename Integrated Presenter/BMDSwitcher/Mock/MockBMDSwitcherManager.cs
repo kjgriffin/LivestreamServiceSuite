@@ -1,6 +1,8 @@
 ﻿using BMDSwitcherAPI;
+using Integrated_Presenter.BMDSwitcher.Config;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,7 +22,18 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             _state = new BMDSwitcherState();
             _state.SetDefault();
-            mockMultiviewer = new MockMultiviewer(parent.LabelSourceMappings);
+            Dictionary<int, string> mapping = new Dictionary<int, string>()
+            {
+                [1] = "center",
+                [2] = "organ",
+                [3] = "cam3",
+                [4] = "slide",
+                [5] = "left",
+                [6] = "right",
+                [7] = "cam7",
+                [8] = "cam8"
+            };
+            mockMultiviewer = new MockMultiviewer(mapping, parent.Config);
             parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
         }
 
@@ -187,9 +200,8 @@ namespace Integrated_Presenter.BMDSwitcher
             mockMultiviewer.Close();
         }
 
-        public void ConfigureSwitcher()
+        public void ConfigureSwitcher(BMDSwitcherConfigSettings config)
         {
-            throw new NotImplementedException();
         }
 
         public void PerformUSK1RunToKeyFrameA()
