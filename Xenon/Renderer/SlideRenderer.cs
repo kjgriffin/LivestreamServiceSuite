@@ -61,6 +61,8 @@ namespace Xenon.Renderer
                     return isr.RenderImageSlide(slide, Messages);
                 case SlideFormat.ScaledImage:
                     return isr.RenderImageSlide(slide, Messages);
+                case SlideFormat.AutoscaledImage:
+                    return isr.RenderImageSlide(slide, Messages);
                 case SlideFormat.LiturgyImage:
                     return isr.RenderImageSlide(slide, Messages);
                 case SlideFormat.Reading:

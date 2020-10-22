@@ -8,6 +8,7 @@ namespace Xenon.SlideAssembly
     {
         Video,
         ScaledImage,
+        AutoscaledImage,
         UnscaledImage,
         LiturgyImage,
         Liturgy,
