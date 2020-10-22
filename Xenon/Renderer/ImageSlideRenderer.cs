@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Windows.Media;
 using Xenon.Helpers;
 
 namespace Xenon.Renderer
@@ -106,11 +105,30 @@ namespace Xenon.Renderer
             s = new Size((int)(sourceimage.Width * scale), (int)(sourceimage.Height * scale));
             p = new Point((Layout.LiturgyLayout.Key.Width - s.Width) / 2, (Layout.LiturgyLayout.Key.Height - s.Height) / 2).Add(Layout.LiturgyLayout.Key.Location);
 
-            gfx.Clear(System.Drawing.Color.Black);
-            gfx.FillRectangle(System.Drawing.Brushes.White, Layout.LiturgyLayout.Key);
-            gfx.DrawImage(sourceimage, new Rectangle(p, s), new Rectangle(new Point(0, 0), sourceimage.Size), GraphicsUnit.Pixel);
+            gfx.Clear(System.Drawing.Color.Gray);
+            gfx.FillRectangle(System.Drawing.Brushes.Black, Layout.LiturgyLayout.Key);
+            gfx.DrawImage(InvertImage(sourceimage), new Rectangle(p, s), new Rectangle(new Point(0, 0), sourceimage.Size), GraphicsUnit.Pixel);
             return bmp;
 
+        }
+
+        private Bitmap InvertImage(Bitmap source)
+        {
+            /*
+                https://stackoverflow.com/questions/33024881/invert-image-faster-in-c-sharp
+             */
+            Bitmap res = new Bitmap(source);
+
+            for (int y = 0; y < res.Height; y++)
+            {
+                for (int x = 0; x < res.Width; x++)
+                {
+                    Color inv = res.GetPixel(x, y);
+                    inv = Color.FromArgb(255, 255 - inv.R, 255 - inv.G, 255 - inv.B);
+                    res.SetPixel(x, y, inv);
+                }
+            }
+            return res;
         }
 
 
