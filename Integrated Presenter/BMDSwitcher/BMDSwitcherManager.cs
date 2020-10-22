@@ -637,11 +637,12 @@ namespace Integrated_Presenter
                 long sourceid;
                 inputsource.GetInputId(out sourceid);
 
-                var map = _config.Routing.Where(r => (long)r.PhysicalInputId == sourceid).First();
-                if (map != null)
+                var map = _config.Routing.Where(r => (long)r.PhysicalInputId == sourceid);
+                if (map != null && map.Count() > 0)
                 {
-                    inputsource.SetLongName(map.LongName);
-                    inputsource.SetShortName(map.ShortName);
+                    var source = map.First();
+                    inputsource.SetLongName(source.LongName);
+                    inputsource.SetShortName(source.ShortName);
                 }
 
             }

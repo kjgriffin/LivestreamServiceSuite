@@ -1601,7 +1601,15 @@ namespace Integrated_Presenter
                 },
                 MultiviewerConfig = new BMDMultiviewerSettings()
                 {
-                    Layout = (int)_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop // 12
+                    Layout = (int)_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop, // 12
+                    Window2 = 5,
+                    Window3 = 1,
+                    Window4 = 6,
+                    Window5 = 2,
+                    Window6 = 4,
+                    Window7 = 3,
+                    Window8 = 7,
+                    Window9 = 8
                 },
                 DownstreamKey1Config = new BMDDSKSettings()
                 {
