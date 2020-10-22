@@ -56,6 +56,13 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)fitimage.Compile(Lexer, Logger);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.AutoFitImage]))
+            {
+                XenonASTAutoFitImage autofit = new XenonASTAutoFitImage();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.AutoFitImage]);
+                expr.Command = (IXenonASTCommand)autofit.Compile(Lexer, Logger);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]))
             {
                 XenonASTLiturgyImage liturgyimage = new XenonASTLiturgyImage();

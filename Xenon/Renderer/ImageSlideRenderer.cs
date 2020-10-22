@@ -39,6 +39,11 @@ namespace Xenon.Renderer
                 res.Bitmap = RenderUniformScale(sourceimage);
                 res.RenderedAs = "Full";
             }
+            else if (slide.Format == SlideFormat.AutoscaledImage)
+            {
+                res.Bitmap = RenderAutoScaled(sourceimage);
+                res.RenderedAs = "Full";
+            }
             else if (slide.Format == SlideFormat.LiturgyImage)
             {
                 res.Bitmap = RenderLiturgyImage(sourceimage);
@@ -82,6 +87,121 @@ namespace Xenon.Renderer
             gfx.DrawImage(sourceimage, new Rectangle(p, s), new Rectangle(new Point(0, 0), sourceimage.Size), GraphicsUnit.Pixel);
             return bmp;
 
+        }
+
+        private Bitmap RenderAutoScaled(Bitmap sourceimage)
+        {
+            /* inspect the image (assumes white background)
+                find edge most (top, left, right, bottom) non-white pixels to determine effective image size
+                crop this image out
+                apply border to fit into action safe region: https://eks.tv/title-safe-still-matters/#:~:text=These%20are%20areas%20on%20the,and%2090%25%20for%20action%20safe.&text=Unless%20you%20don't%20care,won't%20see%20your%20text.
+                will use 93% space
+            */
+            int topbound = 0;
+            int bottombound = sourceimage.Height - 1;
+            int leftbound = 0;
+            int rightbound = sourceimage.Width - 1;
+
+            topbound = SearchBitmapForColor(sourceimage, Color.White, 1).y;
+            bottombound = SearchBitmapForColor(sourceimage, Color.White, 2).y;
+            leftbound = SearchBitmapForColor(sourceimage, Color.White, 3).x;
+            rightbound = SearchBitmapForColor(sourceimage, Color.White, 4).x;
+
+
+            Bitmap bmp = new Bitmap(Layout.FullImageLayout.Size.Width, Layout.FullImageLayout.Size.Height);
+
+            double scale = 1;
+            Point p;
+            Size s;
+
+            double xscale = 1;
+            double yscale = 1;
+
+            double fillsize = 0.93;
+
+            xscale = ((double)Layout.FullImageLayout.Size.Width * fillsize) / (rightbound - leftbound);
+            yscale = ((double)Layout.FullImageLayout.Size.Height * fillsize) / (bottombound - topbound);
+
+            scale = xscale < yscale ? xscale : yscale;
+
+            s = new Size((int)((rightbound - leftbound) * scale), (int)((bottombound - topbound) * scale));
+            p = new Point((Layout.FullImageLayout.Size.Width - s.Width) / 2, (Layout.FullImageLayout.Size.Height - s.Height) / 2);
+
+            Graphics gfx = Graphics.FromImage(bmp);
+            gfx.Clear(Color.White);
+            gfx.DrawImage(sourceimage, new Rectangle(p, s), leftbound, topbound, (rightbound - leftbound), (bottombound - topbound), GraphicsUnit.Pixel);
+
+            return bmp;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="col"></param>
+        /// <param name="type"> 1: top, 2: bottom, 3: left, 4: right</param>
+        /// <returns></returns>
+        private (int x, int y) SearchBitmapForColor(Bitmap source, Color col, int type)
+        {
+            Color test = Color.FromArgb(255, col.R, col.G, col.B);
+            if (type == 1)
+            {
+                for (int y = 0; y < source.Height; y++)
+                {
+                    for (int x = 0; x < source.Width; x++)
+                    {
+                        Color pix = source.GetPixel(x, y);
+                        if (pix != test)
+                        {
+                            return (x, y);
+                        }
+                    }
+                }
+            }
+            else if (type == 2)
+            {
+                for (int y = source.Height - 1; y >= 0; y--)
+                {
+                    for (int x = source.Width - 1; x >= 0; x--)
+                    {
+                        Color pix = source.GetPixel(x, y);
+                        if (pix != test)
+                        {
+                            return (x, y);
+                        }
+                    }
+                }
+            }
+            else if (type == 3)
+            {
+                for (int x = 0; x < source.Width; x++)
+                {
+                    for (int y = 0; y < source.Height; y++)
+                    {
+                        Color pix = source.GetPixel(x, y);
+                        if (pix != test)
+                        {
+                            return (x, y);
+                        }
+                    }
+                }
+            }
+            else if (type == 4)
+            {
+                for (int x = source.Width - 1; x >= 0; x--)
+                {
+                    for (int y = source.Height - 1; y >= 0; y--)
+                    {
+                        Color pix = source.GetPixel(x, y);
+                        if (pix != test)
+                        {
+                            return (x, y);
+                        }
+                    }
+                }
+            }
+
+            return (0, 0);
         }
 
         private Bitmap RenderLiturgyImage(Bitmap sourceimage)
