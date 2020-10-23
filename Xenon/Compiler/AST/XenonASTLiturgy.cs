@@ -79,7 +79,7 @@ namespace Xenon.Compiler
 
                 Also must follow the 3 golden rules of slide layout
 
-                1. If the starting speaker is [C] Congregation, no other speaker allowed on the slide
+                1. If the starting speaker is [C] Congregation, no other speaker allowed on the slide (or if starting speaker is [R] respondant
                 2. There may be no more than 2 speakers per slide
                 3. If a logical-line requires wrapping the line must be the first line of the slide
              */
@@ -108,7 +108,7 @@ namespace Xenon.Compiler
 
                 bool overheight = lineheight + project.Layouts.LiturgyLayout.InterLineSpacing + line.height > project.Layouts.LiturgyLayout.GetRenderInfo().TextBox.Height;
                 bool overspeakerswitch = speakers > 2; // Rule 2
-                bool incorrrectspeakerorder = startspeaker == "C" && line.speaker != "C"; // Rule 1
+                bool incorrrectspeakerorder = (startspeaker == "C" && line.speaker != "C") || (startspeaker == "R" && line.speaker != "R"); // Rule 1
                 bool paragraphwrapissue = speakers > 1 && !line.fulltextonline; // Rule 3
                 if (overheight || overspeakerswitch || incorrrectspeakerorder || paragraphwrapissue)
                 {

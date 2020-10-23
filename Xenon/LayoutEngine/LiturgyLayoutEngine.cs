@@ -54,6 +54,7 @@ namespace Xenon.LayoutEngine
             "A",
             "L",
             "C",
+            "R",
             "$",
         };
 
@@ -154,6 +155,9 @@ namespace Xenon.LayoutEngine
                 switch (line.speaker)
                 {
                     case "C":
+                        f = renderInfo.BoldFont;
+                        break;
+                    case "R":
                         f = renderInfo.BoldFont;
                         break;
                     default:
