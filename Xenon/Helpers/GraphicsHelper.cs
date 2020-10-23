@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -38,6 +39,43 @@ namespace Xenon.Helpers
 
                 return new Bitmap(bitmap);
             }
+        }
+
+
+        public static StringFormat DefaultStringFormat()
+        {
+            StringFormat format = StringFormat.GenericTypographic;
+            format.Trimming = StringTrimming.None;
+            format.FormatFlags = StringFormatFlags.NoWrap;
+            format.LineAlignment = StringAlignment.Near;
+            return format;
+        }
+
+        public static SizeF MeasureStringCharacters(this Graphics gfx, string text, Font font, RectangleF textbox)
+        {
+            //StringFormat format = StringFormat.GenericTypographic;
+            //format.Trimming = StringTrimming.None;
+            //format.FormatFlags = StringFormatFlags.NoWrap;
+            //format.LineAlignment = StringAlignment.Near;
+            StringFormat format = DefaultStringFormat();
+
+            string measuretext = text;
+
+            if (Regex.Match(text, "\\s").Success)
+            {
+                measuretext = $"{text}.";
+                format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, measuretext.Length) });
+                var rectwithextra = gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx);
+                format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, ".".Length) });
+                var rectofextra = gfx.MeasureCharacterRanges(".", font, textbox, format)[0].GetBounds(gfx);
+                return new SizeF(rectwithextra.Size.Width - rectofextra.Size.Width, font.Height);
+            }
+            else
+            {
+                format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, measuretext.Length) });
+                return gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx).Size;
+            }
+
         }
 
         //public static Font LoadLSBSymbolFont()

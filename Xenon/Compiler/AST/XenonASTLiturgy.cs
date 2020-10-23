@@ -35,7 +35,7 @@ namespace Xenon.Compiler
                 }
                 else
                 {
-                    Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Expected Command 'break'", ErrorName = "Unrecognized Command", Generator = "Compiler - XenonASTLiturgy", Inner = "", Level = XenonCompilerMessageType.Error, Token = Lexer.CurrentToken });    
+                    Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Expected Command 'break'", ErrorName = "Unrecognized Command", Generator = "Compiler - XenonASTLiturgy", Inner = "", Level = XenonCompilerMessageType.Error, Token = Lexer.CurrentToken });
                 }
                 liturgy = CompileSubContent(Lexer, Logger);
                 liturgys.Elements.Add(liturgy);
@@ -65,6 +65,7 @@ namespace Xenon.Compiler
             LiturgyLayoutEngine layoutEngine = new LiturgyLayoutEngine();
             layoutEngine.BuildLines(Content.Select(p => p.TextContent).ToList());
             layoutEngine.BuildSlideLines(project.Layouts.LiturgyLayout.GetRenderInfo());
+            layoutEngine.BuildTextLines(project.Layouts.LiturgyLayout.GetRenderInfo());
 
 
 
@@ -97,19 +98,19 @@ namespace Xenon.Compiler
 
             string lastspeaker = "";
             int speakers = 0;
-            string startspeaker = layoutEngine.LayoutLines.FirstOrDefault().speaker ?? "";
+            string startspeaker = layoutEngine.LiturgyTextLines.FirstOrDefault().Speaker ?? "";
 
-            foreach (var line in layoutEngine.LayoutLines)
+            foreach (var line in layoutEngine.LiturgyTextLines)
             {
-                if (lastspeaker != line.speaker)
+                if (lastspeaker != line.Speaker)
                 {
                     speakers++;
                 }
 
-                bool overheight = lineheight + project.Layouts.LiturgyLayout.InterLineSpacing + line.height > project.Layouts.LiturgyLayout.GetRenderInfo().TextBox.Height;
+                bool overheight = lineheight + project.Layouts.LiturgyLayout.InterLineSpacing + line.Height > project.Layouts.LiturgyLayout.GetRenderInfo().TextBox.Height;
                 bool overspeakerswitch = speakers > 2; // Rule 2
-                bool incorrrectspeakerorder = (startspeaker == "C" && line.speaker != "C") || (startspeaker == "R" && line.speaker != "R"); // Rule 1
-                bool paragraphwrapissue = speakers > 1 && !line.fulltextonline; // Rule 3
+                bool incorrrectspeakerorder = (startspeaker == "C" && line.Speaker != "C") || (startspeaker == "R" && line.Speaker != "R"); // Rule 1
+                bool paragraphwrapissue = speakers > 1 && line.MultilineParagraph; // Rule 3
                 if (overheight || overspeakerswitch || incorrrectspeakerorder || paragraphwrapissue)
                 {
                     // need to start a new slide for this one
@@ -121,21 +122,30 @@ namespace Xenon.Compiler
                         Name = "UNNAMED_liturgy",
                         Number = project.NewSlideNumber,
                         Format = SlideFormat.Liturgy,
-                        MediaType = MediaType.Image
+                        MediaType = MediaType.Image,
                     };
                     lineheight = 0;
-                    startspeaker = line.speaker;
-                    lastspeaker = line.speaker;
+                    startspeaker = line.Speaker;
+                    lastspeaker = line.Speaker;
                     speakers = 1;
                 }
-                lastspeaker = line.speaker;
-                lineheight += project.Layouts.LiturgyLayout.InterLineSpacing + line.height;
+                lastspeaker = line.Speaker;
+                lineheight += project.Layouts.LiturgyLayout.InterLineSpacing + line.Height;
                 liturgyslide.Lines.Add(
                     new SlideLine()
                     {
                         Content = {
-                            new SlideLineContent() { Data = line.speaker, Attributes = { ["width"] = line.width, ["height"] = line.height } },
-                            new SlideLineContent() { Data = string.Join("", line.words).Trim(), Attributes = { ["width"] = line.width, ["height"] = line.height  } }
+                            new SlideLineContent() { Data = line.Speaker, Attributes = { ["width"] = line.Width, ["height"] = line.Height } },
+                            new SlideLineContent()
+                            {
+                                Data = string.Join("", line.Words.Select(w => w.Value)).Trim(),
+                                Attributes =
+                                {
+                                    ["textline"] = line,
+                                    ["width"] = line.Width,
+                                    ["height"] = line.Height
+                                }
+                            }
                         }
                     }
                 );

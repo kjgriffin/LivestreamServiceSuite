@@ -25,10 +25,10 @@ namespace Xenon.Renderer
             gfx.Clear(Color.Gray);
             gfx.FillRectangle(Brushes.Black, Layouts.SermonLayout.Key);
 
-            // put 'sermon' in top left
-            gfx.DrawString("Sermon", renderInfo.RegularFont, Brushes.White, Layouts.SermonLayout.TopLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
+            // put 'preacher' in top left
+            gfx.DrawString(slide.Lines[2].Content[0].Data, renderInfo.RegularFont, Brushes.White, Layouts.SermonLayout.TopLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location).Move(100, 0), GraphicsHelper.LeftVerticalCenterAlign);
             // put reference in top right
-            gfx.DrawString(slide.Lines[1].Content[0].Data, renderInfo.ItalicFont, Brushes.White, Layouts.SermonLayout.TopLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
+            gfx.DrawString(slide.Lines[1].Content[0].Data, renderInfo.ItalicFont, Brushes.White, Layouts.SermonLayout.TopLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location).Move(-100, 0), GraphicsHelper.RightVerticalCenterAlign);
             // put title in center mid
             gfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.BoldFont, Brushes.White, Layouts.SermonLayout.MainLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location), GraphicsHelper.CenterAlign);
 
