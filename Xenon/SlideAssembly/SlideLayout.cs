@@ -11,6 +11,24 @@ namespace Xenon.SlideAssembly
         {
             Size = new Size(1920, 1080)
         };
+
+        public AnthemTitleLayout AnthemTitleLayout { get; set; } = new AnthemTitleLayout()
+        {
+            Size = new Size(1920, 1080),
+            Key = new Rectangle(0, 864, 1920, 216),
+            Font = new Font("Arial", 36, FontStyle.Regular),
+            TopLine = new Rectangle(50, 20, 1820, 50),
+            MainLine = new Rectangle(50, 150, 1820, 50)
+        };
+
+        public TwoPartTitleLayout TwoPartTitleLayout { get; set; } = new TwoPartTitleLayout()
+        {
+            Size = new Size(1920, 1080),
+            Key = new Rectangle(0, 864, 1920, 216),
+            Font = new Font("Arial", 36, FontStyle.Regular),
+            MainLine = new Rectangle(80, 0, 1760, 50)
+        };
+
         public LiturgyLayout LiturgyLayout { get; set; } = new LiturgyLayout()
         {
             Size = new Size(1920, 1080),

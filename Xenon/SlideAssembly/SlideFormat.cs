@@ -15,6 +15,8 @@ namespace Xenon.SlideAssembly
         LiturgyVerse,
         Reading,
         SermonTitle,
+        AnthemTitle,
+        TwoPartTitle,
         FullText,
         HymnTextVerse,
         Prefab,
