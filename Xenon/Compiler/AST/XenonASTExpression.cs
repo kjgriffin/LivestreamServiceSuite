@@ -105,6 +105,20 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)sermon.Compile(Lexer, Logger);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.AnthemTitle]))
+            {
+                XenonASTAnthemTitle anthem = new XenonASTAnthemTitle();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.AnthemTitle]);
+                expr.Command = (IXenonASTCommand)anthem.Compile(Lexer, Logger);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle]))
+            {
+                XenonAST2PartTitle title = new XenonAST2PartTitle();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle]);
+                expr.Command = (IXenonASTCommand)title.Compile(Lexer, Logger);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]))
             {
                 XenonASTTextHymn texthymn = new XenonASTTextHymn();
