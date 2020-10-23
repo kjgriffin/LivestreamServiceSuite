@@ -11,15 +11,17 @@ namespace Xenon.Compiler
 
         public string Title { get; set; }
         public string Reference { get; set; }
+        public string Preacher { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTSermon sermon = new XenonASTSermon();
             Lexer.GobbleWhitespace();
 
-            var args = Lexer.ConsumeArgList(true, "title", "reference");
+            var args = Lexer.ConsumeArgList(true, "title", "reference", "preacher");
             sermon.Title = args["title"];
             sermon.Reference = args["reference"];
+            sermon.Preacher = args["preacher"];
             return sermon;
 
         }
@@ -38,12 +40,15 @@ namespace Xenon.Compiler
 
             SlideLineContent slcref = new SlideLineContent() { Data = Reference };
             SlideLineContent slctitle = new SlideLineContent() { Data = Title };
+            SlideLineContent slcpreacher = new SlideLineContent() { Data = Preacher };
 
             SlideLine slref = new SlideLine() { Content = new List<SlideLineContent>() { slcref } };
             SlideLine sltitle = new SlideLine() { Content = new List<SlideLineContent>() { slctitle } };
+            SlideLine slpreacher = new SlideLine() { Content = new List<SlideLineContent>() { slcpreacher } };
 
             sermonslide.Lines.Add(sltitle);
             sermonslide.Lines.Add(slref);
+            sermonslide.Lines.Add(slpreacher);
 
             project.Slides.Add(sermonslide);
 
@@ -55,6 +60,7 @@ namespace Xenon.Compiler
             Debug.WriteLine("<XenonASTSermon>");
             Debug.WriteLine($"Title='{Title}'");
             Debug.WriteLine($"Reference='{Reference}'");
+            Debug.WriteLine($"Preacher='{Preacher}'");
             Debug.WriteLine("</XenonASTSermon>");
         }
 

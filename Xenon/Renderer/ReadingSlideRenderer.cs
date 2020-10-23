@@ -27,11 +27,11 @@ namespace Xenon.Renderer
 
 
             // put name in center left
-            gfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.RegularFont, Brushes.White, Layouts.ReadingLayout.TextAera.Move(Layouts.ReadingLayout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign); 
+            gfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.RegularFont, Brushes.White, Layouts.ReadingLayout.TextAera.Move(Layouts.ReadingLayout.Key.Location).Move(150, 0), GraphicsHelper.LeftVerticalCenterAlign); 
 
 
             // put reference in center right
-            gfx.DrawString(slide.Lines[1].Content[0].Data, renderInfo.ItalicFont, Brushes.White, Layouts.ReadingLayout.TextAera.Move(Layouts.ReadingLayout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
+            gfx.DrawString(slide.Lines[1].Content[0].Data, renderInfo.ItalicFont, Brushes.White, Layouts.ReadingLayout.TextAera.Move(Layouts.ReadingLayout.Key.Location).Move(-180, 0), GraphicsHelper.RightVerticalCenterAlign);
 
 
             res.Bitmap = bmp;
