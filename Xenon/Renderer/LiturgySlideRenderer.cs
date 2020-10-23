@@ -80,6 +80,15 @@ namespace Xenon.Renderer
                         }
                         gfx.DrawString(line.Content[1].Data, renderInfo.BoldFont, Brushes.White, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
                         break;
+                    case "R":
+                        if (drawspeaker)
+                        {
+                            gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, centeralign);
+                            //gfx.FillRectangle(Brushes.Red, speakerblock);
+                            //gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
+                        }
+                        gfx.DrawString(line.Content[1].Data, renderInfo.BoldFont, Brushes.White, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
+                        break;
                     default:
                         if (drawspeaker)
                         {
