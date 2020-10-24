@@ -18,10 +18,21 @@ namespace Xenon.Helpers
         {
             return new Rectangle(r.X + offset.X, r.Y + offset.Y, r.Width, r.Height);
         }
+        
+        public static RectangleF Move(this RectangleF r, PointF offset)
+        {
+            return new RectangleF(r.X + offset.X, r.Y + offset.Y, r.Width, r.Height);
+        }
+
 
         public static Rectangle Move(this Rectangle r, int offsetx, int offsety)
         {
             return new Rectangle(r.X + offsetx, r.Y + offsety, r.Width, r.Height);
+        }
+        
+        public static RectangleF Move(this RectangleF r, float offsetx, float offsety)
+        {
+            return new RectangleF(r.X + offsetx, r.Y + offsety, r.Width, r.Height);
         }
 
         public static Rectangle Center(this Rectangle r)

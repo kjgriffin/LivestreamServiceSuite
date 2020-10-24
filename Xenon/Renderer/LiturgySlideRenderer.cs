@@ -6,9 +6,6 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Shapes;
 using Xenon.Helpers;
 
 namespace Xenon.Renderer
@@ -31,18 +28,16 @@ namespace Xenon.Renderer
 
             Graphics gfx = Graphics.FromImage(bmp);
 
-            Font LSBSymbolFont = new System.Drawing.Font("LSBSymbol", 36, System.Drawing.FontStyle.Regular);
+            gfx.Clear(Color.Gray);
 
-            gfx.Clear(Color.Black);
-
-            gfx.FillRectangle(Brushes.White, Layouts.LiturgyLayout.Key);
+            gfx.FillRectangle(Brushes.Black, Layouts.LiturgyLayout.Key);
 
             StringFormat topleftalign = new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };
             StringFormat centeralign = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
 
-            System.Drawing.Rectangle text = Layouts.LiturgyLayout.Text.Move(Layouts.LiturgyLayout.Key.Location);
+            RectangleF text = Layouts.LiturgyLayout.Text.Move(Layouts.LiturgyLayout.Key.Location);
 
-            System.Drawing.Rectangle speaker = Layouts.LiturgyLayout.Speaker.Move(Layouts.LiturgyLayout.Key.Location);
+            RectangleF speaker = Layouts.LiturgyLayout.Speaker.Move(Layouts.LiturgyLayout.Key.Location);
 
             //gfx.DrawRectangle(Pens.Red, text);
             //gfx.DrawRectangle(Pens.Purple, speaker);
@@ -58,6 +53,16 @@ namespace Xenon.Renderer
             int linenum = 0;
             int linepos = interspace;
             string lastspeaker = "";
+
+
+            Font fregular = new Font("Arial", 36, FontStyle.Regular);
+            Font fbold = new Font("Arial", 36, FontStyle.Bold);
+            Font fitalic = new Font("Arial", 36, FontStyle.Italic);
+
+            Font flsbregular = new Font("LSBSymbol", 36, FontStyle.Regular);
+            Font flsbbold = new Font("LSBSymbol", 36, FontStyle.Bold);
+            Font flsbitalic = new Font("LSBSymbol", 36, FontStyle.Italic);
+
             foreach (var line in slide.Lines)
             {
                 bool drawspeaker = false;
@@ -67,36 +72,39 @@ namespace Xenon.Renderer
                 }
                 lastspeaker = line.Content[0].Data;
 
-                System.Drawing.Rectangle speakerblock = new System.Drawing.Rectangle(speaker.Move(0, linepos + interspace * linenum).Location, new System.Drawing.Size(60, 60));
+                LiturgyTextLine linewords = (LiturgyTextLine)line.Content[1].Attributes["textline"];
 
-                switch (line.Content[0].Data)
+                // draw line
+                float xoffset = 0;
+                // center the text
+                //xoffset = (Layouts.TitleLiturgyVerseLayout.Textbox.Width / 2) - (linewords.Width / 2);
+
+
+                RectangleF speakerblock = new RectangleF(speaker.Move(0, linepos + interspace * linenum).Location, new Size(60, 60));
+
+                // draw speaker
+                if (drawspeaker)
                 {
-                    case "C":
-                        if (drawspeaker)
-                        {
-                            gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, centeralign);
-                            //gfx.FillRectangle(Brushes.Red, speakerblock);
-                            //gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
-                        }
-                        gfx.DrawString(line.Content[1].Data, renderInfo.BoldFont, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
-                        break;
-                    default:
-                        if (drawspeaker)
-                        {
-                            gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, centeralign);
-                            //gfx.DrawRectangle(Pens.Red, speakerblock);
-                            //gfx.DrawString(line.Content[0].Data, renderInfo.RegularFont, Brushes.Red, speakerblock, centeralign);
-                        }
-                        gfx.DrawString(line.Content[1].Data, renderInfo.RegularFont, Brushes.Black, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
-                        break;
+                    gfx.DrawString(linewords.Speaker, flsbregular, Brushes.LightBlue, speakerblock, centeralign);
                 }
 
-                //gfx.DrawString(line.Content[0].Data, f, Brushes.Red, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
+
+                foreach (var word in linewords.Words)
+                {
+                    Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
+                    gfx.DrawString(word.Value, f, Brushes.White, text.Move(xoffset, linepos + interspace * linenum).Location, GraphicsHelper.DefaultStringFormat());
+                    xoffset += word.Size.Width;
+                }
+
 
                 linenum++;
-                linepos += (int)(float)line.Content[1].Attributes["height"];
+                linepos += (int)linewords.Height;
+
+
+
             }
 
+         
             res.Bitmap = bmp;
 
             return res;

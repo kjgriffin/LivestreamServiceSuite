@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls.Ribbon.Primitives;
+using Xenon.LiturgyLayout;
 
 namespace Xenon.LayoutEngine
 {
@@ -38,7 +39,9 @@ namespace Xenon.LayoutEngine
     {
 
         public List<(string speaker, List<string> words)> Lines { get; set; } = new List<(string, List<string>)>();
+        public List<LiturgyLine> LiturgyLines { get; set; } = new List<LiturgyLine>();
         public List<LiturgyLayoutLine> LayoutLines { get; set; } = new List<LiturgyLayoutLine>();
+        public List<LiturgyTextLine> LiturgyTextLines { get; set; } = new List<LiturgyTextLine>();
 
 
         private List<string> SentenceEnds = new List<string>()
@@ -54,6 +57,7 @@ namespace Xenon.LayoutEngine
             "A",
             "L",
             "C",
+            "R",
             "$",
         };
 
@@ -86,6 +90,7 @@ namespace Xenon.LayoutEngine
                     if (speaker != string.Empty)
                     {
                         Lines.Add((speaker, finalizeline(line)));
+                        LiturgyLines.Add(createliturgyline(speaker, finalizeline(line)));
                     }
                     line.Clear();
                     // start a new sentence
@@ -107,8 +112,42 @@ namespace Xenon.LayoutEngine
                 skipnext = false;
             }
             Lines.Add((speaker, finalizeline(line)));
+            LiturgyLines.Add(createliturgyline(speaker, finalizeline(line)));
 
             Lines.ForEach(s => Debug.WriteLine($"<{s.speaker}> \"{string.Join("", s.words)}\""));
+        }
+
+        private LiturgyLine createliturgyline(string speaker, List<string> words)
+        {
+            LiturgyLine liturgy = new LiturgyLine();
+            liturgy.SpeakerText = speaker;
+            List<string> trimmedwords = new List<string>();
+            foreach (var word in words)
+            {
+                trimmedwords.Add(word);
+            }
+            // remove whitespace
+            while (trimmedwords.FindIndex(r => Regex.Match(r, "\\s").Success) == 0)
+            {
+                trimmedwords.RemoveAt(0);
+            }
+            while (trimmedwords.Count > 0 && trimmedwords.FindLastIndex(r => Regex.Match(r, "\\s").Success) == trimmedwords.Count - 1)
+            {
+                trimmedwords.RemoveAt(trimmedwords.Count - 1);
+            }
+            foreach (var word in trimmedwords)
+            {
+                LiturgyWord w = new LiturgyWord()
+                {
+                    IsBold = (speaker == "C" || speaker == "R"),
+                    IsLSBSymbol = word == "T",
+                    Value = word,
+                    Size = new Size(),
+                    IsSized = false,
+                };
+                liturgy.Words.Add(w);
+            }
+            return liturgy;
         }
 
         private List<string> finalizeline(List<string> words)
@@ -127,6 +166,15 @@ namespace Xenon.LayoutEngine
             }
 
             return result;
+        }
+
+        public void BuildTextLines(Rectangle textbox)
+        {
+            foreach (var speakerline in LiturgyLines)
+            {
+                var tlines = BlockParagraphLayoutEngine.LayoutLiturgyIntoTextLines(textbox, speakerline);
+                LiturgyTextLines.AddRange(tlines);
+            }
         }
 
         public void BuildSlideLines(LiturgyLayoutRenderInfo renderInfo)
@@ -154,6 +202,9 @@ namespace Xenon.LayoutEngine
                 switch (line.speaker)
                 {
                     case "C":
+                        f = renderInfo.BoldFont;
+                        break;
+                    case "R":
                         f = renderInfo.BoldFont;
                         break;
                     default:

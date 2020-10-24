@@ -56,6 +56,13 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)fitimage.Compile(Lexer, Logger);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.AutoFitImage]))
+            {
+                XenonASTAutoFitImage autofit = new XenonASTAutoFitImage();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.AutoFitImage]);
+                expr.Command = (IXenonASTCommand)autofit.Compile(Lexer, Logger);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]))
             {
                 XenonASTLiturgyImage liturgyimage = new XenonASTLiturgyImage();
@@ -84,6 +91,13 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)litverse.Compile(Lexer, Logger);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TitledLiturgyVerse]))
+            {
+                XenonASTTitledLiturgyVerse tlverse = new XenonASTTitledLiturgyVerse();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.TitledLiturgyVerse]);
+                expr.Command = (IXenonASTCommand)tlverse.Compile(Lexer, Logger);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Reading]))
             {
                 XenonASTReading reading = new XenonASTReading();
@@ -96,6 +110,20 @@ namespace Xenon.Compiler
                 XenonASTSermon sermon = new XenonASTSermon();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Sermon]);
                 expr.Command = (IXenonASTCommand)sermon.Compile(Lexer, Logger);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.AnthemTitle]))
+            {
+                XenonASTAnthemTitle anthem = new XenonASTAnthemTitle();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.AnthemTitle]);
+                expr.Command = (IXenonASTCommand)anthem.Compile(Lexer, Logger);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle]))
+            {
+                XenonAST2PartTitle title = new XenonAST2PartTitle();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle]);
+                expr.Command = (IXenonASTCommand)title.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]))
