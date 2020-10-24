@@ -74,6 +74,12 @@ namespace Xenon.Renderer
 
                 LiturgyTextLine linewords = (LiturgyTextLine)line.Content[1].Attributes["textline"];
 
+                // draw line
+                float xoffset = 0;
+                // center the text
+                //xoffset = (Layouts.TitleLiturgyVerseLayout.Textbox.Width / 2) - (linewords.Width / 2);
+
+
                 RectangleF speakerblock = new RectangleF(speaker.Move(0, linepos + interspace * linenum).Location, new Size(60, 60));
 
                 // draw speaker
@@ -82,16 +88,6 @@ namespace Xenon.Renderer
                     gfx.DrawString(linewords.Speaker, flsbregular, Brushes.LightBlue, speakerblock, centeralign);
                 }
 
-                // draw line
-                float xoffset = 0;
-
-                //foreach (var chunk in linewords.GetTextChunks())
-                //{
-                //    Font f = chunk.IsLSBSymbol ? (chunk.IsBold ? flsbbold : flsbregular) : (chunk.IsBold ? fbold : fregular);
-                //    gfx.DrawString(chunk.Text, f, Brushes.White, text.Move(xoffset, linepos + interspace * linenum).Location, topleftalign);
-                //    var realwidth = gfx.MeasureString(chunk.Text, f);
-                //    xoffset += realwidth.Width;
-                //}
 
                 foreach (var word in linewords.Words)
                 {
