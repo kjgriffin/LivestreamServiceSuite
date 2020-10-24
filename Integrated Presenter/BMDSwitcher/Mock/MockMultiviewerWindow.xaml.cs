@@ -41,13 +41,13 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 switch (SourceMap[inputID])
                 {
                     case "left":
-                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/leftcam.png"));
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/leftshot.png"));
                     case "center":
-                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/centercam.png"));
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/centershot.png"));
                     case "right":
-                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/rightcam.png"));
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/rightshot.png"));
                     case "organ":
-                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/organcam.png"));
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/organshot.png"));
                     case "slide":
                         return ImgSlide.Source;
                     default:
@@ -114,11 +114,13 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         }
 
+        public double dskliturgyopacity = 0.63;
+
         public void ShowProgramDSK1()
         {
             DSK1 = true;
             ImgProgramLowerThird.Source = ImgSlide.Source;
-            ImgProgramLowerThird.Opacity = 1;
+            ImgProgramLowerThird.Opacity = dskliturgyopacity;
         }
 
         public void ShowPresetTieDSK1(bool tie)
@@ -143,7 +145,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 var fadein = new DoubleAnimation()
                 {
                     From = 0,
-                    To = 1,
+                    To = dskliturgyopacity,
                     Duration = TimeSpan.FromSeconds(1)
                 };
                 Storyboard.SetTarget(fadein, ImgProgramLowerThird);
@@ -152,7 +154,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 sb.Children.Add(fadein);
                 sb.Begin();
                 await Task.Delay(1000);
-                ImgProgramLowerThird.Opacity = 1;
+                ImgProgramLowerThird.Opacity = dskliturgyopacity;
                 sb.Stop();
             }
             DSK1 = true;
@@ -170,7 +172,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             {
                 var fadeout = new DoubleAnimation()
                 {
-                    From = 1,
+                    From = dskliturgyopacity,
                     To = 0,
                     Duration = TimeSpan.FromSeconds(1)
                 };

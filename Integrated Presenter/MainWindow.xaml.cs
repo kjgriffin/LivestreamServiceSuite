@@ -61,6 +61,8 @@ namespace Integrated_Presenter
             UpdateDriveButtonStyle();
             UpdateProjectorButtonStyles();
 
+            UpdateMasterCautionDisplay();
+
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
 
             system_second_timer.Elapsed += System_second_timer_Elapsed;
@@ -814,7 +816,7 @@ namespace Integrated_Presenter
                     // make sure slides aren't the program source
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        switcherManager.PerformAutoTransition();
+                        switcherManager?.PerformAutoTransition();
                         await Task.Delay(1000);
                     }
                     Presentation.NextSlide();
@@ -843,8 +845,9 @@ namespace Integrated_Presenter
                     {
                         playMedia();
                     }
-
                 }
+                // At this point we've switched to the slide
+                SlideDriveVideo_Action(Presentation.Current);
             }
         }
 
@@ -857,7 +860,7 @@ namespace Integrated_Presenter
                     // make sure slides aren't the program source
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        switcherManager.PerformAutoTransition();
+                        switcherManager?.PerformAutoTransition();
                         await Task.Delay(1000);
                     }
                     Presentation.Override = s;
@@ -888,15 +891,27 @@ namespace Integrated_Presenter
                     {
                         playMedia();
                     }
-
                 }
+                // At this point we've switched to the slide
+                SlideDriveVideo_Action(Presentation.EffectiveCurrent);
             }
 
         }
 
-        private void SlideDriveVideo_Prev()
+        private void SlideDriveVideo_Action(Slide s)
         {
-
+            switch (s.Action)
+            {
+                case "t1restart":
+                    timer1span = TimeSpan.Zero; 
+                    break;
+                case "mastercaution2":
+                    MasterCautionState = 2;
+                    UpdateMasterCautionDisplay();
+                    break;
+                default:
+                    break;
+            }
         }
 
         private async void SlideDriveVideo_Current()
@@ -910,19 +925,19 @@ namespace Integrated_Presenter
                     // make sure slides aren't the program source
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        switcherManager.PerformAutoTransition();
+                        switcherManager?.PerformAutoTransition();
                         await Task.Delay(1000);
                     }
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.Current);
-                    switcherManager.PerformAutoOnAirDSK1();
+                    switcherManager?.PerformAutoOnAirDSK1();
 
                 }
                 else
                 {
                     if (switcherState.DSK1OnAir)
                     {
-                        switcherManager.PerformAutoOffAirDSK1();
+                        switcherManager?.PerformAutoOffAirDSK1();
                         await Task.Delay(1000);
                     }
                     slidesUpdated();
@@ -931,15 +946,16 @@ namespace Integrated_Presenter
                     {
                         ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                         await Task.Delay(500);
-                        switcherManager.PerformAutoTransition();
+                        switcherManager?.PerformAutoTransition();
                     }
 
                     if (Presentation.Current.Type == SlideType.Video)
                     {
                         playMedia();
                     }
-
                 }
+                // Do Action on current slide
+                SlideDriveVideo_Action(Presentation.Current);
             }
 
         }
@@ -971,9 +987,8 @@ namespace Integrated_Presenter
                 activepresentation = true;
 
                 // overwrite display of old presentation if already open
-                if (_display != null)
+                if (_display != null && _display.IsWindowVisilbe)
                 {
-
                 }
                 else
                 {
@@ -1341,17 +1356,17 @@ namespace Integrated_Presenter
 
         private void USK1RuntoA()
         {
-            switcherManager.PerformUSK1RunToKeyFrameA();
+            switcherManager?.PerformUSK1RunToKeyFrameA();
         }
 
         private void USK1RuntoB()
         {
-            switcherManager.PerformUSK1RunToKeyFrameB();
+            switcherManager?.PerformUSK1RunToKeyFrameB();
         }
 
         private void USK1RuntoFull()
         {
-            switcherManager.PerformUSK1RunToKeyFrameFull();
+            switcherManager?.PerformUSK1RunToKeyFrameFull();
         }
 
         private void ClickPIPRunToOnScreenBox(object sender, RoutedEventArgs e)
@@ -1371,7 +1386,7 @@ namespace Integrated_Presenter
 
         private void ChangePIPFillSource(int source)
         {
-            switcherManager.PerformUSK1FillSourceSelect(ConvertButtonToSourceID(source));
+            switcherManager?.PerformUSK1FillSourceSelect(ConvertButtonToSourceID(source));
         }
 
         private void ClickPIP1(object sender, RoutedEventArgs e)
@@ -1443,12 +1458,12 @@ namespace Integrated_Presenter
 
         private void ToggleTransBkgd()
         {
-            switcherManager.PerformToggleBackgroundForNextTrans();
+            switcherManager?.PerformToggleBackgroundForNextTrans();
         }
 
         private void ToggleTransKey1()
         {
-            switcherManager.PerformToggleKey1ForNextTrans();
+            switcherManager?.PerformToggleKey1ForNextTrans();
         }
 
         private void ClickTransBkgd(object sender, RoutedEventArgs e)
@@ -1798,6 +1813,36 @@ namespace Integrated_Presenter
         private void ClickConnectProjector(object sender, RoutedEventArgs e)
         {
             ConnectProjector();
+        }
+
+
+        /// <summary>
+        /// 0 = gray (good), 1 = orange (warn), 2 = red (error)
+        /// </summary>
+        int MasterCautionState = 0;
+
+        private void ClickBtnWarnings(object sender, RoutedEventArgs e)
+        {
+            MasterCautionState = 0;
+            UpdateMasterCautionDisplay();
+        }
+
+        private void UpdateMasterCautionDisplay()
+        {
+            switch (MasterCautionState)
+            {
+                case 0:
+                    btnMasterCaution.Background = Brushes.Gray;
+                    break;
+                case 1:
+                    btnMasterCaution.Background = Brushes.Orange;
+                    break;
+                case 2:
+                    btnMasterCaution.Background = Brushes.Red;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

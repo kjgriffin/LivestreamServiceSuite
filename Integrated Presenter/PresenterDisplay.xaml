@@ -6,8 +6,14 @@
         xmlns:local="clr-namespace:Integrated_Presenter"
         mc:Ignorable="d"
         KeyDown="Window_KeyDown"
+        Loaded="Window_Loaded"
+        Closed="window_Closed"
         Title="PresenterDisplay" Height="450" Width="800">
     <Grid>
-        <local:MediaPlayer2 x:Name="mediaPlayer"></local:MediaPlayer2>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="149*"/>
+            <ColumnDefinition Width="651*"/>
+        </Grid.ColumnDefinitions>
+        <local:MediaPlayer2 x:Name="mediaPlayer" Grid.ColumnSpan="2"></local:MediaPlayer2>
     </Grid>
 </Window>

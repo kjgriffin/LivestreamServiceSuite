@@ -25,7 +25,9 @@ namespace Integrated_Presenter
             var files = Directory.GetFiles(Folder).OrderBy(p => Convert.ToInt32(Regex.Match(Path.GetFileName(p), "(?<slidenum>\\d+).*").Groups["slidenum"].Value)).ToList();
             foreach (var file in files)
             {
-                string name = Regex.Match(Path.GetFileName(file), "\\d+_(?<type>.*)\\..*").Groups["type"].Value;
+                var filename = Regex.Match(Path.GetFileName(file), "\\d+_(?<type>[^-]*)-?(?<action>.*)\\..*");
+                string name = filename.Groups["type"].Value;
+                string action = filename.Groups["action"].Value;
                 SlideType type;
                 // look at the name to determine the type
                 switch (name)
@@ -43,7 +45,7 @@ namespace Integrated_Presenter
                         type = SlideType.Empty;
                         break;
                 }
-                Slide s = new Slide() { Source = file, Type = type };
+                Slide s = new Slide() { Source = file, Type = type, Action = action };
                 Slides.Add(s);
             }
 
@@ -145,6 +147,7 @@ namespace Integrated_Presenter
     {
         public SlideType Type { get; set; }
         public string Source { get; set; }
+        public string Action { get; set; }
     }
 
     public enum SlideType

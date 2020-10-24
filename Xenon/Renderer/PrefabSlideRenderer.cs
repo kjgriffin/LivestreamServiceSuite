@@ -36,6 +36,7 @@ namespace Xenon.Renderer
                 switch (slide.Data["prefabtype"])
                 {
                     case PrefabSlides.Copyright:
+                        res.RenderedAs = "Full-mastercaution2";
                         src = ProjectResources.PrefabSlides.CopyrightLicense;
                         break;
                     case PrefabSlides.ViewServices:

@@ -17,7 +17,7 @@ namespace Xenon.Renderer
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = "";
-            res.RenderedAs = "Liturgy";
+            res.RenderedAs = "Liturgy-t1restart";
 
             Bitmap bmp = new Bitmap(Layouts.SermonLayout.Size.Width, Layouts.SermonLayout.Size.Height);
             Graphics gfx = Graphics.FromImage(bmp);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Xenon.SlideAssembly
 {
@@ -11,6 +12,12 @@ namespace Xenon.SlideAssembly
         public Rectangle Key { get; set; }
         public Rectangle Textbox { get; set; }
         public Rectangle TitleLine { get; set; }
+        [JsonIgnore]
         public Font Font { get; set; }
+
+        public TitledLiturgyVerseLayout()
+        {
+            Font = new Font("Arial", 36, FontStyle.Regular);
+        }
     }
 }

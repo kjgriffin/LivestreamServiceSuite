@@ -20,6 +20,8 @@ namespace Integrated_Presenter
 
         MainWindow _control;
 
+        public bool IsWindowVisilbe { get; set; }
+
         public event EventHandler<MediaPlaybackTimeEventArgs> OnMediaPlaybackTimeUpdated;
 
         public PresenterDisplay(MainWindow parent)
@@ -142,6 +144,16 @@ namespace Integrated_Presenter
         private void Window_KeyDown_1(object sender, KeyEventArgs e)
         {
 
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            IsWindowVisilbe = true;
+        }
+
+        private void window_Closed(object sender, EventArgs e)
+        {
+            IsWindowVisilbe = false;
         }
     }
 }

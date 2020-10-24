@@ -118,6 +118,18 @@
                                                     </Viewbox>
                                                 </StackPanel>
                                             </Border>
+                                            <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="100">
+                                                <StackPanel>
+                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">WARNINGS</TextBlock>
+                                                    <Button Name="btnMasterCaution" Click="ClickBtnWarnings" IsTabStop="false" Background="Gray">
+                                                        <Button.Template>
+                                                            <ControlTemplate>
+                                                                <Ellipse Cursor="Hand" Margin="5" Width="60" Height="60" Fill="{TemplateBinding Property=Background}"></Ellipse>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Border>
                                         </StackPanel>
 
                                     </Grid>
