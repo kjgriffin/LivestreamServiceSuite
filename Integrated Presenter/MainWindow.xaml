@@ -24,7 +24,7 @@
                 <MenuItem Header="Connections" IsTabStop="False">
                     <MenuItem Click="ClickConnect" Header="Switcher" IsTabStop="False"></MenuItem>
                     <MenuItem Click="ClickConnectMock" Header="Mock Switcher" IsTabStop="False"></MenuItem>
-                    <MenuItem Click="ClickConfigureSwitcher" Header="Load Config" IsTabStop="False"></MenuItem>
+                    <MenuItem Click="ClickConnectProjector" Header="Projector" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
@@ -33,13 +33,12 @@
                     <MenuItem Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
                     <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
                     <MenuItem Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
+                    <MenuItem Header="Advanced Projector" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedProjector"></MenuItem>
                 </MenuItem>
-                <!--<MenuItem Header="Settings" IsTabStop="False">
-                    <MenuItem Header="DSK 1 Mask" Click="SetDSK1Mask" IsTabStop="False"></MenuItem> 
-                    <MenuItem Header="DSK 2 Mask" Click="SetDSK2Mask" IsTabStop="False"></MenuItem> 
-                    <MenuItem Header="Export DSK 1 Settings" Click="SaveDSK1Mask" IsTabStop="False"></MenuItem> 
-                    <MenuItem Header="Export DSK 2 Settings" Click="SaveDSK2Mask" IsTabStop="False"></MenuItem> 
-                </MenuItem>-->
+                <MenuItem Header="Settings" IsTabStop="False">
+                    <MenuItem Header="Export Settings" Click="SaveSettings" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load Settings" Click="LoadSettings" IsTabStop="False"></MenuItem>
+                </MenuItem>
             </Menu>
         </Grid>
 
@@ -50,253 +49,282 @@
                 <ColumnDefinition Width="*" Name="gcAdvancedPresentation"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
-                <Viewbox Stretch="Uniform">
-                    <Grid Width="660">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="480"></RowDefinition>
-                            <RowDefinition Height="280"></RowDefinition>
-                            <RowDefinition Name="grAdvancedPIP" Height="*"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Grid Grid.Row="0">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <Grid Grid.Row="0">
-                                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                        <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="200">
-                                            <StackPanel>
-                                                <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME</TextBlock>
-                                                <Viewbox>
-                                                    <TextBlock Name="TbTime" Foreground="Orange">00:00:00</TextBlock>
-                                                </Viewbox>
-                                            </StackPanel>
-                                        </Border>
-                                        <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="150">
-                                            <StackPanel>
-                                                <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME ON SHOT</TextBlock>
-                                                <Viewbox>
-                                                    <TextBlock Name="TbShotClock" Foreground="Orange">00:00</TextBlock>
-                                                </Viewbox>
-                                            </StackPanel>
-                                        </Border>
-                                        <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="150">
-                                            <StackPanel>
-                                                <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 1</TextBlock>
-                                                <Viewbox>
-                                                    <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer1" Name="TbGPTimer1" Foreground="Orange">00:00</TextBlock>
-                                                </Viewbox>
-                                            </StackPanel>
-                                        </Border>
-                                    </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <!--<ColumnDefinition></ColumnDefinition>-->
+                    </Grid.ColumnDefinitions>
 
-                                </Grid>
-                                <Grid Grid.Row="1">
-                                    <Border Style="{StaticResource GroupBorder}">
-                                        <StackPanel>
-                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PRESET</TextBlock>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
-                                                <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
-                                                <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
-                                                <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
-                                                <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
-                                                <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
-                                                <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
-                                                <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
-                                            </StackPanel>
+                    <Viewbox Stretch="Uniform">
+                        <Grid Name="gridbtns" Width="760">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Name="gcAdvancedProjector" Width="1.2*"></ColumnDefinition>
+                                <ColumnDefinition Width="8*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="480"></RowDefinition>
+                                <RowDefinition Height="280"></RowDefinition>
+                                <RowDefinition Name="grAdvancedPIP" Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
+                                <Border VerticalAlignment="Bottom" Style="{StaticResource GroupBorder}">
+                                    <StackPanel>
+                                        <TextBlock TextAlignment="Center" Margin="0,25,0,20" Style="{StaticResource GrayText}">PROJECTOR</TextBlock>
+                                        <StackPanel Orientation="Vertical">
+                                            <Button Name="BtnProjector1" Click="ClickProjector1" Style="{StaticResource SwitcherButton_Disabled}">1</Button>
+                                            <Button Name="BtnProjector2" Click="ClickProjector2" Style="{StaticResource SwitcherButton_Disabled}">2</Button>
+                                            <Button Name="BtnProjector3" Click="ClickProjector3" Style="{StaticResource SwitcherButton_Disabled}">3</Button>
+                                            <Button Name="BtnProjector4" Click="ClickProjector4" Style="{StaticResource SwitcherButton_Disabled}">4</Button>
+                                            <Button Name="BtnProjector5" Click="ClickProjector5" Style="{StaticResource SwitcherButton_Disabled}">5</Button>
+                                            <Button Name="BtnProjector6" Click="ClickProjector6" Style="{StaticResource SwitcherButton_Disabled}">6</Button>
                                         </StackPanel>
-                                    </Border>
-                                </Grid>
-                                <Grid Grid.Row="2">
-                                    <Border Style="{StaticResource GroupBorder}">
-                                        <StackPanel>
-                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PROGRAM</TextBlock>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Button Name="BtnProgram1" Click="ClickProgram1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
-                                                <Button Name="BtnProgram2" Click="ClickProgram2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
-                                                <Button Name="BtnProgram3" Click="ClickProgram3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
-                                                <Button Name="BtnProgram4" Click="ClickProgram4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
-                                                <Button Name="BtnProgram5" Click="ClickProgram5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
-                                                <Button Name="BtnProgram6" Click="ClickProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
-                                                <Button Name="BtnProgram7" Click="ClickProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
-                                                <Button Name="BtnProgram8" Click="ClickProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
-                                            </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                            </Grid>
+
+                            <Grid Grid.Row="0" Grid.Column="1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                            <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="200">
+                                                <StackPanel>
+                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME</TextBlock>
+                                                    <Viewbox>
+                                                        <TextBlock Name="TbTime" Foreground="Orange">00:00:00</TextBlock>
+                                                    </Viewbox>
+                                                </StackPanel>
+                                            </Border>
+                                            <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="150">
+                                                <StackPanel>
+                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME ON SHOT</TextBlock>
+                                                    <Viewbox>
+                                                        <TextBlock Name="TbShotClock" Foreground="Orange">00:00</TextBlock>
+                                                    </Viewbox>
+                                                </StackPanel>
+                                            </Border>
+                                            <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="150">
+                                                <StackPanel>
+                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 1</TextBlock>
+                                                    <Viewbox>
+                                                        <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer1" Name="TbGPTimer1" Foreground="Orange">00:00</TextBlock>
+                                                    </Viewbox>
+                                                </StackPanel>
+                                            </Border>
                                         </StackPanel>
-                                    </Border>
-                                </Grid>
-                                <Grid Grid.Row="3">
-                                    <Grid>
-                                        <Border Style="{StaticResource GroupBorder}" Width="160" HorizontalAlignment="Left">
+
+                                    </Grid>
+                                    <Grid Grid.Row="1">
+                                        <Border Style="{StaticResource GroupBorder}">
                                             <StackPanel>
-                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">AUX SOURCES</TextBlock>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Button Name="BtnFTB" Click="ClickFTB" Style="{StaticResource SwitcherButton_Disabled}">FTB</Button>
-                                                    <Button Style="{StaticResource InactiveSwitcherButton}">BARS</Button>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PRESET</TextBlock>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                    <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                    <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                    <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                    <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                    <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                                                    <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                    <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
-                                        <Border Style="{StaticResource GroupBorder}" Width="300" HorizontalAlignment="Right">
+                                    </Grid>
+                                    <Grid Grid.Row="2">
+                                        <Border Style="{StaticResource GroupBorder}">
                                             <StackPanel>
-                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">TRANSITION</TextBlock>
-                                                <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                                                    <Button Name="BtnAutoTrans" Click="ClickAutoTrans" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
-                                                    <Button Name="BtnCutTrans" Click="ClickCutTrans" Style="{StaticResource SwitcherButton_Disabled}">CUT</Button>
-                                                    <Button Margin="70,0,0,0" Name="BtnBackgroundTrans" Click="ClickTransBkgd" Style="{StaticResource SwitcherButton_Disabled}">BKGD</Button>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PROGRAM</TextBlock>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Button Name="BtnProgram1" Click="ClickProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                    <Button Name="BtnProgram2" Click="ClickProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                    <Button Name="BtnProgram3" Click="ClickProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                    <Button Name="BtnProgram4" Click="ClickProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                    <Button Name="BtnProgram5" Click="ClickProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                    <Button Name="BtnProgram6" Click="ClickProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                                                    <Button Name="BtnProgram7" Click="ClickProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                    <Button Name="BtnProgram8" Click="ClickProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
+                                    </Grid>
+                                    <Grid Grid.Row="3">
+                                        <Grid>
+                                            <Border Style="{StaticResource GroupBorder}" Width="160" HorizontalAlignment="Left">
+                                                <StackPanel>
+                                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">AUX SOURCES</TextBlock>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Button Name="BtnFTB" Click="ClickFTB" Style="{StaticResource SwitcherButton_Disabled}">FTB</Button>
+                                                        <Button Style="{StaticResource InactiveSwitcherButton}">BARS</Button>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                            <Border Style="{StaticResource GroupBorder}" Width="300" HorizontalAlignment="Right">
+                                                <StackPanel>
+                                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">TRANSITION</TextBlock>
+                                                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                                                        <Button Name="BtnAutoTrans" Click="ClickAutoTrans" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
+                                                        <Button Name="BtnCutTrans" Click="ClickCutTrans" Style="{StaticResource SwitcherButton_Disabled}">CUT</Button>
+                                                        <Button Margin="70,0,0,0" Name="BtnBackgroundTrans" Click="ClickTransBkgd" Style="{StaticResource SwitcherButton_Disabled}">BKGD</Button>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid Grid.Row="1">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"></ColumnDefinition>
-                                    <ColumnDefinition Width="200"></ColumnDefinition>
-                                    <ColumnDefinition></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                <Grid Grid.Column="0">
-                                    <Border Style="{StaticResource GroupBorder}">
-                                        <StackPanel>
-                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PIP</TextBlock>
-                                            <Button Name="BtnTransKey1" Click="ClickTransKey1" Style="{StaticResource SwitcherButton_Disabled}">KEY 1</Button>
-                                            <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">PIP</Button>
-                                        </StackPanel>
-                                    </Border>
-                                </Grid>
-                                <Border Grid.Column="1" Style="{StaticResource GroupBorder}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition></ColumnDefinition>
-                                            <ColumnDefinition></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid Grid.Column="0">
+                            <Grid Grid.Row="1" Grid.Column="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"></ColumnDefinition>
+                                        <ColumnDefinition Width="200"></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <Border Style="{StaticResource GroupBorder}">
                                             <StackPanel>
-                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">LITURGY</TextBlock>
-                                                <Button Name="BtnDSK1Tie" Click="ClickDSK1Tie" Style="{StaticResource SwitcherButton_Disabled}">TIE</Button>
-                                                <Button Name="BtnDSK1OnOffAir" Click="ClickDSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">LITURGY</Button>
-                                                <Button Name="BtnDSK1Auto" Click="ClickDSK1Auto" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PIP</TextBlock>
+                                                <Button Name="BtnTransKey1" Click="ClickTransKey1" Style="{StaticResource SwitcherButton_Disabled}">KEY 1</Button>
+                                                <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">PIP</Button>
                                             </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                    <Border Grid.Column="1" Style="{StaticResource GroupBorder}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid Grid.Column="0">
+                                                <StackPanel>
+                                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">LITURGY</TextBlock>
+                                                    <Button Name="BtnDSK1Tie" Click="ClickDSK1Tie" Style="{StaticResource SwitcherButton_Disabled}">TIE</Button>
+                                                    <Button Name="BtnDSK1OnOffAir" Click="ClickDSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">LITURGY</Button>
+                                                    <Button Name="BtnDSK1Auto" Click="ClickDSK1Auto" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
+                                                </StackPanel>
+                                            </Grid>
+                                            <Grid Grid.Column="1">
+                                                <StackPanel>
+                                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">SPLIT</TextBlock>
+                                                    <Button Name="BtnDSK2Tie" Click="ClickDSK2Tie" Style="{StaticResource SwitcherButton_Disabled}">TIE</Button>
+                                                    <Button Name="BtnDSK2OnOffAir" Click="ClickDSK2Toggle" Style="{StaticResource SwitcherButton_Disabled}">SPLIT</Button>
+                                                    <Button Name="BtnDSK2Auto" Click="ClickDSK2Auto" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
+                                                </StackPanel>
+                                            </Grid>
                                         </Grid>
-                                        <Grid Grid.Column="1">
-                                            <StackPanel>
-                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">SPLIT</TextBlock>
-                                                <Button Name="BtnDSK2Tie" Click="ClickDSK2Tie" Style="{StaticResource SwitcherButton_Disabled}">TIE</Button>
-                                                <Button Name="BtnDSK2OnOffAir" Click="ClickDSK2Toggle" Style="{StaticResource SwitcherButton_Disabled}">SPLIT</Button>
-                                                <Button Name="BtnDSK2Auto" Click="ClickDSK2Auto" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
-                                            </StackPanel>
+                                    </Border>
+                                    <Grid Grid.Column="3">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Row="0">
+                                                <Border Style="{StaticResource GroupBorder}">
+                                                    <StackPanel>
+                                                        <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">SLIDE CONTROLS</TextBlock>
+                                                        <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
+                                                            <Button Name="BtnTake" Click="ClickTakeSlide" Style="{StaticResource SwitcherButton_Disabled}">TAKE</Button>
+                                                            <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton_Disabled}">NEXT</Button>
+                                                            <Button Name="BtnPrev" Click="ClickPrevSlide" Style="{StaticResource SwitcherButton_Disabled}">PREV</Button>
+                                                            <Button Name="BtnDrive" Click="ClickSlideDriveVideo" Style="{StaticResource SwitcherButton}">DRIVE</Button>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                            <TextBlock Name="TbCurrSlide" Foreground="Orange">0</TextBlock>
+                                                            <TextBlock Foreground="Orange">/</TextBlock>
+                                                            <TextBlock Name="TbSlideCount" Foreground="Orange">0</TextBlock>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                            <Grid Grid.Row="1">
+                                                <Border Style="{StaticResource GroupBorder}">
+                                                    <StackPanel>
+                                                        <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">MEDIA PLAYBACK CONTROLS</TextBlock>
+                                                        <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
+                                                            <Button Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
+                                                            <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource SwitcherButton_Disabled}">STOP</Button>
+                                                            <Button Name="BtnPauseMedia" Click="ClickPauseMedia" Style="{StaticResource SwitcherButton_Disabled}">PAUSE</Button>
+                                                            <Button Name="BtnPlayMedia" Click="ClickPlayMedia" Style="{StaticResource SwitcherButton_Disabled}">PLAY</Button>
+                                                        </StackPanel>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                            </Grid.ColumnDefinitions>
+                                                            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0">
+                                                                <TextBlock Foreground="Orange">T-</TextBlock>
+                                                                <TextBlock Name="TbMediaTimeRemaining" Foreground="Orange">0:00</TextBlock>
+                                                            </StackPanel>
+                                                            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,0">
+                                                                <TextBlock Foreground="Orange">T+</TextBlock>
+                                                                <TextBlock Name="TbMediaTimeCurrent" Foreground="Orange">0:00</TextBlock>
+                                                                <TextBlock Foreground="Orange">/</TextBlock>
+                                                                <TextBlock Name="TbMediaTimeDurration" Foreground="Orange">0:00</TextBlock>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
                                         </Grid>
                                     </Grid>
-                                </Border>
-                                <Grid Grid.Column="3">
+
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="2" Grid.Column="1">
+                                <Border Style="{StaticResource GroupBorder}" >
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <Grid Grid.Row="0">
-                                            <Border Style="{StaticResource GroupBorder}">
-                                                <StackPanel>
-                                                    <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">SLIDE CONTROLS</TextBlock>
-                                                    <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
-                                                        <Button Name="BtnTake" Click="ClickTakeSlide" Style="{StaticResource SwitcherButton_Disabled}">TAKE</Button>
-                                                        <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton_Disabled}">NEXT</Button>
-                                                        <Button Name="BtnPrev" Click="ClickPrevSlide" Style="{StaticResource SwitcherButton_Disabled}">PREV</Button>
-                                                        <Button Name="BtnDrive" Click="ClickSlideDriveVideo" Style="{StaticResource SwitcherButton}">DRIVE</Button>
-                                                    </StackPanel>
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                        <TextBlock Name="TbCurrSlide" Foreground="Orange">0</TextBlock>
-                                                        <TextBlock Foreground="Orange">/</TextBlock>
-                                                        <TextBlock Name="TbSlideCount" Foreground="Orange">0</TextBlock>
-                                                    </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="5">PICTURE IN PICTURE CONTROLS</TextBlock>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoA" Click="ClickPIPRunToOnScreenBox" Style="{StaticResource InactivePIPControlButton}">
+                                                        <Image Source="pack://application:,,,/Icons/keyframepushleft.png"></Image>
+                                                    </Button>
+                                                    <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoB" Click="ClickPIPRunToOffScreenBox" Style="{StaticResource InactivePIPControlButton}">
+                                                        <Image Source="pack://application:,,,/Icons/keyframepushright.png"></Image>
+                                                    </Button>
+                                                    <Button Focusable="False" IsTabStop="False" Width="80" Height="60" Visibility="Hidden">
+                                                        <Image Source="pack://application:,,,/Icons/keyframetobox.png"></Image>
+                                                    </Button>
+                                                    <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoFull" Click="ClickPIPRunToFull" Style="{StaticResource InactivePIPControlButton}">
+                                                        <Image Source="pack://application:,,,/Icons/keyframetofill.png"></Image>
+                                                    </Button>
                                                 </StackPanel>
-                                            </Border>
+                                            </StackPanel>
                                         </Grid>
                                         <Grid Grid.Row="1">
-                                            <Border Style="{StaticResource GroupBorder}">
-                                                <StackPanel>
-                                                    <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">MEDIA PLAYBACK CONTROLS</TextBlock>
-                                                    <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
-                                                        <Button Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
-                                                        <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource SwitcherButton_Disabled}">STOP</Button>
-                                                        <Button Name="BtnPauseMedia" Click="ClickPauseMedia" Style="{StaticResource SwitcherButton_Disabled}">PAUSE</Button>
-                                                        <Button Name="BtnPlayMedia" Click="ClickPlayMedia" Style="{StaticResource SwitcherButton_Disabled}">PLAY</Button>
-                                                    </StackPanel>
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition></ColumnDefinition>
-                                                            <ColumnDefinition></ColumnDefinition>
-                                                        </Grid.ColumnDefinitions>
-                                                        <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0">
-                                                            <TextBlock Foreground="Orange">T-</TextBlock>
-                                                            <TextBlock Name="TbMediaTimeRemaining" Foreground="Orange">0:00</TextBlock>
-                                                        </StackPanel>
-                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,0">
-                                                            <TextBlock Foreground="Orange">T+</TextBlock>
-                                                            <TextBlock Name="TbMediaTimeCurrent" Foreground="Orange">0:00</TextBlock>
-                                                            <TextBlock Foreground="Orange">/</TextBlock>
-                                                            <TextBlock Name="TbMediaTimeDurration" Foreground="Orange">0:00</TextBlock>
-                                                        </StackPanel>
-                                                    </Grid>
+                                            <StackPanel>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">FILL SOURCE</TextBlock>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickPIP7" Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickPIP8" Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                                 </StackPanel>
-                                            </Border>
+                                            </StackPanel>
                                         </Grid>
                                     </Grid>
-                                </Grid>
-
+                                </Border>
                             </Grid>
                         </Grid>
-                        <Grid Grid.Row="2">
-                            <Border Style="{StaticResource GroupBorder}" >
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition></RowDefinition>
-                                        <RowDefinition></RowDefinition>
-                                    </Grid.RowDefinitions>
-                                    <Grid Grid.Row="0">
-                                        <StackPanel>
-                                            <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="5">PICTURE IN PICTURE CONTROLS</TextBlock>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoA" Click="ClickPIPRunToOnScreenBox" Style="{StaticResource InactivePIPControlButton}">
-                                                    <Image Source="pack://application:,,,/Icons/keyframepushleft.png"></Image>
-                                                </Button>
-                                                <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoB" Click="ClickPIPRunToOffScreenBox" Style="{StaticResource InactivePIPControlButton}">
-                                                    <Image Source="pack://application:,,,/Icons/keyframepushright.png"></Image>
-                                                </Button>
-                                                <Button Focusable="False" IsTabStop="False" Width="80" Height="60" Visibility="Hidden">
-                                                    <Image Source="pack://application:,,,/Icons/keyframetobox.png"></Image>
-                                                </Button>
-                                                <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoFull" Click="ClickPIPRunToFull" Style="{StaticResource InactivePIPControlButton}">
-                                                    <Image Source="pack://application:,,,/Icons/keyframetofill.png"></Image>
-                                                </Button>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Grid>
-                                    <Grid Grid.Row="1">
-                                        <StackPanel>
-                                            <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">FILL SOURCE</TextBlock>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">PULPIT</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CENTER</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">LECTERN</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">ORGAN</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">SLIDE</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP7" Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
-                                                <Button IsTabStop="False" Focusable="False" Click="ClickPIP8" Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Grid>
-                                </Grid>
-                            </Border>
-                        </Grid>
-                    </Grid>
-                </Viewbox>
+                    </Viewbox>
+                </Grid>
             </Grid>
             <Grid Grid.Column="1">
                 <Grid>
