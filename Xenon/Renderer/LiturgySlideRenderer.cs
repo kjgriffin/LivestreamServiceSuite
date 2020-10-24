@@ -108,56 +108,7 @@ namespace Xenon.Renderer
 
             }
 
-            /*
-                        foreach (var line in slide.Lines)
-                        {
-                            bool drawspeaker = false;
-                            if (line.Content[0].Data != lastspeaker && line.Content[0].Data != "$")
-                            {
-                                drawspeaker = true;
-                            }
-                            lastspeaker = line.Content[0].Data;
-
-                            System.Drawing.Rectangle speakerblock = new System.Drawing.Rectangle(speaker.Move(0, linepos + interspace * linenum).Location, new System.Drawing.Size(60, 60));
-
-                            switch (line.Content[0].Data)
-                            {
-                                case "C":
-                                    if (drawspeaker)
-                                    {
-                                        gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, centeralign);
-                                        //gfx.FillRectangle(Brushes.Red, speakerblock);
-                                        //gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
-                                    }
-                                    gfx.DrawString(line.Content[1].Data, renderInfo.BoldFont, Brushes.White, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
-                                    break;
-                                case "R":
-                                    if (drawspeaker)
-                                    {
-                                        gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, centeralign);
-                                        //gfx.FillRectangle(Brushes.Red, speakerblock);
-                                        //gfx.DrawString(line.Content[0].Data, renderInfo.BoldFont, Brushes.White, speakerblock, centeralign);
-                                    }
-                                    gfx.DrawString(line.Content[1].Data, renderInfo.BoldFont, Brushes.White, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
-                                    break;
-                                default:
-                                    if (drawspeaker)
-                                    {
-                                        gfx.DrawString(line.Content[0].Data, LSBSymbolFont, Brushes.Red, speakerblock, centeralign);
-                                        //gfx.DrawRectangle(Pens.Red, speakerblock);
-                                        //gfx.DrawString(line.Content[0].Data, renderInfo.RegularFont, Brushes.Red, speakerblock, centeralign);
-                                    }
-                                    gfx.DrawString(line.Content[1].Data, renderInfo.RegularFont, Brushes.White, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
-                                    break;
-                            }
-
-                            //gfx.DrawString(line.Content[0].Data, f, Brushes.Red, text.Move(0, linepos + interspace * linenum).Location, topleftalign);
-
-                            linenum++;
-                            linepos += (int)(float)line.Content[1].Attributes["height"];
-                        }
-            */
-
+         
             res.Bitmap = bmp;
 
             return res;

@@ -13,6 +13,7 @@ namespace Xenon.SlideAssembly
         LiturgyImage,
         Liturgy,
         LiturgyVerse,
+        LiturgyTitledVerse,
         Reading,
         SermonTitle,
         AnthemTitle,

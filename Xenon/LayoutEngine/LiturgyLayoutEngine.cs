@@ -168,11 +168,11 @@ namespace Xenon.LayoutEngine
             return result;
         }
 
-        public void BuildTextLines(LiturgyLayoutRenderInfo renderInfo)
+        public void BuildTextLines(Rectangle textbox)
         {
             foreach (var speakerline in LiturgyLines)
             {
-                var tlines = BlockParagraphLayoutEngine.LayoutLiturgyIntoTextLines(renderInfo.TextBox, speakerline);
+                var tlines = BlockParagraphLayoutEngine.LayoutLiturgyIntoTextLines(textbox, speakerline);
                 LiturgyTextLines.AddRange(tlines);
             }
         }
