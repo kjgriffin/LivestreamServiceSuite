@@ -16,6 +16,102 @@ namespace Xenon.Helpers
     {
 
 
+        /// <summary>
+        /// Returns a new bitmap that is trimmed in size to exclude borders of only the color
+        /// </summary>
+        /// <param name="source">The source bitmap</param>
+        /// <param name="color">Color of border to ignore</param>
+        /// <returns>Trimmed bitmap</returns>
+        public static Bitmap TrimBitmap(this Bitmap source, System.Drawing.Color color)
+        {
+            int t = source.SearchBitmapForColor(color, 1).y;
+            int b = source.SearchBitmapForColor(color, 2).y;
+            int l = source.SearchBitmapForColor(color, 3).x;
+            int r = source.SearchBitmapForColor(color, 4).x;
+
+            Rectangle rect = new Rectangle(l, t, r - l, b - t);
+
+            Bitmap bmp = new Bitmap(rect.Size.Width, rect.Size.Height);
+            Graphics gfx = Graphics.FromImage(bmp);
+
+            gfx.DrawImage(source, 0, 0, rect, GraphicsUnit.Pixel);
+
+            return bmp;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="col"></param>
+        /// <param name="type"> 1: top, 2: bottom, 3: left, 4: right</param>
+        /// <returns></returns>
+        public static (int x, int y) SearchBitmapForColor(this Bitmap source, System.Drawing.Color col, int type)
+        {
+            System.Drawing.Color test = System.Drawing.Color.FromArgb(255, col.R, col.G, col.B);
+            if (type == 1)
+            {
+                for (int y = 0; y < source.Height; y++)
+                {
+                    for (int x = 0; x < source.Width; x++)
+                    {
+                        System.Drawing.Color pix = source.GetPixel(x, y);
+                        if (pix != test)
+                        {
+                            return (x, y);
+                        }
+                    }
+                }
+            }
+            else if (type == 2)
+            {
+                for (int y = source.Height - 1; y >= 0; y--)
+                {
+                    for (int x = source.Width - 1; x >= 0; x--)
+                    {
+                        System.Drawing.Color pix = source.GetPixel(x, y);
+                        if (pix != test)
+                        {
+                            return (x, y);
+                        }
+                    }
+                }
+            }
+            else if (type == 3)
+            {
+                for (int x = 0; x < source.Width; x++)
+                {
+                    for (int y = 0; y < source.Height; y++)
+                    {
+                        System.Drawing.Color pix = source.GetPixel(x, y);
+                        if (pix != test)
+                        {
+                            return (x, y);
+                        }
+                    }
+                }
+            }
+            else if (type == 4)
+            {
+                for (int x = source.Width - 1; x >= 0; x--)
+                {
+                    for (int y = source.Height - 1; y >= 0; y--)
+                    {
+                        System.Drawing.Color pix = source.GetPixel(x, y);
+                        if (pix != test)
+                        {
+                            return (x, y);
+                        }
+                    }
+                }
+            }
+
+            return (0, 0);
+        }
+
+
+
         public static BitmapImage ConvertToBitmapImage(this Bitmap bmp)
         {
             BitmapImage res = new BitmapImage();

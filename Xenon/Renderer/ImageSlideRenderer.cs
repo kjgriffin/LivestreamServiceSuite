@@ -102,10 +102,10 @@ namespace Xenon.Renderer
             int leftbound = 0;
             int rightbound = sourceimage.Width - 1;
 
-            topbound = SearchBitmapForColor(sourceimage, Color.White, 1).y;
-            bottombound = SearchBitmapForColor(sourceimage, Color.White, 2).y;
-            leftbound = SearchBitmapForColor(sourceimage, Color.White, 3).x;
-            rightbound = SearchBitmapForColor(sourceimage, Color.White, 4).x;
+            topbound = GraphicsHelper.SearchBitmapForColor(sourceimage, Color.White, 1).y;
+            bottombound = GraphicsHelper.SearchBitmapForColor(sourceimage, Color.White, 2).y;
+            leftbound = GraphicsHelper.SearchBitmapForColor(sourceimage, Color.White, 3).x;
+            rightbound = GraphicsHelper.SearchBitmapForColor(sourceimage, Color.White, 4).x;
 
 
             Bitmap bmp = new Bitmap(Layout.FullImageLayout.Size.Width, Layout.FullImageLayout.Size.Height);
@@ -134,76 +134,7 @@ namespace Xenon.Renderer
             return bmp;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="col"></param>
-        /// <param name="type"> 1: top, 2: bottom, 3: left, 4: right</param>
-        /// <returns></returns>
-        private (int x, int y) SearchBitmapForColor(Bitmap source, Color col, int type)
-        {
-            Color test = Color.FromArgb(255, col.R, col.G, col.B);
-            if (type == 1)
-            {
-                for (int y = 0; y < source.Height; y++)
-                {
-                    for (int x = 0; x < source.Width; x++)
-                    {
-                        Color pix = source.GetPixel(x, y);
-                        if (pix != test)
-                        {
-                            return (x, y);
-                        }
-                    }
-                }
-            }
-            else if (type == 2)
-            {
-                for (int y = source.Height - 1; y >= 0; y--)
-                {
-                    for (int x = source.Width - 1; x >= 0; x--)
-                    {
-                        Color pix = source.GetPixel(x, y);
-                        if (pix != test)
-                        {
-                            return (x, y);
-                        }
-                    }
-                }
-            }
-            else if (type == 3)
-            {
-                for (int x = 0; x < source.Width; x++)
-                {
-                    for (int y = 0; y < source.Height; y++)
-                    {
-                        Color pix = source.GetPixel(x, y);
-                        if (pix != test)
-                        {
-                            return (x, y);
-                        }
-                    }
-                }
-            }
-            else if (type == 4)
-            {
-                for (int x = source.Width - 1; x >= 0; x--)
-                {
-                    for (int y = source.Height - 1; y >= 0; y--)
-                    {
-                        Color pix = source.GetPixel(x, y);
-                        if (pix != test)
-                        {
-                            return (x, y);
-                        }
-                    }
-                }
-            }
-
-            return (0, 0);
-        }
-
+        
         private Bitmap RenderLiturgyImage(Bitmap sourceimage)
         {
             Bitmap bmp = new Bitmap(Layout.LiturgyLayout.Size.Width, Layout.LiturgyLayout.Size.Height);
@@ -217,17 +148,21 @@ namespace Xenon.Renderer
             double xscale = 1;
             double yscale = 1;
 
-            xscale = (double)Layout.LiturgyLayout.Key.Width / sourceimage.Width;
-            yscale = (double)Layout.LiturgyLayout.Key.Height / sourceimage.Height;
+            double fillsize = 0.93;
+
+            Bitmap trimmed = sourceimage.TrimBitmap(Color.White);
+
+            xscale = (double)(Layout.LiturgyLayout.Key.Width * fillsize) / trimmed.Width;
+            yscale = (double)(Layout.LiturgyLayout.Key.Height * fillsize) / trimmed.Height;
 
             scale = xscale < yscale ? xscale : yscale;
 
-            s = new Size((int)(sourceimage.Width * scale), (int)(sourceimage.Height * scale));
+            s = new Size((int)(trimmed.Width * scale), (int)(trimmed.Height * scale));
             p = new Point((Layout.LiturgyLayout.Key.Width - s.Width) / 2, (Layout.LiturgyLayout.Key.Height - s.Height) / 2).Add(Layout.LiturgyLayout.Key.Location);
 
             gfx.Clear(System.Drawing.Color.Gray);
             gfx.FillRectangle(System.Drawing.Brushes.Black, Layout.LiturgyLayout.Key);
-            gfx.DrawImage(InvertImage(sourceimage), new Rectangle(p, s), new Rectangle(new Point(0, 0), sourceimage.Size), GraphicsUnit.Pixel);
+            gfx.DrawImage(InvertImage(trimmed), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
             return bmp;
 
         }
