@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SlideCreater"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="800">
+             d:DesignHeight="300" d:DesignWidth="1150">
     <Grid Margin="5,5,5,5">
         <Border BorderBrush="Black" BorderThickness="1,1,1,1">
             <Viewbox Stretch="Uniform">
@@ -29,19 +29,31 @@
                             <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
-                        <Viewbox Grid.Row="0" Stretch="Uniform">
-                            <TextBlock Name="AssetName" Margin="5,5,5,5">Asset name</TextBlock>
-                        </Viewbox>
+                        <!--<Viewbox Grid.Row="0" Stretch="Uniform">-->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Name="AssetName" Margin="5,5,0,5" MaxWidth="70">Asset name</TextBlock>
+                            <Label FontSize="10">
+                                <Hyperlink Click="ClickDeleteAsset">
+                                    X
+                                </Hyperlink>
+                            </Label>
+                        </StackPanel>
+                        <!--</Viewbox>-->
                         <Viewbox Grid.Row="1" Stretch="Uniform">
                             <StackPanel Grid.Row="1" Orientation="Horizontal">
                                 <Label FontSize="10">
-                                    <Hyperlink Click="ClickDeleteAsset">
-                                        Delete
-                                    </Hyperlink>
-                                </Label>
-                                <Label FontSize="10">
                                     <Hyperlink Click="ClickFitInsert">
                                         Insert
+                                    </Hyperlink>
+                                </Label>
+                                <Label Name="lbhymn" FontSize="10">
+                                    <Hyperlink Click="ClickAutoFitInsert">
+                                        Hymn
+                                    </Hyperlink>
+                                </Label>
+                                <Label Name="lbliturgy" FontSize="10">
+                                    <Hyperlink Click="ClickLiturgyInsert">
+                                        Liturgy
                                     </Hyperlink>
                                 </Label>
                             </StackPanel>

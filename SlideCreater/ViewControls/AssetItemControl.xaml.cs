@@ -25,6 +25,8 @@ namespace SlideCreater
 
 
         public event InsertAssetEvent OnFitInsertRequest;
+        public event InsertAssetEvent OnAutoFitInsertRequest;
+        public event InsertAssetEvent OnLiturgyInsertRequest;
         public event DeleteAssetEvent OnDeleteAssetRequest;
 
         ProjectAsset Asset;
@@ -46,10 +48,14 @@ namespace SlideCreater
             if (Asset.Type == AssetType.Image)
             {
                 ImgAsset.Source = new BitmapImage(new Uri(Asset.CurrentPath));
+                lbhymn.Visibility = Visibility.Visible;
+                lbliturgy.Visibility = Visibility.Visible;
             }
             if (Asset.Type == AssetType.Video)
             {
                 VideoAsset.Source = new Uri(Asset.CurrentPath);
+                lbhymn.Visibility = Visibility.Hidden;
+                lbliturgy.Visibility = Visibility.Hidden;
             }
 
         }
@@ -62,6 +68,16 @@ namespace SlideCreater
         private void ClickDeleteAsset(object sender, RoutedEventArgs e)
         {
             Dispatcher.Invoke(() => OnDeleteAssetRequest?.Invoke(this, Asset));
+        }
+
+        private void ClickAutoFitInsert(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.Invoke(() => OnAutoFitInsertRequest?.Invoke(this, Asset));
+        }
+
+        private void ClickLiturgyInsert(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.Invoke(() => OnLiturgyInsertRequest?.Invoke(this, Asset));
         }
     }
 }

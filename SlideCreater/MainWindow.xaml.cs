@@ -229,9 +229,27 @@ namespace SlideCreater
                 AssetItemControl assetItemCtrl = new AssetItemControl(asset);
                 assetItemCtrl.OnFitInsertRequest += AssetItemCtrl_OnFitInsertRequest;
                 assetItemCtrl.OnDeleteAssetRequest += AssetItemCtrl_OnDeleteAssetRequest;
+                assetItemCtrl.OnAutoFitInsertRequest += AssetItemCtrl_OnAutoFitInsertRequest;
+                assetItemCtrl.OnLiturgyInsertRequest += AssetItemCtrl_OnLiturgyInsertRequest;
 
                 AssetList.Children.Add(assetItemCtrl);
             }
+        }
+
+        private void AssetItemCtrl_OnLiturgyInsertRequest(object sender, ProjectAsset asset)
+        {
+            string InsertCommand = $"\r\n#litimage({asset.Name})\r\n";
+            int newindex = TbInput.CaretIndex + InsertCommand.Length;
+            TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
+            TbInput.CaretIndex = newindex;
+        }
+
+        private void AssetItemCtrl_OnAutoFitInsertRequest(object sender, ProjectAsset asset)
+        {
+            string InsertCommand = $"\r\n#autofitimage({asset.Name})\r\n";
+            int newindex = TbInput.CaretIndex + InsertCommand.Length;
+            TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
+            TbInput.CaretIndex = newindex;
         }
 
         private void AssetItemCtrl_OnDeleteAssetRequest(object sender, ProjectAsset asset)
