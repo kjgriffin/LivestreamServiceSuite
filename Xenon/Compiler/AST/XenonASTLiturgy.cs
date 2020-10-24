@@ -65,7 +65,7 @@ namespace Xenon.Compiler
             LiturgyLayoutEngine layoutEngine = new LiturgyLayoutEngine();
             layoutEngine.BuildLines(Content.Select(p => p.TextContent).ToList());
             layoutEngine.BuildSlideLines(project.Layouts.LiturgyLayout.GetRenderInfo());
-            layoutEngine.BuildTextLines(project.Layouts.LiturgyLayout.GetRenderInfo());
+            layoutEngine.BuildTextLines(project.Layouts.LiturgyLayout.Text);
 
 
 

@@ -55,7 +55,7 @@ namespace Xenon.LayoutEngine
 
             StringFormat sf = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Near };
 
-            List<string> illegalLineStarts = new List<string>() { "!", "?", ":", "-", ".", ",", ";" };
+            List<string> illegalLineStarts = new List<string>() { "!", "?", ":", "-", ".", ",", ";", "'", "\"", "”" };
 
             float zoomx = (float)gfx.DpiX / 96f;
             float zoomy = (float)gfx.DpiY / 96f;

@@ -38,6 +38,16 @@ namespace Xenon.SlideAssembly
             InterLineSpacing = 5,
             Font = new Font("Arial", 36, FontStyle.Regular)
         };
+
+        public TitledLiturgyVerseLayout TitleLiturgyVerseLayout { get; set; } = new TitledLiturgyVerseLayout()
+        {
+            Size = new Size(1920, 1080),
+            Key = new Rectangle(0, 864, 1920, 216),
+            TitleLine = new Rectangle(50, 10, 1820, 50),
+            Textbox = new Rectangle(50, 56, 1820, 160),
+            Font = new Font("Arial", 36, FontStyle.Regular)
+        };
+
         public ImageLayout FullImageLayout { get; set; } = new ImageLayout()
         {
             Size = new Size(1920, 1080)
