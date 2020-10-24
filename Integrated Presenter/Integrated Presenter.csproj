@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\**" />
+    <EmbeddedResource Remove="Views\**" />
+    <None Remove="Views\**" />
+    <Page Remove="Views\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="BMDSwitcher\Mock\Images\black.png" />
     <None Remove="BMDSwitcher\Mock\Images\centercam.PNG" />
     <None Remove="BMDSwitcher\Mock\Images\leftcam.PNG" />
@@ -63,10 +70,6 @@
     <Resource Include="Icons\keyframetofill.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\" />
   </ItemGroup>
 
   <ItemGroup>
