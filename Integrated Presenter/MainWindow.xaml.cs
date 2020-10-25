@@ -817,7 +817,7 @@ namespace Integrated_Presenter
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         switcherManager?.PerformAutoTransition();
-                        await Task.Delay(1000);
+                        await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     Presentation.NextSlide();
                     slidesUpdated();
@@ -830,7 +830,7 @@ namespace Integrated_Presenter
                     if (switcherState.DSK1OnAir)
                     {
                         switcherManager?.PerformAutoOffAirDSK1();
-                        await Task.Delay(1000);
+                        await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     Presentation.NextSlide();
                     slidesUpdated();
@@ -861,7 +861,7 @@ namespace Integrated_Presenter
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         switcherManager?.PerformAutoTransition();
-                        await Task.Delay(1000);
+                        await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     Presentation.Override = s;
                     Presentation.OverridePres = true;
@@ -875,7 +875,7 @@ namespace Integrated_Presenter
                     if (switcherState.DSK1OnAir)
                     {
                         switcherManager?.PerformAutoOffAirDSK1();
-                        await Task.Delay(1000);
+                        await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     Presentation.Override = s;
                     Presentation.OverridePres = true;
@@ -903,7 +903,7 @@ namespace Integrated_Presenter
             switch (s.Action)
             {
                 case "t1restart":
-                    timer1span = TimeSpan.Zero; 
+                    timer1span = TimeSpan.Zero;
                     break;
                 case "mastercaution2":
                     MasterCautionState = 2;
@@ -926,7 +926,7 @@ namespace Integrated_Presenter
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         switcherManager?.PerformAutoTransition();
-                        await Task.Delay(1000);
+                        await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.Current);
@@ -938,7 +938,7 @@ namespace Integrated_Presenter
                     if (switcherState.DSK1OnAir)
                     {
                         switcherManager?.PerformAutoOffAirDSK1();
-                        await Task.Delay(1000);
+                        await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.Current);
@@ -1600,6 +1600,12 @@ namespace Integrated_Presenter
         {
             BMDSwitcherConfigSettings cfg = new BMDSwitcherConfigSettings()
             {
+                VideoSettings = new BMDSwitcherVideoSettings()
+                {
+                    VideoFPS = 30,
+                    VideoHeight = 1080,
+                    VideoWidth = 1920
+                },
                 Routing = new List<ButtonSourceMapping>() {
                     new ButtonSourceMapping() { KeyName = "left", ButtonId = 1, ButtonName = "PULPIT", PhysicalInputId = 5, LongName = "PULPIT", ShortName = "PLPT" },
                     new ButtonSourceMapping() { KeyName = "center", ButtonId = 2, ButtonName = "CENTER", PhysicalInputId = 1, LongName = "CENTER", ShortName = "CNTR" },
@@ -1630,8 +1636,8 @@ namespace Integrated_Presenter
                 {
                     InputFill = 4,
                     InputCut = 0,
-                    Clip = 1,
-                    Gain = 1,
+                    Clip = 0.3,
+                    Gain = 0.06,
                     Rate = 30,
                     Invert = 1,
                     IsPremultipled = 0,

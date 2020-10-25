@@ -21,6 +21,8 @@ namespace Integrated_Presenter.BMDSwitcher.Config
 
         public BMDUSKSettings PIPSettings { get; set; } = new BMDUSKSettings();
 
+        public BMDSwitcherVideoSettings VideoSettings { get; set; } = new BMDSwitcherVideoSettings();
+
 
 
         public static BMDSwitcherConfigSettings Load(string filename)
