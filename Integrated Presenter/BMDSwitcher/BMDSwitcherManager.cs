@@ -718,6 +718,12 @@ namespace Integrated_Presenter
 
             // set border with dveparams
             dveparams.SetMasked(_config.PIPSettings.IsMasked);
+            dveparams.SetMaskTop(_config.PIPSettings.MaskTop);
+            dveparams.SetMaskBottom(_config.PIPSettings.MaskBottom);
+            dveparams.SetMaskLeft(_config.PIPSettings.MaskLeft);
+            dveparams.SetMaskRight(_config.PIPSettings.MaskRight);
+
+
             dveparams.SetBorderEnabled(_config.PIPSettings.IsBordered);
 
 
