@@ -205,20 +205,27 @@ namespace Integrated_Presenter
 
 
         BMDSwitcherState _lastState = new BMDSwitcherState();
-        private void SwitcherManager_SwitcherStateChanged(BMDSwitcherState args)
+
+        public void SwitcherStateChanged(BMDSwitcherState state)
         {
             // update shot clock
-            if (args.IsDifferentShot(_lastState))
+            if (state.IsDifferentShot(_lastState))
             {
                 timeonshot = TimeSpan.Zero;
                 UpdateShotClock();
             }
             // update ui
-            switcherState = args;
+            switcherState = state;
             _lastState = switcherState.Copy();
             // update viewmodels
 
             UpdateSwitcherUI();
+        }
+
+        private void SwitcherManager_SwitcherStateChanged(BMDSwitcherState args)
+        {
+            SwitcherStateChanged(args);
+            synchronizer.ForwardBMDStateUpdate(args);
         }
 
         public void SetPreset(int button)
@@ -1348,6 +1355,7 @@ namespace Integrated_Presenter
         {
             _display?.Close();
             switcherManager?.Close();
+            synchronizer.Close();
         }
 
         private void ClickTakeSP0(object sender, EventArgs e)

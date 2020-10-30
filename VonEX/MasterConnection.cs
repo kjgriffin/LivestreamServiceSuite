@@ -23,21 +23,28 @@ namespace VonEX
         public event StringDataRecievedEventArgs OnDataRecieved;
         public event ConnectionEventArgs OnConnectionFromClient;
 
+        bool started = false;
+
         public void StartServer(IPAddress hostname, int port)
         {
             tcpListener = new TcpListener(hostname, port);
             tcpListener.Start();
+            started = true;
         }
+
 
         public async void AcceptConnection()
         {
-            slaveConnection = await tcpListener.AcceptTcpClientAsync();
-            var constr = slaveConnection.Client.RemoteEndPoint.ToString();
-            var addr = constr.Split(':')[0];
+            if (started)
+            {
+                slaveConnection = await tcpListener.AcceptTcpClientAsync();
+                var constr = slaveConnection.Client.RemoteEndPoint.ToString();
+                var addr = constr.Split(':')[0];
 
-            OnConnectionFromClient?.Invoke(addr, true);
-            processthread = new Thread(ProcessClient);
-            processthread.Start(slaveConnection);
+                OnConnectionFromClient?.Invoke(addr, true);
+                processthread = new Thread(ProcessClient);
+                processthread.Start(slaveConnection);
+            }
         }
 
         public void SendMessage(string data)
@@ -68,11 +75,12 @@ namespace VonEX
         }
 
 
-        private void Close()
+        public void Close()
         {
-            tcpListener.Stop();
-            slaveConnection.Close();
-            processthread.Abort();
+            tcpListener?.Stop();
+            processthread?.Abort();
+            slaveConnection?.Close();
+            started = false;
         }
         
 

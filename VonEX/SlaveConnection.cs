@@ -42,8 +42,8 @@ namespace VonEX
 
         public void Close()
         {
-            client.Close();
-            processthread.Abort();
+            processthread?.Abort();
+            client?.Close();
         }
 
         private async void ProcessMasterMessages(object obj)

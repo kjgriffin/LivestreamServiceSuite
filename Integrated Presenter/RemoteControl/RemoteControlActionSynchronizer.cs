@@ -1,9 +1,12 @@
-﻿using Integrated_Presenter.BMDSwitcher.Config;
+﻿using Integrated_Presenter.BMDSwitcher;
+using Integrated_Presenter.BMDSwitcher.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,6 +36,8 @@ namespace Integrated_Presenter.RemoteControl
             isMasterCon = true;
             IPAddress ip = Dns.GetHostAddresses(Dns.GetHostName()).Last();
 
+            MasterConnection?.Close();
+
             MasterConnection = new MasterConnection();
             MasterConnection.StartServer(ip, 80);
             MasterConnection.OnConnectionFromClient += (string ip, bool connected) =>
@@ -52,15 +57,18 @@ namespace Integrated_Presenter.RemoteControl
 
         private void Connection_OnDataRecieved(string data)
         {
-            var cmdval = Regex.Match(data, "(?<cmd>.*):(?<params>.*)");
 
-            string cmd = cmdval.Groups["cmd"].Value;
-            string args = cmdval.Groups["params"].Value;
+            RemoteCommand cmd = JsonSerializer.Deserialize<RemoteCommand>(data);
 
-            switch (cmd)
+
+            switch (cmd.CmdName)
             {
+                case "StateUpdate":
+                    BMDSwitcherState state = JsonSerializer.Deserialize<BMDSwitcherState>(cmd.Args["state"]);
+                    RecieveBMDSwitcherStateUpdate(state);
+                    break;
                 case "Preset":
-                    ActionPreset(Convert.ToInt32(args), false);
+                    ActionPreset(Convert.ToInt32(cmd.Args["button"]), false);
                     break;
                 default:
                     break;
@@ -74,6 +82,8 @@ namespace Integrated_Presenter.RemoteControl
             {
                 string ip = ipmodal.IP;
 
+                SlaveConnection?.Close();
+
                 SlaveConnection = new SlaveConnection();
                 SlaveConnection.OnDataRecieved += Connection_OnDataRecieved;
                 SlaveConnection.OnConnectionFromMaster += (string ip, bool connected) =>
@@ -86,10 +96,21 @@ namespace Integrated_Presenter.RemoteControl
         }
 
 
-        private void SendRemoteCmd(string cmd, params string[] args)
+        private void SendRemoteCmd(string cmd, params (string key, string val)[] args)
         {
-            string cmdstring = $"{cmd}:{string.Join(",", args)}";
 
+            RemoteCommand command = new RemoteCommand()
+            {
+                CmdName = cmd,
+            };
+
+            foreach (var item in args)
+            {
+                command.Args[item.key] = item.val;
+            }
+
+
+            string cmdstring = JsonSerializer.Serialize(command);
 
             if (!isConnected)
             {
@@ -107,6 +128,18 @@ namespace Integrated_Presenter.RemoteControl
 
         }
 
+        public void Close()
+        {
+            if (isMasterCon)
+            {
+                MasterConnection.Close();
+            }
+            else
+            {
+                SlaveConnection.Close();
+            }
+        }
+
 
 
 
@@ -116,7 +149,7 @@ namespace Integrated_Presenter.RemoteControl
             _window.SetPreset(button);
             if (sendremote)
             {
-                SendRemoteCmd("Preset", button.ToString());
+                SendRemoteCmd("Preset", ("button", button.ToString()));
             }
         }
 
@@ -275,6 +308,16 @@ namespace Integrated_Presenter.RemoteControl
             _window.ClearMasterCaution();
         }
 
+
+        public void ForwardBMDStateUpdate(BMDSwitcherState state)
+        {
+            SendRemoteCmd("StateUpdate", ("state", JsonSerializer.Serialize(state)));
+        }
+
+        private void RecieveBMDSwitcherStateUpdate(BMDSwitcherState state)
+        {
+            _window.SwitcherStateChanged(state);
+        }
 
 
 
