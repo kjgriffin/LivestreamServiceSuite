@@ -1,6 +1,7 @@
 ﻿using BMDSwitcherAPI;
 using Integrated_Presenter.BMDSwitcher;
 using Integrated_Presenter.BMDSwitcher.Config;
+using Integrated_Presenter.RemoteControl;
 using Integrated_Presenter.ViewModels;
 using Microsoft.Win32;
 using System;
@@ -14,6 +15,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using VonEX;
 
 namespace Integrated_Presenter
 {
@@ -26,23 +28,19 @@ namespace Integrated_Presenter
     {
 
 
-        Timer system_second_timer = new Timer();
-        Timer shot_clock_timer = new Timer();
-        Timer gp_timer_1 = new Timer();
-
-        TimeSpan timer1span = TimeSpan.Zero;
-
-        TimeSpan timeonshot = TimeSpan.Zero;
-        TimeSpan warnShottime = new TimeSpan(0, 2, 30);
 
         BMDSwitcherConfigSettings _config;
 
         List<SlidePoolSource> SlidePoolButtons;
 
+        RemoteControlActionSynchronizer synchronizer;
+
         public MainWindow()
         {
             DataContext = this;
             InitializeComponent();
+
+            synchronizer = new RemoteControlActionSynchronizer(this);
 
 
             // set a default config
@@ -78,6 +76,18 @@ namespace Integrated_Presenter
             gp_timer_1.Elapsed += Gp_timer_1_Elapsed;
             gp_timer_1.Start();
         }
+
+
+        #region Clock/Timers
+        Timer system_second_timer = new Timer();
+        Timer shot_clock_timer = new Timer();
+        Timer gp_timer_1 = new Timer();
+
+        TimeSpan timer1span = TimeSpan.Zero;
+
+        TimeSpan timeonshot = TimeSpan.Zero;
+        TimeSpan warnShottime = new TimeSpan(0, 2, 30);
+
 
         private void Gp_timer_1_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -128,6 +138,10 @@ namespace Integrated_Presenter
             TbTime.Text = DateTime.Now.ToString("hh:mm:ss");
         }
 
+        #endregion
+
+
+
         private void MainWindow_PresentationStateUpdated(Slide currentslide)
         {
             UpdateSlideNums();
@@ -142,9 +156,10 @@ namespace Integrated_Presenter
 
         #region BMD Switcher
 
+        #region Connections
         private void ConnectSwitcher()
         {
-            Connection connectWindow = new Connection();
+            Connection connectWindow = new Connection("Connect to Switcher", "Switcher IP Address");
             bool? res = connectWindow.ShowDialog();
             if (res == true)
             {
@@ -160,7 +175,7 @@ namespace Integrated_Presenter
                 }
             }
             // load current config
-            SetSwitcherSettings();
+            synchronizer.ActionConfigureSwitcher(_config);
         }
 
         private void MockConnectSwitcher()
@@ -174,14 +189,16 @@ namespace Integrated_Presenter
                 shot_clock_timer.Start();
             }
             // load current config
-            SetSwitcherSettings();
+            synchronizer.ActionConfigureSwitcher(_config);
         }
 
-        private void TakeAutoTransition()
+        #endregion
+
+        public void TakeAutoTransition()
         {
             switcherManager?.PerformAutoTransition();
         }
-        private void TakeCutTransition()
+        public void TakeCutTransition()
         {
             switcherManager?.PerformCutTransition();
         }
@@ -204,43 +221,43 @@ namespace Integrated_Presenter
             UpdateSwitcherUI();
         }
 
-        private void ClickPreset(int button)
+        public void SetPreset(int button)
         {
             switcherManager?.PerformPresetSelect(ConvertButtonToSourceID(button));
         }
 
-        private void ClickProgram(int button)
+        public void SetProgram(int button)
         {
             switcherManager?.PerformProgramSelect(ConvertButtonToSourceID(button));
         }
 
-        private void ToggleUSK1()
+        public void ToggleUSK1()
         {
             switcherManager?.PerformToggleUSK1();
         }
 
-        private void ToggleDSK1()
+        public void ToggleDSK1()
         {
             switcherManager?.PerformToggleDSK1();
         }
-        private void ToggleTieDSK1()
+        public void ToggleTieDSK1()
         {
             switcherManager?.PerformTieDSK1();
         }
-        private void AutoDSK1()
+        public void AutoDSK1()
         {
             switcherManager?.PerformTakeAutoDSK1();
         }
 
-        private void ToggleDSK2()
+        public void ToggleDSK2()
         {
             switcherManager?.PerformToggleDSK2();
         }
-        private void ToggleTieDSK2()
+        public void ToggleTieDSK2()
         {
             switcherManager?.PerformTieDSK2();
         }
-        private void AutoDSK2()
+        public void AutoDSK2()
         {
             switcherManager?.PerformTakeAutoDSK2();
         }
@@ -495,74 +512,74 @@ namespace Integrated_Presenter
             if (e.Key == Key.D1)
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
-                    ClickProgram(1);
+                    SetProgram(1);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(1);
                 else
-                    ClickPreset(1);
+                    SetPreset(1);
             }
             if (e.Key == Key.D2)
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
-                    ClickProgram(2);
+                    SetProgram(2);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(2);
                 else
-                    ClickPreset(2);
+                    SetPreset(2);
             }
             if (e.Key == Key.D3)
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
-                    ClickProgram(3);
+                    SetProgram(3);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(3);
                 else
-                    ClickPreset(3);
+                    SetPreset(3);
             }
             if (e.Key == Key.D4)
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
-                    ClickProgram(4);
+                    SetProgram(4);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(4);
                 else
-                    ClickPreset(4);
+                    SetPreset(4);
             }
             if (e.Key == Key.D5)
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
-                    ClickProgram(5);
+                    SetProgram(5);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(5);
                 else
-                    ClickPreset(5);
+                    SetPreset(5);
             }
             if (e.Key == Key.D6)
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
-                    ClickProgram(6);
+                    SetProgram(6);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(6);
                 else
-                    ClickPreset(6);
+                    SetPreset(6);
             }
             if (e.Key == Key.D7)
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
-                    ClickProgram(7);
+                    SetProgram(7);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(7);
                 else
-                    ClickPreset(7);
+                    SetPreset(7);
             }
             if (e.Key == Key.D8)
             {
                 if (Keyboard.IsKeyDown(Key.LeftShift))
-                    ClickProgram(8);
+                    SetProgram(8);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(8);
                 else
-                    ClickPreset(8);
+                    SetPreset(8);
             }
             #endregion
 
@@ -733,35 +750,35 @@ namespace Integrated_Presenter
         #region PresetButtonClick
         private void ClickPreset1(object sender, RoutedEventArgs e)
         {
-            ClickPreset(1);
+            synchronizer.ActionPreset(1);
         }
         private void ClickPreset2(object sender, RoutedEventArgs e)
         {
-            ClickPreset(2);
+            synchronizer.ActionPreset(2);
         }
         private void ClickPreset3(object sender, RoutedEventArgs e)
         {
-            ClickPreset(3);
+            synchronizer.ActionPreset(3);
         }
         private void ClickPreset4(object sender, RoutedEventArgs e)
         {
-            ClickPreset(4);
+            synchronizer.ActionPreset(4);
         }
         private void ClickPreset5(object sender, RoutedEventArgs e)
         {
-            ClickPreset(5);
+            synchronizer.ActionPreset(5);
         }
         private void ClickPreset6(object sender, RoutedEventArgs e)
         {
-            ClickPreset(6);
+            synchronizer.ActionPreset(6);
         }
         private void ClickPreset7(object sender, RoutedEventArgs e)
         {
-            ClickPreset(7);
+            synchronizer.ActionPreset(7);
         }
         private void ClickPreset8(object sender, RoutedEventArgs e)
         {
-            ClickPreset(8);
+            synchronizer.ActionPreset(8);
         }
         #endregion
 
@@ -769,35 +786,35 @@ namespace Integrated_Presenter
 
         private void ClickProgram8(object sender, RoutedEventArgs e)
         {
-            ClickProgram(8);
+            synchronizer.ActionProgram(8);
         }
         private void ClickProgram7(object sender, RoutedEventArgs e)
         {
-            ClickProgram(7);
+            synchronizer.ActionProgram(7);
         }
         private void ClickProgram6(object sender, RoutedEventArgs e)
         {
-            ClickProgram(6);
+            synchronizer.ActionProgram(6);
         }
         private void ClickProgram5(object sender, RoutedEventArgs e)
         {
-            ClickProgram(5);
+            synchronizer.ActionProgram(5);
         }
         private void ClickProgram4(object sender, RoutedEventArgs e)
         {
-            ClickProgram(4);
+            synchronizer.ActionProgram(4);
         }
         private void ClickProgram3(object sender, RoutedEventArgs e)
         {
-            ClickProgram(3);
+            synchronizer.ActionProgram(3);
         }
         private void ClickProgram2(object sender, RoutedEventArgs e)
         {
-            ClickProgram(2);
+            synchronizer.ActionProgram(2);
         }
         private void ClickProgram1(object sender, RoutedEventArgs e)
         {
-            ClickProgram(1);
+            synchronizer.ActionProgram(1);
         }
         #endregion
 
@@ -807,7 +824,7 @@ namespace Integrated_Presenter
         #region SlideDriveVideo
 
 
-        private async void SlideDriveVideo_Next()
+        public async void SlideDriveVideo_Next()
         {
             if (Presentation?.Next != null)
             {
@@ -837,7 +854,7 @@ namespace Integrated_Presenter
                     PresentationStateUpdated?.Invoke(Presentation.Current);
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
+                        SetPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                         await Task.Delay(500);
                         switcherManager?.PerformAutoTransition();
                     }
@@ -851,7 +868,7 @@ namespace Integrated_Presenter
             }
         }
 
-        private async void SlideDriveVideo_ToSlide(Slide s)
+        public async void SlideDriveVideo_ToSlide(Slide s)
         {
             if (s != null && Presentation != null)
             {
@@ -883,7 +900,7 @@ namespace Integrated_Presenter
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
+                        SetPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                         await Task.Delay(500);
                         switcherManager?.PerformAutoTransition();
                     }
@@ -914,7 +931,7 @@ namespace Integrated_Presenter
             }
         }
 
-        private async void SlideDriveVideo_Current()
+        public async void SlideDriveVideo_Current()
         {
             if (Presentation?.Current != null)
             {
@@ -944,7 +961,7 @@ namespace Integrated_Presenter
                     PresentationStateUpdated?.Invoke(Presentation.Current);
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
+                        SetPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                         await Task.Delay(500);
                         switcherManager?.PerformAutoTransition();
                     }
@@ -1039,7 +1056,7 @@ namespace Integrated_Presenter
 
 
         #region slideshow commands
-        private void nextSlide()
+        public void nextSlide()
         {
             if (activepresentation)
             {
@@ -1056,7 +1073,7 @@ namespace Integrated_Presenter
                 PresentationStateUpdated?.Invoke(Presentation.Current);
             }
         }
-        private void prevSlide()
+        public void prevSlide()
         {
             if (activepresentation)
             {
@@ -1067,7 +1084,7 @@ namespace Integrated_Presenter
             }
         }
 
-        private void playMedia()
+        public void playMedia()
         {
             if (activepresentation)
             {
@@ -1086,7 +1103,7 @@ namespace Integrated_Presenter
                 });
             }
         }
-        private void pauseMedia()
+        public void pauseMedia()
         {
             if (activepresentation)
             {
@@ -1102,7 +1119,7 @@ namespace Integrated_Presenter
                 }
             }
         }
-        private void stopMedia()
+        public void stopMedia()
         {
             if (activepresentation)
             {
@@ -1118,7 +1135,7 @@ namespace Integrated_Presenter
                 }
             }
         }
-        private void restartMedia()
+        public void restartMedia()
         {
             if (activepresentation)
             {
@@ -1141,27 +1158,27 @@ namespace Integrated_Presenter
         #region slide/media buttons
         private void ClickRestartMedia(object sender, RoutedEventArgs e)
         {
-            restartMedia();
+            synchronizer.ActionRestartMedia();
         }
         private void ClickStopMedia(object sender, RoutedEventArgs e)
         {
-            stopMedia();
+            synchronizer.ActionStopMedia();
         }
         private void ClickPauseMedia(object sender, RoutedEventArgs e)
         {
-            pauseMedia();
+            synchronizer.ActionPauseMedia();
         }
         private void ClickPlayMedia(object sender, RoutedEventArgs e)
         {
-            playMedia();
+            synchronizer.ActionStartMedia();
         }
         private void ClickNextSlide(object sender, RoutedEventArgs e)
         {
-            nextSlide();
+            synchronizer.ActionNextSlide();
         }
         private void ClickPrevSlide(object sender, RoutedEventArgs e)
         {
-            prevSlide();
+            synchronizer.ActionPrevSlide();
         }
         #endregion
 
@@ -1177,46 +1194,50 @@ namespace Integrated_Presenter
         }
 
 
+        public void ToggleSlideDriveVideo(bool val)
+        {
+            SlideDriveVideoBTN = val;
+        }
 
         private void ClickSlideDriveVideo(object sender, RoutedEventArgs e)
         {
-            SlideDriveVideoBTN = !SlideDriveVideo;
+            synchronizer.ActionToggleDrive(!SlideDriveVideo);
         }
 
         private void ClickCutTrans(object sender, RoutedEventArgs e)
         {
-            TakeCutTransition();
+            synchronizer.ActionCutTransition();
         }
         private void ClickAutoTrans(object sender, RoutedEventArgs e)
         {
-            TakeAutoTransition();
+            synchronizer.ActionAutoTransition();
         }
 
         private void ClickDSK1Toggle(object sender, RoutedEventArgs e)
         {
-            ToggleDSK1();
+            synchronizer.ActionToggleDSK1();
         }
 
         private void ClickDSK1Auto(object sender, RoutedEventArgs e)
         {
-            AutoDSK1();
+            synchronizer.ActionAutoDSK1();
         }
         private void ClickDSK1Tie(object sender, RoutedEventArgs e)
         {
-            ToggleTieDSK1();
+            synchronizer.ActionTieDSK1();
         }
 
         private void ClickDSK2Tie(object sender, RoutedEventArgs e)
         {
-            ToggleTieDSK2();
+            synchronizer.ActionTieDSK2();
         }
         private void ClickDSK2Toggle(object sender, RoutedEventArgs e)
         {
-            ToggleDSK2();
+            synchronizer.ActionToggleDSK2();
         }
         private void ClickDSK2Auto(object sender, RoutedEventArgs e)
         {
-            AutoDSK2();
+            synchronizer.ActionAutoDSK2();
         }
         private void ClickFTB(object sender, RoutedEventArgs e)
         {
@@ -1225,7 +1246,7 @@ namespace Integrated_Presenter
 
         private void ClickUSK1Toggle(object sender, RoutedEventArgs e)
         {
-            ToggleUSK1();
+            synchronizer.ActionToggleDSK1();
         }
 
         private void ClickViewPrevAfter(object sender, RoutedEventArgs e)
@@ -1236,7 +1257,7 @@ namespace Integrated_Presenter
 
         private void ClickTakeSlide(object sender, RoutedEventArgs e)
         {
-            SlideDriveVideo_Current();
+            synchronizer.ActionTakeSlide();
         }
 
 
@@ -1266,6 +1287,11 @@ namespace Integrated_Presenter
 
 
         private void ClickResetgpTimer1(object sender, MouseButtonEventArgs e)
+        {
+            synchronizer.ActionResetGPTimer1();
+        }
+
+        public void ResetGPTimer1()
         {
             gp_timer_1.Stop();
             timer1span = TimeSpan.Zero;
@@ -1351,82 +1377,82 @@ namespace Integrated_Presenter
 
         private void ClickConfigureSwitcher(object sender, RoutedEventArgs e)
         {
-            SetSwitcherSettings();
+            synchronizer.ActionConfigureSwitcher(_config);
         }
 
-        private void USK1RuntoA()
+        public void USK1RuntoA()
         {
             switcherManager?.PerformUSK1RunToKeyFrameA();
         }
 
-        private void USK1RuntoB()
+        public void USK1RuntoB()
         {
             switcherManager?.PerformUSK1RunToKeyFrameB();
         }
 
-        private void USK1RuntoFull()
+        public void USK1RuntoFull()
         {
             switcherManager?.PerformUSK1RunToKeyFrameFull();
         }
 
         private void ClickPIPRunToOnScreenBox(object sender, RoutedEventArgs e)
         {
-            USK1RuntoA();
+            synchronizer.ActionUSK1RuntoKeyA();
         }
 
         private void ClickPIPRunToOffScreenBox(object sender, RoutedEventArgs e)
         {
-            USK1RuntoB();
+            synchronizer.ActionUSK1RuntoKeyB();
         }
 
         private void ClickPIPRunToFull(object sender, RoutedEventArgs e)
         {
-            USK1RuntoFull();
+            synchronizer.ActionUSK1RunToFull();
         }
 
-        private void ChangePIPFillSource(int source)
+        public void ChangePIPFillSource(int source)
         {
             switcherManager?.PerformUSK1FillSourceSelect(ConvertButtonToSourceID(source));
         }
 
         private void ClickPIP1(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(1);
+            synchronizer.ActionSetUSK1FillSource(1);
         }
 
         private void ClickPIP2(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(2);
+            synchronizer.ActionSetUSK1FillSource(2);
         }
 
         private void ClickPIP3(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(3);
+            synchronizer.ActionSetUSK1FillSource(3);
         }
 
         private void ClickPIP4(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(4);
+            synchronizer.ActionSetUSK1FillSource(4);
         }
 
         private void ClickPIP5(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(5);
+            synchronizer.ActionSetUSK1FillSource(5);
         }
 
         private void ClickPIP6(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(6);
+            synchronizer.ActionSetUSK1FillSource(6);
         }
 
         private void ClickPIP7(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(7);
+            synchronizer.ActionSetUSK1FillSource(7);
         }
 
         private void ClickPIP8(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(8);
+            synchronizer.ActionSetUSK1FillSource(8);
         }
 
 
@@ -1456,24 +1482,24 @@ namespace Integrated_Presenter
             grAdvancedPIP.Height = new GridLength(0);
         }
 
-        private void ToggleTransBkgd()
+        public void ToggleTransBkgd()
         {
             switcherManager?.PerformToggleBackgroundForNextTrans();
         }
 
-        private void ToggleTransKey1()
+        public void ToggleTransKey1()
         {
             switcherManager?.PerformToggleKey1ForNextTrans();
         }
 
         private void ClickTransBkgd(object sender, RoutedEventArgs e)
         {
-            ToggleTransBkgd();
+            synchronizer.ActionToggleLayerBKGD();
         }
 
         private void ClickTransKey1(object sender, RoutedEventArgs e)
         {
-            ToggleTransKey1();
+            synchronizer.ActionToggleLayerKey1();
         }
 
         private void SaveSettings(object sender, RoutedEventArgs e)
@@ -1497,11 +1523,13 @@ namespace Integrated_Presenter
             {
                 _config = BMDSwitcherConfigSettings.Load(ofd.FileName);
             }
-            SetSwitcherSettings();
+            synchronizer.ActionConfigureSwitcher(_config);
         }
 
-        private void SetSwitcherSettings()
+        public void SetSwitcherSettings(BMDSwitcherConfigSettings config)
         {
+            // redundant unless this originated from a remote request
+            _config = config;
             // update UI
             UpdateUIButtonLabels();
             // config switcher
@@ -1829,6 +1857,11 @@ namespace Integrated_Presenter
 
         private void ClickBtnWarnings(object sender, RoutedEventArgs e)
         {
+            synchronizer.ActionClearMasterCaution();
+        }
+
+        public void ClearMasterCaution()
+        {
             MasterCautionState = 0;
             UpdateMasterCautionDisplay();
         }
@@ -1849,6 +1882,17 @@ namespace Integrated_Presenter
                 default:
                     break;
             }
+        }
+
+
+        private void ClickAcceptOverrideControl(object sender, RoutedEventArgs e)
+        {
+            synchronizer.OpenConnectionAsMaster(); 
+        }
+
+        private void ClickStartOverrideControl(object sender, RoutedEventArgs e)
+        {
+            synchronizer.OpenConnectionAsSlave();
         }
     }
 }

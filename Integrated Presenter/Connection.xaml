@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Integrated_Presenter"
         mc:Ignorable="d"
-        Title="Connect to Switcher" Height="120" Width="380">
+        Title="Connect" Height="120" Width="380">
     <Grid>
         <StackPanel VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="10,10,10,10">Switcher IP Address:</TextBlock>
+                <TextBlock Name="tbipname" Margin="10,10,10,10">IP Address:</TextBlock>
                 <TextBox Name="tbIP" Width="200" Margin="10,10,10,10">192.168.2.120</TextBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

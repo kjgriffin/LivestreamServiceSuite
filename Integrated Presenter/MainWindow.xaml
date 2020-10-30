@@ -25,6 +25,8 @@
                     <MenuItem Click="ClickConnect" Header="Switcher" IsTabStop="False"></MenuItem>
                     <MenuItem Click="ClickConnectMock" Header="Mock Switcher" IsTabStop="False"></MenuItem>
                     <MenuItem Click="ClickConnectProjector" Header="Projector" IsTabStop="False"></MenuItem>
+                    <MenuItem Click="ClickAcceptOverrideControl" Header="Accept Remote" IsTabStop="False"></MenuItem>
+                    <MenuItem Click="ClickStartOverrideControl" Header="Link To Remote" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
