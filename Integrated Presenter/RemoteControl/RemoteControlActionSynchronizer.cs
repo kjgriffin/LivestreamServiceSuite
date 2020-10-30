@@ -31,7 +31,7 @@ namespace Integrated_Presenter.RemoteControl
         public void OpenConnectionAsMaster()
         {
             isMasterCon = true;
-            IPAddress ip = Dns.GetHostAddresses(Dns.GetHostName())[0];
+            IPAddress ip = Dns.GetHostAddresses(Dns.GetHostName()).Last();
 
             MasterConnection = new MasterConnection();
             MasterConnection.StartServer(ip, 80);
@@ -114,6 +114,7 @@ namespace Integrated_Presenter.RemoteControl
         public void ActionPreset(int button)
         {
             _window.SetPreset(button);
+            SendRemoteCmd("Preset", button.ToString());
         }
 
         public void ActionProgram(int button)
