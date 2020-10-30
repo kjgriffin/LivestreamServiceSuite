@@ -24,6 +24,10 @@ namespace VonEX
             client = new TcpClient();
             client.Connect(hostname, port);
 
+            var constr = client.Client.RemoteEndPoint.ToString();
+            var addr = constr.Split(':')[0];
+            OnConnectionFromMaster?.Invoke(addr, true);
+
             processthread = new Thread(ProcessMasterMessages);
             processthread.Start(client);
 
