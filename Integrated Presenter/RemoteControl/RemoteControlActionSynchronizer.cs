@@ -60,7 +60,7 @@ namespace Integrated_Presenter.RemoteControl
             switch (cmd)
             {
                 case "Preset":
-                    ActionPreset(Convert.ToInt32(args));
+                    ActionPreset(Convert.ToInt32(args), false);
                     break;
                 default:
                     break;
@@ -111,10 +111,13 @@ namespace Integrated_Presenter.RemoteControl
 
 
 
-        public void ActionPreset(int button)
+        public void ActionPreset(int button, bool sendremote = true)
         {
             _window.SetPreset(button);
-            SendRemoteCmd("Preset", button.ToString());
+            if (sendremote)
+            {
+                SendRemoteCmd("Preset", button.ToString());
+            }
         }
 
         public void ActionProgram(int button)
