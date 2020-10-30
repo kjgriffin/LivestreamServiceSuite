@@ -223,7 +223,10 @@ namespace Integrated_Presenter
 
         public void SetPreset(int button)
         {
-            switcherManager?.PerformPresetSelect(ConvertButtonToSourceID(button));
+            Dispatcher.Invoke(() =>
+            {
+                switcherManager?.PerformPresetSelect(ConvertButtonToSourceID(button));
+            });
         }
 
         public void SetProgram(int button)
@@ -1887,7 +1890,7 @@ namespace Integrated_Presenter
 
         private void ClickAcceptOverrideControl(object sender, RoutedEventArgs e)
         {
-            synchronizer.OpenConnectionAsMaster(); 
+            synchronizer.OpenConnectionAsMaster();
         }
 
         private void ClickStartOverrideControl(object sender, RoutedEventArgs e)

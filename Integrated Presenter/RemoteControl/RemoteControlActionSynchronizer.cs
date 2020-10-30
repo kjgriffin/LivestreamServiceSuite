@@ -52,7 +52,7 @@ namespace Integrated_Presenter.RemoteControl
 
         private void Connection_OnDataRecieved(string data)
         {
-            var cmdval = Regex.Match(data, "(<?cmd>.*):(<?params>.*)");
+            var cmdval = Regex.Match(data, "(?<cmd>.*):(?<params>.*)");
 
             string cmd = cmdval.Groups["cmd"].Value;
             string args = cmdval.Groups["params"].Value;
