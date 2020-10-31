@@ -45,7 +45,7 @@ namespace Xenon.SlideAssembly
             {
                 progress.Report(0);
 
-                using FileStream ziptoopen = new FileStream($"{filename}", FileMode.OpenOrCreate);
+                using FileStream ziptoopen = new FileStream($"{filename}", FileMode.Create);
                 using ZipArchive archive = new ZipArchive(ziptoopen, ZipArchiveMode.Update);
                 // create readme
                 ZipArchiveEntry readmeEntry = archive.CreateEntry("Readme.txt");
