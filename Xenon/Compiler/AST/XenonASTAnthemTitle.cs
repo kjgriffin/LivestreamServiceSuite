@@ -40,8 +40,8 @@ namespace Xenon.Compiler.AST
                 MediaType = MediaType.Image
             };
 
-            SlideLineContent slcmusician = new SlideLineContent() { Data = Musician };
             SlideLineContent slcatitle = new SlideLineContent() { Data = AnthemTitle };
+            SlideLineContent slcmusician = new SlideLineContent() { Data = Musician };
             SlideLineContent slcaccompanianst = new SlideLineContent() { Data = Accompanianst };
             SlideLineContent slccredits = new SlideLineContent() { Data = Credits };
 

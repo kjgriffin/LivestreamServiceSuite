@@ -38,7 +38,7 @@ namespace Xenon.LayoutEngine
     class LiturgyLayoutEngine
     {
 
-        public List<(string speaker, List<string> words)> Lines { get; set; } = new List<(string, List<string>)>();
+        public List<((string speaker, string speakertext) speaker, List<string> words)> Lines { get; set; } = new List<((string, string), List<string>)>();
         public List<LiturgyLine> LiturgyLines { get; set; } = new List<LiturgyLine>();
         public List<LiturgyLayoutLine> LayoutLines { get; set; } = new List<LiturgyLayoutLine>();
         public List<LiturgyTextLine> LiturgyTextLines { get; set; } = new List<LiturgyTextLine>();
@@ -51,14 +51,14 @@ namespace Xenon.LayoutEngine
             "?"
         };
 
-        private List<string> Speakers = new List<string>()
+        private Dictionary<string, string> Speakers = new Dictionary<string, string>()
         {
-            "P",
-            "A",
-            "L",
-            "C",
-            "R",
-            "$",
+            ["P"] = "P",
+            ["A"] = "A",
+            ["L"] = "L",
+            ["C"] = "C",
+            ["R"] = "R",
+            ["$"] = "",
         };
 
         private List<string> Escape = new List<string>()
@@ -66,17 +66,29 @@ namespace Xenon.LayoutEngine
             "\\",
         };
 
-        public void BuildLines(List<string> words)
+        public void BuildLines(List<string> words, Dictionary<string, string> additionalspeakers, bool onlystartspeakersonnewline = false)
         {
             // go through all the words and assemble into sentences.
 
             StringBuilder sb = new StringBuilder();
+
+            Dictionary<string, string> speakers = Speakers;
+
+            if (additionalspeakers != null)
+            {
+                foreach (var kvp in additionalspeakers)
+                {
+                    speakers[kvp.Key] = kvp.Value;
+                }
+            }
 
             string speaker = "";
 
             List<string> line = new List<string>();
 
             bool skipnext = false;
+
+            bool startofline = true;
 
             foreach (var word in words)
             {
@@ -85,12 +97,12 @@ namespace Xenon.LayoutEngine
                     skipnext = true;
                     continue;
                 }
-                if (Speakers.Contains(word) && !skipnext)
+                if (speakers.Keys.Contains(word) && !skipnext)
                 {
                     if (speaker != string.Empty)
                     {
-                        Lines.Add((speaker, finalizeline(line)));
-                        LiturgyLines.Add(createliturgyline(speaker, finalizeline(line)));
+                        Lines.Add(((speaker, speakers[speaker]), finalizeline(line)));
+                        LiturgyLines.Add(createliturgyline(speakers[speaker], finalizeline(line)));
                     }
                     line.Clear();
                     // start a new sentence
@@ -107,12 +119,17 @@ namespace Xenon.LayoutEngine
                     {
                         // use space instead
                         line.Add(" ");
+                        startofline = true;
                     }
                 }
                 skipnext = false;
+                if (startofline)
+                {
+                    startofline = false;
+                }
             }
-            Lines.Add((speaker, finalizeline(line)));
-            LiturgyLines.Add(createliturgyline(speaker, finalizeline(line)));
+            Lines.Add(((speaker, speakers[speaker]), finalizeline(line)));
+            LiturgyLines.Add(createliturgyline(speakers[speaker], finalizeline(line)));
 
             Lines.ForEach(s => Debug.WriteLine($"<{s.speaker}> \"{string.Join("", s.words)}\""));
         }
@@ -199,7 +216,7 @@ namespace Xenon.LayoutEngine
             foreach (var line in Lines)
             {
                 Font f;
-                switch (line.speaker)
+                switch (line.speaker.speakertext)
                 {
                     case "C":
                         f = renderInfo.BoldFont;
@@ -215,7 +232,7 @@ namespace Xenon.LayoutEngine
 
                 foreach (var l in par)
                 {
-                    LayoutLines.Add((line.speaker, l.words, l.width, l.height, l.linestart, l.fulltextonline));
+                    LayoutLines.Add((line.speaker.speakertext, l.words, l.width, l.height, l.linestart, l.fulltextonline));
                 }
 
             }

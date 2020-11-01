@@ -11,16 +11,18 @@ namespace Xenon.Compiler.AST
 
         public string Part1 { get; set; }
         public string Part2 { get; set; }
+        public string Orientation { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
-            XenonAST2PartTitle title = new XenonAST2PartTitle();
             Lexer.GobbleWhitespace();
 
-            var args = Lexer.ConsumeArgList(true, "part1", "part2");
-            title.Part1 = args["part1"];
-            title.Part2 = args["part2"];
-            return title;
+            var args = Lexer.ConsumeArgList(true, "part1", "part2", "orientation");
+            Part1 = args["part1"];
+            Part2 = args["part2"];
+            Orientation = args["orientation"];
+
+            return this;
 
         }
 
@@ -40,10 +42,12 @@ namespace Xenon.Compiler.AST
             SlideLineContent slcpart2 = new SlideLineContent() { Data = Part2 };
 
             SlideLine slpart1 = new SlideLine() { Content = new List<SlideLineContent>() { slcpart1 } };
-            SlideLine slpart2 = new SlideLine() { Content = new List<SlideLineContent>() { slcpart2} };
+            SlideLine slpart2 = new SlideLine() { Content = new List<SlideLineContent>() { slcpart2 } };
 
             titleslide.Lines.Add(slpart1);
             titleslide.Lines.Add(slpart2);
+
+            titleslide.Data["orientation"] = Orientation;
 
             project.Slides.Add(titleslide);
 

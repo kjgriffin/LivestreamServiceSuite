@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
 using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
 
@@ -48,8 +49,18 @@ namespace Xenon.Compiler.AST
                 MediaType = MediaType.Image
             };
 
+
+            Dictionary<string, string> otherspeakers = new Dictionary<string, string>();
+            var s = project.GetAttribute("otherspeakers");
+            foreach (var item in s)
+            {
+                var match = Regex.Match(item, "(?<speaker>(.*)-(?<text>.*))").Groups;
+                otherspeakers.Add(match["speaker"].Value, match["text"].Value);
+            }
+
+
             LiturgyLayoutEngine layoutEngine = new LiturgyLayoutEngine();
-            layoutEngine.BuildLines(Text);
+            layoutEngine.BuildLines(Text, otherspeakers);
             layoutEngine.BuildTextLines(project.Layouts.TitleLiturgyVerseLayout.Textbox);
 
             slide.Data["lines"] = layoutEngine.LiturgyTextLines;

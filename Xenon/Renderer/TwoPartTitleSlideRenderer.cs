@@ -28,10 +28,18 @@ namespace Xenon.Renderer
 
             var lineheight = gfx.MeasureStringCharacters(slide.Lines[0].Content[0].Data, bf, Layouts.AnthemTitleLayout.Key);
 
-            int ycord = (int)((Layouts.TwoPartTitleLayout.Key.Height / 2) - (lineheight.Height / 2));
+            if ((string)slide.Data["orientation"] == "vertical")
+            {
+                gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, Layouts.TwoPartTitleLayout.Line1.Move(Layouts.TwoPartTitleLayout.Key.Location), GraphicsHelper.CenterAlign);
+                gfx.DrawString(slide.Lines[1].Content[0].Data, Layouts.TwoPartTitleLayout.Font, Brushes.White, Layouts.TwoPartTitleLayout.Line2.Move(Layouts.TwoPartTitleLayout.Key.Location), GraphicsHelper.CenterAlign);
+            }
+            else
+            {
+                int ycord = (int)((Layouts.TwoPartTitleLayout.Key.Height / 2) - (lineheight.Height / 2));
+                gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, Layouts.TwoPartTitleLayout.MainLine.Move(Layouts.TwoPartTitleLayout.Key.Location).Move(0, ycord), GraphicsHelper.LeftVerticalCenterAlign);
+                gfx.DrawString(slide.Lines[1].Content[0].Data, Layouts.TwoPartTitleLayout.Font, Brushes.White, Layouts.TwoPartTitleLayout.MainLine.Move(Layouts.TwoPartTitleLayout.Key.Location).Move(0, ycord), GraphicsHelper.RightVerticalCenterAlign);
+            }
 
-            gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, Layouts.TwoPartTitleLayout.MainLine.Move(Layouts.TwoPartTitleLayout.Key.Location).Move(0, ycord), GraphicsHelper.LeftVerticalCenterAlign);
-            gfx.DrawString(slide.Lines[1].Content[0].Data, Layouts.TwoPartTitleLayout.Font, Brushes.White, Layouts.TwoPartTitleLayout.MainLine.Move(Layouts.TwoPartTitleLayout.Key.Location).Move(0, ycord), GraphicsHelper.RightVerticalCenterAlign);
 
             res.Bitmap = bmp;
             return res;

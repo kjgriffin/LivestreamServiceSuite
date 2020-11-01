@@ -28,9 +28,14 @@ namespace Xenon.Renderer
 
             Graphics gfx = Graphics.FromImage(bmp);
 
-            gfx.Clear(Color.Gray);
+            gfx.Clear(slide.Colors["background"]);
 
-            gfx.FillRectangle(Brushes.Black, Layouts.LiturgyLayout.Key);
+
+            SolidBrush textcol = new SolidBrush(slide.Colors["text"]);
+            SolidBrush speakercol = new SolidBrush(slide.Colors["alttext"]);
+
+            SolidBrush sb = new SolidBrush(slide.Colors["keybackground"]);
+            gfx.FillRectangle(sb, Layouts.LiturgyLayout.Key);
 
             StringFormat topleftalign = new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };
             StringFormat centeralign = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
@@ -85,14 +90,14 @@ namespace Xenon.Renderer
                 // draw speaker
                 if (drawspeaker)
                 {
-                    gfx.DrawString(linewords.Speaker, flsbregular, Brushes.LightBlue, speakerblock, centeralign);
+                    gfx.DrawString(linewords.Speaker, flsbregular, speakercol, speakerblock, centeralign);
                 }
 
 
                 foreach (var word in linewords.Words)
                 {
                     Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
-                    gfx.DrawString(word.Value, f, Brushes.White, text.Move(xoffset, linepos + interspace * linenum).Location, GraphicsHelper.DefaultStringFormat());
+                    gfx.DrawString(word.Value, f, textcol, text.Move(xoffset, linepos + interspace * linenum).Location, GraphicsHelper.DefaultStringFormat());
                     xoffset += word.Size.Width;
                 }
 

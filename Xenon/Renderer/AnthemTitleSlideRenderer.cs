@@ -26,11 +26,11 @@ namespace Xenon.Renderer
 
             Font bf = new Font(Layouts.AnthemTitleLayout.Font, FontStyle.Bold);
 
-            // major title
-            gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, Layouts.AnthemTitleLayout.TopLine.Move(Layouts.AnthemTitleLayout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
+            // musician
+            gfx.DrawString(slide.Lines[1].Content[0].Data, bf, Brushes.White, Layouts.AnthemTitleLayout.TopLine.Move(Layouts.AnthemTitleLayout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
             // anthem title
-            gfx.DrawString(slide.Lines[1].Content[0].Data, bf, Brushes.White, Layouts.AnthemTitleLayout.TopLine.Move(Layouts.AnthemTitleLayout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
-            // musicians 
+            gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, Layouts.AnthemTitleLayout.TopLine.Move(Layouts.AnthemTitleLayout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
+            // accompanianist 
             gfx.DrawString(slide.Lines[2].Content[0].Data, Layouts.AnthemTitleLayout.Font, Brushes.White, Layouts.AnthemTitleLayout.MainLine.Move(Layouts.AnthemTitleLayout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
             // credit
             gfx.DrawString(slide.Lines[3].Content[0].Data, Layouts.AnthemTitleLayout.Font, Brushes.White, Layouts.AnthemTitleLayout.MainLine.Move(Layouts.AnthemTitleLayout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);

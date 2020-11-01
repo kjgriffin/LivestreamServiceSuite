@@ -11,6 +11,8 @@ namespace Xenon.SlideAssembly
         public Size Size { get; set; }
         public Rectangle Key { get; set; }
         public Rectangle MainLine { get; set; }
+        public Rectangle Line1 { get; set; }
+        public Rectangle Line2 { get; set; }
         [JsonIgnore]
         public Font Font { get; set; }
 

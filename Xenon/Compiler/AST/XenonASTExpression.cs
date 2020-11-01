@@ -35,6 +35,13 @@ namespace Xenon.Compiler
         private XenonASTExpression CompileCommand(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTExpression expr = new XenonASTExpression();
+            if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.SetVar]))
+            {
+                XenonASTSetVariable xenonASTSetVariable = new XenonASTSetVariable();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.SetVar]);
+                expr.Command = (IXenonASTCommand)xenonASTSetVariable.Compile(Lexer, Logger);
+                return expr;
+            }
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Video]))
             {
                 XenonASTVideo video = new XenonASTVideo();

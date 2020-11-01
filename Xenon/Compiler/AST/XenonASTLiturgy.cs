@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Xenon.Compiler.AST;
+using Xenon.Helpers;
 using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
 
@@ -11,6 +13,8 @@ namespace Xenon.Compiler
     class XenonASTLiturgy : IXenonASTCommand
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
+
+        public bool ForceSpeakerStartOnNewline = false;
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
@@ -21,6 +25,18 @@ namespace Xenon.Compiler
 
 
             Lexer.GobbleWhitespace();
+
+            // optional params
+            if (Lexer.Inspect("("))
+            {
+                var args = Lexer.ConsumeArgList(false, "startnewline");
+                if (args["startnewline"] == "true")
+                {
+                    ForceSpeakerStartOnNewline = true;
+                }
+                Lexer.GobbleWhitespace();
+            }
+
             Lexer.GobbleandLog("{", "Expected opening brace at start of liturgy.");
             Lexer.GobbleWhitespace();
             XenonASTLiturgy liturgy = CompileSubContent(Lexer, Logger);
@@ -60,16 +76,52 @@ namespace Xenon.Compiler
         public void Generate(Project project, IXenonASTElement _Parent)
         {
 
-            //liturgyslide.Lines = Content.Select(p => new SlideLine { Content = new List<string> { p.TextContent } }).ToList();
+            Dictionary<string, string> otherspeakers = new Dictionary<string, string>();
+            // get otherspeakers from project
+
+            var s = project.GetAttribute("otherspeakers");
+            foreach (var item in s)
+            {
+                var match = Regex.Match(item, "(?<speaker>(.*))-(?<text>.*)").Groups;
+                otherspeakers.Add(match["speaker"].Value, match["text"].Value);
+            }
+
+
+
 
             LiturgyLayoutEngine layoutEngine = new LiturgyLayoutEngine();
-            layoutEngine.BuildLines(Content.Select(p => p.TextContent).ToList());
+            layoutEngine.BuildLines(Content.Select(p => p.TextContent).ToList(), otherspeakers, ForceSpeakerStartOnNewline);
             layoutEngine.BuildSlideLines(project.Layouts.LiturgyLayout.GetRenderInfo());
             layoutEngine.BuildTextLines(project.Layouts.LiturgyLayout.Text);
 
 
+            // override colors if requried on slide
 
-            //liturgyslide.Lines = layoutEngine.LayoutLines.Select(l => new SlideLine() { Content = new List<string>() { l.speaker, string.Join("", l.words) } }).ToList();
+            bool overridespeakercolor = false;
+            bool overridetextcolor = false;
+            bool overridebackgroundcolor = false;
+
+            System.Drawing.Color liturgyspeakercolor = new System.Drawing.Color();
+            System.Drawing.Color liturgytextcolor = new System.Drawing.Color();
+            System.Drawing.Color liturgybackgroundcolor = new System.Drawing.Color();
+
+            if (project.GetAttribute("litspeakertextcol").Count > 0)
+            {
+                liturgyspeakercolor = GraphicsHelper.ColorFromRGB(project.GetAttribute("litspeakertextcol").FirstOrDefault());
+                overridespeakercolor = true;
+            }
+            if (project.GetAttribute("littextcol").Count > 0)
+            {
+                liturgytextcolor = GraphicsHelper.ColorFromRGB(project.GetAttribute("littextcol").FirstOrDefault());
+                overridetextcolor = true;
+            }
+            if (project.GetAttribute("litbackgroundcol").Count > 0)
+            {
+                liturgybackgroundcolor = GraphicsHelper.ColorFromRGB(project.GetAttribute("litbackgroundcol").FirstOrDefault());
+                overridebackgroundcolor = true;
+            }
+
+
 
 
             // turn lines into slides
@@ -91,8 +143,22 @@ namespace Xenon.Compiler
                 Name = "UNNAMED_liturgy",
                 Number = project.NewSlideNumber,
                 Format = SlideFormat.Liturgy,
-                MediaType = MediaType.Image
+                MediaType = MediaType.Image,
             };
+
+            if (overridespeakercolor)
+            {
+                liturgyslide.Colors["alttext"] = liturgyspeakercolor;
+            }
+            if (overridetextcolor)
+            {
+                liturgyslide.Colors["text"] = liturgytextcolor;
+            }
+            if (overridebackgroundcolor)
+            {
+                liturgyslide.Colors["keybackground"] = liturgybackgroundcolor;
+            }
+
 
             double lineheight = -project.Layouts.LiturgyLayout.InterLineSpacing;
 
@@ -124,6 +190,19 @@ namespace Xenon.Compiler
                         Format = SlideFormat.Liturgy,
                         MediaType = MediaType.Image,
                     };
+                    if (overridespeakercolor)
+                    {
+                        liturgyslide.Colors["alttext"] = liturgyspeakercolor;
+                    }
+                    if (overridetextcolor)
+                    {
+                        liturgyslide.Colors["text"] = liturgytextcolor;
+                    }
+                    if (overridebackgroundcolor)
+                    {
+                        liturgyslide.Colors["keybackground"] = liturgybackgroundcolor;
+                    }
+
                     lineheight = 0;
                     startspeaker = line.Speaker;
                     lastspeaker = line.Speaker;

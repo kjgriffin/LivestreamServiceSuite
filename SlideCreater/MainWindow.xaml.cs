@@ -25,16 +25,170 @@ using Xenon.AssetManagment;
 
 namespace SlideCreater
 {
+
+
+    public enum ProjectState
+    {
+        NewProject,
+        Saving,
+        Saved,
+        Dirty,
+        LoadError,
+    }
+
+    public enum ActionState
+    {
+        Ready,
+        Building,
+        SuccessBuilding,
+        ErrorBuilding,
+        Exporting,
+        SuccessExporting,
+        ErrorExporting,
+        Saving,
+
+
+    }
+
+
+
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class CreaterEditorWindow : Window
     {
+
+        ProjectState _mProjectState;
+        public ProjectState ProjectState
+        {
+            get => _mProjectState;
+            set
+            {
+                _mProjectState = value;
+                UpdateProjectStatusLabel();
+            }
+        }
+
+        ActionState _mActionState;
+        public ActionState ActionState
+        {
+            get => _mActionState;
+            set
+            {
+                _mActionState = value;
+                UpdateActionStatusLabel();
+                UpdateActionProgressBarVisibile();
+            }
+        }
+
+
+        private void UpdateProjectStatusLabel()
+        {
+            switch (ProjectState)
+            {
+                case ProjectState.NewProject:
+                    tbProjectStatus.Text = "New Project";
+                    break;
+                case ProjectState.Saved:
+                    tbProjectStatus.Text = "Project Saved";
+                    break;
+                case ProjectState.Saving:
+                    tbProjectStatus.Text = "Saving Project...";
+                    break;
+                case ProjectState.Dirty:
+                    tbProjectStatus.Text = "*Unsaved Changes";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void UpdateActionStatusLabel()
+        {
+            switch (ActionState)
+            {
+                case ActionState.Ready:
+                    tbActionStatus.Text = "";
+                    tbSubActionStatus.Text = "";
+                    sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
+                    break;
+                case ActionState.Building:
+                    tbActionStatus.Text = "Buildling...";
+                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
+                    break;
+                case ActionState.SuccessBuilding:
+                    tbActionStatus.Text = "Project Rendered";
+                    tbSubActionStatus.Text = "";
+                    sbStatus.Background = System.Windows.Media.Brushes.Green;
+                    break;
+                case ActionState.ErrorBuilding:
+                    tbActionStatus.Text = "Render Failed";
+                    sbStatus.Background = System.Windows.Media.Brushes.Red;
+                    break;
+                case ActionState.Exporting:
+                    tbActionStatus.Text = "Exporting...";
+                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
+                    break;
+                case ActionState.SuccessExporting:
+                    tbActionStatus.Text = "Slides Exported";
+                    tbSubActionStatus.Text = "";
+                    sbStatus.Background = System.Windows.Media.Brushes.Green;
+                    break;
+                case ActionState.ErrorExporting:
+                    tbActionStatus.Text = "Export Failed";
+                    tbSubActionStatus.Text = "";
+                    sbStatus.Background = System.Windows.Media.Brushes.IndianRed;
+                    break;
+                case ActionState.Saving:
+                    tbActionStatus.Text = "Saving...";
+                    sbStatus.Background = System.Windows.Media.Brushes.Purple;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void UpdateActionProgressBarVisibile()
+        {
+            switch (ActionState)
+            {
+                case ActionState.Ready:
+                    pbActionStatus.Visibility = Visibility.Hidden;
+                    break;
+                case ActionState.Building:
+                    pbActionStatus.Visibility = Visibility.Visible;
+                    break;
+                case ActionState.SuccessBuilding:
+                    pbActionStatus.Visibility = Visibility.Hidden;
+                    break;
+                case ActionState.ErrorBuilding:
+                    pbActionStatus.Visibility = Visibility.Hidden;
+                    break;
+                case ActionState.Exporting:
+                    pbActionStatus.Visibility = Visibility.Visible;
+                    break;
+                case ActionState.SuccessExporting:
+                    pbActionStatus.Visibility = Visibility.Hidden;
+                    break;
+                case ActionState.ErrorExporting:
+                    pbActionStatus.Visibility = Visibility.Hidden;
+                    break;
+                case ActionState.Saving:
+                    pbActionStatus.Visibility = Visibility.Visible;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
         public CreaterEditorWindow()
         {
             InitializeComponent();
-            sbStatus.Background = System.Windows.Media.Brushes.LightGray;
-            tbStatusText.Text = "Open Project";
+            dirty = false;
+            ProjectState = ProjectState.NewProject;
+            ActionState = ActionState.Ready;
         }
 
 
@@ -51,8 +205,8 @@ namespace SlideCreater
             {
                 Dispatcher.Invoke(() =>
                 {
-                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
-                    tbStatusText.Text = $"Compiling Project: {percent}%";
+                    tbSubActionStatus.Text = $"Compiling Project: {percent}%";
+                    pbActionStatus.Value = percent;
                 });
             });
 
@@ -60,11 +214,12 @@ namespace SlideCreater
             {
                 Dispatcher.Invoke(() =>
                 {
-                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
-                    tbStatusText.Text = $"Rendering Project: {percent}%";
+                    tbSubActionStatus.Text = $"Rendering Project: {percent}%";
+                    pbActionStatus.Value = percent;
                 });
             });
 
+            ActionState = ActionState.Building;
 
             // compile text
             XenonBuildService builder = new XenonBuildService();
@@ -74,8 +229,7 @@ namespace SlideCreater
             {
                 sbStatus.Dispatcher.Invoke(() =>
                 {
-                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
-                    tbStatusText.Text = "Build Failed";
+                    ActionState = ActionState.ErrorBuilding;
                 });
                 tbConsole.Dispatcher.Invoke(() =>
                 {
@@ -102,8 +256,7 @@ namespace SlideCreater
             {
                 sbStatus.Dispatcher.Invoke(() =>
                 {
-                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
-                    tbStatusText.Text = "Render Failed";
+                    ActionState = ActionState.ErrorBuilding;
                     tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: Unknown Reason? {ex}";
                     foreach (var err in builder.Messages)
                     {
@@ -115,8 +268,7 @@ namespace SlideCreater
 
             sbStatus.Dispatcher.Invoke(() =>
             {
-                sbStatus.Background = System.Windows.Media.Brushes.Green;
-                tbStatusText.Text = "Project Rendered";
+                ActionState = ActionState.SuccessBuilding;
                 foreach (var msg in builder.Messages)
                 {
                     tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Message]: {msg}";
@@ -124,7 +276,7 @@ namespace SlideCreater
                 tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Succeded]: Slides built!";
             });
 
-            slidelist.Children.Clear();
+            slidelist.Items.Clear();
             slidepreviews.Clear();
             // add all slides to list
             foreach (var slide in slides)
@@ -132,9 +284,9 @@ namespace SlideCreater
                 SlideContentPresenter slideContentPresenter = new SlideContentPresenter();
                 slideContentPresenter.Width = slidelist.Width;
                 slideContentPresenter.Slide = slide;
+                slideContentPresenter.Height = 200;
                 slideContentPresenter.ShowSlide();
-                slideContentPresenter.OnSlideClicked += SlideContentPresenter_OnSlideClicked;
-                slidelist.Children.Add(slideContentPresenter);
+                slidelist.Items.Add(slideContentPresenter);
                 slidepreviews.Add(slideContentPresenter);
             }
 
@@ -143,19 +295,17 @@ namespace SlideCreater
             {
                 FocusSlide.Slide = slides.First();
                 FocusSlide.ShowSlide();
-                slidepreviews.First().ShowSelected(true);
+                slidelist.SelectedIndex = 0;
             }
+
+
         }
 
         Project _proj = new Project(true);
         List<SlideContentPresenter> slidepreviews = new List<SlideContentPresenter>();
 
-        private void SlideContentPresenter_OnSlideClicked(object sender, RenderedSlide slide)
+        private void SelectSlideToPreview(object sender, RenderedSlide slide)
         {
-            foreach (var spv in slidepreviews)
-            {
-                spv.ShowSelected(false);
-            }
             FocusSlide.Slide = slide;
             FocusSlide.ShowSlide();
             FocusSlide.PlaySlide();
@@ -164,7 +314,6 @@ namespace SlideCreater
             {
                 this.slide = 0;
             }
-            (sender as SlideContentPresenter).ShowSelected(true);
         }
 
         List<RenderedSlide> slides = new List<RenderedSlide>();
@@ -201,7 +350,7 @@ namespace SlideCreater
                 {
                     // copy to tmp folder
                     string tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, "assets", System.IO.Path.GetFileName(file));
-                    File.Copy(file, tmpassetpath);
+                    File.Copy(file, tmpassetpath, true);
 
                     ProjectAsset asset = new ProjectAsset();
                     if (Regex.IsMatch(System.IO.Path.GetExtension(file), "\\.mp4", RegexOptions.IgnoreCase))
@@ -278,8 +427,7 @@ namespace SlideCreater
 
         private async void ExportSlides(object sender, RoutedEventArgs e)
         {
-            sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
-            tbStatusText.Text = "Exporting Slides";
+            ActionState = ActionState.Exporting;
             SaveFileDialog ofd = new SaveFileDialog();
             ofd.Title = "Select Output Folder";
             ofd.FileName = "Slide";
@@ -289,13 +437,11 @@ namespace SlideCreater
                 {
                     SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>()); // for now ignore messages
                 });
-                sbStatus.Background = System.Windows.Media.Brushes.GreenYellow;
-                tbStatusText.Text = "Slides Exported";
+                ActionState = ActionState.SuccessExporting;
             }
             else
             {
-                sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
-                tbStatusText.Text = "Abort Export";
+                ActionState = ActionState.ErrorExporting;
             }
         }
 
@@ -311,8 +457,9 @@ namespace SlideCreater
             {
                 Dispatcher.Invoke(() =>
                 {
-                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
-                    tbStatusText.Text = $"Saving Project: {percent}%";
+                    ActionState = ActionState.Saving;
+                    tbSubActionStatus.Text = $"Saving Project: {percent}%";
+                    pbActionStatus.Value = percent;
                 });
             });
 
@@ -328,9 +475,9 @@ namespace SlideCreater
                 await _proj.SaveProject(sfd.FileName, saveprogress);
                 Dispatcher.Invoke(() =>
                 {
-                    sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
-                    tbStatusText.Text = "Project Saved";
                     dirty = false;
+                    ProjectState = ProjectState.Saved;
+                    ActionState = ActionState.Ready;
                 });
             }
         }
@@ -346,9 +493,9 @@ namespace SlideCreater
             if (sfd.ShowDialog() == true)
             {
                 _proj.Save(sfd.FileName);
-                sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
-                tbStatusText.Text = "Project Saved";
                 dirty = false;
+                ProjectState = ProjectState.Saved;
+                ActionState = ActionState.Ready;
             }
         }
 
@@ -370,7 +517,7 @@ namespace SlideCreater
             if (ofd.ShowDialog() == true)
             {
                 Assets.Clear();
-                slidelist.Children.Clear();
+                slidelist.Items.Clear();
                 slidepreviews.Clear();
                 _proj = Project.Load(ofd.FileName);
                 TbInput.Text = _proj.SourceCode;
@@ -384,12 +531,12 @@ namespace SlideCreater
                     MessageBox.Show("Failed to load project assets");
                     Assets.Clear();
                     _proj.Assets.Clear();
-                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
-                    tbStatusText.Text = "Failed to Load Project";
+                    ProjectState = ProjectState.LoadError;
                     return;
                 }
-                sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
-                tbStatusText.Text = "Project Saved";
+                dirty = false;
+                ProjectState = ProjectState.Saved;
+                ActionState = ActionState.Ready;
             }
 
         }
@@ -410,7 +557,7 @@ namespace SlideCreater
             if (ofd.ShowDialog() == true)
             {
                 Assets.Clear();
-                slidelist.Children.Clear();
+                slidelist.Items.Clear();
                 slidepreviews.Clear();
                 _proj = await Project.LoadProject(ofd.FileName);
                 TbInput.Text = _proj.SourceCode;
@@ -424,12 +571,12 @@ namespace SlideCreater
                     MessageBox.Show("Failed to load project assets");
                     Assets.Clear();
                     _proj.Assets.Clear();
-                    sbStatus.Background = System.Windows.Media.Brushes.Crimson;
-                    tbStatusText.Text = "Failed to Load Project";
+                    ProjectState = ProjectState.LoadError;
                     return;
                 }
-                sbStatus.Background = System.Windows.Media.Brushes.CornflowerBlue;
-                tbStatusText.Text = "Project Saved";
+                dirty = false;
+                ProjectState = ProjectState.Saved;
+                ActionState = ActionState.Ready;
             }
 
         }
@@ -445,7 +592,7 @@ namespace SlideCreater
                 }
             }
             dirty = false;
-            slidelist.Children.Clear();
+            slidelist.Items.Clear();
             slidepreviews.Clear();
             Assets.Clear();
             AssetList.Children.Clear();
@@ -453,8 +600,8 @@ namespace SlideCreater
             TbInput.Text = string.Empty;
             _proj = new Project();
 
-            sbStatus.Background = System.Windows.Media.Brushes.LightGray;
-            tbStatusText.Text = "Empty Project";
+            ProjectState = ProjectState.NewProject;
+            ActionState = ActionState.Ready;
 
         }
 
@@ -491,15 +638,15 @@ namespace SlideCreater
         private void SourceTextChanged(object sender, TextChangedEventArgs e)
         {
             dirty = true;
-            sbStatus.Background = System.Windows.Media.Brushes.Brown;
-            tbStatusText.Text = "Project Unsaved";
+            ProjectState = ProjectState.Dirty;
+            ActionState = ActionState.Ready;
         }
 
         private void AssetsChanged()
         {
             dirty = true;
-            sbStatus.Background = System.Windows.Media.Brushes.Brown;
-            tbStatusText.Text = "Project Unsaved";
+            ProjectState = ProjectState.Dirty;
+            ActionState = ActionState.Ready;
         }
 
         private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -529,6 +676,15 @@ namespace SlideCreater
         private void ClickOpenJSON(object sender, RoutedEventArgs e)
         {
             OpenProjectJSON();
+        }
+
+        private void slidelist_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SlideContentPresenter scp = (SlideContentPresenter)slidelist.SelectedItem;
+            if (scp != null)
+            {
+                SelectSlideToPreview(sender, scp.Slide);
+            }
         }
     }
 }

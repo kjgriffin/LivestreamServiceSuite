@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Windows;
 using System.IO.Compression;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Xenon.SlideAssembly
 {
@@ -16,12 +17,33 @@ namespace Xenon.SlideAssembly
         public SlideLayout Layouts { get; set; } = new SlideLayout();
         public List<Slide> Slides { get; set; } = new List<Slide>();
 
+        public Dictionary<string, List<string>> ProjectVariables = new Dictionary<string, List<string>>();
+
         public List<ProjectAsset> Assets { get; set; } = new List<ProjectAsset>();
         public string SourceCode { get; set; } = string.Empty;
 
 
         private int slidenum = 0;
         public int NewSlideNumber => slidenum++;
+
+
+        public void AddAttribute(string key, string value)
+        {
+            if (!ProjectVariables.ContainsKey(key))
+            {
+                ProjectVariables[key] = new List<string>();
+            }
+            ProjectVariables[key].Add(value);
+        }
+
+        public List<string> GetAttribute(string key)
+        {
+            if (ProjectVariables.ContainsKey(key))
+            {
+                return ProjectVariables[key];
+            }
+            return new List<string>();
+        }
 
 
         public void Save(string filename)
@@ -39,9 +61,9 @@ namespace Xenon.SlideAssembly
             }
         }
 
-        public async Task SaveProject(string filename, IProgress<int> progress)
+        public Task SaveProject(string filename, IProgress<int> progress)
         {
-            await Task.Run(async () =>
+            return Task.Run(async () =>
             {
                 progress.Report(0);
 
@@ -51,8 +73,8 @@ namespace Xenon.SlideAssembly
                 ZipArchiveEntry readmeEntry = archive.CreateEntry("Readme.txt");
                 using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                 {
-                    writer.WriteLine("Information about this package.");
-                    writer.WriteLine("===============================");
+                    await writer.WriteLineAsync("Information about this package.");
+                    await writer.WriteLineAsync("===============================");
                 }
 
                 progress.Report(1);
@@ -69,20 +91,23 @@ namespace Xenon.SlideAssembly
 
                 int completed = 0;
                 // copy assets
-                foreach (var asset in Assets)
-                {
-                    ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
-                    completed++;
-                    progress.Report(5 + (int)((double)completed / (double)count * 100 * 0.9));
-                }
-
-
-                //Parallel.ForEach(Assets, (asset) =>
+                //foreach (var asset in Assets)
                 //{
                 //    ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
                 //    completed++;
-                //    progress.Report(5 + (int)((double)0 / (double)count * 100 * 0.9));
-                //});
+                //    progress.Report(5 + (int)((double)completed / (double)count * 100 * 0.9));
+                //}
+
+
+
+
+                Parallel.ForEach(Assets, (asset) =>
+                 {
+                     ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
+                     Interlocked.Increment(ref completed);
+                     double assetssaved = (completed / (double)count) * 100;
+                     progress.Report(5 + (int)(assetssaved * 0.85));
+                 });
 
                 // update project assets to point to zip
 
@@ -94,9 +119,8 @@ namespace Xenon.SlideAssembly
                 var sobj = JsonSerializer.Serialize(this);
                 using (StreamWriter writer = new StreamWriter(jsonfile.Open()))
                 {
-                    await writer.WriteAsync(sobj);
+                    await writer.WriteLineAsync(sobj);
                 }
-                progress.Report(100);
             });
         }
 

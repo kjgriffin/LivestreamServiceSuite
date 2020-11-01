@@ -105,12 +105,9 @@
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <ScrollViewer Grid.Column="1">
-                        <StackPanel Name="slidelist">
-                        </StackPanel>
-                    </ScrollViewer>
+                    <!--<StackPanel Name="slidelist"></StackPanel>-->
+                    <ListBox Name="slidelist" SelectionChanged="slidelist_SelectionChanged"></ListBox>
                 </Grid>
 
 
@@ -120,7 +117,12 @@
 
         <Grid Grid.Row="3">
             <StatusBar Name="sbStatus" Background="LightGray">
-                <TextBlock Name="tbStatusText" Foreground="White">New Project</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Name="tbProjectStatus" Foreground="White" Margin="10,0,10,0"></TextBlock>
+                    <TextBlock Name="tbActionStatus" Foreground="White" Margin="10, 0, 10, 0"></TextBlock>
+                    <TextBlock Name="tbSubActionStatus" Foreground="White" Margin="10, 0, 10, 0"></TextBlock>
+                    <ProgressBar x:Name="pbActionStatus" Value="0" Foreground="green" Width="100" Visibility="Hidden"></ProgressBar>
+                </StackPanel>
             </StatusBar>
         </Grid>
     </Grid>

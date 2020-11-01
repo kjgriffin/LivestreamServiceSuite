@@ -9,6 +9,7 @@ namespace Xenon.Compiler
 
         public static Dictionary<LanguageKeywordCommand, string> Commands = new Dictionary<LanguageKeywordCommand, string>()
         {
+            [LanguageKeywordCommand.SetVar] = "set", 
             [LanguageKeywordCommand.Break] = "break", 
             [LanguageKeywordCommand.Image] = "image", 
             [LanguageKeywordCommand.Video] = "video", 
@@ -38,6 +39,7 @@ namespace Xenon.Compiler
 
     enum LanguageKeywordCommand
     {
+        SetVar,
         Break,
         Image,
         Video,

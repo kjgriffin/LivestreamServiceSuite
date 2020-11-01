@@ -32,7 +32,6 @@ namespace SlideCreater
         public SlideContentPresenter()
         {
             InitializeComponent();
-            ShowSelected(false);
         }
 
         public async void ShowSlide()
@@ -66,24 +65,6 @@ namespace SlideCreater
             Slide = null;
             ShowSlide();
         }
-
-        public void ShowSelected(bool isselected)
-        {
-            if (isselected)
-            {
-                SelectionBorder.BorderThickness = new Thickness(2, 2, 2, 2);
-                SelectionBorder.BorderBrush = Brushes.Cyan;
-            }
-            else
-            {
-                SelectionBorder.BorderThickness = new Thickness(1, 1, 1, 1);
-                SelectionBorder.BorderBrush = Brushes.Black;
-            }
-        }
-
-        private void OnControlMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Dispatcher.Invoke(() => OnSlideClicked?.Invoke(this, Slide));
-        }
+      
     }
 }

@@ -111,6 +111,17 @@ namespace Xenon.Helpers
         }
 
 
+        public static System.Drawing.Color ColorFromRGB(string col)
+        {
+            var colmatch = Regex.Match(col, @"(?<Red>\d{1,3}),(?<Green>\d{1,3}),(?<Blue>\d{1,3})").Groups;
+            int alpha = 255;
+            int red = Convert.ToInt32(colmatch["Red"].Value);
+            int green = Convert.ToInt32(colmatch["Green"].Value);
+            int blue = Convert.ToInt32(colmatch["Blue"].Value);
+            return System.Drawing.Color.FromArgb(alpha, red, green, blue);
+        }
+
+
 
         public static BitmapImage ConvertToBitmapImage(this Bitmap bmp)
         {
