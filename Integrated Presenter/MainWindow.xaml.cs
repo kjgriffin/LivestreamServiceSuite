@@ -1642,7 +1642,7 @@ namespace Integrated_Presenter
                     Invert = 1,
                     IsPremultipled = 0,
                     IsMasked = 1,
-                    MaskTop = -5.4f,
+                    MaskTop = -5.5f,
                     MaskBottom = -9,
                     MaskLeft = -16,
                     MaskRight = 16
