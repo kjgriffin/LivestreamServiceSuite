@@ -686,5 +686,6 @@ namespace SlideCreater
                 SelectSlideToPreview(sender, scp.Slide);
             }
         }
+
     }
 }
