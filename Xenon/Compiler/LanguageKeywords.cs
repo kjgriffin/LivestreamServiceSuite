@@ -11,7 +11,6 @@ namespace Xenon.Compiler
         {
             [LanguageKeywordCommand.SetVar] = "set", 
             [LanguageKeywordCommand.Break] = "break", 
-            [LanguageKeywordCommand.Image] = "image", 
             [LanguageKeywordCommand.Video] = "video", 
             [LanguageKeywordCommand.FullImage] = "fullimage", 
             [LanguageKeywordCommand.FitImage] = "fitimage", 
@@ -41,7 +40,6 @@ namespace Xenon.Compiler
     {
         SetVar,
         Break,
-        Image,
         Video,
         FullImage,
         FitImage,
