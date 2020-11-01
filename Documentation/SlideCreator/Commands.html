@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Commands.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="slide-creator-command-reference">Slide Creator Command Reference</h1>
+<p>Below are the following recognized commands:</p>
+<ul>
+<li>
+<p><a href="#set">set</a></p>
+</li>
+<li>
+<p><a href="#liturgy">liturgy</a></p>
+</li>
+<li>
+<p><a href="#break">break</a></p>
+</li>
+<li>
+<p><a href="#titled-liturgy-verse">tlverse</a></p>
+</li>
+<li>
+<p><a href="#video">video</a></p>
+</li>
+<li>
+<p><a href="#full-image">fullimage</a></p>
+</li>
+<li>
+<p><a href="#fit-image">fitimage</a></p>
+</li>
+<li>
+<p><a href="#auto-fit-image">autofitimage</a></p>
+</li>
+<li>
+<p><a href="#liturgy-image">litimage</a></p>
+</li>
+<li>
+<p><a href="#reading">reading</a></p>
+</li>
+<li>
+<p><a href="#sermon">sermon</a></p>
+</li>
+<li>
+<p><a href="#anthem-title">anthemtitle</a></p>
+</li>
+<li>
+<p><a href="#two-line-title">2title</a></p>
+</li>
+<li>
+<p><a href="#texthymn">texthymn</a></p>
+</li>
+<li>
+<p><a href="#verse">verse</a></p>
+</li>
+<li>
+<p><a href="#apostles-creed">apostlescreed</a></p>
+</li>
+<li>
+<p><a href="#nicene-creed">nicenecreed,</a></p>
+</li>
+<li>
+<p><a href="#lords-prayer">lordsprayer</a></p>
+</li>
+<li>
+<p><a href="#copyright">copyright</a></p>
+</li>
+<li>
+<p><a href="#view-services">viewservices</a></p>
+</li>
+<li>
+<p><a href="#view-series">viewseries</a></p>
+</li>
+</ul>
+<h1 id="set">Set</h1>
+<p>Sets a project-wide variable.</p>
+<h2 id="use">Use:</h2>
+<pre><code>#set(&quot;&lt;somevariable&gt;&quot;, &quot;&lt;somevalue&gt;&quot;)
+</code></pre>
+<h2 id="params">Params:</h2>
+<h3 id="somevariable-string">somevariable &lt;string&gt;</h3>
+<ul>
+<li>name of the project variable</li>
+</ul>
+<h3 id="somevalue-string">somevalue &lt;string&gt;</h3>
+<ul>
+<li>value to set the variable to</li>
+</ul>
+<p>Current variables used by project:</p>
+<h2 id="variable-otherspeakers">Variable: 'otherspeakers'</h2>
+<p>Use: 'speakeridentifier-speakertext'</p>
+<pre><code>#set(&quot;otherspeakers&quot;, &quot;Pastor:-P&quot;)
+</code></pre>
+<h2 id="variable-litspeakertextcol">Variable: 'litspeakertextcol'</h2>
+<p>Use: 'red,green,blue'</p>
+<pre><code>#set(&quot;litspeakertextcol&quot;, &quot;255, 0, 0&quot;)
+</code></pre>
+<h2 id="variable-littextcol%22">Variable: 'littextcol&quot;</h2>
+<p>Use: 'red,green,blue'</p>
+<pre><code>#set(&quot;littextcol&quot;, &quot;255, 0, 0&quot;)
+</code></pre>
+<h2 id="variable-litbackgroundcol">Variable: 'litbackgroundcol'</h2>
+<p>Use: 'red,green,blue'</p>
+<pre><code>#set(&quot;litbackgroundcol&quot;, &quot;255, 0, 0&quot;)
+</code></pre>
+<h1 id="liturgy">Liturgy</h1>
+<p>Used to apply liturgy layout rules to text.</p>
+<h2 id="use">Use:</h2>
+<pre><code>#liturgy[(&lt;speakerstartonline&gt;)] {
+
+}
+</code></pre>
+<h2 id="params">Params:</h2>
+<h3 id="speakerstartonline-bool-defaultfalse">speakerstartonline &lt;bool&gt; (default=false)</h3>
+<ul>
+<li>True: Only detects speakers at the start of a line</li>
+</ul>
+<p>Will search source text for <em>speakers</em> and then assign lines to them.</p>
+<h2 id="speakers">Speakers</h2>
+<p>The default speakers are:</p>
+<ul>
+<li>P - Pastor</li>
+<li>C - Congregation</li>
+<li>A - Assistant</li>
+<li>L - Leader</li>
+<li>R - Responder</li>
+<li>$ - None</li>
+</ul>
+<p>Setting the project variable '<a href="#variable:-'otherspeakers'">otherspeakers</a>' will add user defined speakers d</p>
+<p>Accepts an optional parameter to determine if it should only recognize speakers if they start a line (default = false)</p>
+<pre><code>// Default use
+#liturgy {
+P Some example text.
+C This is cool.
+}
+
+// With Parameter
+#liturgy(true) {
+P this should P only detect one speaker.
+}
+</code></pre>
+<p>In the Liturgy source text the character sequence ' T ' will be rendered as a special LSBSymbol character 'T'</p>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>All the text within the {} of the #liturgy command will be split onto slides that look like:</p>
+<pre><code>#liturgy {
+P This is some example text.
+C To give you and idea of what to expect.
+}
+</code></pre>
+<p><img src="./img/ExampleLiturgy1.png" alt="image"></p>
+<h1 id="break">Break</h1>
+<h2 id="use">Use:</h2>
+<pre><code>liturgy...
+#break
+liturgy...
+</code></pre>
+<p>The break command is valid within the #liturgy source text. It will force a slide break.</p>
+<pre><code>#liturgy {
+P Some content that fits on one slide.
+#break
+C This will be forced onto a second slide.
+}
+</code></pre>
+<h1 id="titled-liturgy-verse">Titled Liturgy Verse</h1>
+<p>Renders Liturgy As Centred Text with a title and refence.</p>
+<h2 id="use">Use:</h2>
+<pre><code>#tlverse(&quot;&lt;title&gt;&quot;, &quot;&lt;reference&gt;&quot;) {
+    ...content...
+}
+</code></pre>
+<h2 id="params">Params:</h2>
+<h3 id="title-string">title &lt;string&gt;</h3>
+<ul>
+<li>Slide Title</li>
+</ul>
+<h3 id="reference-string">reference &lt;string&gt;</h3>
+<ul>
+<li>Slide Reference</li>
+</ul>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Speakers are detected, but not rendered. The renderer will attempt to fit all the text onto the slide, cramming it in if needed.</p>
+<p>Example:</p>
+<pre><code>#tlverse(&quot;Title&quot;, &quot;reference&quot;) {
+$ Line 1 of text here.
+$ Second longer line of text here that will be wrapped eventually as it is long enough that it needs 2 lines.
+}
+</code></pre>
+<p><img src="./img/ExampleTLVerse1.png" alt="image"></p>
+<h1 id="video">Video</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#video(&lt;assetname&gt;)
+</code></pre>
+<h2 id="params">Params:</h2>
+<h3 id="assetname-string">assetname &lt;string&gt;</h3>
+<ul>
+<li>Refers to an asset name from the project assets.</li>
+</ul>
+<p>This command is automatically used when a video asset is inserted as 'Insert'</p>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>The video will be inserted as a slide.</p>
+<h1 id="full-image">Full Image</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#fullimage(&lt;assetname&gt;)
+</code></pre>
+<h2 id="params">Params:</h2>
+<h3 id="assetname-string">assetname &lt;string&gt;</h3>
+<ul>
+<li>Refers to an asset name from the project assets.</li>
+</ul>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Renders the image unscaled.</p>
+<h1 id="fit-image">Fit Image</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#fitimage(&lt;assetname&gt;)
+</code></pre>
+<h3 id="assetname-string">assetname &lt;string&gt;</h3>
+<ul>
+<li>Refers to an asset name from the project assets.</li>
+</ul>
+<p>This command is automatically used when a image asset is inserted as 'Insert'</p>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Renders the image with uniform scaling up/down so that the limiting dimension is not clipped.</p>
+<h1 id="auto-fit-image">Auto Fit Image</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#autofitimage(&lt;assetname&gt;)
+</code></pre>
+<h3 id="assetname-string">assetname &lt;string&gt;</h3>
+<ul>
+<li>Refers to an asset name from the project assets.</li>
+</ul>
+<p>This command is automatically used when an asset is inserted as 'Hymn'</p>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Renders the image with uniform scaling up/down so that the limiting dimension is not clipped. Auto detects the 'true' size of the image by inspecting every pixel in the image to find the outer pixel for each direction (top, bottom, left, right) that is not white.
+Fills only 93% of slide to pad the image with a white border</p>
+<h1 id="liturgy-image">Liturgy Image</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#litiamge(&lt;assetname&gt;)
+</code></pre>
+<h3 id="assetname-string">assetname &lt;string&gt;</h3>
+<ul>
+<li>Refers to an asset name from the project assets.</li>
+</ul>
+<p>This command is automatically used when an asset is inserted as 'Liturgy'</p>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Renders the image with uniform scaling up/down so that the limiting dimension is not clipped, based on the 'true size' and then fills 93% available area. Will invert image colors so that black is rendered white and white is rendered black.</p>
+<h1 id="reading">Reading</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#reading(&quot;&lt;name&gt;&quot;, &quot;&lt;reference&gt;&quot;)
+</code></pre>
+<h2 id="params">Params:</h2>
+<h3 id="name-string">name &lt;string&gt;</h3>
+<ul>
+<li>name to call the reading. (eg. First Reading, Gospel)</li>
+</ul>
+<h3 id="reference-string">reference &lt;string&gt;</h3>
+<ul>
+<li>verse reading is from</li>
+</ul>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<pre><code>#reading(&quot;First Reading&quot;, &quot;Somewhere 3:5-18&quot;)
+</code></pre>
+<p><img src="./img/ExampleReading1.png" alt="image"></p>
+<h1 id="sermon">Sermon</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#sermon(&quot;&lt;name&gt;&quot;, &quot;&lt;reference&gt;&quot;, &quot;&lt;preacher&gt;&quot;)
+</code></pre>
+<h2 id="params">Params:</h2>
+<h3 id="name-string">name &lt;string&gt;</h3>
+<ul>
+<li>sermon title</li>
+</ul>
+<h3 id="reference-string">reference &lt;string&gt;</h3>
+<ul>
+<li>text sermon is based upon</li>
+</ul>
+<h3 id="preacher-string">preacher &lt;string&gt;</h3>
+<ul>
+<li>name of the preacher</li>
+</ul>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>*The sermon slide will also instruct Integrated Presenter to restart the general purpose timer 1.</p>
+<pre><code>#sermon(&quot;'An Insightful Sermon'&quot;, &quot;Based Upon Somewhere 2:4-14&quot;, &quot;The Rev. Preacher&quot;)
+</code></pre>
+<p><img src="./img/ExampleSermon1.png" alt="image"></p>
+<h1 id="anthem-title">Anthem Title</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#anthemtitle(&quot;&lt;name&gt;&quot;, &quot;&lt;musician&gt;&quot;, &quot;&lt;accompanist&gt;&quot;, &quot;&lt;credit&gt;&quot;)
+</code></pre>
+<h2 id="params">Params:</h2>
+<h3 id="name-string">name &lt;string&gt;</h3>
+<ul>
+<li>name of the anthem</li>
+</ul>
+<h3 id="musician-string">musician &lt;string&gt;</h3>
+<ul>
+<li>the main performer(s)</li>
+</ul>
+<h3 id="accompanist-string">accompanist &lt;string&gt;</h3>
+<ul>
+<li>the accompanists</li>
+</ul>
+<h3 id="credit">credit</h3>
+<ul>
+<li>credits/author of piece</li>
+</ul>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<pre><code>#anthemtitle(&quot;Anthem Name&quot;, &quot;Main Musician&quot;, &quot;Accompanied by (instrument)&quot; &quot;by a Composer&quot;)
+</code></pre>
+<p><img src="./img/ExampleAnthemTitle1.png" alt="image"></p>
+<h1 id="two-line-title">Two Line Title</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#2title(&quot;&lt;majortext&gt;&quot;, &quot;&lt;minortext&gt;&quot;, &quot;&lt;orientation&gt;&quot;)
+</code></pre>
+<h2 id="params">Params:</h2>
+<h3 id="majortext-string">majortext &lt;string&gt;</h3>
+<ul>
+<li>the main line of text</li>
+</ul>
+<h3 id="minortext-string">minortext &lt;string&gt;</h3>
+<ul>
+<li>the secondary line of text</li>
+</ul>
+<h3 id="orientation-string-default--horizontal">orientation &lt;string&gt; (default = 'horizontal')</h3>
+<ul>
+<li>the layout direction of the lines</li>
+<li>Horizontal layout = both on middle line. Main line left justified (bold). Minor line right justified.</li>
+<li>Vertical layout = two lines. Main line top (centre justified, bold). Minor line bottom (centre justified)</li>
+</ul>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<pre><code>#2title(&quot;THE MAIN LINE&quot;, &quot;Secondary Text line&quot;, &quot;vertical&quot;)
+</code></pre>
+<p><img src="./img/Example2TitleVertical.png" alt="image"></p>
+<pre><code>#2title(&quot;THE MAIN LINE&quot;, &quot;Secondary Text line&quot;, &quot;horizontal&quot;)
+</code></pre>
+<p><img src="./img/Example2TitleHorizontal.png" alt="image"></p>
+<h1 id="text-hymn">Text Hymn</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#texthymn(&quot;&lt;title&gt;&quot;, &quot;&lt;hymnname&gt;&quot;, &quot;&lt;tune&gt;&quot;, &quot;&lt;number&gt;&quot;, &quot;&lt;copyright&gt;&quot;)
+{
+    ...#verse{}...
+}
+</code></pre>
+<h2 id="params">Params:</h2>
+<h3 id="title-string">title &lt;string&gt;</h3>
+<ul>
+<li>Slide title</li>
+</ul>
+<h3 id="hymnname-string">hymnname &lt;string&gt;</h3>
+<ul>
+<li>Name of the Hymn</li>
+</ul>
+<h3 id="tune-string">tune &lt;string&gt;</h3>
+<ul>
+<li>Name of Tune (if different)</li>
+</ul>
+<h3 id="number-string">number &lt;string&gt;</h3>
+<ul>
+<li>Hymn number and verses</li>
+</ul>
+<h3 id="copyright-string">copyright &lt;string&gt;</h3>
+<ul>
+<li>Copyright info for hymn</li>
+</ul>
+<p>Note: Requires at least one <a href="#verse">verse</a> to render the hymn.
+Each verse is rendered on a sperate slide.</p>
+<h1 id="render-behaviour">Render Behaviour</h1>
+<pre><code>#texthymn(&quot;Hymn Title&quot;, &quot;Hymn Name&quot;, &quot;Alt Tune Name&quot;, &quot;Hymnal #111&quot;, &quot;Copyright stuff that needs to be put there, but that no-one actually reads&quot;)
+{
+#verse {
+Line 1
+Line 2
+Line 3
+Line 4
+} 
+}
+</code></pre>
+<p><img src="./img/ExampleTextHymn1.png" alt="image"></p>
+<h1 id="verse">Verse</h1>
+<p>Only valid in a <a href="#text-hymn">#texthymn</a> command.
+Defines the lyrics for a verse.</p>
+<h2 id="use">Use:</h2>
+<pre><code>#verse {
+    ...lines...
+}
+</code></pre>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Each line will be rendered as one line. No attempt will be made to fit lines that are too large/small. Lines will be spaced equidistant vertically.</p>
+<h1 id="lords-prayer">Lords Prayer</h1>
+<p>Prefab slide.</p>
+<h2 id="use">Use:</h2>
+<pre><code>#lordsprayer
+</code></pre>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Inserts the prebuilt slide for the lords prayer.</p>
+<p><img src="./img/ExampleLordsPrayer.png" alt="image"></p>
+<h1 id="apostles-creed">Apostles Creed</h1>
+<p>Prefab slide.</p>
+<h2 id="use">Use:</h2>
+<pre><code>#apostlescreed
+</code></pre>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Inserts the 3 prebuilt slide for the lords prayer.</p>
+<p><img src="./img/ExampleApostlesCreed1.png" alt="image">
+<img src="./img/ExampleApostlesCreed2.png" alt="image">
+<img src="./img/ExampleApostlesCreed3.png" alt="image"></p>
+<h1 id="nicene-creed">Nicene Creed</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#nicenecreed
+</code></pre>
+<p>Prefab slide.</p>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Inserts the 5 prebuilt slide for the lords prayer.
+<img src="./img/ExampleNiceneCreed1.png" alt="image">
+<img src="./img/ExampleNiceneCreed2.png" alt="image">
+<img src="./img/ExampleNiceneCreed3.png" alt="image">
+<img src="./img/ExampleNiceneCreed4.png" alt="image">
+<img src="./img/ExampleNiceneCreed5.png" alt="image"></p>
+<h1 id="copyright">Copyright</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#copyright
+</code></pre>
+<p>Prefab slide.</p>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Inserts the prebuilt slide for the lords prayer.
+<img src="./img/ExampleCopyright.png" alt="image"></p>
+<h1 id="view-services">View Services</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#viewservices
+</code></pre>
+<p>Prefab slide.</p>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Inserts the prebuilt slide for the lords prayer.
+<img src="./img/ExampleViewServices.png" alt="image"></p>
+<h1 id="view-series">View Series</h1>
+<h2 id="use">Use:</h2>
+<pre><code>#viewseries
+</code></pre>
+<p>Prefab slide.</p>
+<h2 id="render-behaviour">Render Behaviour</h2>
+<p>Inserts the prebuilt slide for the lords prayer.
+<img src="./img/ExampleViewSeries.png" alt="image"></p>
+
+</body>
+</html>
