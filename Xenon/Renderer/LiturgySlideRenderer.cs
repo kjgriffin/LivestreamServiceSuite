@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Xenon.Helpers;
+using System.Printing;
 
 namespace Xenon.Renderer
 {
@@ -90,14 +91,16 @@ namespace Xenon.Renderer
                 // draw speaker
                 if (drawspeaker)
                 {
-                    gfx.DrawString(linewords.Speaker, flsbregular, speakercol, speakerblock, centeralign);
+                    float jog = 0.07f * (gfx.DpiY * gfx.MeasureStringCharacters(linewords.Speaker, flsbregular, speakerblock).Height / 72);
+                    gfx.DrawString(linewords.Speaker, flsbregular, speakercol, speakerblock.Move(0, -jog), centeralign);
                 }
 
 
                 foreach (var word in linewords.Words)
                 {
                     Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
-                    gfx.DrawString(word.Value, f, textcol, text.Move(xoffset, linepos + interspace * linenum).Location, GraphicsHelper.DefaultStringFormat());
+                    float jog = word.IsLSBSymbol ? 0.07f * (gfx.DpiY * gfx.MeasureStringCharacters(linewords.Speaker, f, speakerblock).Height / 72) : 0;
+                    gfx.DrawString(word.Value, f, textcol, text.Move(xoffset, linepos + interspace * linenum).Move(0, -jog).Location, GraphicsHelper.DefaultStringFormat());
                     xoffset += word.Size.Width;
                 }
 
@@ -109,7 +112,7 @@ namespace Xenon.Renderer
 
             }
 
-         
+
             res.Bitmap = bmp;
 
             return res;
