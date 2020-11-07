@@ -35,6 +35,9 @@ namespace Integrated_Presenter
         void PerformToggleBackgroundForNextTrans();
         void PerformToggleKey1ForNextTrans();
 
+        void SetPIPPosition(BMDUSKSettings settings);
+        void SetPIPKeyFrameA(BMDUSKSettings settings);
+
         void Close();
         void ConfigureSwitcher(BMDSwitcherConfigSettings config);
     }

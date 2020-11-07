@@ -918,5 +918,53 @@ namespace Integrated_Presenter
             }
             _BMDSwitcherTransitionParameters.SetNextTransitionSelection((_BMDSwitcherTransitionSelection)val);
         }
+
+        public void SetPIPPosition(BMDUSKSettings settings)
+        {
+            IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+
+            // set border with dveparams
+            dveparams.SetMasked(settings.IsMasked);
+            dveparams.SetMaskTop(settings.MaskTop);
+            dveparams.SetMaskBottom(settings.MaskBottom);
+            dveparams.SetMaskLeft(settings.MaskLeft);
+            dveparams.SetMaskRight(settings.MaskRight);
+
+
+            dveparams.SetBorderEnabled(settings.IsBordered);
+
+
+            // config size & base position
+            _BMDSwitcherFlyKeyParamters.SetPositionX(settings.Current.PositionX);
+            _BMDSwitcherFlyKeyParamters.SetPositionY(settings.Current.PositionY);
+            _BMDSwitcherFlyKeyParamters.SetSizeX(settings.Current.SizeX);
+            _BMDSwitcherFlyKeyParamters.SetSizeY(settings.Current.SizeY);
+        }
+
+        public void SetPIPKeyFrameA(BMDUSKSettings settings)
+        {
+            IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+
+            // set border with dveparams
+            dveparams.SetMasked(settings.IsMasked);
+            dveparams.SetMaskTop(settings.MaskTop);
+            dveparams.SetMaskBottom(settings.MaskBottom);
+            dveparams.SetMaskLeft(settings.MaskLeft);
+            dveparams.SetMaskRight(settings.MaskRight);
+
+
+            dveparams.SetBorderEnabled(settings.IsBordered);
+
+            // setup keyframes
+            IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
+            _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparams);
+
+            keyframeparams.SetPositionX(settings.KeyFrameA.PositionX);
+            keyframeparams.SetPositionY(settings.KeyFrameA.PositionY);
+            keyframeparams.SetSizeX(settings.KeyFrameA.SizeX);
+            keyframeparams.SetSizeY(settings.KeyFrameA.SizeY);
+        }
+
+
     }
 }

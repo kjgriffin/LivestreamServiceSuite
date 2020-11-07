@@ -1870,5 +1870,68 @@ namespace Integrated_Presenter
         {
             mHyperdeckManager?.StopRecording();
         }
+
+        private void ClickApplyPIPSettings(object sender, RoutedEventArgs e)
+        {
+            BMDUSKSettings config = new BMDUSKSettings();
+            var res = GetPIPSettings();
+            config.Current.PositionX = res.px;
+            config.Current.PositionY = res.py;
+            config.Current.SizeX = res.s;
+            config.Current.SizeY = res.s;
+            config.IsMasked = res.im ? 1 : 0;
+            config.MaskTop = res.mtb;
+            config.MaskBottom = res.mtb;
+            config.MaskLeft = res.mlr;
+            config.MaskRight = res.mlr;
+            switcherManager?.SetPIPKeyFrameA(config);
+
+        }
+
+        private void UpdatePIPSettingsUI()
+        {
+        }
+
+        private (float mlr, float mtb, float px, float py, float s, bool im) GetPIPSettings()
+        {
+            float masklr = 0;
+            float masktb = 0;
+            float posx = 0;
+            float posy = 0;
+            float size = 0;
+            float.TryParse(tbPIPSize.Text, out size);
+            float.TryParse(tbPIPmaskLR.Text, out masklr);
+            float.TryParse(tbPIPmaskTB.Text, out masktb);
+            float.TryParse(tbPIPPosX.Text, out posx);
+            float.TryParse(tbPIPPosY.Text, out posy);
+
+            masklr = Math.Clamp(size, 0, 1);
+            masktb = Math.Clamp(masktb, 0, 9);
+            masklr = Math.Clamp(masklr, 0, 16);
+
+            bool ismasked = false;
+            if (masklr != 0 && masktb != 0)
+            {
+                ismasked = true;
+            }
+
+            return (masklr, masktb, posx, posy, size, ismasked);
+        }
+
+        private void ClickApplyKFAPIPSettings(object sender, RoutedEventArgs e)
+        {
+            BMDUSKSettings config = new BMDUSKSettings();
+            var res = GetPIPSettings();
+            config.KeyFrameA.PositionX = res.px;
+            config.KeyFrameA.PositionY = res.py;
+            config.KeyFrameA.SizeX = res.s;
+            config.KeyFrameA.SizeY = res.s;
+            config.IsMasked = res.im ? 1 : 0;
+            config.MaskTop = res.mtb;
+            config.MaskBottom = res.mtb;
+            config.MaskLeft = res.mlr;
+            config.MaskRight = res.mlr;
+            switcherManager?.SetPIPKeyFrameA(config);
+        }
     }
 }
