@@ -25,9 +25,14 @@
                     <MenuItem Click="ClickConnect" Header="Switcher" IsTabStop="False"></MenuItem>
                     <MenuItem Click="ClickConnectMock" Header="Mock Switcher" IsTabStop="False"></MenuItem>
                     <MenuItem Click="ClickConnectProjector" Header="Projector" IsTabStop="False"></MenuItem>
+                    <MenuItem Click="ClickConnectHyperdeck" Header="Hyperdeck" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Recording" IsTabStop="False">
+                    <MenuItem Click="ClickRecordStart" IsTabStop="False"></MenuItem> 
+                    <MenuItem Click="ClickRecordStop" IsTabStop="False"></MenuItem> 
                 </MenuItem>
                 <MenuItem Header="View" IsTabStop="False">
                     <MenuItem Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>

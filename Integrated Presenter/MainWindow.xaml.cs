@@ -1,4 +1,5 @@
 ﻿using BMDSwitcherAPI;
+using Integrated_Presenter.BMDHyperdeck;
 using Integrated_Presenter.BMDSwitcher;
 using Integrated_Presenter.BMDSwitcher.Config;
 using Integrated_Presenter.ViewModels;
@@ -37,6 +38,9 @@ namespace Integrated_Presenter
 
         BMDSwitcherConfigSettings _config;
 
+
+        BMDHyperdeckManager mHyperdeckManager;
+
         List<SlidePoolSource> SlidePoolButtons;
 
         public MainWindow()
@@ -44,6 +48,7 @@ namespace Integrated_Presenter
             DataContext = this;
             InitializeComponent();
 
+            mHyperdeckManager = new BMDHyperdeckManager();
 
             // set a default config
             SetDefaultConfig();
@@ -144,7 +149,7 @@ namespace Integrated_Presenter
 
         private void ConnectSwitcher()
         {
-            Connection connectWindow = new Connection();
+            Connection connectWindow = new Connection("Connect to Switcher", "Switcher IP Address:", "192.168.2.120");
             bool? res = connectWindow.ShowDialog();
             if (res == true)
             {
@@ -1849,6 +1854,21 @@ namespace Integrated_Presenter
                 default:
                     break;
             }
+        }
+
+        private void ClickConnectHyperdeck(object sender, RoutedEventArgs e)
+        {
+            mHyperdeckManager?.Connect();
+        }
+
+        private void ClickRecordStart(object sender, RoutedEventArgs e)
+        {
+            mHyperdeckManager?.StartRecording();
+        }
+
+        private void ClickRecordStop(object sender, RoutedEventArgs e)
+        {
+            mHyperdeckManager?.StopRecording();
         }
     }
 }
