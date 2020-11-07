@@ -39,6 +39,7 @@
                     <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
                     <MenuItem Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
                     <MenuItem Header="Advanced Projector" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedProjector"></MenuItem>
+                    <MenuItem Header="Hyperdeck Monitor" IsTabStop="False" Click="OpenHyperdeckMonitorWindow"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Settings" IsTabStop="False">
                     <MenuItem Header="Export Settings" Click="SaveSettings" IsTabStop="False"></MenuItem>

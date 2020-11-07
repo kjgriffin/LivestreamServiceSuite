@@ -3,8 +3,12 @@ using VonEX;
 
 namespace HyperdeckControl
 {
+
+    public delegate void StringMessageArgs(object sender, string message);
     public class HyperdeckController
     {
+
+        public event StringMessageArgs OnMessageFromHyperDeck;
 
         SlaveConnection connection;
 
@@ -31,6 +35,7 @@ namespace HyperdeckControl
         private void Connection_OnDataRecieved(string data)
         {
             // for now just assume commands work?
+            OnMessageFromHyperDeck?.Invoke(this, data);
         }
 
         private void Connection_OnConnectionFromMaster(string senderip, bool connected)

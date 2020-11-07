@@ -1,0 +1,15 @@
+﻿<Window x:Class="Integrated_Presenter.HyperDeckMonitorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Integrated_Presenter"
+        mc:Ignorable="d"
+        Closed="OnClosed"
+        Title="HyperDeckMonitorWindow" Height="450" Width="800">
+    <Grid>
+        <ScrollViewer>
+            <TextBlock Name="tb"></TextBlock>
+        </ScrollViewer> 
+    </Grid>
+</Window>

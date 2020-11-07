@@ -50,6 +50,7 @@ namespace Integrated_Presenter
             InitializeComponent();
 
             mHyperdeckManager = new BMDHyperdeckManager();
+            mHyperdeckManager.OnMessageFromHyperDeck += MHyperdeckManager_OnMessageFromHyperDeck;
 
             // set a default config
             SetDefaultConfig();
@@ -83,6 +84,11 @@ namespace Integrated_Presenter
             gp_timer_1.Interval = 1000;
             gp_timer_1.Elapsed += Gp_timer_1_Elapsed;
             gp_timer_1.Start();
+        }
+
+        private void MHyperdeckManager_OnMessageFromHyperDeck(object sender, string message)
+        {
+            hyperDeckMonitorWindow?.AddMessage(message);
         }
 
         private void Gp_timer_1_Elapsed(object sender, ElapsedEventArgs e)
@@ -1331,6 +1337,7 @@ namespace Integrated_Presenter
         {
             _display?.Close();
             switcherManager?.Close();
+            hyperDeckMonitorWindow?.Close();
         }
 
         private void ClickTakeSP0(object sender, EventArgs e)
@@ -1946,6 +1953,26 @@ namespace Integrated_Presenter
 
         private void TextEntryMode(object sender, DependencyPropertyChangedEventArgs e)
         {
+        }
+
+        HyperDeckMonitorWindow hyperDeckMonitorWindow;
+
+        private void OpenHyperdeckMonitorWindow(object sender, RoutedEventArgs e)
+        {
+            if (hyperDeckMonitorWindow == null)
+            {
+                hyperDeckMonitorWindow = new HyperDeckMonitorWindow();
+            }
+            if (hyperDeckMonitorWindow.IsClosed)
+            {
+                hyperDeckMonitorWindow = new HyperDeckMonitorWindow();
+            }
+
+            hyperDeckMonitorWindow.Show();
+
+
+
+
         }
     }
 }
