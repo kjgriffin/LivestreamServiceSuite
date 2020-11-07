@@ -1829,7 +1829,14 @@ namespace Integrated_Presenter
                     }
                 }
                 projectorSerialPort = new SerialPort(port, 9600);
-                projectorSerialPort.Open();
+                try
+                {
+                    projectorSerialPort.Open();
+                }
+                catch (Exception)
+                {
+                    return;
+                }
                 projectorconnected = true;
             }
             UpdateProjectorButtonStyles();
