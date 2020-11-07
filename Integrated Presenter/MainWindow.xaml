@@ -31,8 +31,8 @@
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Recording" IsTabStop="False">
-                    <MenuItem Click="ClickRecordStart" IsTabStop="False"></MenuItem>
-                    <MenuItem Click="ClickRecordStop" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Start Record" Click="ClickRecordStart" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Stop Record" Click="ClickRecordStop" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="View" IsTabStop="False">
                     <MenuItem Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
@@ -339,15 +339,15 @@
                                                                 <RowDefinition></RowDefinition>
                                                             </Grid.RowDefinitions>
                                                             <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Style="{StaticResource GrayText}">SIZE [0, 1.0]</TextBlock>
-                                                            <TextBox Style="{StaticResource darkTextbox}" AcceptsReturn="False" IsTabStop="False" Grid.Row="0" Grid.Column="1" Name="tbPIPSize"></TextBox>
+                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" Style="{StaticResource darkTextbox}" AcceptsReturn="False" IsTabStop="False" Grid.Row="0" Grid.Column="1" Name="tbPIPSize"></TextBox>
                                                             <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Style="{StaticResource GrayText}">POS X:</TextBlock>
-                                                            <TextBox AcceptsReturn="False"  IsTabStop="False"  Grid.Row="1" Grid.Column="1" Name="tbPIPPosX" Style="{StaticResource darkTextbox}"></TextBox>
+                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False"  IsTabStop="False"  Grid.Row="1" Grid.Column="1" Name="tbPIPPosX" Style="{StaticResource darkTextbox}"></TextBox>
                                                             <TextBlock  Grid.Row="1" Grid.Column="2" Margin="5" Style="{StaticResource GrayText}">POS Y:</TextBlock>
-                                                            <TextBox AcceptsReturn="False" IsTabStop="False"  Grid.Row="1" Grid.Column="3" Name="tbPIPPosY" Style="{StaticResource darkTextbox}" ></TextBox>
-                                                            <TextBlock  Grid.Row="2" Grid.Column="0" Name="tbPIPmaskLR" Margin="5" Style="{StaticResource GrayText}">MASK LR:</TextBlock>
-                                                            <TextBox  AcceptsReturn="False" IsTabStop="False"  Grid.Row="2" Grid.Column="1" Style="{StaticResource darkTextbox}"></TextBox>
-                                                            <TextBlock  Grid.Row="2" Grid.Column="2" Name="tbPIPmaskTB" Margin="5" Style="{StaticResource GrayText}">MASK TB:</TextBlock>
-                                                            <TextBox AcceptsReturn="False"  IsTabStop="False"  Grid.Row="2" Grid.Column="3" Style="{StaticResource darkTextbox}"></TextBox>
+                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False" IsTabStop="False"  Grid.Row="1" Grid.Column="3" Name="tbPIPPosY" Style="{StaticResource darkTextbox}" ></TextBox>
+                                                            <TextBlock  Grid.Row="2" Grid.Column="0"  Margin="5" Style="{StaticResource GrayText}">MASK LR:</TextBlock>
+                                                            <TextBox Name="tbPIPmaskLR" IsKeyboardFocusedChanged="TextEntryMode"  AcceptsReturn="False" IsTabStop="False"  Grid.Row="2" Grid.Column="1" Style="{StaticResource darkTextbox}"></TextBox>
+                                                            <TextBlock  Grid.Row="2" Grid.Column="2" Margin="5" Style="{StaticResource GrayText}">MASK TB:</TextBlock>
+                                                            <TextBox Name="tbPIPmaskTB" IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False"  IsTabStop="False"  Grid.Row="2" Grid.Column="3" Style="{StaticResource darkTextbox}"></TextBox>
                                                             <Button Click="ClickApplyPIPSettings" IsTabStop="False" x:Name="btnApplyPIP" Grid.Row="0" Grid.Column="2" Margin="10, 0, 10, 0">
                                                                 <Button.Template>
                                                                     <ControlTemplate>
@@ -363,7 +363,7 @@
                                                                     </ControlTemplate>
                                                                 </Button.Template>
                                                             </Button>
-<Button Click="ClickApplyKFAPIPSettings" IsTabStop="False" x:Name="btnApplyKFAPIP" Grid.Row="0" Grid.Column="3" Margin="10, 0, 10, 0">
+                                                            <Button Click="ClickApplyKFAPIPSettings" IsTabStop="False" x:Name="btnApplyKFAPIP" Grid.Row="0" Grid.Column="3" Margin="10, 0, 10, 0">
                                                                 <Button.Template>
                                                                     <ControlTemplate>
                                                                         <Border Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="1">

@@ -38,6 +38,11 @@ namespace VonEX
             var stream = client.GetStream();
             stream.Write(Encoding.UTF8.GetBytes(data));
         }
+        public void SendStringASCII(string data)
+        {
+            var stream = client.GetStream();
+            stream.Write(Encoding.ASCII.GetBytes(data));
+        }
 
 
         public void Close()

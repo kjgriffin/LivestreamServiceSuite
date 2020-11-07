@@ -43,7 +43,7 @@ namespace HyperdeckControl
         {
             if (IsConnected)
             {
-                connection.SendString("record\r\n");
+                connection.SendStringASCII("record\r\n");
             }
         }
 
@@ -51,7 +51,7 @@ namespace HyperdeckControl
         {
             if (IsConnected)
             {
-                connection.SendString("stop\r\n");
+                connection.SendStringASCII("stop\r\n");
             }
         }
 

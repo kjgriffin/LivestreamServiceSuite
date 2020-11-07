@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -494,6 +495,12 @@ namespace Integrated_Presenter
 
         private void WindowKeyDown(object sender, KeyEventArgs e)
         {
+
+            // dont enable shortcuts when focused on textbox
+            if (tbPIPSize.IsFocused || tbPIPPosX.IsFocused || tbPIPPosY.IsFocused || tbPIPmaskLR.IsFocused || tbPIPmaskTB.IsFocused)
+            {
+                return;
+            }
 
             // D1-D8 + (LShift)
             #region program/preset bus
@@ -1875,6 +1882,7 @@ namespace Integrated_Presenter
         {
             BMDUSKSettings config = new BMDUSKSettings();
             var res = GetPIPSettings();
+            config.Current = new KeyFrameSettings();
             config.Current.PositionX = res.px;
             config.Current.PositionY = res.py;
             config.Current.SizeX = res.s;
@@ -1884,7 +1892,7 @@ namespace Integrated_Presenter
             config.MaskBottom = res.mtb;
             config.MaskLeft = res.mlr;
             config.MaskRight = res.mlr;
-            switcherManager?.SetPIPKeyFrameA(config);
+            switcherManager?.SetPIPPosition(config);
 
         }
 
@@ -1905,12 +1913,12 @@ namespace Integrated_Presenter
             float.TryParse(tbPIPPosX.Text, out posx);
             float.TryParse(tbPIPPosY.Text, out posy);
 
-            masklr = Math.Clamp(size, 0, 1);
+            size = Math.Clamp(size, 0, 1);
             masktb = Math.Clamp(masktb, 0, 9);
             masklr = Math.Clamp(masklr, 0, 16);
 
             bool ismasked = false;
-            if (masklr != 0 && masktb != 0)
+            if (masklr != 0 || masktb != 0)
             {
                 ismasked = true;
             }
@@ -1922,6 +1930,7 @@ namespace Integrated_Presenter
         {
             BMDUSKSettings config = new BMDUSKSettings();
             var res = GetPIPSettings();
+            config.KeyFrameA = new KeyFrameSettings();
             config.KeyFrameA.PositionX = res.px;
             config.KeyFrameA.PositionY = res.py;
             config.KeyFrameA.SizeX = res.s;
@@ -1932,6 +1941,11 @@ namespace Integrated_Presenter
             config.MaskLeft = res.mlr;
             config.MaskRight = res.mlr;
             switcherManager?.SetPIPKeyFrameA(config);
+        }
+
+
+        private void TextEntryMode(object sender, DependencyPropertyChangedEventArgs e)
+        {
         }
     }
 }
