@@ -1760,7 +1760,7 @@ namespace Integrated_Presenter
 
         private void ClickProjectorButton(int btn)
         {
-            if (projectorconnected)
+            if (projectorSerialPort.IsOpen)
             {
                 projectorSerialPort.Write(btn.ToString());
             }
