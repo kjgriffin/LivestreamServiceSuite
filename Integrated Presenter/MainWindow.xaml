@@ -131,7 +131,7 @@
                                             <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="100">
                                                 <StackPanel>
                                                     <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">RECORDING</TextBlock>
-                                                    <Button Name="btnRecording" Click="ClickToggleRecording" IsTabStop="false" Background="Gray">
+                                                    <Button Focusable="False" Name="btnRecording" Click="ClickToggleRecording" IsTabStop="false" Background="Gray">
                                                         <Button.Template>
                                                             <ControlTemplate>
                                                                 <Ellipse Cursor="Hand" Margin="5" Width="60" Height="60" Fill="{TemplateBinding Property=Background}"></Ellipse>
