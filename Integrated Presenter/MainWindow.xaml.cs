@@ -68,7 +68,7 @@ namespace Integrated_Presenter
             UpdateDriveButtonStyle();
             UpdateProjectorButtonStyles();
 
-            UpdateMasterCautionDisplay();
+            UpdateRecordButtonUI();
 
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
 
@@ -921,11 +921,22 @@ namespace Integrated_Presenter
             switch (s.Action)
             {
                 case "t1restart":
-                    timer1span = TimeSpan.Zero;
+                    if (automationtimer1enabled)
+                    {
+                        timer1span = TimeSpan.Zero;
+                    }
                     break;
                 case "mastercaution2":
-                    MasterCautionState = 2;
-                    UpdateMasterCautionDisplay();
+                    //MasterCautionState = 2;
+                    //UpdateMasterCautionDisplay();
+                    break;
+                case "startrecord":
+                    if (automationrecordstartenabled)
+                    {
+                        mHyperdeckManager?.StartRecording();
+                        isRecording = true;
+                        UpdateRecordButtonUI();
+                    }
                     break;
                 default:
                     break;
@@ -1848,32 +1859,18 @@ namespace Integrated_Presenter
         }
 
 
-        /// <summary>
-        /// 0 = gray (good), 1 = orange (warn), 2 = red (error)
-        /// </summary>
-        int MasterCautionState = 0;
 
-        private void ClickBtnWarnings(object sender, RoutedEventArgs e)
-        {
-            MasterCautionState = 0;
-            UpdateMasterCautionDisplay();
-        }
+        bool isRecording = false;
 
-        private void UpdateMasterCautionDisplay()
+        private void UpdateRecordButtonUI()
         {
-            switch (MasterCautionState)
+            if (isRecording)
             {
-                case 0:
-                    btnMasterCaution.Background = Brushes.Gray;
-                    break;
-                case 1:
-                    btnMasterCaution.Background = Brushes.Orange;
-                    break;
-                case 2:
-                    btnMasterCaution.Background = Brushes.Red;
-                    break;
-                default:
-                    break;
+                btnRecording.Background = Brushes.Red;
+            }
+            else
+            {
+                btnRecording.Background = Brushes.Gray;
             }
         }
 
@@ -1980,6 +1977,39 @@ namespace Integrated_Presenter
 
 
 
+        }
+
+        private void ClickToggleRecording(object sender, RoutedEventArgs e)
+        {
+            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
+            {
+                if (isRecording)
+                {
+                    isRecording = false;
+                    mHyperdeckManager?.StopRecording();
+                }
+                else
+                {
+                    isRecording = true;
+                    mHyperdeckManager?.StartRecording();
+                }
+                UpdateRecordButtonUI();
+            }
+        }
+
+        bool automationtimer1enabled = true;
+        bool automationrecordstartenabled = true;
+
+        private void ClickToggleAutomationTimer1(object sender, RoutedEventArgs e)
+        {
+            automationtimer1enabled = !automationtimer1enabled;
+            miTimer1Restart.IsChecked = automationtimer1enabled;
+        }
+
+        private void ClickToggleAutomationRecordingStart(object sender, RoutedEventArgs e)
+        {
+            automationrecordstartenabled = !automationrecordstartenabled;
+            miStartRecord.IsChecked = automationrecordstartenabled;
         }
     }
 }

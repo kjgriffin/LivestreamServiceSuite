@@ -11,6 +11,8 @@ namespace Integrated_Presenter.BMDHyperdeck
 
         public event StringMessageArgs OnMessageFromHyperDeck;
 
+        public bool IsConnected { get => m_hyperdeckController.IsConnected; }
+
         public BMDHyperdeckManager()
         {
             m_hyperdeckController = new HyperdeckController();

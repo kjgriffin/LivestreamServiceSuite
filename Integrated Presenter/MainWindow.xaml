@@ -30,10 +30,10 @@
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
                 </MenuItem>
-                <MenuItem Header="Recording" IsTabStop="False">
+                <!--<MenuItem Header="Recording" IsTabStop="False">
                     <MenuItem Header="Start Record" Click="ClickRecordStart" IsTabStop="False"></MenuItem>
                     <MenuItem Header="Stop Record" Click="ClickRecordStop" IsTabStop="False"></MenuItem>
-                </MenuItem>
+                </MenuItem>-->
                 <MenuItem Header="View" IsTabStop="False">
                     <MenuItem Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
                     <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
@@ -44,6 +44,10 @@
                 <MenuItem Header="Settings" IsTabStop="False">
                     <MenuItem Header="Export Settings" Click="SaveSettings" IsTabStop="False"></MenuItem>
                     <MenuItem Header="Load Settings" Click="LoadSettings" IsTabStop="False"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Automation" IsTabStop="False">
+                    <MenuItem Name="miTimer1Restart" Header="Timer1 Restart" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationTimer1"></MenuItem> 
+                    <MenuItem Name="miStartRecord" Header="Recording Start" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationRecordingStart"></MenuItem> 
                 </MenuItem>
             </Menu>
         </Grid>
@@ -126,8 +130,8 @@
                                             </Border>
                                             <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="100">
                                                 <StackPanel>
-                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">WARNINGS</TextBlock>
-                                                    <Button Name="btnMasterCaution" Click="ClickBtnWarnings" IsTabStop="false" Background="Gray">
+                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">RECORDING</TextBlock>
+                                                    <Button Name="btnRecording" Click="ClickToggleRecording" IsTabStop="false" Background="Gray">
                                                         <Button.Template>
                                                             <ControlTemplate>
                                                                 <Ellipse Cursor="Hand" Margin="5" Width="60" Height="60" Fill="{TemplateBinding Property=Background}"></Ellipse>
