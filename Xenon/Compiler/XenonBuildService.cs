@@ -21,11 +21,11 @@ namespace Xenon.Compiler
 
         readonly XenonCompiler compiler = new XenonCompiler();
 
-        public async Task<bool> BuildProject(string inputtext, List<ProjectAsset> Assets, IProgress<int> progress)
+        public async Task<bool> BuildProject(Project proj, string inputtext, List<ProjectAsset> Assets, IProgress<int> progress)
         {
             await Task.Run(() =>
             {
-                Project = compiler.Compile(inputtext, Assets, progress);
+                Project = compiler.Compile(proj, inputtext, Assets, progress);
             });
 
             Messages.AddRange(compiler.Logger.AllErrors);
