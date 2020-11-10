@@ -23,9 +23,14 @@
             <Menu IsTabStop="False">
                 <MenuItem Header="Connections" IsTabStop="False">
                     <MenuItem Click="ClickConnect" Header="Switcher" IsTabStop="False"></MenuItem>
+                    <Separator></Separator>
                     <MenuItem Click="ClickConnectMock" Header="Mock Switcher" IsTabStop="False"></MenuItem>
+                    <Separator></Separator>
                     <MenuItem Click="ClickConnectProjector" Header="Projector" IsTabStop="False"></MenuItem>
                     <MenuItem Click="ClickConnectHyperdeck" Header="Hyperdeck" IsTabStop="False"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Click="ClickDisconnectProjector" Header="Disconnect Projector" IsTabStop="False"></MenuItem>
+                    <MenuItem Click="ClickDisconnectHyperdeck" Header="Disconnect Hyperdeck" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>

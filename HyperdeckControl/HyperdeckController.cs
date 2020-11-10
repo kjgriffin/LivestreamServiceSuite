@@ -32,6 +32,14 @@ namespace HyperdeckControl
 
         }
 
+        public void Disconnect()
+        {
+            if (IsConnected)
+            {
+                connection.Close();
+            }
+        }
+
         private void Connection_OnDataRecieved(string data)
         {
             // for now just assume commands work?

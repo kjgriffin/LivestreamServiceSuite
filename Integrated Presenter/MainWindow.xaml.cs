@@ -2011,5 +2011,18 @@ namespace Integrated_Presenter
             automationrecordstartenabled = !automationrecordstartenabled;
             miStartRecord.IsChecked = automationrecordstartenabled;
         }
+
+        private void ClickDisconnectProjector(object sender, RoutedEventArgs e)
+        {
+            if (projectorconnected)
+            {
+                projectorSerialPort.Close();
+            }
+        }
+
+        private void ClickDisconnectHyperdeck(object sender, RoutedEventArgs e)
+        {
+            mHyperdeckManager?.Disconnect();
+        }
     }
 }

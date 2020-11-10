@@ -30,6 +30,11 @@ namespace Integrated_Presenter.BMDHyperdeck
 
         }
 
+        public void Disconnect()
+        {
+            m_hyperdeckController?.Disconnect();
+        }
+
         private void M_hyperdeckController_OnMessageFromHyperDeck(object sender, string message)
         {
             OnMessageFromHyperDeck?.Invoke(this, message);
