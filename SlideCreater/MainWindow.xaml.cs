@@ -223,7 +223,7 @@ namespace SlideCreater
 
             // compile text
             XenonBuildService builder = new XenonBuildService();
-            bool success = await builder.BuildProject(_proj.SourceCode, Assets, compileprogress);
+            bool success = await builder.BuildProject(_proj, _proj.SourceCode, Assets, compileprogress);
 
             if (!success)
             {
@@ -239,10 +239,6 @@ namespace SlideCreater
                     }
                 });
                 return;
-            }
-            else
-            {
-                _proj = builder.Project;
             }
 
 
@@ -350,7 +346,14 @@ namespace SlideCreater
                 {
                     // copy to tmp folder
                     string tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, "assets", System.IO.Path.GetFileName(file));
-                    File.Copy(file, tmpassetpath, true);
+                    try
+                    {
+                        File.Copy(file, tmpassetpath, true);
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show($"Unable to load {file}", "Load Asset Failed");
+                    }
 
                     ProjectAsset asset = new ProjectAsset();
                     if (Regex.IsMatch(System.IO.Path.GetExtension(file), "\\.mp4", RegexOptions.IgnoreCase))
@@ -559,6 +562,8 @@ namespace SlideCreater
                 Assets.Clear();
                 slidelist.Items.Clear();
                 slidepreviews.Clear();
+                FocusSlide.Clear();
+                _proj.CleanupResources();
                 _proj = await Project.LoadProject(ofd.FileName);
                 TbInput.Text = _proj.SourceCode;
                 Assets = _proj.Assets;
@@ -598,7 +603,8 @@ namespace SlideCreater
             AssetList.Children.Clear();
             FocusSlide.Clear();
             TbInput.Text = string.Empty;
-            _proj = new Project();
+            _proj.CleanupResources();
+            _proj = new Project(true);
 
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
@@ -666,6 +672,8 @@ namespace SlideCreater
             _proj.Assets = Assets;
             ShowProjectAssets();
             AssetsChanged();
+            FocusSlide.Clear();
+            slidepreviews.Clear();
         }
 
         private void ClickSaveJSON(object sender, RoutedEventArgs e)

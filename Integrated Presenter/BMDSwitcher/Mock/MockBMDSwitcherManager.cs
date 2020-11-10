@@ -265,5 +265,15 @@ namespace Integrated_Presenter.BMDSwitcher
             _state.TransNextKey1 = !_state.TransNextKey1;
             SwitcherStateChanged?.Invoke(_state);
         }
+
+        public void SetPIPPosition(BMDUSKSettings settings)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetPIPKeyFrameA(BMDUSKSettings settings)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

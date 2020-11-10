@@ -17,9 +17,12 @@ namespace Integrated_Presenter
     /// </summary>
     public partial class Connection : Window
     {
-        public Connection()
+        public Connection(string title, string ipname, string defaultip)
         {
             InitializeComponent();
+            Title = title;
+            lbIP.Text = ipname;
+            tbIP.Text = defaultip;
         }
 
         public string IP = string.Empty;

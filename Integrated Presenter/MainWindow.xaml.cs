@@ -1,4 +1,5 @@
 ﻿using BMDSwitcherAPI;
+using Integrated_Presenter.BMDHyperdeck;
 using Integrated_Presenter.BMDSwitcher;
 using Integrated_Presenter.BMDSwitcher.Config;
 using Integrated_Presenter.ViewModels;
@@ -9,6 +10,7 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -37,6 +39,9 @@ namespace Integrated_Presenter
 
         BMDSwitcherConfigSettings _config;
 
+
+        BMDHyperdeckManager mHyperdeckManager;
+
         List<SlidePoolSource> SlidePoolButtons;
 
         public MainWindow()
@@ -44,6 +49,8 @@ namespace Integrated_Presenter
             DataContext = this;
             InitializeComponent();
 
+            mHyperdeckManager = new BMDHyperdeckManager();
+            mHyperdeckManager.OnMessageFromHyperDeck += MHyperdeckManager_OnMessageFromHyperDeck;
 
             // set a default config
             SetDefaultConfig();
@@ -61,7 +68,7 @@ namespace Integrated_Presenter
             UpdateDriveButtonStyle();
             UpdateProjectorButtonStyles();
 
-            UpdateMasterCautionDisplay();
+            UpdateRecordButtonUI();
 
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
 
@@ -77,6 +84,11 @@ namespace Integrated_Presenter
             gp_timer_1.Interval = 1000;
             gp_timer_1.Elapsed += Gp_timer_1_Elapsed;
             gp_timer_1.Start();
+        }
+
+        private void MHyperdeckManager_OnMessageFromHyperDeck(object sender, string message)
+        {
+            hyperDeckMonitorWindow?.AddMessage(message);
         }
 
         private void Gp_timer_1_Elapsed(object sender, ElapsedEventArgs e)
@@ -144,7 +156,7 @@ namespace Integrated_Presenter
 
         private void ConnectSwitcher()
         {
-            Connection connectWindow = new Connection();
+            Connection connectWindow = new Connection("Connect to Switcher", "Switcher IP Address:", "192.168.2.120");
             bool? res = connectWindow.ShowDialog();
             if (res == true)
             {
@@ -489,6 +501,12 @@ namespace Integrated_Presenter
 
         private void WindowKeyDown(object sender, KeyEventArgs e)
         {
+
+            // dont enable shortcuts when focused on textbox
+            if (tbPIPSize.IsFocused || tbPIPPosX.IsFocused || tbPIPPosY.IsFocused || tbPIPmaskLR.IsFocused || tbPIPmaskTB.IsFocused)
+            {
+                return;
+            }
 
             // D1-D8 + (LShift)
             #region program/preset bus
@@ -903,11 +921,22 @@ namespace Integrated_Presenter
             switch (s.Action)
             {
                 case "t1restart":
-                    timer1span = TimeSpan.Zero;
+                    if (automationtimer1enabled)
+                    {
+                        timer1span = TimeSpan.Zero;
+                    }
                     break;
                 case "mastercaution2":
-                    MasterCautionState = 2;
-                    UpdateMasterCautionDisplay();
+                    //MasterCautionState = 2;
+                    //UpdateMasterCautionDisplay();
+                    break;
+                case "startrecord":
+                    if (automationrecordstartenabled)
+                    {
+                        mHyperdeckManager?.StartRecording();
+                        isRecording = true;
+                        UpdateRecordButtonUI();
+                    }
                     break;
                 default:
                     break;
@@ -1319,6 +1348,7 @@ namespace Integrated_Presenter
         {
             _display?.Close();
             switcherManager?.Close();
+            hyperDeckMonitorWindow?.Close();
         }
 
         private void ClickTakeSP0(object sender, EventArgs e)
@@ -1748,7 +1778,7 @@ namespace Integrated_Presenter
 
         private void ClickProjectorButton(int btn)
         {
-            if (projectorconnected)
+            if (projectorSerialPort.IsOpen)
             {
                 projectorSerialPort.Write(btn.ToString());
             }
@@ -1810,7 +1840,14 @@ namespace Integrated_Presenter
                     }
                 }
                 projectorSerialPort = new SerialPort(port, 9600);
-                projectorSerialPort.Open();
+                try
+                {
+                    projectorSerialPort.Open();
+                }
+                catch (Exception)
+                {
+                    return;
+                }
                 projectorconnected = true;
             }
             UpdateProjectorButtonStyles();
@@ -1822,33 +1859,170 @@ namespace Integrated_Presenter
         }
 
 
-        /// <summary>
-        /// 0 = gray (good), 1 = orange (warn), 2 = red (error)
-        /// </summary>
-        int MasterCautionState = 0;
 
-        private void ClickBtnWarnings(object sender, RoutedEventArgs e)
+        bool isRecording = false;
+
+        private void UpdateRecordButtonUI()
         {
-            MasterCautionState = 0;
-            UpdateMasterCautionDisplay();
+            if (isRecording)
+            {
+                btnRecording.Background = Brushes.Red;
+            }
+            else
+            {
+                btnRecording.Background = Brushes.Gray;
+            }
         }
 
-        private void UpdateMasterCautionDisplay()
+        private void ClickConnectHyperdeck(object sender, RoutedEventArgs e)
         {
-            switch (MasterCautionState)
+            mHyperdeckManager?.Connect();
+        }
+
+        private void ClickRecordStart(object sender, RoutedEventArgs e)
+        {
+            mHyperdeckManager?.StartRecording();
+        }
+
+        private void ClickRecordStop(object sender, RoutedEventArgs e)
+        {
+            mHyperdeckManager?.StopRecording();
+        }
+
+        private void ClickApplyPIPSettings(object sender, RoutedEventArgs e)
+        {
+            BMDUSKSettings config = new BMDUSKSettings();
+            var res = GetPIPSettings();
+            config.Current = new KeyFrameSettings();
+            config.Current.PositionX = res.px;
+            config.Current.PositionY = res.py;
+            config.Current.SizeX = res.s;
+            config.Current.SizeY = res.s;
+            config.IsMasked = res.im ? 1 : 0;
+            config.MaskTop = res.mtb;
+            config.MaskBottom = res.mtb;
+            config.MaskLeft = res.mlr;
+            config.MaskRight = res.mlr;
+            switcherManager?.SetPIPPosition(config);
+
+        }
+
+        private void UpdatePIPSettingsUI()
+        {
+        }
+
+        private (float mlr, float mtb, float px, float py, float s, bool im) GetPIPSettings()
+        {
+            float masklr = 0;
+            float masktb = 0;
+            float posx = 0;
+            float posy = 0;
+            float size = 0;
+            float.TryParse(tbPIPSize.Text, out size);
+            float.TryParse(tbPIPmaskLR.Text, out masklr);
+            float.TryParse(tbPIPmaskTB.Text, out masktb);
+            float.TryParse(tbPIPPosX.Text, out posx);
+            float.TryParse(tbPIPPosY.Text, out posy);
+
+            size = Math.Clamp(size, 0, 1);
+            masktb = Math.Clamp(masktb, 0, 9);
+            masklr = Math.Clamp(masklr, 0, 16);
+
+            bool ismasked = false;
+            if (masklr != 0 || masktb != 0)
             {
-                case 0:
-                    btnMasterCaution.Background = Brushes.Gray;
-                    break;
-                case 1:
-                    btnMasterCaution.Background = Brushes.Orange;
-                    break;
-                case 2:
-                    btnMasterCaution.Background = Brushes.Red;
-                    break;
-                default:
-                    break;
+                ismasked = true;
             }
+
+            return (masklr, masktb, posx, posy, size, ismasked);
+        }
+
+        private void ClickApplyKFAPIPSettings(object sender, RoutedEventArgs e)
+        {
+            BMDUSKSettings config = new BMDUSKSettings();
+            var res = GetPIPSettings();
+            config.KeyFrameA = new KeyFrameSettings();
+            config.KeyFrameA.PositionX = res.px;
+            config.KeyFrameA.PositionY = res.py;
+            config.KeyFrameA.SizeX = res.s;
+            config.KeyFrameA.SizeY = res.s;
+            config.IsMasked = res.im ? 1 : 0;
+            config.MaskTop = res.mtb;
+            config.MaskBottom = res.mtb;
+            config.MaskLeft = res.mlr;
+            config.MaskRight = res.mlr;
+            switcherManager?.SetPIPKeyFrameA(config);
+        }
+
+
+        private void TextEntryMode(object sender, DependencyPropertyChangedEventArgs e)
+        {
+        }
+
+        HyperDeckMonitorWindow hyperDeckMonitorWindow;
+
+        private void OpenHyperdeckMonitorWindow(object sender, RoutedEventArgs e)
+        {
+            if (hyperDeckMonitorWindow == null)
+            {
+                hyperDeckMonitorWindow = new HyperDeckMonitorWindow();
+            }
+            if (hyperDeckMonitorWindow.IsClosed)
+            {
+                hyperDeckMonitorWindow = new HyperDeckMonitorWindow();
+            }
+
+            hyperDeckMonitorWindow.Show();
+
+
+
+
+        }
+
+        private void ClickToggleRecording(object sender, RoutedEventArgs e)
+        {
+            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
+            {
+                if (isRecording)
+                {
+                    isRecording = false;
+                    mHyperdeckManager?.StopRecording();
+                }
+                else
+                {
+                    isRecording = true;
+                    mHyperdeckManager?.StartRecording();
+                }
+                UpdateRecordButtonUI();
+            }
+        }
+
+        bool automationtimer1enabled = true;
+        bool automationrecordstartenabled = true;
+
+        private void ClickToggleAutomationTimer1(object sender, RoutedEventArgs e)
+        {
+            automationtimer1enabled = !automationtimer1enabled;
+            miTimer1Restart.IsChecked = automationtimer1enabled;
+        }
+
+        private void ClickToggleAutomationRecordingStart(object sender, RoutedEventArgs e)
+        {
+            automationrecordstartenabled = !automationrecordstartenabled;
+            miStartRecord.IsChecked = automationrecordstartenabled;
+        }
+
+        private void ClickDisconnectProjector(object sender, RoutedEventArgs e)
+        {
+            if (projectorconnected)
+            {
+                projectorSerialPort.Close();
+            }
+        }
+
+        private void ClickDisconnectHyperdeck(object sender, RoutedEventArgs e)
+        {
+            mHyperdeckManager?.Disconnect();
         }
     }
 }

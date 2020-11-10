@@ -48,11 +48,9 @@ namespace Xenon.Compiler
 
         public bool CompilerSucess { get; set; } = false;
 
-        public Project Compile(string input, List<ProjectAsset> assets, IProgress<int> progress)
+        public Project Compile(Project proj, string input, List<ProjectAsset> assets, IProgress<int> progress)
         {
             CompilerSucess = false; 
-            Project proj = new Project(true);
-            proj.Assets = assets;
 
             progress.Report(0);
 
@@ -79,6 +77,8 @@ namespace Xenon.Compiler
 
             try
             {
+                proj?.Clear();
+                proj.SourceCode = input;
                 p.Generate(proj, null);
             }
             catch (Exception ex)

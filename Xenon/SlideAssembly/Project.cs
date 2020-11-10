@@ -124,24 +124,18 @@ namespace Xenon.SlideAssembly
             });
         }
 
+        internal void Clear()
+        {
+            Slides.Clear();
+            ProjectVariables.Clear();
+            SourceCode = "";
+            slidenum = 0;
+        }
+
         private string _loadTmpPath = "";
+        private bool disposedValue;
 
         public string LoadTmpPath { get => _loadTmpPath; }
-
-        ~Project()
-        {
-            // delete temp directory if needed
-            if (_loadTmpPath != null && _loadTmpPath != string.Empty)
-            {
-                try
-                {
-                    //Directory.Delete(_loadTmpPath, true);
-                }
-                catch (Exception)
-                {
-                }
-            }
-        }
 
         public Project(bool withtemp = false)
         {
@@ -181,11 +175,6 @@ namespace Xenon.SlideAssembly
                 // unzip all assets
                 archive.ExtractToDirectory(p._loadTmpPath, true);
 
-                foreach (var a in p.Assets)
-                {
-                    // extract asset to temp folder
-                    a.LoadedTempPath = Path.Combine(p._loadTmpPath, "assets", a.OriginalFilename);
-                }
             }
 
             return p;
@@ -206,6 +195,23 @@ namespace Xenon.SlideAssembly
             {
                 //MessageBox.Show("Failed to load project");
                 throw new Exception("Failed to load project");
+            }
+        }
+
+
+        public void CleanupResources()
+        {
+            slidenum = 0;
+            // delete temp directory if needed
+            if (_loadTmpPath != null && _loadTmpPath != string.Empty)
+            {
+                try
+                {
+                    Directory.Delete(_loadTmpPath, true);
+                }
+                catch (Exception)
+                {
+                }
             }
         }
     }
