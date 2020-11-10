@@ -51,8 +51,8 @@
                     <MenuItem Header="Load Settings" Click="LoadSettings" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Automation" IsTabStop="False">
-                    <MenuItem Name="miTimer1Restart" Header="Timer1 Restart" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationTimer1"></MenuItem> 
-                    <MenuItem Name="miStartRecord" Header="Recording Start" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationRecordingStart"></MenuItem> 
+                    <MenuItem Name="miTimer1Restart" Header="Timer1 Restart" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationTimer1"></MenuItem>
+                    <MenuItem Name="miStartRecord" Header="Recording Start" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationRecordingStart"></MenuItem>
                 </MenuItem>
             </Menu>
         </Grid>
@@ -168,7 +168,29 @@
                                     <Grid Grid.Row="2">
                                         <Border Style="{StaticResource GroupBorder}">
                                             <StackPanel>
-                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PROGRAM</TextBlock>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.ColumnSpan="2" TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PROGRAM</TextBlock>
+                                                    <Button Name="btnProgramLock" Click="ClickBtnProgramLock" Grid.Column="1" Width="100" HorizontalAlignment="Right" Focusable="False" IsTabStop="False">
+                                                        <Button.Content>LOCKED</Button.Content>
+                                                        <Button.Template>
+                                                            <ControlTemplate>
+                                                                <Border Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="1">
+                                                                    <ContentControl Name="btnProgramLockName" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Orange" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                        <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+                                                </Grid>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                     <Button Name="BtnProgram1" Click="ClickProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
                                                     <Button Name="BtnProgram2" Click="ClickProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
@@ -366,8 +388,8 @@
                                                                         </Border>
                                                                         <ControlTemplate.Triggers>
                                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Cursor" Value="Hand"></Setter> 
-                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter> 
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
                                                                             </Trigger>
                                                                         </ControlTemplate.Triggers>
                                                                     </ControlTemplate>
@@ -381,8 +403,8 @@
                                                                         </Border>
                                                                         <ControlTemplate.Triggers>
                                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Cursor" Value="Hand"></Setter> 
-                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter> 
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
                                                                             </Trigger>
                                                                         </ControlTemplate.Triggers>
                                                                     </ControlTemplate>

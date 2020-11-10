@@ -10,11 +10,13 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Printing;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 
 namespace Integrated_Presenter
@@ -67,7 +69,7 @@ namespace Integrated_Presenter
             UpdateMediaControls();
             UpdateDriveButtonStyle();
             UpdateProjectorButtonStyles();
-
+            UpdateProgramRowLockButtonUI();
             UpdateRecordButtonUI();
 
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
@@ -223,7 +225,10 @@ namespace Integrated_Presenter
 
         private void ClickProgram(int button)
         {
-            switcherManager?.PerformProgramSelect(ConvertButtonToSourceID(button));
+            if (!IsProgramRowLocked)
+            {
+                switcherManager?.PerformProgramSelect(ConvertButtonToSourceID(button));
+            }
         }
 
         private void ToggleUSK1()
@@ -508,6 +513,11 @@ namespace Integrated_Presenter
                 return;
             }
 
+            if (Keyboard.IsKeyDown(Key.LeftShift))
+            {
+                IsProgramRowLocked = false;
+            }
+
             // D1-D8 + (LShift)
             #region program/preset bus
             if (e.Key == Key.D1)
@@ -716,6 +726,11 @@ namespace Integrated_Presenter
             if (e.Key == Key.RightCtrl)
             {
                 SlideDriveVideoCTRL = true;
+            }
+
+            if (e.Key == Key.LeftShift)
+            {
+                IsProgramRowLocked = true;
             }
         }
 
@@ -2023,6 +2038,39 @@ namespace Integrated_Presenter
         private void ClickDisconnectHyperdeck(object sender, RoutedEventArgs e)
         {
             mHyperdeckManager?.Disconnect();
+        }
+
+
+        private bool ProgramRowLocked = true;
+
+        private bool IsProgramRowLocked
+        {
+            get => ProgramRowLocked;
+            set
+            {
+                ProgramRowLocked = value;
+                if (ProgramRowLocked)
+                {
+                }
+                UpdateProgramRowLockButtonUI();
+            }
+        }
+
+        private void UpdateProgramRowLockButtonUI()
+        {
+            if (IsProgramRowLocked)
+            {
+                btnProgramLock.Content = "LOCKED";
+            }
+            else
+            {
+                btnProgramLock.Content = "UNLOCKED";
+            }
+        }
+
+        private void ClickBtnProgramLock(object sender, RoutedEventArgs e)
+        {
+            IsProgramRowLocked = !IsProgramRowLocked;
         }
     }
 }
