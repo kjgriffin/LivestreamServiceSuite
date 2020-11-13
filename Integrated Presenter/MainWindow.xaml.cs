@@ -1981,10 +1981,12 @@ namespace Integrated_Presenter
             if (hyperDeckMonitorWindow == null)
             {
                 hyperDeckMonitorWindow = new HyperDeckMonitorWindow();
+                hyperDeckMonitorWindow.OnTextCommand += HyperDeckMonitorWindow_OnTextCommand;
             }
             if (hyperDeckMonitorWindow.IsClosed)
             {
                 hyperDeckMonitorWindow = new HyperDeckMonitorWindow();
+                hyperDeckMonitorWindow.OnTextCommand += HyperDeckMonitorWindow_OnTextCommand;
             }
 
             hyperDeckMonitorWindow.Show();
@@ -1992,6 +1994,11 @@ namespace Integrated_Presenter
 
 
 
+        }
+
+        private void HyperDeckMonitorWindow_OnTextCommand(object sender, string cmd)
+        {
+            mHyperdeckManager?.Send(cmd);
         }
 
         private void ClickToggleRecording(object sender, RoutedEventArgs e)
@@ -2061,10 +2068,12 @@ namespace Integrated_Presenter
             if (IsProgramRowLocked)
             {
                 btnProgramLock.Content = "LOCKED";
+                btnProgramLock.Foreground = Brushes.WhiteSmoke;
             }
             else
             {
                 btnProgramLock.Content = "UNLOCKED";
+                btnProgramLock.Foreground = Brushes.Orange;
             }
         }
 

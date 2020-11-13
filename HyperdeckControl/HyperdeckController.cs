@@ -51,7 +51,12 @@ namespace HyperdeckControl
             m_isConnected = connected;
         }
 
-        
+        public void Send(string cmd)
+        {
+            cmd.TrimEnd(System.Environment.NewLine.ToCharArray());
+            connection.SendStringASCII($"{cmd}\r\n");
+        }
+
         public void RecordStart()
         {
             if (IsConnected)

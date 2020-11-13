@@ -19,11 +19,17 @@ namespace VonEX
         public event StringDataRecievedEventArgs OnDataRecieved;
         public event ConnectionEventArgs OnConnectionFromMaster;
 
-        public void Connect(string hostname, int port)
+        public async void Connect(string hostname, int port)
         {
             client = new TcpClient();
-            client.Connect(hostname, port);
-
+            try
+            {
+                await client.ConnectAsync(hostname, port);
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
             var constr = client.Client.RemoteEndPoint.ToString();
             var addr = constr.Split(':')[0];
             OnConnectionFromMaster?.Invoke(addr, true);

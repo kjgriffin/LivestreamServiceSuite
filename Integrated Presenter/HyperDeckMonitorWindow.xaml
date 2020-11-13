@@ -6,10 +6,15 @@
         xmlns:local="clr-namespace:Integrated_Presenter"
         mc:Ignorable="d"
         Closed="OnClosed"
-        Title="HyperDeckMonitorWindow" Height="450" Width="800">
+        Title="HyperDeck Monitor" Height="450" Width="800">
     <Grid>
-        <ScrollViewer>
-            <TextBlock Name="tb"></TextBlock>
-        </ScrollViewer> 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+            <TextBox Name="tbCmd" Margin="10" PreviewTextInput="OnPreviewTextInput"></TextBox>
+            <ScrollViewer Grid.Row="1">
+                <TextBlock Name="tb"></TextBlock>
+            </ScrollViewer>
     </Grid>
 </Window>

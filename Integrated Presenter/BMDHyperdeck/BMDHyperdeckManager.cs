@@ -40,6 +40,11 @@ namespace Integrated_Presenter.BMDHyperdeck
             OnMessageFromHyperDeck?.Invoke(this, message);
         }
 
+        public void Send(string cmd)
+        {
+            m_hyperdeckController?.Send(cmd);
+        }
+
         public void StartRecording()
         {
             m_hyperdeckController?.RecordStart();
