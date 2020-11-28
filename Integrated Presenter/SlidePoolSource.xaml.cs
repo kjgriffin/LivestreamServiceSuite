@@ -90,7 +90,14 @@ namespace Integrated_Presenter
                 }
                 else
                 {
-                    border.BorderBrush = Brushes.Gray;
+                    if (loaded)
+                    {
+                        border.BorderBrush = Brushes.LightBlue;
+                    }
+                    else
+                    {
+                        border.BorderBrush = Brushes.Gray;
+                    }
                 }
 
                 if (loaded)
