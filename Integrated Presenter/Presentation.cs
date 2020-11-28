@@ -148,6 +148,7 @@ namespace Integrated_Presenter
         public SlideType Type { get; set; }
         public string Source { get; set; }
         public string Action { get; set; }
+        public Guid Guid { get; set; } = Guid.NewGuid();
     }
 
     public enum SlideType

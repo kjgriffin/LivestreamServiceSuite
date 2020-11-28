@@ -855,6 +855,12 @@ namespace Integrated_Presenter
                     Presentation.NextSlide();
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.Current);
+                    if (Presentation.OverridePres == true)
+                    {
+                        Presentation.OverridePres = false;
+                        slidesUpdated();
+                        PresentationStateUpdated?.Invoke(Presentation.Current);
+                    }
                     switcherManager?.PerformAutoOnAirDSK1();
 
                 }
@@ -868,6 +874,13 @@ namespace Integrated_Presenter
                     Presentation.NextSlide();
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.Current);
+                    if (Presentation.OverridePres == true)
+                    {
+                        Presentation.OverridePres = false;
+                        slidesUpdated();
+                        PresentationStateUpdated?.Invoke(Presentation.Current);
+                    }
+
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
@@ -1041,6 +1054,7 @@ namespace Integrated_Presenter
                     // start display
                     _display.Show();
                 }
+                DisableSlidePoolOverrides();
                 slidesUpdated();
 
                 PresentationStateUpdated?.Invoke(Presentation.Current);
@@ -1055,14 +1069,33 @@ namespace Integrated_Presenter
             TbMediaTimeDurration.Text = e.Length.ToString("m\\:ss");
         }
 
+
+        public bool ShowEffectiveCurrentPreview = true;
+
+        private void ClickToggleShowEffectiveCurrentPreview(object sender, RoutedEventArgs e)
+        {
+            ShowEffectiveCurrentPreview = !ShowEffectiveCurrentPreview;
+        }
+
+
         private void slidesUpdated()
         {
-            _display.ShowSlide();
+            _display?.ShowSlide();
             // update previews
-            PrevPreview.SetMedia(Presentation.Prev);
-            CurrentPreview.SetMedia(Presentation.Current);
-            NextPreview.SetMedia(Presentation.Next);
-            AfterPreview.SetMedia(Presentation.After);
+            if (Presentation != null)
+            {
+                PrevPreview.SetMedia(Presentation.Prev);
+                if (ShowEffectiveCurrentPreview)
+                {
+                    CurrentPreview.SetMedia(Presentation.EffectiveCurrent);
+                }
+                else
+                {
+                    CurrentPreview.SetMedia(Presentation.Current);
+                }
+                NextPreview.SetMedia(Presentation.Next);
+                AfterPreview.SetMedia(Presentation.After);
+            }
         }
 
 
@@ -1094,10 +1127,11 @@ namespace Integrated_Presenter
                 }
                 else
                 {
+                    Presentation.OverridePres = false;
                     Presentation.NextSlide();
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.Current);
                 }
-                slidesUpdated();
-                PresentationStateUpdated?.Invoke(Presentation.Current);
             }
         }
         private void prevSlide()
@@ -1105,6 +1139,7 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 DisableSlidePoolOverrides();
+                Presentation.OverridePres = false;
                 Presentation.PrevSlide();
                 slidesUpdated();
                 PresentationStateUpdated?.Invoke(Presentation.Current);
@@ -1118,7 +1153,7 @@ namespace Integrated_Presenter
                 Dispatcher.Invoke(() =>
                 {
                     _display.StartMediaPlayback();
-                    if (!Presentation.OverridePres)
+                    if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                     {
                         CurrentPreview.videoPlayer.Volume = 0;
                         CurrentPreview.PlayMedia();
@@ -1135,7 +1170,7 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.PauseMediaPlayback();
-                if (!Presentation.OverridePres)
+                if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
                     CurrentPreview.PauseMedia();
@@ -1151,7 +1186,7 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.StopMediaPlayback();
-                if (!Presentation.OverridePres)
+                if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
                     CurrentPreview.videoPlayer.Stop();
@@ -1167,7 +1202,7 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.RestartMediaPlayback();
-                if (!Presentation.OverridePres)
+                if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
                     CurrentPreview.ReplayMedia();
@@ -1320,7 +1355,7 @@ namespace Integrated_Presenter
 
         SlidePoolSource currentpoolsource = null;
 
-        private void TakeSlidePoolSlide(Slide s, int num, bool slideoverride)
+        private void TakeSlidePoolSlide(Slide s, int num, bool replaceMode)
         {
 
             for (int i = 0; i < 4; i++)
@@ -1331,21 +1366,16 @@ namespace Integrated_Presenter
                 }
             }
 
-            if (slideoverride)
+            currentpoolsource = SlidePoolButtons[num];
+
+            if (replaceMode)
             {
-                currentpoolsource = SlidePoolButtons[num];
+                Presentation?.NextSlide();
             }
 
-            if (slideoverride)
-            {
-                SlideDriveVideo_ToSlide(s);
-                slidesUpdated();
-                PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
-            }
-            else
-            {
-                SlideDriveVideo_Current();
-            }
+            SlideDriveVideo_ToSlide(s);
+
+
         }
 
         private void DisableSlidePoolOverrides()
@@ -1354,7 +1384,6 @@ namespace Integrated_Presenter
             {
                 SlidePoolButtons[i].Selected = false;
             }
-            Presentation.OverridePres = false;
             currentpoolsource?.StopMedia();
             UpdateMediaControls();
         }
@@ -1366,32 +1395,24 @@ namespace Integrated_Presenter
             hyperDeckMonitorWindow?.Close();
         }
 
-        private void ClickTakeSP0(object sender, EventArgs e)
+        private void ClickTakeSP0(object sender, Slide s, bool replaceMode)
         {
-            SlidePoolSource sps = sender as SlidePoolSource;
-            Slide s = new Slide() { Source = sps.Source.ToString(), Type = sps.Type };
-            TakeSlidePoolSlide(s, 0, sps.Selected);
+            TakeSlidePoolSlide(s, 0, replaceMode);
         }
 
-        private void ClickTakeSP1(object sender, EventArgs e)
+        private void ClickTakeSP1(object sender, Slide s, bool replaceMode)
         {
-            SlidePoolSource sps = sender as SlidePoolSource;
-            Slide s = new Slide() { Source = sps.Source.ToString(), Type = sps.Type };
-            TakeSlidePoolSlide(s, 1, sps.Selected);
+            TakeSlidePoolSlide(s, 1, replaceMode);
         }
 
-        private void ClickTakeSP2(object sender, EventArgs e)
+        private void ClickTakeSP2(object sender, Slide s, bool replaceMode)
         {
-            SlidePoolSource sps = sender as SlidePoolSource;
-            Slide s = new Slide() { Source = sps.Source.ToString(), Type = sps.Type };
-            TakeSlidePoolSlide(s, 2, sps.Selected);
+            TakeSlidePoolSlide(s, 2, replaceMode);
         }
 
-        private void ClickTakeSP3(object sender, EventArgs e)
+        private void ClickTakeSP3(object sender, Slide s, bool replaceMode)
         {
-            SlidePoolSource sps = sender as SlidePoolSource;
-            Slide s = new Slide() { Source = sps.Source.ToString(), Type = sps.Type };
-            TakeSlidePoolSlide(s, 3, sps.Selected);
+            TakeSlidePoolSlide(s, 3, replaceMode);
         }
 
         private void ClickConfigureSwitcher(object sender, RoutedEventArgs e)
@@ -2017,6 +2038,11 @@ namespace Integrated_Presenter
                 }
                 UpdateRecordButtonUI();
             }
+            else
+            {
+                isRecording = false;
+                UpdateRecordButtonUI();
+            }
         }
 
         bool automationtimer1enabled = true;
@@ -2081,5 +2107,6 @@ namespace Integrated_Presenter
         {
             IsProgramRowLocked = !IsProgramRowLocked;
         }
-    }
+
+           }
 }

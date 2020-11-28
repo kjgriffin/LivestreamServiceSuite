@@ -24,80 +24,257 @@ namespace Integrated_Presenter
 
         public event EventHandler<MediaPlaybackTimeEventArgs> OnMediaPlaybackTimeUpdated;
 
+        private int activeplayer;
+        private int prevplayer;
+        private int nextplayer;
+
+        private Guid curentslide;
+        private Guid prevslide;
+        private Guid nextslide;
+
         public PresenterDisplay(MainWindow parent)
         {
             InitializeComponent();
             _control = parent;
-            mediaPlayer.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdate;
+            mediaPlayerA.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdateA;
+            mediaPlayerB.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdateB;
+            mediaPlayerC.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdateC;
+
+            activeplayer = 2;
+            prevplayer = 1;
+            nextplayer = 3;
+
+            ShowSlide();
+
         }
 
         private void _controlPanel_OnWindowClosing(object sender, EventArgs e)
         {
-            mediaPlayer.OnMediaPlaybackTimeUpdate -= MediaPlayer_OnMediaPlaybackTimeUpdate;
+            mediaPlayerA.OnMediaPlaybackTimeUpdate -= MediaPlayer_OnMediaPlaybackTimeUpdateA;
+            mediaPlayerB.OnMediaPlaybackTimeUpdate -= MediaPlayer_OnMediaPlaybackTimeUpdateB;
+            mediaPlayerC.OnMediaPlaybackTimeUpdate -= MediaPlayer_OnMediaPlaybackTimeUpdateC;
         }
 
-        private void MediaPlayer_OnMediaPlaybackTimeUpdate(object sender, MediaPlaybackTimeEventArgs e)
+        private void MediaPlayer_OnMediaPlaybackTimeUpdateA(object sender, MediaPlaybackTimeEventArgs e)
         {
-            _control.Dispatcher.Invoke(() =>
+            UpdateMediaPlaybackTime(1, e);
+        }
+
+        private void MediaPlayer_OnMediaPlaybackTimeUpdateB(object sender, MediaPlaybackTimeEventArgs e)
+        {
+            UpdateMediaPlaybackTime(2, e);
+        }
+
+        private void MediaPlayer_OnMediaPlaybackTimeUpdateC(object sender, MediaPlaybackTimeEventArgs e)
+        {
+            UpdateMediaPlaybackTime(3, e);
+        }
+
+
+        private void UpdateMediaPlaybackTime(int player, MediaPlaybackTimeEventArgs e)
+        {
+            if (activeplayer == player)
             {
-                OnMediaPlaybackTimeUpdated?.Invoke(this, e);
-            });
+                _control.Dispatcher.Invoke(() =>
+                {
+                    OnMediaPlaybackTimeUpdated?.Invoke(this, e);
+                });
+            }
+        }
+
+        private void StopNonActiveMedia()
+        {
+            switch (activeplayer)
+            {
+                case 1:
+                    mediaPlayerB.StopMedia();
+                    mediaPlayerC.StopMedia();
+                    break;
+                case 2:
+                    mediaPlayerA.StopMedia();
+                    mediaPlayerC.StopMedia();
+                    break;
+                case 3:
+                    mediaPlayerA.StopMedia();
+                    mediaPlayerB.StopMedia();
+                    break;
+            }
         }
 
         public void StartMediaPlayback()
         {
+            StopNonActiveMedia();
             if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video)
             {
-                mediaPlayer.PlayMedia();
+                switch (activeplayer)
+                {
+                    case 1:
+                        mediaPlayerA.PlayMedia();
+                        break;
+                    case 2:
+                        mediaPlayerB.PlayMedia();
+                        break;
+                    case 3:
+                        mediaPlayerC.PlayMedia();
+                        break;
+                }
             }
         }
 
         public void PauseMediaPlayback()
         {
+            StopNonActiveMedia();
             if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video)
             {
-                mediaPlayer.PauseMedia();
+                switch (activeplayer)
+                {
+                    case 1:
+                        mediaPlayerA.PauseMedia();
+                        break;
+                    case 2:
+                        mediaPlayerB.PauseMedia();
+                        break;
+                    case 3:
+                        mediaPlayerC.PauseMedia();
+                        break;
+                }
             }
         }
 
         public void RestartMediaPlayback()
         {
+            StopNonActiveMedia();
             if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video)
             {
-                mediaPlayer.ReplayMedia();
+                switch (activeplayer)
+                {
+                    case 1:
+                        mediaPlayerA.ReplayMedia();
+                        break;
+                    case 2:
+                        mediaPlayerB.ReplayMedia();
+                        break;
+                    case 3:
+                        mediaPlayerC.ReplayMedia();
+                        break;
+                }
             }
         }
 
         public void StopMediaPlayback()
         {
+            StopNonActiveMedia();
             if (_control.Presentation.EffectiveCurrent.Type == SlideType.Video)
             {
-                mediaPlayer.StopMedia();
+                switch (activeplayer)
+                {
+                    case 1:
+                        mediaPlayerA.StopMedia();
+                        break;
+                    case 2:
+                        mediaPlayerB.StopMedia();
+                        break;
+                    case 3:
+                        mediaPlayerC.StopMedia();
+                        break;
+                }
             }
         }
 
 
         public void ShowSlide()
         {
-            if (_control.Presentation.EffectiveCurrent.Type == SlideType.Video)
+            Slide slidetoshow = _control.Presentation.EffectiveCurrent;
+
+            if (slidetoshow.Guid == curentslide)
             {
-                ShowVideo();
+                // we're displaying it!!
+            }
+            else if (slidetoshow.Guid == nextslide)
+            {
+                // we've cued it on our nextplayer
+                var swap = activeplayer;
+                activeplayer = nextplayer;
+                nextplayer = swap;
+                ShowActivePlayer();
+            }
+            else if (slidetoshow.Guid == prevslide)
+            {
+                // we've cued it on our prevplayer
+                var swap = activeplayer;
+                activeplayer = prevplayer;
+                prevplayer = swap;
+                ShowActivePlayer();
             }
             else
             {
-                ShowImage();
+                // we don't have this one cued
+                // hot-swap into the active player
+                SetSlideForPlayer(activeplayer, slidetoshow);
+                // show it from next player
+                ShowActivePlayer();
+            }
+
+
+
+
+            // Update next/prev players if needed
+            if (_control.Presentation.Next.Guid != nextslide)
+            {
+                // pre-cue the next slide into the next player
+                SetSlideForPlayer(nextplayer, _control.Presentation.Next);
+            }
+            if (_control.Presentation.Prev.Guid != prevslide)
+            {
+                // pre-cue the next slide into the prev player
+                SetSlideForPlayer(prevplayer, _control.Presentation.Prev);
+            }
+
+
+
+
+            curentslide = _control.Presentation.EffectiveCurrent.Guid;
+            nextslide = _control.Presentation.Next.Guid;
+            prevslide = _control.Presentation.Prev.Guid;
+        }
+
+        private void ShowActivePlayer()
+        {
+            if (activeplayer == 1)
+            {
+                mediaPlayerA.Visibility = Visibility.Visible;
+                mediaPlayerB.Visibility = Visibility.Hidden;
+                mediaPlayerC.Visibility = Visibility.Hidden;
+            }
+            else if (activeplayer == 2)
+            {
+                mediaPlayerB.Visibility = Visibility.Visible;
+                mediaPlayerA.Visibility = Visibility.Hidden;
+                mediaPlayerC.Visibility = Visibility.Hidden;
+            }
+            else if (activeplayer == 3)
+            {
+                mediaPlayerC.Visibility = Visibility.Visible;
+                mediaPlayerB.Visibility = Visibility.Hidden;
+                mediaPlayerA.Visibility = Visibility.Hidden;
             }
         }
 
 
-        private void ShowImage()
+        private void SetSlideForPlayer(int player, Slide slide)
         {
-            mediaPlayer.SetMedia(_control.Presentation.EffectiveCurrent);
-        }
-
-        private void ShowVideo()
-        {
-            mediaPlayer.SetMedia(_control.Presentation.EffectiveCurrent);
+            switch (player)
+            {
+                case 1:
+                    mediaPlayerA.SetMedia(slide);
+                    break;
+                case 2:
+                    mediaPlayerB.SetMedia(slide);
+                    break;
+                case 3:
+                    mediaPlayerC.SetMedia(slide);
+                    break;
+            }
         }
 
 
@@ -135,15 +312,6 @@ namespace Integrated_Presenter
             {
                 ExitFullscreen();
             }
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-        }
-
-        private void Window_KeyDown_1(object sender, KeyEventArgs e)
-        {
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

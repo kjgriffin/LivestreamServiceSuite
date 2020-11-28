@@ -14,6 +14,8 @@
             <ColumnDefinition Width="149*"/>
             <ColumnDefinition Width="651*"/>
         </Grid.ColumnDefinitions>
-        <local:MediaPlayer2 x:Name="mediaPlayer" Grid.ColumnSpan="2"></local:MediaPlayer2>
+        <local:MediaPlayer2 x:Name="mediaPlayerA" Grid.ColumnSpan="2"></local:MediaPlayer2>
+        <local:MediaPlayer2 x:Name="mediaPlayerB" Grid.ColumnSpan="2"></local:MediaPlayer2>
+        <local:MediaPlayer2 x:Name="mediaPlayerC" Grid.ColumnSpan="2"></local:MediaPlayer2>
     </Grid>
 </Window>

@@ -41,7 +41,8 @@
                 </MenuItem>-->
                 <MenuItem Header="View" IsTabStop="False">
                     <MenuItem Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
-                    <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
+                    <MenuItem Header="Preview Effective Current" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickToggleShowEffectiveCurrentPreview"></MenuItem>
+                    <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewAdvancedPresentation"></MenuItem>
                     <MenuItem Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
                     <MenuItem Header="Advanced Projector" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedProjector"></MenuItem>
                     <MenuItem Header="Hyperdeck Monitor" IsTabStop="False" Click="OpenHyperdeckMonitorWindow"></MenuItem>
@@ -493,18 +494,14 @@
                 </Grid>
             </Grid>
             <Grid Grid.Column="2">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource0" ClickTakeEvent="ClickTakeSP0" Grid.Row="0"></local:SlidePoolSource>
-                    <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource1" ClickTakeEvent="ClickTakeSP1" Grid.Row="1"></local:SlidePoolSource>
-                    <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource2" ClickTakeEvent="ClickTakeSP2"  Grid.Row="2"></local:SlidePoolSource>
-                    <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource3" ClickTakeEvent="ClickTakeSP3" Grid.Row="3"></local:SlidePoolSource>
-                </Grid>
+                <Viewbox Stretch="Uniform">
+                    <StackPanel>
+                        <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource0" TakeSlidePoolSource="ClickTakeSP0" Grid.Row="0"></local:SlidePoolSource>
+                        <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource1" TakeSlidePoolSource="ClickTakeSP1" Grid.Row="1"></local:SlidePoolSource>
+                        <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource2" TakeSlidePoolSource="ClickTakeSP2"  Grid.Row="2"></local:SlidePoolSource>
+                        <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource3" TakeSlidePoolSource="ClickTakeSP3" Grid.Row="3"></local:SlidePoolSource>
+                    </StackPanel>
+                </Viewbox>
             </Grid>
         </Grid>
 
