@@ -1,0 +1,78 @@
+﻿<Window x:Class="Integrated_Presenter.AudioPlayer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Integrated_Presenter"
+        mc:Ignorable="d"
+        Background="#3f3f3f"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        Topmost="True"
+        Title="Audio Player" Height="240" Width="400">
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Click="ClickLoadAudio" IsTabStop="False" x:Name="btnLoadAudio" Grid.Row="0" Grid.Column="0" Margin="10, 10, 10, 10">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Border Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="1">
+                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Orange">LOAD</ContentControl>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <TextBlock Name="tbFileName" Grid.Column="1" Foreground="Orange" Background="#1d1d1d" Margin="10" Padding="10" TextAlignment="Left" VerticalAlignment="Center">(Open File...)</TextBlock>
+         
+        </Grid>
+
+        <Border Grid.Row="1" Style="{StaticResource GroupBorder}">
+            <StackPanel>
+                <TextBlock TextAlignment="Center" Margin="0,5,20,0" Style="{StaticResource GrayText}">AUDIO PLAYBACK CONTROLS</TextBlock>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Button Name="BtnRestartAudio" Click="ClickRestartAudio" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
+                    <Button Name="BtnStopAudio" Click="ClickStopAudio" Style="{StaticResource SwitcherButton_Disabled}">STOP</Button>
+                    <Button Name="BtnPauseAudio" Click="ClickPauseAudio" Style="{StaticResource SwitcherButton_Disabled}">PAUSE</Button>
+                    <Button Name="BtnPlayAudio" Click="ClickPlayAudio" Style="{StaticResource SwitcherButton_Disabled}">PLAY</Button>
+                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0">
+                        <TextBlock Foreground="Orange">T-</TextBlock>
+                        <TextBlock Name="TbAudioTimeRemaining" Foreground="Orange">0:00</TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,0">
+                        <TextBlock Foreground="Orange">T+</TextBlock>
+                        <TextBlock Name="TbAudioTimeCurrent" Foreground="Orange">0:00</TextBlock>
+                        <TextBlock Foreground="Orange">/</TextBlock>
+                        <TextBlock Name="TbAudioTimeDurration" Foreground="Orange">0:00</TextBlock>
+                    </StackPanel>
+
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <MediaElement Name="audioplayer" Visibility="Collapsed"></MediaElement>
+
+
+    </Grid>
+</Window>

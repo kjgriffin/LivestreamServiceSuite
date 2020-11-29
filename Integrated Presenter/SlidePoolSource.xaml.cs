@@ -211,7 +211,7 @@ namespace Integrated_Presenter
         {
             if (loaded)
             {
-                Selected = !Selected;
+                Selected = true;
                 TakeSlidePoolSource?.Invoke(this, Slide, false);
             }
         }
@@ -220,7 +220,7 @@ namespace Integrated_Presenter
         {
             if (loaded)
             {
-                Selected = !Selected;
+                Selected = true;
                 TakeSlidePoolSource?.Invoke(this, Slide, true);
             }
         }

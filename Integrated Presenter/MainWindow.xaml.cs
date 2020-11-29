@@ -518,6 +518,27 @@ namespace Integrated_Presenter
                 IsProgramRowLocked = false;
             }
 
+            // audio
+            if (audioPlayer != null)
+            {
+                if (e.Key == Key.F1)
+                {
+                    audioPlayer?.RestartAudio();
+                }
+                if (e.Key == Key.F2)
+                {
+                    audioPlayer?.StopAudio();
+                }
+                if (e.Key == Key.F3)
+                {
+                    audioPlayer?.PauseAudio();
+                }
+                if (e.Key == Key.F4)
+                {
+                    audioPlayer?.PlayAudio();
+                }
+            }
+
             // D1-D8 + (LShift)
             #region program/preset bus
             if (e.Key == Key.D1)
@@ -1393,6 +1414,7 @@ namespace Integrated_Presenter
             _display?.Close();
             switcherManager?.Close();
             hyperDeckMonitorWindow?.Close();
+            audioPlayer?.Close();
         }
 
         private void ClickTakeSP0(object sender, Slide s, bool replaceMode)
@@ -2108,5 +2130,27 @@ namespace Integrated_Presenter
             IsProgramRowLocked = !IsProgramRowLocked;
         }
 
-           }
+        public AudioPlayer audioPlayer;
+
+        private void ClickViewAudioPlayer(object sender, RoutedEventArgs e)
+        {
+            if (audioPlayer != null)
+            {
+                if (!audioPlayer.IsVisible)
+                {
+                    audioPlayer = new AudioPlayer();
+                    audioPlayer.Show();
+                }
+                else
+                {
+                    audioPlayer.WindowState = WindowState.Normal;
+                }
+            }
+            else
+            {
+                audioPlayer = new AudioPlayer();
+                audioPlayer.Show();
+            }
+        }
+    }
 }

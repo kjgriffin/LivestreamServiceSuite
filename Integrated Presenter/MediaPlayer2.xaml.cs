@@ -38,7 +38,7 @@ namespace Integrated_Presenter
         public MediaPlayer2()
         {
             InitializeComponent();
-            _playbacktimer = new Timer(1000);
+            _playbacktimer = new Timer(500);
             _playbacktimer.Elapsed += _playbacktimer_Elapsed;
 
         }
@@ -50,7 +50,11 @@ namespace Integrated_Presenter
         {
             this.Parent.Dispatcher.Invoke(() =>
             {
-                OnMediaPlaybackTimeUpdate?.Invoke(this, new MediaPlaybackTimeEventArgs(videoPlayer.Position, videoPlayer.NaturalDuration.TimeSpan, (videoPlayer.NaturalDuration - videoPlayer.Position).TimeSpan));
+                try
+                {
+                    OnMediaPlaybackTimeUpdate?.Invoke(this, new MediaPlaybackTimeEventArgs(videoPlayer.Position, videoPlayer.NaturalDuration.TimeSpan, (videoPlayer.NaturalDuration - videoPlayer.Position).TimeSpan));
+                }
+                catch { }
             });
         }
 
