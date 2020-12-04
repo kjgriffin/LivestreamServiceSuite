@@ -67,7 +67,7 @@ namespace Integrated_Presenter
             UpdateRealTimeClock();
             UpdateSlideControls();
             UpdateMediaControls();
-            UpdateDriveButtonStyle();
+            UpdateSlideModeButtons();
             UpdateProjectorButtonStyles();
             UpdateProgramRowLockButtonUI();
             UpdateRecordButtonUI();
@@ -435,9 +435,24 @@ namespace Integrated_Presenter
             BtnFTB.Background = (switcherState.FTB ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
-        private void UpdateDriveButtonStyle()
+        private void UpdateSlideModeButtons()
         {
-            BtnDrive.Background = (SlideDriveVideo ? Application.Current.FindResource("YellowLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            //BtnDrive.Background = (SlideDriveVideo ? Application.Current.FindResource("YellowLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            switch (CurrentSlideMode)
+            {
+                case 0:
+                    BtnDrive.Foreground = Brushes.White;
+                    BtnJump.Foreground = Brushes.White;
+                    break;
+                case 1:
+                    BtnDrive.Foreground = Brushes.Orange;
+                    BtnJump.Foreground = Brushes.White;
+                    break;
+                case 2:
+                    BtnDrive.Foreground = Brushes.White;
+                    BtnJump.Foreground = Brushes.Orange;
+                    break;
+            }
         }
 
         private void UpdateSlideNums()
@@ -473,7 +488,7 @@ namespace Integrated_Presenter
             BtnNext.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
             BtnPrev.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
             BtnTake.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            UpdateDriveButtonStyle();
+            UpdateSlideModeButtons();
         }
 
         private void UpdateMediaControls()
@@ -735,18 +750,23 @@ namespace Integrated_Presenter
                 TakeAutoTransition();
             }
 
-            // modifier alt for drive commands
-            if (e.Key == Key.RightCtrl)
+            // modifier for slide mode commands
+            // prioritize skip over drive
+            if (e.Key == Key.RightShift)
             {
-                SlideDriveVideoCTRL = false;
+                OverrideSlideModeWithKey(2);
+            }
+            else if (e.Key == Key.RightCtrl)
+            {
+                OverrideSlideModeWithKey(1);
             }
 
         }
         private void WindowKeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.RightCtrl)
+            if (e.Key == Key.RightCtrl || e.Key == Key.RightShift)
             {
-                SlideDriveVideoCTRL = true;
+                ReleaseSlideModeHotkey();
             }
 
             if (e.Key == Key.LeftShift)
@@ -755,33 +775,55 @@ namespace Integrated_Presenter
             }
         }
 
+        // 0 = normal, 1 = drive, 2 = skip
 
-        bool _slideDriveVideo_CTRL = true;
+        // keys
+        private int _currentKeySlideMode = 1;
+        private bool _currentKeyOverride = false;
+        // buttons
+        private int _currentBtnSlideMode = 1;
 
-        bool SlideDriveVideoBTN
+        private int CurrentSlideMode
         {
-            set
+            get
             {
-                _slideDriveVideo_BTN = value;
-                UpdateDriveButtonStyle();
+                if (_currentKeyOverride)
+                {
+                    if (_currentBtnSlideMode == _currentKeySlideMode)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return _currentKeySlideMode;
+                    }
+                }
+                else
+                {
+                    return _currentBtnSlideMode;
+                }
             }
         }
 
-        bool SlideDriveVideoCTRL
+        private void SetBtnSlideMode(int value)
         {
-            set
-            {
-                _slideDriveVideo_CTRL = value;
-                UpdateDriveButtonStyle();
-            }
+            _currentBtnSlideMode = value;
+            UpdateSlideModeButtons();
         }
 
-        bool _slideDriveVideo_BTN = true;
-
-        bool SlideDriveVideo
+        private void OverrideSlideModeWithKey(int value)
         {
-            get => _slideDriveVideo_BTN && _slideDriveVideo_CTRL;
+            _currentKeySlideMode = value;
+            _currentKeyOverride = true;
+            UpdateSlideModeButtons();
         }
+
+        private void ReleaseSlideModeHotkey()
+        {
+            _currentKeyOverride = false;
+            UpdateSlideModeButtons();
+        }
+
 
         #region ButtonClicks
         #region PresetButtonClick
@@ -1142,9 +1184,15 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 DisableSlidePoolOverrides();
-                if (SlideDriveVideo)
+                if (CurrentSlideMode == 1)
                 {
                     SlideDriveVideo_Next();
+                }
+                else if (CurrentSlideMode == 2)
+                {
+                    Presentation.SkipNextSlide();
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.Current);
                 }
                 else
                 {
@@ -1159,11 +1207,20 @@ namespace Integrated_Presenter
         {
             if (activepresentation)
             {
-                DisableSlidePoolOverrides();
-                Presentation.OverridePres = false;
-                Presentation.PrevSlide();
-                slidesUpdated();
-                PresentationStateUpdated?.Invoke(Presentation.Current);
+                if (CurrentSlideMode == 2)
+                {
+                    Presentation.SkipPrevSlide();
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                }
+                else
+                {
+                    DisableSlidePoolOverrides();
+                    Presentation.OverridePres = false;
+                    Presentation.PrevSlide();
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                }
             }
         }
 
@@ -1280,8 +1337,28 @@ namespace Integrated_Presenter
 
         private void ClickSlideDriveVideo(object sender, RoutedEventArgs e)
         {
-            SlideDriveVideoBTN = !SlideDriveVideo;
+            if (CurrentSlideMode == 1)
+            {
+                SetBtnSlideMode(0);
+            }
+            else
+            {
+                SetBtnSlideMode(1);
+            }
         }
+
+        private void ClickSlideSkipMode(object sender, RoutedEventArgs e)
+        {
+            if (CurrentSlideMode == 2)
+            {
+                SetBtnSlideMode(0);
+            }
+            else
+            {
+                SetBtnSlideMode(2);
+            }
+        }
+
 
         private void ClickCutTrans(object sender, RoutedEventArgs e)
         {
@@ -2152,5 +2229,7 @@ namespace Integrated_Presenter
                 audioPlayer.Show();
             }
         }
+
+
     }
 }

@@ -285,7 +285,42 @@
                                                             <Button Name="BtnTake" Click="ClickTakeSlide" Style="{StaticResource SwitcherButton_Disabled}">TAKE</Button>
                                                             <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton_Disabled}">NEXT</Button>
                                                             <Button Name="BtnPrev" Click="ClickPrevSlide" Style="{StaticResource SwitcherButton_Disabled}">PREV</Button>
-                                                            <Button Name="BtnDrive" Click="ClickSlideDriveVideo" Style="{StaticResource SwitcherButton}">DRIVE</Button>
+                                                            <StackPanel VerticalAlignment="Center">
+                                                                <Button Name="BtnDrive" Click="ClickSlideDriveVideo" Foreground="White">
+                                                                    <Button.Content>DRIVE</Button.Content>
+                                                                    <Button.Template>
+                                                                        <ControlTemplate>
+                                                                            <Border Width="80" Height="30" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+
+                                                                </Button>
+                                                                <Button Name="BtnJump" Click="ClickSlideSkipMode" Foreground="White">
+                                                                    <Button.Content>SKIP</Button.Content>
+                                                                    <Button.Template>
+                                                                        <ControlTemplate>
+                                                                            <Border Width="80" Height="30" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+
+                                                                </Button>
+                                                            </StackPanel>
                                                         </StackPanel>
                                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                             <TextBlock Name="TbCurrSlide" Foreground="Orange">0</TextBlock>

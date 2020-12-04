@@ -58,14 +58,15 @@ namespace Integrated_Presenter
         public int CurrentSlide { get => _currentSlide + 1; }
 
         private int _currentSlide = 0;
+        private int _virtualCurrentSlide = 0;
 
         public Slide Prev
         {
             get
             {
-                if (_currentSlide - 1 >= 0)
+                if (_virtualCurrentSlide - 1 >= 0)
                 {
-                    return Slides[_currentSlide - 1];
+                    return Slides[_virtualCurrentSlide - 1];
                 }
                 else
                 {
@@ -95,9 +96,9 @@ namespace Integrated_Presenter
         {
             get
             {
-                if (_currentSlide + 1 < SlideCount)
+                if (_virtualCurrentSlide + 1 < SlideCount)
                 {
-                    return Slides[_currentSlide + 1];
+                    return Slides[_virtualCurrentSlide + 1];
                 }
                 else
                 {
@@ -109,9 +110,9 @@ namespace Integrated_Presenter
         {
             get
             {
-                if (_currentSlide + 2 < SlideCount)
+                if (_virtualCurrentSlide + 2 < SlideCount)
                 {
-                    return Slides[_currentSlide + 2];
+                    return Slides[_virtualCurrentSlide + 2];
                 }
                 else
                 {
@@ -122,17 +123,45 @@ namespace Integrated_Presenter
 
         public void NextSlide()
         {
-            if (_currentSlide + 1 < SlideCount)
+            if (_virtualCurrentSlide + 1 < SlideCount)
             {
-                _currentSlide += 1;
+                _virtualCurrentSlide += 1;
+                _currentSlide = _virtualCurrentSlide;
+            }
+            else
+            {
+                _virtualCurrentSlide = SlideCount - 1;
+                _currentSlide = SlideCount - 1;
+            }
+        }
+
+        public void SkipNextSlide()
+        {
+            if (_virtualCurrentSlide + 1 < SlideCount)
+            {
+                _virtualCurrentSlide += 1;
             }
         }
 
         public void PrevSlide()
         {
-            if (_currentSlide - 1 >= 0)
+            if (_virtualCurrentSlide - 1 >= 0)
             {
-                _currentSlide -= 1;
+                _virtualCurrentSlide -= 1;
+                _currentSlide = _virtualCurrentSlide;
+            }
+            else
+            {
+                _currentSlide = 0;
+                _virtualCurrentSlide = 0;
+            }
+        }
+
+        public void SkipPrevSlide()
+        {
+            if (_virtualCurrentSlide - 1 >= 0)
+            {
+                _virtualCurrentSlide -= 1;
             }
         }
 
