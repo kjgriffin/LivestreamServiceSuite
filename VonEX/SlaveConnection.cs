@@ -13,14 +13,14 @@ namespace VonEX
 
         TcpClient client;
 
-        Thread processthread;
-
-
         public event StringDataRecievedEventArgs OnDataRecieved;
         public event ConnectionEventArgs OnConnectionFromMaster;
 
+        private CancellationTokenSource cancellationToken;
+
         public async void Connect(string hostname, int port)
         {
+            Close();
             client = new TcpClient();
             try
             {
@@ -34,36 +34,54 @@ namespace VonEX
             var addr = constr.Split(':')[0];
             OnConnectionFromMaster?.Invoke(addr, true);
 
-            processthread = new Thread(ProcessMasterMessages);
-            processthread.Start(client);
+            cancellationToken = new CancellationTokenSource();
+
+            ThreadPool.QueueUserWorkItem(ProcessMasterMessages, new ProcessArgs() { Client = client, Token = cancellationToken });
 
         }
 
         public void SendString(string data)
         {
-            var stream = client.GetStream();
-            stream.Write(Encoding.UTF8.GetBytes(data));
+            if (client.Connected)
+            {
+                var stream = client.GetStream();
+                stream.Write(Encoding.UTF8.GetBytes(data));
+            }
         }
         public async void SendStringASCII(string data)
         {
-            var stream = client.GetStream();
-            await stream.WriteAsync(Encoding.ASCII.GetBytes(data));
+            if (client.Connected)
+            {
+                var stream = client.GetStream();
+                await stream.WriteAsync(Encoding.ASCII.GetBytes(data));
+            }
         }
 
 
         public void Close()
         {
-            processthread?.Abort();
+            cancellationToken?.Cancel();
             client?.Close();
         }
 
         private async void ProcessMasterMessages(object obj)
         {
-            TcpClient client = obj as TcpClient;
+            ProcessArgs props = obj as ProcessArgs;
+            TcpClient client = props.Client;
             var stream = client.GetStream();
             while (client.Connected)
             {
-                while (!stream.DataAvailable) ;
+                if (props.Token.IsCancellationRequested)
+                {
+                    return;
+                }
+                while (!stream.DataAvailable)
+                {
+                    if (props.Token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                }
 
                 // read data into dataframe
                 byte[] data = new byte[client.Available];
@@ -77,5 +95,11 @@ namespace VonEX
             OnConnectionFromMaster(addr, false);
         }
 
+    }
+
+    internal class ProcessArgs
+    {
+        public TcpClient Client { get; set; }
+        public CancellationTokenSource Token { get; set; }
     }
 }
