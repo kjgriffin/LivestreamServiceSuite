@@ -336,7 +336,7 @@ namespace SlideCreater
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Add Assets";
-            ofd.Filter = "Images and Video (*.png;*.mp4)|*.png;*.mp4";
+            ofd.Filter = "Images and Video (*.png;*.jpg;*.bmp;*.mp4)|*.png;*.jpg;*.bmp;*.mp4";
             ofd.Multiselect = true;
             if (ofd.ShowDialog() == true)
             {
@@ -360,7 +360,7 @@ namespace SlideCreater
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
                     }
-                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file), "\\.png", RegexOptions.IgnoreCase))
+                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
                     }

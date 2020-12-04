@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Xenon.AssetManagment;
 using Xenon.Helpers;
 using Xenon.Renderer;
@@ -25,7 +26,14 @@ namespace Xenon.Compiler
         {
             await Task.Run(() =>
             {
-                Project = compiler.Compile(proj, inputtext, Assets, progress);
+                try
+                {
+                    Project = compiler.Compile(proj, inputtext, Assets, progress);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Master Compiler Exception");
+                }
             });
 
             Messages.AddRange(compiler.Logger.AllErrors);
@@ -37,24 +45,33 @@ namespace Xenon.Compiler
 
             List<RenderedSlide> slides = new List<RenderedSlide>();
 
-            await Task.Run(() =>
+            try
             {
 
-                SlideRenderer sr = new SlideRenderer(project);
+                await Task.Run(() =>
+                {
 
-                progress.Report(0);
+                    SlideRenderer sr = new SlideRenderer(project);
 
-                int completedslidecount = 0;
+                    progress.Report(0);
 
-                Parallel.ForEach(project.Slides, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, (Slide s) =>
-                 {
-                     slides.Add(sr.RenderSlide(s.Number, Messages));
-                     Interlocked.Increment(ref completedslidecount);
-                     int prog = (int)(completedslidecount / (double)project.Slides.Count * 100);
-                     progress.Report(prog);
-                 });
+                    int completedslidecount = 0;
 
-            });
+                    Parallel.ForEach(project.Slides, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, (Slide s) =>
+                     {
+                         slides.Add(sr.RenderSlide(s.Number, Messages));
+                         Interlocked.Increment(ref completedslidecount);
+                         int prog = (int)(completedslidecount / (double)project.Slides.Count * 100);
+                         progress.Report(prog);
+                     });
+
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Master Renderer Exception");
+            }
+
 
             return slides.OrderBy(s => s.Number).ToList();
 
