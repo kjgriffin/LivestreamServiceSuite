@@ -917,12 +917,12 @@ namespace Integrated_Presenter
                     }
                     Presentation.NextSlide();
                     slidesUpdated();
-                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                     if (Presentation.OverridePres == true)
                     {
                         Presentation.OverridePres = false;
                         slidesUpdated();
-                        PresentationStateUpdated?.Invoke(Presentation.Current);
+                        PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                     }
                     switcherManager?.PerformAutoOnAirDSK1();
 
@@ -936,12 +936,12 @@ namespace Integrated_Presenter
                     }
                     Presentation.NextSlide();
                     slidesUpdated();
-                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                     if (Presentation.OverridePres == true)
                     {
                         Presentation.OverridePres = false;
                         slidesUpdated();
-                        PresentationStateUpdated?.Invoke(Presentation.Current);
+                        PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                     }
 
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
@@ -950,13 +950,13 @@ namespace Integrated_Presenter
                         await Task.Delay(500);
                         switcherManager?.PerformAutoTransition();
                     }
-                    if (Presentation.Current.Type == SlideType.Video)
+                    if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                     {
                         playMedia();
                     }
                 }
                 // At this point we've switched to the slide
-                SlideDriveVideo_Action(Presentation.Current);
+                SlideDriveVideo_Action(Presentation.EffectiveCurrent);
             }
         }
 
@@ -1036,11 +1036,11 @@ namespace Integrated_Presenter
 
         private async void SlideDriveVideo_Current()
         {
-            if (Presentation?.Current != null)
+            if (Presentation?.EffectiveCurrent != null)
             {
                 DisableSlidePoolOverrides();
                 currentpoolsource = null;
-                if (Presentation.Current.Type == SlideType.Liturgy)
+                if (Presentation.EffectiveCurrent.Type == SlideType.Liturgy)
                 {
                     // make sure slides aren't the program source
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
@@ -1049,7 +1049,7 @@ namespace Integrated_Presenter
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     slidesUpdated();
-                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                     switcherManager?.PerformAutoOnAirDSK1();
 
                 }
@@ -1061,7 +1061,7 @@ namespace Integrated_Presenter
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     slidesUpdated();
-                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
@@ -1069,13 +1069,13 @@ namespace Integrated_Presenter
                         switcherManager?.PerformAutoTransition();
                     }
 
-                    if (Presentation.Current.Type == SlideType.Video)
+                    if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                     {
                         playMedia();
                     }
                 }
                 // Do Action on current slide
-                SlideDriveVideo_Action(Presentation.Current);
+                SlideDriveVideo_Action(Presentation.EffectiveCurrent);
             }
 
         }
@@ -1120,7 +1120,7 @@ namespace Integrated_Presenter
                 DisableSlidePoolOverrides();
                 slidesUpdated();
 
-                PresentationStateUpdated?.Invoke(Presentation.Current);
+                PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
             }
         }
 
@@ -1192,14 +1192,14 @@ namespace Integrated_Presenter
                 {
                     Presentation.SkipNextSlide();
                     slidesUpdated();
-                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                 }
                 else
                 {
                     Presentation.OverridePres = false;
                     Presentation.NextSlide();
                     slidesUpdated();
-                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                 }
             }
         }
@@ -1211,7 +1211,7 @@ namespace Integrated_Presenter
                 {
                     Presentation.SkipPrevSlide();
                     slidesUpdated();
-                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                 }
                 else
                 {
@@ -1219,7 +1219,7 @@ namespace Integrated_Presenter
                     Presentation.OverridePres = false;
                     Presentation.PrevSlide();
                     slidesUpdated();
-                    PresentationStateUpdated?.Invoke(Presentation.Current);
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                 }
             }
         }
