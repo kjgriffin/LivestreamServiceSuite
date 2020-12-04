@@ -11,7 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenon", "Xenon\Xenon.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VonEX", "VonEX\VonEX.csproj", "{1399AF18-296F-42D0-911E-300E529BCC4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyperdeckControl", "HyperdeckControl\HyperdeckControl.csproj", "{A216B9D7-5820-46ED-8172-FE2B1DFF31A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperdeckControl", "HyperdeckControl\HyperdeckControl.csproj", "{A216B9D7-5820-46ED-8172-FE2B1DFF31A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{849F6492-9995-4E47-A7BA-E49C0129C5A8}"
+	ProjectSection(SolutionItems) = preProject
+		Build.bat = Build.bat
+		build.py = build.py
+		version.json = version.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
