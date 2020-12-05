@@ -1141,6 +1141,8 @@ namespace Integrated_Presenter
         }
 
 
+        private Guid currentGuid;
+
         private void slidesUpdated()
         {
             _display?.ShowSlide();
@@ -1150,11 +1152,19 @@ namespace Integrated_Presenter
                 PrevPreview.SetMedia(Presentation.Prev);
                 if (ShowEffectiveCurrentPreview)
                 {
-                    CurrentPreview.SetMedia(Presentation.EffectiveCurrent);
+                    if (currentGuid != Presentation.EffectiveCurrent.Guid)
+                    {
+                        CurrentPreview.SetMedia(Presentation.EffectiveCurrent);
+                        currentGuid = Presentation.EffectiveCurrent.Guid;
+                    }
                 }
                 else
                 {
-                    CurrentPreview.SetMedia(Presentation.Current);
+                    if (currentGuid != Presentation.Current.Guid)
+                    {
+                        CurrentPreview.SetMedia(Presentation.Current);
+                        currentGuid = Presentation.Current.Guid;
+                    }
                 }
                 NextPreview.SetMedia(Presentation.Next);
                 AfterPreview.SetMedia(Presentation.After);
