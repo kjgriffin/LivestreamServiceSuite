@@ -15,14 +15,17 @@ namespace Xenon.Compiler.AST
 
         public string Title { get; set; }
         public string Reference { get; set; }
+        public string DrawSpeaker { get; set; }
         public List<string> Text { get; set; } = new List<string>();
 
         public IXenonASTElement Compile(Lexer lexer, XenonErrorLogger Logger)
         {
             lexer.GobbleWhitespace();
-            var args = lexer.ConsumeArgList(true, "title", "reference");
+            var args = lexer.ConsumeArgList(true, "title", "reference", "drawspeaker");
             Title = args["title"];
             Reference = args["reference"];
+            DrawSpeaker = args["drawspeaker"];
+
 
             lexer.GobbleWhitespace();
             lexer.GobbleandLog("{", "Expected opening brace to start content.");
@@ -66,6 +69,7 @@ namespace Xenon.Compiler.AST
             slide.Data["lines"] = layoutEngine.LiturgyTextLines;
             slide.Data["title"] = Title;
             slide.Data["reference"] = Reference;
+            slide.Data["drawspeaker"] = DrawSpeaker;
 
             project.Slides.Add(slide);
         }
@@ -75,6 +79,7 @@ namespace Xenon.Compiler.AST
             Debug.WriteLine("<XenonASTTitledLiturgyVerse>");
             Debug.WriteLine($"Title='{Title}'");
             Debug.WriteLine($"Reference='{Reference}'");
+            Debug.WriteLine($"DrawSpeaker='{DrawSpeaker}'");
             Debug.WriteLine($"Content=[");
             foreach (var word in Text)
             {

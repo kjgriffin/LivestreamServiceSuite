@@ -50,15 +50,42 @@ namespace Xenon.Renderer
 
             float vspace = interspace;
             int linenum = 0;
+
+            string lastspeaker = "";
+
+            Font fregular = new Font("Arial", 36, FontStyle.Regular);
+            Font fbold = new Font("Arial", 36, FontStyle.Bold);
+            Font fitalic = new Font("Arial", 36, FontStyle.Italic);
+
+            Font flsbregular = new Font("LSBSymbol", 36, FontStyle.Regular);
+            Font flsbbold = new Font("LSBSymbol", 36, FontStyle.Bold);
+            Font flsbitalic = new Font("LSBSymbol", 36, FontStyle.Italic);
+
+
             foreach (var line in Lines)
             {
                 float xoffset = 0;
                 // center the text
                 xoffset = (Layouts.TitleLiturgyVerseLayout.Textbox.Width / 2) - (line.Width / 2);
+
+                // draw speaker
+                if ((string)slide.Data["drawspeaker"] == "true" && lastspeaker != line.Speaker)
+                {
+                    SizeF speakersize = gfx.MeasureStringCharacters(line.Speaker + " ", flsbregular, new RectangleF(0, 0, 100, 100));
+                    float jog = 0.07f * (gfx.DpiY * speakersize.Height / 72);
+                    xoffset = (Layouts.TitleLiturgyVerseLayout.Textbox.Width / 2) - ((line.Width) + speakersize.Width) / 2;
+                    gfx.DrawString(line.Speaker + " ", flsbregular, Brushes.Teal, Layouts.TitleLiturgyVerseLayout.Textbox.Move(Layouts.TitleLiturgyVerseLayout.Key.Location).Move((int) xoffset, (int)(vspace + interspace * linenum)).Move(0, (int)-jog).Location, GraphicsHelper.DefaultStringFormat());
+                    xoffset += speakersize.Width;
+                }
+
+                lastspeaker = line.Speaker;
+
+
+
                 foreach (var word in line.Words)
                 {
-                    //Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
-                    gfx.DrawString(word.Value, Layouts.TitleLiturgyVerseLayout.Font, Brushes.White, Layouts.TitleLiturgyVerseLayout.Textbox.Move(Layouts.TitleLiturgyVerseLayout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Location, GraphicsHelper.DefaultStringFormat());
+                    Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
+                    gfx.DrawString(word.Value, f, Brushes.White, Layouts.TitleLiturgyVerseLayout.Textbox.Move(Layouts.TitleLiturgyVerseLayout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Location, GraphicsHelper.DefaultStringFormat());
                     xoffset += word.Size.Width;
                 }
                 linenum++;
