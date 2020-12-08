@@ -16,7 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using System.Text.Json;
 using Xenon.Compiler;
 using Xenon.Renderer;
 using Xenon.Helpers;
@@ -183,12 +183,23 @@ namespace SlideCreater
         }
 
 
+        private BuildVersion VersionInfo;
+
         public CreaterEditorWindow()
         {
             InitializeComponent();
             dirty = false;
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
+            // Load Version Number
+            var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SlideCreater.version.json");
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                string json = sr.ReadToEnd();
+                VersionInfo = JsonSerializer.Deserialize<BuildVersion>(json);
+            }
+            // Set title
+            Title = $"Slide Creater - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}";
         }
 
 

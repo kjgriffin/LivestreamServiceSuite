@@ -38,6 +38,7 @@
     <None Remove="Icons\keyframepushright.png" />
     <None Remove="Icons\keyframetobox.png" />
     <None Remove="Icons\keyframetofill.png" />
+    <None Remove="version.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,6 +98,9 @@
     <Resource Include="Icons\keyframetofill.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <EmbeddedResource Include="version.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

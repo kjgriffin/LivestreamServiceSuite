@@ -17,7 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{849F6492
 	ProjectSection(SolutionItems) = preProject
 		Build.bat = Build.bat
 		build.py = build.py
-		version.json = version.json
 	EndProjectSection
 EndProject
 Global

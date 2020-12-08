@@ -4,6 +4,7 @@ using Integrated_Presenter.BMDSwitcher;
 using Integrated_Presenter.BMDSwitcher.Config;
 using Integrated_Presenter.ViewModels;
 using Microsoft.Win32;
+using SlideCreater;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Printing;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -46,10 +48,26 @@ namespace Integrated_Presenter
 
         List<SlidePoolSource> SlidePoolButtons;
 
+        private BuildVersion VersionInfo;
+
         public MainWindow()
         {
             DataContext = this;
             InitializeComponent();
+
+            // load build/version info
+            var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Integrated_Presenter.version.json");
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                string json = sr.ReadToEnd();
+                VersionInfo = JsonSerializer.Deserialize<BuildVersion>(json);
+            }
+            // Set title
+            Title = $"Integrated Presenter - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}";
+
+
+
+
 
             mHyperdeckManager = new BMDHyperdeckManager();
             mHyperdeckManager.OnMessageFromHyperDeck += MHyperdeckManager_OnMessageFromHyperDeck;
