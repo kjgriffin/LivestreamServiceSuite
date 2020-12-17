@@ -616,9 +616,9 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(2);
                 else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 1, false);
+                    TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, false);
                 else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 1, true);
+                    TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, true);
                 else
                     ClickPreset(2);
             }
@@ -629,9 +629,9 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(3);
                 else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 2, false);
+                    TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, false);
                 else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 2, true);
+                    TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, true);
                 else
                     ClickPreset(3);
             }
@@ -642,9 +642,9 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(4);
                 else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 3, false);
+                    TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, false);
                 else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 3, true);
+                    TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, true);
                 else
                     ClickPreset(4);
             }
