@@ -41,7 +41,12 @@ namespace Xenon.Renderer
             }
             else if (slide.Format == SlideFormat.AutoscaledImage)
             {
-                res.Bitmap = RenderAutoScaled(sourceimage);
+                bool invert = false;
+                if (slide.Data.ContainsKey("invert-color"))
+                {
+                    invert = (bool)slide.Data["invert-color"];
+                }
+                res.Bitmap = RenderAutoScaled(sourceimage, invert);
                 res.RenderedAs = "Full";
             }
             else if (slide.Format == SlideFormat.LiturgyImage)
@@ -89,7 +94,7 @@ namespace Xenon.Renderer
 
         }
 
-        private Bitmap RenderAutoScaled(Bitmap sourceimage)
+        private Bitmap RenderAutoScaled(Bitmap sourceimage, bool invertblackandwhite)
         {
             /* inspect the image (assumes white background)
                 find edge most (top, left, right, bottom) non-white pixels to determine effective image size
@@ -128,13 +133,25 @@ namespace Xenon.Renderer
             p = new Point((Layout.FullImageLayout.Size.Width - s.Width) / 2, (Layout.FullImageLayout.Size.Height - s.Height) / 2);
 
             Graphics gfx = Graphics.FromImage(bmp);
-            gfx.Clear(Color.White);
-            gfx.DrawImage(sourceimage, new Rectangle(p, s), leftbound, topbound, (rightbound - leftbound), (bottombound - topbound), GraphicsUnit.Pixel);
+            if (invertblackandwhite)
+            {
+                gfx.Clear(Color.Black);
+            }
+            else
+            {
+                gfx.Clear(Color.White);
+            }
+            Bitmap img = sourceimage;
+            if (invertblackandwhite)
+            {
+                img = InvertImage(sourceimage);
+            }
+            gfx.DrawImage(img, new Rectangle(p, s), leftbound, topbound, (rightbound - leftbound), (bottombound - topbound), GraphicsUnit.Pixel);
 
             return bmp;
         }
 
-        
+
         private Bitmap RenderLiturgyImage(Bitmap sourceimage)
         {
             Bitmap bmp = new Bitmap(Layout.LiturgyLayout.Size.Width, Layout.LiturgyLayout.Size.Height);

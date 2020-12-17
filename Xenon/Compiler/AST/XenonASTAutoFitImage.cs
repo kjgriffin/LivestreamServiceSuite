@@ -9,6 +9,7 @@ namespace Xenon.Compiler
     class XenonASTAutoFitImage : IXenonASTCommand
     {
         public string AssetName { get; set; }
+        public bool InvertColor { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
@@ -16,6 +17,26 @@ namespace Xenon.Compiler
             Lexer.GobbleWhitespace();
             var args = Lexer.ConsumeArgList(false, "asset");
             fullimage.AssetName = args["asset"];
+
+            Lexer.GobbleWhitespace();
+
+            InvertColor = false;
+            if (!Lexer.InspectEOF())
+            {
+                if (Lexer.Inspect("("))
+                {
+                    Lexer.Consume();
+                    string val = Lexer.ConsumeUntil(")");
+                    if (val == "true")
+                    {
+                        fullimage.InvertColor = true;
+                    }
+                    Lexer.Consume();
+                    Lexer.GobbleWhitespace();
+                }
+            }
+
+
             return fullimage;
 
         }
@@ -40,6 +61,16 @@ namespace Xenon.Compiler
             imageslide.Asset = assetpath;
             imageslide.MediaType = MediaType.Image;
 
+            if (project.ProjectVariables.ContainsKey("invert-autofit"))
+            {
+                bool val = Convert.ToBoolean(project.GetAttribute("invert-autofit")[0]);
+                imageslide.Data["invert-color"] = val | InvertColor;
+            }
+            else
+            {
+                imageslide.Data["invert-color"] = InvertColor;
+            }
+
             project.Slides.Add(imageslide);
         }
 
@@ -47,6 +78,7 @@ namespace Xenon.Compiler
         {
             Debug.WriteLine("<XenonASTAutoFullImage>");
             Debug.WriteLine(AssetName);
+            Debug.WriteLine($"Invert-Color: {InvertColor}");
             Debug.WriteLine("</XenonASTAutoFullImage>");
         }
 
