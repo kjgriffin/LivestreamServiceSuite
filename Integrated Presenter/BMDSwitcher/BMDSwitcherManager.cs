@@ -757,6 +757,42 @@ namespace Integrated_Presenter
 
         private void ConfigureAudioLevels()
         {
+            IBMDSwitcherAudioMixer mixer = (IBMDSwitcherAudioMixer)_BMDSwitcher;
+
+            mixer.SetProgramOutGain(_config.AudioSettings.ProgramOutGain);
+
+            IBMDSwitcherAudioInputIterator audioIterator = null;
+            IntPtr audioPtr;
+            Guid audioInputIID = typeof(IBMDSwitcherAudioInputIterator).GUID;
+            mixer.CreateIterator(ref audioInputIID, out audioPtr);
+            if (audioPtr != null)
+            {
+                audioIterator = (IBMDSwitcherAudioInputIterator)Marshal.GetObjectForIUnknown(audioPtr);
+
+                IBMDSwitcherAudioInput xlr;
+                audioIterator.GetById((long)BMDSwitcherAudioSources.XLR, out xlr);
+                xlr.SetGain(_config.AudioSettings.XLRInputGain);
+
+                // for now disable all other inputs
+                IBMDSwitcherAudioInput audioinput;
+                audioIterator.GetById((long)BMDSwitcherAudioSources.Input_1, out audioinput);
+                audioinput.SetMixOption(_BMDSwitcherAudioMixOption.bmdSwitcherAudioMixOptionOff);
+                audioIterator.GetById((long)BMDSwitcherAudioSources.Input_2, out audioinput);
+                audioinput.SetMixOption(_BMDSwitcherAudioMixOption.bmdSwitcherAudioMixOptionOff);
+                audioIterator.GetById((long)BMDSwitcherAudioSources.Input_3, out audioinput);
+                audioinput.SetMixOption(_BMDSwitcherAudioMixOption.bmdSwitcherAudioMixOptionOff);
+                audioIterator.GetById((long)BMDSwitcherAudioSources.Input_4, out audioinput);
+                audioinput.SetMixOption(_BMDSwitcherAudioMixOption.bmdSwitcherAudioMixOptionOff);
+                audioIterator.GetById((long)BMDSwitcherAudioSources.Input_5, out audioinput);
+                audioinput.SetMixOption(_BMDSwitcherAudioMixOption.bmdSwitcherAudioMixOptionOff);
+                audioIterator.GetById((long)BMDSwitcherAudioSources.Input_6, out audioinput);
+                audioinput.SetMixOption(_BMDSwitcherAudioMixOption.bmdSwitcherAudioMixOptionOff);
+                audioIterator.GetById((long)BMDSwitcherAudioSources.Input_7, out audioinput);
+                audioinput.SetMixOption(_BMDSwitcherAudioMixOption.bmdSwitcherAudioMixOptionOff);
+                audioIterator.GetById((long)BMDSwitcherAudioSources.Input_8, out audioinput);
+                audioinput.SetMixOption(_BMDSwitcherAudioMixOption.bmdSwitcherAudioMixOptionOff);
+
+            }
 
         }
 
