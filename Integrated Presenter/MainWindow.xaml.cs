@@ -551,7 +551,29 @@ namespace Integrated_Presenter
                 IsProgramRowLocked = false;
             }
 
+            // extra features
+
+            if (e.Key == Key.P)
+            {
+                ToggleViewAdvancedPIP();
+            }
+            if (e.Key == Key.O)
+            {
+                ToggleViewPrevAfter();
+            }
+            if (e.Key == Key.Q)
+            {
+                ToggleViewAdvancedPresentation();
+            }
+
             // audio
+
+            if (e.Key == Key.A)
+            {
+                OpenAudioPlayer();
+                Focus();
+            }
+
             if (audioPlayer != null)
             {
                 if (e.Key == Key.F1)
@@ -580,6 +602,10 @@ namespace Integrated_Presenter
                     ClickProgram(1);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(1);
+                else if (Keyboard.IsKeyDown(Key.E))
+                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, false);
+                else if (Keyboard.IsKeyDown(Key.R))
+                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, true);
                 else
                     ClickPreset(1);
             }
@@ -589,6 +615,10 @@ namespace Integrated_Presenter
                     ClickProgram(2);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(2);
+                else if (Keyboard.IsKeyDown(Key.E))
+                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 1, false);
+                else if (Keyboard.IsKeyDown(Key.R))
+                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 1, true);
                 else
                     ClickPreset(2);
             }
@@ -598,6 +628,10 @@ namespace Integrated_Presenter
                     ClickProgram(3);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(3);
+                else if (Keyboard.IsKeyDown(Key.E))
+                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 2, false);
+                else if (Keyboard.IsKeyDown(Key.R))
+                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 2, true);
                 else
                     ClickPreset(3);
             }
@@ -607,6 +641,10 @@ namespace Integrated_Presenter
                     ClickProgram(4);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangePIPFillSource(4);
+                else if (Keyboard.IsKeyDown(Key.E))
+                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 3, false);
+                else if (Keyboard.IsKeyDown(Key.R))
+                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 3, true);
                 else
                     ClickPreset(4);
             }
@@ -1435,8 +1473,14 @@ namespace Integrated_Presenter
 
         private void ClickViewPrevAfter(object sender, RoutedEventArgs e)
         {
+            ToggleViewPrevAfter();
+        }
+
+        private void ToggleViewPrevAfter()
+        {
             displayPrevAfter = !displayPrevAfter;
             UIUpdateDisplayPrevAfter();
+            cbPrevAfter.IsChecked = displayPrevAfter;
         }
 
         private void ClickTakeSlide(object sender, RoutedEventArgs e)
@@ -1448,12 +1492,20 @@ namespace Integrated_Presenter
         bool _viewAdvancedPresentation = false;
         private void ClickViewAdvancedPresentation(object sender, RoutedEventArgs e)
         {
+            ToggleViewAdvancedPresentation();
+        }
+
+        private void ToggleViewAdvancedPresentation()
+        {
             _viewAdvancedPresentation = !_viewAdvancedPresentation;
 
             if (_viewAdvancedPresentation)
                 ShowAdvancedPresControls();
             else
                 HideAdvancedPresControls();
+
+            cbAdvancedPresentation.IsChecked = _viewAdvancedPresentation;
+
         }
 
         private void ShowAdvancedPresControls()
@@ -1626,6 +1678,11 @@ namespace Integrated_Presenter
         private bool showadvancedpipcontrols = false;
         private void ClickViewAdvancedPIP(object sender, RoutedEventArgs e)
         {
+            ToggleViewAdvancedPresentation();
+        }
+
+        private void ToggleViewAdvancedPIP()
+        {
             showadvancedpipcontrols = !showadvancedpipcontrols;
 
             if (showadvancedpipcontrols)
@@ -1636,6 +1693,7 @@ namespace Integrated_Presenter
             {
                 HideAdvancedPIPControls();
             }
+            cbAdvancedPresentation.IsChecked = showadvancedpipcontrols;
 
         }
 
@@ -1799,6 +1857,11 @@ namespace Integrated_Presenter
                     VideoHeight = 1080,
                     VideoWidth = 1920
                 },
+                AudioSettings = new BMDSwitcherAudioSettings()
+                {
+                    ProgramOutGain = 2,
+                    XLRInputGain = 6,
+                },
                 Routing = new List<ButtonSourceMapping>() {
                     new ButtonSourceMapping() { KeyName = "left", ButtonId = 1, ButtonName = "PULPIT", PhysicalInputId = 5, LongName = "PULPIT", ShortName = "PLPT" },
                     new ButtonSourceMapping() { KeyName = "center", ButtonId = 2, ButtonName = "CENTER", PhysicalInputId = 1, LongName = "CENTER", ShortName = "CNTR" },
@@ -1811,7 +1874,8 @@ namespace Integrated_Presenter
                 },
                 MixEffectSettings = new BMDMixEffectSettings()
                 {
-                    Rate = 30
+                    Rate = 30,
+                    FTBRate = 30,
                 },
                 MultiviewerConfig = new BMDMultiviewerSettings()
                 {
@@ -2239,11 +2303,16 @@ namespace Integrated_Presenter
 
         private void ClickViewAudioPlayer(object sender, RoutedEventArgs e)
         {
+            OpenAudioPlayer();
+        }
+
+        private void OpenAudioPlayer()
+        {
             if (audioPlayer != null)
             {
                 if (!audioPlayer.IsVisible)
                 {
-                    audioPlayer = new AudioPlayer();
+                    audioPlayer = new AudioPlayer(this);
                     audioPlayer.Show();
                 }
                 else
@@ -2253,9 +2322,10 @@ namespace Integrated_Presenter
             }
             else
             {
-                audioPlayer = new AudioPlayer();
+                audioPlayer = new AudioPlayer(this);
                 audioPlayer.Show();
             }
+
         }
 
 

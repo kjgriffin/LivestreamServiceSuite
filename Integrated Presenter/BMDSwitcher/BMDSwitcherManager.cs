@@ -621,11 +621,15 @@ namespace Integrated_Presenter
             ConfigureUpstreamKey();
             // disable for now - doesn't work
             //ConfigureMediaPool();
+            ConfigureAudioLevels();
         }
 
         private void ConfigureMixEffectBlock()
         {
-            _BMDSwitcherMixEffectBlock1.SetFadeToBlackRate((uint)_config.MixEffectSettings.Rate);
+            _BMDSwitcherMixEffectBlock1.SetFadeToBlackRate((uint)_config.MixEffectSettings.FTBRate);
+
+            IBMDSwitcherTransitionMixParameters mixParameters = (IBMDSwitcherTransitionMixParameters)_BMDSwitcherMixEffectBlock1;
+            mixParameters.SetRate((uint)_config.MixEffectSettings.Rate);
         }
 
         private void ConfigureCameraSources()
@@ -748,6 +752,11 @@ namespace Integrated_Presenter
             keyframeparams.SetPositionY(_config.PIPSettings.KeyFrameB.PositionY);
             keyframeparams.SetSizeX(_config.PIPSettings.KeyFrameB.SizeX);
             keyframeparams.SetSizeY(_config.PIPSettings.KeyFrameB.SizeY);
+
+        }
+
+        private void ConfigureAudioLevels()
+        {
 
         }
 

@@ -6,7 +6,9 @@ using System.Text;
 
 namespace Integrated_Presenter.BMDSwitcher
 {
-    public enum BMDSwitcherSources
+    /* acording to: https://www.skaarhoj.com/fileadmin/BMDPROTOCOL.html
+     */
+    public enum BMDSwitcherVideoSources
     {
         Black = 0,
         Input1 = 1,

@@ -22,8 +22,11 @@ namespace Integrated_Presenter
     public partial class AudioPlayer : Window
     {
 
-        public AudioPlayer()
+        MainWindow _parent;
+
+        public AudioPlayer(MainWindow parent)
         {
+            _parent = parent;
             InitializeComponent();
             audioplayer.LoadedBehavior = MediaState.Manual;
             audioplayer.MediaOpened += Audioplayer_MediaOpened;
@@ -140,6 +143,11 @@ namespace Integrated_Presenter
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Escape)
+            {
+                _parent.Focus();
+            }
+
             if (e.Key == Key.F1)
             {
                 RestartAudio();

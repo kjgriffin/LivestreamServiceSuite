@@ -40,11 +40,11 @@
                     <MenuItem Header="Stop Record" Click="ClickRecordStop" IsTabStop="False"></MenuItem>
                 </MenuItem>-->
                 <MenuItem Header="View" IsTabStop="False">
-                    <MenuItem Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
+                    <MenuItem Name="cbPrevAfter" Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
                     <MenuItem Header="Preview Effective Current" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowEffectiveCurrentPreview"></MenuItem>
-                    <MenuItem Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
+                    <MenuItem Name="cbAdvancedPresentation" Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
                     <MenuItem Header="Audio Player" IsTabStop="False" Click="ClickViewAudioPlayer"></MenuItem>
-                    <MenuItem Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
+                    <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
                     <MenuItem Header="Advanced Projector" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedProjector"></MenuItem>
                     <MenuItem Header="Hyperdeck Monitor" IsTabStop="False" Click="OpenHyperdeckMonitorWindow"></MenuItem>
                 </MenuItem>

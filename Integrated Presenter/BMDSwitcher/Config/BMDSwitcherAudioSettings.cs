@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Integrated_Presenter.BMDSwitcher.Config
 {
-    public class BMDMixEffectSettings
+    public class BMDSwitcherAudioSettings
     {
-        public int Rate { get; set; } = 30;
-        public int FTBRate { get; set; } = 30;
+        public int XLRInputGain { get; set; }
+        public int ProgramOutGain { get; set; }
     }
 }

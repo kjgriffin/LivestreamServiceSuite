@@ -23,6 +23,8 @@ namespace Integrated_Presenter.BMDSwitcher.Config
 
         public BMDSwitcherVideoSettings VideoSettings { get; set; } = new BMDSwitcherVideoSettings();
 
+        public BMDSwitcherAudioSettings AudioSettings { get; set; } = new BMDSwitcherAudioSettings();
+
 
 
         public static BMDSwitcherConfigSettings Load(string filename)
