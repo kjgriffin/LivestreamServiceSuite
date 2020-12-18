@@ -457,7 +457,18 @@ namespace Integrated_Presenter
 
         private void UpdateCBarsStyle()
         {
-            BtnCBars.Background = (switcherState.ProgramID == (int)BMDSwitcherVideoSources.ColorBars ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            if (switcherState.ProgramID == (int)BMDSwitcherVideoSources.ColorBars)
+            {
+                BtnCBars.Background = Application.Current.FindResource("RedLight") as RadialGradientBrush;
+            }
+            else if (switcherState.PresetID == (int)BMDSwitcherVideoSources.ColorBars)
+            {
+                BtnCBars.Background = Application.Current.FindResource("GreenLight") as RadialGradientBrush;
+            }
+            else
+            {
+                BtnCBars.Background = Application.Current.FindResource("GrayLight") as RadialGradientBrush;
+            }
         }
 
         private void UpdateSlideModeButtons()
