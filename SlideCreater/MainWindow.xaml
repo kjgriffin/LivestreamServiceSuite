@@ -24,6 +24,9 @@
                 <MenuItem Click="ClickSave" Header="Save"></MenuItem>
                 <MenuItem Click="ClickSaveJSON" Header="Save JSON"></MenuItem>
             </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="Commands" Click="ClickHelpCommands"></MenuItem>
+            </MenuItem>
         </Menu>
 
         <ToolBar Grid.Row="1" Background="#fafafa">
