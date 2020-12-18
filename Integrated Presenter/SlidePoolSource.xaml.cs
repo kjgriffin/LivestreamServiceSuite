@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -23,6 +24,28 @@ namespace Integrated_Presenter
         public SlidePoolSource()
         {
             InitializeComponent();
+            mediapreview.OnMediaLoaded += Mediapreview_OnMediaLoaded;
+            mediapreview.OnMediaPlaybackTimeUpdate += Mediapreview_OnMediaPlaybackTimeUpdate;
+            mediapreview.videoPlayer.Volume = 0;
+            mediapreview.AutoSilentPlayback = true;
+            mediapreview.AutoSilentReplay = true;
+            UpdateDurationUI();
+        }
+
+        private void Mediapreview_OnMediaPlaybackTimeUpdate(object sender, MediaPlaybackTimeEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                UpdateDurationUI();
+            });
+        }
+
+        private void Mediapreview_OnMediaLoaded(object sender, MediaPlaybackTimeEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                UpdateDurationUI();
+            });
         }
 
         private SlideType type = SlideType.Full;
@@ -116,16 +139,22 @@ namespace Integrated_Presenter
         private void ClickSlideMode(object sender, RoutedEventArgs e)
         {
             Type = SlideType.Full;
+            UpdateDurationUI();
         }
 
         private void ClickLiturgyMode(object sender, RoutedEventArgs e)
         {
             Type = SlideType.Liturgy;
+            UpdateDurationUI();
         }
 
         private void ClickVideoMode(object sender, RoutedEventArgs e)
         {
             Type = SlideType.Video;
+            Dispatcher.Invoke(() =>
+            {
+                mediapreview.PlayMedia();
+            });
         }
 
         public void PlayMedia()
@@ -152,7 +181,7 @@ namespace Integrated_Presenter
             mediapreview.ReplayMedia();
         }
 
-        private void ClickLoadMedia(object sender, RoutedEventArgs e)
+        private async void ClickLoadMedia(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Select Media File";
@@ -198,12 +227,36 @@ namespace Integrated_Presenter
                 }
 
                 mediapreview.SetMedia(Source, Type);
+                if (Slide.Type == SlideType.Video)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        mediapreview.PlayMedia();
+                    });
+                    UpdateDurationUI();
+                }
+
                 BtnTakeInsert.Style = (Style)Application.Current.FindResource("SwitcherButton");
                 BtnTakeReplace.Style = (Style)Application.Current.FindResource("SwitcherButton");
                 loaded = true;
 
                 border.BorderBrush = Brushes.LightBlue;
+                UpdateDurationUI();
 
+            }
+        }
+
+        private void UpdateDurationUI()
+        {
+            if (Slide?.Type == SlideType.Video && mediapreview.MediaLength != TimeSpan.Zero)
+            {
+                tbDuration.Text = mediapreview.MediaLength.ToString("\\T\\-mm\\:ss");
+                tbDuration.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                tbDuration.Visibility = Visibility.Hidden;
+                tbDuration.Text = "";
             }
         }
 

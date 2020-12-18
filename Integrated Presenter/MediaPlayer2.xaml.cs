@@ -40,11 +40,50 @@ namespace Integrated_Presenter
             InitializeComponent();
             _playbacktimer = new Timer(500);
             _playbacktimer.Elapsed += _playbacktimer_Elapsed;
+            videoPlayer.MediaOpened += VideoPlayer_MediaOpened;
+            videoPlayer.MediaEnded += VideoPlayer_MediaEnded;
 
         }
 
+        private void VideoPlayer_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            if (AutoSilentReplay)
+            {
+                videoPlayer.Volume = 0;
+                ReplayMedia();
+            }
+        }
 
+        public bool AutoSilentReplay { get; set; } = false;
+        public bool AutoSilentPlayback { get; set; } = false;
+
+        private void VideoPlayer_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            if (AutoSilentPlayback)
+            {
+                videoPlayer.Volume = 0;
+                PlayMedia();
+            }
+            OnMediaLoaded?.Invoke(this, new MediaPlaybackTimeEventArgs(videoPlayer.Position, videoPlayer.NaturalDuration.TimeSpan, (videoPlayer.NaturalDuration - videoPlayer.Position).TimeSpan));
+        }
+
+        public event EventHandler<MediaPlaybackTimeEventArgs> OnMediaLoaded;
         public event EventHandler<MediaPlaybackTimeEventArgs> OnMediaPlaybackTimeUpdate;
+
+        public TimeSpan MediaLength
+        {
+            get
+            {
+                if (videoPlayer.NaturalDuration != null)
+                {
+                    if (videoPlayer.NaturalDuration.HasTimeSpan)
+                    {
+                        return videoPlayer.NaturalDuration.TimeSpan;
+                    }
+                }
+                return TimeSpan.Zero;
+            }
+        }
 
         private void _playbacktimer_Elapsed(object sender, ElapsedEventArgs e)
         {

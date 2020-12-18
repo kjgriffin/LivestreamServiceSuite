@@ -14,8 +14,14 @@
             <ColumnDefinition Width="149*"/>
             <ColumnDefinition Width="651*"/>
         </Grid.ColumnDefinitions>
+        <Viewbox Grid.ColumnSpan="2">
+            <Rectangle Fill="Black"></Rectangle>
+        </Viewbox>
         <local:MediaPlayer2 x:Name="mediaPlayerA" Grid.ColumnSpan="2"></local:MediaPlayer2>
         <local:MediaPlayer2 x:Name="mediaPlayerB" Grid.ColumnSpan="2"></local:MediaPlayer2>
         <local:MediaPlayer2 x:Name="mediaPlayerC" Grid.ColumnSpan="2"></local:MediaPlayer2>
+        <Viewbox Name="blackcover" Panel.ZIndex="10" Grid.ColumnSpan="2">
+            <Rectangle Fill="Black"></Rectangle>
+        </Viewbox>
     </Grid>
 </Window>

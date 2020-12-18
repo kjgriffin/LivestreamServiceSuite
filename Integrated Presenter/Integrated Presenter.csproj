@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <None Remove="BMDSwitcher\Mock\Images\black.png" />
+    <None Remove="BMDSwitcher\Mock\Images\cbars.png" />
     <None Remove="BMDSwitcher\Mock\Images\centercam.PNG" />
     <None Remove="BMDSwitcher\Mock\Images\centershot.PNG" />
     <None Remove="BMDSwitcher\Mock\Images\leftcam.PNG" />
@@ -54,6 +55,9 @@
 
   <ItemGroup>
     <Resource Include="BMDSwitcher\Mock\Images\black.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="BMDSwitcher\Mock\Images\cbars.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="BMDSwitcher\Mock\Images\centercam.PNG">

@@ -25,6 +25,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         {
             InitializeComponent();
             SourceMap = sourcemap;
+            SourceMap.Add((int)BMDSwitcherVideoSources.ColorBars, "colorbars");
         }
 
 
@@ -50,6 +51,8 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                         return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/organshot.png"));
                     case "slide":
                         return ImgSlide.Source;
+                    case "colorbars":
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/cbars.png"));
                     default:
                         return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
                 }

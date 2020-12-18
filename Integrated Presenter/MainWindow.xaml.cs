@@ -91,6 +91,16 @@ namespace Integrated_Presenter
             UpdateRecordButtonUI();
 
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
+            NextPreview.AutoSilentPlayback = true;
+            AfterPreview.AutoSilentPlayback = true;
+            PrevPreview.AutoSilentPlayback = true;
+            NextPreview.AutoSilentReplay = true;
+            AfterPreview.AutoSilentReplay = true;
+            PrevPreview.AutoSilentReplay = true;
+
+            NextPreview.OnMediaLoaded += NextPreview_OnMediaLoaded;
+            AfterPreview.OnMediaLoaded += AfterPreview_OnMediaLoaded;
+            PrevPreview.OnMediaLoaded += PrevPreview_OnMediaLoaded;
 
             system_second_timer.Elapsed += System_second_timer_Elapsed;
             system_second_timer.Interval = 1000;
@@ -104,6 +114,21 @@ namespace Integrated_Presenter
             gp_timer_1.Interval = 1000;
             gp_timer_1.Elapsed += Gp_timer_1_Elapsed;
             gp_timer_1.Start();
+        }
+
+        private void PrevPreview_OnMediaLoaded(object sender, MediaPlaybackTimeEventArgs e)
+        {
+            UpdateSlidePreviewControls();
+        }
+
+        private void AfterPreview_OnMediaLoaded(object sender, MediaPlaybackTimeEventArgs e)
+        {
+            UpdateSlidePreviewControls();
+        }
+
+        private void NextPreview_OnMediaLoaded(object sender, MediaPlaybackTimeEventArgs e)
+        {
+            UpdateSlidePreviewControls();
         }
 
         private void MHyperdeckManager_OnMessageFromHyperDeck(object sender, string message)
@@ -163,6 +188,7 @@ namespace Integrated_Presenter
         private void MainWindow_PresentationStateUpdated(Slide currentslide)
         {
             UpdateSlideNums();
+            UpdateSlidePreviewControls();
             ResetSlideMediaTimes();
             UpdateSlideControls();
             UpdateMediaControls();
@@ -525,6 +551,56 @@ namespace Integrated_Presenter
             BtnPrev.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
             BtnTake.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
             UpdateSlideModeButtons();
+            UpdateSlidePreviewControls();
+        }
+
+        private void UpdateSlidePreviewControls()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (Presentation?.Next.Type == SlideType.Video)
+                {
+                    NextPreview.PlayMedia();
+                    if (NextPreview.MediaLength != TimeSpan.Zero)
+                    {
+                        tbPreviewNextVideoDuration.Text = NextPreview.MediaLength.ToString("\\T\\-mm\\:ss");
+                        tbPreviewNextVideoDuration.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    tbPreviewNextVideoDuration.Visibility = Visibility.Hidden;
+                    tbPreviewNextVideoDuration.Text = "";
+                }
+                if (Presentation?.After.Type == SlideType.Video)
+                {
+                    AfterPreview.PlayMedia();
+                    if (AfterPreview.MediaLength != TimeSpan.Zero)
+                    {
+                        tbPreviewAfterVideoDuration.Text = AfterPreview.MediaLength.ToString("\\T\\-mm\\:ss");
+                        tbPreviewAfterVideoDuration.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    tbPreviewAfterVideoDuration.Visibility = Visibility.Hidden;
+                    tbPreviewAfterVideoDuration.Text = "";
+                }
+                if (Presentation?.Prev.Type == SlideType.Video)
+                {
+                    PrevPreview.PlayMedia();
+                    if (PrevPreview.MediaLength != TimeSpan.Zero)
+                    {
+                        tbPreviewPrevVideoDuration.Text = PrevPreview.MediaLength.ToString("\\T\\-mm\\:ss");
+                        tbPreviewPrevVideoDuration.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    tbPreviewPrevVideoDuration.Visibility = Visibility.Hidden;
+                    tbPreviewPrevVideoDuration.Text = "";
+                }
+            });
         }
 
         private void UpdateMediaControls()
@@ -1210,6 +1286,11 @@ namespace Integrated_Presenter
             TbMediaTimeRemaining.Text = e.Remaining.ToString("m\\:ss");
             TbMediaTimeCurrent.Text = e.Current.ToString("m\\:ss");
             TbMediaTimeDurration.Text = e.Length.ToString("m\\:ss");
+            // synchronize current preview
+            if (Math.Abs(CurrentPreview.videoPlayer.Position.TotalMilliseconds - e.Current.TotalMilliseconds) > 400)
+            {
+                CurrentPreview.videoPlayer.Position = e.Current;
+            }
         }
 
 
@@ -1249,6 +1330,7 @@ namespace Integrated_Presenter
                 NextPreview.SetMedia(Presentation.Next);
                 AfterPreview.SetMedia(Presentation.After);
             }
+            UpdateSlidePreviewControls();
         }
 
 

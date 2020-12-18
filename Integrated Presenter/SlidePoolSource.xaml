@@ -91,6 +91,11 @@
                 <Grid Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">
                     <local:MediaPlayer2 x:Name="mediapreview" Panel.ZIndex="100"></local:MediaPlayer2>
                     <Rectangle Fill="Black" Panel.ZIndex="1"></Rectangle>
+                    <TextBlock x:Name="tbDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" Panel.ZIndex="100">
+                        <TextBlock.Background>
+                            <SolidColorBrush Color="Black" Opacity="0.8"></SolidColorBrush>
+                        </TextBlock.Background>
+                        00:00:00</TextBlock>
                 </Grid>
                 <StackPanel Grid.Row="1" Grid.RowSpan="2">
                     <Button Focusable="false" IsTabStop="False" Name="BtnTakeInsert" Click="ClickTakeInsert" Grid.Column="0" Grid.Row="1" Style="{StaticResource SwitcherButton_Disabled}">TAKE INS</Button>

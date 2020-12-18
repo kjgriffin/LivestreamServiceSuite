@@ -44,6 +44,8 @@ namespace Integrated_Presenter
             prevplayer = 1;
             nextplayer = 3;
 
+            blackcover.Visibility = Visibility.Hidden;
+
             ShowSlide();
 
         }
@@ -210,9 +212,12 @@ namespace Integrated_Presenter
             {
                 // we don't have this one cued
                 // hot-swap into the active player
+                // show black for now
+                blackcover.Visibility = Visibility.Visible;
                 SetSlideForPlayer(activeplayer, slidetoshow);
                 // show it from next player
                 ShowActivePlayer();
+                blackcover.Visibility = Visibility.Hidden;
             }
 
 

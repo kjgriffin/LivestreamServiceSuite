@@ -498,7 +498,10 @@
                                         <Border.RenderTransform>
                                             <TranslateTransform X="144" Y="-81"></TranslateTransform>
                                         </Border.RenderTransform>
-                                        <local:MediaPlayer2 Opacity="0.5" x:Name="PrevPreview"></local:MediaPlayer2>
+                                        <Grid>
+                                            <local:MediaPlayer2 Opacity="0.5" x:Name="PrevPreview"></local:MediaPlayer2>
+                                            <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">10:00:00</TextBlock>
+                                        </Grid>
                                     </Border>
                                 </Grid>
                             </Border>
@@ -521,8 +524,12 @@
                                         <Border.RenderTransform>
                                             <TranslateTransform X="144" Y="81"></TranslateTransform>
                                         </Border.RenderTransform>
-                                        <local:MediaPlayer2 Opacity="0.5" x:Name="AfterPreview" ></local:MediaPlayer2>
+                                        <Grid>
+                                            <local:MediaPlayer2 Opacity="0.5" x:Name="AfterPreview" ></local:MediaPlayer2>
+                                            <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">10:00:00</TextBlock>
+                                        </Grid>
                                     </Border>
+                                    <TextBlock Name="tbPreviewNextVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100">10:00:00</TextBlock>
                                 </Grid>
                             </Border>
                         </Viewbox>
