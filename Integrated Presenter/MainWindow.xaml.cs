@@ -312,6 +312,7 @@ namespace Integrated_Presenter
             UpdateDSK1Styles();
             UpdateDSK2Styles();
             UpdateFTBButtonStyle();
+            UpdateCBarsStyle();
             UpdatePIPButtonStyles();
         }
 
@@ -371,6 +372,7 @@ namespace Integrated_Presenter
             BtnDSK2Auto.Style = (Style)Application.Current.FindResource(style);
 
             BtnFTB.Style = (Style)Application.Current.FindResource(style);
+            BtnCBars.Style = (Style)Application.Current.FindResource(style);
 
             BtnAutoTrans.Style = (Style)Application.Current.FindResource(style);
             BtnCutTrans.Style = (Style)Application.Current.FindResource(style);
@@ -451,6 +453,11 @@ namespace Integrated_Presenter
         private void UpdateFTBButtonStyle()
         {
             BtnFTB.Background = (switcherState.FTB ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+        }
+
+        private void UpdateCBarsStyle()
+        {
+            BtnCBars.Background = (switcherState.ProgramID == (int)BMDSwitcherVideoSources.ColorBars ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
         private void UpdateSlideModeButtons()
@@ -793,6 +800,12 @@ namespace Integrated_Presenter
             if (e.Key == Key.B)
             {
                 switcherManager?.PerformToggleFTB();
+            }
+
+            // color bars
+            if (e.Key == Key.C)
+            {
+                SetProgramColorBars();
             }
 
             // transition controls
@@ -2328,6 +2341,14 @@ namespace Integrated_Presenter
 
         }
 
+        private void ClickCBars(object sender, RoutedEventArgs e)
+        {
+            SetProgramColorBars();
+        }
 
+        private void SetProgramColorBars()
+        {
+            switcherManager?.PerformProgramSelect((int)BMDSwitcherVideoSources.ColorBars);
+        }
     }
 }

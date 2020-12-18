@@ -213,7 +213,7 @@
                                                     <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">AUX SOURCES</TextBlock>
                                                     <StackPanel Orientation="Horizontal">
                                                         <Button Name="BtnFTB" Click="ClickFTB" Style="{StaticResource SwitcherButton_Disabled}">FTB</Button>
-                                                        <Button Style="{StaticResource InactiveSwitcherButton}">BARS</Button>
+                                                        <Button Name="BtnCBars" Click="ClickCBars" Style="{StaticResource SwitcherButton_Disabled}">TEST</Button>
                                                     </StackPanel>
                                                 </StackPanel>
                                             </Border>
