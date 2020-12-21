@@ -35,10 +35,6 @@
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
                 </MenuItem>
-                <!--<MenuItem Header="Recording" IsTabStop="False">
-                    <MenuItem Header="Start Record" Click="ClickRecordStart" IsTabStop="False"></MenuItem>
-                    <MenuItem Header="Stop Record" Click="ClickRecordStop" IsTabStop="False"></MenuItem>
-                </MenuItem>-->
                 <MenuItem Header="View" IsTabStop="False">
                     <MenuItem Name="cbPrevAfter" Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
                     <MenuItem Header="Preview Effective Current" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowEffectiveCurrentPreview"></MenuItem>
@@ -242,9 +238,47 @@
                                     <Grid Grid.Column="0">
                                         <Border Style="{StaticResource GroupBorder}">
                                             <StackPanel>
-                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PIP</TextBlock>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">USK 1</TextBlock>
                                                 <Button Name="BtnTransKey1" Click="ClickTransKey1" Style="{StaticResource SwitcherButton_Disabled}">KEY 1</Button>
-                                                <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">PIP</Button>
+                                                <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">ON AIR</Button>
+
+                                                <Button Name="BtnDVE" Click="ClickDVEMode" Foreground="White">
+                                                    <Button.Content>DVE (PIP)</Button.Content>
+                                                    <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Border Width="70" Height="30" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+
+                                                <Button Name="BtnChroma" Click="ClickChromaMode" Foreground="White">
+                                                    <Button.Content>CHROMA</Button.Content>
+                                                    <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Border Width="70" Height="30" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+
+
+
+
                                             </StackPanel>
                                         </Border>
                                     </Grid>
@@ -366,7 +400,7 @@
                                 </Grid>
                             </Grid>
                             <Grid Grid.Row="2" Grid.Column="1">
-                                <Border Style="{StaticResource GroupBorder}" >
+                                <Border Name="PIPControls" Style="{StaticResource GroupBorder}" >
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition></RowDefinition>
@@ -471,6 +505,82 @@
                                         </Grid>
                                     </Grid>
                                 </Border>
+                                <Border Name="ChromaControls" Style="{StaticResource GroupBorder}" >
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <StackPanel>
+                                                <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="5">CHROMA KEYER CONTROLS</TextBlock>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition></RowDefinition>
+                                                                <RowDefinition></RowDefinition>
+                                                                <RowDefinition></RowDefinition>
+                                                                <RowDefinition></RowDefinition>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Style="{StaticResource GrayText}">HUE</TextBlock>
+                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" Style="{StaticResource darkTextbox}" AcceptsReturn="False" IsTabStop="False" Grid.Row="0" Grid.Column="1" Name="tbChromaHue"></TextBox>
+                                                            <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Style="{StaticResource GrayText}">GAIN</TextBlock>
+                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False"  IsTabStop="False"  Grid.Row="1" Grid.Column="1" Name="tbChromaGain" Style="{StaticResource darkTextbox}"></TextBox>
+                                                            <TextBlock  Grid.Row="1" Grid.Column="2" Margin="5" Style="{StaticResource GrayText}">YSUPPRESS</TextBlock>
+                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False" IsTabStop="False"  Grid.Row="1" Grid.Column="3" Name="tbChromaYSuppress" Style="{StaticResource darkTextbox}" ></TextBox>
+                                                            <TextBlock  Grid.Row="2" Grid.Column="0"  Margin="5" Style="{StaticResource GrayText}">LIFT</TextBlock>
+                                                            <TextBox Name="tbChromaLift" IsKeyboardFocusedChanged="TextEntryMode"  AcceptsReturn="False" IsTabStop="False"  Grid.Row="2" Grid.Column="1" Style="{StaticResource darkTextbox}"></TextBox>
+                                                            <TextBlock  Grid.Row="2" Grid.Column="2" Margin="5" Style="{StaticResource GrayText}">NARROW</TextBlock>
+                                                            <TextBox Name="tbChromaNarrow" IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False"  IsTabStop="False"  Grid.Row="2" Grid.Column="3" Style="{StaticResource darkTextbox}"></TextBox>
+                                                            <Button Click="ClickApplyChromaSettings" IsTabStop="False" x:Name="btnApplyChroma" Grid.Row="0" Grid.Column="3" Margin="10, 0, 10, 0">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="1">
+                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Orange">APPLY</ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid Grid.Row="1">
+                                            <StackPanel>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">KEY FILL SOURCE</TextBlock>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickChroma1" Name="BtnChromaFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickChroma2" Name="BtnChromaFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickChroma3" Name="BtnChromaFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickChroma4" Name="BtnChromaFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickChroma5" Name="BtnChromaFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickChroma6" Name="BtnChromaFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickChroma7" Name="BtnChromaFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                    <Button IsTabStop="False" Focusable="False" Click="ClickChroma8" Name="BtnChromaFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+
                             </Grid>
                         </Grid>
                     </Viewbox>

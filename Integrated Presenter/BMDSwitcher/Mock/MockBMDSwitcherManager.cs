@@ -202,6 +202,17 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void ConfigureSwitcher(BMDSwitcherConfigSettings config)
         {
+            _state.USK1KeyType = config.USKSettings.IsChroma == 1 ? 2 : 1;
+            if (config.USKSettings.IsChroma == 1)
+            {
+                _state.USK1FillSource = config.USKSettings.ChromaSettings.FillSource;
+            }
+            else
+            {
+                _state.USK1FillSource = config.USKSettings.PIPSettings.DefaultFillSource;
+            }
+
+            ForceStateUpdate();
         }
 
         public void PerformUSK1RunToKeyFrameA()
@@ -268,12 +279,30 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void SetPIPPosition(BMDUSKSettings settings)
         {
-            throw new NotImplementedException();
         }
 
         public void SetPIPKeyFrameA(BMDUSKSettings settings)
         {
-            throw new NotImplementedException();
+        }
+
+        public void SetPIPPosition(BMDUSKDVESettings settings)
+        {
+        }
+
+        public void SetPIPKeyFrameA(BMDUSKDVESettings settings)
+        {
+        }
+
+        public void ConfigureUSK1PIP(BMDUSKDVESettings settings)
+        {
+            _state.USK1KeyType = 1;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        public void ConfigureUSK1Chroma(BMDUSKChromaSettings settings)
+        {
+            _state.USK1KeyType = 2;
+            SwitcherStateChanged?.Invoke(_state);
         }
     }
 }

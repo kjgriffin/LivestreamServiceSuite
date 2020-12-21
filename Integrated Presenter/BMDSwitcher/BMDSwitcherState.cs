@@ -22,6 +22,11 @@ namespace Integrated_Presenter.BMDSwitcher
         /// </summary>
         public int USK1KeyFrame { get; set; }
 
+        /// <summary>
+        /// 1 = DVE, 2 = Chroma
+        /// </summary>
+        public int USK1KeyType { get; set; }
+
         public bool DSK1OnAir { get; set; }
         public bool DSK1Tie { get; set; }
         public bool DSK2OnAir { get; set; }
@@ -36,6 +41,7 @@ namespace Integrated_Presenter.BMDSwitcher
             ProgramID = -1;
             DSK1OnAir = false;
             USK1OnAir = false;
+            USK1KeyType = 1;
             DSK1Tie = false;
             DSK2OnAir = false;
             DSK2Tie = false;
@@ -62,6 +68,7 @@ namespace Integrated_Presenter.BMDSwitcher
                 PresetID = this.PresetID,
                 ProgramID = this.ProgramID,
                 USK1OnAir = this.USK1OnAir,
+                USK1KeyType = this.USK1KeyType,
                 USK1FillSource = this.USK1FillSource,
                 USK1KeyFrame = this.USK1KeyFrame,
                 DSK1OnAir = this.DSK1OnAir,

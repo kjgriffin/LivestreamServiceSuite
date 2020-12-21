@@ -6,15 +6,9 @@ namespace Integrated_Presenter.BMDSwitcher.Config
 {
     public class BMDUSKSettings
     {
-        public int DefaultFillSource { get; set; }
-        public int IsBordered { get; set; }
-        public int IsMasked { get; set; }
-        public float MaskTop { get; set; }
-        public float MaskBottom { get; set; }
-        public float MaskLeft { get; set; }
-        public float MaskRight { get; set; }
-        public KeyFrameSettings Current { get; set; }
-        public KeyFrameSettings KeyFrameA { get; set; }
-        public KeyFrameSettings KeyFrameB { get; set; }
+        public int IsDVE { get; set; }
+        public int IsChroma { get; set; }
+        public BMDUSKDVESettings PIPSettings { get; set; } = new BMDUSKDVESettings();
+        public BMDUSKChromaSettings ChromaSettings { get; set; } = new BMDUSKChromaSettings();
     }
 }

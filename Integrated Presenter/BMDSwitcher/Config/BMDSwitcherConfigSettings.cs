@@ -19,7 +19,7 @@ namespace Integrated_Presenter.BMDSwitcher.Config
 
         public BMDMixEffectSettings MixEffectSettings { get; set; } = new BMDMixEffectSettings();
 
-        public BMDUSKSettings PIPSettings { get; set; } = new BMDUSKSettings();
+        public BMDUSKSettings USKSettings { get; set; } = new BMDUSKSettings();
 
         public BMDSwitcherVideoSettings VideoSettings { get; set; } = new BMDSwitcherVideoSettings();
 

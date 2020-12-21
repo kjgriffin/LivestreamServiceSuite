@@ -525,6 +525,28 @@ namespace Integrated_Presenter
             _BMDSwitcherUpstreamKey1.GetOnAir(out onair);
             _state.USK1OnAir = onair != 0;
 
+            _BMDSwitcherKeyType keytype;
+            _BMDSwitcherUpstreamKey1.GetType(out keytype);
+
+            switch (keytype)
+            {
+                case _BMDSwitcherKeyType.bmdSwitcherKeyTypeLuma:
+                    _state.USK1KeyType = 3;
+                    break;
+                case _BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma:
+                    _state.USK1KeyType = 2;
+                    break;
+                case _BMDSwitcherKeyType.bmdSwitcherKeyTypePattern:
+                    _state.USK1KeyType = 4;
+                    break;
+                case _BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE:
+                    _state.USK1KeyType = 1;
+                    break;
+                default:
+                    _state.USK1KeyType = 0;
+                    break;
+            }
+
             _BMDSwitcherFlyKeyFrame frame;
             _BMDSwitcherFlyKeyParamters.IsAtKeyFrames(out frame);
 
@@ -622,6 +644,8 @@ namespace Integrated_Presenter
             // disable for now - doesn't work
             //ConfigureMediaPool();
             ConfigureAudioLevels();
+
+            ForceStateUpdate();
         }
 
         private void ConfigureMixEffectBlock()
@@ -708,7 +732,33 @@ namespace Integrated_Presenter
 
         private void ConfigureUpstreamKey()
         {
-            ConfigureUSKforPictureInPicture();
+            if (_config.USKSettings.IsChroma == 1)
+            {
+                ConfigureUSKforChroma();
+            }
+            else if (_config.USKSettings.IsDVE == 1)
+            {
+                ConfigureUSKforPictureInPicture();
+            }
+        }
+
+        private void ConfigureUSKforChroma()
+        {
+            _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
+
+            // set initial fill to slide
+            _BMDSwitcherUpstreamKey1.SetInputFill(_config.USKSettings.ChromaSettings.FillSource);
+
+            IBMDSwitcherKeyChromaParameters chromaParameters = (IBMDSwitcherKeyChromaParameters)_BMDSwitcherUpstreamKey1;
+
+            chromaParameters.SetHue(_config.USKSettings.ChromaSettings.Hue);
+            chromaParameters.SetGain(_config.USKSettings.ChromaSettings.Gain);
+            chromaParameters.SetYSuppress(_config.USKSettings.ChromaSettings.YSuppress);
+            chromaParameters.SetLift(_config.USKSettings.ChromaSettings.Lift);
+            chromaParameters.SetNarrow(_config.USKSettings.ChromaSettings.Narrow);
+
+
+            ForceStateUpdate();
         }
 
         private void ConfigureUSKforPictureInPicture()
@@ -716,43 +766,44 @@ namespace Integrated_Presenter
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
 
             // set initial fill source to center
-            _BMDSwitcherUpstreamKey1.SetInputFill(_config.PIPSettings.DefaultFillSource);
+            _BMDSwitcherUpstreamKey1.SetInputFill(_config.USKSettings.PIPSettings.DefaultFillSource);
 
             IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
 
             // set border with dveparams
-            dveparams.SetMasked(_config.PIPSettings.IsMasked);
-            dveparams.SetMaskTop(_config.PIPSettings.MaskTop);
-            dveparams.SetMaskBottom(_config.PIPSettings.MaskBottom);
-            dveparams.SetMaskLeft(_config.PIPSettings.MaskLeft);
-            dveparams.SetMaskRight(_config.PIPSettings.MaskRight);
+            dveparams.SetMasked(_config.USKSettings.PIPSettings.IsMasked);
+            dveparams.SetMaskTop(_config.USKSettings.PIPSettings.MaskTop);
+            dveparams.SetMaskBottom(_config.USKSettings.PIPSettings.MaskBottom);
+            dveparams.SetMaskLeft(_config.USKSettings.PIPSettings.MaskLeft);
+            dveparams.SetMaskRight(_config.USKSettings.PIPSettings.MaskRight);
 
 
-            dveparams.SetBorderEnabled(_config.PIPSettings.IsBordered);
+            dveparams.SetBorderEnabled(_config.USKSettings.PIPSettings.IsBordered);
 
 
             // config size & base position
-            _BMDSwitcherFlyKeyParamters.SetPositionX(_config.PIPSettings.Current.PositionX);
-            _BMDSwitcherFlyKeyParamters.SetPositionY(_config.PIPSettings.Current.PositionY);
-            _BMDSwitcherFlyKeyParamters.SetSizeX(_config.PIPSettings.Current.SizeX);
-            _BMDSwitcherFlyKeyParamters.SetSizeY(_config.PIPSettings.Current.SizeY);
+            _BMDSwitcherFlyKeyParamters.SetPositionX(_config.USKSettings.PIPSettings.Current.PositionX);
+            _BMDSwitcherFlyKeyParamters.SetPositionY(_config.USKSettings.PIPSettings.Current.PositionY);
+            _BMDSwitcherFlyKeyParamters.SetSizeX(_config.USKSettings.PIPSettings.Current.SizeX);
+            _BMDSwitcherFlyKeyParamters.SetSizeY(_config.USKSettings.PIPSettings.Current.SizeY);
 
             // setup keyframes
             IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
             _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparams);
 
-            keyframeparams.SetPositionX(_config.PIPSettings.KeyFrameA.PositionX);
-            keyframeparams.SetPositionY(_config.PIPSettings.KeyFrameA.PositionY);
-            keyframeparams.SetSizeX(_config.PIPSettings.KeyFrameA.SizeX);
-            keyframeparams.SetSizeY(_config.PIPSettings.KeyFrameA.SizeY);
+            keyframeparams.SetPositionX(_config.USKSettings.PIPSettings.KeyFrameA.PositionX);
+            keyframeparams.SetPositionY(_config.USKSettings.PIPSettings.KeyFrameA.PositionY);
+            keyframeparams.SetSizeX(_config.USKSettings.PIPSettings.KeyFrameA.SizeX);
+            keyframeparams.SetSizeY(_config.USKSettings.PIPSettings.KeyFrameA.SizeY);
 
             _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparams);
 
-            keyframeparams.SetPositionX(_config.PIPSettings.KeyFrameB.PositionX);
-            keyframeparams.SetPositionY(_config.PIPSettings.KeyFrameB.PositionY);
-            keyframeparams.SetSizeX(_config.PIPSettings.KeyFrameB.SizeX);
-            keyframeparams.SetSizeY(_config.PIPSettings.KeyFrameB.SizeY);
+            keyframeparams.SetPositionX(_config.USKSettings.PIPSettings.KeyFrameB.PositionX);
+            keyframeparams.SetPositionY(_config.USKSettings.PIPSettings.KeyFrameB.PositionY);
+            keyframeparams.SetSizeX(_config.USKSettings.PIPSettings.KeyFrameB.SizeX);
+            keyframeparams.SetSizeY(_config.USKSettings.PIPSettings.KeyFrameB.SizeY);
 
+            ForceStateUpdate();
         }
 
         private void ConfigureAudioLevels()
@@ -964,7 +1015,7 @@ namespace Integrated_Presenter
             _BMDSwitcherTransitionParameters.SetNextTransitionSelection((_BMDSwitcherTransitionSelection)val);
         }
 
-        public void SetPIPPosition(BMDUSKSettings settings)
+        public void SetPIPPosition(BMDUSKDVESettings settings)
         {
             IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
 
@@ -984,9 +1035,11 @@ namespace Integrated_Presenter
             _BMDSwitcherFlyKeyParamters.SetPositionY(settings.Current.PositionY);
             _BMDSwitcherFlyKeyParamters.SetSizeX(settings.Current.SizeX);
             _BMDSwitcherFlyKeyParamters.SetSizeY(settings.Current.SizeY);
+
+            ForceStateUpdate();
         }
 
-        public void SetPIPKeyFrameA(BMDUSKSettings settings)
+        public void SetPIPKeyFrameA(BMDUSKDVESettings settings)
         {
             IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
 
@@ -1008,8 +1061,30 @@ namespace Integrated_Presenter
             keyframeparams.SetPositionY(settings.KeyFrameA.PositionY);
             keyframeparams.SetSizeX(settings.KeyFrameA.SizeX);
             keyframeparams.SetSizeY(settings.KeyFrameA.SizeY);
+
+
+            ForceStateUpdate();
         }
 
+        public void ConfigureUSK1PIP(BMDUSKDVESettings settings)
+        {
+            _config.USKSettings.IsDVE = 1;
+            _config.USKSettings.IsChroma = 0;
+            _config.USKSettings.PIPSettings = settings;
+            ConfigureUSKforPictureInPicture();
 
+            ForceStateUpdate();
+        }
+
+        public void ConfigureUSK1Chroma(BMDUSKChromaSettings settings)
+        {
+            _config.USKSettings.IsDVE = 0;
+            _config.USKSettings.IsChroma = 1;
+            _config.USKSettings.ChromaSettings = settings;
+            ConfigureUSKforChroma();
+
+
+            ForceStateUpdate();
+        }
     }
 }

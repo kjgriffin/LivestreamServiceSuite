@@ -75,6 +75,14 @@ namespace Integrated_Presenter
             // set a default config
             SetDefaultConfig();
 
+            // update default config values on PIP UI
+            tbPIPSize.Text = _config.USKSettings.PIPSettings.Current.SizeX.ToString();
+            tbPIPPosX.Text = _config.USKSettings.PIPSettings.Current.PositionX.ToString();
+            tbPIPPosY.Text = _config.USKSettings.PIPSettings.Current.PositionY.ToString();
+            tbPIPmaskTB.Text = _config.USKSettings.PIPSettings.MaskTop.ToString();
+            tbPIPmaskLR.Text = _config.USKSettings.PIPSettings.MaskLeft.ToString();
+
+
 
             HideAdvancedPresControls();
             HideAdvancedPIPControls();
@@ -345,7 +353,7 @@ namespace Integrated_Presenter
             UpdateDSK2Styles();
             UpdateFTBButtonStyle();
             UpdateCBarsStyle();
-            UpdatePIPButtonStyles();
+            UpdateKeyerControls();
         }
 
         private void UpdateUSK1Styles()
@@ -385,14 +393,6 @@ namespace Integrated_Presenter
             BtnProgram7.Style = (Style)Application.Current.FindResource(style);
             BtnProgram8.Style = (Style)Application.Current.FindResource(style);
 
-            BtnPIPFillProgram1.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram2.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram3.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram4.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram5.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram6.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram7.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram8.Style = (Style)Application.Current.FindResource(style);
 
 
             BtnDSK1Tie.Style = (Style)Application.Current.FindResource(style);
@@ -409,17 +409,63 @@ namespace Integrated_Presenter
             BtnAutoTrans.Style = (Style)Application.Current.FindResource(style);
             BtnCutTrans.Style = (Style)Application.Current.FindResource(style);
 
+            BtnBackgroundTrans.Style = (Style)Application.Current.FindResource(style);
+            BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
+
+            EnableKeyerControls();
+            ShowKeyerUI();
+
+        }
+
+
+        private void ShowKeyerUI()
+        {
+            if (switcherState?.USK1KeyType == 1)
+            {
+                BtnDVE.Foreground = Brushes.Orange;
+                BtnChroma.Foreground = Brushes.White;
+                ChromaControls.Visibility = Visibility.Hidden;
+                PIPControls.Visibility = Visibility.Visible;
+            }
+            if (switcherState?.USK1KeyType == 2)
+            {
+                BtnDVE.Foreground = Brushes.White;
+                BtnChroma.Foreground = Brushes.Orange;
+                PIPControls.Visibility = Visibility.Hidden;
+                ChromaControls.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void EnableKeyerControls()
+        {
+
+            string style = "SwitcherButton";
+
+
             BtnUSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
 
+            BtnPIPFillProgram1.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram2.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram3.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram4.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram5.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram6.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram7.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram8.Style = (Style)Application.Current.FindResource(style);
+
+            BtnChromaFillProgram1.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram2.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram3.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram4.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram5.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram6.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram7.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram8.Style = (Style)Application.Current.FindResource(style);
 
             string pipstyle = "PIPControlButton";
             BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
             BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
             BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
-
-            BtnBackgroundTrans.Style = (Style)Application.Current.FindResource(style);
-            BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
-
 
         }
 
@@ -480,6 +526,25 @@ namespace Integrated_Presenter
             BtnPIPtoA.Background = switcherState.USK1KeyFrame == 1 ? Brushes.Red : Brushes.Transparent;
             BtnPIPtoB.Background = switcherState.USK1KeyFrame == 2 ? Brushes.Red : Brushes.Transparent;
             BtnPIPtoFull.Background = switcherState.USK1KeyFrame == 0 ? Brushes.Red : Brushes.Transparent;
+        }
+
+        private void UpdateChromaButtonStyles()
+        {
+            BtnChromaFillProgram1.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 1 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnChromaFillProgram2.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 2 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnChromaFillProgram3.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 3 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnChromaFillProgram4.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 4 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnChromaFillProgram5.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 5 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnChromaFillProgram6.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 6 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnChromaFillProgram7.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnChromaFillProgram8.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+        }
+
+        private void UpdateKeyerControls()
+        {
+            ShowKeyerUI();
+            UpdatePIPButtonStyles();
+            UpdateChromaButtonStyles();
         }
 
         private void UpdateFTBButtonStyle()
@@ -770,7 +835,7 @@ namespace Integrated_Presenter
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(1);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                    ChangePIPFillSource(1);
+                    ChangeUSK1FillSource(1);
                 else if (Keyboard.IsKeyDown(Key.E))
                     TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, false);
                 else if (Keyboard.IsKeyDown(Key.R))
@@ -783,7 +848,7 @@ namespace Integrated_Presenter
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(2);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                    ChangePIPFillSource(2);
+                    ChangeUSK1FillSource(2);
                 else if (Keyboard.IsKeyDown(Key.E))
                     TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, false);
                 else if (Keyboard.IsKeyDown(Key.R))
@@ -796,7 +861,7 @@ namespace Integrated_Presenter
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(3);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                    ChangePIPFillSource(3);
+                    ChangeUSK1FillSource(3);
                 else if (Keyboard.IsKeyDown(Key.E))
                     TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, false);
                 else if (Keyboard.IsKeyDown(Key.R))
@@ -809,7 +874,7 @@ namespace Integrated_Presenter
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(4);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                    ChangePIPFillSource(4);
+                    ChangeUSK1FillSource(4);
                 else if (Keyboard.IsKeyDown(Key.E))
                     TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, false);
                 else if (Keyboard.IsKeyDown(Key.R))
@@ -822,7 +887,7 @@ namespace Integrated_Presenter
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(5);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                    ChangePIPFillSource(5);
+                    ChangeUSK1FillSource(5);
                 else
                     ClickPreset(5);
             }
@@ -831,7 +896,7 @@ namespace Integrated_Presenter
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(6);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                    ChangePIPFillSource(6);
+                    ChangeUSK1FillSource(6);
                 else
                     ClickPreset(6);
             }
@@ -840,7 +905,7 @@ namespace Integrated_Presenter
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(7);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                    ChangePIPFillSource(7);
+                    ChangeUSK1FillSource(7);
                 else
                     ClickPreset(7);
             }
@@ -849,7 +914,7 @@ namespace Integrated_Presenter
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                     ClickProgram(8);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                    ChangePIPFillSource(8);
+                    ChangeUSK1FillSource(8);
                 else
                     ClickPreset(8);
             }
@@ -931,6 +996,11 @@ namespace Integrated_Presenter
                 ToggleUSK1();
             }
 
+            if (e.Key == Key.NumPad1)
+            {
+                ToggleUSK1Type();
+            }
+
             if (e.Key == Key.Divide)
             {
                 USK1RuntoA();
@@ -993,6 +1063,21 @@ namespace Integrated_Presenter
             }
 
         }
+
+        private void ToggleUSK1Type()
+        {
+            if (switcherState?.USK1KeyType == 1)
+            {
+                // change to Chroma
+                SetSwitcherKeyerChroma();
+            }
+            else
+            {
+                // set DVE
+                SetSwitcherKeyerDVE();
+            }
+        }
+
         private void WindowKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.RightCtrl || e.Key == Key.RightShift)
@@ -1810,49 +1895,49 @@ namespace Integrated_Presenter
             USK1RuntoFull();
         }
 
-        private void ChangePIPFillSource(int source)
+        private void ChangeUSK1FillSource(int source)
         {
             switcherManager?.PerformUSK1FillSourceSelect(ConvertButtonToSourceID(source));
         }
 
         private void ClickPIP1(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(1);
+            ChangeUSK1FillSource(1);
         }
 
         private void ClickPIP2(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(2);
+            ChangeUSK1FillSource(2);
         }
 
         private void ClickPIP3(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(3);
+            ChangeUSK1FillSource(3);
         }
 
         private void ClickPIP4(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(4);
+            ChangeUSK1FillSource(4);
         }
 
         private void ClickPIP5(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(5);
+            ChangeUSK1FillSource(5);
         }
 
         private void ClickPIP6(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(6);
+            ChangeUSK1FillSource(6);
         }
 
         private void ClickPIP7(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(7);
+            ChangeUSK1FillSource(7);
         }
 
         private void ClickPIP8(object sender, RoutedEventArgs e)
         {
-            ChangePIPFillSource(8);
+            ChangeUSK1FillSource(8);
         }
 
 
@@ -1981,6 +2066,7 @@ namespace Integrated_Presenter
             BtnPreset1.Content = config.ButtonName;
             BtnProgram1.Content = config.ButtonName;
             BtnPIPFillProgram1.Content = config.ButtonName;
+            BtnChromaFillProgram1.Content = config.ButtonName;
         }
 
         private void UpdateButton2Labels(ButtonSourceMapping config)
@@ -1988,18 +2074,21 @@ namespace Integrated_Presenter
             BtnPreset2.Content = config.ButtonName;
             BtnProgram2.Content = config.ButtonName;
             BtnPIPFillProgram2.Content = config.ButtonName;
+            BtnChromaFillProgram2.Content = config.ButtonName;
         }
         private void UpdateButton3Labels(ButtonSourceMapping config)
         {
             BtnPreset3.Content = config.ButtonName;
             BtnProgram3.Content = config.ButtonName;
             BtnPIPFillProgram3.Content = config.ButtonName;
+            BtnChromaFillProgram3.Content = config.ButtonName;
         }
         private void UpdateButton4Labels(ButtonSourceMapping config)
         {
             BtnPreset4.Content = config.ButtonName;
             BtnProgram4.Content = config.ButtonName;
             BtnPIPFillProgram4.Content = config.ButtonName;
+            BtnChromaFillProgram4.Content = config.ButtonName;
         }
 
         private void UpdateButton5Labels(ButtonSourceMapping config)
@@ -2007,24 +2096,28 @@ namespace Integrated_Presenter
             BtnPreset5.Content = config.ButtonName;
             BtnProgram5.Content = config.ButtonName;
             BtnPIPFillProgram5.Content = config.ButtonName;
+            BtnChromaFillProgram5.Content = config.ButtonName;
         }
         private void UpdateButton6Labels(ButtonSourceMapping config)
         {
             BtnPreset6.Content = config.ButtonName;
             BtnProgram6.Content = config.ButtonName;
             BtnPIPFillProgram6.Content = config.ButtonName;
+            BtnChromaFillProgram6.Content = config.ButtonName;
         }
         private void UpdateButton7Labels(ButtonSourceMapping config)
         {
             BtnPreset7.Content = config.ButtonName;
             BtnProgram7.Content = config.ButtonName;
             BtnPIPFillProgram7.Content = config.ButtonName;
+            BtnChromaFillProgram7.Content = config.ButtonName;
         }
         private void UpdateButton8Labels(ButtonSourceMapping config)
         {
             BtnPreset8.Content = config.ButtonName;
             BtnProgram8.Content = config.ButtonName;
             BtnPIPFillProgram8.Content = config.ButtonName;
+            BtnChromaFillProgram8.Content = config.ButtonName;
         }
 
 
@@ -2100,35 +2193,49 @@ namespace Integrated_Presenter
                     MaskLeft = 0,
                     MaskRight = 16
                 },
-                PIPSettings = new BMDUSKSettings()
+                USKSettings = new BMDUSKSettings()
                 {
-                    DefaultFillSource = 1,
-                    IsBordered = 0,
-                    IsMasked = 0,
-                    MaskTop = 0,
-                    MaskBottom = 0,
-                    MaskLeft = 0,
-                    MaskRight = 0,
-                    Current = new KeyFrameSettings()
+                    IsDVE = 1,
+                    IsChroma = 0,
+                    PIPSettings = new BMDUSKDVESettings()
                     {
-                        PositionX = 9.6,
-                        PositionY = -6,
-                        SizeX = 0.4,
-                        SizeY = 0.4
+                        DefaultFillSource = 1,
+                        IsBordered = 0,
+                        IsMasked = 0,
+                        MaskTop = 0,
+                        MaskBottom = 0,
+                        MaskLeft = 0,
+                        MaskRight = 0,
+                        Current = new KeyFrameSettings()
+                        {
+                            PositionX = 9.6,
+                            PositionY = -6,
+                            SizeX = 0.4,
+                            SizeY = 0.4
+                        },
+                        KeyFrameA = new KeyFrameSettings()
+                        {
+                            PositionX = 9.6,
+                            PositionY = -6,
+                            SizeX = 0.4,
+                            SizeY = 0.4
+                        },
+                        KeyFrameB = new KeyFrameSettings()
+                        {
+                            PositionX = 23,
+                            PositionY = -6,
+                            SizeX = 0.4,
+                            SizeY = 0.4
+                        }
                     },
-                    KeyFrameA = new KeyFrameSettings()
+                    ChromaSettings = new BMDUSKChromaSettings()
                     {
-                        PositionX = 9.6,
-                        PositionY = -6,
-                        SizeX = 0.4,
-                        SizeY = 0.4
-                    },
-                    KeyFrameB = new KeyFrameSettings()
-                    {
-                        PositionX = 23,
-                        PositionY = -6,
-                        SizeX = 0.4,
-                        SizeY = 0.4
+                        FillSource = 4,
+                        Hue = 0,
+                        Gain = 0,
+                        Lift = 0,
+                        Narrow = 0,
+                        YSuppress = 0
                     }
                 }
             };
@@ -2299,7 +2406,7 @@ namespace Integrated_Presenter
 
         private void ClickApplyPIPSettings(object sender, RoutedEventArgs e)
         {
-            BMDUSKSettings config = new BMDUSKSettings();
+            BMDUSKDVESettings config = new BMDUSKDVESettings();
             var res = GetPIPSettings();
             config.Current = new KeyFrameSettings();
             config.Current.PositionX = res.px;
@@ -2347,7 +2454,7 @@ namespace Integrated_Presenter
 
         private void ClickApplyKFAPIPSettings(object sender, RoutedEventArgs e)
         {
-            BMDUSKSettings config = new BMDUSKSettings();
+            BMDUSKDVESettings config = new BMDUSKDVESettings();
             var res = GetPIPSettings();
             config.KeyFrameA = new KeyFrameSettings();
             config.KeyFrameA.PositionX = res.px;
@@ -2528,6 +2635,104 @@ namespace Integrated_Presenter
         {
             showCurrentVideoTimeOnPreview = !showCurrentVideoTimeOnPreview;
             cbShowCurrentVideoCountdownTimer.IsChecked = showCurrentVideoTimeOnPreview;
+        }
+
+        private void ClickDVEMode(object sender, RoutedEventArgs e)
+        {
+            SetSwitcherKeyerDVE();
+        }
+
+        private void ClickChromaMode(object sender, RoutedEventArgs e)
+        {
+            SetSwitcherKeyerChroma();
+        }
+
+        private void SetSwitcherKeyerDVE()
+        {
+            switcherManager?.ConfigureUSK1PIP(_config.USKSettings.PIPSettings);
+            switcherManager?.ForceStateUpdate();
+            tbPIPSize.Text = _config.USKSettings.PIPSettings.Current.SizeX.ToString();
+            tbPIPPosX.Text = _config.USKSettings.PIPSettings.Current.PositionX.ToString();
+            tbPIPPosY.Text = _config.USKSettings.PIPSettings.Current.PositionY.ToString();
+            tbPIPmaskTB.Text = _config.USKSettings.PIPSettings.MaskTop.ToString();
+            tbPIPmaskLR.Text = _config.USKSettings.PIPSettings.MaskLeft.ToString();
+        }
+
+        private void SetSwitcherKeyerChroma()
+        {
+            switcherManager?.ConfigureUSK1Chroma(_config.USKSettings.ChromaSettings);
+            switcherManager?.ForceStateUpdate();
+            tbChromaHue.Text = _config.USKSettings.ChromaSettings.Hue.ToString();
+            tbChromaGain.Text = _config.USKSettings.ChromaSettings.Gain.ToString();
+            tbChromaLift.Text = _config.USKSettings.ChromaSettings.Lift.ToString();
+            tbChromaYSuppress.Text = _config.USKSettings.ChromaSettings.YSuppress.ToString();
+            tbChromaNarrow.Text = _config.USKSettings.ChromaSettings.Narrow.ToString();
+        }
+
+        private void ClickApplyChromaSettings(object sender, RoutedEventArgs e)
+        {
+            double hue = 0;
+            double gain = 0;
+            double lift = 0;
+            double ysuppress = 0;
+            int narrow = 0;
+            double.TryParse(tbChromaHue.Text, out hue);
+            double.TryParse(tbChromaGain.Text, out gain);
+            double.TryParse(tbChromaLift.Text, out lift);
+            double.TryParse(tbChromaYSuppress.Text, out ysuppress);
+            int.TryParse(tbChromaNarrow.Text, out narrow);
+
+            BMDUSKChromaSettings chromaSettings = new BMDUSKChromaSettings()
+            {
+                FillSource = (int)((switcherState?.USK1FillSource) ?? _config.USKSettings.ChromaSettings.FillSource),
+                Hue = hue,
+                Gain = gain,
+                Lift = lift,
+                YSuppress = ysuppress,
+                Narrow = narrow
+            };
+
+            switcherManager?.ConfigureUSK1Chroma(chromaSettings);
+        }
+
+        private void ClickChroma1(object sender, RoutedEventArgs e)
+        {
+            ChangeUSK1FillSource(1);
+        }
+
+        private void ClickChroma2(object sender, RoutedEventArgs e)
+        {
+            ChangeUSK1FillSource(2);
+        }
+
+        private void ClickChroma3(object sender, RoutedEventArgs e)
+        {
+            ChangeUSK1FillSource(3);
+        }
+
+        private void ClickChroma4(object sender, RoutedEventArgs e)
+        {
+            ChangeUSK1FillSource(4);
+        }
+
+        private void ClickChroma5(object sender, RoutedEventArgs e)
+        {
+            ChangeUSK1FillSource(5);
+        }
+
+        private void ClickChroma6(object sender, RoutedEventArgs e)
+        {
+            ChangeUSK1FillSource(6);
+        }
+
+        private void ClickChroma7(object sender, RoutedEventArgs e)
+        {
+            ChangeUSK1FillSource(7);
+        }
+
+        private void ClickChroma8(object sender, RoutedEventArgs e)
+        {
+            ChangeUSK1FillSource(8);
         }
     }
 }
