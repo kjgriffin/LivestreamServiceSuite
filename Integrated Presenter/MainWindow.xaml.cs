@@ -98,6 +98,7 @@ namespace Integrated_Presenter
             AfterPreview.AutoSilentReplay = true;
             PrevPreview.AutoSilentReplay = true;
 
+            CurrentPreview.OnMediaPlaybackTimeUpdate += CurrentPreview_OnMediaPlaybackTimeUpdate;
             NextPreview.OnMediaLoaded += NextPreview_OnMediaLoaded;
             AfterPreview.OnMediaLoaded += AfterPreview_OnMediaLoaded;
             PrevPreview.OnMediaLoaded += PrevPreview_OnMediaLoaded;
@@ -114,6 +115,11 @@ namespace Integrated_Presenter
             gp_timer_1.Interval = 1000;
             gp_timer_1.Elapsed += Gp_timer_1_Elapsed;
             gp_timer_1.Start();
+        }
+
+        private void CurrentPreview_OnMediaPlaybackTimeUpdate(object sender, MediaPlaybackTimeEventArgs e)
+        {
+            UpdateSlideCurrentPreviewTimes();
         }
 
         private void PrevPreview_OnMediaLoaded(object sender, MediaPlaybackTimeEventArgs e)
@@ -554,10 +560,79 @@ namespace Integrated_Presenter
             UpdateSlidePreviewControls();
         }
 
+        private bool showCurrentVideoTimeOnPreview = true;
+
+        private void UpdateSlideCurrentPreviewTimes()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (showCurrentVideoTimeOnPreview)
+                {
+                    if (ShowEffectiveCurrentPreview)
+                    {
+                        if (Presentation?.EffectiveCurrent.Type == SlideType.Video)
+                        {
+
+                            tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
+                            tbPreviewCurrentVideoDuration.Visibility = Visibility.Visible;
+                        }
+                    }
+                    else
+                    {
+                        if (Presentation?.Current.Type == SlideType.Video)
+                        {
+                            tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
+                            tbPreviewCurrentVideoDuration.Visibility = Visibility.Visible;
+                        }
+                    }
+                }
+                else
+                {
+                    tbPreviewCurrentVideoDuration.Visibility = Visibility.Hidden;
+                    tbPreviewCurrentVideoDuration.Text = "";
+                }
+            });
+        }
+
         private void UpdateSlidePreviewControls()
         {
             Dispatcher.Invoke(() =>
             {
+                if (showCurrentVideoTimeOnPreview)
+                {
+                    if (ShowEffectiveCurrentPreview)
+                    {
+                        if (Presentation?.EffectiveCurrent.Type == SlideType.Video)
+                        {
+
+                            tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
+                            tbPreviewCurrentVideoDuration.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            tbPreviewCurrentVideoDuration.Visibility = Visibility.Hidden;
+                            tbPreviewCurrentVideoDuration.Text = "";
+                        }
+                    }
+                    else
+                    {
+                        if (Presentation?.Current.Type == SlideType.Video)
+                        {
+                            tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
+                            tbPreviewCurrentVideoDuration.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            tbPreviewCurrentVideoDuration.Visibility = Visibility.Hidden;
+                            tbPreviewCurrentVideoDuration.Text = "";
+                        }
+                    }
+                }
+                else
+                {
+                    tbPreviewCurrentVideoDuration.Visibility = Visibility.Hidden;
+                    tbPreviewCurrentVideoDuration.Text = "";
+                }
                 if (Presentation?.Next.Type == SlideType.Video)
                 {
                     NextPreview.PlayMedia();
@@ -2442,6 +2517,17 @@ namespace Integrated_Presenter
         private void SetProgramColorBars()
         {
             switcherManager?.PerformProgramSelect((int)BMDSwitcherVideoSources.ColorBars);
+        }
+
+        private void ClickToggleShowCurrentVideoCountdownTimer(object sender, RoutedEventArgs e)
+        {
+            ToggleShowCurrentVideoCountdownTimer();
+        }
+
+        private void ToggleShowCurrentVideoCountdownTimer()
+        {
+            showCurrentVideoTimeOnPreview = !showCurrentVideoTimeOnPreview;
+            cbShowCurrentVideoCountdownTimer.IsChecked = showCurrentVideoTimeOnPreview;
         }
     }
 }

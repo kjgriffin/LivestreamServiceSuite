@@ -85,6 +85,37 @@ namespace Integrated_Presenter
             }
         }
 
+        public TimeSpan MediaTimeRemaining
+        {
+            get
+            {
+                if (videoPlayer.NaturalDuration != null)
+                {
+                    if (videoPlayer.NaturalDuration.HasTimeSpan)
+                    {
+                        if (videoPlayer.Position != null)
+                        {
+                            TimeSpan length = videoPlayer.NaturalDuration.TimeSpan;
+                            TimeSpan pos = videoPlayer.Position;
+                            if (pos <= length)
+                            {
+                                return length - pos;
+                            }
+                            else
+                            {
+                                return length;
+                            }
+                        }
+                        else
+                        {
+                            return videoPlayer.NaturalDuration.TimeSpan;
+                        }
+                    }
+                }
+                return TimeSpan.Zero;
+            }
+        }
+
         private void _playbacktimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             this.Parent.Dispatcher.Invoke(() =>

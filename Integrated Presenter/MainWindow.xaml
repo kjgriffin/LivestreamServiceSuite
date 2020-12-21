@@ -42,6 +42,7 @@
                 <MenuItem Header="View" IsTabStop="False">
                     <MenuItem Name="cbPrevAfter" Header="Prev/After" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
                     <MenuItem Header="Preview Effective Current" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowEffectiveCurrentPreview"></MenuItem>
+                    <MenuItem Name="cbShowCurrentVideoCountdownTimer" Header="Video Countdown Timer (Current)" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowCurrentVideoCountdownTimer"></MenuItem>
                     <MenuItem Name="cbAdvancedPresentation" Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
                     <MenuItem Header="Audio Player" IsTabStop="False" Click="ClickViewAudioPlayer"></MenuItem>
                     <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
@@ -503,6 +504,7 @@
                                             <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">10:00:00</TextBlock>
                                         </Grid>
                                     </Border>
+                                    <TextBlock Name="tbPreviewCurrentVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100">10:00:00</TextBlock>
                                 </Grid>
                             </Border>
                         </Viewbox>
