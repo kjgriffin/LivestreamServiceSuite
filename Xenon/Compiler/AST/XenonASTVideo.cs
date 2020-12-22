@@ -11,6 +11,7 @@ namespace Xenon.Compiler
     {
 
         public string AssetName { get; set; }
+        public string KeyType { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
@@ -19,6 +20,16 @@ namespace Xenon.Compiler
             StringBuilder sb = new StringBuilder();
             var args = Lexer.ConsumeArgList(false, "assetname");
             video.AssetName = args["assetname"];
+            if (!Lexer.InspectEOF())
+            {
+                if (Lexer.Inspect("["))
+                {
+                    Lexer.Consume();
+                    video.KeyType = Lexer.ConsumeUntil("]");
+                    Lexer.Consume();
+                    Lexer.GobbleWhitespace();
+                }
+            }
             return video;
 
         }
@@ -44,6 +55,7 @@ namespace Xenon.Compiler
             videoslide.Format = SlideFormat.Video;
             videoslide.Asset = AssetName;
             videoslide.MediaType = MediaType.Video;
+            videoslide.Data["key-type"] = KeyType;
 
             project.Slides.Add(videoslide);
         }
