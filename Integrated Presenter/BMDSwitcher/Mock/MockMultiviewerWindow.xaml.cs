@@ -26,6 +26,15 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             InitializeComponent();
             SourceMap = sourcemap;
             SourceMap.Add((int)BMDSwitcherVideoSources.ColorBars, "colorbars");
+            ProgramSource = (int)BMDSwitcherVideoSources.ColorBars;
+            PresetSource = (int)BMDSwitcherVideoSources.ColorBars;
+            DSK1 = false;
+            DSK2 = false;
+            USK1PreviewOn = false;
+            USK1ProgramOn = false;
+            USK1KeyType = 1;
+            PreviewChromaKey.Visibility = Visibility.Hidden;
+            ProgramChromaKey.Visibility = Visibility.Hidden;
         }
 
 
@@ -34,6 +43,11 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         private bool DSK1;
         private bool DSK2;
+
+        private bool USK1PreviewOn;
+        private bool USK1ProgramOn;
+
+        private int USK1KeyType;
 
         private ImageSource InputSourceToImage(int inputID)
         {
@@ -108,6 +122,14 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             else if (slide.Type == SlideType.Empty)
             {
                 control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+            }
+            else if (slide.Type == SlideType.ChromaKeyStill)
+            {
+                control.Source = new BitmapImage(new Uri(slide.Source));
+            }
+            else if (slide.Type == SlideType.ChromaKeyVideo)
+            {
+                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/greenscreen1.png"));
             }
             else
             {
@@ -374,6 +396,57 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             ImgProgram_presetbgnd.Source = InputSourceToImage((int)finalstate.PresetID);
             ImgPreset.Source = InputSourceToImage((int)finalstate.PresetID);
             ImgPreset_pgmbgnd.Source = InputSourceToImage((int)finalstate.ProgramID);
+
+        }
+
+        public async void SetUSK1PreviewOn()
+        {
+            USK1PreviewOn = true;
+            if (USK1KeyType == 2)
+            {
+                PreviewChromaKey.Visibility = Visibility.Visible;
+            }
+        }
+
+        public async void SetUSK1PreviewOff()
+        {
+            USK1PreviewOn = false;
+            PreviewChromaKey.Visibility = Visibility.Hidden;
+        }
+
+        public async void SetUSK1ProgramOn()
+        {
+            USK1ProgramOn = true;
+            if (USK1KeyType == 2)
+            {
+                ProgramChromaKey.Visibility = Visibility.Visible;
+            }
+        }
+
+        public async void SetUSK1ProgramOff()
+        {
+            USK1ProgramOn = false;
+            ProgramChromaKey.Visibility = Visibility.Hidden;
+        }
+
+        public async void SetUSK1Type(int type)
+        {
+            USK1KeyType = type;
+            if (USK1KeyType == 2)
+            {
+                if (USK1ProgramOn)
+                {
+                    ProgramChromaKey.Visibility = Visibility.Visible;
+                    return;
+                }
+                if (USK1PreviewOn)
+                {
+                    ProgramChromaKey.Visibility = Visibility.Visible;
+                    return;
+                }
+            }
+            ProgramChromaKey.Visibility = Visibility.Hidden;
+            PreviewChromaKey.Visibility = Visibility.Hidden;
 
         }
 

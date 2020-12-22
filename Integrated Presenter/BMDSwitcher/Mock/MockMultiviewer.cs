@@ -61,7 +61,7 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             if (onair)
             {
-               multiviewerWindow.FadeInProgramDSK1();
+                multiviewerWindow.FadeInProgramDSK1();
             }
             else
             {
@@ -95,6 +95,23 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public BMDSwitcherState PerformAutoTransition(BMDSwitcherState state)
         {
+
+            // take selected layers
+
+            if (state.TransNextKey1)
+            {
+                if (state.USK1OnAir)
+                {
+                    multiviewerWindow.SetUSK1ProgramOff();
+                    multiviewerWindow.SetUSK1PreviewOn();
+                }
+                else
+                {
+                    multiviewerWindow.SetUSK1ProgramOn();
+                    multiviewerWindow.SetUSK1PreviewOff();
+                }
+            }
+
             // take all tied keyers
             if (state.DSK1Tie)
             {
@@ -110,13 +127,16 @@ namespace Integrated_Presenter.BMDSwitcher
             }
 
             // swap sources
-            long programID = state.ProgramID;
-            long presetID = state.PresetID;
+            if (state.TransNextBackground)
+            {
+                long programID = state.ProgramID;
+                long presetID = state.PresetID;
 
-            state.ProgramID = presetID;
-            state.PresetID = programID;
+                state.ProgramID = presetID;
+                state.PresetID = programID;
 
-            multiviewerWindow.CrossFadeTransition(state);
+                multiviewerWindow.CrossFadeTransition(state);
+            }
 
             return state;
         }
@@ -130,5 +150,63 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             multiviewerWindow?.Close();
         }
+
+        internal void SetUSK1ForNextTrans(bool v, BMDSwitcherState state)
+        {
+            if (v)
+            {
+                if (state.USK1OnAir)
+                {
+                    multiviewerWindow?.SetUSK1PreviewOff();
+                }
+                else
+                {
+                    multiviewerWindow?.SetUSK1PreviewOn();
+                }
+            }
+            else
+            {
+                if (state.USK1OnAir)
+                {
+                    multiviewerWindow?.SetUSK1PreviewOn();
+                }
+                else
+                {
+                    multiviewerWindow?.SetUSK1PreviewOff();
+                }
+            }
+        }
+
+        internal void setUSK1KeyType(int v)
+        {
+            multiviewerWindow?.SetUSK1Type(v);
+        }
+
+        internal void SetUSK1OffAir(BMDSwitcherState state)
+        {
+            if (state.TransNextKey1)
+            {
+                multiviewerWindow.SetUSK1PreviewOn();
+            }
+            else
+            {
+                multiviewerWindow.SetUSK1PreviewOff();
+            }
+            multiviewerWindow?.SetUSK1ProgramOff();
+        }
+
+        internal void SetUSK1OnAir(BMDSwitcherState state)
+        {
+            if (state.TransNextKey1)
+            {
+                multiviewerWindow.SetUSK1PreviewOff();
+            }
+            else
+            {
+                multiviewerWindow.SetUSK1PreviewOn();
+            }
+            multiviewerWindow?.SetUSK1ProgramOn();
+        }
+
     }
 }

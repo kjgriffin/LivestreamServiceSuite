@@ -25,7 +25,8 @@
                     <Grid>
                         <Image Name="ImgPreset" Panel.ZIndex="2"></Image>
                         <Image Name="ImgPreset_pgmbgnd" Panel.ZIndex="1"></Image>
-                        <Viewbox Panel.ZIndex="3">
+                        <Rectangle Name="PreviewChromaKey" Opacity="0.2" Fill="#00FF00" Panel.ZIndex="3"></Rectangle>
+                        <Viewbox Panel.ZIndex="4">
                             <Image Name="ImgPresetLowerThird" Stretch="None" Opacity="0.63">
                                 <Image.RenderTransform>
                                     <TranslateTransform X="0" Y="0"></TranslateTransform>
@@ -35,7 +36,7 @@
                                 </Image.Clip>
                             </Image>
                         </Viewbox>
-                        <Viewbox Panel.ZIndex="4">
+                        <Viewbox Panel.ZIndex="5">
                             <Image Name="ImgPresetSplit" Stretch="None">
                                 <Image.RenderTransform>
                                     <TranslateTransform X="0" Y="0"></TranslateTransform>
@@ -51,7 +52,8 @@
                     <Grid>
                         <Image Name="ImgProgram" Grid.RowSpan="2" Panel.ZIndex="2"></Image>
                         <Image Name="ImgProgram_presetbgnd" Grid.RowSpan="2" Panel.ZIndex="1"></Image>
-                        <Viewbox Panel.ZIndex="3">
+                        <Rectangle Name="ProgramChromaKey" Opacity="0.2" Fill="#00FF00" Panel.ZIndex="3"></Rectangle>
+                        <Viewbox Panel.ZIndex="4">
                             <Image Name="ImgProgramLowerThird" Stretch="None" Opacity="0.63">
                                 <Image.RenderTransform>
                                     <TranslateTransform X="0" Y="0"></TranslateTransform>
@@ -61,7 +63,7 @@
                                 </Image.Clip>
                             </Image>
                         </Viewbox>
-                        <Viewbox Panel.ZIndex="4">
+                        <Viewbox Panel.ZIndex="5">
                             <Image Name="ImgProgramSplit" Stretch="None">
                                 <Image.RenderTransform>
                                     <TranslateTransform X="0" Y="0"></TranslateTransform>

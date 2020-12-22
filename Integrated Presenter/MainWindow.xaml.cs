@@ -1225,6 +1225,11 @@ namespace Integrated_Presenter
             {
                 if (Presentation.Next.Type == SlideType.Liturgy)
                 {
+                    // turn of usk1 if chroma keyer
+                    if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
+                    {
+                        switcherManager?.PerformOffAirUSK1();
+                    }
                     // make sure slides aren't the program source
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
@@ -1270,6 +1275,7 @@ namespace Integrated_Presenter
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     switcherManager?.PerformProgramSelect((int)previewsource);
+                    switcherManager?.PerformPresetSelect((int)previewsource);
 
                     // next slide
                     Presentation.NextSlide();
@@ -1294,6 +1300,11 @@ namespace Integrated_Presenter
                 }
                 else
                 {
+                    // turn of usk1 if chroma keyer
+                    if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
+                    {
+                        switcherManager?.PerformOffAirUSK1();
+                    }
                     if (switcherState.DSK1OnAir)
                     {
                         switcherManager?.PerformAutoOffAirDSK1();
@@ -1331,6 +1342,11 @@ namespace Integrated_Presenter
             {
                 if (s.Type == SlideType.Liturgy)
                 {
+                    // turn of usk1 if chroma keyer
+                    if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
+                    {
+                        switcherManager?.PerformOffAirUSK1();
+                    }
                     // make sure slides aren't the program source
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
@@ -1371,6 +1387,7 @@ namespace Integrated_Presenter
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     switcherManager?.PerformProgramSelect((int)previewsource);
+                    switcherManager?.PerformPresetSelect((int)previewsource);
 
                     // set slide
                     Presentation.Override = s;
@@ -1391,6 +1408,11 @@ namespace Integrated_Presenter
                 }
                 else
                 {
+                    // turn of usk1 if chroma keyer
+                    if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
+                    {
+                        switcherManager?.PerformOffAirUSK1();
+                    }
                     if (switcherState.DSK1OnAir)
                     {
                         switcherManager?.PerformAutoOffAirDSK1();
@@ -1456,6 +1478,11 @@ namespace Integrated_Presenter
                 currentpoolsource = null;
                 if (Presentation.EffectiveCurrent.Type == SlideType.Liturgy)
                 {
+                    // turn of usk1 if chroma keyer
+                    if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
+                    {
+                        switcherManager?.PerformOffAirUSK1();
+                    }
                     // make sure slides aren't the program source
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
@@ -1494,6 +1521,7 @@ namespace Integrated_Presenter
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     switcherManager?.PerformProgramSelect((int)previewsource);
+                    switcherManager?.PerformPresetSelect((int)previewsource);
 
                     // set slide
                     slidesUpdated();
@@ -1511,6 +1539,11 @@ namespace Integrated_Presenter
                 }
                 else
                 {
+                    // turn of usk1 if chroma keyer
+                    if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
+                    {
+                        switcherManager?.PerformOffAirUSK1();
+                    }
                     if (switcherState.DSK1OnAir)
                     {
                         switcherManager?.PerformAutoOffAirDSK1();

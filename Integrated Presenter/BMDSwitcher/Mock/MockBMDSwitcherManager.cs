@@ -55,11 +55,28 @@ namespace Integrated_Presenter.BMDSwitcher
         public void PerformAutoTransition()
         {
             _state = mockMultiviewer.PerformAutoTransition(_state);
+            if (_state.TransNextKey1)
+            {
+                _state.USK1OnAir = !_state.USK1OnAir;
+            }
             SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformCutTransition()
         {
+            // take all layers
+            if (_state.TransNextKey1)
+            {
+                if (_state.USK1OnAir)
+                {
+                    mockMultiviewer.SetUSK1OffAir(_state);
+                }
+                else
+                {
+                    mockMultiviewer.SetUSK1OnAir(_state);
+                }
+                _state.USK1OnAir = !_state.USK1OnAir;
+            }
             // take all tied keyers
             if (_state.DSK1Tie)
             {
@@ -73,13 +90,15 @@ namespace Integrated_Presenter.BMDSwitcher
                 mockMultiviewer.SetDSK2(_state.DSK2OnAir);
                 mockMultiviewer.SetTieDSK2(_state.DSK2Tie);
             }
-            long presetid = _state.PresetID;
-            long programid = _state.ProgramID;
-
-            _state.PresetID = programid;
-            _state.ProgramID = presetid;
-            mockMultiviewer.SetPresetInput((int)_state.PresetID);
-            mockMultiviewer.SetProgramInput((int)_state.ProgramID);
+            if (_state.TransNextBackground)
+            {
+                long presetid = _state.PresetID;
+                long programid = _state.ProgramID;
+                _state.PresetID = programid;
+                _state.ProgramID = presetid;
+                mockMultiviewer.SetPresetInput((int)_state.PresetID);
+                mockMultiviewer.SetProgramInput((int)_state.ProgramID);
+            }
             SwitcherStateChanged?.Invoke(_state);
         }
 
@@ -192,6 +211,14 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             _state.USK1OnAir = !_state.USK1OnAir;
             // update multiviewer
+            if (_state.USK1OnAir)
+            {
+                mockMultiviewer.SetUSK1OnAir(_state);
+            }
+            else
+            {
+                mockMultiviewer.SetUSK1OffAir(_state);
+            }
             SwitcherStateChanged?.Invoke(_state);
         }
 
@@ -211,6 +238,8 @@ namespace Integrated_Presenter.BMDSwitcher
             {
                 _state.USK1FillSource = config.USKSettings.PIPSettings.DefaultFillSource;
             }
+            _state.DVESettings = config.USKSettings.PIPSettings;
+            _state.ChromaSettings = config.USKSettings.ChromaSettings;
 
             ForceStateUpdate();
         }
@@ -274,23 +303,20 @@ namespace Integrated_Presenter.BMDSwitcher
             }
 
             _state.TransNextKey1 = !_state.TransNextKey1;
+            mockMultiviewer.SetUSK1ForNextTrans(_state.TransNextKey1, _state);
             SwitcherStateChanged?.Invoke(_state);
-        }
-
-        public void SetPIPPosition(BMDUSKSettings settings)
-        {
-        }
-
-        public void SetPIPKeyFrameA(BMDUSKSettings settings)
-        {
         }
 
         public void SetPIPPosition(BMDUSKDVESettings settings)
         {
+            _state.DVESettings.Current = settings.Current;
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void SetPIPKeyFrameA(BMDUSKDVESettings settings)
         {
+            _state.DVESettings.KeyFrameA = settings.KeyFrameA;
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void ConfigureUSK1PIP(BMDUSKDVESettings settings)
@@ -307,26 +333,44 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformOnAirUSK1()
         {
+            _state.USK1OnAir = true;
+            mockMultiviewer.SetUSK1OnAir(_state);
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformOffAirUSK1()
         {
+            _state.USK1OnAir = false;
+            mockMultiviewer.SetUSK1OffAir(_state);
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void SetUSK1TypeDVE()
         {
+            _state.USK1KeyType = 1;
+            mockMultiviewer.setUSK1KeyType(1);
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void SetUSK1TypeChroma()
         {
+            _state.USK1KeyType = 2;
+            mockMultiviewer.setUSK1KeyType(2);
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformSetKey1OnForNextTrans()
         {
+            _state.TransNextKey1 = true;
+            mockMultiviewer.SetUSK1ForNextTrans(true, _state);
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformSetKey1OffForNextTrans()
         {
+            _state.TransNextKey1 = false;
+            mockMultiviewer.SetUSK1ForNextTrans(false, _state);
+            SwitcherStateChanged?.Invoke(_state);
         }
     }
 }
