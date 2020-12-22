@@ -9,6 +9,7 @@ namespace Integrated_Presenter.BMDSwitcher
     {
         public event SwitcherEventHandler UpstreamKeyOnAirChanged;
         public event SwitcherEventHandler UpstreamKeyFillChanged;
+        public event SwitcherEventHandler UpstreamKeyTypeChanged;
 
         void IBMDSwitcherKeyCallback.Notify(_BMDSwitcherKeyEventType eventType)
         {
@@ -20,6 +21,10 @@ namespace Integrated_Presenter.BMDSwitcher
                 case _BMDSwitcherKeyEventType.bmdSwitcherKeyEventTypeOnAirChanged:
                     UpstreamKeyOnAirChanged?.Invoke(this, null);
                     break;
+                case _BMDSwitcherKeyEventType.bmdSwitcherKeyEventTypeTypeChanged:
+                    UpstreamKeyTypeChanged?.Invoke(this, null);
+                    break;
+
 
             }
         }

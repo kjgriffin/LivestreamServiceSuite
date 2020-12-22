@@ -35,8 +35,8 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public bool FTB { get; set; }
 
-        public BMDUSKChromaSettings ChromaSettings { get; set; }
-        public BMDUSKDVESettings DVESettings { get; set; }
+        public BMDUSKChromaSettings ChromaSettings { get; set; } = new BMDUSKChromaSettings();
+        public BMDUSKDVESettings DVESettings { get; set; } = new BMDUSKDVESettings();
 
 
 

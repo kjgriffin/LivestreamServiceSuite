@@ -74,6 +74,7 @@ namespace Integrated_Presenter
             _upstreamKey1Monitor = new UpstreamKeyMonitor();
             _upstreamKey1Monitor.UpstreamKeyOnAirChanged += _upstreamKey1Monitor_UpstreamKeyOnAirChanged;
             _upstreamKey1Monitor.UpstreamKeyFillChanged += _upstreamKey1Monitor_UpstreamKeyFillChanged;
+            _upstreamKey1Monitor.UpstreamKeyTypeChanged += _upstreamKey1Monitor_UpstreamKeyTypeChanged;
 
             _flykeyMonitor = new SwitcherFlyKeyMonitor();
             _flykeyMonitor.KeyFrameChanged += _flykeyMonitor_KeyFrameChanged;
@@ -95,6 +96,17 @@ namespace Integrated_Presenter
             }
             _state = new BMDSwitcherState();
             SwitcherDisconnected();
+        }
+
+        private void _upstreamKey1Monitor_UpstreamKeyTypeChanged(object sender, object args)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_USK1();
+                ForceStateUpdate_ChromaSettings();
+                ForceStateUpdate_PIPSettings();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _upstreamKey1Monitor_UpstreamKeyFillChanged(object sender, object args)
@@ -521,6 +533,8 @@ namespace Integrated_Presenter
             return _state;
         }
 
+
+
         private void ForceStateUpdate_USK1()
         {
             int onair;
@@ -874,7 +888,7 @@ namespace Integrated_Presenter
                     SizeX = csizex,
                     SizeY = csizey
                 }    ,
-                DefaultFillSource = _config.USKSettings.PIPSettings.DefaultFillSource,
+                DefaultFillSource = _config?.USKSettings.PIPSettings.DefaultFillSource ?? 0,
                 IsBordered = isbordered,
                 IsMasked = ismasked,
                 MaskBottom = (float)maskbot,
@@ -1181,24 +1195,32 @@ namespace Integrated_Presenter
 
         public void PerformOnAirUSK1()
         {
-            _BMDSwitcherUpstreamKey1.SetOnAir(1);
+            _parent.Dispatcher.Invoke(() => {
+                _BMDSwitcherUpstreamKey1.SetOnAir(1);
+            });
         }
 
         public void PerformOffAirUSK1()
         {
-            _BMDSwitcherUpstreamKey1.SetOnAir(1);
+            _parent.Dispatcher.Invoke(() => {
+                _BMDSwitcherUpstreamKey1.SetOnAir(0);
+            });
         }
 
         public void SetUSK1TypeDVE()
         {
-            _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
-            ForceStateUpdate();
+            _parent.Dispatcher.Invoke(() => {
+                _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
+                ForceStateUpdate();
+            });
         }
 
         public void SetUSK1TypeChroma()
         {
-            _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
-            ForceStateUpdate();
+            _parent.Dispatcher.Invoke(() => {
+                _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
+                ForceStateUpdate();
+            });
         }
 
         public void PerformSetKey1OnForNextTrans()

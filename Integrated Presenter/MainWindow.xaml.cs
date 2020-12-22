@@ -1266,6 +1266,8 @@ namespace Integrated_Presenter
                     {
                         switcherManager?.SetUSK1TypeChroma();
                     }
+                    // select fill source to be slide, since slide is marked as key it must be the key source
+                    switcherManager?.PerformUSK1FillSourceSelect(_config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId);
 
                     // pull slide off air (and then reset the preview to the old source)
                     long previewsource = switcherState.PresetID;
@@ -1295,6 +1297,8 @@ namespace Integrated_Presenter
                     }
 
                     // turn on chroma key once playout has started
+                    // add some fudge factor
+                    await Task.Delay(100);
                     switcherManager?.PerformOnAirUSK1();
 
                 }
@@ -1378,6 +1382,8 @@ namespace Integrated_Presenter
                     {
                         switcherManager?.SetUSK1TypeChroma();
                     }
+                    // select fill source to be slide, since slide is marked as key it must be the key source
+                    switcherManager?.PerformUSK1FillSourceSelect(_config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId);
 
                     // pull slide off air (and then reset the preview to the old source)
                     long previewsource = switcherState.PresetID;
@@ -1402,6 +1408,8 @@ namespace Integrated_Presenter
                         playMedia();
                     }
 
+                    // add fudge factor to make sure slide is updated for keying
+                    await Task.Delay(100);
                     // turn on chroma key once playout has started
                     switcherManager?.PerformOnAirUSK1();
 
@@ -1512,6 +1520,8 @@ namespace Integrated_Presenter
                     {
                         switcherManager?.SetUSK1TypeChroma();
                     }
+                    // select fill source to be slide, since slide is marked as key it must be the key source
+                    switcherManager?.PerformUSK1FillSourceSelect(_config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId);
 
                     // pull slide off air (and then reset the preview to the old source)
                     long previewsource = switcherState.PresetID;
@@ -1532,6 +1542,9 @@ namespace Integrated_Presenter
                     {
                         playMedia();
                     }
+
+                    // add fudge factor so key slide loads
+                    await Task.Delay(100);
 
                     // turn on chroma key once playout has started
                     switcherManager?.PerformOnAirUSK1();
@@ -2827,24 +2840,28 @@ namespace Integrated_Presenter
         {
             //switcherManager?.ConfigureUSK1PIP(_config.USKSettings.PIPSettings);
             switcherManager?.SetUSK1TypeDVE();
-            switcherManager?.ForceStateUpdate();
+            // force blocking state update
+            SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate());
             tbPIPSize.Text = switcherState.DVESettings.Current.SizeX.ToString();
             tbPIPPosX.Text = switcherState.DVESettings.Current.PositionX.ToString();
             tbPIPPosY.Text = switcherState.DVESettings.Current.PositionY.ToString();
             tbPIPmaskTB.Text = switcherState.DVESettings.MaskTop.ToString();
             tbPIPmaskLR.Text = switcherState.DVESettings.MaskLeft.ToString();
+            ShowKeyerUI();
         }
 
         private void SetSwitcherKeyerChroma()
         {
             //switcherManager?.ConfigureUSK1Chroma(_config.USKSettings.ChromaSettings);
             switcherManager?.SetUSK1TypeChroma();
-            switcherManager?.ForceStateUpdate();
+            // force blocking state update
+            SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate());
             tbChromaHue.Text = switcherState.ChromaSettings.Hue.ToString();
             tbChromaGain.Text = switcherState.ChromaSettings.Gain.ToString();
             tbChromaLift.Text = switcherState.ChromaSettings.Lift.ToString();
             tbChromaYSuppress.Text = switcherState.ChromaSettings.YSuppress.ToString();
             tbChromaNarrow.Text = switcherState.ChromaSettings.Narrow.ToString();
+            ShowKeyerUI();
         }
 
         private void ClickApplyChromaSettings(object sender, RoutedEventArgs e)
