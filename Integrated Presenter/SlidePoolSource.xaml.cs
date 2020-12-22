@@ -64,6 +64,10 @@ namespace Integrated_Presenter
                         btnLiturgy.Foreground = Brushes.WhiteSmoke;
                         btnVideo.Background = Brushes.WhiteSmoke;
                         btnVideo.Foreground = Brushes.WhiteSmoke;
+                        btnChromaStill.Background = Brushes.WhiteSmoke;
+                        btnChromaStill.Foreground = Brushes.WhiteSmoke;
+                        btnChromaVideo.Background = Brushes.WhiteSmoke;
+                        btnChromaVideo.Foreground = Brushes.WhiteSmoke;
                         break;
                     case SlideType.Liturgy:
                         btnStill.Background = Brushes.WhiteSmoke;
@@ -72,6 +76,10 @@ namespace Integrated_Presenter
                         btnLiturgy.Foreground = Brushes.Orange;
                         btnVideo.Background = Brushes.WhiteSmoke;
                         btnVideo.Foreground = Brushes.WhiteSmoke;
+                        btnChromaStill.Background = Brushes.WhiteSmoke;
+                        btnChromaStill.Foreground = Brushes.WhiteSmoke;
+                        btnChromaVideo.Background = Brushes.WhiteSmoke;
+                        btnChromaVideo.Foreground = Brushes.WhiteSmoke;
                         break;
                     case SlideType.Video:
                         btnStill.Background = Brushes.WhiteSmoke;
@@ -80,7 +88,36 @@ namespace Integrated_Presenter
                         btnLiturgy.Foreground = Brushes.WhiteSmoke;
                         btnVideo.Background = Brushes.Orange;
                         btnVideo.Foreground = Brushes.Orange;
+                        btnChromaStill.Background = Brushes.WhiteSmoke;
+                        btnChromaStill.Foreground = Brushes.WhiteSmoke;
+                        btnChromaVideo.Background = Brushes.WhiteSmoke;
+                        btnChromaVideo.Foreground = Brushes.WhiteSmoke;
                         break;
+                    case SlideType.ChromaKeyStill:
+                        btnStill.Background = Brushes.WhiteSmoke;
+                        btnStill.Foreground = Brushes.WhiteSmoke;
+                        btnLiturgy.Background = Brushes.WhiteSmoke;
+                        btnLiturgy.Foreground = Brushes.WhiteSmoke;
+                        btnVideo.Background = Brushes.WhiteSmoke;
+                        btnVideo.Foreground = Brushes.WhiteSmoke;
+                        btnChromaStill.Background = Brushes.Orange;
+                        btnChromaStill.Foreground = Brushes.Orange;
+                        btnChromaVideo.Background = Brushes.WhiteSmoke;
+                        btnChromaVideo.Foreground = Brushes.WhiteSmoke;
+                        break;
+                    case SlideType.ChromaKeyVideo:
+                        btnStill.Background = Brushes.WhiteSmoke;
+                        btnStill.Foreground = Brushes.WhiteSmoke;
+                        btnLiturgy.Background = Brushes.WhiteSmoke;
+                        btnLiturgy.Foreground = Brushes.WhiteSmoke;
+                        btnVideo.Background = Brushes.WhiteSmoke;
+                        btnVideo.Foreground = Brushes.WhiteSmoke;
+                        btnChromaStill.Background = Brushes.WhiteSmoke;
+                        btnChromaStill.Foreground = Brushes.WhiteSmoke;
+                        btnChromaVideo.Background = Brushes.Orange;
+                        btnChromaVideo.Foreground = Brushes.Orange;
+                        break;
+
                     case SlideType.Empty:
                         break;
                     default:
@@ -207,8 +244,14 @@ namespace Integrated_Presenter
                         case "Video":
                             Type = SlideType.Video;
                             break;
+                        case "ChromaKeyVideo":
+                            Type = SlideType.ChromaKeyVideo;
+                            break;
+                        case "ChromaKeyStill":
+                            Type = SlideType.ChromaKeyStill;
+                            break;
                         default:
-                            type = SlideType.Empty;
+                            Type = SlideType.Empty;
                             break;
                     }
                     Source = new Uri(ofd.FileName);
@@ -227,7 +270,7 @@ namespace Integrated_Presenter
                 }
 
                 mediapreview.SetMedia(Source, Type);
-                if (Slide.Type == SlideType.Video)
+                if (Slide.Type == SlideType.Video || Slide.Type == SlideType.ChromaKeyVideo)
                 {
                     Dispatcher.Invoke(() =>
                     {
@@ -248,7 +291,7 @@ namespace Integrated_Presenter
 
         private void UpdateDurationUI()
         {
-            if (Slide?.Type == SlideType.Video && mediapreview.MediaLength != TimeSpan.Zero)
+            if ((Slide?.Type == SlideType.Video || Slide?.Type == SlideType.ChromaKeyVideo ) && mediapreview.MediaLength != TimeSpan.Zero)
             {
                 tbDuration.Text = mediapreview.MediaLength.ToString("\\T\\-mm\\:ss");
                 tbDuration.Visibility = Visibility.Visible;
@@ -282,6 +325,21 @@ namespace Integrated_Presenter
         //public event EventHandler ClickTakeEvent;
         public event TakeSlidePoolEvent TakeSlidePoolSource;
 
+        private void ClickChromaStillMode(object sender, RoutedEventArgs e)
+        {
+            Type = SlideType.ChromaKeyStill;
+            UpdateDurationUI();
+        }
+
+        private void ClickChromaVideoMode(object sender, RoutedEventArgs e)
+        {
+            Type = SlideType.ChromaKeyVideo;
+            UpdateDurationUI();
+            Dispatcher.Invoke(() =>
+            {
+                mediapreview.PlayMedia();
+            });
+        }
     }
 
     public delegate void TakeSlidePoolEvent(object sender, Slide s, bool replaceMode);

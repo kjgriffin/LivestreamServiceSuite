@@ -106,7 +106,7 @@ namespace Integrated_Presenter
         public void StartMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video)
+            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -126,7 +126,7 @@ namespace Integrated_Presenter
         public void PauseMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video)
+            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -146,7 +146,7 @@ namespace Integrated_Presenter
         public void RestartMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video)
+            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -166,7 +166,7 @@ namespace Integrated_Presenter
         public void StopMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == SlideType.Video)
+            if (_control.Presentation.EffectiveCurrent.Type == SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {

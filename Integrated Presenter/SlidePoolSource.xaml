@@ -68,6 +68,37 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
+                        <Button Focusable="False" Name="btnChromaStill" Background="Gray" Foreground="WhiteSmoke" Click="ClickChromaStillMode">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Border CornerRadius="5" Padding="5,0,5,0" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Property=Background}" Margin="3" BorderThickness="1">
+                                        <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Property=Foreground}">CKS</ContentControl>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Cursor" Value="Hand"></Setter>
+                                            <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button Focusable="False" Name="btnChromaVideo" Background="Gray" Foreground="WhiteSmoke" Click="ClickChromaVideoMode">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Border CornerRadius="5" Padding="5,0,5,0" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Property=Background}" Margin="3" BorderThickness="1">
+                                        <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Property=Foreground}">CKV</ContentControl>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Cursor" Value="Hand"></Setter>
+                                            <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
 
 
                         <Button Focusable="false" IsTabStop="False" Click="ClickLoadMedia" Margin="10, 0, 0, 0">

@@ -130,7 +130,7 @@ namespace Integrated_Presenter
 
         public void PlayMedia()
         {
-            if (_type == SlideType.Video)
+            if (_type == SlideType.Video || _type == SlideType.ChromaKeyVideo)
             {
                 videoPlayer.Play();
             }
@@ -138,7 +138,7 @@ namespace Integrated_Presenter
 
         public void PauseMedia()
         {
-            if (_type == SlideType.Video)
+            if (_type == SlideType.Video || _type == SlideType.ChromaKeyVideo)
             {
                 videoPlayer.Pause();
             }
@@ -146,7 +146,7 @@ namespace Integrated_Presenter
 
         public void ReplayMedia()
         {
-            if (_type == SlideType.Video)
+            if (_type == SlideType.Video || _type == SlideType.ChromaKeyVideo)
             {
                 videoPlayer.Position = TimeSpan.Zero;
                 videoPlayer.Play();
@@ -155,7 +155,7 @@ namespace Integrated_Presenter
 
         public void StopMedia()
         {
-            if (_type == SlideType.Video)
+            if (_type == SlideType.Video || _type == SlideType.ChromaKeyVideo)
             {
                 videoPlayer.Stop();
             }
@@ -175,6 +175,12 @@ namespace Integrated_Presenter
             {
                 case SlideType.Video:
                     ShowVideo();
+                    break;
+                case SlideType.ChromaKeyVideo:
+                    ShowVideo();
+                    break;
+                case SlideType.ChromaKeyStill:
+                    ShowImage();
                     break;
                 case SlideType.Full:
                     ShowImage();

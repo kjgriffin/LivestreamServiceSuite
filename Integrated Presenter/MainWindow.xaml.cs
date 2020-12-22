@@ -667,7 +667,7 @@ namespace Integrated_Presenter
                 {
                     if (ShowEffectiveCurrentPreview)
                     {
-                        if (Presentation?.EffectiveCurrent.Type == SlideType.Video)
+                        if (Presentation?.EffectiveCurrent.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
 
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
@@ -681,7 +681,7 @@ namespace Integrated_Presenter
                     }
                     else
                     {
-                        if (Presentation?.Current.Type == SlideType.Video)
+                        if (Presentation?.Current.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
                             tbPreviewCurrentVideoDuration.Visibility = Visibility.Visible;
@@ -698,7 +698,7 @@ namespace Integrated_Presenter
                     tbPreviewCurrentVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewCurrentVideoDuration.Text = "";
                 }
-                if (Presentation?.Next.Type == SlideType.Video)
+                if (Presentation?.Next.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                 {
                     NextPreview.PlayMedia();
                     if (NextPreview.MediaLength != TimeSpan.Zero)
@@ -712,7 +712,7 @@ namespace Integrated_Presenter
                     tbPreviewNextVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewNextVideoDuration.Text = "";
                 }
-                if (Presentation?.After.Type == SlideType.Video)
+                if (Presentation?.After.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                 {
                     AfterPreview.PlayMedia();
                     if (AfterPreview.MediaLength != TimeSpan.Zero)
@@ -726,7 +726,7 @@ namespace Integrated_Presenter
                     tbPreviewAfterVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewAfterVideoDuration.Text = "";
                 }
-                if (Presentation?.Prev.Type == SlideType.Video)
+                if (Presentation?.Prev.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                 {
                     PrevPreview.PlayMedia();
                     if (PrevPreview.MediaLength != TimeSpan.Zero)
@@ -775,7 +775,7 @@ namespace Integrated_Presenter
         {
 
             // dont enable shortcuts when focused on textbox
-            if (tbPIPSize.IsFocused || tbPIPPosX.IsFocused || tbPIPPosY.IsFocused || tbPIPmaskLR.IsFocused || tbPIPmaskTB.IsFocused)
+            if (tbPIPSize.IsFocused || tbPIPPosX.IsFocused || tbPIPPosY.IsFocused || tbPIPmaskLR.IsFocused || tbPIPmaskTB.IsFocused || tbChromaHue.IsFocused || tbChromaGain.IsFocused || tbChromaYSuppress.IsFocused || tbChromaLift.IsFocused || tbChromaNarrow.IsFocused)
             {
                 return;
             }
@@ -1259,16 +1259,29 @@ namespace Integrated_Presenter
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                     }
-
-                    if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                    // don't force slides on air if key type
+                    if (Presentation.EffectiveCurrent.Type != SlideType.ChromaKeyVideo && Presentation.EffectiveCurrent.Type != SlideType.ChromaKeyStill)
                     {
-                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
-                        await Task.Delay(500);
-                        switcherManager?.PerformAutoTransition();
+                        if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                        {
+                            ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
+                            await Task.Delay(500);
+                            switcherManager?.PerformAutoTransition();
+                        }
                     }
-                    if (Presentation.EffectiveCurrent.Type == SlideType.Video)
+                    if (Presentation.EffectiveCurrent.Type == SlideType.Video || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                     {
                         playMedia();
+                    }
+
+                    if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyStill || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    {
+                        // turn on chroma key
+                        // assume we're using a choma keyer
+                        if (!switcherState.USK1OnAir)
+                        {
+                            switcherManager?.PerformToggleUSK1();
+                        }
                     }
                 }
                 // At this point we've switched to the slide
@@ -1306,16 +1319,32 @@ namespace Integrated_Presenter
                     Presentation.OverridePres = true;
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
-                    if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                    // don't take slide as program source when key type slide
+                    if (s.Type != SlideType.ChromaKeyStill && s.Type != SlideType.ChromaKeyVideo)
                     {
-                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
-                        await Task.Delay(500);
-                        switcherManager?.PerformAutoTransition();
+                        if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                        {
+                            ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
+                            await Task.Delay(500);
+                            switcherManager?.PerformAutoTransition();
+                        }
                     }
-                    if (Presentation.EffectiveCurrent.Type == SlideType.Video)
+
+                    if (Presentation.EffectiveCurrent.Type == SlideType.Video || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                     {
                         playMedia();
                     }
+
+                    if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyStill || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    {
+                        // turn on chroma key
+                        // assume we're using a choma keyer
+                        if (!switcherState.USK1OnAir)
+                        {
+                            switcherManager?.PerformToggleUSK1();
+                        }
+                    }
+
                 }
                 // At this point we've switched to the slide
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
@@ -1378,17 +1407,31 @@ namespace Integrated_Presenter
                     }
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
-                    if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                    //  don't put key type slides on air
+                    if (Presentation?.EffectiveCurrent.Type != SlideType.ChromaKeyStill && Presentation?.EffectiveCurrent.Type != SlideType.ChromaKeyVideo)
                     {
-                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
-                        await Task.Delay(500);
-                        switcherManager?.PerformAutoTransition();
+                        if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                        {
+                            ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
+                            await Task.Delay(500);
+                            switcherManager?.PerformAutoTransition();
+                        }
                     }
-
-                    if (Presentation.EffectiveCurrent.Type == SlideType.Video)
+                    if (Presentation.EffectiveCurrent.Type == SlideType.Video || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                     {
                         playMedia();
                     }
+
+                    if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyStill || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    {
+                        // turn on chroma key
+                        // assume we're using a choma keyer
+                        if (!switcherState.USK1OnAir)
+                        {
+                            switcherManager?.PerformToggleUSK1();
+                        }
+                    }
+
                 }
                 // Do Action on current slide
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
@@ -2231,11 +2274,11 @@ namespace Integrated_Presenter
                     ChromaSettings = new BMDUSKChromaSettings()
                     {
                         FillSource = 4,
-                        Hue = 0,
-                        Gain = 0,
-                        Lift = 0,
-                        Narrow = 0,
-                        YSuppress = 0
+                        Hue = 321.8,
+                        Gain = 0.652,
+                        YSuppress = 0.595,
+                        Lift = 0.095,
+                        Narrow = 0
                     }
                 }
             };

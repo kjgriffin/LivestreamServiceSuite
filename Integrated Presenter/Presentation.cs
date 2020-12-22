@@ -41,6 +41,12 @@ namespace Integrated_Presenter
                     case "Video":
                         type = SlideType.Video;
                         break;
+                    case "ChromaKeyVideo":
+                        type = SlideType.ChromaKeyVideo;
+                        break;
+                    case "ChromaKeyStill":
+                        type = SlideType.ChromaKeyStill;
+                        break;
                     default:
                         type = SlideType.Empty;
                         break;
@@ -185,6 +191,8 @@ namespace Integrated_Presenter
         Full,
         Liturgy,
         Video,
+        ChromaKeyVideo,
+        ChromaKeyStill,
         Empty
     }
 
