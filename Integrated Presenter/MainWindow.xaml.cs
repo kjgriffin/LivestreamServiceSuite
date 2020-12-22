@@ -635,7 +635,7 @@ namespace Integrated_Presenter
                 {
                     if (ShowEffectiveCurrentPreview)
                     {
-                        if (Presentation?.EffectiveCurrent.Type == SlideType.Video)
+                        if (Presentation?.EffectiveCurrent.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
 
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
@@ -644,7 +644,7 @@ namespace Integrated_Presenter
                     }
                     else
                     {
-                        if (Presentation?.Current.Type == SlideType.Video)
+                        if (Presentation?.Current.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
                             tbPreviewCurrentVideoDuration.Visibility = Visibility.Visible;
@@ -698,7 +698,7 @@ namespace Integrated_Presenter
                     tbPreviewCurrentVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewCurrentVideoDuration.Text = "";
                 }
-                if (Presentation?.Next.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                if (Presentation?.Next.Type == SlideType.Video || Presentation?.Next.Type == SlideType.ChromaKeyVideo)
                 {
                     NextPreview.PlayMedia();
                     if (NextPreview.MediaLength != TimeSpan.Zero)
@@ -712,7 +712,7 @@ namespace Integrated_Presenter
                     tbPreviewNextVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewNextVideoDuration.Text = "";
                 }
-                if (Presentation?.After.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                if (Presentation?.After.Type == SlideType.Video || Presentation?.After.Type == SlideType.ChromaKeyVideo)
                 {
                     AfterPreview.PlayMedia();
                     if (AfterPreview.MediaLength != TimeSpan.Zero)
@@ -726,7 +726,7 @@ namespace Integrated_Presenter
                     tbPreviewAfterVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewAfterVideoDuration.Text = "";
                 }
-                if (Presentation?.Prev.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                if (Presentation?.Prev.Type == SlideType.Video || Presentation?.Prev.Type == SlideType.ChromaKeyVideo)
                 {
                     PrevPreview.PlayMedia();
                     if (PrevPreview.MediaLength != TimeSpan.Zero)
@@ -1243,12 +1243,61 @@ namespace Integrated_Presenter
                     switcherManager?.PerformAutoOnAirDSK1();
 
                 }
+                else if (Presentation.Next.Type == SlideType.ChromaKeyStill || Presentation.Next.Type == SlideType.ChromaKeyVideo)
+                {
+                    // turn of downstream keys
+                    if (switcherState.DSK1OnAir)
+                    {
+                        switcherManager?.PerformAutoOffAirDSK1();
+                        await Task.Delay((_config.DownstreamKey1Config.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                    }
+
+                    // set usk1 to chroma (using curently loaded settings)
+                    if (switcherState.USK1OnAir)
+                    {
+                        switcherManager?.PerformOffAirUSK1();
+                    }
+                    if (switcherState.USK1KeyType != 2)
+                    {
+                        switcherManager?.SetUSK1TypeChroma();
+                    }
+
+                    // pull slide off air (and then reset the preview to the old source)
+                    long previewsource = switcherState.PresetID;
+                    if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                    {
+                        switcherManager?.PerformAutoTransition();
+                        await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                    }
+                    switcherManager?.PerformProgramSelect((int)previewsource);
+
+                    // next slide
+                    Presentation.NextSlide();
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                    if (Presentation.OverridePres == true)
+                    {
+                        Presentation.OverridePres = false;
+                        slidesUpdated();
+                        PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                    }
+
+                    // start mediaplayout
+                    if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    {
+                        playMedia();
+                    }
+
+                    // turn on chroma key once playout has started
+                    switcherManager?.PerformOnAirUSK1();
+
+                }
                 else
                 {
                     if (switcherState.DSK1OnAir)
                     {
                         switcherManager?.PerformAutoOffAirDSK1();
-                        await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                        await Task.Delay((_config.DownstreamKey1Config.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     Presentation.NextSlide();
                     slidesUpdated();
@@ -1259,30 +1308,17 @@ namespace Integrated_Presenter
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                     }
-                    // don't force slides on air if key type
-                    if (Presentation.EffectiveCurrent.Type != SlideType.ChromaKeyVideo && Presentation.EffectiveCurrent.Type != SlideType.ChromaKeyStill)
-                    {
-                        if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
-                        {
-                            ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
-                            await Task.Delay(500);
-                            switcherManager?.PerformAutoTransition();
-                        }
-                    }
-                    if (Presentation.EffectiveCurrent.Type == SlideType.Video || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                     {
                         playMedia();
                     }
-
-                    if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyStill || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        // turn on chroma key
-                        // assume we're using a choma keyer
-                        if (!switcherState.USK1OnAir)
-                        {
-                            switcherManager?.PerformToggleUSK1();
-                        }
+                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
+                        await Task.Delay(500);
+                        switcherManager?.PerformAutoTransition();
                     }
+
                 }
                 // At this point we've switched to the slide
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
@@ -1308,6 +1344,51 @@ namespace Integrated_Presenter
                     switcherManager?.PerformAutoOnAirDSK1();
 
                 }
+                else if (s.Type == SlideType.ChromaKeyStill || s.Type == SlideType.ChromaKeyVideo)
+                {
+                    // turn of downstream keys
+                    if (switcherState.DSK1OnAir)
+                    {
+                        switcherManager?.PerformAutoOffAirDSK1();
+                        await Task.Delay((_config.DownstreamKey1Config.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                    }
+
+                    // set usk1 to chroma (using curently loaded settings)
+                    if (switcherState.USK1OnAir)
+                    {
+                        switcherManager?.PerformOffAirUSK1();
+                    }
+                    if (switcherState.USK1KeyType != 2)
+                    {
+                        switcherManager?.SetUSK1TypeChroma();
+                    }
+
+                    // pull slide off air (and then reset the preview to the old source)
+                    long previewsource = switcherState.PresetID;
+                    if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                    {
+                        switcherManager?.PerformAutoTransition();
+                        await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                    }
+                    switcherManager?.PerformProgramSelect((int)previewsource);
+
+                    // set slide
+                    Presentation.Override = s;
+                    Presentation.OverridePres = true;
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+
+
+                    // start mediaplayout
+                    if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    {
+                        playMedia();
+                    }
+
+                    // turn on chroma key once playout has started
+                    switcherManager?.PerformOnAirUSK1();
+
+                }
                 else
                 {
                     if (switcherState.DSK1OnAir)
@@ -1319,31 +1400,19 @@ namespace Integrated_Presenter
                     Presentation.OverridePres = true;
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
-                    // don't take slide as program source when key type slide
-                    if (s.Type != SlideType.ChromaKeyStill && s.Type != SlideType.ChromaKeyVideo)
-                    {
-                        if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
-                        {
-                            ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
-                            await Task.Delay(500);
-                            switcherManager?.PerformAutoTransition();
-                        }
-                    }
 
-                    if (Presentation.EffectiveCurrent.Type == SlideType.Video || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                     {
                         playMedia();
                     }
 
-                    if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyStill || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        // turn on chroma key
-                        // assume we're using a choma keyer
-                        if (!switcherState.USK1OnAir)
-                        {
-                            switcherManager?.PerformToggleUSK1();
-                        }
+                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
+                        await Task.Delay(500);
+                        switcherManager?.PerformAutoTransition();
                     }
+
 
                 }
                 // At this point we've switched to the slide
@@ -1398,6 +1467,48 @@ namespace Integrated_Presenter
                     switcherManager?.PerformAutoOnAirDSK1();
 
                 }
+                else if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyStill || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                {
+                    // turn of downstream keys
+                    if (switcherState.DSK1OnAir)
+                    {
+                        switcherManager?.PerformAutoOffAirDSK1();
+                        await Task.Delay((_config.DownstreamKey1Config.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                    }
+
+                    // set usk1 to chroma (using curently loaded settings)
+                    if (switcherState.USK1OnAir)
+                    {
+                        switcherManager?.PerformOffAirUSK1();
+                    }
+                    if (switcherState.USK1KeyType != 2)
+                    {
+                        switcherManager?.SetUSK1TypeChroma();
+                    }
+
+                    // pull slide off air (and then reset the preview to the old source)
+                    long previewsource = switcherState.PresetID;
+                    if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                    {
+                        switcherManager?.PerformAutoTransition();
+                        await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                    }
+                    switcherManager?.PerformProgramSelect((int)previewsource);
+
+                    // set slide
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+
+                    // start mediaplayout
+                    if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    {
+                        playMedia();
+                    }
+
+                    // turn on chroma key once playout has started
+                    switcherManager?.PerformOnAirUSK1();
+
+                }
                 else
                 {
                     if (switcherState.DSK1OnAir)
@@ -1407,30 +1518,19 @@ namespace Integrated_Presenter
                     }
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
-                    //  don't put key type slides on air
-                    if (Presentation?.EffectiveCurrent.Type != SlideType.ChromaKeyStill && Presentation?.EffectiveCurrent.Type != SlideType.ChromaKeyVideo)
-                    {
-                        if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
-                        {
-                            ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
-                            await Task.Delay(500);
-                            switcherManager?.PerformAutoTransition();
-                        }
-                    }
-                    if (Presentation.EffectiveCurrent.Type == SlideType.Video || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+
+                    if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                     {
                         playMedia();
                     }
 
-                    if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyStill || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                    if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        // turn on chroma key
-                        // assume we're using a choma keyer
-                        if (!switcherState.USK1OnAir)
-                        {
-                            switcherManager?.PerformToggleUSK1();
-                        }
+                        ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
+                        await Task.Delay(500);
+                        switcherManager?.PerformAutoTransition();
                     }
+
 
                 }
                 // Do Action on current slide
@@ -2692,24 +2792,26 @@ namespace Integrated_Presenter
 
         private void SetSwitcherKeyerDVE()
         {
-            switcherManager?.ConfigureUSK1PIP(_config.USKSettings.PIPSettings);
+            //switcherManager?.ConfigureUSK1PIP(_config.USKSettings.PIPSettings);
+            switcherManager?.SetUSK1TypeDVE();
             switcherManager?.ForceStateUpdate();
-            tbPIPSize.Text = _config.USKSettings.PIPSettings.Current.SizeX.ToString();
-            tbPIPPosX.Text = _config.USKSettings.PIPSettings.Current.PositionX.ToString();
-            tbPIPPosY.Text = _config.USKSettings.PIPSettings.Current.PositionY.ToString();
-            tbPIPmaskTB.Text = _config.USKSettings.PIPSettings.MaskTop.ToString();
-            tbPIPmaskLR.Text = _config.USKSettings.PIPSettings.MaskLeft.ToString();
+            tbPIPSize.Text = switcherState.DVESettings.Current.SizeX.ToString();
+            tbPIPPosX.Text = switcherState.DVESettings.Current.PositionX.ToString();
+            tbPIPPosY.Text = switcherState.DVESettings.Current.PositionY.ToString();
+            tbPIPmaskTB.Text = switcherState.DVESettings.MaskTop.ToString();
+            tbPIPmaskLR.Text = switcherState.DVESettings.MaskLeft.ToString();
         }
 
         private void SetSwitcherKeyerChroma()
         {
-            switcherManager?.ConfigureUSK1Chroma(_config.USKSettings.ChromaSettings);
+            //switcherManager?.ConfigureUSK1Chroma(_config.USKSettings.ChromaSettings);
+            switcherManager?.SetUSK1TypeChroma();
             switcherManager?.ForceStateUpdate();
-            tbChromaHue.Text = _config.USKSettings.ChromaSettings.Hue.ToString();
-            tbChromaGain.Text = _config.USKSettings.ChromaSettings.Gain.ToString();
-            tbChromaLift.Text = _config.USKSettings.ChromaSettings.Lift.ToString();
-            tbChromaYSuppress.Text = _config.USKSettings.ChromaSettings.YSuppress.ToString();
-            tbChromaNarrow.Text = _config.USKSettings.ChromaSettings.Narrow.ToString();
+            tbChromaHue.Text = switcherState.ChromaSettings.Hue.ToString();
+            tbChromaGain.Text = switcherState.ChromaSettings.Gain.ToString();
+            tbChromaLift.Text = switcherState.ChromaSettings.Lift.ToString();
+            tbChromaYSuppress.Text = switcherState.ChromaSettings.YSuppress.ToString();
+            tbChromaNarrow.Text = switcherState.ChromaSettings.Narrow.ToString();
         }
 
         private void ClickApplyChromaSettings(object sender, RoutedEventArgs e)
@@ -2776,6 +2878,11 @@ namespace Integrated_Presenter
         private void ClickChroma8(object sender, RoutedEventArgs e)
         {
             ChangeUSK1FillSource(8);
+        }
+
+        private void LoadDefault(object sender, RoutedEventArgs e)
+        {
+            SetSwitcherSettings();
         }
     }
 }

@@ -512,6 +512,8 @@ namespace Integrated_Presenter
                 ForceStateUpdate_PreviewInput();
                 ForceStateUpdate_Transition();
                 ForceStateUpdate_USK1();
+                ForceStateUpdate_ChromaSettings();
+                ForceStateUpdate_PIPSettings();
                 ForceStateUpdate_DSK1();
                 ForceStateUpdate_DSK2();
                 ForceStateUpdate_FTB();
@@ -761,6 +763,27 @@ namespace Integrated_Presenter
             ForceStateUpdate();
         }
 
+        private void ForceStateUpdate_ChromaSettings()
+        {
+            IBMDSwitcherKeyChromaParameters chromaParameters = (IBMDSwitcherKeyChromaParameters)_BMDSwitcherUpstreamKey1;
+            double hue, gain, lift, ysuppress;
+            int narrow;
+            chromaParameters.GetHue(out hue);
+            chromaParameters.GetGain(out gain);
+            chromaParameters.GetLift(out lift);
+            chromaParameters.GetYSuppress(out ysuppress);
+            chromaParameters.GetNarrow(out narrow);
+            _state.ChromaSettings = new BMDUSKChromaSettings()
+            {
+                FillSource = (int)_state.USK1FillSource,
+                Hue = hue,
+                Gain = gain,
+                Lift = lift,
+                YSuppress = ysuppress,
+                Narrow = narrow
+            };
+        }
+
         private void ConfigureUSKforPictureInPicture()
         {
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
@@ -804,6 +827,75 @@ namespace Integrated_Presenter
             keyframeparams.SetSizeY(_config.USKSettings.PIPSettings.KeyFrameB.SizeY);
 
             ForceStateUpdate();
+        }
+
+        private void ForceStateUpdate_PIPSettings()
+        {
+            IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+
+            int isbordered;
+            int ismasked;
+            double masktop, maskbot, maskleft, maskright;
+            dveparams.GetMasked(out ismasked);
+            dveparams.GetMaskBottom(out maskbot);
+            dveparams.GetMaskTop(out masktop);
+            dveparams.GetMaskLeft(out maskleft);
+            dveparams.GetMaskRight(out maskright);
+            dveparams.GetBorderEnabled(out isbordered);
+
+            double cposx, cposy, csizex, csizey;
+            _BMDSwitcherFlyKeyParamters.GetPositionX(out cposx);
+            _BMDSwitcherFlyKeyParamters.GetPositionY(out cposy);
+            _BMDSwitcherFlyKeyParamters.GetSizeX(out csizex);
+            _BMDSwitcherFlyKeyParamters.GetSizeY(out csizey);
+
+            double aposx, aposy, asizex, asizey;
+            IBMDSwitcherKeyFlyKeyFrameParameters keyframeparamsa;
+            _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparamsa);
+            keyframeparamsa.GetPositionX(out aposx);
+            keyframeparamsa.GetPositionY(out aposy);
+            keyframeparamsa.GetSizeX(out asizex);
+            keyframeparamsa.GetSizeY(out asizey);
+
+            double bposx, bposy, bsizex, bsizey;
+            IBMDSwitcherKeyFlyKeyFrameParameters keyframeparamsb;
+            _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparamsb);
+            keyframeparamsb.GetPositionX(out bposx);
+            keyframeparamsb.GetPositionY(out bposy);
+            keyframeparamsb.GetSizeX(out bsizex);
+            keyframeparamsb.GetSizeY(out bsizey);
+
+
+            _state.DVESettings = new BMDUSKDVESettings()
+            {
+                Current = new KeyFrameSettings() {
+                    PositionX = cposx,
+                    PositionY = cposy,
+                    SizeX = csizex,
+                    SizeY = csizey
+                }    ,
+                DefaultFillSource = _config.USKSettings.PIPSettings.DefaultFillSource,
+                IsBordered = isbordered,
+                IsMasked = ismasked,
+                MaskBottom = (float)maskbot,
+                MaskTop = (float)masktop,
+                MaskLeft = (float)maskleft,
+                MaskRight = (float)maskright,
+                KeyFrameA = new KeyFrameSettings()
+                {
+                    PositionX = aposx,
+                    PositionY = aposy,
+                    SizeX = asizex,
+                    SizeY = asizey
+                },
+                KeyFrameB = new KeyFrameSettings()
+                {
+                    PositionX = bposx,
+                    PositionY = bposy,
+                    SizeX = bsizex,
+                    SizeY = bsizey
+                }
+            };
         }
 
         private void ConfigureAudioLevels()
@@ -1085,6 +1177,38 @@ namespace Integrated_Presenter
 
 
             ForceStateUpdate();
+        }
+
+        public void PerformOnAirUSK1()
+        {
+            _BMDSwitcherUpstreamKey1.SetOnAir(1);
+        }
+
+        public void PerformOffAirUSK1()
+        {
+            _BMDSwitcherUpstreamKey1.SetOnAir(1);
+        }
+
+        public void SetUSK1TypeDVE()
+        {
+            _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
+            ForceStateUpdate();
+        }
+
+        public void SetUSK1TypeChroma()
+        {
+            _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
+            ForceStateUpdate();
+        }
+
+        public void PerformSetKey1OnForNextTrans()
+        {
+
+        }
+
+        public void PerformSetKey1OffForNextTrans()
+        {
+
         }
     }
 }

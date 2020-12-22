@@ -304,5 +304,29 @@ namespace Integrated_Presenter.BMDSwitcher
             _state.USK1KeyType = 2;
             SwitcherStateChanged?.Invoke(_state);
         }
+
+        public void PerformOnAirUSK1()
+        {
+        }
+
+        public void PerformOffAirUSK1()
+        {
+        }
+
+        public void SetUSK1TypeDVE()
+        {
+        }
+
+        public void SetUSK1TypeChroma()
+        {
+        }
+
+        public void PerformSetKey1OnForNextTrans()
+        {
+        }
+
+        public void PerformSetKey1OffForNextTrans()
+        {
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BMDSwitcherAPI;
+using Integrated_Presenter.BMDSwitcher.Config;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,6 +35,10 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public bool FTB { get; set; }
 
+        public BMDUSKChromaSettings ChromaSettings { get; set; }
+        public BMDUSKDVESettings DVESettings { get; set; }
+
+
 
         public void SetDefault()
         {
@@ -50,6 +55,48 @@ namespace Integrated_Presenter.BMDSwitcher
             USK1KeyFrame = -1;
             TransNextBackground = true;
             TransNextKey1 = false;
+            ChromaSettings = new BMDUSKChromaSettings()
+            {
+                FillSource = 0,
+                Gain = 0,
+                Hue = 0,
+                Lift = 0,
+                Narrow = 0,
+                YSuppress = 0
+            };
+            DVESettings = new BMDUSKDVESettings()
+            {
+                Current = new KeyFrameSettings()
+                {
+                    PositionX = 0,
+                    PositionY = 0,
+                    SizeX = 0,
+                    SizeY = 0
+                },
+                DefaultFillSource = 0,
+                IsBordered = 0,
+                IsMasked = 0,
+                MaskBottom = 0,
+                MaskTop = 0,
+                MaskLeft = 0,
+                MaskRight = 0,
+                KeyFrameA = new KeyFrameSettings()
+                {
+                    PositionX = 0,
+                    PositionY = 0,
+                    SizeX = 0,
+                    SizeY = 0
+                },
+                KeyFrameB = new KeyFrameSettings()
+                {
+                    PositionX = 0,
+                    PositionY = 0,
+                    SizeX = 0,
+                    SizeY = 0
+                }
+            };
+
+
         }
 
         public bool IsDifferentShot(BMDSwitcherState oldstate)
@@ -64,7 +111,8 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public BMDSwitcherState Copy()
         {
-            return new BMDSwitcherState() {
+            return new BMDSwitcherState()
+            {
                 PresetID = this.PresetID,
                 ProgramID = this.ProgramID,
                 USK1OnAir = this.USK1OnAir,
@@ -77,7 +125,9 @@ namespace Integrated_Presenter.BMDSwitcher
                 DSK2Tie = this.DSK2Tie,
                 FTB = this.FTB,
                 TransNextBackground = this.TransNextBackground,
-                TransNextKey1 = this.TransNextKey1
+                TransNextKey1 = this.TransNextKey1,
+                ChromaSettings = this.ChromaSettings,
+                DVESettings = this.DVESettings
             };
 
         }

@@ -28,13 +28,19 @@ namespace Integrated_Presenter
         void PerformToggleFTB();
         bool TryConnect(string address);
         void PerformToggleUSK1();
+        void PerformOnAirUSK1();
+        void PerformOffAirUSK1();
         void PerformUSK1RunToKeyFrameA();
         void PerformUSK1RunToKeyFrameB();
         void PerformUSK1RunToKeyFrameFull();
         void PerformUSK1FillSourceSelect(int sourceID);
         void PerformToggleBackgroundForNextTrans();
         void PerformToggleKey1ForNextTrans();
+        void PerformSetKey1OnForNextTrans();
+        void PerformSetKey1OffForNextTrans();
 
+        void SetUSK1TypeDVE();
+        void SetUSK1TypeChroma();
         void SetPIPPosition(BMDUSKDVESettings settings);
         void SetPIPKeyFrameA(BMDUSKDVESettings settings);
         void ConfigureUSK1PIP(BMDUSKDVESettings settings);

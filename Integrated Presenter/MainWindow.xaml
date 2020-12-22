@@ -48,6 +48,7 @@
                 <MenuItem Header="Settings" IsTabStop="False">
                     <MenuItem Header="Export Settings" Click="SaveSettings" IsTabStop="False"></MenuItem>
                     <MenuItem Header="Load Settings" Click="LoadSettings" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load Default" Click="LoadDefault" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Automation" IsTabStop="False">
                     <MenuItem Name="miTimer1Restart" Header="Timer1 Restart" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationTimer1"></MenuItem>
@@ -611,10 +612,10 @@
                                         </Border.RenderTransform>
                                         <Grid>
                                             <local:MediaPlayer2 Opacity="0.5" x:Name="PrevPreview"></local:MediaPlayer2>
-                                            <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">10:00:00</TextBlock>
+                                            <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">00:00:00</TextBlock>
                                         </Grid>
                                     </Border>
-                                    <TextBlock Name="tbPreviewCurrentVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100">10:00:00</TextBlock>
+                                    <TextBlock Name="tbPreviewCurrentVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100">00:00:00</TextBlock>
                                 </Grid>
                             </Border>
                         </Viewbox>
@@ -638,10 +639,10 @@
                                         </Border.RenderTransform>
                                         <Grid>
                                             <local:MediaPlayer2 Opacity="0.5" x:Name="AfterPreview" ></local:MediaPlayer2>
-                                            <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">10:00:00</TextBlock>
+                                            <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">00:00:00</TextBlock>
                                         </Grid>
                                     </Border>
-                                    <TextBlock Name="tbPreviewNextVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100">10:00:00</TextBlock>
+                                    <TextBlock Name="tbPreviewNextVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100">00:00:00</TextBlock>
                                 </Grid>
                             </Border>
                         </Viewbox>

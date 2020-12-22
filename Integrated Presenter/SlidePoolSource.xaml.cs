@@ -55,6 +55,10 @@ namespace Integrated_Presenter
             set
             {
                 type = value;
+                if (Slide != null)
+                {
+                    Slide.Type = value;
+                }
                 switch (type)
                 {
                     case SlideType.Full:
