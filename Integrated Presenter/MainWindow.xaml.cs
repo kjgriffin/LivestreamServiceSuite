@@ -1276,7 +1276,6 @@ namespace Integrated_Presenter
                         switcherManager?.PerformAutoTransition();
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
-                    switcherManager?.PerformProgramSelect((int)previewsource);
                     switcherManager?.PerformPresetSelect((int)previewsource);
 
                     // next slide
@@ -1392,7 +1391,6 @@ namespace Integrated_Presenter
                         switcherManager?.PerformAutoTransition();
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
-                    switcherManager?.PerformProgramSelect((int)previewsource);
                     switcherManager?.PerformPresetSelect((int)previewsource);
 
                     // set slide
@@ -1530,7 +1528,6 @@ namespace Integrated_Presenter
                         switcherManager?.PerformAutoTransition();
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
-                    switcherManager?.PerformProgramSelect((int)previewsource);
                     switcherManager?.PerformPresetSelect((int)previewsource);
 
                     // set slide
