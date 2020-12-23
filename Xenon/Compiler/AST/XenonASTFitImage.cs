@@ -9,6 +9,7 @@ namespace Xenon.Compiler
     class XenonASTFitImage : IXenonASTCommand
     {
         public string AssetName { get; set; }
+        public string KeyType { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
@@ -16,6 +17,17 @@ namespace Xenon.Compiler
             Lexer.GobbleWhitespace();
             var args = Lexer.ConsumeArgList(false, "asset");
             fullimage.AssetName = args["asset"];
+            if (!Lexer.InspectEOF())
+            {
+                if (Lexer.Inspect("["))
+                {
+                    Lexer.Consume();
+                    fullimage.KeyType = Lexer.ConsumeUntil("]");
+                    Lexer.Consume();
+                    Lexer.GobbleWhitespace();
+                }
+            }
+
             return fullimage;
 
         }
@@ -39,6 +51,7 @@ namespace Xenon.Compiler
             imageslide.Format = SlideFormat.ScaledImage;
             imageslide.Asset = assetpath;
             imageslide.MediaType = MediaType.Image;
+            imageslide.Data["key-type"] = KeyType;
 
             project.Slides.Add(imageslide);
         }

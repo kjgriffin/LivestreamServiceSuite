@@ -33,11 +33,26 @@ namespace Xenon.Renderer
             {
                 res.Bitmap = RenderUnscaled(sourceimage);
                 res.RenderedAs = "Full";
+                if (slide.Data.ContainsKey("key-type"))
+                {
+                    if ((string)slide.Data["key-type"] == "chroma")
+                    {
+                        res.RenderedAs = "ChromaKeyStill";
+                    }
+                }
+
             }
             else if (slide.Format == SlideFormat.ScaledImage)
             {
                 res.Bitmap = RenderUniformScale(sourceimage);
                 res.RenderedAs = "Full";
+                if (slide.Data.ContainsKey("key-type"))
+                {
+                    if ((string)slide.Data["key-type"] == "chroma")
+                    {
+                        res.RenderedAs = "ChromaKeyStill";
+                    }
+                }
             }
             else if (slide.Format == SlideFormat.AutoscaledImage)
             {
@@ -48,6 +63,14 @@ namespace Xenon.Renderer
                 }
                 res.Bitmap = RenderAutoScaled(sourceimage, invert);
                 res.RenderedAs = "Full";
+                if (slide.Data.ContainsKey("key-type"))
+                {
+                    if ((string)slide.Data["key-type"] == "chroma")
+                    {
+                        res.RenderedAs = "ChromaKeyStill";
+                    }
+                }
+
             }
             else if (slide.Format == SlideFormat.LiturgyImage)
             {

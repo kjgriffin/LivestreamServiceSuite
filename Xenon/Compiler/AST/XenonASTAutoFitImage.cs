@@ -10,6 +10,7 @@ namespace Xenon.Compiler
     {
         public string AssetName { get; set; }
         public bool InvertColor { get; set; }
+        public string KeyType { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
@@ -35,6 +36,17 @@ namespace Xenon.Compiler
                     Lexer.GobbleWhitespace();
                 }
             }
+            if (!Lexer.InspectEOF())
+            {
+                if (Lexer.Inspect("["))
+                {
+                    Lexer.Consume();
+                    fullimage.KeyType = Lexer.ConsumeUntil("]");
+                    Lexer.Consume();
+                    Lexer.GobbleWhitespace();
+                }
+            }
+
 
 
             return fullimage;
@@ -60,6 +72,7 @@ namespace Xenon.Compiler
             imageslide.Format = SlideFormat.AutoscaledImage;
             imageslide.Asset = assetpath;
             imageslide.MediaType = MediaType.Image;
+            imageslide.Data["key-type"] = KeyType;
 
             if (project.ProjectVariables.ContainsKey("invert-autofit"))
             {
