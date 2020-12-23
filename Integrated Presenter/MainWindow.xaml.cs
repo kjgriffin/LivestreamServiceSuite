@@ -837,9 +837,9 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(1);
                 else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, false);
+                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, false, SlidePoolSource0.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, true);
+                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, true, SlidePoolSource0.Driven);
                 else
                     ClickPreset(1);
             }
@@ -850,9 +850,9 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(2);
                 else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, false);
+                    TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, false, SlidePoolSource1.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, true);
+                    TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, true, SlidePoolSource1.Driven);
                 else
                     ClickPreset(2);
             }
@@ -863,9 +863,9 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(3);
                 else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, false);
+                    TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, false, SlidePoolSource2.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, true);
+                    TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, true, SlidePoolSource2.Driven);
                 else
                     ClickPreset(3);
             }
@@ -876,9 +876,9 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(4);
                 else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, false);
+                    TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, false, SlidePoolSource3.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, true);
+                    TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, true, SlidePoolSource3.Driven);
                 else
                     ClickPreset(4);
             }
@@ -1336,6 +1336,17 @@ namespace Integrated_Presenter
                 }
                 // At this point we've switched to the slide
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
+            }
+        }
+
+        private async void SlideUndrive_ToSlide(Slide s)
+        {
+            if (s != null && Presentation != null)
+            {
+                Presentation.Override = s;
+                Presentation.OverridePres = true;
+                slidesUpdated();
+                PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
             }
         }
 
@@ -1984,7 +1995,7 @@ namespace Integrated_Presenter
 
         SlidePoolSource currentpoolsource = null;
 
-        private void TakeSlidePoolSlide(Slide s, int num, bool replaceMode)
+        private void TakeSlidePoolSlide(Slide s, int num, bool replaceMode, bool driven)
         {
 
             for (int i = 0; i < 4; i++)
@@ -1995,6 +2006,8 @@ namespace Integrated_Presenter
                 }
             }
 
+            SlidePoolButtons[1].Selected = true;
+
             currentpoolsource = SlidePoolButtons[num];
 
             if (replaceMode)
@@ -2002,7 +2015,14 @@ namespace Integrated_Presenter
                 Presentation?.NextSlide();
             }
 
-            SlideDriveVideo_ToSlide(s);
+            if (driven)
+            {
+                SlideDriveVideo_ToSlide(s);
+            }
+            else
+            {
+                SlideUndrive_ToSlide(s);
+            }
 
 
         }
@@ -2025,24 +2045,24 @@ namespace Integrated_Presenter
             audioPlayer?.Close();
         }
 
-        private void ClickTakeSP0(object sender, Slide s, bool replaceMode)
+        private void ClickTakeSP0(object sender, Slide s, bool replaceMode, bool driven)
         {
-            TakeSlidePoolSlide(s, 0, replaceMode);
+            TakeSlidePoolSlide(s, 0, replaceMode, driven);
         }
 
-        private void ClickTakeSP1(object sender, Slide s, bool replaceMode)
+        private void ClickTakeSP1(object sender, Slide s, bool replaceMode, bool driven)
         {
-            TakeSlidePoolSlide(s, 1, replaceMode);
+            TakeSlidePoolSlide(s, 1, replaceMode, driven);
         }
 
-        private void ClickTakeSP2(object sender, Slide s, bool replaceMode)
+        private void ClickTakeSP2(object sender, Slide s, bool replaceMode, bool driven)
         {
-            TakeSlidePoolSlide(s, 2, replaceMode);
+            TakeSlidePoolSlide(s, 2, replaceMode, driven);
         }
 
-        private void ClickTakeSP3(object sender, Slide s, bool replaceMode)
+        private void ClickTakeSP3(object sender, Slide s, bool replaceMode, bool driven)
         {
-            TakeSlidePoolSlide(s, 3, replaceMode);
+            TakeSlidePoolSlide(s, 3, replaceMode, driven);
         }
 
         private void ClickConfigureSwitcher(object sender, RoutedEventArgs e)

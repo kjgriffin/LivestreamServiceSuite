@@ -16,7 +16,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid Grid.Column="0" Grid.ColumnSpan="2">
                     <StackPanel Orientation="Horizontal" Focusable="False">
@@ -101,6 +101,8 @@
 
 
 
+
+
                         <Button Focusable="false" IsTabStop="False" Click="ClickLoadMedia" Margin="10, 0, 0, 0">
                             <Button.Template>
                                 <ControlTemplate>
@@ -119,7 +121,7 @@
                         </Button>
                     </StackPanel>
                 </Grid>
-                <Grid Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">
+                <Grid Grid.Row="1" Grid.Column="1" Grid.RowSpan="3">
                     <local:MediaPlayer2 x:Name="mediapreview" Panel.ZIndex="100"></local:MediaPlayer2>
                     <Rectangle Fill="Black" Panel.ZIndex="1"></Rectangle>
                     <TextBlock x:Name="tbDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" Panel.ZIndex="100">
@@ -129,9 +131,32 @@
                         00:00:00</TextBlock>
                 </Grid>
                 <StackPanel Grid.Row="1" Grid.RowSpan="2">
-                    <Button Focusable="false" IsTabStop="False" Name="BtnTakeInsert" Click="ClickTakeInsert" Grid.Column="0" Grid.Row="1" Style="{StaticResource SwitcherButton_Disabled}">TAKE INS</Button>
-                    <Button Focusable="false" IsTabStop="False" Name="BtnTakeReplace" Click="ClickTakeReplace" Grid.Column="0" Grid.Row="1" Style="{StaticResource SwitcherButton_Disabled}">TAKE REP</Button>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Button Grid.Row="0" Width="70" Height="50" Margin="5" Focusable="false" IsTabStop="False" Name="BtnTakeInsert" Click="ClickTakeInsert" Grid.Column="0" Style="{StaticResource SwitcherButton_Disabled}">TAKE INS</Button>
+                        <Button Grid.Row="1" Width="70" Height="50" Margin="5" Focusable="false" IsTabStop="False" Name="BtnTakeReplace" Click="ClickTakeReplace" Grid.Column="0" Style="{StaticResource SwitcherButton_Disabled}">TAKE REP</Button>
+                    </Grid>
                 </StackPanel>
+
+                <Button Grid.Row="3" Focusable="False" Name="btnDriven" Background="Orange" Foreground="Orange" Click="ClickToggleDrive">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Border CornerRadius="5" Padding="5,0,5,0" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Property=Background}" Margin="3" BorderThickness="1">
+                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Property=Foreground}">DRIVE</ContentControl>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
             </Grid>
         </Border>
     </Grid>

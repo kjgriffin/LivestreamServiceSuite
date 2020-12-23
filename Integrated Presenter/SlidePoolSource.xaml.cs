@@ -49,6 +49,7 @@ namespace Integrated_Presenter
         }
 
         private SlideType type = SlideType.Full;
+        public bool Driven { get; set; } = true;
         public SlideType Type
         {
             get => type;
@@ -312,7 +313,7 @@ namespace Integrated_Presenter
             if (loaded)
             {
                 Selected = true;
-                TakeSlidePoolSource?.Invoke(this, Slide, false);
+                TakeSlidePoolSource?.Invoke(this, Slide, false, Driven);
             }
         }
 
@@ -321,7 +322,7 @@ namespace Integrated_Presenter
             if (loaded)
             {
                 Selected = true;
-                TakeSlidePoolSource?.Invoke(this, Slide, true);
+                TakeSlidePoolSource?.Invoke(this, Slide, true, Driven);
             }
         }
 
@@ -344,8 +345,23 @@ namespace Integrated_Presenter
                 mediapreview.PlayMedia();
             });
         }
+
+        private void ClickToggleDrive(object sender, RoutedEventArgs e)
+        {
+            Driven = !Driven;
+            if (Driven)
+            {
+                btnDriven.Background = Brushes.Orange;
+                btnDriven.Foreground = Brushes.Orange;
+            }
+            else
+            {
+                btnDriven.Background = Brushes.WhiteSmoke;
+                btnDriven.Foreground = Brushes.WhiteSmoke;
+            }
+        }
     }
 
-    public delegate void TakeSlidePoolEvent(object sender, Slide s, bool replaceMode);
+    public delegate void TakeSlidePoolEvent(object sender, Slide s, bool replaceMode, bool driven);
 
 }
