@@ -1294,11 +1294,10 @@ namespace Integrated_Presenter
                     if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                     {
                         playMedia();
+                        await Task.Delay(_config?.PrerollSettings.ChromaVideoPreRoll ?? 0);
                     }
 
                     // turn on chroma key once playout has started
-                    // add some fudge factor
-                    await Task.Delay(100);
                     switcherManager?.PerformOnAirUSK1();
 
                 }
@@ -1326,6 +1325,7 @@ namespace Integrated_Presenter
                     if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                     {
                         playMedia();
+                        await Task.Delay(_config?.PrerollSettings.VideoPreRoll ?? 0);
                     }
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
@@ -1406,10 +1406,9 @@ namespace Integrated_Presenter
                     if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                     {
                         playMedia();
+                        await Task.Delay(_config?.PrerollSettings.ChromaVideoPreRoll ?? 0);
                     }
 
-                    // add fudge factor to make sure slide is updated for keying
-                    await Task.Delay(100);
                     // turn on chroma key once playout has started
                     switcherManager?.PerformOnAirUSK1();
 
@@ -1434,6 +1433,7 @@ namespace Integrated_Presenter
                     if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                     {
                         playMedia();
+                        await Task.Delay(_config?.PrerollSettings.VideoPreRoll ?? 0);
                     }
 
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
@@ -1541,10 +1541,8 @@ namespace Integrated_Presenter
                     if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                     {
                         playMedia();
+                        await Task.Delay(_config?.PrerollSettings.ChromaVideoPreRoll ?? 0);
                     }
-
-                    // add fudge factor so key slide loads
-                    await Task.Delay(100);
 
                     // turn on chroma key once playout has started
                     switcherManager?.PerformOnAirUSK1();
@@ -1568,6 +1566,7 @@ namespace Integrated_Presenter
                     if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                     {
                         playMedia();
+                        await Task.Delay(_config?.PrerollSettings.VideoPreRoll ?? 0);
                     }
 
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
@@ -2425,8 +2424,14 @@ namespace Integrated_Presenter
                         YSuppress = 0.595,
                         Lift = 0.095,
                         Narrow = 0
-                    }
+                    },
+                },
+                PrerollSettings = new PrerollSettings()
+                {
+                    VideoPreRoll = 5000,
+                    ChromaVideoPreRoll = 5000,
                 }
+
             };
 
 

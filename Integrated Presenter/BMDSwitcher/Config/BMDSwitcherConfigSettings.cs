@@ -25,6 +25,7 @@ namespace Integrated_Presenter.BMDSwitcher.Config
 
         public BMDSwitcherAudioSettings AudioSettings { get; set; } = new BMDSwitcherAudioSettings();
 
+        public PrerollSettings PrerollSettings { get; set; } = new PrerollSettings();
 
 
         public static BMDSwitcherConfigSettings Load(string filename)
