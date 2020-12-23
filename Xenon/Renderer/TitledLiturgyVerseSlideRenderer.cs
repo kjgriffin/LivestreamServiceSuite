@@ -15,6 +15,15 @@ namespace Xenon.Renderer
         public SlideLayout Layouts { get; set; }
 
 
+        static Font fregular = new Font("Arial", 36, FontStyle.Regular);
+        static Font fbold = new Font("Arial", 36, FontStyle.Bold);
+        static Font fitalic = new Font("Arial", 36, FontStyle.Italic);
+
+        static Font flsbregular = new Font("LSBSymbol", 36, FontStyle.Regular);
+        static Font flsbbold = new Font("LSBSymbol", 36, FontStyle.Bold);
+        static Font flsbitalic = new Font("LSBSymbol", 36, FontStyle.Italic);
+
+
         public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages)
         {
             RenderedSlide res = new RenderedSlide();
@@ -53,13 +62,6 @@ namespace Xenon.Renderer
 
             string lastspeaker = "";
 
-            Font fregular = new Font("Arial", 36, FontStyle.Regular);
-            Font fbold = new Font("Arial", 36, FontStyle.Bold);
-            Font fitalic = new Font("Arial", 36, FontStyle.Italic);
-
-            Font flsbregular = new Font("LSBSymbol", 36, FontStyle.Regular);
-            Font flsbbold = new Font("LSBSymbol", 36, FontStyle.Bold);
-            Font flsbitalic = new Font("LSBSymbol", 36, FontStyle.Italic);
 
 
             foreach (var line in Lines)
@@ -74,7 +76,7 @@ namespace Xenon.Renderer
                     SizeF speakersize = gfx.MeasureStringCharacters(line.Speaker + " ", flsbregular, new RectangleF(0, 0, 100, 100));
                     float jog = 0.07f * (gfx.DpiY * speakersize.Height / 72);
                     xoffset = (Layouts.TitleLiturgyVerseLayout.Textbox.Width / 2) - ((line.Width) + speakersize.Width) / 2;
-                    gfx.DrawString(line.Speaker + " ", flsbregular, Brushes.Teal, Layouts.TitleLiturgyVerseLayout.Textbox.Move(Layouts.TitleLiturgyVerseLayout.Key.Location).Move((int) xoffset, (int)(vspace + interspace * linenum)).Move(0, (int)-jog).Location, GraphicsHelper.DefaultStringFormat());
+                    gfx.DrawString(line.Speaker + " ", flsbregular, Brushes.Teal, Layouts.TitleLiturgyVerseLayout.Textbox.Move(Layouts.TitleLiturgyVerseLayout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Move(0, (int)-jog).Location, GraphicsHelper.DefaultStringFormat());
                     xoffset += speakersize.Width;
                 }
 

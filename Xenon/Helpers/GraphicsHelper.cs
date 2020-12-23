@@ -164,23 +164,54 @@ namespace Xenon.Helpers
             //format.Trimming = StringTrimming.None;
             //format.FormatFlags = StringFormatFlags.NoWrap;
             //format.LineAlignment = StringAlignment.Near;
-            StringFormat format = DefaultStringFormat();
 
             string measuretext = text;
 
             if (Regex.Match(text, "\\s").Success)
             {
+                StringFormat format = DefaultStringFormat();
                 measuretext = $"{text}.";
+                gfx = Graphics.FromHwnd((IntPtr)0);
                 format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, measuretext.Length) });
-                var rectwithextra = gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx);
+                var rectwithextra = RectangleF.Empty;
+                try
+                {
+
+                    rectwithextra = gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx);
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+
                 format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, ".".Length) });
-                var rectofextra = gfx.MeasureCharacterRanges(".", font, textbox, format)[0].GetBounds(gfx);
+
+                var rectofextra = RectangleF.Empty;
+                try
+                {
+                    rectofextra = gfx.MeasureCharacterRanges(".", font, textbox, format)[0].GetBounds(gfx);
+                }
+                catch (Exception ex)
+                {
+
+                }
+
                 return new SizeF(rectwithextra.Size.Width - rectofextra.Size.Width, font.Height);
             }
             else
             {
+                StringFormat format = DefaultStringFormat();
+                gfx = Graphics.FromHwnd((IntPtr)0);
                 format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, measuretext.Length) });
-                return gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx).Size;
+                try
+                {
+                    return gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx).Size;
+                }
+                catch (Exception ex)
+                {
+                    return SizeF.Empty;
+                }
             }
 
         }

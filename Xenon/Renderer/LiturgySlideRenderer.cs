@@ -16,6 +16,15 @@ namespace Xenon.Renderer
 
         public SlideLayout Layouts { get; set; }
 
+        static Font fregular = new Font("Arial", 36, FontStyle.Regular);
+        static Font fbold = new Font("Arial", 36, FontStyle.Bold);
+        static Font fitalic = new Font("Arial", 36, FontStyle.Italic);
+
+        static Font flsbregular = new Font("LSBSymbol", 36, FontStyle.Regular);
+        static Font flsbbold = new Font("LSBSymbol", 36, FontStyle.Bold);
+        static Font flsbitalic = new Font("LSBSymbol", 36, FontStyle.Italic);
+
+
         public RenderedSlide RenderSlide(LiturgyLayoutRenderInfo renderInfo, Slide slide, List<Compiler.XenonCompilerMessage> messages)
         {
             RenderedSlide res = new RenderedSlide();
@@ -61,13 +70,6 @@ namespace Xenon.Renderer
             string lastspeaker = "";
 
 
-            Font fregular = new Font("Arial", 36, FontStyle.Regular);
-            Font fbold = new Font("Arial", 36, FontStyle.Bold);
-            Font fitalic = new Font("Arial", 36, FontStyle.Italic);
-
-            Font flsbregular = new Font("LSBSymbol", 36, FontStyle.Regular);
-            Font flsbbold = new Font("LSBSymbol", 36, FontStyle.Bold);
-            Font flsbitalic = new Font("LSBSymbol", 36, FontStyle.Italic);
 
             foreach (var line in slide.Lines)
             {

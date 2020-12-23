@@ -46,6 +46,14 @@ namespace Xenon.LayoutEngine
 
         }
 
+        static Font fregular = new Font("Arial", 36, FontStyle.Regular);
+        static Font fbold = new Font("Arial", 36, FontStyle.Bold);
+        static Font fitalic = new Font("Arial", 36, FontStyle.Italic);
+
+        static Font flsbregular = new Font("LSBSymbol", 36, FontStyle.Regular);
+        static Font flsbbold = new Font("LSBSymbol", 36, FontStyle.Bold);
+        static Font flsbitalic = new Font("LSBSymbol", 36, FontStyle.Italic);
+
         static public List<LiturgyTextLine> LayoutLiturgyIntoTextLines(Rectangle textbox, LiturgyLine line)
         {
             List<LiturgyTextLine> textlines = new List<LiturgyTextLine>();
@@ -60,13 +68,6 @@ namespace Xenon.LayoutEngine
             float zoomx = (float)gfx.DpiX / 96f;
             float zoomy = (float)gfx.DpiY / 96f;
 
-            Font fregular = new Font("Arial", 36, FontStyle.Regular);
-            Font fbold = new Font("Arial", 36, FontStyle.Bold);
-            Font fitalic = new Font("Arial", 36, FontStyle.Italic);
-
-            Font flsbregular = new Font("LSBSymbol", 36, FontStyle.Regular);
-            Font flsbbold = new Font("LSBSymbol", 36, FontStyle.Bold);
-            Font flsbitalic = new Font("LSBSymbol", 36, FontStyle.Italic);
 
             // measure each word individually to generate list of 'words' that have a size
             foreach (var word in line.Words)
