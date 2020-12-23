@@ -2445,8 +2445,8 @@ namespace Integrated_Presenter
                 },
                 PrerollSettings = new PrerollSettings()
                 {
-                    VideoPreRoll = 5000,
-                    ChromaVideoPreRoll = 5000,
+                    VideoPreRoll = 2000,
+                    ChromaVideoPreRoll = 2000,
                 }
 
             };
