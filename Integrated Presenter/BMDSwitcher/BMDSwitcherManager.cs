@@ -751,10 +751,12 @@ namespace Integrated_Presenter
             if (_config.USKSettings.IsChroma == 1)
             {
                 ConfigureUSKforChroma();
+                ConfigureDVEPIPSettings();
             }
             else if (_config.USKSettings.IsDVE == 1)
             {
                 ConfigureUSKforPictureInPicture();
+                ConfigureUSK1ChromaSettings();
             }
         }
 
@@ -762,6 +764,13 @@ namespace Integrated_Presenter
         {
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
 
+            ConfigureUSK1ChromaSettings();
+
+            ForceStateUpdate();
+        }
+
+        private void ConfigureUSK1ChromaSettings()
+        {
             // set initial fill to slide
             _BMDSwitcherUpstreamKey1.SetInputFill(_config.USKSettings.ChromaSettings.FillSource);
 
@@ -773,8 +782,6 @@ namespace Integrated_Presenter
             chromaParameters.SetLift(_config.USKSettings.ChromaSettings.Lift);
             chromaParameters.SetNarrow(_config.USKSettings.ChromaSettings.Narrow);
 
-
-            ForceStateUpdate();
         }
 
         private void ForceStateUpdate_ChromaSettings()
@@ -802,6 +809,13 @@ namespace Integrated_Presenter
         {
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
 
+            ConfigureDVEPIPSettings();
+
+            ForceStateUpdate();
+        }
+
+        private void ConfigureDVEPIPSettings()
+        {
             // set initial fill source to center
             _BMDSwitcherUpstreamKey1.SetInputFill(_config.USKSettings.PIPSettings.DefaultFillSource);
 
@@ -839,8 +853,6 @@ namespace Integrated_Presenter
             keyframeparams.SetPositionY(_config.USKSettings.PIPSettings.KeyFrameB.PositionY);
             keyframeparams.SetSizeX(_config.USKSettings.PIPSettings.KeyFrameB.SizeX);
             keyframeparams.SetSizeY(_config.USKSettings.PIPSettings.KeyFrameB.SizeY);
-
-            ForceStateUpdate();
         }
 
         private void ForceStateUpdate_PIPSettings()
@@ -882,12 +894,13 @@ namespace Integrated_Presenter
 
             _state.DVESettings = new BMDUSKDVESettings()
             {
-                Current = new KeyFrameSettings() {
+                Current = new KeyFrameSettings()
+                {
                     PositionX = cposx,
                     PositionY = cposy,
                     SizeX = csizex,
                     SizeY = csizey
-                }    ,
+                },
                 DefaultFillSource = _config?.USKSettings.PIPSettings.DefaultFillSource ?? 0,
                 IsBordered = isbordered,
                 IsMasked = ismasked,
@@ -1195,21 +1208,24 @@ namespace Integrated_Presenter
 
         public void PerformOnAirUSK1()
         {
-            _parent.Dispatcher.Invoke(() => {
+            _parent.Dispatcher.Invoke(() =>
+            {
                 _BMDSwitcherUpstreamKey1.SetOnAir(1);
             });
         }
 
         public void PerformOffAirUSK1()
         {
-            _parent.Dispatcher.Invoke(() => {
+            _parent.Dispatcher.Invoke(() =>
+            {
                 _BMDSwitcherUpstreamKey1.SetOnAir(0);
             });
         }
 
         public void SetUSK1TypeDVE()
         {
-            _parent.Dispatcher.Invoke(() => {
+            _parent.Dispatcher.Invoke(() =>
+            {
                 _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
                 ForceStateUpdate();
             });
@@ -1217,7 +1233,8 @@ namespace Integrated_Presenter
 
         public void SetUSK1TypeChroma()
         {
-            _parent.Dispatcher.Invoke(() => {
+            _parent.Dispatcher.Invoke(() =>
+            {
                 _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
                 ForceStateUpdate();
             });
