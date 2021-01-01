@@ -800,6 +800,19 @@ namespace Integrated_Presenter
                 ToggleViewAdvancedPresentation();
             }
 
+
+            // recording
+
+            if (e.Key == Key.F5)
+            {
+                TryStartRecording();
+            }
+            
+            if (e.Key == Key.F6)
+            {
+                TryStopRecording();
+            }
+
             // audio
 
             if (e.Key == Key.A)
@@ -1462,7 +1475,7 @@ namespace Integrated_Presenter
 
         private void SlideDriveVideo_Action(Slide s)
         {
-            switch (s.Action)
+            switch (s.PreAction)
             {
                 case "t1restart":
                     if (automationtimer1enabled)
@@ -2006,7 +2019,7 @@ namespace Integrated_Presenter
                 }
             }
 
-            SlidePoolButtons[1].Selected = true;
+            SlidePoolButtons[num].Selected = true;
 
             currentpoolsource = SlidePoolButtons[num];
 
@@ -2733,6 +2746,26 @@ namespace Integrated_Presenter
                 isRecording = false;
                 UpdateRecordButtonUI();
             }
+        }
+
+        private void TryStartRecording()
+        {
+            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
+            {
+                isRecording = true;
+                mHyperdeckManager?.StartRecording();
+            }
+            UpdateRecordButtonUI();
+        }
+        
+        private void TryStopRecording()
+        {
+            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
+            {
+                isRecording = false;
+                mHyperdeckManager?.StopRecording();
+            }
+            UpdateRecordButtonUI();
         }
 
         bool automationtimer1enabled = true;
