@@ -22,7 +22,7 @@ namespace Integrated_Presenter
             Folder = folder;
 
             // get all files in directory and hope they are slides
-            var files = Directory.GetFiles(Folder).OrderBy(p => Convert.ToInt32(Regex.Match(Path.GetFileName(p), "(?<slidenum>\\d+).*").Groups["slidenum"].Value)).ToList();
+            var files = Directory.GetFiles(Folder).Where(f => Regex.Match(f, "\\d+_.*").Success).OrderBy(p => Convert.ToInt32(Regex.Match(Path.GetFileName(p), "(?<slidenum>\\d+).*").Groups["slidenum"].Value)).ToList();
             foreach (var file in files)
             {
                 var filename = Regex.Match(Path.GetFileName(file), "\\d+_(?<type>[^-]*)-?(?<action>.*)\\.(?<extension>.*)");
@@ -32,7 +32,7 @@ namespace Integrated_Presenter
 
                 // skip unrecognized files
                 List<string> valid = new List<string>() { "mp4", "png", "txt" };
-                if (!valid.Contains(extension.ToLower()))
+                if (!valid.Contains(extension.ToLower()) || name == "Resource")
                 {
                     continue;
                 }
@@ -219,20 +219,26 @@ namespace Integrated_Presenter
                     }
                     foreach (var part in parts)
                     {
-                        // parse into commands
-                        if (part.StartsWith("@"))
-                        {
-                            SetupActions.Add(AutomationAction.Parse(part.Remove(0, 1)));
-                        }
                         Title = "AUTO SEQ";
-                        if (part.StartsWith("#"))
+                        // parse into commands
+                        if (part == ";")
+                        {
+
+                        }
+                        else if (part.StartsWith("@"))
+                        {
+                            var a = AutomationAction.Parse(part.Remove(0, 1));
+                            SetupActions.Add(a);
+                        }
+                        else if (part.StartsWith("#"))
                         {
                             var title = Regex.Match(part, @"#(?<title>.*);").Groups["title"].Value;
                             Title = title;
                         }
                         else
                         {
-                            Actions.Add(AutomationAction.Parse(part));
+                            var a = AutomationAction.Parse(part);
+                            Actions.Add(a);
                         }
                     }
                 }
@@ -248,14 +254,16 @@ namespace Integrated_Presenter
     {
         public AutomationActionType Action { get; set; } = AutomationActionType.None;
         public string Message { get; set; } = "";
-        public int Data { get; set; } = 0;
+        public int DataI { get; set; } = 0;
+        public string DataS { get; set; } = "";
 
 
         public static AutomationAction Parse(string command)
         {
             AutomationAction a = new AutomationAction();
             a.Action = AutomationActionType.None;
-            a.Data = 0;
+            a.DataI = 0;
+            a.DataS = "";
             a.Message = "";
 
             if (command.StartsWith("arg0:"))
@@ -287,6 +295,21 @@ namespace Integrated_Presenter
                     case "RecordStop":
                         a.Action = AutomationActionType.RecordStop;
                         break;
+                    case "OpenAudioPlayer":
+                        a.Action = AutomationActionType.OpenAudioPlayer;
+                        break;
+                    case "PlayAuxAudio":
+                        a.Action = AutomationActionType.PlayAuxAudio;
+                        break;
+                    case "StopAuxAudio":
+                        a.Action = AutomationActionType.StopAuxAudio;
+                        break;
+                    case "PauseAuxAudio":
+                        a.Action = AutomationActionType.PauseAuxAudio;
+                        break;
+                    case "ReplayAuxAudio":
+                        a.Action = AutomationActionType.ReplayAuxAudio;
+                        break;
                 }
             }
             if (command.StartsWith("arg1:"))
@@ -300,15 +323,19 @@ namespace Integrated_Presenter
                 {
                     case "PresetSelect":
                         a.Action = AutomationActionType.PresetSelect;
-                        a.Data = Convert.ToInt32(arg1);
+                        a.DataI = Convert.ToInt32(arg1);
                         break;
                     case "ProgramSelect":
                         a.Action = AutomationActionType.ProgramSelect;
-                        a.Data = Convert.ToInt32(arg1);
+                        a.DataI = Convert.ToInt32(arg1);
                         break;
                     case "DelayMs":
                         a.Action = AutomationActionType.DelayMs;
-                        a.Data = Convert.ToInt32(arg1);
+                        a.DataI = Convert.ToInt32(arg1);
+                        break;
+                    case "LoadAudioFile":
+                        a.Action = AutomationActionType.LoadAudio;
+                        a.DataS = arg1;
                         break;
                     default:
                         break;
@@ -347,6 +374,13 @@ namespace Integrated_Presenter
 
         AutoTakePresetIfOnSlide,
 
+
+        OpenAudioPlayer,
+        LoadAudio,
+        PlayAuxAudio,
+        StopAuxAudio,
+        PauseAuxAudio,
+        ReplayAuxAudio,
 
 
         DelayMs,

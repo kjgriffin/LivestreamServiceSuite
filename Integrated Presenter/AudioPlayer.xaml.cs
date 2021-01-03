@@ -64,27 +64,37 @@ namespace Integrated_Presenter
             if (ofd.ShowDialog() == true)
             {
                 string filename = ofd.FileName;
-                try
-                {
-                    tbFileName.Text = filename;
-                    AudioSource = new Uri(filename);
-                    audioplayer.Source = AudioSource;
-                }
-                catch (Exception)
-                {
-                }
-                Dispatcher.Invoke(() =>
-                {
-                    StopAudio();
-                    PlaybackTimer.Interval = 500;
-                    PlaybackTimer.Start();
-                    BtnPlayAudio.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                    BtnPauseAudio.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                    BtnStopAudio.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                    BtnRestartAudio.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                });
-
+                openAudio(filename);
             }
+        }
+
+        private void openAudio(string filename)
+        {
+            try
+            {
+                tbFileName.Text = filename;
+                AudioSource = new Uri(filename);
+                audioplayer.Source = AudioSource;
+            }
+            catch (Exception)
+            {
+            }
+            Dispatcher.Invoke(() =>
+            {
+                StopAudio();
+                PlaybackTimer.Interval = 500;
+                PlaybackTimer.Start();
+                BtnPlayAudio.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                BtnPauseAudio.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                BtnStopAudio.Style = Application.Current.FindResource("SwitcherButton") as Style;
+                BtnRestartAudio.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            });
+
+        }
+
+        public void OpenAudio(string filename)
+        {
+            openAudio(filename);
         }
 
         private void ClickRestartAudio(object sender, RoutedEventArgs e)

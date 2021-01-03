@@ -1267,13 +1267,13 @@ namespace Integrated_Presenter
                     case AutomationActionType.PresetSelect:
                         Dispatcher.Invoke(() =>
                         {
-                            switcherManager?.PerformPresetSelect(task.Data);
+                            switcherManager?.PerformPresetSelect(task.DataI);
                         });
                         break;
                     case AutomationActionType.ProgramSelect:
                         Dispatcher.Invoke(() =>
                         {
-                            switcherManager?.PerformProgramSelect(task.Data);
+                            switcherManager?.PerformProgramSelect(task.DataI);
                         });
                         break;
                     case AutomationActionType.AutoTrans:
@@ -1342,8 +1342,50 @@ namespace Integrated_Presenter
                     case AutomationActionType.RecordStop:
                         TryStopRecording();
                         break;
+
+
+                    case AutomationActionType.OpenAudioPlayer:
+                        Dispatcher.Invoke(() =>
+                        {
+                            OpenAudioPlayer();
+                            Focus();
+                        });
+                        break;
+                    case AutomationActionType.LoadAudio:
+                        string filename = Path.Join(Presentation.Folder, task.DataS);
+                        Dispatcher.Invoke(() =>
+                        {
+                            audioPlayer.OpenAudio(filename);
+                        });
+                        break;
+                    case AutomationActionType.PlayAuxAudio:
+                        Dispatcher.Invoke(() =>
+                        {
+                            audioPlayer.PlayAudio();
+                        });
+                        break;
+                    case AutomationActionType.StopAuxAudio:
+                        Dispatcher.Invoke(() =>
+                        {
+                            audioPlayer.StopAudio();
+                        });
+                        break;
+                    case AutomationActionType.PauseAuxAudio:
+                        Dispatcher.Invoke(() =>
+                        {
+                            audioPlayer.PauseAudio();
+                        });
+                        break;
+                    case AutomationActionType.ReplayAuxAudio:
+                        Dispatcher.Invoke(() =>
+                        {
+                            audioPlayer.RestartAudio();
+                        });
+                        break;
+
+
                     case AutomationActionType.DelayMs:
-                        await Task.Delay(task.Data);
+                        await Task.Delay(task.DataI);
                         break;
                     case AutomationActionType.None:
                         break;
