@@ -21,7 +21,7 @@
             </StackPanel>
         </Viewbox>
         <Rectangle Name="ActionIndicator" Fill="Orange" Panel.ZIndex="10" Height="50" VerticalAlignment="Top"></Rectangle>
-        <Viewbox VerticalAlignment="Top" Panel.ZIndex="10">
+        <Viewbox VerticalAlignment="Center" Panel.ZIndex="10">
             <TextBlock Margin="1" Name="SequenceLabel" Foreground="Black" HorizontalAlignment="Center">AUTO SEQ</TextBlock>
         </Viewbox>
     </Grid>

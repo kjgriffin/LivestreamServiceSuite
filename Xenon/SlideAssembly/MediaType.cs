@@ -5,5 +5,7 @@
         Video,
         Image,
         Empty,
+        Text,
+        Audio,
     }
 }

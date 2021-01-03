@@ -24,6 +24,8 @@ namespace Xenon.Renderer
         AnthemTitleSlideRenderer atsr = new AnthemTitleSlideRenderer();
         TwoPartTitleSlideRenderer tpsr = new TwoPartTitleSlideRenderer();
         TitledLiturgyVerseSlideRenderer tlvsr = new TitledLiturgyVerseSlideRenderer();
+        CopySlideRenderer csr = new CopySlideRenderer();
+        ScriptRenderer sr = new ScriptRenderer();
 
         public SlideRenderer(Project proj)
         {
@@ -85,6 +87,10 @@ namespace Xenon.Renderer
                     return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.Prefab:
                     return psr.RenderSlide(slide, Messages);
+                case SlideFormat.Script:
+                    return sr.RenderSlide(slide, Messages);
+                case SlideFormat.ResourceCopy:
+                    return csr.RenderSlide(slide, Messages);
                 default:
                     return RenderedSlide.Default();
             }

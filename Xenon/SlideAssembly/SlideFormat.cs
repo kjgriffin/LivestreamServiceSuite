@@ -22,6 +22,9 @@ namespace Xenon.SlideAssembly
         HymnTextVerse,
         Prefab,
 
+        Script,
+        ResourceCopy,
+
 
     }
 }

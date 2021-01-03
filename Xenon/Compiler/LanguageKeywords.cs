@@ -31,6 +31,8 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.ApostlesCreed] = "apostlescreed", 
             [LanguageKeywordCommand.NiceneCreed] = "nicenecreed", 
             [LanguageKeywordCommand.LordsPrayer] = "lordsprayer", 
+            [LanguageKeywordCommand.Resource] = "resource", 
+            [LanguageKeywordCommand.Script] = "script", 
         };
 
 
@@ -60,6 +62,8 @@ namespace Xenon.Compiler
         ApostlesCreed,
         NiceneCreed,
         LordsPrayer,
+        Resource,
+        Script,
     }
 
 }

@@ -28,6 +28,21 @@ namespace Xenon.Renderer
                     string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.mp4");
                     File.Copy(rs.AssetPath, filename);
                 }
+                else if (rs.MediaType == MediaType.Audio)
+                {
+                    // for now only allow audio files to be rendered as resource
+                    string filename = Path.Join(directory, $"Resource_{rs.Name}.{rs.CopyExtension}");
+                    File.Copy(rs.AssetPath, filename);
+                }
+                else if (rs.MediaType == MediaType.Text)
+                {
+                    // output text file
+                    string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.txt");
+                    using (StreamWriter sw = new StreamWriter(filename, false))
+                    {
+                        sw.Write(rs.Text);
+                    }
+                }
                 
             } 
         }

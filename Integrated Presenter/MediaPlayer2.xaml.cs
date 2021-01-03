@@ -212,7 +212,10 @@ namespace Integrated_Presenter
                     string description = "";
                     foreach (var action in slide.Actions)
                     {
-                        description += action?.Message + Environment.NewLine;
+                        if (action?.Message != "")
+                        {
+                            description += action.Message + Environment.NewLine;
+                        }
                     }
                     MainMessages.Text = description.Trim();
                     MainMessages.Visibility = Visibility.Visible;
@@ -220,7 +223,10 @@ namespace Integrated_Presenter
                     description = "";
                     foreach (var action in slide.SetupActions)
                     {
-                        description += action?.Message + Environment.NewLine;
+                        if (action?.Message != "")
+                        {
+                            description += action.Message + Environment.NewLine;
+                        }
                     }
                     SetupMessages.Text = description.Trim();
                     SetupMessages.Visibility = Visibility.Visible;

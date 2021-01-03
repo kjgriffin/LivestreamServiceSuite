@@ -217,9 +217,9 @@ namespace Integrated_Presenter
                         var commands = text.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(s => (s + ";").Trim());
                         parts = commands.ToList();
                     }
+                    Title = "AUTO SEQ";
                     foreach (var part in parts)
                     {
-                        Title = "AUTO SEQ";
                         // parse into commands
                         if (part == ";")
                         {
@@ -272,7 +272,7 @@ namespace Integrated_Presenter
                 string cmd = res.Groups["commandname"].Value;
                 string msg = res.Groups["msg"].Value;
                 a.Message = msg;
-                switch(cmd)
+                switch (cmd)
                 {
                     case "AutoTrans":
                         a.Action = AutomationActionType.AutoTrans;
