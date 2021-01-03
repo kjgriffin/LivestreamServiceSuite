@@ -260,7 +260,7 @@ namespace Integrated_Presenter
                             break;
                     }
                     Source = new Uri(ofd.FileName);
-                    Slide = new Slide() { Action = action, Guid = Guid.NewGuid(), Source = ofd.FileName, Type = Type, };
+                    Slide = new Slide() { PreAction = action, Guid = Guid.NewGuid(), Source = ofd.FileName, Type = Type, };
                 }
                 else
                 {
@@ -271,7 +271,7 @@ namespace Integrated_Presenter
                     {
                         Type = SlideType.Video;
                     }
-                    Slide = new Slide() { Action = "", Guid = Guid.NewGuid(), Source = ofd.FileName, Type = Type };
+                    Slide = new Slide() { PreAction = "", Guid = Guid.NewGuid(), Source = ofd.FileName, Type = Type };
                 }
 
                 mediapreview.SetMedia(Source, Type);

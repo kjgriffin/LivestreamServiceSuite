@@ -131,6 +131,10 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             {
                 control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/greenscreen1.png"));
             }
+            else if (slide.Type == SlideType.Action)
+            {
+                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+            }
             else
             {
                 control.Source = new BitmapImage(new Uri(slide.Source));

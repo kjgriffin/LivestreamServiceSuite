@@ -106,6 +106,11 @@ namespace Integrated_Presenter
             AfterPreview.AutoSilentReplay = true;
             PrevPreview.AutoSilentReplay = true;
 
+            NextPreview.ShowBlackForActions = false;
+            AfterPreview.ShowBlackForActions = false;
+            PrevPreview.ShowBlackForActions = false;
+            CurrentPreview.ShowBlackForActions = false;
+
             CurrentPreview.OnMediaPlaybackTimeUpdate += CurrentPreview_OnMediaPlaybackTimeUpdate;
             NextPreview.OnMediaLoaded += NextPreview_OnMediaLoaded;
             AfterPreview.OnMediaLoaded += AfterPreview_OnMediaLoaded;
@@ -807,7 +812,7 @@ namespace Integrated_Presenter
             {
                 TryStartRecording();
             }
-            
+
             if (e.Key == Key.F6)
             {
                 TryStopRecording();
@@ -1231,12 +1236,138 @@ namespace Integrated_Presenter
 
         #region SlideDriveVideo
 
+        private async Task ExecuteSetupActions(Slide s)
+        {
+            await Task.Run(async () =>
+            {
+                foreach (var task in s.SetupActions)
+                {
+                    await PerformAutomationAction(task);
+                }
+            });
+        }
+
+        private async Task ExecuteActionSlide(Slide s)
+        {
+            await Task.Run(async () =>
+            {
+                foreach (var task in s.Actions)
+                {
+                    await PerformAutomationAction(task);
+                }
+            });
+        }
+
+        private async Task PerformAutomationAction(AutomationAction task)
+        {
+            await Task.Run(async () =>
+            {
+                switch (task.Action)
+                {
+                    case AutomationActionType.PresetSelect:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.PerformPresetSelect(task.Data);
+                        });
+                        break;
+                    case AutomationActionType.ProgramSelect:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.PerformProgramSelect(task.Data);
+                        });
+                        break;
+                    case AutomationActionType.AutoTrans:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.PerformAutoTransition();
+                        });
+                        break;
+                    case AutomationActionType.CutTrans:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.PerformCutTransition();
+                        });
+                        break;
+                    case AutomationActionType.AutoTakePresetIfOnSlide:
+                        // Take Preset if program source is fed from slides
+                        if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformAutoTransition();
+                            });
+                            await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                        }
+                        break;
+                    case AutomationActionType.DSK1On:
+                        if (!switcherState.DSK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformToggleDSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.DSK1Off:
+                        if (switcherState.DSK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformToggleDSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.DSK1FadeOn:
+                        break;
+                    case AutomationActionType.DSK1FadeOff:
+                        if (switcherState.DSK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformAutoOffAirDSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.DSK2On:
+                        break;
+                    case AutomationActionType.DSK2Off:
+                        break;
+                    case AutomationActionType.DSK2FadeOn:
+                        break;
+                    case AutomationActionType.DSK2FadeOff:
+                        break;
+                    case AutomationActionType.RecordStart:
+                        TryStartRecording();
+                        break;
+                    case AutomationActionType.RecordStop:
+                        TryStopRecording();
+                        break;
+                    case AutomationActionType.DelayMs:
+                        await Task.Delay(task.Data);
+                        break;
+                    case AutomationActionType.None:
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
 
         private async void SlideDriveVideo_Next()
         {
             if (Presentation?.Next != null)
             {
-                if (Presentation.Next.Type == SlideType.Liturgy)
+                if (Presentation.Next.Type == SlideType.Action)
+                {
+                    // run stetup actions
+                    await ExecuteSetupActions(Presentation.Next);
+                    // Perform slide actions
+                    Presentation.NextSlide();
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                    await ExecuteActionSlide(Presentation.EffectiveCurrent);
+                }
+                else if (Presentation.Next.Type == SlideType.Liturgy)
                 {
                     // turn of usk1 if chroma keyer
                     if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
@@ -1367,7 +1498,18 @@ namespace Integrated_Presenter
         {
             if (s != null && Presentation != null)
             {
-                if (s.Type == SlideType.Liturgy)
+                if (s.Type == SlideType.Action)
+                {
+                    // Run Setup Actions
+                    await ExecuteSetupActions(s);
+                    // Execute Slide Actions
+                    Presentation.Override = s;
+                    Presentation.OverridePres = true;
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                    await ExecuteActionSlide(s);
+                }
+                else if (s.Type == SlideType.Liturgy)
                 {
                     // turn of usk1 if chroma keyer
                     if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
@@ -1506,7 +1648,16 @@ namespace Integrated_Presenter
             {
                 DisableSlidePoolOverrides();
                 currentpoolsource = null;
-                if (Presentation.EffectiveCurrent.Type == SlideType.Liturgy)
+                if (Presentation.EffectiveCurrent.Type == SlideType.Action)
+                {
+                    // Re-run setup actions
+                    await ExecuteSetupActions(Presentation.EffectiveCurrent);
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                    // Run Actions
+                    await ExecuteActionSlide(Presentation.EffectiveCurrent);
+                }
+                else if (Presentation.EffectiveCurrent.Type == SlideType.Liturgy)
                 {
                     // turn of usk1 if chroma keyer
                     if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
@@ -2757,7 +2908,7 @@ namespace Integrated_Presenter
             }
             UpdateRecordButtonUI();
         }
-        
+
         private void TryStopRecording()
         {
             if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)

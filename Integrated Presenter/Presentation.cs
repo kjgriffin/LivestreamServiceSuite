@@ -25,9 +25,18 @@ namespace Integrated_Presenter
             var files = Directory.GetFiles(Folder).OrderBy(p => Convert.ToInt32(Regex.Match(Path.GetFileName(p), "(?<slidenum>\\d+).*").Groups["slidenum"].Value)).ToList();
             foreach (var file in files)
             {
-                var filename = Regex.Match(Path.GetFileName(file), "\\d+_(?<type>[^-]*)-?(?<action>.*)\\..*");
+                var filename = Regex.Match(Path.GetFileName(file), "\\d+_(?<type>[^-]*)-?(?<action>.*)\\.(?<extension>.*)");
                 string name = filename.Groups["type"].Value;
                 string action = filename.Groups["action"].Value;
+                string extension = filename.Groups["extension"].Value;
+
+                // skip unrecognized files
+                List<string> valid = new List<string>() { "mp4", "png", "txt" };
+                if (!valid.Contains(extension.ToLower()))
+                {
+                    continue;
+                }
+
                 SlideType type;
                 // look at the name to determine the type
                 switch (name)
@@ -47,11 +56,18 @@ namespace Integrated_Presenter
                     case "ChromaKeyStill":
                         type = SlideType.ChromaKeyStill;
                         break;
+                    case "Action":
+                        type = SlideType.Action;
+                        break;
                     default:
                         type = SlideType.Empty;
                         break;
                 }
-                Slide s = new Slide() { Source = file, Type = type, Action = action };
+                Slide s = new Slide() { Source = file, Type = type, PreAction = action };
+                if (s.Type == SlideType.Action)
+                {
+                    s.LoadActions();
+                }
                 Slides.Add(s);
             }
 
@@ -182,9 +198,163 @@ namespace Integrated_Presenter
     {
         public SlideType Type { get; set; }
         public string Source { get; set; }
-        public string Action { get; set; }
+        public string PreAction { get; set; }
         public Guid Guid { get; set; } = Guid.NewGuid();
+        public List<AutomationAction> SetupActions { get; set; } = new List<AutomationAction>();
+        public List<AutomationAction> Actions { get; set; } = new List<AutomationAction>();
+        public string Title { get; set; } = "";
+
+        public void LoadActions()
+        {
+            if (Type == SlideType.Action)
+            {
+                try
+                {
+                    List<string> parts = new List<string>();
+                    using (StreamReader sr = new StreamReader(Source))
+                    {
+                        string text = sr.ReadToEnd();
+                        var commands = text.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(s => (s + ";").Trim());
+                        parts = commands.ToList();
+                    }
+                    foreach (var part in parts)
+                    {
+                        // parse into commands
+                        if (part.StartsWith("@"))
+                        {
+                            SetupActions.Add(AutomationAction.Parse(part.Remove(0, 1)));
+                        }
+                        Title = "AUTO SEQ";
+                        if (part.StartsWith("#"))
+                        {
+                            var title = Regex.Match(part, @"#(?<title>.*);").Groups["title"].Value;
+                            Title = title;
+                        }
+                        else
+                        {
+                            Actions.Add(AutomationAction.Parse(part));
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+
     }
+
+    public class AutomationAction
+    {
+        public AutomationActionType Action { get; set; } = AutomationActionType.None;
+        public string Message { get; set; } = "";
+        public int Data { get; set; } = 0;
+
+
+        public static AutomationAction Parse(string command)
+        {
+            AutomationAction a = new AutomationAction();
+            a.Action = AutomationActionType.None;
+            a.Data = 0;
+            a.Message = "";
+
+            if (command.StartsWith("arg0:"))
+            {
+                var res = Regex.Match(command, @"arg0:(?<commandname>.*?)(\[(?<msg>.*)\])?;");
+                string cmd = res.Groups["commandname"].Value;
+                string msg = res.Groups["msg"].Value;
+                a.Message = msg;
+                switch(cmd)
+                {
+                    case "AutoTrans":
+                        a.Action = AutomationActionType.AutoTrans;
+                        break;
+                    case "CutTrans":
+                        a.Action = AutomationActionType.CutTrans;
+                        break;
+                    case "AutoTakePresetIfOnSlide":
+                        a.Action = AutomationActionType.AutoTakePresetIfOnSlide;
+                        break;
+                    case "DSK1FadeOn":
+                        a.Action = AutomationActionType.DSK1FadeOn;
+                        break;
+                    case "DSK1FadeOff":
+                        a.Action = AutomationActionType.DSK1FadeOff;
+                        break;
+                    case "RecordStart":
+                        a.Action = AutomationActionType.RecordStart;
+                        break;
+                    case "RecordStop":
+                        a.Action = AutomationActionType.RecordStop;
+                        break;
+                }
+            }
+            if (command.StartsWith("arg1:"))
+            {
+                var res = Regex.Match(command, @"arg1:(?<commandname>.*?)\((?<param>.*)\)(\[(?<msg>.*)\])?;");
+                string cmd = res.Groups["commandname"].Value;
+                string arg1 = res.Groups["param"].Value;
+                string msg = res.Groups["msg"].Value;
+                a.Message = msg;
+                switch (cmd)
+                {
+                    case "PresetSelect":
+                        a.Action = AutomationActionType.PresetSelect;
+                        a.Data = Convert.ToInt32(arg1);
+                        break;
+                    case "ProgramSelect":
+                        a.Action = AutomationActionType.ProgramSelect;
+                        a.Data = Convert.ToInt32(arg1);
+                        break;
+                    case "DelayMs":
+                        a.Action = AutomationActionType.DelayMs;
+                        a.Data = Convert.ToInt32(arg1);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+
+            return a;
+        }
+
+    }
+
+    public enum AutomationActionType
+    {
+        PresetSelect,
+        ProgramSelect,
+
+        AutoTrans,
+        CutTrans,
+
+        DSK1On,
+        DSK1Off,
+        DSK1FadeOn,
+        DSK1FadeOff,
+
+        DSK2On,
+        DSK2Off,
+        DSK2FadeOn,
+        DSK2FadeOff,
+
+        USK1Off,
+        USK1On,
+
+        RecordStart,
+        RecordStop,
+
+        AutoTakePresetIfOnSlide,
+
+
+
+        DelayMs,
+
+        None,
+
+    }
+
 
     public enum SlideType
     {
@@ -193,6 +363,7 @@ namespace Integrated_Presenter
         Video,
         ChromaKeyVideo,
         ChromaKeyStill,
+        Action,
         Empty
     }
 

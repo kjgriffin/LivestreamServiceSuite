@@ -7,8 +7,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close"></MediaElement>
-        <Image Name="imagePlayer"></Image>
-        <Rectangle Name="BlackSource" Fill="Black"></Rectangle>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close" Grid.RowSpan="2"></MediaElement>
+        <Image Name="imagePlayer" Grid.RowSpan="2"></Image>
+        <Rectangle Name="BlackSource" Fill="Black" Grid.RowSpan="2"></Rectangle>
+        <Viewbox Grid.Row="1" Margin="10">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Name="SetupMessages" Foreground="LightGreen" Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                <TextBlock Name="MainMessages" Foreground="Orange" Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            </StackPanel>
+        </Viewbox>
+        <Rectangle Name="ActionIndicator" Fill="Orange" Panel.ZIndex="10" Height="50" VerticalAlignment="Top"></Rectangle>
+        <Viewbox VerticalAlignment="Top" Panel.ZIndex="10">
+            <TextBlock Margin="1" Name="SequenceLabel" Foreground="Black" HorizontalAlignment="Center">AUTO SEQ</TextBlock>
+        </Viewbox>
     </Grid>
 </UserControl>
