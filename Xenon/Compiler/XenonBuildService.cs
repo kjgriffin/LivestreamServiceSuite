@@ -59,7 +59,7 @@ namespace Xenon.Compiler
 
                     Parallel.ForEach(project.Slides, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, (Slide s) =>
                      {
-                         slides.Add(sr.RenderSlide(s.Number, Messages));
+                         slides.Add(sr.RenderSlide(s, Messages));
                          Interlocked.Increment(ref completedslidecount);
                          int prog = (int)(completedslidecount / (double)project.Slides.Count * 100);
                          progress.Report(prog);

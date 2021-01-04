@@ -24,24 +24,28 @@ namespace Xenon.Compiler
 
         public void Generate(Project project, IXenonASTElement _Parent)
         {
-            // create a video slide
-            Slide script = new Slide
+            Slide res = new Slide
             {
                 Name = "UNNAMED_resource",
                 Number = -1, // Slide is not given a number since is not an ordered slide
                 Lines = new List<SlideLine>()
             };
-            if (Assettype != "audio")
+            res.Format = SlideFormat.ResourceCopy;
+            res.Asset = project.Assets.Find(p => p.Name == AssetName).CurrentPath;
+            if (Assettype == "audio")
             {
-                // TODO: implement other types
-                // yeah, don't bother making a slide for this
-                return;
+                res.MediaType = MediaType.Audio;
             }
-            script.Format = SlideFormat.ResourceCopy;
-            script.Asset = AssetName;
-            script.MediaType = MediaType.Audio;
+            if (Assettype == "video")
+            {
+                res.MediaType = MediaType.Video;
+            }
+            if (Assettype == "image")
+            {
+                res.MediaType = MediaType.Image;
+            }
 
-            project.Slides.Add(script);
+            project.Slides.Add(res);
         }
 
         public void GenerateDebug(Project project)

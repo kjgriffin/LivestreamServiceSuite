@@ -18,9 +18,10 @@ namespace Xenon.Renderer
             RenderedSlide res = new RenderedSlide();
             // only do audio for now
             res.MediaType = MediaType.Audio;
-            res.RenderedAs = "Liturgy";
+            res.RenderedAs = "Resource";
             res.Name = Path.GetFileNameWithoutExtension(slide.Asset);
             res.CopyExtension = Path.GetExtension(slide.Asset);
+            res.AssetPath = slide.Asset;
             return res;
         }
 

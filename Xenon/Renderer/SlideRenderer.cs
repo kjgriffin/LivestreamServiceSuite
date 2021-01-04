@@ -42,19 +42,14 @@ namespace Xenon.Renderer
             tlvsr.Layouts = proj.Layouts;
         }
 
-        public RenderedSlide RenderSlide(int slidenum, List<XenonCompilerMessage> Messages)
+        public RenderedSlide RenderSlide(Slide s, List<XenonCompilerMessage> Messages)
         {
-            if (slidenum >= _project.Slides.Count)
-            {
-                throw new ArgumentOutOfRangeException("slidenum");
-                //return RenderedSlide.Default();
-            }
-            var s = RenderSlide(_project.Slides[slidenum], Messages);
-            s.Number = slidenum;
-            return s;
+            var res = _RenderSlide(s, Messages);
+            res.Number = s.Number;
+            return res;
         }
 
-        public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> Messages)
+        private RenderedSlide _RenderSlide(Slide slide, List<XenonCompilerMessage> Messages)
         {
             // use an appropriate slide render for the task
             switch (slide.Format)

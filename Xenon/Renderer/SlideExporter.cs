@@ -16,7 +16,15 @@ namespace Xenon.Renderer
             {
                 SlideRenderer slideRenderer = new SlideRenderer(proj);
                 // render the slide
-                RenderedSlide rs = slideRenderer.RenderSlide(slide.Number, messages);
+                RenderedSlide rs = slideRenderer.RenderSlide(slide, messages);
+
+                if (rs.RenderedAs == "Resource")
+                {
+                    // for now only allow audio files to be rendered as resource
+                    string filename = Path.Join(directory, $"Resource_{rs.Name}{rs.CopyExtension}");
+                    File.Copy(rs.AssetPath, filename, true);
+                    return;
+                }
 
                 if (rs.MediaType == MediaType.Image)
                 {
@@ -26,12 +34,6 @@ namespace Xenon.Renderer
                 else if (rs.MediaType == MediaType.Video)
                 {
                     string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.mp4");
-                    File.Copy(rs.AssetPath, filename);
-                }
-                else if (rs.MediaType == MediaType.Audio)
-                {
-                    // for now only allow audio files to be rendered as resource
-                    string filename = Path.Join(directory, $"Resource_{rs.Name}.{rs.CopyExtension}");
                     File.Copy(rs.AssetPath, filename);
                 }
                 else if (rs.MediaType == MediaType.Text)
