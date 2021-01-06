@@ -183,6 +183,20 @@ namespace Integrated_Presenter
             }
         }
 
+        public void MuteMedia()
+        {
+            mediaPlayerA.videoPlayer.Volume = 0;
+            mediaPlayerB.videoPlayer.Volume = 0;
+            mediaPlayerC.videoPlayer.Volume = 0;
+        }
+
+        public void UnMuteMedia()
+        {
+            mediaPlayerA.videoPlayer.Volume = 1;
+            mediaPlayerB.videoPlayer.Volume = 1;
+            mediaPlayerC.videoPlayer.Volume = 1;
+        }
+
 
         public void ShowSlide()
         {

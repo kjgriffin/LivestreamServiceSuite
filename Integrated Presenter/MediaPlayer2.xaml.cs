@@ -45,13 +45,41 @@ namespace Integrated_Presenter
             videoPlayer.MediaOpened += VideoPlayer_MediaOpened;
             videoPlayer.MediaEnded += VideoPlayer_MediaEnded;
 
+            MuteIcon.Visibility = Visibility.Hidden;
+        }
+
+        private bool showingmute = false;
+
+        public void MarkMuted()
+        {
+            showingmute = true;
+            if (ShowIfMute)
+            {
+                MuteIcon.Visibility = Visibility.Visible;
+            }
+        }
+
+        public void MarkUnMuted()
+        {
+            showingmute = false;
+            MuteIcon.Visibility = Visibility.Hidden;
+        }
+
+        private void Mute()
+        {
+            videoPlayer.Volume = 0;
+        }
+
+        private void UnMute()
+        {
+            videoPlayer.Volume = 1;
         }
 
         private void VideoPlayer_MediaEnded(object sender, RoutedEventArgs e)
         {
             if (AutoSilentReplay)
             {
-                videoPlayer.Volume = 0;
+                Mute();
                 ReplayMedia();
             }
         }
@@ -59,13 +87,15 @@ namespace Integrated_Presenter
         public bool AutoSilentReplay { get; set; } = false;
         public bool AutoSilentPlayback { get; set; } = false;
 
+        public bool ShowIfMute { get; set; } = false;
+
         public bool ShowBlackForActions { get; set; } = true;
 
         private void VideoPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
             if (AutoSilentPlayback)
             {
-                videoPlayer.Volume = 0;
+                Mute();
                 PlayMedia();
             }
             OnMediaLoaded?.Invoke(this, new MediaPlaybackTimeEventArgs(videoPlayer.Position, videoPlayer.NaturalDuration.TimeSpan, (videoPlayer.NaturalDuration - videoPlayer.Position).TimeSpan));

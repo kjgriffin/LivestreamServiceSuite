@@ -40,6 +40,7 @@
     <None Remove="Icons\keyframepushright.png" />
     <None Remove="Icons\keyframetobox.png" />
     <None Remove="Icons\keyframetofill.png" />
+    <None Remove="Icons\Mute2.png" />
     <None Remove="version.json" />
   </ItemGroup>
 
@@ -104,6 +105,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\keyframetofill.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Mute2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <EmbeddedResource Include="version.json">

@@ -110,6 +110,7 @@ namespace Integrated_Presenter
             AfterPreview.ShowBlackForActions = false;
             PrevPreview.ShowBlackForActions = false;
             CurrentPreview.ShowBlackForActions = false;
+            CurrentPreview.ShowIfMute = true;
 
             CurrentPreview.OnMediaPlaybackTimeUpdate += CurrentPreview_OnMediaPlaybackTimeUpdate;
             NextPreview.OnMediaLoaded += NextPreview_OnMediaLoaded;
@@ -846,6 +847,19 @@ namespace Integrated_Presenter
                 }
             }
 
+            if (e.Key == Key.M)
+            {
+                MediaMuted = !MediaMuted;
+                if (MediaMuted)
+                {
+                    muteMedia();
+                }
+                else
+                {
+                    unmuteMedia();
+                }
+            }
+
             // D1-D8 + (LShift)
             #region program/preset bus
             if (e.Key == Key.D1)
@@ -1344,6 +1358,13 @@ namespace Integrated_Presenter
                         }
                         break;
                     case AutomationActionType.DSK1FadeOn:
+                        if (!switcherState.DSK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformAutoOnAirDSK1();
+                            });
+                        }
                         break;
                     case AutomationActionType.DSK1FadeOff:
                         if (switcherState.DSK1OnAir)
@@ -1355,12 +1376,40 @@ namespace Integrated_Presenter
                         }
                         break;
                     case AutomationActionType.DSK2On:
+                        if (!switcherState.DSK2OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformToggleDSK2();
+                            });
+                        }
                         break;
                     case AutomationActionType.DSK2Off:
+                        if (switcherState.DSK2OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformToggleDSK2();
+                            });
+                        }
                         break;
                     case AutomationActionType.DSK2FadeOn:
+                        if (!switcherState.DSK2OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformAutoOnAirDSK2();
+                            });
+                        }
                         break;
                     case AutomationActionType.DSK2FadeOff:
+                        if (switcherState.DSK2OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformAutoOffAirDSK2();
+                            });
+                        }
                         break;
                     case AutomationActionType.RecordStart:
                         Dispatcher.Invoke(() =>
@@ -1385,6 +1434,36 @@ namespace Integrated_Presenter
                         }
                         break;
 
+                    case AutomationActionType.USK1On:
+                        if (!switcherState.USK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformOnAirUSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.USK1Off:
+                        if (switcherState.USK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformOffAirUSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.USK1SetTypeChroma:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.SetUSK1TypeChroma();
+                        });
+                        break;
+                    case AutomationActionType.USK1SetTypeDVE:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.SetUSK1TypeDVE();
+                        });
+                        break;
 
                     case AutomationActionType.OpenAudioPlayer:
                         Dispatcher.Invoke(() =>
@@ -1425,6 +1504,43 @@ namespace Integrated_Presenter
                         });
                         break;
 
+                    case AutomationActionType.PlayMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            playMedia();
+                        });
+                        break;
+                    case AutomationActionType.PauseMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            pauseMedia();
+                        });
+                        break;
+                    case AutomationActionType.StopMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            stopMedia();
+                        });
+                        break;
+                    case AutomationActionType.RestartMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            restartMedia();
+                        });
+                        break;
+                    case AutomationActionType.MuteMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            muteMedia();
+                        });
+                        break;
+                    case AutomationActionType.UnMuteMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            unmuteMedia();
+                        });
+                        break;
+
 
                     case AutomationActionType.DelayMs:
                         await Task.Delay(task.DataI);
@@ -1435,6 +1551,22 @@ namespace Integrated_Presenter
                         break;
                 }
             });
+        }
+
+        private bool MediaMuted = false;
+
+        private void unmuteMedia()
+        {
+            MediaMuted = false;
+            CurrentPreview.MarkUnMuted();
+            _display?.UnMuteMedia();
+        }
+
+        private void muteMedia()
+        {
+            MediaMuted = true;
+            CurrentPreview.MarkMuted();
+            _display?.MuteMedia();
         }
 
         private async void SlideDriveVideo_Next()

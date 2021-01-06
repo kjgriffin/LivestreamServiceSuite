@@ -291,18 +291,53 @@ namespace Integrated_Presenter
                     case "AutoTakePresetIfOnSlide":
                         a.Action = AutomationActionType.AutoTakePresetIfOnSlide;
                         break;
+
+                    case "DSK1On":
+                        a.Action = AutomationActionType.DSK1On;
+                        break;
+                    case "DSK1Off":
+                        a.Action = AutomationActionType.DSK1Off;
+                        break;
                     case "DSK1FadeOn":
                         a.Action = AutomationActionType.DSK1FadeOn;
                         break;
                     case "DSK1FadeOff":
                         a.Action = AutomationActionType.DSK1FadeOff;
                         break;
+
+                    case "DSK2On":
+                        a.Action = AutomationActionType.DSK2On;
+                        break;
+                    case "DSK2Off":
+                        a.Action = AutomationActionType.DSK2Off;
+                        break;
+                    case "DSK2FadeOn":
+                        a.Action = AutomationActionType.DSK2FadeOn;
+                        break;
+                    case "DSK2FadeOff":
+                        a.Action = AutomationActionType.DSK2FadeOff;
+                        break;
+
+                    case "USK1On":
+                        a.Action = AutomationActionType.USK1On;
+                        break;
+                    case "USK1Off":
+                        a.Action = AutomationActionType.USK1Off;
+                        break;
+                    case "USK1SetTypeChroma":
+                        a.Action = AutomationActionType.USK1SetTypeChroma;
+                        break;
+                    case "USK1SetTypeDVE":
+                        a.Action = AutomationActionType.USK1SetTypeDVE;
+                        break;
+
                     case "RecordStart":
                         a.Action = AutomationActionType.RecordStart;
                         break;
                     case "RecordStop":
                         a.Action = AutomationActionType.RecordStop;
                         break;
+
                     case "OpenAudioPlayer":
                         a.Action = AutomationActionType.OpenAudioPlayer;
                         break;
@@ -318,6 +353,26 @@ namespace Integrated_Presenter
                     case "ReplayAuxAudio":
                         a.Action = AutomationActionType.ReplayAuxAudio;
                         break;
+
+                    case "PlayMedia":
+                        a.Action = AutomationActionType.PlayMedia;
+                        break;
+                    case "PauseMedia":
+                        a.Action = AutomationActionType.PauseMedia;
+                        break;
+                    case "StopMedia":
+                        a.Action = AutomationActionType.StopMedia;
+                        break;
+                    case "RestartMedia":
+                        a.Action = AutomationActionType.RestartMedia;
+                        break;
+                    case "MuteMedia":
+                        a.Action = AutomationActionType.MuteMedia;
+                        break;
+                    case "UnMuteMedia":
+                        a.Action = AutomationActionType.UnMuteMedia;
+                        break;
+
                     case "DriveNextSlide":
                         a.Action = AutomationActionType.DriveNextSlide;
                         break;
@@ -383,6 +438,9 @@ namespace Integrated_Presenter
         USK1Off,
         USK1On,
 
+        USK1SetTypeChroma,
+        USK1SetTypeDVE,
+
         RecordStart,
         RecordStop,
 
@@ -402,6 +460,12 @@ namespace Integrated_Presenter
         None,
         DriveNextSlide,
         Timer1Restart,
+        PlayMedia,
+        PauseMedia,
+        StopMedia,
+        RestartMedia,
+        MuteMedia,
+        UnMuteMedia,
     }
 
 
