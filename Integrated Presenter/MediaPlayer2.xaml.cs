@@ -204,39 +204,7 @@ namespace Integrated_Presenter
         {
             if (slide.Type == SlideType.Action)
             {
-                ShowBlackSource();
-
-                if (!ShowBlackForActions)
-                {
-                    // Show Commands
-                    string description = "";
-                    foreach (var action in slide.Actions)
-                    {
-                        if (action?.Message != "")
-                        {
-                            description += action.Message + Environment.NewLine;
-                        }
-                    }
-                    MainMessages.Text = description.Trim();
-                    MainMessages.Visibility = Visibility.Visible;
-
-                    description = "";
-                    foreach (var action in slide.SetupActions)
-                    {
-                        if (action?.Message != "")
-                        {
-                            description += action.Message + Environment.NewLine;
-                        }
-                    }
-                    SetupMessages.Text = description.Trim();
-                    SetupMessages.Visibility = Visibility.Visible;
-
-
-                    SequenceLabel.Text = slide.Title;
-
-                    SequenceLabel.Visibility = Visibility.Visible;
-                    ActionIndicator.Visibility = Visibility.Visible;
-                }
+                ShowActionCommands(slide);
             }
             else if (slide.Source != string.Empty)
             {
@@ -248,9 +216,76 @@ namespace Integrated_Presenter
             }
         }
 
+        public void SetupComplete(bool complete = true)
+        {
+            if (complete)
+            {
+                SetupMessages.Foreground = Brushes.Gray;
+            }
+            else
+            {
+                SetupMessages.Foreground = Brushes.LightGreen;
+            }
+        }
+
+        public void ActionComplete(bool complete = true)
+        {
+            if (complete)
+            {
+                MainMessages.Foreground = Brushes.White;
+            }
+            else
+            {
+                MainMessages.Foreground = Brushes.Orange;
+            }
+        }
+
+        private void ShowActionCommands(Slide slide)
+        {
+            ShowBlackSource();
+
+            if (!ShowBlackForActions)
+            {
+                // Show Commands
+                string description = "";
+                foreach (var action in slide.Actions)
+                {
+                    if (action?.Message != "")
+                    {
+                        description += action.Message + Environment.NewLine;
+                    }
+                }
+                MainMessages.Text = description.Trim();
+                MainMessages.Visibility = Visibility.Visible;
+
+                description = "";
+                foreach (var action in slide.SetupActions)
+                {
+                    if (action?.Message != "")
+                    {
+                        description += action.Message + Environment.NewLine;
+                    }
+                }
+                SetupMessages.Text = description.Trim();
+                SetupMessages.Visibility = Visibility.Visible;
+
+                SetupMessages.Foreground = Brushes.LightGreen;
+                MainMessages.Foreground = Brushes.Orange;
+
+
+                SequenceLabel.Text = slide.Title;
+
+                SeqType.Text = slide.AutoOnly ? "AUTO" : "SEQ";
+
+                SequenceLabel.Visibility = Visibility.Visible;
+                ActionIndicator.Visibility = Visibility.Visible;
+            }
+        }
+
         private void ShowImage()
         {
             SequenceLabel.Visibility = Visibility.Hidden;
+            SeqType.Visibility = Visibility.Hidden;
             ActionIndicator.Visibility = Visibility.Hidden;
             MainMessages.Visibility = Visibility.Hidden;
             SetupMessages.Visibility = Visibility.Hidden;
@@ -273,6 +308,7 @@ namespace Integrated_Presenter
         private void ShowVideo()
         {
             SequenceLabel.Visibility = Visibility.Hidden;
+            SeqType.Visibility = Visibility.Hidden;
             ActionIndicator.Visibility = Visibility.Hidden;
             MainMessages.Visibility = Visibility.Hidden;
             SetupMessages.Visibility = Visibility.Hidden;
@@ -299,6 +335,7 @@ namespace Integrated_Presenter
             imagePlayer.Visibility = Visibility.Hidden;
             videoPlayer.Visibility = Visibility.Hidden;
             SequenceLabel.Visibility = Visibility.Hidden;
+            SeqType.Visibility = Visibility.Hidden;
             ActionIndicator.Visibility = Visibility.Hidden;
             MainMessages.Visibility = Visibility.Hidden;
             SetupMessages.Visibility = Visibility.Hidden;

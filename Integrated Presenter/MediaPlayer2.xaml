@@ -21,8 +21,11 @@
             </StackPanel>
         </Viewbox>
         <Rectangle Name="ActionIndicator" Fill="Orange" Panel.ZIndex="10" Height="50" VerticalAlignment="Top"></Rectangle>
-        <Viewbox VerticalAlignment="Center" Panel.ZIndex="10">
-            <TextBlock Margin="1" Name="SequenceLabel" Foreground="Black" HorizontalAlignment="Center">AUTO SEQ</TextBlock>
-        </Viewbox>
+        <Grid Panel.ZIndex="11">
+            <TextBlock Margin="10" Name="SeqType" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="30" FontWeight="Bold">SEQ</TextBlock>
+            <Viewbox VerticalAlignment="Center">
+                <TextBlock Margin="1" Name="SequenceLabel" Foreground="Black" HorizontalAlignment="Center">Automated Slide</TextBlock>
+            </Viewbox>
+        </Grid>
     </Grid>
 </UserControl>

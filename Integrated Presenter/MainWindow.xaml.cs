@@ -1236,8 +1236,19 @@ namespace Integrated_Presenter
 
         #region SlideDriveVideo
 
+
+        private bool SetupActionsCompleted = false;
+        private bool ActionsCompleted = false;
+
+        private Guid currentslideforactions;
+
         private async Task ExecuteSetupActions(Slide s)
         {
+            Dispatcher.Invoke(() =>
+            {
+                SetupActionsCompleted = false;
+                CurrentPreview.SetupComplete(false);
+            });
             await Task.Run(async () =>
             {
                 foreach (var task in s.SetupActions)
@@ -1245,16 +1256,31 @@ namespace Integrated_Presenter
                     await PerformAutomationAction(task);
                 }
             });
+            Dispatcher.Invoke(() =>
+            {
+                SetupActionsCompleted = true;
+                CurrentPreview.SetupComplete(true);
+            });
         }
 
         private async Task ExecuteActionSlide(Slide s)
         {
+            Dispatcher.Invoke(() =>
+            {
+                ActionsCompleted = false;
+                CurrentPreview.ActionComplete(false);
+            });
             await Task.Run(async () =>
             {
                 foreach (var task in s.Actions)
                 {
                     await PerformAutomationAction(task);
                 }
+            });
+            Dispatcher.Invoke(() =>
+            {
+                ActionsCompleted = true;
+                CurrentPreview.ActionComplete(true);
             });
         }
 
@@ -1337,10 +1363,26 @@ namespace Integrated_Presenter
                     case AutomationActionType.DSK2FadeOff:
                         break;
                     case AutomationActionType.RecordStart:
-                        TryStartRecording();
+                        Dispatcher.Invoke(() =>
+                        {
+                            TryStartRecording();
+                        });
                         break;
                     case AutomationActionType.RecordStop:
-                        TryStopRecording();
+                        Dispatcher.Invoke(() =>
+                        {
+                            TryStopRecording();
+                        });
+                        break;
+
+                    case AutomationActionType.Timer1Restart:
+                        if (automationtimer1enabled)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                timer1span = TimeSpan.Zero;
+                            });
+                        }
                         break;
 
 
@@ -1401,8 +1443,19 @@ namespace Integrated_Presenter
             {
                 if (Presentation.Next.Type == SlideType.Action)
                 {
+                    SetupActionsCompleted = false;
+                    ActionsCompleted = false;
                     // run stetup actions
                     await ExecuteSetupActions(Presentation.Next);
+
+                    if (Presentation.Next.AutoOnly)
+                    {
+                        // for now we won't support running 2 back to back fullauto slides.
+                        // There really shouldn't be any need.
+                        // We also cant run a script's setup actions immediatley afterward.
+                        // again it shouldn't be nessecary, since in both cases you can add it to the fullauto slide's setup actions
+                        Presentation.NextSlide();
+                    }
                     // Perform slide actions
                     Presentation.NextSlide();
                     slidesUpdated();
@@ -1869,6 +1922,15 @@ namespace Integrated_Presenter
         private void slidesUpdated()
         {
             _display?.ShowSlide();
+
+            // mark update for slides
+            if (currentslideforactions != currentGuid)
+            {
+                // new slide - mark changes
+                SetupActionsCompleted = false;
+                ActionsCompleted = false;
+            }
+
             // update previews
             if (Presentation != null)
             {
@@ -1889,10 +1951,15 @@ namespace Integrated_Presenter
                         currentGuid = Presentation.Current.Guid;
                     }
                 }
+                NextPreview.SetupComplete(SetupActionsCompleted);
+                NextPreview.ActionComplete(false);
+                CurrentPreview.ActionComplete(ActionsCompleted);
+                CurrentPreview.SetupComplete(true);
                 NextPreview.SetMedia(Presentation.Next);
                 AfterPreview.SetMedia(Presentation.After);
             }
             UpdateSlidePreviewControls();
+            currentslideforactions = currentGuid;
         }
 
 

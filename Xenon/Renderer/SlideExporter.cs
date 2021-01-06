@@ -23,7 +23,7 @@ namespace Xenon.Renderer
                     // for now only allow audio files to be rendered as resource
                     string filename = Path.Join(directory, $"Resource_{rs.Name}{rs.CopyExtension}");
                     File.Copy(rs.AssetPath, filename, true);
-                    return;
+                    continue;
                 }
 
                 if (rs.MediaType == MediaType.Image)

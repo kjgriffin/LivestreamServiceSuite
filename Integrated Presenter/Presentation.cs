@@ -203,6 +203,7 @@ namespace Integrated_Presenter
         public List<AutomationAction> SetupActions { get; set; } = new List<AutomationAction>();
         public List<AutomationAction> Actions { get; set; } = new List<AutomationAction>();
         public string Title { get; set; } = "";
+        public bool AutoOnly { get; set; } = false;
 
         public void LoadActions()
         {
@@ -224,6 +225,13 @@ namespace Integrated_Presenter
                         if (part == ";")
                         {
 
+                        }
+                        else if (part.StartsWith("!"))
+                        {
+                            if (part == ("!fullauto;"))
+                            {
+                                AutoOnly = true;
+                            }
                         }
                         else if (part.StartsWith("@"))
                         {
@@ -310,6 +318,12 @@ namespace Integrated_Presenter
                     case "ReplayAuxAudio":
                         a.Action = AutomationActionType.ReplayAuxAudio;
                         break;
+                    case "DriveNextSlide":
+                        a.Action = AutomationActionType.DriveNextSlide;
+                        break;
+                    case "Timer1Restart":
+                        a.Action = AutomationActionType.Timer1Restart;
+                        break;
                 }
             }
             if (command.StartsWith("arg1:"))
@@ -386,7 +400,8 @@ namespace Integrated_Presenter
         DelayMs,
 
         None,
-
+        DriveNextSlide,
+        Timer1Restart,
     }
 
 
