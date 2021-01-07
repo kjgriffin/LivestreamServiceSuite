@@ -27,6 +27,7 @@ namespace Xenon.SlideAssembly
             Colors.Add("alttext", Color.Teal);
             Colors.Add("background", Color.Gray);
             Colors.Add("keybackground", Color.Black);
+            Colors.Add("keytrans", Color.Gray);
         }
 
     }

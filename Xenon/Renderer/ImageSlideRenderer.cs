@@ -19,6 +19,11 @@ namespace Xenon.Renderer
             res.MediaType = MediaType.Image;
             res.AssetPath = slide.Asset;
 
+            Bitmap kbmp = new Bitmap(1920, 1080);
+            Graphics kgfx = Graphics.FromImage(kbmp);
+            kgfx.Clear(Color.White);
+            res.KeyBitmap = kbmp;
+
             Bitmap sourceimage;
             try
             {
@@ -75,6 +80,7 @@ namespace Xenon.Renderer
             else if (slide.Format == SlideFormat.LiturgyImage)
             {
                 res.Bitmap = RenderLiturgyImage(sourceimage);
+                res.KeyBitmap = RenderLiturgyImageKey(sourceimage, slide.Colors["keytrans"]);
                 res.RenderedAs = "Liturgy";
             }
 
@@ -206,6 +212,39 @@ namespace Xenon.Renderer
             return bmp;
 
         }
+
+        private Bitmap RenderLiturgyImageKey(Bitmap sourceimage, Color alpha)
+        {
+            Bitmap bmp = new Bitmap(Layout.LiturgyLayout.Size.Width, Layout.LiturgyLayout.Size.Height);
+
+            Graphics gfx = Graphics.FromImage(bmp);
+
+            double scale = 1;
+            Point p;
+            Size s;
+
+            double xscale = 1;
+            double yscale = 1;
+
+            double fillsize = 0.93;
+
+            Bitmap trimmed = sourceimage.TrimBitmap(Color.White);
+
+            xscale = (double)(Layout.LiturgyLayout.Key.Width * fillsize) / trimmed.Width;
+            yscale = (double)(Layout.LiturgyLayout.Key.Height * fillsize) / trimmed.Height;
+
+            scale = xscale < yscale ? xscale : yscale;
+
+            s = new Size((int)(trimmed.Width * scale), (int)(trimmed.Height * scale));
+            p = new Point((Layout.LiturgyLayout.Key.Width - s.Width) / 2, (Layout.LiturgyLayout.Key.Height - s.Height) / 2).Add(Layout.LiturgyLayout.Key.Location);
+
+            gfx.Clear(System.Drawing.Color.Gray);
+            gfx.FillRectangle(new SolidBrush(alpha), Layout.LiturgyLayout.Key);
+            gfx.DrawImage(InvertImage(trimmed), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
+            return bmp;
+
+        }
+
 
         private Bitmap InvertImage(Bitmap source)
         {

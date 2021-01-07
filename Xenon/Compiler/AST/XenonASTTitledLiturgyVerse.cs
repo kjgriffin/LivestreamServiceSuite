@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Xenon.Helpers;
 using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
 
@@ -70,6 +72,12 @@ namespace Xenon.Compiler.AST
             slide.Data["title"] = Title;
             slide.Data["reference"] = Reference;
             slide.Data["drawspeaker"] = DrawSpeaker;
+
+            if (project.GetAttribute("alphatranscol").Count > 0)
+            {
+                slide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
+            }
+
 
             project.Slides.Add(slide);
         }

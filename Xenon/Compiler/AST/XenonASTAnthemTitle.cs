@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
+using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -19,7 +21,7 @@ namespace Xenon.Compiler.AST
             XenonASTAnthemTitle title = new XenonASTAnthemTitle();
             Lexer.GobbleWhitespace();
 
-            var args = Lexer.ConsumeArgList(true,"anthemtitle", "musician", "accompanianst", "credits");
+            var args = Lexer.ConsumeArgList(true, "anthemtitle", "musician", "accompanianst", "credits");
             title.AnthemTitle = args["anthemtitle"];
             title.Musician = args["musician"];
             title.Accompanianst = args["accompanianst"];
@@ -54,6 +56,12 @@ namespace Xenon.Compiler.AST
             titleslide.Lines.Add(slmusician);
             titleslide.Lines.Add(slaccompanianst);
             titleslide.Lines.Add(slcredits);
+
+            if (project.GetAttribute("alphatranscol").Count > 0)
+            {
+                titleslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
+            }
+
 
             project.Slides.Add(titleslide);
 

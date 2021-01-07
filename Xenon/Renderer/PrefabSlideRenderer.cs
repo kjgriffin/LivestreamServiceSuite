@@ -23,9 +23,14 @@ namespace Xenon.Renderer
             res.RenderedAs = "Full";
 
             Bitmap bmp = new Bitmap(Layouts.PrefabLayout.Size.Width, Layouts.PrefabLayout.Size.Height);
+            Bitmap kbmp = new Bitmap(Layouts.PrefabLayout.Size.Width, Layouts.PrefabLayout.Size.Height);
             Graphics gfx = Graphics.FromImage(bmp);
+            Graphics kgfx = Graphics.FromImage(kbmp);
 
             gfx.Clear(Color.White);
+            kgfx.Clear(Color.White);
+
+            res.KeyBitmap = kbmp;
 
 
             Bitmap src = null;

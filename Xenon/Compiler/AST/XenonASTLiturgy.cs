@@ -104,6 +104,7 @@ namespace Xenon.Compiler
             System.Drawing.Color liturgyspeakercolor = new System.Drawing.Color();
             System.Drawing.Color liturgytextcolor = new System.Drawing.Color();
             System.Drawing.Color liturgybackgroundcolor = new System.Drawing.Color();
+            System.Drawing.Color liturgytransppcolor = System.Drawing.Color.Gray;
 
             if (project.GetAttribute("litspeakertextcol").Count > 0)
             {
@@ -119,6 +120,10 @@ namespace Xenon.Compiler
             {
                 liturgybackgroundcolor = GraphicsHelper.ColorFromRGB(project.GetAttribute("litbackgroundcol").FirstOrDefault());
                 overridebackgroundcolor = true;
+            }
+            if (project.GetAttribute("alphatranscol").Count > 0)
+            {
+                liturgytransppcolor = GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault());
             }
 
 
@@ -158,6 +163,7 @@ namespace Xenon.Compiler
             {
                 liturgyslide.Colors["keybackground"] = liturgybackgroundcolor;
             }
+            liturgyslide.Colors["keytrans"] = liturgytransppcolor;
 
 
             double lineheight = -project.Layouts.LiturgyLayout.InterLineSpacing;
@@ -202,6 +208,7 @@ namespace Xenon.Compiler
                     {
                         liturgyslide.Colors["keybackground"] = liturgybackgroundcolor;
                     }
+                    liturgyslide.Colors["keytrans"] = liturgytransppcolor;
 
                     lineheight = 0;
                     startspeaker = line.Speaker;

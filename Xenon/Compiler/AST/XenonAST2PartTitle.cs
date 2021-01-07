@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
+using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -48,6 +50,12 @@ namespace Xenon.Compiler.AST
             titleslide.Lines.Add(slpart2);
 
             titleslide.Data["orientation"] = Orientation;
+
+            if (project.GetAttribute("alphatranscol").Count > 0)
+            {
+                titleslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
+            }
+
 
             project.Slides.Add(titleslide);
 

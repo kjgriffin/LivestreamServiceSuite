@@ -49,10 +49,11 @@ namespace Xenon.Renderer
             SolidBrush speakercol = new SolidBrush(slide.Colors["alttext"]);
 
             SolidBrush sb = new SolidBrush(slide.Colors["keybackground"]);
+            SolidBrush kb = new SolidBrush(slide.Colors["keytrans"]);
 
             gfx.FillRectangle(sb, Layouts.LiturgyLayout.Key);
             // make black somewhat transparent
-            kgfx.FillRectangle(Brushes.Gray, Layouts.LiturgyLayout.Key);
+            kgfx.FillRectangle(kb, Layouts.LiturgyLayout.Key);
 
             StringFormat topleftalign = new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };
             StringFormat centeralign = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
