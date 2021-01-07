@@ -37,7 +37,7 @@ namespace Xenon.Renderer
             kgfx.DrawString(slide.Lines[1].Content[0].Data, renderInfo.ItalicFont, Brushes.White, Layouts.SermonLayout.TopLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location).Move(-100, 0), GraphicsHelper.RightVerticalCenterAlign);
             // put title in center mid
             gfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.BoldFont, Brushes.White, Layouts.SermonLayout.MainLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location), GraphicsHelper.CenterAlign);
-            kgfx.DrawString(slide.Lines[1].Content[0].Data, renderInfo.ItalicFont, Brushes.White, Layouts.SermonLayout.TopLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location).Move(-100, 0), GraphicsHelper.RightVerticalCenterAlign);
+            kgfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.BoldFont, Brushes.White, Layouts.SermonLayout.MainLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location), GraphicsHelper.CenterAlign);
 
             res.Bitmap = bmp;
             res.KeyBitmap = kbmp;

@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using Xenon.Helpers;
 
+
 namespace Xenon.Renderer
 {
     class ImageSlideRenderer
@@ -173,7 +174,7 @@ namespace Xenon.Renderer
             Bitmap img = sourceimage;
             if (invertblackandwhite)
             {
-                img = InvertImage(sourceimage);
+                img = GraphicsHelper.InvertImage(sourceimage);
             }
             gfx.DrawImage(img, new Rectangle(p, s), leftbound, topbound, (rightbound - leftbound), (bottombound - topbound), GraphicsUnit.Pixel);
 
@@ -208,7 +209,7 @@ namespace Xenon.Renderer
 
             gfx.Clear(System.Drawing.Color.Gray);
             gfx.FillRectangle(System.Drawing.Brushes.Black, Layout.LiturgyLayout.Key);
-            gfx.DrawImage(InvertImage(trimmed), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
+            gfx.DrawImage(GraphicsHelper.InvertImage(trimmed), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
             return bmp;
 
         }
@@ -238,32 +239,15 @@ namespace Xenon.Renderer
             s = new Size((int)(trimmed.Width * scale), (int)(trimmed.Height * scale));
             p = new Point((Layout.LiturgyLayout.Key.Width - s.Width) / 2, (Layout.LiturgyLayout.Key.Height - s.Height) / 2).Add(Layout.LiturgyLayout.Key.Location);
 
-            gfx.Clear(System.Drawing.Color.Gray);
+            gfx.Clear(System.Drawing.Color.Black);
             gfx.FillRectangle(new SolidBrush(alpha), Layout.LiturgyLayout.Key);
-            gfx.DrawImage(InvertImage(trimmed), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
+            gfx.DrawImage(trimmed.DichotimizeImage(Color.Black, 150, Color.White).InvertImage().SwapImageColors(Color.Black, alpha), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
             return bmp;
 
         }
 
 
-        private Bitmap InvertImage(Bitmap source)
-        {
-            /*
-                https://stackoverflow.com/questions/33024881/invert-image-faster-in-c-sharp
-             */
-            Bitmap res = new Bitmap(source);
-
-            for (int y = 0; y < res.Height; y++)
-            {
-                for (int x = 0; x < res.Width; x++)
-                {
-                    Color inv = res.GetPixel(x, y);
-                    inv = Color.FromArgb(255, 255 - inv.R, 255 - inv.G, 255 - inv.B);
-                    res.SetPixel(x, y, inv);
-                }
-            }
-            return res;
-        }
+        
 
 
     }

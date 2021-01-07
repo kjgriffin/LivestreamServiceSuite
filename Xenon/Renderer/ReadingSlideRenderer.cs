@@ -25,7 +25,7 @@ namespace Xenon.Renderer
             Graphics kgfx = Graphics.FromImage(kbmp);
 
             gfx.Clear(Color.Gray);
-            kgfx.Clear(Color.Gray);
+            kgfx.Clear(Color.Black);
             gfx.FillRectangle(Brushes.Black, Layouts.ReadingLayout.Key);
             kgfx.FillRectangle(new SolidBrush(slide.Colors["keytrans"]), Layouts.ReadingLayout.Key);
 
