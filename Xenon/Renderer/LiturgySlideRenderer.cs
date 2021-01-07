@@ -35,17 +35,24 @@ namespace Xenon.Renderer
 
             // for now just draw the layout
             Bitmap bmp = new Bitmap(Layouts.LiturgyLayout.Size.Width, Layouts.LiturgyLayout.Size.Height);
+            Bitmap kbmp = new Bitmap(Layouts.LiturgyLayout.Size.Width, Layouts.LiturgyLayout.Size.Height);
 
             Graphics gfx = Graphics.FromImage(bmp);
+            Graphics kgfx = Graphics.FromImage(kbmp);
 
             gfx.Clear(slide.Colors["background"]);
+            // most of slide should be transparent
+            kgfx.Clear(Color.Black);
 
 
             SolidBrush textcol = new SolidBrush(slide.Colors["text"]);
             SolidBrush speakercol = new SolidBrush(slide.Colors["alttext"]);
 
             SolidBrush sb = new SolidBrush(slide.Colors["keybackground"]);
+
             gfx.FillRectangle(sb, Layouts.LiturgyLayout.Key);
+            // make black somewhat transparent
+            kgfx.FillRectangle(Brushes.Gray, Layouts.LiturgyLayout.Key);
 
             StringFormat topleftalign = new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };
             StringFormat centeralign = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
@@ -95,6 +102,8 @@ namespace Xenon.Renderer
                 {
                     float jog = 0.07f * (gfx.DpiY * gfx.MeasureStringCharacters(linewords.Speaker, flsbregular, speakerblock).Height / 72);
                     gfx.DrawString(linewords.Speaker, flsbregular, speakercol, speakerblock.Move(0, -jog), centeralign);
+                    // make speaker fully opaque
+                    kgfx.DrawString(linewords.Speaker, flsbregular, Brushes.White, speakerblock.Move(0, -jog), centeralign);
                 }
 
 
@@ -103,6 +112,8 @@ namespace Xenon.Renderer
                     Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
                     float jog = word.IsLSBSymbol ? 0.07f * (gfx.DpiY * gfx.MeasureStringCharacters(linewords.Speaker, f, speakerblock).Height / 72) : 0;
                     gfx.DrawString(word.Value, f, textcol, text.Move(xoffset, linepos + interspace * linenum).Move(0, -jog).Location, GraphicsHelper.DefaultStringFormat());
+                    // make text fully opaque 
+                    kgfx.DrawString(word.Value, f, Brushes.White, text.Move(xoffset, linepos + interspace * linenum).Move(0, -jog).Location, GraphicsHelper.DefaultStringFormat());
                     xoffset += word.Size.Width;
                 }
 
@@ -116,6 +127,7 @@ namespace Xenon.Renderer
 
 
             res.Bitmap = bmp;
+            res.KeyBitmap = kbmp;
 
             return res;
         }

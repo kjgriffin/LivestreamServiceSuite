@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,11 @@ namespace Xenon.Renderer
                 messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = $"Could not find file {res.AssetPath}", ErrorName = "Missing Video File", Level = Compiler.XenonCompilerMessageType.Error });
                 throw new FileNotFoundException();
             }
+
+            res.KeyBitmap = new Bitmap(1920, 1080);
+            Graphics gfx = Graphics.FromImage(res.KeyBitmap);
+            // for now videos are fully transparent all the time
+            gfx.Clear(Color.White);
             return res;
         }
     }

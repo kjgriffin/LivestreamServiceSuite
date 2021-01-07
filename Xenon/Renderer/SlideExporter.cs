@@ -29,12 +29,16 @@ namespace Xenon.Renderer
                 if (rs.MediaType == MediaType.Image)
                 {
                     string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.png");
+                    string kfilename = Path.Join(directory, $"Key_{slide.Number}.png");
                     rs.Bitmap.Save(filename, ImageFormat.Png);
+                    rs.KeyBitmap.Save(kfilename, ImageFormat.Png);
                 }
                 else if (rs.MediaType == MediaType.Video)
                 {
                     string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.mp4");
+                    string kfilename = Path.Join(directory, $"Key_{slide.Number}.png");
                     File.Copy(rs.AssetPath, filename);
+                    rs.KeyBitmap.Save(kfilename, ImageFormat.Png);
                 }
                 else if (rs.MediaType == MediaType.Text)
                 {

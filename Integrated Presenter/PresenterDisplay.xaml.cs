@@ -51,6 +51,8 @@ namespace Integrated_Presenter
             this.ShowKey = ShowKey;
             ShowSlide(this.ShowKey);
 
+            Title = ShowKey ? "Presentation Display" : "Presentation Key Source";
+
         }
 
         private void _controlPanel_OnWindowClosing(object sender, EventArgs e)

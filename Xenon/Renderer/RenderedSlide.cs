@@ -15,6 +15,7 @@ namespace Xenon.Renderer
         public string CopyExtension { get; set; }
         public string Text { get; set; }
         public Bitmap Bitmap {get; set;}
+        public Bitmap KeyBitmap {get; set;}
         public int Number { get; set; }
 
         public static RenderedSlide Default()
