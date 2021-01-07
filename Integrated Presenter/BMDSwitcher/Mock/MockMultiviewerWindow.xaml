@@ -96,7 +96,7 @@
                     <Image Name="ImgSlide" Grid.ColumnSpan="1" Source="/BMDSwitcher/Mock/Images/black.png"></Image>
                 </Border>
                 <Border Background="Black" Grid.Row="2" Grid.Column="1" BorderBrush="Gray" BorderThickness="2,2,2,2">
-                    <Image Grid.ColumnSpan="1"></Image>
+                    <Image Name="ImgKey" Grid.ColumnSpan="1"></Image>
                 </Border>
                 <Border Background="Black" Grid.Row="2" Grid.Column="2" BorderBrush="Gray" BorderThickness="2,2,2,2">
                     <Image Grid.ColumnSpan="1"></Image>

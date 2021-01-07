@@ -2767,7 +2767,7 @@ namespace Integrated_Presenter
                     new ButtonSourceMapping() { KeyName = "right", ButtonId = 3, ButtonName = "LECTERN", PhysicalInputId = 6, LongName = "LECTERN", ShortName = "LTRN" },
                     new ButtonSourceMapping() { KeyName = "organ", ButtonId = 4, ButtonName = "ORGAN", PhysicalInputId = 2, LongName = "ORGAN", ShortName = "ORGN" },
                     new ButtonSourceMapping() { KeyName = "slide", ButtonId = 5, ButtonName = "SLIDE", PhysicalInputId = 4, LongName = "SLIDESHOW", ShortName = "SLDE" },
-                    new ButtonSourceMapping() { KeyName = "c3", ButtonId = 6, ButtonName = "CAM3", PhysicalInputId = 3, LongName = "CAMERA 3", ShortName = "CAM3" },
+                    new ButtonSourceMapping() { KeyName = "key", ButtonId = 6, ButtonName = "AKEY", PhysicalInputId = 3, LongName = "ALPHA KEY", ShortName = "AKEY" },
                     new ButtonSourceMapping() { KeyName = "c7", ButtonId = 7, ButtonName = "CAM7", PhysicalInputId = 7, LongName = "CAMERA 7", ShortName = "CAM7" },
                     new ButtonSourceMapping() { KeyName = "c8", ButtonId = 8, ButtonName = "CAM8", PhysicalInputId = 8, LongName = "CAMERA 8", ShortName = "CAM8" },
                 },

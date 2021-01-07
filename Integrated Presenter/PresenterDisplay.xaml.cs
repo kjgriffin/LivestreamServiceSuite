@@ -51,7 +51,7 @@ namespace Integrated_Presenter
             this.ShowKey = ShowKey;
             ShowSlide(this.ShowKey);
 
-            Title = ShowKey ? "Presentation Display" : "Presentation Key Source";
+            Title = ShowKey ? "Presentation Key Source" : "Presentation Display";
 
         }
 

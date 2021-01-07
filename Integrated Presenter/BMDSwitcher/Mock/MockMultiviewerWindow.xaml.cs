@@ -94,11 +94,21 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         public void UpdateAuxSource(Slide slide)
         {
             UpdateSourceFromAux(ImgSlide, slide);
+            UpdateSourceFromKey(ImgKey, slide);
             if (ProgramSource == 4)
             {
                 UpdateSourceFromAux(ImgProgram, slide);
             }
             if (PresetSource == 4)
+            {
+                UpdateSourceFromAux(ImgPreset, slide);
+            }
+
+            if (ProgramSource == 3)
+            {
+                UpdateSourceFromAux(ImgProgram, slide);
+            }
+            if (PresetSource == 3)
             {
                 UpdateSourceFromAux(ImgPreset, slide);
             }
@@ -110,6 +120,22 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             if (DSK2)
             {
                 UpdateSourceFromAux(ImgProgramSplit, slide);
+            }
+        }
+
+        private void UpdateSourceFromKey(Image control, Slide slide)
+        {
+            if (slide.Type == SlideType.Empty)
+            {
+                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+            }
+            else if (slide.Type == SlideType.Action)
+            {
+                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+            }
+            else
+            {
+                control.Source = new BitmapImage(new Uri(slide.KeySource));
             }
         }
 

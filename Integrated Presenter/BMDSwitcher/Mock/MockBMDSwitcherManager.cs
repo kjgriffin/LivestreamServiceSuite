@@ -26,7 +26,7 @@ namespace Integrated_Presenter.BMDSwitcher
             {
                 [1] = "center",
                 [2] = "organ",
-                [3] = "cam3",
+                [3] = "key",
                 [4] = "slide",
                 [5] = "left",
                 [6] = "right",
