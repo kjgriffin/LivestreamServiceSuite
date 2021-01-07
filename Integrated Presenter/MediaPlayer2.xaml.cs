@@ -230,7 +230,7 @@ namespace Integrated_Presenter
             }
         }
 
-        public void SetMedia(Slide slide)
+        public void SetMedia(Slide slide, bool asKey)
         {
             if (slide.Type == SlideType.Action)
             {
@@ -238,7 +238,14 @@ namespace Integrated_Presenter
             }
             else if (slide.Source != string.Empty)
             {
-                SetMedia(new Uri(slide.Source), slide.Type);
+                if (asKey)
+                {
+                    SetMedia(new Uri(slide.KeySource), slide.Type);
+                }
+                else
+                {
+                    SetMedia(new Uri(slide.Source), slide.Type);
+                }
             }
             else
             {

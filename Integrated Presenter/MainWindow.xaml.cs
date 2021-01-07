@@ -1994,6 +1994,7 @@ namespace Integrated_Presenter
         public event PresentationStateUpdate PresentationStateUpdated;
 
         PresenterDisplay _display;
+        PresenterDisplay _keydisplay;
 
         private void OpenPresentation(object sender, RoutedEventArgs e)
         {
@@ -2015,11 +2016,19 @@ namespace Integrated_Presenter
                 }
                 else
                 {
-                    _display = new PresenterDisplay(this);
+                    _display = new PresenterDisplay(this, false);
                     _display.OnMediaPlaybackTimeUpdated += _display_OnMediaPlaybackTimeUpdated;
                     // start display
                     _display.Show();
                 }
+
+                if (_keydisplay == null && !(_keydisplay?.IsWindowVisilbe ?? false))
+                {
+                    _keydisplay = new PresenterDisplay(this, true);
+                    // no need to get playback event info
+                    _keydisplay.Show();
+                }
+
                 DisableSlidePoolOverrides();
                 slidesUpdated();
 
@@ -2053,7 +2062,8 @@ namespace Integrated_Presenter
 
         private void slidesUpdated()
         {
-            _display?.ShowSlide();
+            _display?.ShowSlide(false);
+            _keydisplay?.ShowSlide(true);
 
             // mark update for slides
             if (currentslideforactions != currentGuid)
@@ -2066,12 +2076,12 @@ namespace Integrated_Presenter
             // update previews
             if (Presentation != null)
             {
-                PrevPreview.SetMedia(Presentation.Prev);
+                PrevPreview.SetMedia(Presentation.Prev, false);
                 if (ShowEffectiveCurrentPreview)
                 {
                     if (currentGuid != Presentation.EffectiveCurrent.Guid)
                     {
-                        CurrentPreview.SetMedia(Presentation.EffectiveCurrent);
+                        CurrentPreview.SetMedia(Presentation.EffectiveCurrent, false);
                         currentGuid = Presentation.EffectiveCurrent.Guid;
                     }
                 }
@@ -2079,7 +2089,7 @@ namespace Integrated_Presenter
                 {
                     if (currentGuid != Presentation.Current.Guid)
                     {
-                        CurrentPreview.SetMedia(Presentation.Current);
+                        CurrentPreview.SetMedia(Presentation.Current, false);
                         currentGuid = Presentation.Current.Guid;
                     }
                 }
@@ -2087,8 +2097,8 @@ namespace Integrated_Presenter
                 NextPreview.ActionComplete(false);
                 CurrentPreview.ActionComplete(ActionsCompleted);
                 CurrentPreview.SetupComplete(true);
-                NextPreview.SetMedia(Presentation.Next);
-                AfterPreview.SetMedia(Presentation.After);
+                NextPreview.SetMedia(Presentation.Next, false);
+                AfterPreview.SetMedia(Presentation.After, false);
             }
             UpdateSlidePreviewControls();
             currentslideforactions = currentGuid;
@@ -2164,6 +2174,7 @@ namespace Integrated_Presenter
                 Dispatcher.Invoke(() =>
                 {
                     _display.StartMediaPlayback();
+                    _keydisplay.StartMediaPlayback();
                     if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                     {
                         CurrentPreview.videoPlayer.Volume = 0;
@@ -2181,6 +2192,7 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.PauseMediaPlayback();
+                _keydisplay.PauseMediaPlayback();
                 if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
@@ -2197,6 +2209,7 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.StopMediaPlayback();
+                _keydisplay.StopMediaPlayback();
                 if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
@@ -2213,6 +2226,7 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.RestartMediaPlayback();
+                _keydisplay.RestartMediaPlayback();
                 if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
@@ -2445,6 +2459,7 @@ namespace Integrated_Presenter
         private void OnClosing(object sender, CancelEventArgs e)
         {
             _display?.Close();
+            _keydisplay?.Close();
             switcherManager?.Close();
             hyperDeckMonitorWindow?.Close();
             audioPlayer?.Close();

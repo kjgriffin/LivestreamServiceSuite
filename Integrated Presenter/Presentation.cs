@@ -32,7 +32,7 @@ namespace Integrated_Presenter
 
                 // skip unrecognized files
                 List<string> valid = new List<string>() { "mp4", "png", "txt" };
-                if (!valid.Contains(extension.ToLower()) || name == "Resource")
+                if (!valid.Contains(extension.ToLower()))
                 {
                     continue;
                 }
@@ -70,6 +70,16 @@ namespace Integrated_Presenter
                 }
                 Slides.Add(s);
             }
+
+            // attack keyfiles to slides
+            files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"Key_\d+").Success).ToList();
+            foreach (var file in files)
+            {
+                var num = Regex.Match(file, @"Key_(?<num>\d+)").Groups["num"].Value;
+                int snum = Convert.ToInt32(num);
+                Slides[snum].KeySource = file;
+            }
+
 
             return false;
         }
@@ -198,6 +208,7 @@ namespace Integrated_Presenter
     {
         public SlideType Type { get; set; }
         public string Source { get; set; }
+        public string KeySource { get; set; }
         public string PreAction { get; set; }
         public Guid Guid { get; set; } = Guid.NewGuid();
         public List<AutomationAction> SetupActions { get; set; } = new List<AutomationAction>();

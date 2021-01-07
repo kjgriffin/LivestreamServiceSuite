@@ -32,7 +32,9 @@ namespace Integrated_Presenter
         private Guid prevslide;
         private Guid nextslide;
 
-        public PresenterDisplay(MainWindow parent)
+        private bool ShowKey;
+
+        public PresenterDisplay(MainWindow parent, bool ShowKey)
         {
             InitializeComponent();
             _control = parent;
@@ -46,7 +48,8 @@ namespace Integrated_Presenter
 
             blackcover.Visibility = Visibility.Hidden;
 
-            ShowSlide();
+            this.ShowKey = ShowKey;
+            ShowSlide(this.ShowKey);
 
         }
 
@@ -198,7 +201,7 @@ namespace Integrated_Presenter
         }
 
 
-        public void ShowSlide()
+        public void ShowSlide(bool asKey)
         {
             Slide slidetoshow = _control.Presentation.EffectiveCurrent;
 
@@ -285,13 +288,13 @@ namespace Integrated_Presenter
             switch (player)
             {
                 case 1:
-                    mediaPlayerA.SetMedia(slide);
+                    mediaPlayerA.SetMedia(slide, ShowKey);
                     break;
                 case 2:
-                    mediaPlayerB.SetMedia(slide);
+                    mediaPlayerB.SetMedia(slide, ShowKey);
                     break;
                 case 3:
-                    mediaPlayerC.SetMedia(slide);
+                    mediaPlayerC.SetMedia(slide, ShowKey);
                     break;
             }
         }
