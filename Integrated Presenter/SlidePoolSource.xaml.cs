@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -283,6 +284,23 @@ namespace Integrated_Presenter
                     });
                     UpdateDurationUI();
                 }
+
+                // ask to open a key file
+
+                // uses a default white key (fully opaque) if not
+
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Title = "Select Alpha Key";
+                openFileDialog.Filter = "Image (*.png)|*.png";
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    Slide.KeySource = openFileDialog.FileName; 
+                }
+                else
+                {
+                    Slide.KeySource = "pack://application:,,,/Keys/WhiteKey.png";
+                }
+
 
                 BtnTakeInsert.Style = (Style)Application.Current.FindResource("SwitcherButton");
                 BtnTakeReplace.Style = (Style)Application.Current.FindResource("SwitcherButton");

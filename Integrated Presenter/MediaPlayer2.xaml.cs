@@ -240,7 +240,14 @@ namespace Integrated_Presenter
             {
                 if (asKey)
                 {
-                    SetMedia(new Uri(slide.KeySource), slide.Type);
+                    if (slide.KeySource != null && slide.KeySource != "")
+                    {
+                        SetMedia(new Uri(slide.KeySource), slide.Type);
+                    }
+                    else
+                    {
+                        ShowBlackSource();
+                    }
                 }
                 else
                 {

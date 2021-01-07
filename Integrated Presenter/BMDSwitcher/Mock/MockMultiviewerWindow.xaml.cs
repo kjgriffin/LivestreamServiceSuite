@@ -65,6 +65,8 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                         return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/organshot.png"));
                     case "slide":
                         return ImgSlide.Source;
+                    case "key":
+                        return ImgKey.Source;
                     case "colorbars":
                         return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/cbars.png"));
                     default:
@@ -135,7 +137,14 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             }
             else
             {
-                control.Source = new BitmapImage(new Uri(slide.KeySource));
+                if (slide.KeySource != null && slide.KeySource != "")
+                {
+                    control.Source = new BitmapImage(new Uri(slide.KeySource));
+                }
+                else
+                {
+                    control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                }
             }
         }
 
