@@ -2762,14 +2762,14 @@ namespace Integrated_Presenter
                     XLRInputGain = 6,
                 },
                 Routing = new List<ButtonSourceMapping>() {
-                    new ButtonSourceMapping() { KeyName = "left", ButtonId = 1, ButtonName = "PULPIT", PhysicalInputId = 5, LongName = "PULPIT", ShortName = "PLPT" },
-                    new ButtonSourceMapping() { KeyName = "center", ButtonId = 2, ButtonName = "CENTER", PhysicalInputId = 1, LongName = "CENTER", ShortName = "CNTR" },
+                    new ButtonSourceMapping() { KeyName = "left", ButtonId = 1, ButtonName = "PULPIT", PhysicalInputId = 8, LongName = "PULPIT", ShortName = "PLPT" },
+                    new ButtonSourceMapping() { KeyName = "center", ButtonId = 2, ButtonName = "CENTER", PhysicalInputId = 7, LongName = "CENTER", ShortName = "CNTR" },
                     new ButtonSourceMapping() { KeyName = "right", ButtonId = 3, ButtonName = "LECTERN", PhysicalInputId = 6, LongName = "LECTERN", ShortName = "LTRN" },
-                    new ButtonSourceMapping() { KeyName = "organ", ButtonId = 4, ButtonName = "ORGAN", PhysicalInputId = 2, LongName = "ORGAN", ShortName = "ORGN" },
+                    new ButtonSourceMapping() { KeyName = "organ", ButtonId = 4, ButtonName = "ORGAN", PhysicalInputId = 5, LongName = "ORGAN", ShortName = "ORGN" },
                     new ButtonSourceMapping() { KeyName = "slide", ButtonId = 5, ButtonName = "SLIDE", PhysicalInputId = 4, LongName = "SLIDESHOW", ShortName = "SLDE" },
                     new ButtonSourceMapping() { KeyName = "key", ButtonId = 6, ButtonName = "AKEY", PhysicalInputId = 3, LongName = "ALPHA KEY", ShortName = "AKEY" },
-                    new ButtonSourceMapping() { KeyName = "c7", ButtonId = 7, ButtonName = "CAM7", PhysicalInputId = 7, LongName = "CAMERA 7", ShortName = "CAM7" },
-                    new ButtonSourceMapping() { KeyName = "c8", ButtonId = 8, ButtonName = "CAM8", PhysicalInputId = 8, LongName = "CAMERA 8", ShortName = "CAM8" },
+                    new ButtonSourceMapping() { KeyName = "proj", ButtonId = 7, ButtonName = "PROJ", PhysicalInputId = 2, LongName = "PROJECTOR", ShortName = "PROJ" },
+                    new ButtonSourceMapping() { KeyName = "c8", ButtonId = 8, ButtonName = "CAM8", PhysicalInputId = 1, LongName = "CAMERA 8", ShortName = "CAM8" },
                 },
                 MixEffectSettings = new BMDMixEffectSettings()
                 {
@@ -2779,25 +2779,25 @@ namespace Integrated_Presenter
                 MultiviewerConfig = new BMDMultiviewerSettings()
                 {
                     Layout = (int)_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop, // 12
-                    Window2 = 5,
-                    Window3 = 1,
+                    Window2 = 8,
+                    Window3 = 7,
                     Window4 = 6,
-                    Window5 = 2,
+                    Window5 = 5,
                     Window6 = 4,
                     Window7 = 3,
-                    Window8 = 7,
-                    Window9 = 8
+                    Window8 = 2,
+                    Window9 = 1
                 },
                 DownstreamKey1Config = new BMDDSKSettings()
                 {
                     InputFill = 4,
-                    InputCut = 0,
-                    Clip = 0.3,
-                    Gain = 0.06,
+                    InputCut = 3,
+                    Clip = 0.5,
+                    Gain = 0.35,
                     Rate = 30,
-                    Invert = 1,
+                    Invert = 0,
                     IsPremultipled = 0,
-                    IsMasked = 1,
+                    IsMasked = 0,
                     MaskTop = -5.5f,
                     MaskBottom = -9,
                     MaskLeft = -16,
