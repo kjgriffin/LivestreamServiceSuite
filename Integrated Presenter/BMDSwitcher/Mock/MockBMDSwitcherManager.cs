@@ -372,5 +372,11 @@ namespace Integrated_Presenter.BMDSwitcher
             mockMultiviewer.SetUSK1ForNextTrans(false, _state);
             SwitcherStateChanged?.Invoke(_state);
         }
+
+        public void PerformAuxSelect(int sourceID)
+        {
+            _state.AuxID = sourceID;
+            SwitcherStateChanged?.Invoke(_state);
+        }
     }
 }

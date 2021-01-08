@@ -287,6 +287,11 @@ namespace Integrated_Presenter
             switcherManager?.PerformPresetSelect(ConvertButtonToSourceID(button));
         }
 
+        private void ClickAux(int sourceID)
+        {
+            switcherManager?.PerformAuxSelect(sourceID);
+        }
+
         private void ClickProgram(int button)
         {
             if (!IsProgramRowLocked)
@@ -872,6 +877,8 @@ namespace Integrated_Presenter
                     TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, false, SlidePoolSource0.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, true, SlidePoolSource0.Driven);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input1);
                 else
                     ClickPreset(1);
             }
@@ -885,6 +892,8 @@ namespace Integrated_Presenter
                     TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, false, SlidePoolSource1.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, true, SlidePoolSource1.Driven);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input2);
                 else
                     ClickPreset(2);
             }
@@ -898,6 +907,8 @@ namespace Integrated_Presenter
                     TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, false, SlidePoolSource2.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, true, SlidePoolSource2.Driven);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input3);
                 else
                     ClickPreset(3);
             }
@@ -911,6 +922,8 @@ namespace Integrated_Presenter
                     TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, false, SlidePoolSource3.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, true, SlidePoolSource3.Driven);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input4);
                 else
                     ClickPreset(4);
             }
@@ -920,6 +933,8 @@ namespace Integrated_Presenter
                     ClickProgram(5);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(5);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input5);
                 else
                     ClickPreset(5);
             }
@@ -929,6 +944,8 @@ namespace Integrated_Presenter
                     ClickProgram(6);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(6);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input6);
                 else
                     ClickPreset(6);
             }
@@ -938,6 +955,8 @@ namespace Integrated_Presenter
                     ClickProgram(7);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(7);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input7);
                 else
                     ClickPreset(7);
             }
@@ -947,10 +966,28 @@ namespace Integrated_Presenter
                     ClickProgram(8);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(8);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input8);
                 else
                     ClickPreset(8);
             }
+            if (e.Key == Key.D9)
+            {
+                if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcherVideoSources.CleanFeed1);
+            }
+            if (e.Key == Key.D0)
+            {
+                if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcherVideoSources.CleanFeed2);
+            }
             #endregion
+
+            if (e.Key == Key.OemTilde)
+            {
+                if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcherVideoSources.ME1Prog);
+            }
 
             // arrow keys + (LCtrl)
             #region slide controls
@@ -1063,13 +1100,19 @@ namespace Integrated_Presenter
             // fade to black
             if (e.Key == Key.B)
             {
-                switcherManager?.PerformToggleFTB();
+                if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcherVideoSources.Black);
+                else
+                    switcherManager?.PerformToggleFTB();
             }
 
             // color bars
             if (e.Key == Key.C)
             {
-                SetProgramColorBars();
+                if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux((int)BMDSwitcherVideoSources.ColorBars);
+                else
+                    SetProgramColorBars();
             }
 
             // transition controls
@@ -2761,6 +2804,7 @@ namespace Integrated_Presenter
                     ProgramOutGain = 2,
                     XLRInputGain = 6,
                 },
+                DefaultAuxSource = (int)BMDSwitcherVideoSources.ME1Prog,
                 Routing = new List<ButtonSourceMapping>() {
                     new ButtonSourceMapping() { KeyName = "left", ButtonId = 1, ButtonName = "PULPIT", PhysicalInputId = 8, LongName = "PULPIT", ShortName = "PLPT" },
                     new ButtonSourceMapping() { KeyName = "center", ButtonId = 2, ButtonName = "CENTER", PhysicalInputId = 7, LongName = "CENTER", ShortName = "CNTR" },
