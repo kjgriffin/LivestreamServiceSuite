@@ -2769,7 +2769,7 @@ namespace Integrated_Presenter
                     new ButtonSourceMapping() { KeyName = "slide", ButtonId = 5, ButtonName = "SLIDE", PhysicalInputId = 4, LongName = "SLIDESHOW", ShortName = "SLDE" },
                     new ButtonSourceMapping() { KeyName = "key", ButtonId = 6, ButtonName = "AKEY", PhysicalInputId = 3, LongName = "ALPHA KEY", ShortName = "AKEY" },
                     new ButtonSourceMapping() { KeyName = "proj", ButtonId = 7, ButtonName = "PROJ", PhysicalInputId = 2, LongName = "PROJECTOR", ShortName = "PROJ" },
-                    new ButtonSourceMapping() { KeyName = "c8", ButtonId = 8, ButtonName = "CAM8", PhysicalInputId = 1, LongName = "CAMERA 8", ShortName = "CAM8" },
+                    new ButtonSourceMapping() { KeyName = "c1", ButtonId = 8, ButtonName = "CAM1", PhysicalInputId = 1, LongName = "HDMI 1", ShortName = "CAM1" },
                 },
                 MixEffectSettings = new BMDMixEffectSettings()
                 {
