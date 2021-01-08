@@ -86,7 +86,7 @@ namespace Integrated_Presenter
 
             HideAdvancedPresControls();
             HideAdvancedPIPControls();
-            HideAdvancedProjectorControls();
+            HideAuxButtonConrols();
 
             SlidePoolButtons = new List<SlidePoolSource>() { SlidePoolSource0, SlidePoolSource1, SlidePoolSource2, SlidePoolSource3 };
 
@@ -94,7 +94,7 @@ namespace Integrated_Presenter
             UpdateSlideControls();
             UpdateMediaControls();
             UpdateSlideModeButtons();
-            UpdateProjectorButtonStyles();
+            DisableAuxControls();
             UpdateProgramRowLockButtonUI();
             UpdateRecordButtonUI();
 
@@ -287,9 +287,9 @@ namespace Integrated_Presenter
             switcherManager?.PerformPresetSelect(ConvertButtonToSourceID(button));
         }
 
-        private void ClickAux(int sourceID)
+        private void ClickAux(int button)
         {
-            switcherManager?.PerformAuxSelect(sourceID);
+            switcherManager?.PerformAuxSelect(ConvertButtonToSourceID(button));
         }
 
         private void ClickProgram(int button)
@@ -358,6 +358,7 @@ namespace Integrated_Presenter
         {
             UpdatePresetButtonStyles();
             UpdateProgramButtonStyles();
+            UpdateAuxButtonStyles();
             UpdateTransButtonStyles();
             UpdateUSK1Styles();
             UpdateDSK1Styles();
@@ -424,6 +425,7 @@ namespace Integrated_Presenter
             BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
 
             EnableKeyerControls();
+            EnableAuxButtons();
             ShowKeyerUI();
 
         }
@@ -516,6 +518,20 @@ namespace Integrated_Presenter
             BtnProgram7.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
             BtnProgram8.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
+
+        private void UpdateAuxButtonStyles()
+        {
+            BtnAux1.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 1 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux2.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 2 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux3.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 3 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux4.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 4 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux5.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 5 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux6.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 6 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux7.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux8.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAuxPgm.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 12 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+        }
+
 
         private void UpdateTransButtonStyles()
         {
@@ -810,6 +826,10 @@ namespace Integrated_Presenter
             {
                 ToggleViewAdvancedPresentation();
             }
+            if (e.Key == Key.X)
+            {
+                ToggleAuxRow();
+            }
 
 
             // recording
@@ -878,7 +898,7 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, true, SlidePoolSource0.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input1);
+                    ClickAux(1);
                 else
                     ClickPreset(1);
             }
@@ -893,7 +913,7 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, true, SlidePoolSource1.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input2);
+                    ClickAux(2);
                 else
                     ClickPreset(2);
             }
@@ -908,7 +928,7 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, true, SlidePoolSource2.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input3);
+                    ClickAux(3);
                 else
                     ClickPreset(3);
             }
@@ -923,7 +943,7 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, true, SlidePoolSource3.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input4);
+                    ClickAux(4);
                 else
                     ClickPreset(4);
             }
@@ -934,7 +954,7 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(5);
                 else if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input5);
+                    ClickAux(5);
                 else
                     ClickPreset(5);
             }
@@ -945,7 +965,7 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(6);
                 else if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input6);
+                    ClickAux(6);
                 else
                     ClickPreset(6);
             }
@@ -956,7 +976,7 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(7);
                 else if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input7);
+                    ClickAux(7);
                 else
                     ClickPreset(7);
             }
@@ -967,26 +987,26 @@ namespace Integrated_Presenter
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(8);
                 else if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcher.BMDSwitcherVideoSources.Input8);
+                    ClickAux(8);
                 else
                     ClickPreset(8);
             }
             if (e.Key == Key.D9)
             {
                 if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcherVideoSources.CleanFeed1);
+                    ClickAux(9);
             }
             if (e.Key == Key.D0)
             {
                 if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcherVideoSources.CleanFeed2);
+                    ClickAux(0);
             }
             #endregion
 
             if (e.Key == Key.OemTilde)
             {
                 if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcherVideoSources.ME1Prog);
+                    ClickAux(12);
             }
 
             // arrow keys + (LCtrl)
@@ -1101,7 +1121,7 @@ namespace Integrated_Presenter
             if (e.Key == Key.B)
             {
                 if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcherVideoSources.Black);
+                    ClickAux(10);
                 else
                     switcherManager?.PerformToggleFTB();
             }
@@ -1110,7 +1130,7 @@ namespace Integrated_Presenter
             if (e.Key == Key.C)
             {
                 if (Keyboard.IsKeyDown(Key.Z))
-                    ClickAux((int)BMDSwitcherVideoSources.ColorBars);
+                    ClickAux(11);
                 else
                     SetProgramColorBars();
             }
@@ -2723,10 +2743,18 @@ namespace Integrated_Presenter
                     case 8:
                         UpdateButton8Labels(btn);
                         break;
+                    case 12:
+                        UpdateButtonPgmLabels(btn);
+                        break;
                     default:
                         break;
                 }
             }
+        }
+
+        private void UpdateButtonPgmLabels(ButtonSourceMapping config)
+        {
+            BtnAuxPgm.Content = config.ButtonName;
         }
 
         private void UpdateButton1Labels(ButtonSourceMapping config)
@@ -2735,6 +2763,7 @@ namespace Integrated_Presenter
             BtnProgram1.Content = config.ButtonName;
             BtnPIPFillProgram1.Content = config.ButtonName;
             BtnChromaFillProgram1.Content = config.ButtonName;
+            BtnAux1.Content = config.ButtonName;
         }
 
         private void UpdateButton2Labels(ButtonSourceMapping config)
@@ -2743,6 +2772,7 @@ namespace Integrated_Presenter
             BtnProgram2.Content = config.ButtonName;
             BtnPIPFillProgram2.Content = config.ButtonName;
             BtnChromaFillProgram2.Content = config.ButtonName;
+            BtnAux2.Content = config.ButtonName;
         }
         private void UpdateButton3Labels(ButtonSourceMapping config)
         {
@@ -2750,6 +2780,7 @@ namespace Integrated_Presenter
             BtnProgram3.Content = config.ButtonName;
             BtnPIPFillProgram3.Content = config.ButtonName;
             BtnChromaFillProgram3.Content = config.ButtonName;
+            BtnAux3.Content = config.ButtonName;
         }
         private void UpdateButton4Labels(ButtonSourceMapping config)
         {
@@ -2757,6 +2788,7 @@ namespace Integrated_Presenter
             BtnProgram4.Content = config.ButtonName;
             BtnPIPFillProgram4.Content = config.ButtonName;
             BtnChromaFillProgram4.Content = config.ButtonName;
+            BtnAux4.Content = config.ButtonName;
         }
 
         private void UpdateButton5Labels(ButtonSourceMapping config)
@@ -2765,6 +2797,7 @@ namespace Integrated_Presenter
             BtnProgram5.Content = config.ButtonName;
             BtnPIPFillProgram5.Content = config.ButtonName;
             BtnChromaFillProgram5.Content = config.ButtonName;
+            BtnAux5.Content = config.ButtonName;
         }
         private void UpdateButton6Labels(ButtonSourceMapping config)
         {
@@ -2772,6 +2805,7 @@ namespace Integrated_Presenter
             BtnProgram6.Content = config.ButtonName;
             BtnPIPFillProgram6.Content = config.ButtonName;
             BtnChromaFillProgram6.Content = config.ButtonName;
+            BtnAux6.Content = config.ButtonName;
         }
         private void UpdateButton7Labels(ButtonSourceMapping config)
         {
@@ -2779,6 +2813,7 @@ namespace Integrated_Presenter
             BtnProgram7.Content = config.ButtonName;
             BtnPIPFillProgram7.Content = config.ButtonName;
             BtnChromaFillProgram7.Content = config.ButtonName;
+            BtnAux7.Content = config.ButtonName;
         }
         private void UpdateButton8Labels(ButtonSourceMapping config)
         {
@@ -2786,6 +2821,7 @@ namespace Integrated_Presenter
             BtnProgram8.Content = config.ButtonName;
             BtnPIPFillProgram8.Content = config.ButtonName;
             BtnChromaFillProgram8.Content = config.ButtonName;
+            BtnAux8.Content = config.ButtonName;
         }
 
 
@@ -2814,6 +2850,11 @@ namespace Integrated_Presenter
                     new ButtonSourceMapping() { KeyName = "key", ButtonId = 6, ButtonName = "AKEY", PhysicalInputId = 3, LongName = "ALPHA KEY", ShortName = "AKEY" },
                     new ButtonSourceMapping() { KeyName = "proj", ButtonId = 7, ButtonName = "PROJ", PhysicalInputId = 2, LongName = "PROJECTOR", ShortName = "PROJ" },
                     new ButtonSourceMapping() { KeyName = "c1", ButtonId = 8, ButtonName = "CAM1", PhysicalInputId = 1, LongName = "HDMI 1", ShortName = "CAM1" },
+                    new ButtonSourceMapping() { KeyName = "cf1", ButtonId = 9, ButtonName = "CLF1", PhysicalInputId = (int)BMDSwitcherVideoSources.CleanFeed1, LongName = "CLEAN FEED 1", ShortName = "CLF1" },
+                    new ButtonSourceMapping() { KeyName = "cf2", ButtonId = 0, ButtonName = "CLF2", PhysicalInputId = (int)BMDSwitcherVideoSources.CleanFeed2, LongName = "CLEAN FEED 2", ShortName = "CLF2" },
+                    new ButtonSourceMapping() { KeyName = "black", ButtonId = 10, ButtonName = "BLACK", PhysicalInputId = (int)BMDSwitcherVideoSources.Black, LongName = "BLACK", ShortName = "BLK" },
+                    new ButtonSourceMapping() { KeyName = "cbar", ButtonId = 11, ButtonName = "CBAR", PhysicalInputId = (int)BMDSwitcherVideoSources.ColorBars, LongName = "COLOR BARS", ShortName = "CBAR" },
+                    new ButtonSourceMapping() { KeyName = "program", ButtonId = 12, ButtonName = "PRGM", PhysicalInputId = (int)BMDSwitcherVideoSources.ME1Prog, LongName = "PROGRAM", ShortName = "PRGM" },
                 },
                 MixEffectSettings = new BMDMixEffectSettings()
                 {
@@ -2921,92 +2962,105 @@ namespace Integrated_Presenter
 
         public BMDSwitcherConfigSettings Config { get => _config; }
 
-        bool showAdvancedProjector = false;
-        private void ClickViewAdvancedProjector(object sender, RoutedEventArgs e)
+        bool showAuxButons = false;
+        private void ClickViewAuxOutput(object sender, RoutedEventArgs e)
         {
-            showAdvancedProjector = !showAdvancedProjector;
-            if (showAdvancedProjector)
+            ToggleAuxRow();
+        }
+
+        private void ToggleAuxRow()
+        {
+            showAuxButons = !showAuxButons;
+            if (showAuxButons)
             {
-                ShowAdvancedProjectorControls();
+                ShowAuxButtonControls();
             }
             else
             {
-                HideAdvancedProjectorControls();
+                HideAuxButtonConrols();
             }
         }
 
-        private void ClickProjector1(object sender, RoutedEventArgs e)
+        private void ClickAux1(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(1);
+            ClickAux(1);
         }
 
-        private void ClickProjector2(object sender, RoutedEventArgs e)
+        private void ClickAux2(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(2);
+            ClickAux(2);
         }
 
-        private void ClickProjector3(object sender, RoutedEventArgs e)
+        private void ClickAux3(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(3);
+            ClickAux(3);
         }
 
-        private void ClickProjector4(object sender, RoutedEventArgs e)
+        private void ClickAux4(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(4);
+            ClickAux(4);
         }
 
-        private void ClickProjector5(object sender, RoutedEventArgs e)
+        private void ClickAux5(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(5);
+            ClickAux(5);
         }
 
-        private void ClickProjector6(object sender, RoutedEventArgs e)
+        private void ClickAux6(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(6);
+            ClickAux(6);
+        }
+
+        private void ClickAux7(object sender, RoutedEventArgs e)
+        {
+            ClickAux(7);
+        }
+        private void ClickAux8(object sender, RoutedEventArgs e)
+        {
+            ClickAux(8);
+        }
+        private void ClickAuxPgm(object sender, RoutedEventArgs e)
+        {
+            ClickAux(12);
         }
 
 
-        private void ClickProjectorButton(int btn)
+        private void EnableAuxButtons()
         {
-            if (projectorSerialPort.IsOpen)
-            {
-                projectorSerialPort.Write(btn.ToString());
-            }
+            BtnAux1.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux2.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux3.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux4.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux5.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux6.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux7.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux8.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAuxPgm.Style = Application.Current.FindResource("SwitcherButton") as Style;
         }
 
-        private void UpdateProjectorButtonNames()
+        private void DisableAuxControls()
         {
-
+            BtnAux1.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux2.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux3.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux4.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux5.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux6.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux7.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux8.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAuxPgm.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
         }
 
-        private void UpdateProjectorButtonStyles()
+        private void ShowAuxButtonControls()
         {
-            if (projectorconnected)
-            {
-                BtnProjector1.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                BtnProjector2.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                BtnProjector3.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                BtnProjector4.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                BtnProjector5.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                BtnProjector6.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                return;
-            }
-            BtnProjector1.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            BtnProjector2.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            BtnProjector3.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            BtnProjector4.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            BtnProjector5.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            BtnProjector6.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-        }
-
-        private void ShowAdvancedProjectorControls()
-        {
+            showAuxButons = true;
             gridbtns.Width = 770;
             gcAdvancedProjector.Width = new GridLength(1.2, GridUnitType.Star);
         }
 
-        private void HideAdvancedProjectorControls()
+        private void HideAuxButtonConrols()
         {
+            showAuxButons = false;
             gridbtns.Width = 660;
             gcAdvancedProjector.Width = new GridLength(0);
         }
@@ -3040,7 +3094,6 @@ namespace Integrated_Presenter
                 }
                 projectorconnected = true;
             }
-            UpdateProjectorButtonStyles();
         }
 
         private void ClickConnectProjector(object sender, RoutedEventArgs e)
