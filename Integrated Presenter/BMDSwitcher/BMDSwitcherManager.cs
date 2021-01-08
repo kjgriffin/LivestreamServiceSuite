@@ -23,6 +23,7 @@ namespace Integrated_Presenter
         private IBMDSwitcher _BMDSwitcher;
 
         private IBMDSwitcherMixEffectBlock _BMDSwitcherMixEffectBlock1;
+        private IBMDSwitcherInputAux _BMDSwitcherInputAux;
         private IBMDSwitcherKey _BMDSwitcherUpstreamKey1;
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey1;
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey2;
@@ -37,6 +38,7 @@ namespace Integrated_Presenter
 
         private SwitcherMonitor _switcherMonitor;
         private MixEffectBlockMonitor _mixEffectBlockMonitor;
+        private BMDSwitcherAuxMonitor _auxSourceMonitor;
         private UpstreamKeyMonitor _upstreamKey1Monitor;
         private DownstreamKeyMonitor _dsk1Monitor;
         private DownstreamKeyMonitor _dsk2Monitor;
@@ -71,6 +73,9 @@ namespace Integrated_Presenter
             _mixEffectBlockMonitor.ProgramInputChanged += _mixEffectBlockMonitor_ProgramInputChanged;
             _mixEffectBlockMonitor.FateToBlackFullyChanged += _mixEffectBlockMonitor_FateToBlackFullyChanged;
 
+            _auxSourceMonitor = new BMDSwitcherAuxMonitor();
+            _auxSourceMonitor.AuxInputChanged += _auxSourceMonitor_AuxInputChanged;
+
             _upstreamKey1Monitor = new UpstreamKeyMonitor();
             _upstreamKey1Monitor.UpstreamKeyOnAirChanged += _upstreamKey1Monitor_UpstreamKeyOnAirChanged;
             _upstreamKey1Monitor.UpstreamKeyFillChanged += _upstreamKey1Monitor_UpstreamKeyFillChanged;
@@ -96,6 +101,15 @@ namespace Integrated_Presenter
             }
             _state = new BMDSwitcherState();
             SwitcherDisconnected();
+        }
+
+        private void _auxSourceMonitor_AuxInputChanged(object sender, object args)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_PreviewInput();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _upstreamKey1Monitor_UpstreamKeyTypeChanged(object sender, object args)
@@ -1248,6 +1262,11 @@ namespace Integrated_Presenter
         public void PerformSetKey1OffForNextTrans()
         {
 
+        }
+
+        public void PerformAuxSelect(int sourceID)
+        {
+            throw new NotImplementedException();
         }
     }
 }
