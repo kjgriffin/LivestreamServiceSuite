@@ -264,6 +264,7 @@ namespace Integrated_Presenter
 
         private void ShowActivePlayer()
         {
+            StopNonActiveMedia();
             if (activeplayer == 1)
             {
                 mediaPlayerA.Visibility = Visibility.Visible;

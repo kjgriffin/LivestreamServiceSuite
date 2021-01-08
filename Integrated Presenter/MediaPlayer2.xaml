@@ -23,7 +23,7 @@
         <Rectangle Name="ActionIndicator" Fill="Orange" Panel.ZIndex="10" Height="50" VerticalAlignment="Top"></Rectangle>
         <Image Grid.Row="1" Name="MuteIcon" Width="70" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5" Panel.ZIndex="100" Source="pack://application:,,,/Icons/Mute2.png" Visibility="Visible"></Image>
         <Grid Panel.ZIndex="11">
-            <TextBlock Margin="10" Name="SeqType" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="30" FontWeight="Bold">SEQ</TextBlock>
+            <TextBlock Panel.ZIndex="100" Margin="10" Name="SeqType" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="30" FontWeight="Bold">SEQ</TextBlock>
             <Viewbox VerticalAlignment="Center">
                 <TextBlock Margin="1" Name="SequenceLabel" Foreground="Black" HorizontalAlignment="Center">Automated Slide</TextBlock>
             </Viewbox>

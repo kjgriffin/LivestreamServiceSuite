@@ -323,6 +323,7 @@ namespace Integrated_Presenter
 
                 SequenceLabel.Visibility = Visibility.Visible;
                 ActionIndicator.Visibility = Visibility.Visible;
+                SeqType.Visibility = Visibility.Visible;
             }
         }
 
