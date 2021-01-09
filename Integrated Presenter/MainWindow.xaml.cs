@@ -2855,6 +2855,7 @@ namespace Integrated_Presenter
                     new ButtonSourceMapping() { KeyName = "black", ButtonId = 10, ButtonName = "BLACK", PhysicalInputId = (int)BMDSwitcherVideoSources.Black, LongName = "BLACK", ShortName = "BLK" },
                     new ButtonSourceMapping() { KeyName = "cbar", ButtonId = 11, ButtonName = "CBAR", PhysicalInputId = (int)BMDSwitcherVideoSources.ColorBars, LongName = "COLOR BARS", ShortName = "CBAR" },
                     new ButtonSourceMapping() { KeyName = "program", ButtonId = 12, ButtonName = "PRGM", PhysicalInputId = (int)BMDSwitcherVideoSources.ME1Prog, LongName = "PROGRAM", ShortName = "PRGM" },
+                    new ButtonSourceMapping() { KeyName = "preview", ButtonId = 13, ButtonName = "PREV", PhysicalInputId = (int)BMDSwitcherVideoSources.ME1Prev, LongName = "PREVIEW", ShortName = "PREV" },
                 },
                 MixEffectSettings = new BMDMixEffectSettings()
                 {
