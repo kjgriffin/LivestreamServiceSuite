@@ -1379,6 +1379,12 @@ namespace Integrated_Presenter
                             switcherManager?.PerformProgramSelect(task.DataI);
                         });
                         break;
+                    case AutomationActionType.AuxSelect:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.PerformAuxSelect(task.DataI);
+                        });
+                        break;
                     case AutomationActionType.AutoTrans:
                         Dispatcher.Invoke(() =>
                         {

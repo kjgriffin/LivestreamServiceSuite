@@ -409,6 +409,10 @@ namespace Integrated_Presenter
                         a.Action = AutomationActionType.ProgramSelect;
                         a.DataI = Convert.ToInt32(arg1);
                         break;
+                    case "AuxSelect":
+                        a.Action = AutomationActionType.AuxSelect;
+                        a.DataI = Convert.ToInt32(arg1);
+                        break;
                     case "DelayMs":
                         a.Action = AutomationActionType.DelayMs;
                         a.DataI = Convert.ToInt32(arg1);
@@ -477,6 +481,7 @@ namespace Integrated_Presenter
         RestartMedia,
         MuteMedia,
         UnMuteMedia,
+        AuxSelect,
     }
 
 
