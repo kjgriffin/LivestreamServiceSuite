@@ -6,7 +6,6 @@ using System.Drawing.Text;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
@@ -215,6 +214,111 @@ namespace Xenon.Helpers
             }
 
         }
+
+
+        public static Bitmap InvertImage(this Bitmap source)
+        {
+            /*
+                https://stackoverflow.com/questions/33024881/invert-image-faster-in-c-sharp
+             */
+            Bitmap res = new Bitmap(source);
+
+            for (int y = 0; y < res.Height; y++)
+            {
+                for (int x = 0; x < res.Width; x++)
+                {
+                    Color inv = res.GetPixel(x, y);
+                    inv = Color.FromArgb(255, 255 - inv.R, 255 - inv.G, 255 - inv.B);
+                    res.SetPixel(x, y, inv);
+                }
+            }
+            return res;
+        }
+
+        public static Bitmap CorrectImage(this Bitmap source, int cfactor, Color ccol)
+        {
+            Bitmap res = new Bitmap(source);
+
+            for (int y = 0; y < res.Height; y++)
+            {
+                for (int x = 0; x < res.Width; x++)
+                {
+                    Color inv = res.GetPixel(x, y);
+                    if (Math.Abs(ccol.R - inv.R) < cfactor || Math.Abs(ccol.G - inv.G) < cfactor || Math.Abs(ccol.B - inv.B) < cfactor)
+                    {
+                        res.SetPixel(x, y, ccol);
+                    }
+                }
+            }
+            return res;
+
+        }
+
+        public static Bitmap ForceMonoChromeImage(this Bitmap source, Color except, Color force)
+        {
+            Bitmap res = new Bitmap(source);
+
+            for (int y = 0; y < res.Height; y++)
+            {
+                for (int x = 0; x < res.Width; x++)
+                {
+                    Color inv = res.GetPixel(x, y);
+                    if (inv.R != except.R || inv.G != except.G || inv.B != except.B)
+                    {
+                        res.SetPixel(x, y, force);
+                    }
+                }
+            }
+            return res;
+
+        }
+
+
+        public static Bitmap DichotimizeImage(this Bitmap source, Color match, int tolerance, Color force)
+        {
+            Bitmap res = new Bitmap(source);
+
+            for (int y = 0; y < res.Height; y++)
+            {
+                for (int x = 0; x < res.Width; x++)
+                {
+                    Color inv = res.GetPixel(x, y);
+                    if (Math.Abs(match.R - inv.R) < tolerance || Math.Abs(match.G - inv.G) < tolerance || Math.Abs(match.B - inv.B) < tolerance)
+                    {
+                        res.SetPixel(x, y, match);
+                    }
+                    else
+                    {
+                        res.SetPixel(x, y, force);
+                    }
+                }
+            }
+            return res;
+
+        }
+
+
+        public static Bitmap SwapImageColors(this Bitmap source, Color scol, Color dcol)
+        {
+            /*
+                https://stackoverflow.com/questions/33024881/invert-image-faster-in-c-sharp
+             */
+            Bitmap res = new Bitmap(source);
+
+            for (int y = 0; y < res.Height; y++)
+            {
+                for (int x = 0; x < res.Width; x++)
+                {
+                    Color inv = res.GetPixel(x, y);
+                    if (inv.R == scol.R && inv.G == scol.G && inv.B == scol.B)
+                    {
+                        res.SetPixel(x, y, dcol);
+                    }
+                }
+            }
+            return res;
+        }
+
 
         //public static Font LoadLSBSymbolFont()
         //{

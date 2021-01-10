@@ -347,7 +347,7 @@ namespace SlideCreater
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Add Assets";
-            ofd.Filter = "Images and Video (*.png;*.jpg;*.bmp;*.mp4)|*.png;*.jpg;*.bmp;*.mp4";
+            ofd.Filter = "Images, Video and Audio (*.png;*.jpg;*.bmp;*.mp4;*.mp3;*.wav)|*.png;*.jpg;*.bmp;*.mp4;*.mp3;*.wav";
             ofd.Multiselect = true;
             if (ofd.ShowDialog() == true)
             {
@@ -367,14 +367,19 @@ namespace SlideCreater
                     }
 
                     ProjectAsset asset = new ProjectAsset();
-                    if (Regex.IsMatch(System.IO.Path.GetExtension(file), "\\.mp4", RegexOptions.IgnoreCase))
+                    if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio };
                     }
-                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
+                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
                     }
+                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
+                    {
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
+                    }
+
 
 
                     Assets.Add(asset);

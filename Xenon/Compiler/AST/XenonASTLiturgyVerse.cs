@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Xenon.Compiler.AST;
+using Xenon.Helpers;
 using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
 
@@ -84,6 +85,12 @@ namespace Xenon.Compiler
 
             double lineheight = -project.Layouts.LiturgyLayout.InterLineSpacing;
 
+            if (project.GetAttribute("alphatranscol").Count > 0)
+            {
+                liturgyslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
+            }
+
+
 
             foreach (var line in layoutEngine.LayoutLines)
             {
@@ -103,6 +110,10 @@ namespace Xenon.Compiler
                         MediaType = MediaType.Image
                     };
                     lineheight = 0;
+                    if (project.GetAttribute("alphatranscol").Count > 0)
+                    {
+                        liturgyslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
+                    }
                 }
                 lineheight += project.Layouts.LiturgyLayout.InterLineSpacing + line.height;
                 liturgyslide.Lines.Add(

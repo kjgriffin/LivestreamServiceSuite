@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Xenon.Helpers;
+using System.Linq;
 
 namespace Xenon.Compiler
 {
@@ -49,6 +51,12 @@ namespace Xenon.Compiler
             sermonslide.Lines.Add(sltitle);
             sermonslide.Lines.Add(slref);
             sermonslide.Lines.Add(slpreacher);
+
+            if (project.GetAttribute("alphatranscol").Count > 0)
+            {
+                sermonslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
+            }
+
 
             project.Slides.Add(sermonslide);
 

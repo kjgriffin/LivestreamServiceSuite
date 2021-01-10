@@ -11,6 +11,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public long PresetID { get; set; }
         public long ProgramID { get; set; }
+        public long AuxID { get; set; }
 
         public bool USK1OnAir { get; set; }
         public long USK1FillSource { get; set; }
@@ -44,6 +45,7 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             PresetID = -1;
             ProgramID = -1;
+            AuxID = -1;
             DSK1OnAir = false;
             USK1OnAir = false;
             USK1KeyType = 1;
@@ -115,6 +117,7 @@ namespace Integrated_Presenter.BMDSwitcher
             {
                 PresetID = this.PresetID,
                 ProgramID = this.ProgramID,
+                AuxID = this.AuxID,
                 USK1OnAir = this.USK1OnAir,
                 USK1KeyType = this.USK1KeyType,
                 USK1FillSource = this.USK1FillSource,

@@ -86,7 +86,7 @@ namespace Integrated_Presenter
 
             HideAdvancedPresControls();
             HideAdvancedPIPControls();
-            HideAdvancedProjectorControls();
+            HideAuxButtonConrols();
 
             SlidePoolButtons = new List<SlidePoolSource>() { SlidePoolSource0, SlidePoolSource1, SlidePoolSource2, SlidePoolSource3 };
 
@@ -94,7 +94,7 @@ namespace Integrated_Presenter
             UpdateSlideControls();
             UpdateMediaControls();
             UpdateSlideModeButtons();
-            UpdateProjectorButtonStyles();
+            DisableAuxControls();
             UpdateProgramRowLockButtonUI();
             UpdateRecordButtonUI();
 
@@ -105,6 +105,12 @@ namespace Integrated_Presenter
             NextPreview.AutoSilentReplay = true;
             AfterPreview.AutoSilentReplay = true;
             PrevPreview.AutoSilentReplay = true;
+
+            NextPreview.ShowBlackForActions = false;
+            AfterPreview.ShowBlackForActions = false;
+            PrevPreview.ShowBlackForActions = false;
+            CurrentPreview.ShowBlackForActions = false;
+            CurrentPreview.ShowIfMute = true;
 
             CurrentPreview.OnMediaPlaybackTimeUpdate += CurrentPreview_OnMediaPlaybackTimeUpdate;
             NextPreview.OnMediaLoaded += NextPreview_OnMediaLoaded;
@@ -281,6 +287,11 @@ namespace Integrated_Presenter
             switcherManager?.PerformPresetSelect(ConvertButtonToSourceID(button));
         }
 
+        private void ClickAux(int button)
+        {
+            switcherManager?.PerformAuxSelect(ConvertButtonToSourceID(button));
+        }
+
         private void ClickProgram(int button)
         {
             if (!IsProgramRowLocked)
@@ -347,6 +358,7 @@ namespace Integrated_Presenter
         {
             UpdatePresetButtonStyles();
             UpdateProgramButtonStyles();
+            UpdateAuxButtonStyles();
             UpdateTransButtonStyles();
             UpdateUSK1Styles();
             UpdateDSK1Styles();
@@ -413,6 +425,7 @@ namespace Integrated_Presenter
             BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
 
             EnableKeyerControls();
+            EnableAuxButtons();
             ShowKeyerUI();
 
         }
@@ -505,6 +518,20 @@ namespace Integrated_Presenter
             BtnProgram7.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
             BtnProgram8.Background = (ConvertSourceIDToButton(switcherState.ProgramID) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
+
+        private void UpdateAuxButtonStyles()
+        {
+            BtnAux1.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 1 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux2.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 2 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux3.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 3 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux4.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 4 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux5.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 5 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux6.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 6 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux7.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAux8.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+            BtnAuxPgm.Background = (ConvertSourceIDToButton(switcherState.AuxID) == 12 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
+        }
+
 
         private void UpdateTransButtonStyles()
         {
@@ -799,6 +826,23 @@ namespace Integrated_Presenter
             {
                 ToggleViewAdvancedPresentation();
             }
+            if (e.Key == Key.X)
+            {
+                ToggleAuxRow();
+            }
+
+
+            // recording
+
+            if (e.Key == Key.F5)
+            {
+                TryStartRecording();
+            }
+
+            if (e.Key == Key.F6)
+            {
+                TryStopRecording();
+            }
 
             // audio
 
@@ -828,6 +872,19 @@ namespace Integrated_Presenter
                 }
             }
 
+            if (e.Key == Key.M)
+            {
+                MediaMuted = !MediaMuted;
+                if (MediaMuted)
+                {
+                    muteMedia();
+                }
+                else
+                {
+                    unmuteMedia();
+                }
+            }
+
             // D1-D8 + (LShift)
             #region program/preset bus
             if (e.Key == Key.D1)
@@ -840,6 +897,8 @@ namespace Integrated_Presenter
                     TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, false, SlidePoolSource0.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, true, SlidePoolSource0.Driven);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(1);
                 else
                     ClickPreset(1);
             }
@@ -853,6 +912,8 @@ namespace Integrated_Presenter
                     TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, false, SlidePoolSource1.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, true, SlidePoolSource1.Driven);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(2);
                 else
                     ClickPreset(2);
             }
@@ -866,6 +927,8 @@ namespace Integrated_Presenter
                     TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, false, SlidePoolSource2.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, true, SlidePoolSource2.Driven);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(3);
                 else
                     ClickPreset(3);
             }
@@ -879,6 +942,8 @@ namespace Integrated_Presenter
                     TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, false, SlidePoolSource3.Driven);
                 else if (Keyboard.IsKeyDown(Key.R))
                     TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, true, SlidePoolSource3.Driven);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(4);
                 else
                     ClickPreset(4);
             }
@@ -888,6 +953,8 @@ namespace Integrated_Presenter
                     ClickProgram(5);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(5);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(5);
                 else
                     ClickPreset(5);
             }
@@ -897,6 +964,8 @@ namespace Integrated_Presenter
                     ClickProgram(6);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(6);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(6);
                 else
                     ClickPreset(6);
             }
@@ -906,6 +975,8 @@ namespace Integrated_Presenter
                     ClickProgram(7);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(7);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(7);
                 else
                     ClickPreset(7);
             }
@@ -915,10 +986,28 @@ namespace Integrated_Presenter
                     ClickProgram(8);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(8);
+                else if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(8);
                 else
                     ClickPreset(8);
             }
+            if (e.Key == Key.D9)
+            {
+                if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(9);
+            }
+            if (e.Key == Key.D0)
+            {
+                if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(0);
+            }
             #endregion
+
+            if (e.Key == Key.OemTilde)
+            {
+                if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(12);
+            }
 
             // arrow keys + (LCtrl)
             #region slide controls
@@ -1031,13 +1120,19 @@ namespace Integrated_Presenter
             // fade to black
             if (e.Key == Key.B)
             {
-                switcherManager?.PerformToggleFTB();
+                if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(10);
+                else
+                    switcherManager?.PerformToggleFTB();
             }
 
             // color bars
             if (e.Key == Key.C)
             {
-                SetProgramColorBars();
+                if (Keyboard.IsKeyDown(Key.Z))
+                    ClickAux(11);
+                else
+                    SetProgramColorBars();
             }
 
             // transition controls
@@ -1219,11 +1314,356 @@ namespace Integrated_Presenter
         #region SlideDriveVideo
 
 
+        private bool SetupActionsCompleted = false;
+        private bool ActionsCompleted = false;
+
+        private Guid currentslideforactions;
+
+        private async Task ExecuteSetupActions(Slide s)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                SetupActionsCompleted = false;
+                CurrentPreview.SetupComplete(false);
+            });
+            await Task.Run(async () =>
+            {
+                foreach (var task in s.SetupActions)
+                {
+                    await PerformAutomationAction(task);
+                }
+            });
+            Dispatcher.Invoke(() =>
+            {
+                SetupActionsCompleted = true;
+                CurrentPreview.SetupComplete(true);
+            });
+        }
+
+        private async Task ExecuteActionSlide(Slide s)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                ActionsCompleted = false;
+                CurrentPreview.ActionComplete(false);
+            });
+            await Task.Run(async () =>
+            {
+                foreach (var task in s.Actions)
+                {
+                    await PerformAutomationAction(task);
+                }
+            });
+            Dispatcher.Invoke(() =>
+            {
+                ActionsCompleted = true;
+                CurrentPreview.ActionComplete(true);
+            });
+        }
+
+        private async Task PerformAutomationAction(AutomationAction task)
+        {
+            await Task.Run(async () =>
+            {
+                switch (task.Action)
+                {
+                    case AutomationActionType.PresetSelect:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.PerformPresetSelect(task.DataI);
+                        });
+                        break;
+                    case AutomationActionType.ProgramSelect:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.PerformProgramSelect(task.DataI);
+                        });
+                        break;
+                    case AutomationActionType.AuxSelect:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.PerformAuxSelect(task.DataI);
+                        });
+                        break;
+                    case AutomationActionType.AutoTrans:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.PerformAutoTransition();
+                        });
+                        break;
+                    case AutomationActionType.CutTrans:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.PerformCutTransition();
+                        });
+                        break;
+                    case AutomationActionType.AutoTakePresetIfOnSlide:
+                        // Take Preset if program source is fed from slides
+                        if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformAutoTransition();
+                            });
+                            await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                        }
+                        break;
+                    case AutomationActionType.DSK1On:
+                        if (!switcherState.DSK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformToggleDSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.DSK1Off:
+                        if (switcherState.DSK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformToggleDSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.DSK1FadeOn:
+                        if (!switcherState.DSK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformAutoOnAirDSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.DSK1FadeOff:
+                        if (switcherState.DSK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformAutoOffAirDSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.DSK2On:
+                        if (!switcherState.DSK2OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformToggleDSK2();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.DSK2Off:
+                        if (switcherState.DSK2OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformToggleDSK2();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.DSK2FadeOn:
+                        if (!switcherState.DSK2OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformAutoOnAirDSK2();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.DSK2FadeOff:
+                        if (switcherState.DSK2OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformAutoOffAirDSK2();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.RecordStart:
+                        Dispatcher.Invoke(() =>
+                        {
+                            TryStartRecording();
+                        });
+                        break;
+                    case AutomationActionType.RecordStop:
+                        Dispatcher.Invoke(() =>
+                        {
+                            TryStopRecording();
+                        });
+                        break;
+
+                    case AutomationActionType.Timer1Restart:
+                        if (automationtimer1enabled)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                timer1span = TimeSpan.Zero;
+                            });
+                        }
+                        break;
+
+                    case AutomationActionType.USK1On:
+                        if (!switcherState.USK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformOnAirUSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.USK1Off:
+                        if (switcherState.USK1OnAir)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                switcherManager?.PerformOffAirUSK1();
+                            });
+                        }
+                        break;
+                    case AutomationActionType.USK1SetTypeChroma:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.SetUSK1TypeChroma();
+                        });
+                        break;
+                    case AutomationActionType.USK1SetTypeDVE:
+                        Dispatcher.Invoke(() =>
+                        {
+                            switcherManager?.SetUSK1TypeDVE();
+                        });
+                        break;
+
+                    case AutomationActionType.OpenAudioPlayer:
+                        Dispatcher.Invoke(() =>
+                        {
+                            OpenAudioPlayer();
+                            Focus();
+                        });
+                        break;
+                    case AutomationActionType.LoadAudio:
+                        string filename = Path.Join(Presentation.Folder, task.DataS);
+                        Dispatcher.Invoke(() =>
+                        {
+                            audioPlayer.OpenAudio(filename);
+                        });
+                        break;
+                    case AutomationActionType.PlayAuxAudio:
+                        Dispatcher.Invoke(() =>
+                        {
+                            audioPlayer.PlayAudio();
+                        });
+                        break;
+                    case AutomationActionType.StopAuxAudio:
+                        Dispatcher.Invoke(() =>
+                        {
+                            audioPlayer.StopAudio();
+                        });
+                        break;
+                    case AutomationActionType.PauseAuxAudio:
+                        Dispatcher.Invoke(() =>
+                        {
+                            audioPlayer.PauseAudio();
+                        });
+                        break;
+                    case AutomationActionType.ReplayAuxAudio:
+                        Dispatcher.Invoke(() =>
+                        {
+                            audioPlayer.RestartAudio();
+                        });
+                        break;
+
+                    case AutomationActionType.PlayMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            playMedia();
+                        });
+                        break;
+                    case AutomationActionType.PauseMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            pauseMedia();
+                        });
+                        break;
+                    case AutomationActionType.StopMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            stopMedia();
+                        });
+                        break;
+                    case AutomationActionType.RestartMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            restartMedia();
+                        });
+                        break;
+                    case AutomationActionType.MuteMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            muteMedia();
+                        });
+                        break;
+                    case AutomationActionType.UnMuteMedia:
+                        Dispatcher.Invoke(() =>
+                        {
+                            unmuteMedia();
+                        });
+                        break;
+
+
+                    case AutomationActionType.DelayMs:
+                        await Task.Delay(task.DataI);
+                        break;
+                    case AutomationActionType.None:
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+
+        private bool MediaMuted = false;
+
+        private void unmuteMedia()
+        {
+            MediaMuted = false;
+            CurrentPreview.MarkUnMuted();
+            _display?.UnMuteMedia();
+        }
+
+        private void muteMedia()
+        {
+            MediaMuted = true;
+            CurrentPreview.MarkMuted();
+            _display?.MuteMedia();
+        }
+
         private async void SlideDriveVideo_Next()
         {
             if (Presentation?.Next != null)
             {
-                if (Presentation.Next.Type == SlideType.Liturgy)
+                if (Presentation.Next.Type == SlideType.Action)
+                {
+                    SetupActionsCompleted = false;
+                    ActionsCompleted = false;
+                    // run stetup actions
+                    await ExecuteSetupActions(Presentation.Next);
+
+                    if (Presentation.Next.AutoOnly)
+                    {
+                        // for now we won't support running 2 back to back fullauto slides.
+                        // There really shouldn't be any need.
+                        // We also cant run a script's setup actions immediatley afterward.
+                        // again it shouldn't be nessecary, since in both cases you can add it to the fullauto slide's setup actions
+                        Presentation.NextSlide();
+                    }
+                    // Perform slide actions
+                    Presentation.NextSlide();
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                    await ExecuteActionSlide(Presentation.EffectiveCurrent);
+                }
+                else if (Presentation.Next.Type == SlideType.Liturgy)
                 {
                     // turn of usk1 if chroma keyer
                     if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
@@ -1354,7 +1794,18 @@ namespace Integrated_Presenter
         {
             if (s != null && Presentation != null)
             {
-                if (s.Type == SlideType.Liturgy)
+                if (s.Type == SlideType.Action)
+                {
+                    // Run Setup Actions
+                    await ExecuteSetupActions(s);
+                    // Execute Slide Actions
+                    Presentation.Override = s;
+                    Presentation.OverridePres = true;
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                    await ExecuteActionSlide(s);
+                }
+                else if (s.Type == SlideType.Liturgy)
                 {
                     // turn of usk1 if chroma keyer
                     if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
@@ -1462,7 +1913,7 @@ namespace Integrated_Presenter
 
         private void SlideDriveVideo_Action(Slide s)
         {
-            switch (s.Action)
+            switch (s.PreAction)
             {
                 case "t1restart":
                     if (automationtimer1enabled)
@@ -1493,7 +1944,16 @@ namespace Integrated_Presenter
             {
                 DisableSlidePoolOverrides();
                 currentpoolsource = null;
-                if (Presentation.EffectiveCurrent.Type == SlideType.Liturgy)
+                if (Presentation.EffectiveCurrent.Type == SlideType.Action)
+                {
+                    // Re-run setup actions
+                    await ExecuteSetupActions(Presentation.EffectiveCurrent);
+                    slidesUpdated();
+                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                    // Run Actions
+                    await ExecuteActionSlide(Presentation.EffectiveCurrent);
+                }
+                else if (Presentation.EffectiveCurrent.Type == SlideType.Liturgy)
                 {
                     // turn of usk1 if chroma keyer
                     if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
@@ -1603,6 +2063,7 @@ namespace Integrated_Presenter
         public event PresentationStateUpdate PresentationStateUpdated;
 
         PresenterDisplay _display;
+        PresenterDisplay _keydisplay;
 
         private void OpenPresentation(object sender, RoutedEventArgs e)
         {
@@ -1624,11 +2085,19 @@ namespace Integrated_Presenter
                 }
                 else
                 {
-                    _display = new PresenterDisplay(this);
+                    _display = new PresenterDisplay(this, false);
                     _display.OnMediaPlaybackTimeUpdated += _display_OnMediaPlaybackTimeUpdated;
                     // start display
                     _display.Show();
                 }
+
+                if (_keydisplay == null && !(_keydisplay?.IsWindowVisilbe ?? false))
+                {
+                    _keydisplay = new PresenterDisplay(this, true);
+                    // no need to get playback event info
+                    _keydisplay.Show();
+                }
+
                 DisableSlidePoolOverrides();
                 slidesUpdated();
 
@@ -1662,16 +2131,26 @@ namespace Integrated_Presenter
 
         private void slidesUpdated()
         {
-            _display?.ShowSlide();
+            _display?.ShowSlide(false);
+            _keydisplay?.ShowSlide(true);
+
+            // mark update for slides
+            if (currentslideforactions != currentGuid)
+            {
+                // new slide - mark changes
+                SetupActionsCompleted = false;
+                ActionsCompleted = false;
+            }
+
             // update previews
             if (Presentation != null)
             {
-                PrevPreview.SetMedia(Presentation.Prev);
+                PrevPreview.SetMedia(Presentation.Prev, false);
                 if (ShowEffectiveCurrentPreview)
                 {
                     if (currentGuid != Presentation.EffectiveCurrent.Guid)
                     {
-                        CurrentPreview.SetMedia(Presentation.EffectiveCurrent);
+                        CurrentPreview.SetMedia(Presentation.EffectiveCurrent, false);
                         currentGuid = Presentation.EffectiveCurrent.Guid;
                     }
                 }
@@ -1679,14 +2158,19 @@ namespace Integrated_Presenter
                 {
                     if (currentGuid != Presentation.Current.Guid)
                     {
-                        CurrentPreview.SetMedia(Presentation.Current);
+                        CurrentPreview.SetMedia(Presentation.Current, false);
                         currentGuid = Presentation.Current.Guid;
                     }
                 }
-                NextPreview.SetMedia(Presentation.Next);
-                AfterPreview.SetMedia(Presentation.After);
+                NextPreview.SetupComplete(SetupActionsCompleted);
+                NextPreview.ActionComplete(false);
+                CurrentPreview.ActionComplete(ActionsCompleted);
+                CurrentPreview.SetupComplete(true);
+                NextPreview.SetMedia(Presentation.Next, false);
+                AfterPreview.SetMedia(Presentation.After, false);
             }
             UpdateSlidePreviewControls();
+            currentslideforactions = currentGuid;
         }
 
 
@@ -1759,6 +2243,7 @@ namespace Integrated_Presenter
                 Dispatcher.Invoke(() =>
                 {
                     _display.StartMediaPlayback();
+                    _keydisplay.StartMediaPlayback();
                     if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                     {
                         CurrentPreview.videoPlayer.Volume = 0;
@@ -1776,6 +2261,7 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.PauseMediaPlayback();
+                _keydisplay.PauseMediaPlayback();
                 if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
@@ -1792,6 +2278,7 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.StopMediaPlayback();
+                _keydisplay.StopMediaPlayback();
                 if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
@@ -1808,6 +2295,7 @@ namespace Integrated_Presenter
             if (activepresentation)
             {
                 _display.RestartMediaPlayback();
+                _keydisplay.RestartMediaPlayback();
                 if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
@@ -2006,7 +2494,7 @@ namespace Integrated_Presenter
                 }
             }
 
-            SlidePoolButtons[1].Selected = true;
+            SlidePoolButtons[num].Selected = true;
 
             currentpoolsource = SlidePoolButtons[num];
 
@@ -2040,6 +2528,7 @@ namespace Integrated_Presenter
         private void OnClosing(object sender, CancelEventArgs e)
         {
             _display?.Close();
+            _keydisplay?.Close();
             switcherManager?.Close();
             hyperDeckMonitorWindow?.Close();
             audioPlayer?.Close();
@@ -2260,10 +2749,18 @@ namespace Integrated_Presenter
                     case 8:
                         UpdateButton8Labels(btn);
                         break;
+                    case 12:
+                        UpdateButtonPgmLabels(btn);
+                        break;
                     default:
                         break;
                 }
             }
+        }
+
+        private void UpdateButtonPgmLabels(ButtonSourceMapping config)
+        {
+            BtnAuxPgm.Content = config.ButtonName;
         }
 
         private void UpdateButton1Labels(ButtonSourceMapping config)
@@ -2272,6 +2769,7 @@ namespace Integrated_Presenter
             BtnProgram1.Content = config.ButtonName;
             BtnPIPFillProgram1.Content = config.ButtonName;
             BtnChromaFillProgram1.Content = config.ButtonName;
+            BtnAux1.Content = config.ButtonName;
         }
 
         private void UpdateButton2Labels(ButtonSourceMapping config)
@@ -2280,6 +2778,7 @@ namespace Integrated_Presenter
             BtnProgram2.Content = config.ButtonName;
             BtnPIPFillProgram2.Content = config.ButtonName;
             BtnChromaFillProgram2.Content = config.ButtonName;
+            BtnAux2.Content = config.ButtonName;
         }
         private void UpdateButton3Labels(ButtonSourceMapping config)
         {
@@ -2287,6 +2786,7 @@ namespace Integrated_Presenter
             BtnProgram3.Content = config.ButtonName;
             BtnPIPFillProgram3.Content = config.ButtonName;
             BtnChromaFillProgram3.Content = config.ButtonName;
+            BtnAux3.Content = config.ButtonName;
         }
         private void UpdateButton4Labels(ButtonSourceMapping config)
         {
@@ -2294,6 +2794,7 @@ namespace Integrated_Presenter
             BtnProgram4.Content = config.ButtonName;
             BtnPIPFillProgram4.Content = config.ButtonName;
             BtnChromaFillProgram4.Content = config.ButtonName;
+            BtnAux4.Content = config.ButtonName;
         }
 
         private void UpdateButton5Labels(ButtonSourceMapping config)
@@ -2302,6 +2803,7 @@ namespace Integrated_Presenter
             BtnProgram5.Content = config.ButtonName;
             BtnPIPFillProgram5.Content = config.ButtonName;
             BtnChromaFillProgram5.Content = config.ButtonName;
+            BtnAux5.Content = config.ButtonName;
         }
         private void UpdateButton6Labels(ButtonSourceMapping config)
         {
@@ -2309,6 +2811,7 @@ namespace Integrated_Presenter
             BtnProgram6.Content = config.ButtonName;
             BtnPIPFillProgram6.Content = config.ButtonName;
             BtnChromaFillProgram6.Content = config.ButtonName;
+            BtnAux6.Content = config.ButtonName;
         }
         private void UpdateButton7Labels(ButtonSourceMapping config)
         {
@@ -2316,6 +2819,7 @@ namespace Integrated_Presenter
             BtnProgram7.Content = config.ButtonName;
             BtnPIPFillProgram7.Content = config.ButtonName;
             BtnChromaFillProgram7.Content = config.ButtonName;
+            BtnAux7.Content = config.ButtonName;
         }
         private void UpdateButton8Labels(ButtonSourceMapping config)
         {
@@ -2323,6 +2827,7 @@ namespace Integrated_Presenter
             BtnProgram8.Content = config.ButtonName;
             BtnPIPFillProgram8.Content = config.ButtonName;
             BtnChromaFillProgram8.Content = config.ButtonName;
+            BtnAux8.Content = config.ButtonName;
         }
 
 
@@ -2341,15 +2846,22 @@ namespace Integrated_Presenter
                     ProgramOutGain = 2,
                     XLRInputGain = 6,
                 },
+                DefaultAuxSource = (int)BMDSwitcherVideoSources.ME1Prog,
                 Routing = new List<ButtonSourceMapping>() {
-                    new ButtonSourceMapping() { KeyName = "left", ButtonId = 1, ButtonName = "PULPIT", PhysicalInputId = 5, LongName = "PULPIT", ShortName = "PLPT" },
-                    new ButtonSourceMapping() { KeyName = "center", ButtonId = 2, ButtonName = "CENTER", PhysicalInputId = 1, LongName = "CENTER", ShortName = "CNTR" },
+                    new ButtonSourceMapping() { KeyName = "left", ButtonId = 1, ButtonName = "PULPIT", PhysicalInputId = 8, LongName = "PULPIT", ShortName = "PLPT" },
+                    new ButtonSourceMapping() { KeyName = "center", ButtonId = 2, ButtonName = "CENTER", PhysicalInputId = 7, LongName = "CENTER", ShortName = "CNTR" },
                     new ButtonSourceMapping() { KeyName = "right", ButtonId = 3, ButtonName = "LECTERN", PhysicalInputId = 6, LongName = "LECTERN", ShortName = "LTRN" },
-                    new ButtonSourceMapping() { KeyName = "organ", ButtonId = 4, ButtonName = "ORGAN", PhysicalInputId = 2, LongName = "ORGAN", ShortName = "ORGN" },
+                    new ButtonSourceMapping() { KeyName = "organ", ButtonId = 4, ButtonName = "ORGAN", PhysicalInputId = 5, LongName = "ORGAN", ShortName = "ORGN" },
                     new ButtonSourceMapping() { KeyName = "slide", ButtonId = 5, ButtonName = "SLIDE", PhysicalInputId = 4, LongName = "SLIDESHOW", ShortName = "SLDE" },
-                    new ButtonSourceMapping() { KeyName = "c3", ButtonId = 6, ButtonName = "CAM3", PhysicalInputId = 3, LongName = "CAMERA 3", ShortName = "CAM3" },
-                    new ButtonSourceMapping() { KeyName = "c7", ButtonId = 7, ButtonName = "CAM7", PhysicalInputId = 7, LongName = "CAMERA 7", ShortName = "CAM7" },
-                    new ButtonSourceMapping() { KeyName = "c8", ButtonId = 8, ButtonName = "CAM8", PhysicalInputId = 8, LongName = "CAMERA 8", ShortName = "CAM8" },
+                    new ButtonSourceMapping() { KeyName = "key", ButtonId = 6, ButtonName = "AKEY", PhysicalInputId = 3, LongName = "ALPHA KEY", ShortName = "AKEY" },
+                    new ButtonSourceMapping() { KeyName = "proj", ButtonId = 7, ButtonName = "PROJ", PhysicalInputId = 2, LongName = "PROJECTOR", ShortName = "PROJ" },
+                    new ButtonSourceMapping() { KeyName = "c1", ButtonId = 8, ButtonName = "CAM1", PhysicalInputId = 1, LongName = "HDMI 1", ShortName = "CAM1" },
+                    new ButtonSourceMapping() { KeyName = "cf1", ButtonId = 9, ButtonName = "CLF1", PhysicalInputId = (int)BMDSwitcherVideoSources.CleanFeed1, LongName = "CLEAN FEED 1", ShortName = "CLF1" },
+                    new ButtonSourceMapping() { KeyName = "cf2", ButtonId = 0, ButtonName = "CLF2", PhysicalInputId = (int)BMDSwitcherVideoSources.CleanFeed2, LongName = "CLEAN FEED 2", ShortName = "CLF2" },
+                    new ButtonSourceMapping() { KeyName = "black", ButtonId = 10, ButtonName = "BLACK", PhysicalInputId = (int)BMDSwitcherVideoSources.Black, LongName = "BLACK", ShortName = "BLK" },
+                    new ButtonSourceMapping() { KeyName = "cbar", ButtonId = 11, ButtonName = "CBAR", PhysicalInputId = (int)BMDSwitcherVideoSources.ColorBars, LongName = "COLOR BARS", ShortName = "CBAR" },
+                    new ButtonSourceMapping() { KeyName = "program", ButtonId = 12, ButtonName = "PRGM", PhysicalInputId = (int)BMDSwitcherVideoSources.ME1Prog, LongName = "PROGRAM", ShortName = "PRGM" },
+                    new ButtonSourceMapping() { KeyName = "preview", ButtonId = 13, ButtonName = "PREV", PhysicalInputId = (int)BMDSwitcherVideoSources.ME1Prev, LongName = "PREVIEW", ShortName = "PREV" },
                 },
                 MixEffectSettings = new BMDMixEffectSettings()
                 {
@@ -2359,25 +2871,25 @@ namespace Integrated_Presenter
                 MultiviewerConfig = new BMDMultiviewerSettings()
                 {
                     Layout = (int)_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop, // 12
-                    Window2 = 5,
-                    Window3 = 1,
+                    Window2 = 8,
+                    Window3 = 7,
                     Window4 = 6,
-                    Window5 = 2,
+                    Window5 = 5,
                     Window6 = 4,
                     Window7 = 3,
-                    Window8 = 7,
-                    Window9 = 8
+                    Window8 = 2,
+                    Window9 = 1
                 },
                 DownstreamKey1Config = new BMDDSKSettings()
                 {
                     InputFill = 4,
-                    InputCut = 0,
-                    Clip = 0.3,
-                    Gain = 0.06,
+                    InputCut = 3,
+                    Clip = 0.5,
+                    Gain = 0.35,
                     Rate = 30,
-                    Invert = 1,
+                    Invert = 0,
                     IsPremultipled = 0,
-                    IsMasked = 1,
+                    IsMasked = 0,
                     MaskTop = -5.5f,
                     MaskBottom = -9,
                     MaskLeft = -16,
@@ -2457,92 +2969,105 @@ namespace Integrated_Presenter
 
         public BMDSwitcherConfigSettings Config { get => _config; }
 
-        bool showAdvancedProjector = false;
-        private void ClickViewAdvancedProjector(object sender, RoutedEventArgs e)
+        bool showAuxButons = false;
+        private void ClickViewAuxOutput(object sender, RoutedEventArgs e)
         {
-            showAdvancedProjector = !showAdvancedProjector;
-            if (showAdvancedProjector)
+            ToggleAuxRow();
+        }
+
+        private void ToggleAuxRow()
+        {
+            showAuxButons = !showAuxButons;
+            if (showAuxButons)
             {
-                ShowAdvancedProjectorControls();
+                ShowAuxButtonControls();
             }
             else
             {
-                HideAdvancedProjectorControls();
+                HideAuxButtonConrols();
             }
         }
 
-        private void ClickProjector1(object sender, RoutedEventArgs e)
+        private void ClickAux1(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(1);
+            ClickAux(1);
         }
 
-        private void ClickProjector2(object sender, RoutedEventArgs e)
+        private void ClickAux2(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(2);
+            ClickAux(2);
         }
 
-        private void ClickProjector3(object sender, RoutedEventArgs e)
+        private void ClickAux3(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(3);
+            ClickAux(3);
         }
 
-        private void ClickProjector4(object sender, RoutedEventArgs e)
+        private void ClickAux4(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(4);
+            ClickAux(4);
         }
 
-        private void ClickProjector5(object sender, RoutedEventArgs e)
+        private void ClickAux5(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(5);
+            ClickAux(5);
         }
 
-        private void ClickProjector6(object sender, RoutedEventArgs e)
+        private void ClickAux6(object sender, RoutedEventArgs e)
         {
-            ClickProjectorButton(6);
+            ClickAux(6);
+        }
+
+        private void ClickAux7(object sender, RoutedEventArgs e)
+        {
+            ClickAux(7);
+        }
+        private void ClickAux8(object sender, RoutedEventArgs e)
+        {
+            ClickAux(8);
+        }
+        private void ClickAuxPgm(object sender, RoutedEventArgs e)
+        {
+            ClickAux(12);
         }
 
 
-        private void ClickProjectorButton(int btn)
+        private void EnableAuxButtons()
         {
-            if (projectorSerialPort.IsOpen)
-            {
-                projectorSerialPort.Write(btn.ToString());
-            }
+            BtnAux1.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux2.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux3.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux4.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux5.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux6.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux7.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAux8.Style = Application.Current.FindResource("SwitcherButton") as Style;
+            BtnAuxPgm.Style = Application.Current.FindResource("SwitcherButton") as Style;
         }
 
-        private void UpdateProjectorButtonNames()
+        private void DisableAuxControls()
         {
-
+            BtnAux1.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux2.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux3.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux4.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux5.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux6.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux7.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAux8.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+            BtnAuxPgm.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
         }
 
-        private void UpdateProjectorButtonStyles()
+        private void ShowAuxButtonControls()
         {
-            if (projectorconnected)
-            {
-                BtnProjector1.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                BtnProjector2.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                BtnProjector3.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                BtnProjector4.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                BtnProjector5.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                BtnProjector6.Style = Application.Current.FindResource("SwitcherButton") as Style;
-                return;
-            }
-            BtnProjector1.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            BtnProjector2.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            BtnProjector3.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            BtnProjector4.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            BtnProjector5.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-            BtnProjector6.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
-        }
-
-        private void ShowAdvancedProjectorControls()
-        {
+            showAuxButons = true;
             gridbtns.Width = 770;
             gcAdvancedProjector.Width = new GridLength(1.2, GridUnitType.Star);
         }
 
-        private void HideAdvancedProjectorControls()
+        private void HideAuxButtonConrols()
         {
+            showAuxButons = false;
             gridbtns.Width = 660;
             gcAdvancedProjector.Width = new GridLength(0);
         }
@@ -2576,7 +3101,6 @@ namespace Integrated_Presenter
                 }
                 projectorconnected = true;
             }
-            UpdateProjectorButtonStyles();
         }
 
         private void ClickConnectProjector(object sender, RoutedEventArgs e)
@@ -2733,6 +3257,26 @@ namespace Integrated_Presenter
                 isRecording = false;
                 UpdateRecordButtonUI();
             }
+        }
+
+        private void TryStartRecording()
+        {
+            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
+            {
+                isRecording = true;
+                mHyperdeckManager?.StartRecording();
+            }
+            UpdateRecordButtonUI();
+        }
+
+        private void TryStopRecording()
+        {
+            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
+            {
+                isRecording = false;
+                mHyperdeckManager?.StopRecording();
+            }
+            UpdateRecordButtonUI();
         }
 
         bool automationtimer1enabled = true;

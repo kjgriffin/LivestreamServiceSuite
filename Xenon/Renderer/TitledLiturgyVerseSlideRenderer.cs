@@ -34,12 +34,16 @@ namespace Xenon.Renderer
 
             // for now just draw the layout
             Bitmap bmp = new Bitmap(Layouts.TitleLiturgyVerseLayout.Size.Width, Layouts.TitleLiturgyVerseLayout.Size.Height);
+            Bitmap kbmp = new Bitmap(Layouts.TitleLiturgyVerseLayout.Size.Width, Layouts.TitleLiturgyVerseLayout.Size.Height);
 
             Graphics gfx = Graphics.FromImage(bmp);
+            Graphics kgfx = Graphics.FromImage(kbmp);
 
             gfx.Clear(Color.Gray);
+            kgfx.Clear(Color.Black);
 
             gfx.FillRectangle(Brushes.Black, Layouts.TitleLiturgyVerseLayout.Key);
+            kgfx.FillRectangle(new SolidBrush(slide.Colors["keytrans"]), Layouts.TitleLiturgyVerseLayout.Key);
 
             List<LiturgyTextLine> Lines = (List<LiturgyTextLine>)slide.Data["lines"];
 
@@ -47,7 +51,9 @@ namespace Xenon.Renderer
             Font itf = new Font(Layouts.TitleLiturgyVerseLayout.Font, FontStyle.Italic);
 
             gfx.DrawString((string)slide.Data["title"], bf, Brushes.White, Layouts.TitleLiturgyVerseLayout.TitleLine.Move(Layouts.TitleLiturgyVerseLayout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
+            kgfx.DrawString((string)slide.Data["title"], bf, Brushes.White, Layouts.TitleLiturgyVerseLayout.TitleLine.Move(Layouts.TitleLiturgyVerseLayout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
             gfx.DrawString((string)slide.Data["reference"], itf, Brushes.White, Layouts.TitleLiturgyVerseLayout.TitleLine.Move(Layouts.TitleLiturgyVerseLayout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
+            kgfx.DrawString((string)slide.Data["reference"], itf, Brushes.White, Layouts.TitleLiturgyVerseLayout.TitleLine.Move(Layouts.TitleLiturgyVerseLayout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
 
             float alltextheight = 0;
             foreach (var line in Lines)
@@ -77,6 +83,7 @@ namespace Xenon.Renderer
                     float jog = 0.07f * (gfx.DpiY * speakersize.Height / 72);
                     xoffset = (Layouts.TitleLiturgyVerseLayout.Textbox.Width / 2) - ((line.Width) + speakersize.Width) / 2;
                     gfx.DrawString(line.Speaker + " ", flsbregular, Brushes.Teal, Layouts.TitleLiturgyVerseLayout.Textbox.Move(Layouts.TitleLiturgyVerseLayout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Move(0, (int)-jog).Location, GraphicsHelper.DefaultStringFormat());
+                    kgfx.DrawString(line.Speaker + " ", flsbregular, Brushes.White, Layouts.TitleLiturgyVerseLayout.Textbox.Move(Layouts.TitleLiturgyVerseLayout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Move(0, (int)-jog).Location, GraphicsHelper.DefaultStringFormat());
                     xoffset += speakersize.Width;
                 }
 
@@ -88,6 +95,7 @@ namespace Xenon.Renderer
                 {
                     Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
                     gfx.DrawString(word.Value, f, Brushes.White, Layouts.TitleLiturgyVerseLayout.Textbox.Move(Layouts.TitleLiturgyVerseLayout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Location, GraphicsHelper.DefaultStringFormat());
+                    kgfx.DrawString(word.Value, f, Brushes.White, Layouts.TitleLiturgyVerseLayout.Textbox.Move(Layouts.TitleLiturgyVerseLayout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Location, GraphicsHelper.DefaultStringFormat());
                     xoffset += word.Size.Width;
                 }
                 linenum++;
@@ -95,6 +103,7 @@ namespace Xenon.Renderer
             }
 
             res.Bitmap = bmp;
+            res.KeyBitmap = kbmp;
             return res;
         }
 

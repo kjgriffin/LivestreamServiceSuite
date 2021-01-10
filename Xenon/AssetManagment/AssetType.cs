@@ -8,5 +8,6 @@ namespace Xenon.AssetManagment
     {
         Image,
         Video,
+        Audio,
     }
 }

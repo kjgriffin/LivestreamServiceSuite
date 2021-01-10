@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Timers;
 using System.Windows;
@@ -38,18 +39,47 @@ namespace Integrated_Presenter
         public MediaPlayer2()
         {
             InitializeComponent();
+            ShowBlackSource();
             _playbacktimer = new Timer(500);
             _playbacktimer.Elapsed += _playbacktimer_Elapsed;
             videoPlayer.MediaOpened += VideoPlayer_MediaOpened;
             videoPlayer.MediaEnded += VideoPlayer_MediaEnded;
 
+            MuteIcon.Visibility = Visibility.Hidden;
+        }
+
+        private bool showingmute = false;
+
+        public void MarkMuted()
+        {
+            showingmute = true;
+            if (ShowIfMute)
+            {
+                MuteIcon.Visibility = Visibility.Visible;
+            }
+        }
+
+        public void MarkUnMuted()
+        {
+            showingmute = false;
+            MuteIcon.Visibility = Visibility.Hidden;
+        }
+
+        private void Mute()
+        {
+            videoPlayer.Volume = 0;
+        }
+
+        private void UnMute()
+        {
+            videoPlayer.Volume = 1;
         }
 
         private void VideoPlayer_MediaEnded(object sender, RoutedEventArgs e)
         {
             if (AutoSilentReplay)
             {
-                videoPlayer.Volume = 0;
+                Mute();
                 ReplayMedia();
             }
         }
@@ -57,11 +87,15 @@ namespace Integrated_Presenter
         public bool AutoSilentReplay { get; set; } = false;
         public bool AutoSilentPlayback { get; set; } = false;
 
+        public bool ShowIfMute { get; set; } = false;
+
+        public bool ShowBlackForActions { get; set; } = true;
+
         private void VideoPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
             if (AutoSilentPlayback)
             {
-                videoPlayer.Volume = 0;
+                Mute();
                 PlayMedia();
             }
             OnMediaLoaded?.Invoke(this, new MediaPlaybackTimeEventArgs(videoPlayer.Position, videoPlayer.NaturalDuration.TimeSpan, (videoPlayer.NaturalDuration - videoPlayer.Position).TimeSpan));
@@ -196,11 +230,29 @@ namespace Integrated_Presenter
             }
         }
 
-        public void SetMedia(Slide slide)
+        public void SetMedia(Slide slide, bool asKey)
         {
-            if (slide.Source != string.Empty)
+            if (slide.Type == SlideType.Action)
             {
-                SetMedia(new Uri(slide.Source), slide.Type);
+                ShowActionCommands(slide);
+            }
+            else if (slide.Source != string.Empty)
+            {
+                if (asKey)
+                {
+                    if (slide.KeySource != null && slide.KeySource != "")
+                    {
+                        SetMedia(new Uri(slide.KeySource), slide.Type);
+                    }
+                    else
+                    {
+                        ShowBlackSource();
+                    }
+                }
+                else
+                {
+                    SetMedia(new Uri(slide.Source), slide.Type);
+                }
             }
             else
             {
@@ -208,8 +260,80 @@ namespace Integrated_Presenter
             }
         }
 
+        public void SetupComplete(bool complete = true)
+        {
+            if (complete)
+            {
+                SetupMessages.Foreground = Brushes.Gray;
+            }
+            else
+            {
+                SetupMessages.Foreground = Brushes.LightGreen;
+            }
+        }
+
+        public void ActionComplete(bool complete = true)
+        {
+            if (complete)
+            {
+                MainMessages.Foreground = Brushes.White;
+            }
+            else
+            {
+                MainMessages.Foreground = Brushes.Orange;
+            }
+        }
+
+        private void ShowActionCommands(Slide slide)
+        {
+            ShowBlackSource();
+
+            if (!ShowBlackForActions)
+            {
+                // Show Commands
+                string description = "";
+                foreach (var action in slide.Actions)
+                {
+                    if (action?.Message != "")
+                    {
+                        description += action.Message + Environment.NewLine;
+                    }
+                }
+                MainMessages.Text = description.Trim();
+                MainMessages.Visibility = Visibility.Visible;
+
+                description = "";
+                foreach (var action in slide.SetupActions)
+                {
+                    if (action?.Message != "")
+                    {
+                        description += action.Message + Environment.NewLine;
+                    }
+                }
+                SetupMessages.Text = description.Trim();
+                SetupMessages.Visibility = Visibility.Visible;
+
+                SetupMessages.Foreground = Brushes.LightGreen;
+                MainMessages.Foreground = Brushes.Orange;
+
+
+                SequenceLabel.Text = slide.Title;
+
+                SeqType.Text = slide.AutoOnly ? "AUTO" : "SEQ";
+
+                SequenceLabel.Visibility = Visibility.Visible;
+                ActionIndicator.Visibility = Visibility.Visible;
+                SeqType.Visibility = Visibility.Visible;
+            }
+        }
+
         private void ShowImage()
         {
+            SequenceLabel.Visibility = Visibility.Hidden;
+            SeqType.Visibility = Visibility.Hidden;
+            ActionIndicator.Visibility = Visibility.Hidden;
+            MainMessages.Visibility = Visibility.Hidden;
+            SetupMessages.Visibility = Visibility.Hidden;
             BlackSource.Visibility = Visibility.Hidden;
             _playbacktimer.Stop();
             videoPlayer.Stop();
@@ -228,6 +352,11 @@ namespace Integrated_Presenter
 
         private void ShowVideo()
         {
+            SequenceLabel.Visibility = Visibility.Hidden;
+            SeqType.Visibility = Visibility.Hidden;
+            ActionIndicator.Visibility = Visibility.Hidden;
+            MainMessages.Visibility = Visibility.Hidden;
+            SetupMessages.Visibility = Visibility.Hidden;
             BlackSource.Visibility = Visibility.Hidden;
             _playbacktimer.Start();
             imagePlayer.Visibility = Visibility.Hidden;
@@ -248,6 +377,13 @@ namespace Integrated_Presenter
         public void ShowBlackSource()
         {
             BlackSource.Visibility = Visibility.Visible;
+            imagePlayer.Visibility = Visibility.Hidden;
+            videoPlayer.Visibility = Visibility.Hidden;
+            SequenceLabel.Visibility = Visibility.Hidden;
+            SeqType.Visibility = Visibility.Hidden;
+            ActionIndicator.Visibility = Visibility.Hidden;
+            MainMessages.Visibility = Visibility.Hidden;
+            SetupMessages.Visibility = Visibility.Hidden;
         }
 
     }

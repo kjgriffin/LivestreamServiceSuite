@@ -42,7 +42,7 @@
                     <MenuItem Name="cbAdvancedPresentation" Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
                     <MenuItem Header="Audio Player" IsTabStop="False" Click="ClickViewAudioPlayer"></MenuItem>
                     <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
-                    <MenuItem Header="Advanced Projector" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedProjector"></MenuItem>
+                    <MenuItem Header="Aux Output" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAuxOutput"></MenuItem>
                     <MenuItem Header="Hyperdeck Monitor" IsTabStop="False" Click="OpenHyperdeckMonitorWindow"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Settings" IsTabStop="False">
@@ -82,17 +82,20 @@
                                 <RowDefinition Name="grAdvancedPIP" Height="*"></RowDefinition>
                             </Grid.RowDefinitions>
 
-                            <Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
-                                <Border VerticalAlignment="Bottom" Style="{StaticResource GroupBorder}">
+                            <Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="3">
+                                <Border VerticalAlignment="Center" Style="{StaticResource GroupBorder}">
                                     <StackPanel>
-                                        <TextBlock TextAlignment="Center" Margin="0,25,0,20" Style="{StaticResource GrayText}">PROJECTOR</TextBlock>
+                                        <TextBlock TextAlignment="Center" Margin="0,10,0,00" Style="{StaticResource GrayText}">PROJECTOR</TextBlock>
                                         <StackPanel Orientation="Vertical">
-                                            <Button Name="BtnProjector1" Click="ClickProjector1" Style="{StaticResource SwitcherButton_Disabled}">1</Button>
-                                            <Button Name="BtnProjector2" Click="ClickProjector2" Style="{StaticResource SwitcherButton_Disabled}">2</Button>
-                                            <Button Name="BtnProjector3" Click="ClickProjector3" Style="{StaticResource SwitcherButton_Disabled}">3</Button>
-                                            <Button Name="BtnProjector4" Click="ClickProjector4" Style="{StaticResource SwitcherButton_Disabled}">4</Button>
-                                            <Button Name="BtnProjector5" Click="ClickProjector5" Style="{StaticResource SwitcherButton_Disabled}">5</Button>
-                                            <Button Name="BtnProjector6" Click="ClickProjector6" Style="{StaticResource SwitcherButton_Disabled}">6</Button>
+                                            <Button Name="BtnAuxPgm" Click="ClickAuxPgm" Style="{StaticResource SwitcherButton_Disabled}">PGM</Button>
+                                            <Button Name="BtnAux1" Click="ClickAux1" Style="{StaticResource SwitcherButton_Disabled}">1</Button>
+                                            <Button Name="BtnAux2" Click="ClickAux2" Style="{StaticResource SwitcherButton_Disabled}">2</Button>
+                                            <Button Name="BtnAux3" Click="ClickAux3" Style="{StaticResource SwitcherButton_Disabled}">3</Button>
+                                            <Button Name="BtnAux4" Click="ClickAux4" Style="{StaticResource SwitcherButton_Disabled}">4</Button>
+                                            <Button Name="BtnAux5" Click="ClickAux5" Style="{StaticResource SwitcherButton_Disabled}">5</Button>
+                                            <Button Name="BtnAux6" Click="ClickAux6" Style="{StaticResource SwitcherButton_Disabled}">6</Button>
+                                            <Button Name="BtnAux7" Click="ClickAux7" Style="{StaticResource SwitcherButton_Disabled}">7</Button>
+                                            <Button Name="BtnAux8" Click="ClickAux8" Style="{StaticResource SwitcherButton_Disabled}">8</Button>
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Xenon.Helpers;
+using System.Linq;
 
 namespace Xenon.Compiler
 {
@@ -41,6 +43,11 @@ namespace Xenon.Compiler
             imageslide.Format = SlideFormat.LiturgyImage;
             imageslide.Asset = assetpath;
             imageslide.MediaType = MediaType.Image;
+
+            if (project.GetAttribute("alphatranscol").Count > 0)
+            {
+                imageslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
+            }
 
             project.Slides.Add(imageslide);
 

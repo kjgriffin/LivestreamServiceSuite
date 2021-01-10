@@ -11,6 +11,8 @@ namespace Integrated_Presenter.BMDSwitcher.Config
 
         public List<ButtonSourceMapping> Routing { get; set; } = new List<ButtonSourceMapping>();
 
+        public int DefaultAuxSource { get; set; }
+
         public BMDDSKSettings DownstreamKey1Config { get; set; } = new BMDDSKSettings();
 
         public BMDDSKSettings DownstreamKey2Config { get; set; } = new BMDDSKSettings();

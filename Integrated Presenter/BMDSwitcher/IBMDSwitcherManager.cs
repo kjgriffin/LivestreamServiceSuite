@@ -19,6 +19,7 @@ namespace Integrated_Presenter
         void PerformCutTransition();
         void PerformPresetSelect(int sourceID);
         void PerformProgramSelect(int sourceID);
+        void PerformAuxSelect(int sourceID);
         void PerformTakeAutoDSK1();
         void PerformTakeAutoDSK2();
         void PerformTieDSK1();

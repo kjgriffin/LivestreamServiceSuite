@@ -28,14 +28,18 @@ namespace Xenon.Renderer
 
             // for now just draw the layout
             Bitmap bmp = new Bitmap(Layouts.LiturgyLayout.Size.Width, Layouts.LiturgyLayout.Size.Height);
+            Bitmap kbmp = new Bitmap(Layouts.LiturgyLayout.Size.Width, Layouts.LiturgyLayout.Size.Height);
 
             Graphics gfx = Graphics.FromImage(bmp);
+            Graphics kgfx = Graphics.FromImage(kbmp);
 
             Font LSBSymbolFont = new System.Drawing.Font("LSBSymbol", 36, System.Drawing.FontStyle.Regular);
 
             gfx.Clear(Color.Black);
+            kgfx.Clear(Color.Black);
 
             gfx.FillRectangle(Brushes.White, Layouts.LiturgyLayout.Key);
+            kgfx.FillRectangle(Brushes.White, Layouts.LiturgyLayout.Key);
 
             StringFormat topleftalign = new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };
             StringFormat centeralign = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };

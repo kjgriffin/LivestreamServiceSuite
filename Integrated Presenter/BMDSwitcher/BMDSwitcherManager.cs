@@ -23,6 +23,7 @@ namespace Integrated_Presenter
         private IBMDSwitcher _BMDSwitcher;
 
         private IBMDSwitcherMixEffectBlock _BMDSwitcherMixEffectBlock1;
+        private IBMDSwitcherInputAux _BMDSwitcherAuxInput;
         private IBMDSwitcherKey _BMDSwitcherUpstreamKey1;
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey1;
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey2;
@@ -37,6 +38,7 @@ namespace Integrated_Presenter
 
         private SwitcherMonitor _switcherMonitor;
         private MixEffectBlockMonitor _mixEffectBlockMonitor;
+        private BMDSwitcherAuxMonitor _auxMonitor;
         private UpstreamKeyMonitor _upstreamKey1Monitor;
         private DownstreamKeyMonitor _dsk1Monitor;
         private DownstreamKeyMonitor _dsk2Monitor;
@@ -71,6 +73,9 @@ namespace Integrated_Presenter
             _mixEffectBlockMonitor.ProgramInputChanged += _mixEffectBlockMonitor_ProgramInputChanged;
             _mixEffectBlockMonitor.FateToBlackFullyChanged += _mixEffectBlockMonitor_FateToBlackFullyChanged;
 
+            _auxMonitor = new BMDSwitcherAuxMonitor();
+            _auxMonitor.OnAuxInputChanged += _auxMonitor_OnAuxInputChanged;
+
             _upstreamKey1Monitor = new UpstreamKeyMonitor();
             _upstreamKey1Monitor.UpstreamKeyOnAirChanged += _upstreamKey1Monitor_UpstreamKeyOnAirChanged;
             _upstreamKey1Monitor.UpstreamKeyFillChanged += _upstreamKey1Monitor_UpstreamKeyFillChanged;
@@ -96,6 +101,15 @@ namespace Integrated_Presenter
             }
             _state = new BMDSwitcherState();
             SwitcherDisconnected();
+        }
+
+        private void _auxMonitor_OnAuxInputChanged(object sender, object args)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _upstreamKey1Monitor_UpstreamKeyTypeChanged(object sender, object args)
@@ -291,6 +305,33 @@ namespace Integrated_Presenter
             return true;
         }
 
+        private bool InitializeAuxInput()
+        {
+            // get all input sources
+            IBMDSwitcherInputIterator inputIterator = null;
+            IntPtr inputIteratorPtr;
+            Guid inputIteratorIID = typeof(IBMDSwitcherInputIterator).GUID;
+            _BMDSwitcher.CreateIterator(ref inputIteratorIID, out inputIteratorPtr);
+            if (inputIteratorPtr != null)
+            {
+                inputIterator = (IBMDSwitcherInputIterator)Marshal.GetObjectForIUnknown(inputIteratorPtr);
+            }
+            else
+            {
+                return false;
+            }
+            if (inputIterator != null)
+            {
+                IBMDSwitcherInput aux;
+                inputIterator.GetById((long)BMDSwitcherVideoSources.Auxillary1, out aux);
+                _BMDSwitcherAuxInput = (IBMDSwitcherInputAux)aux;
+                _BMDSwitcherAuxInput.AddCallback(_auxMonitor);
+                return true;
+            }
+
+            return false;
+        }
+
         private bool InitializeMultiView()
         {
             IntPtr multiViewPtr;
@@ -443,12 +484,13 @@ namespace Integrated_Presenter
             bool downstreamkeyers = InitializeDownstreamKeyers();
 
             bool inputsources = InitializeInputSources();
+            bool auxsource = InitializeAuxInput();
             bool multiviewer = InitializeMultiView();
 
             bool mediapool = InitializeMediaPool();
             bool mediaplayers = InitializeMediaPlayers();
 
-            GoodConnection = mixeffects && downstreamkeyers && upstreamkeyers && inputsources && multiviewer && mediaplayers && mediapool;
+            GoodConnection = mixeffects && auxsource && downstreamkeyers && upstreamkeyers && inputsources && multiviewer && mediaplayers && mediapool;
 
             MessageBox.Show("Connected to Switcher", "Connection Success");
 
@@ -490,6 +532,12 @@ namespace Integrated_Presenter
                     _BMDSwitcherDownstreamKey2 = null;
                 }
 
+                if (_BMDSwitcherAuxInput != null)
+                {
+                    _BMDSwitcherAuxInput.RemoveCallback(_auxMonitor);
+                    _BMDSwitcherAuxInput = null;
+                }
+
                 if (_BMDSwitcher != null)
                 {
                     _BMDSwitcher.RemoveCallback(_switcherMonitor);
@@ -522,6 +570,7 @@ namespace Integrated_Presenter
                 // update state
                 ForceStateUpdate_ProgramInput();
                 ForceStateUpdate_PreviewInput();
+                ForceStateUpdate_AuxInput();
                 ForceStateUpdate_Transition();
                 ForceStateUpdate_USK1();
                 ForceStateUpdate_ChromaSettings();
@@ -533,7 +582,12 @@ namespace Integrated_Presenter
             return _state;
         }
 
-
+        private void ForceStateUpdate_AuxInput()
+        {
+            long source;
+            _BMDSwitcherAuxInput.GetInputSource(out source);
+            _state.AuxID = source;
+        }
 
         private void ForceStateUpdate_USK1()
         {
@@ -653,6 +707,7 @@ namespace Integrated_Presenter
         {
             _config = config;
             ConfigureMixEffectBlock();
+            ConfigureAux();
             ConfigureCameraSources();
             ConfigureDownstreamKeys();
             ConfigureMultiviewer();
@@ -662,6 +717,11 @@ namespace Integrated_Presenter
             ConfigureAudioLevels();
 
             ForceStateUpdate();
+        }
+
+        private void ConfigureAux()
+        {
+            _BMDSwitcherAuxInput.SetInputSource(_config.DefaultAuxSource);
         }
 
         private void ConfigureMixEffectBlock()
@@ -1248,6 +1308,15 @@ namespace Integrated_Presenter
         public void PerformSetKey1OffForNextTrans()
         {
 
+        }
+
+        public void PerformAuxSelect(int sourceID)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                _BMDSwitcherAuxInput?.SetInputSource(sourceID);
+                ForceStateUpdate();
+            });
         }
     }
 }

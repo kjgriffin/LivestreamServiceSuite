@@ -24,14 +24,14 @@ namespace Integrated_Presenter.BMDSwitcher
             _state.SetDefault();
             Dictionary<int, string> mapping = new Dictionary<int, string>()
             {
-                [1] = "center",
-                [2] = "organ",
-                [3] = "cam3",
+                [1] = "cam1",
+                [2] = "pres",
+                [3] = "key",
                 [4] = "slide",
-                [5] = "left",
+                [5] = "organ",
                 [6] = "right",
-                [7] = "cam7",
-                [8] = "cam8"
+                [7] = "center",
+                [8] = "left"
             };
             mockMultiviewer = new MockMultiviewer(mapping, parent.Config);
             parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
@@ -370,6 +370,12 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             _state.TransNextKey1 = false;
             mockMultiviewer.SetUSK1ForNextTrans(false, _state);
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        public void PerformAuxSelect(int sourceID)
+        {
+            _state.AuxID = sourceID;
             SwitcherStateChanged?.Invoke(_state);
         }
     }

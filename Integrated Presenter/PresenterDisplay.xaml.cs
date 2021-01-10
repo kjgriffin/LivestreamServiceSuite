@@ -32,7 +32,9 @@ namespace Integrated_Presenter
         private Guid prevslide;
         private Guid nextslide;
 
-        public PresenterDisplay(MainWindow parent)
+        private bool ShowKey;
+
+        public PresenterDisplay(MainWindow parent, bool ShowKey)
         {
             InitializeComponent();
             _control = parent;
@@ -46,7 +48,10 @@ namespace Integrated_Presenter
 
             blackcover.Visibility = Visibility.Hidden;
 
-            ShowSlide();
+            this.ShowKey = ShowKey;
+            ShowSlide(this.ShowKey);
+
+            Title = ShowKey ? "Presentation Key Source" : "Presentation Display";
 
         }
 
@@ -183,8 +188,22 @@ namespace Integrated_Presenter
             }
         }
 
+        public void MuteMedia()
+        {
+            mediaPlayerA.videoPlayer.Volume = 0;
+            mediaPlayerB.videoPlayer.Volume = 0;
+            mediaPlayerC.videoPlayer.Volume = 0;
+        }
 
-        public void ShowSlide()
+        public void UnMuteMedia()
+        {
+            mediaPlayerA.videoPlayer.Volume = 1;
+            mediaPlayerB.videoPlayer.Volume = 1;
+            mediaPlayerC.videoPlayer.Volume = 1;
+        }
+
+
+        public void ShowSlide(bool asKey)
         {
             Slide slidetoshow = _control.Presentation.EffectiveCurrent;
 
@@ -245,6 +264,7 @@ namespace Integrated_Presenter
 
         private void ShowActivePlayer()
         {
+            StopNonActiveMedia();
             if (activeplayer == 1)
             {
                 mediaPlayerA.Visibility = Visibility.Visible;
@@ -271,13 +291,13 @@ namespace Integrated_Presenter
             switch (player)
             {
                 case 1:
-                    mediaPlayerA.SetMedia(slide);
+                    mediaPlayerA.SetMedia(slide, ShowKey);
                     break;
                 case 2:
-                    mediaPlayerB.SetMedia(slide);
+                    mediaPlayerB.SetMedia(slide, ShowKey);
                     break;
                 case 3:
-                    mediaPlayerC.SetMedia(slide);
+                    mediaPlayerC.SetMedia(slide, ShowKey);
                     break;
             }
         }

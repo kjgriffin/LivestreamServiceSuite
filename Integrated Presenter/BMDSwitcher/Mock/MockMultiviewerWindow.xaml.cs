@@ -65,6 +65,8 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                         return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/organshot.png"));
                     case "slide":
                         return ImgSlide.Source;
+                    case "key":
+                        return ImgKey.Source;
                     case "colorbars":
                         return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/cbars.png"));
                     default:
@@ -94,11 +96,21 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         public void UpdateAuxSource(Slide slide)
         {
             UpdateSourceFromAux(ImgSlide, slide);
+            UpdateSourceFromKey(ImgKey, slide);
             if (ProgramSource == 4)
             {
                 UpdateSourceFromAux(ImgProgram, slide);
             }
             if (PresetSource == 4)
+            {
+                UpdateSourceFromAux(ImgPreset, slide);
+            }
+
+            if (ProgramSource == 3)
+            {
+                UpdateSourceFromAux(ImgProgram, slide);
+            }
+            if (PresetSource == 3)
             {
                 UpdateSourceFromAux(ImgPreset, slide);
             }
@@ -110,6 +122,29 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             if (DSK2)
             {
                 UpdateSourceFromAux(ImgProgramSplit, slide);
+            }
+        }
+
+        private void UpdateSourceFromKey(Image control, Slide slide)
+        {
+            if (slide.Type == SlideType.Empty)
+            {
+                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+            }
+            else if (slide.Type == SlideType.Action)
+            {
+                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+            }
+            else
+            {
+                if (slide.KeySource != null && slide.KeySource != "")
+                {
+                    control.Source = new BitmapImage(new Uri(slide.KeySource));
+                }
+                else
+                {
+                    control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                }
             }
         }
 
@@ -130,6 +165,10 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             else if (slide.Type == SlideType.ChromaKeyVideo)
             {
                 control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/greenscreen1.png"));
+            }
+            else if (slide.Type == SlideType.Action)
+            {
+                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
             }
             else
             {

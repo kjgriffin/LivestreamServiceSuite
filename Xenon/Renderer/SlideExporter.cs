@@ -16,17 +16,38 @@ namespace Xenon.Renderer
             {
                 SlideRenderer slideRenderer = new SlideRenderer(proj);
                 // render the slide
-                RenderedSlide rs = slideRenderer.RenderSlide(slide.Number, messages);
+                RenderedSlide rs = slideRenderer.RenderSlide(slide, messages);
+
+                if (rs.RenderedAs == "Resource")
+                {
+                    // for now only allow audio files to be rendered as resource
+                    string filename = Path.Join(directory, $"Resource_{rs.Name}{rs.CopyExtension}");
+                    File.Copy(rs.AssetPath, filename, true);
+                    continue;
+                }
 
                 if (rs.MediaType == MediaType.Image)
                 {
                     string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.png");
+                    string kfilename = Path.Join(directory, $"Key_{slide.Number}.png");
                     rs.Bitmap.Save(filename, ImageFormat.Png);
+                    rs.KeyBitmap.Save(kfilename, ImageFormat.Png);
                 }
                 else if (rs.MediaType == MediaType.Video)
                 {
                     string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.mp4");
+                    string kfilename = Path.Join(directory, $"Key_{slide.Number}.png");
                     File.Copy(rs.AssetPath, filename);
+                    rs.KeyBitmap.Save(kfilename, ImageFormat.Png);
+                }
+                else if (rs.MediaType == MediaType.Text)
+                {
+                    // output text file
+                    string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.txt");
+                    using (StreamWriter sw = new StreamWriter(filename, false))
+                    {
+                        sw.Write(rs.Text);
+                    }
                 }
                 
             } 

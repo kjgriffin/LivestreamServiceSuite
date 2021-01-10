@@ -35,6 +35,23 @@ namespace Xenon.Compiler
         private XenonASTExpression CompileCommand(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTExpression expr = new XenonASTExpression();
+
+            if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Resource]))
+            {
+                XenonASTResource resource = new XenonASTResource();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Resource]);
+                expr.Command = (IXenonASTCommand)resource.Compile(Lexer, Logger);
+                return expr;
+            }
+            if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Script]))
+            {
+                XenonASTScript script = new XenonASTScript();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Script]);
+                expr.Command = (IXenonASTCommand)script.Compile(Lexer, Logger);
+                return expr;
+            }
+
+
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.SetVar]))
             {
                 XenonASTSetVariable xenonASTSetVariable = new XenonASTSetVariable();

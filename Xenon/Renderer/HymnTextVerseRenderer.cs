@@ -17,9 +17,12 @@ namespace Xenon.Renderer
             res.RenderedAs = "Full";
 
             Bitmap bmp = new Bitmap(Layouts.TextHymnLayout.Size.Width, Layouts.TextHymnLayout.Size.Height);
+            Bitmap kbmp = new Bitmap(Layouts.TextHymnLayout.Size.Width, Layouts.TextHymnLayout.Size.Height);
             Graphics gfx = Graphics.FromImage(bmp);
+            Graphics kgfx = Graphics.FromImage(kbmp);
 
             gfx.Clear(Color.White);
+            kgfx.Clear(Color.White);
 
             // debug
 
@@ -63,6 +66,7 @@ namespace Xenon.Renderer
 
 
             res.Bitmap = bmp;
+            res.KeyBitmap = kbmp;
             return res;
         }
 

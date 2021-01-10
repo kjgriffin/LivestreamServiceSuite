@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using Xenon.Helpers;
 
+
 namespace Xenon.Renderer
 {
     class ImageSlideRenderer
@@ -18,6 +19,11 @@ namespace Xenon.Renderer
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = slide.Asset;
+
+            Bitmap kbmp = new Bitmap(1920, 1080);
+            Graphics kgfx = Graphics.FromImage(kbmp);
+            kgfx.Clear(Color.White);
+            res.KeyBitmap = kbmp;
 
             Bitmap sourceimage;
             try
@@ -75,6 +81,7 @@ namespace Xenon.Renderer
             else if (slide.Format == SlideFormat.LiturgyImage)
             {
                 res.Bitmap = RenderLiturgyImage(sourceimage);
+                res.KeyBitmap = RenderLiturgyImageKey(sourceimage, slide.Colors["keytrans"]);
                 res.RenderedAs = "Liturgy";
             }
 
@@ -167,7 +174,7 @@ namespace Xenon.Renderer
             Bitmap img = sourceimage;
             if (invertblackandwhite)
             {
-                img = InvertImage(sourceimage);
+                img = GraphicsHelper.InvertImage(sourceimage);
             }
             gfx.DrawImage(img, new Rectangle(p, s), leftbound, topbound, (rightbound - leftbound), (bottombound - topbound), GraphicsUnit.Pixel);
 
@@ -202,29 +209,45 @@ namespace Xenon.Renderer
 
             gfx.Clear(System.Drawing.Color.Gray);
             gfx.FillRectangle(System.Drawing.Brushes.Black, Layout.LiturgyLayout.Key);
-            gfx.DrawImage(InvertImage(trimmed), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
+            gfx.DrawImage(GraphicsHelper.InvertImage(trimmed), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
             return bmp;
 
         }
 
-        private Bitmap InvertImage(Bitmap source)
+        private Bitmap RenderLiturgyImageKey(Bitmap sourceimage, Color alpha)
         {
-            /*
-                https://stackoverflow.com/questions/33024881/invert-image-faster-in-c-sharp
-             */
-            Bitmap res = new Bitmap(source);
+            Bitmap bmp = new Bitmap(Layout.LiturgyLayout.Size.Width, Layout.LiturgyLayout.Size.Height);
 
-            for (int y = 0; y < res.Height; y++)
-            {
-                for (int x = 0; x < res.Width; x++)
-                {
-                    Color inv = res.GetPixel(x, y);
-                    inv = Color.FromArgb(255, 255 - inv.R, 255 - inv.G, 255 - inv.B);
-                    res.SetPixel(x, y, inv);
-                }
-            }
-            return res;
+            Graphics gfx = Graphics.FromImage(bmp);
+
+            double scale = 1;
+            Point p;
+            Size s;
+
+            double xscale = 1;
+            double yscale = 1;
+
+            double fillsize = 0.93;
+
+            Bitmap trimmed = sourceimage.TrimBitmap(Color.White);
+
+            xscale = (double)(Layout.LiturgyLayout.Key.Width * fillsize) / trimmed.Width;
+            yscale = (double)(Layout.LiturgyLayout.Key.Height * fillsize) / trimmed.Height;
+
+            scale = xscale < yscale ? xscale : yscale;
+
+            s = new Size((int)(trimmed.Width * scale), (int)(trimmed.Height * scale));
+            p = new Point((Layout.LiturgyLayout.Key.Width - s.Width) / 2, (Layout.LiturgyLayout.Key.Height - s.Height) / 2).Add(Layout.LiturgyLayout.Key.Location);
+
+            gfx.Clear(System.Drawing.Color.Black);
+            gfx.FillRectangle(new SolidBrush(alpha), Layout.LiturgyLayout.Key);
+            gfx.DrawImage(trimmed.DichotimizeImage(Color.Black, 150, Color.White).InvertImage().SwapImageColors(Color.Black, alpha), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
+            return bmp;
+
         }
+
+
+        
 
 
     }

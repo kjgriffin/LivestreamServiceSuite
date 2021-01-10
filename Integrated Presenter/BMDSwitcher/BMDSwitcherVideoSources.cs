@@ -36,7 +36,7 @@ namespace Integrated_Presenter.BMDSwitcher
         DSK2Mask = 5020,
         SuperSource = 6000,
         CleanFeed1 = 7001,
-        CleenFeed2 = 7002,
+        CleanFeed2 = 7002,
         Auxillary1 = 8001,
         // Aux 800x
         Auxillary6 = 8006,
