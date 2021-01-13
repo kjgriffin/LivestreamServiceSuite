@@ -51,9 +51,10 @@ namespace Xenon.Renderer
             SolidBrush sb = new SolidBrush(slide.Colors["keybackground"]);
             SolidBrush kb = new SolidBrush(slide.Colors["keytrans"]);
 
-            gfx.FillRectangle(sb, Layouts.LiturgyLayout.Key);
+            // draw key backgroun
+            gfx.FillRectangle(Brushes.LightBlue, Layouts.LiturgyLayout.Key);
             // make black somewhat transparent
-            kgfx.FillRectangle(kb, Layouts.LiturgyLayout.Key);
+            kgfx.FillRectangle(Brushes.Black, Layouts.LiturgyLayout.Key);
 
             StringFormat topleftalign = new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };
             StringFormat centeralign = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
@@ -77,7 +78,10 @@ namespace Xenon.Renderer
             int linepos = interspace;
             string lastspeaker = "";
 
-
+            // Test drop shadow (black) dropped below left
+            float dropshadowx = -1;
+            float dropshadowy = 1;
+            int dropshadows = 5;
 
             foreach (var line in slide.Lines)
             {
@@ -102,8 +106,21 @@ namespace Xenon.Renderer
                 if (drawspeaker)
                 {
                     float jog = 0.07f * (gfx.DpiY * gfx.MeasureStringCharacters(linewords.Speaker, flsbregular, speakerblock).Height / 72);
+                    // draw dropshadow
+                    for (int i = 0; i < dropshadows; i++)
+                    {
+                        float dx = dropshadowx * i;
+                        float dy = dropshadowy * i;
+                        gfx.DrawString(linewords.Speaker, flsbregular, Brushes.Black, speakerblock.Move(0, -jog).Move(dx, dy), centeralign);
+                    }
                     gfx.DrawString(linewords.Speaker, flsbregular, speakercol, speakerblock.Move(0, -jog), centeralign);
                     // make speaker fully opaque
+                    for (int i = 0; i < dropshadows; i++)
+                    {
+                        float dx = dropshadowx * i;
+                        float dy = dropshadowy * i;
+                        kgfx.DrawString(linewords.Speaker, flsbregular, Brushes.White, speakerblock.Move(0, -jog).Move(dx, dy), centeralign);
+                    }
                     kgfx.DrawString(linewords.Speaker, flsbregular, Brushes.White, speakerblock.Move(0, -jog), centeralign);
                 }
 
@@ -112,8 +129,21 @@ namespace Xenon.Renderer
                 {
                     Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
                     float jog = word.IsLSBSymbol ? 0.07f * (gfx.DpiY * gfx.MeasureStringCharacters(linewords.Speaker, f, speakerblock).Height / 72) : 0;
+                    // drop shadow
+                    for (int i = 0; i < dropshadows; i++)
+                    {
+                        float dx = dropshadowx * i;
+                        float dy = dropshadowy * i;
+                        gfx.DrawString(word.Value, f, Brushes.Black, text.Move(xoffset, linepos + interspace * linenum).Move(0, -jog).Move(dx, dy).Location, GraphicsHelper.DefaultStringFormat());
+                    }
                     gfx.DrawString(word.Value, f, textcol, text.Move(xoffset, linepos + interspace * linenum).Move(0, -jog).Location, GraphicsHelper.DefaultStringFormat());
                     // make text fully opaque 
+                    for (int i = 0; i < dropshadows; i++)
+                    {
+                        float dx = dropshadowx * i;
+                        float dy = dropshadowy * i;
+                        kgfx.DrawString(word.Value, f, Brushes.White, text.Move(xoffset, linepos + interspace * linenum).Move(0, -jog).Move(dx, dy).Location, GraphicsHelper.DefaultStringFormat());
+                    }
                     kgfx.DrawString(word.Value, f, Brushes.White, text.Move(xoffset, linepos + interspace * linenum).Move(0, -jog).Location, GraphicsHelper.DefaultStringFormat());
                     xoffset += word.Size.Width;
                 }
