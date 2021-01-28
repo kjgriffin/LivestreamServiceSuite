@@ -23,7 +23,7 @@ Below are the following recognized commands:
 - [anthemtitle](#anthem-title)
 - [2title](#two-line-title)
 
-- [texthymn](#texthymn)
+- [texthymn](#text-hymn)
 - [verse](#verse)
 
 
