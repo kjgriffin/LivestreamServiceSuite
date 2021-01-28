@@ -41,7 +41,19 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         private int ProgramSource;
         private int PresetSource;
 
-        private bool DSK1;
+        private bool dsk1;
+        private bool DSK1
+        {
+            get => dsk1;
+            set
+            {
+                dsk1 = value;
+                if (dsk1)
+                {
+                    ImgProgramLowerThird.Source = ImgSlide.Source;
+                }
+            }
+        }
         private bool DSK2;
 
         private bool USK1PreviewOn;
@@ -97,6 +109,8 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         {
             UpdateSourceFromAux(ImgSlide, slide);
             UpdateSourceFromKey(ImgKey, slide);
+
+
             if (ProgramSource == 4)
             {
                 UpdateSourceFromAux(ImgProgram, slide);
