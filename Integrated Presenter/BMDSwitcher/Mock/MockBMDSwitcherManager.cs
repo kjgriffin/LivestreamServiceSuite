@@ -310,6 +310,12 @@ namespace Integrated_Presenter.BMDSwitcher
         public void SetPIPPosition(BMDUSKDVESettings settings)
         {
             _state.DVESettings.Current = settings.Current;
+            _state.DVESettings.MaskTop = settings.MaskTop;
+            _state.DVESettings.MaskBottom = settings.MaskBottom;
+            _state.DVESettings.MaskLeft = settings.MaskLeft;
+            _state.DVESettings.MaskRight = settings.MaskRight;
+            _state.DVESettings.IsMasked = settings.IsMasked;
+
             SwitcherStateChanged?.Invoke(_state);
         }
 

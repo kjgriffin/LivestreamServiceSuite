@@ -42,6 +42,7 @@
                     <MenuItem Name="cbAdvancedPresentation" Header="Advanced Presentation" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
                     <MenuItem Header="Audio Player" IsTabStop="False" Click="ClickViewAudioPlayer"></MenuItem>
                     <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
+                    <MenuItem Name="cbAdvancedPIPMovement" Header="Advanced PIP Location" IsTabStop="False" Click="ClickViewAdvancedPIPLocation"></MenuItem>
                     <MenuItem Header="Aux Output" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAuxOutput"></MenuItem>
                     <MenuItem Header="Hyperdeck Monitor" IsTabStop="False" Click="OpenHyperdeckMonitorWindow"></MenuItem>
                 </MenuItem>

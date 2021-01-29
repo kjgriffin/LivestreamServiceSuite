@@ -277,6 +277,10 @@ namespace Integrated_Presenter
             // update ui
             switcherState = args;
             _lastState = switcherState.Copy();
+
+            // update pip ui
+            pipctrl?.PIPSettingsUpdated(switcherState.DVESettings);
+
             // update viewmodels
 
             UpdateSwitcherUI();
@@ -817,6 +821,10 @@ namespace Integrated_Presenter
             if (e.Key == Key.P)
             {
                 ToggleViewAdvancedPIP();
+            }
+            if (e.Key == Key.L)
+            {
+                ShowPIPLocationControl();
             }
             if (e.Key == Key.O)
             {
@@ -2532,6 +2540,7 @@ namespace Integrated_Presenter
             switcherManager?.Close();
             hyperDeckMonitorWindow?.Close();
             audioPlayer?.Close();
+            pipctrl?.Close();
         }
 
         private void ClickTakeSP0(object sender, Slide s, bool replaceMode, bool driven)
@@ -3157,6 +3166,14 @@ namespace Integrated_Presenter
 
         }
 
+        private void SetPIPPosition(BMDUSKDVESettings config)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                switcherManager?.SetPIPPosition(config);
+            });
+        }
+
         private void UpdatePIPSettingsUI()
         {
         }
@@ -3499,6 +3516,26 @@ namespace Integrated_Presenter
         private void LoadDefault(object sender, RoutedEventArgs e)
         {
             SetSwitcherSettings();
+        }
+
+        PIPControl pipctrl;
+        private void ClickViewAdvancedPIPLocation(object sender, RoutedEventArgs e)
+        {
+            ShowPIPLocationControl();
+        }
+
+        private void ShowPIPLocationControl()
+        {
+            if (pipctrl == null)
+            {
+                pipctrl = new PIPControl(this, SetPIPPosition);
+            }
+            if (pipctrl.HasClosed)
+            {
+                pipctrl = new PIPControl(this, SetPIPPosition);
+            }
+            pipctrl.Show();
+            pipctrl.Focus();
         }
     }
 }
