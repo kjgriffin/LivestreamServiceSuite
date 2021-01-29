@@ -247,18 +247,21 @@ namespace Integrated_Presenter.BMDSwitcher
         public void PerformUSK1RunToKeyFrameA()
         {
             _state.USK1KeyFrame = 1;
+            _state.DVESettings.Current = _state.DVESettings.KeyFrameA;
             SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformUSK1RunToKeyFrameB()
         {
             _state.USK1KeyFrame = 2;
+            _state.DVESettings.Current = _state.DVESettings.KeyFrameB;
             SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformUSK1RunToKeyFrameFull()
         {
             _state.USK1KeyFrame = 0;
+            _state.DVESettings.Current = new KeyFrameSettings() { PositionX = 0, PositionY = 0, SizeX = 1, SizeY = 1 };
             SwitcherStateChanged?.Invoke(_state);
         }
 
@@ -321,9 +324,28 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void SetPIPKeyFrameA(BMDUSKDVESettings settings)
         {
+            _state.DVESettings.IsMasked = settings.IsMasked;
+            _state.DVESettings.MaskTop = settings.MaskTop;
+            _state.DVESettings.MaskBottom = settings.MaskBottom;
+            _state.DVESettings.MaskLeft = settings.MaskLeft;
+            _state.DVESettings.MaskRight = settings.MaskRight;
+            _state.DVESettings.IsBordered = settings.IsBordered;
             _state.DVESettings.KeyFrameA = settings.KeyFrameA;
             SwitcherStateChanged?.Invoke(_state);
         }
+
+        public void SetPIPKeyFrameB(BMDUSKDVESettings settings)
+        {
+            _state.DVESettings.IsMasked = settings.IsMasked;
+            _state.DVESettings.MaskTop = settings.MaskTop;
+            _state.DVESettings.MaskBottom = settings.MaskBottom;
+            _state.DVESettings.MaskLeft = settings.MaskLeft;
+            _state.DVESettings.MaskRight = settings.MaskRight;
+            _state.DVESettings.IsBordered = settings.IsBordered;
+            _state.DVESettings.KeyFrameB = settings.KeyFrameB;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
 
         public void ConfigureUSK1PIP(BMDUSKDVESettings settings)
         {

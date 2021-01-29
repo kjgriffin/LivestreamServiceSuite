@@ -137,7 +137,7 @@
                                                     </Viewbox>
                                                 </StackPanel>
                                             </Border>
-                                            <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="100">
+                                            <Border Visibility="Collapsed" Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="100">
                                                 <StackPanel>
                                                     <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">RECORDING</TextBlock>
                                                     <Button Focusable="False" Name="btnRecording" Click="ClickToggleRecording" IsTabStop="false" Background="Gray">
@@ -420,75 +420,73 @@
                                                         <ColumnDefinition></ColumnDefinition>
                                                     </Grid.ColumnDefinitions>
                                                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                                        <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoA" Click="ClickPIPRunToOnScreenBox" Style="{StaticResource InactivePIPControlButton}">
-                                                            <Image Source="pack://application:,,,/Icons/keyframepushleft.png"></Image>
+                                                        <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoA" Click="ClickPIPRunToA" Foreground="White" Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                            <Button.Template>
+                                                                <ControlTemplate>
+                                                                    <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                        <ContentControl FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}">A</ContentControl>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                            <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
                                                         </Button>
-                                                        <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoB" Click="ClickPIPRunToOffScreenBox" Style="{StaticResource InactivePIPControlButton}">
-                                                            <Image Source="pack://application:,,,/Icons/keyframepushright.png"></Image>
-                                                        </Button>
-                                                        <!--<Button Focusable="False" IsTabStop="False" Width="80" Height="60" Visibility="Hidden">
-                                                        <Image Source="pack://application:,,,/Icons/keyframetobox.png"></Image>
-                                                    </Button>-->
-                                                        <Button Margin="30,0,10,0" Focusable="False" IsTabStop="False" Name="BtnPIPtoFull" Click="ClickPIPRunToFull" Style="{StaticResource InactivePIPControlButton}">
-                                                            <Image Source="pack://application:,,,/Icons/keyframetofill.png"></Image>
-                                                        </Button>
-                                                    </StackPanel>
-                                                    <StackPanel Grid.Column="0">
-                                                        <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition></ColumnDefinition>
-                                                                <ColumnDefinition></ColumnDefinition>
-                                                                <ColumnDefinition></ColumnDefinition>
-                                                                <ColumnDefinition></ColumnDefinition>
-                                                            </Grid.ColumnDefinitions>
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition></RowDefinition>
-                                                                <RowDefinition></RowDefinition>
-                                                                <RowDefinition></RowDefinition>
-                                                                <RowDefinition></RowDefinition>
-                                                            </Grid.RowDefinitions>
-                                                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Style="{StaticResource GrayText}">SIZE [0, 1.0]</TextBlock>
-                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" Style="{StaticResource darkTextbox}" AcceptsReturn="False" IsTabStop="False" Grid.Row="0" Grid.Column="1" Name="tbPIPSize"></TextBox>
-                                                            <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Style="{StaticResource GrayText}">POS X:</TextBlock>
-                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False"  IsTabStop="False"  Grid.Row="1" Grid.Column="1" Name="tbPIPPosX" Style="{StaticResource darkTextbox}"></TextBox>
-                                                            <TextBlock  Grid.Row="1" Grid.Column="2" Margin="5" Style="{StaticResource GrayText}">POS Y:</TextBlock>
-                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False" IsTabStop="False"  Grid.Row="1" Grid.Column="3" Name="tbPIPPosY" Style="{StaticResource darkTextbox}" ></TextBox>
-                                                            <TextBlock  Grid.Row="2" Grid.Column="0"  Margin="5" Style="{StaticResource GrayText}">MASK LR:</TextBlock>
-                                                            <TextBox Name="tbPIPmaskLR" IsKeyboardFocusedChanged="TextEntryMode"  AcceptsReturn="False" IsTabStop="False"  Grid.Row="2" Grid.Column="1" Style="{StaticResource darkTextbox}"></TextBox>
-                                                            <TextBlock  Grid.Row="2" Grid.Column="2" Margin="5" Style="{StaticResource GrayText}">MASK TB:</TextBlock>
-                                                            <TextBox Name="tbPIPmaskTB" IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False"  IsTabStop="False"  Grid.Row="2" Grid.Column="3" Style="{StaticResource darkTextbox}"></TextBox>
-                                                            <Button Click="ClickApplyPIPSettings" IsTabStop="False" x:Name="btnApplyPIP" Grid.Row="0" Grid.Column="2" Margin="10, 0, 10, 0">
-                                                                <Button.Template>
-                                                                    <ControlTemplate>
-                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="1">
-                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Orange">APPLY</ContentControl>
-                                                                        </Border>
-                                                                        <ControlTemplate.Triggers>
-                                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                            </Trigger>
-                                                                        </ControlTemplate.Triggers>
-                                                                    </ControlTemplate>
-                                                                </Button.Template>
-                                                            </Button>
-                                                            <Button Click="ClickApplyKFAPIPSettings" IsTabStop="False" x:Name="btnApplyKFAPIP" Grid.Row="0" Grid.Column="3" Margin="10, 0, 10, 0">
-                                                                <Button.Template>
-                                                                    <ControlTemplate>
-                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="1">
-                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Orange">SET A</ContentControl>
-                                                                        </Border>
-                                                                        <ControlTemplate.Triggers>
-                                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                            </Trigger>
-                                                                        </ControlTemplate.Triggers>
-                                                                    </ControlTemplate>
-                                                                </Button.Template>
-                                                            </Button>
 
-                                                        </Grid>
+                                                        <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoB" Click="ClickPIPRunToB" Foreground="WhiteSmoke" Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                            <Button.Template>
+                                                                <ControlTemplate>
+                                                                    <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                        <ContentControl FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}">B</ContentControl>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                            <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+
+                                                        <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoFull" Click="ClickPIPRunToFull" Foreground="WhiteSmoke"  Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                            <Button.Template>
+                                                                <ControlTemplate>
+                                                                    <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                        <ContentControl FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}">FULL</ContentControl>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                            <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+
+
+
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Button Click="ClickViewAdvancedPIPLocation" IsTabStop="False" x:Name="btnViewAdvancedPIPLocation" Grid.Row="0" Grid.Column="2">
+                                                            <Button.Template>
+                                                                <ControlTemplate>
+                                                                    <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">
+                                                                        <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke">Open Advanced Control</ContentControl>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                            <Setter Property="BorderBrush" Value="Orange" TargetName="Border"></Setter>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
                                                     </StackPanel>
                                                 </Grid>
                                             </StackPanel>

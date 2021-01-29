@@ -1245,6 +1245,34 @@ namespace Integrated_Presenter
             ForceStateUpdate();
         }
 
+        public void SetPIPKeyFrameB(BMDUSKDVESettings settings)
+        {
+            IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+
+            // set border with dveparams
+            dveparams.SetMasked(settings.IsMasked);
+            dveparams.SetMaskTop(settings.MaskTop);
+            dveparams.SetMaskBottom(settings.MaskBottom);
+            dveparams.SetMaskLeft(settings.MaskLeft);
+            dveparams.SetMaskRight(settings.MaskRight);
+
+
+            dveparams.SetBorderEnabled(settings.IsBordered);
+
+            // setup keyframes
+            IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
+            _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparams);
+
+            keyframeparams.SetPositionX(settings.KeyFrameB.PositionX);
+            keyframeparams.SetPositionY(settings.KeyFrameB.PositionY);
+            keyframeparams.SetSizeX(settings.KeyFrameB.SizeX);
+            keyframeparams.SetSizeY(settings.KeyFrameB.SizeY);
+
+
+            ForceStateUpdate();
+        }
+
+
         public void ConfigureUSK1PIP(BMDUSKDVESettings settings)
         {
             _config.USKSettings.IsDVE = 1;

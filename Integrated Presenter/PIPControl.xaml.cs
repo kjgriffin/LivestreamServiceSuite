@@ -20,12 +20,17 @@ namespace Integrated_Presenter
     {
 
         Action<BMDUSKDVESettings> SetPIPOnSwitcher;
+        Action<BMDUSKDVESettings> SetPIPKeyframeAOnSwitcher;
+        Action<BMDUSKDVESettings> SetPIPKeyframeBOnSwitcher;
         MainWindow _parent;
-        public PIPControl(MainWindow parent, Action<BMDUSKDVESettings> setpiponswitcher)
+        public PIPControl(MainWindow parent, Action<BMDUSKDVESettings> setpiponswitcher, Action<BMDUSKDVESettings> setpipkeyaonswitcher, Action<BMDUSKDVESettings> setpipkeybonswitcher, BMDUSKDVESettings current)
         {
             InitializeComponent();
             _parent = parent;
             SetPIPOnSwitcher = setpiponswitcher;
+            SetPIPKeyframeAOnSwitcher = setpipkeyaonswitcher;
+            SetPIPKeyframeBOnSwitcher = setpipkeybonswitcher;
+            PIPSettingsUpdated(current);
         }
 
         public bool HasClosed { get; set; } = false;
@@ -39,15 +44,37 @@ namespace Integrated_Presenter
             truepipmlr = state.IsMasked == 1 ? Math.Max(state.MaskLeft, state.MaskRight) : 0;
             truepipmtb = state.IsMasked == 1 ? Math.Max(state.MaskTop, state.MaskBottom) : 0;
 
+            keyapipscale = Math.Max(state.KeyFrameA.SizeX, state.KeyFrameA.SizeY);
+            keyapipx = state.KeyFrameA.PositionX;
+            keyapipy = state.KeyFrameA.PositionY;
+
+            keybpipscale = Math.Max(state.KeyFrameB.SizeX, state.KeyFrameB.SizeY);
+            keybpipx = state.KeyFrameB.PositionX;
+            keybpipy = state.KeyFrameB.PositionY;
+
+            CheckIfAtTarget();
+
             Dispatcher.Invoke(() =>
             {
                 UpdateUI();
             });
         }
 
+        private void CheckIfAtTarget()
+        {
+            if (PIPIsAtTarget())
+            {
+                // no need to send command to update pip position
+                SendCmd = false;
+            }
+        }
+
 
         private void UpdateUI()
         {
+            CheckIfAtTarget();
+
+
             // compute location of pip
 
             // set displaysize
@@ -61,6 +88,13 @@ namespace Integrated_Presenter
             truemaskedbox.Width = displaygrid.Width * truepipscale;
             truemaskedbox.Height = displaygrid.Height * truepipscale;
 
+
+            keyamaskbox.Width = displaygrid.Width * keyapipscale;
+            keyamaskbox.Height = displaygrid.Height * keyapipscale;
+
+            keybmaskbox.Width = displaygrid.Width * keybpipscale;
+            keybmaskbox.Height = displaygrid.Height * keybpipscale;
+
             // TODO: adjust width/height to account for masking
             viewbox.Width = Math.Max((displaygrid.Width * pipscale) - ((displaygrid.Width * pipscale) * (pipmlr * 2 / xrange)), 0);
             viewbox.Height = Math.Max((displaygrid.Height * pipscale) - ((displaygrid.Height * pipscale) * (pipmtb * 2 / yrange)), 0);
@@ -69,19 +103,28 @@ namespace Integrated_Presenter
             trueviewbox.Height = Math.Max((displaygrid.Height * truepipscale) - ((displaygrid.Height * truepipscale) * (truepipmtb * 2 / yrange)), 0);
 
 
-
             // position the rectangles
             double x = pipxoff * (displaygrid.Width / xrange);
-            double y = pipyoff * (displaygrid.Height / yrange);
+            double y = -pipyoff * (displaygrid.Height / yrange);
 
             double tx = truepipxoff * (displaygrid.Width / xrange);
-            double ty = truepipyoff * (displaygrid.Height / yrange);
+            double ty = -truepipyoff * (displaygrid.Height / yrange);
+
+
+            double kax = keyapipx * (displaygrid.Width / xrange);
+            double kay = -keyapipy * (displaygrid.Height / yrange);
+
+            double kbx = keybpipx * (displaygrid.Width / xrange);
+            double kby = -keybpipy * (displaygrid.Height / yrange);
 
             maskedbox.RenderTransform = new TranslateTransform(x, y);
             viewbox.RenderTransform = new TranslateTransform(x, y);
 
             truemaskedbox.RenderTransform = new TranslateTransform(tx, ty);
             trueviewbox.RenderTransform = new TranslateTransform(tx, ty);
+
+            keyamaskbox.RenderTransform = new TranslateTransform(kax, kay);
+            keybmaskbox.RenderTransform = new TranslateTransform(kbx, kby);
 
             tbScale.Text = $"{pipscale:0.##} :: {pipscale * 100:0.##}%";
             tbX.Text = $"{pipxoff:0.##} :: {pipxoff / (xrange / 2) * 100:0.##}%";
@@ -123,6 +166,14 @@ namespace Integrated_Presenter
         double truepipyoff = 5.4;
         double truepipmlr = 0;
         double truepipmtb = 0;
+
+        double keyapipscale = 0;
+        double keyapipx = 0;
+        double keyapipy = 0;
+        double keybpipscale = 0;
+        double keybpipx = 0;
+        double keybpipy = 0;
+
 
 
         double scalespeed = 0.1;
@@ -254,7 +305,8 @@ namespace Integrated_Presenter
             {
                 to_bottom_mid();
             }
-            if (e.Key == Key.NumPad4) {
+            if (e.Key == Key.NumPad4)
+            {
                 to_left_mid();
             }
             if (e.Key == Key.NumPad6)
@@ -267,7 +319,20 @@ namespace Integrated_Presenter
                 to_center();
             }
 
+            if (e.Key == Key.Divide)
+            {
+                set_as_key_a();
+            }
+            if (e.Key == Key.Multiply)
+            {
+                set_as_key_b();
+            }
 
+        }
+
+        private bool PIPIsAtTarget()
+        {
+            return pipscale == truepipscale && pipxoff == truepipxoff && pipyoff == truepipyoff && pipmlr == truepipmlr && pipmtb == truepipmlr;
         }
 
         private void SwitcherPIPUpdate()
@@ -283,7 +348,8 @@ namespace Integrated_Presenter
                 config.Current.PositionY = pipyoff;
                 config.Current.SizeX = pipscale;
                 config.Current.SizeY = pipscale;
-                config.IsMasked = 1; // it will be masked, but may have a 0 mask
+                config.IsMasked = pipmtb != 0 || pipmlr != 0 ? 1 : 0;
+                config.IsBordered = 0; // no border
                 config.MaskTop = (float)pipmtb;
                 config.MaskBottom = (float)pipmtb;
                 config.MaskLeft = (float)pipmlr;
@@ -292,6 +358,44 @@ namespace Integrated_Presenter
                 SetPIPOnSwitcher?.Invoke(config);
             }
 
+        }
+
+        private void set_as_key_a()
+        {
+            BMDUSKDVESettings config = new BMDUSKDVESettings();
+            config.IsMasked = pipmtb != 0 || pipmlr != 0 ? 1 : 0;
+            config.MaskTop = (float)pipmtb;
+            config.MaskBottom = (float)pipmtb;
+            config.MaskLeft = (float)pipmlr;
+            config.MaskRight = (float)pipmlr;
+            config.IsBordered = 0; // no border
+            config.KeyFrameA = new KeyFrameSettings()
+            {
+                PositionX = pipxoff,
+                PositionY = pipyoff,
+                SizeX = pipscale,
+                SizeY = pipscale,
+            };
+            SetPIPKeyframeAOnSwitcher(config);
+        }
+
+        private void set_as_key_b()
+        {
+            BMDUSKDVESettings config = new BMDUSKDVESettings();
+            config.IsMasked = pipmtb != 0 || pipmlr != 0 ? 1 : 0;
+            config.MaskTop = (float)pipmtb;
+            config.MaskBottom = (float)pipmtb;
+            config.MaskLeft = (float)pipmlr;
+            config.MaskRight = (float)pipmlr;
+            config.IsBordered = 0; // no border
+            config.KeyFrameB = new KeyFrameSettings()
+            {
+                PositionX = pipxoff,
+                PositionY = pipyoff,
+                SizeX = pipscale,
+                SizeY = pipscale,
+            };
+            SetPIPKeyframeBOnSwitcher(config);
         }
 
         private void scale_up()
@@ -400,7 +504,7 @@ namespace Integrated_Presenter
             UpdateUI();
         }
 
-        private void translate_up()
+        private void translate_down()
         {
             pipyoff -= translationspeed;
             if (pipyoff < miny)
@@ -413,7 +517,7 @@ namespace Integrated_Presenter
             UpdateUI();
         }
 
-        private void translate_down()
+        private void translate_up()
         {
             pipyoff += translationspeed;
             if (pipyoff > maxy)
@@ -457,7 +561,7 @@ namespace Integrated_Presenter
             var h = calc_centers();
 
             pipxoff = -xrange / 2 + h.x;
-            pipyoff = -yrange / 2 + h.y;
+            pipyoff = yrange / 2 - h.y;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -469,7 +573,7 @@ namespace Integrated_Presenter
             var h = calc_centers();
 
             pipxoff = xrange / 2 - h.x;
-            pipyoff = -yrange / 2 + h.y;
+            pipyoff = yrange / 2 - h.y;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -481,7 +585,7 @@ namespace Integrated_Presenter
             var h = calc_centers();
 
             pipxoff = -xrange / 2 + h.x;
-            pipyoff = yrange / 2 - h.y;
+            pipyoff = -yrange / 2 + h.y;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -493,7 +597,7 @@ namespace Integrated_Presenter
             var h = calc_centers();
 
             pipxoff = xrange / 2 - h.x;
-            pipyoff = yrange / 2 - h.y;
+            pipyoff = -yrange / 2 + h.y;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -505,7 +609,7 @@ namespace Integrated_Presenter
             var h = calc_centers();
 
             pipxoff = 0;
-            pipyoff = -yrange / 2 + h.y;
+            pipyoff = yrange / 2 - h.y;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -518,7 +622,7 @@ namespace Integrated_Presenter
             var h = calc_centers();
 
             pipxoff = 0;
-            pipyoff = yrange / 2 - h.y;
+            pipyoff = -yrange / 2 + h.y;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -538,7 +642,7 @@ namespace Integrated_Presenter
             UpdateUI();
 
         }
-        
+
         private void to_right_mid()
         {
             var h = calc_centers();

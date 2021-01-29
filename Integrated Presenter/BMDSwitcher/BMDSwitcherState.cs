@@ -9,6 +9,11 @@ namespace Integrated_Presenter.BMDSwitcher
     public class BMDSwitcherState
     {
 
+        public BMDSwitcherState()
+        {
+            SetDefault();
+        }
+
         public long PresetID { get; set; }
         public long ProgramID { get; set; }
         public long AuxID { get; set; }

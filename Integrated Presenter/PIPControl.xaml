@@ -9,8 +9,8 @@
         PreviewKeyUp="Window_PreviewKeyUp"
         Topmost="true"
         Closed="Window_Closed"
-        Width="400"
-        Height="225"
+        Width="600"
+        Height="480"
         Title="Picture In Picture Positioning">
     <Grid Background="#0D0D0D">
         <Grid.RowDefinitions>
@@ -46,28 +46,119 @@
             </StackPanel>
         </Grid>
         <Viewbox Grid.Row="1">
+            <Grid Name="extragrid" Width="600" Height="450">
+                <Grid Name="displaygrid" Background="Gray" Width="384" Height="216">
+                    <Rectangle Name="maskedbox" Width="153.6" Height="86.4" Fill="Black">
+                        <Rectangle.RenderTransform>
+                            <TranslateTransform X="115.2" Y="64"></TranslateTransform>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Rectangle Name="viewbox" Width="100" Height="80" Fill="Orange">
+                        <Rectangle.RenderTransform>
+                            <TranslateTransform X="115.2" Y="64"></TranslateTransform>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
 
-            <Grid Name="displaygrid" Background="Gray" Width="384" Height="216">
-                <Rectangle Name="maskedbox" Width="153.6" Height="86.4" Fill="Black">
-                    <Rectangle.RenderTransform>
-                        <TranslateTransform X="115.2" Y="64"></TranslateTransform>
-                    </Rectangle.RenderTransform>
-                </Rectangle>
-                <Rectangle Name="viewbox" Width="100" Height="80" Fill="Orange">
-                    <Rectangle.RenderTransform>
-                        <TranslateTransform X="115.2" Y="64"></TranslateTransform>
-                    </Rectangle.RenderTransform>
-                </Rectangle>
-                <Border Name="truemaskedbox" Width="153.6" Height="86.4" BorderBrush="White" BorderThickness="1">
-                    <Border.RenderTransform>
-                        <TranslateTransform X="115.2" Y="64"></TranslateTransform>
-                    </Border.RenderTransform>
-                </Border>
-                <Border Name="trueviewbox" Width="100" Height="80" BorderBrush="Red" BorderThickness="1">
-                    <Border.RenderTransform>
-                        <TranslateTransform X="115.2" Y="64"></TranslateTransform>
-                    </Border.RenderTransform>
-                </Border>
+                    <Border Name="truemaskedbox" Width="153.6" Height="86.4" BorderThickness="2">
+                        <Border.BorderBrush>
+                            <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                                <DrawingBrush.Drawing>
+                                    <DrawingGroup>
+                                        <GeometryDrawing Brush="White">
+                                            <GeometryDrawing.Geometry>
+                                                <GeometryGroup>
+                                                    <RectangleGeometry Rect="0,0,50,50" />
+                                                    <RectangleGeometry Rect="50,50,50,50" />
+                                                </GeometryGroup>
+                                            </GeometryDrawing.Geometry>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingBrush.Drawing>
+                            </DrawingBrush>
+                        </Border.BorderBrush>
+                        <Border.RenderTransform>
+                            <TranslateTransform X="0" Y="0"></TranslateTransform>
+                        </Border.RenderTransform>
+                    </Border>
+                    <Border Name="trueviewbox" Width="100" Height="80" BorderThickness="3">
+                        <Border.BorderBrush>
+                            <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                                <DrawingBrush.Drawing>
+                                    <DrawingGroup>
+                                        <GeometryDrawing Brush="Red">
+                                            <GeometryDrawing.Geometry>
+                                                <GeometryGroup>
+                                                    <RectangleGeometry Rect="0,0,50,50" />
+                                                    <RectangleGeometry Rect="50,50,50,50" />
+                                                </GeometryGroup>
+                                            </GeometryDrawing.Geometry>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingBrush.Drawing>
+                            </DrawingBrush>
+                        </Border.BorderBrush>
+                        <Border.RenderTransform>
+                            <TranslateTransform X="0" Y="0"></TranslateTransform>
+                        </Border.RenderTransform>
+                    </Border>
+
+
+                    <Border Name="keyamaskbox" Width="153.6" Height="86.4" BorderThickness="1">
+                        <Border.BorderBrush>
+                            <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                                <DrawingBrush.Drawing>
+                                    <DrawingGroup>
+                                        <GeometryDrawing Brush="SkyBlue">
+                                            <GeometryDrawing.Geometry>
+                                                <GeometryGroup>
+                                                    <RectangleGeometry Rect="0,0,50,50" />
+                                                    <RectangleGeometry Rect="50,50,50,50" />
+                                                </GeometryGroup>
+                                            </GeometryDrawing.Geometry>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingBrush.Drawing>
+                            </DrawingBrush>
+                        </Border.BorderBrush>
+
+                        <Border.RenderTransform>
+                            <TranslateTransform X="115.2" Y="-64"></TranslateTransform>
+                        </Border.RenderTransform>
+
+                        <Grid>
+                            <TextBlock FontSize="40" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">A</TextBlock>
+                        </Grid>
+
+                    </Border>
+
+                    <Border Name="keybmaskbox" Width="153.6" Height="86.4" BorderThickness="1">
+                        <Border.BorderBrush>
+                            <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                                <DrawingBrush.Drawing>
+                                    <DrawingGroup>
+                                        <GeometryDrawing Brush="SkyBlue">
+                                            <GeometryDrawing.Geometry>
+                                                <GeometryGroup>
+                                                    <RectangleGeometry Rect="0,0,50,50" />
+                                                    <RectangleGeometry Rect="50,50,50,50" />
+                                                </GeometryGroup>
+                                            </GeometryDrawing.Geometry>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingBrush.Drawing>
+                            </DrawingBrush>
+                        </Border.BorderBrush>
+
+                        <Border.RenderTransform>
+                            <TranslateTransform X="-115.2" Y="64"></TranslateTransform>
+                        </Border.RenderTransform>
+                        <Grid>
+                            <TextBlock FontSize="40" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">B</TextBlock>
+                        </Grid>
+
+                    </Border>
+
+                </Grid>
             </Grid>
         </Viewbox>
     </Grid>

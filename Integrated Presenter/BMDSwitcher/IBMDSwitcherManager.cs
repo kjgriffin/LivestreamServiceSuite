@@ -44,6 +44,7 @@ namespace Integrated_Presenter
         void SetUSK1TypeChroma();
         void SetPIPPosition(BMDUSKDVESettings settings);
         void SetPIPKeyFrameA(BMDUSKDVESettings settings);
+        void SetPIPKeyFrameB(BMDUSKDVESettings settings);
         void ConfigureUSK1PIP(BMDUSKDVESettings settings);
         void ConfigureUSK1Chroma(BMDUSKChromaSettings settings);
 

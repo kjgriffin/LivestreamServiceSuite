@@ -75,15 +75,6 @@ namespace Integrated_Presenter
             // set a default config
             SetDefaultConfig();
 
-            // update default config values on PIP UI
-            tbPIPSize.Text = _config.USKSettings.PIPSettings.Current.SizeX.ToString();
-            tbPIPPosX.Text = _config.USKSettings.PIPSettings.Current.PositionX.ToString();
-            tbPIPPosY.Text = _config.USKSettings.PIPSettings.Current.PositionY.ToString();
-            tbPIPmaskTB.Text = _config.USKSettings.PIPSettings.MaskTop.ToString();
-            tbPIPmaskLR.Text = _config.USKSettings.PIPSettings.MaskLeft.ToString();
-
-
-
             HideAdvancedPresControls();
             HideAdvancedPIPControls();
             HideAuxButtonConrols();
@@ -554,9 +545,12 @@ namespace Integrated_Presenter
             BtnPIPFillProgram7.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
             BtnPIPFillProgram8.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
 
-            BtnPIPtoA.Background = switcherState.USK1KeyFrame == 1 ? Brushes.Red : Brushes.Transparent;
-            BtnPIPtoB.Background = switcherState.USK1KeyFrame == 2 ? Brushes.Red : Brushes.Transparent;
-            BtnPIPtoFull.Background = switcherState.USK1KeyFrame == 0 ? Brushes.Red : Brushes.Transparent;
+            BtnPIPtoA.Background = switcherState.USK1KeyFrame == 1 ? Brushes.Orange : Brushes.WhiteSmoke;
+            BtnPIPtoA.Foreground = switcherState.USK1KeyFrame == 1 ? Brushes.Orange : Brushes.WhiteSmoke;
+            BtnPIPtoB.Background = switcherState.USK1KeyFrame == 2 ? Brushes.Orange : Brushes.WhiteSmoke;
+            BtnPIPtoB.Foreground = switcherState.USK1KeyFrame == 2 ? Brushes.Orange : Brushes.WhiteSmoke;
+            BtnPIPtoFull.Background = switcherState.USK1KeyFrame == 0 ? Brushes.Orange : Brushes.WhiteSmoke;
+            BtnPIPtoFull.Foreground = switcherState.USK1KeyFrame == 0 ? Brushes.Orange : Brushes.WhiteSmoke;
         }
 
         private void UpdateChromaButtonStyles()
@@ -806,7 +800,7 @@ namespace Integrated_Presenter
         {
 
             // dont enable shortcuts when focused on textbox
-            if (tbPIPSize.IsFocused || tbPIPPosX.IsFocused || tbPIPPosY.IsFocused || tbPIPmaskLR.IsFocused || tbPIPmaskTB.IsFocused || tbChromaHue.IsFocused || tbChromaGain.IsFocused || tbChromaYSuppress.IsFocused || tbChromaLift.IsFocused || tbChromaNarrow.IsFocused)
+            if (tbChromaHue.IsFocused || tbChromaGain.IsFocused || tbChromaYSuppress.IsFocused || tbChromaLift.IsFocused || tbChromaNarrow.IsFocused)
             {
                 return;
             }
@@ -2583,16 +2577,6 @@ namespace Integrated_Presenter
             switcherManager?.PerformUSK1RunToKeyFrameFull();
         }
 
-        private void ClickPIPRunToOnScreenBox(object sender, RoutedEventArgs e)
-        {
-            USK1RuntoA();
-        }
-
-        private void ClickPIPRunToOffScreenBox(object sender, RoutedEventArgs e)
-        {
-            USK1RuntoB();
-        }
-
         private void ClickPIPRunToFull(object sender, RoutedEventArgs e)
         {
             USK1RuntoFull();
@@ -3148,24 +3132,6 @@ namespace Integrated_Presenter
             mHyperdeckManager?.StopRecording();
         }
 
-        private void ClickApplyPIPSettings(object sender, RoutedEventArgs e)
-        {
-            BMDUSKDVESettings config = new BMDUSKDVESettings();
-            var res = GetPIPSettings();
-            config.Current = new KeyFrameSettings();
-            config.Current.PositionX = res.px;
-            config.Current.PositionY = res.py;
-            config.Current.SizeX = res.s;
-            config.Current.SizeY = res.s;
-            config.IsMasked = res.im ? 1 : 0;
-            config.MaskTop = res.mtb;
-            config.MaskBottom = res.mtb;
-            config.MaskLeft = res.mlr;
-            config.MaskRight = res.mlr;
-            switcherManager?.SetPIPPosition(config);
-
-        }
-
         private void SetPIPPosition(BMDUSKDVESettings config)
         {
             Dispatcher.Invoke(() =>
@@ -3178,47 +3144,25 @@ namespace Integrated_Presenter
         {
         }
 
-        private (float mlr, float mtb, float px, float py, float s, bool im) GetPIPSettings()
+        private void ClickOpenPIPLocationControls(object sender, RoutedEventArgs e)
         {
-            float masklr = 0;
-            float masktb = 0;
-            float posx = 0;
-            float posy = 0;
-            float size = 0;
-            float.TryParse(tbPIPSize.Text, out size);
-            float.TryParse(tbPIPmaskLR.Text, out masklr);
-            float.TryParse(tbPIPmaskTB.Text, out masktb);
-            float.TryParse(tbPIPPosX.Text, out posx);
-            float.TryParse(tbPIPPosY.Text, out posy);
-
-            size = Math.Clamp(size, 0, 1);
-            masktb = Math.Clamp(masktb, 0, 9);
-            masklr = Math.Clamp(masklr, 0, 16);
-
-            bool ismasked = false;
-            if (masklr != 0 || masktb != 0)
-            {
-                ismasked = true;
-            }
-
-            return (masklr, masktb, posx, posy, size, ismasked);
+            ShowPIPLocationControl();
         }
 
-        private void ClickApplyKFAPIPSettings(object sender, RoutedEventArgs e)
+        private void SetKeyFrameAOnSwitcher(BMDUSKDVESettings config)
         {
-            BMDUSKDVESettings config = new BMDUSKDVESettings();
-            var res = GetPIPSettings();
-            config.KeyFrameA = new KeyFrameSettings();
-            config.KeyFrameA.PositionX = res.px;
-            config.KeyFrameA.PositionY = res.py;
-            config.KeyFrameA.SizeX = res.s;
-            config.KeyFrameA.SizeY = res.s;
-            config.IsMasked = res.im ? 1 : 0;
-            config.MaskTop = res.mtb;
-            config.MaskBottom = res.mtb;
-            config.MaskLeft = res.mlr;
-            config.MaskRight = res.mlr;
-            switcherManager?.SetPIPKeyFrameA(config);
+            Dispatcher.Invoke(() =>
+            {
+                switcherManager?.SetPIPKeyFrameA(config);
+            });
+        }
+
+        private void SetKeyFrameBOnSwitcher(BMDUSKDVESettings config)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                switcherManager?.SetPIPKeyFrameB(config);
+            });
         }
 
 
@@ -3425,11 +3369,6 @@ namespace Integrated_Presenter
             switcherManager?.SetUSK1TypeDVE();
             // force blocking state update
             SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate());
-            tbPIPSize.Text = switcherState.DVESettings.Current.SizeX.ToString();
-            tbPIPPosX.Text = switcherState.DVESettings.Current.PositionX.ToString();
-            tbPIPPosY.Text = switcherState.DVESettings.Current.PositionY.ToString();
-            tbPIPmaskTB.Text = switcherState.DVESettings.MaskTop.ToString();
-            tbPIPmaskLR.Text = switcherState.DVESettings.MaskLeft.ToString();
             ShowKeyerUI();
         }
 
@@ -3438,7 +3377,7 @@ namespace Integrated_Presenter
             //switcherManager?.ConfigureUSK1Chroma(_config.USKSettings.ChromaSettings);
             switcherManager?.SetUSK1TypeChroma();
             // force blocking state update
-            SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate());
+            SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate() ?? new BMDSwitcherState());
             tbChromaHue.Text = switcherState.ChromaSettings.Hue.ToString();
             tbChromaGain.Text = switcherState.ChromaSettings.Gain.ToString();
             tbChromaLift.Text = switcherState.ChromaSettings.Lift.ToString();
@@ -3528,14 +3467,24 @@ namespace Integrated_Presenter
         {
             if (pipctrl == null)
             {
-                pipctrl = new PIPControl(this, SetPIPPosition);
+                pipctrl = new PIPControl(this, SetPIPPosition, SetKeyFrameAOnSwitcher, SetKeyFrameBOnSwitcher, switcherState?.DVESettings ?? _config.USKSettings.PIPSettings);
             }
             if (pipctrl.HasClosed)
             {
-                pipctrl = new PIPControl(this, SetPIPPosition);
+                pipctrl = new PIPControl(this, SetPIPPosition, SetKeyFrameAOnSwitcher, SetKeyFrameBOnSwitcher, switcherState?.DVESettings ?? _config.USKSettings.PIPSettings);
             }
             pipctrl.Show();
             pipctrl.Focus();
+        }
+
+        private void ClickPIPRunToA(object sender, RoutedEventArgs e)
+        {
+            switcherManager?.PerformUSK1RunToKeyFrameA();
+        }
+
+        private void ClickPIPRunToB(object sender, RoutedEventArgs e)
+        {
+            switcherManager?.PerformUSK1RunToKeyFrameB();
         }
     }
 }
