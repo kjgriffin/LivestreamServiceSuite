@@ -31,6 +31,7 @@ namespace Integrated_Presenter
             SetPIPKeyframeAOnSwitcher = setpipkeyaonswitcher;
             SetPIPKeyframeBOnSwitcher = setpipkeybonswitcher;
             PIPSettingsUpdated(current);
+            CheckIfAtTarget();
         }
 
         public bool HasClosed { get; set; } = false;
@@ -376,7 +377,7 @@ namespace Integrated_Presenter
                 SizeX = pipscale,
                 SizeY = pipscale,
             };
-            SetPIPKeyframeAOnSwitcher(config);
+            SetPIPKeyframeAOnSwitcher?.Invoke(config);
         }
 
         private void set_as_key_b()
@@ -395,7 +396,7 @@ namespace Integrated_Presenter
                 SizeX = pipscale,
                 SizeY = pipscale,
             };
-            SetPIPKeyframeBOnSwitcher(config);
+            SetPIPKeyframeBOnSwitcher?.Invoke(config);
         }
 
         private void scale_up()

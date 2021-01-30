@@ -83,6 +83,7 @@ namespace Integrated_Presenter
 
             _flykeyMonitor = new SwitcherFlyKeyMonitor();
             _flykeyMonitor.KeyFrameChanged += _flykeyMonitor_KeyFrameChanged;
+            _flykeyMonitor.KeyFrameStateChange += _flykeyMonitor_KeyFrameStateChange;
 
             _transitionMontitor = new SwitcherTransitionMonitor();
             _transitionMontitor.OnTransitionSelectionChanged += _transitionMontitor_OnNextTransitionSelectionChanged;
@@ -101,6 +102,16 @@ namespace Integrated_Presenter
             }
             _state = new BMDSwitcherState();
             SwitcherDisconnected();
+        }
+
+        private void _flykeyMonitor_KeyFrameStateChange(object sender, object args)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_USK1();
+                ForceStateUpdate_PIPSettings();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _auxMonitor_OnAuxInputChanged(object sender, object args)
@@ -1196,80 +1207,92 @@ namespace Integrated_Presenter
 
         public void SetPIPPosition(BMDUSKDVESettings settings)
         {
-            IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+            _parent.Dispatcher.Invoke(() =>
+            {
+                IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
 
-            // set border with dveparams
-            dveparams.SetMasked(settings.IsMasked);
-            dveparams.SetMaskTop(settings.MaskTop);
-            dveparams.SetMaskBottom(settings.MaskBottom);
-            dveparams.SetMaskLeft(settings.MaskLeft);
-            dveparams.SetMaskRight(settings.MaskRight);
+                // set border with dveparams
+                dveparams.SetMasked(settings.IsMasked);
+                dveparams.SetMaskTop(settings.MaskTop);
+                dveparams.SetMaskBottom(settings.MaskBottom);
+                dveparams.SetMaskLeft(settings.MaskLeft);
+                dveparams.SetMaskRight(settings.MaskRight);
 
 
-            dveparams.SetBorderEnabled(settings.IsBordered);
+                dveparams.SetBorderEnabled(settings.IsBordered);
 
 
-            // config size & base position
-            _BMDSwitcherFlyKeyParamters.SetPositionX(settings.Current.PositionX);
-            _BMDSwitcherFlyKeyParamters.SetPositionY(settings.Current.PositionY);
-            _BMDSwitcherFlyKeyParamters.SetSizeX(settings.Current.SizeX);
-            _BMDSwitcherFlyKeyParamters.SetSizeY(settings.Current.SizeY);
+                // config size & base position
+                _BMDSwitcherFlyKeyParamters.SetPositionX(settings.Current.PositionX);
+                _BMDSwitcherFlyKeyParamters.SetPositionY(settings.Current.PositionY);
+                _BMDSwitcherFlyKeyParamters.SetSizeX(settings.Current.SizeX);
+                _BMDSwitcherFlyKeyParamters.SetSizeY(settings.Current.SizeY);
 
-            ForceStateUpdate();
+                ForceStateUpdate();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         public void SetPIPKeyFrameA(BMDUSKDVESettings settings)
         {
-            IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+            _parent.Dispatcher.Invoke(() =>
+            {
+                IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
 
-            // set border with dveparams
-            dveparams.SetMasked(settings.IsMasked);
-            dveparams.SetMaskTop(settings.MaskTop);
-            dveparams.SetMaskBottom(settings.MaskBottom);
-            dveparams.SetMaskLeft(settings.MaskLeft);
-            dveparams.SetMaskRight(settings.MaskRight);
-
-
-            dveparams.SetBorderEnabled(settings.IsBordered);
-
-            // setup keyframes
-            IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
-            _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparams);
-
-            keyframeparams.SetPositionX(settings.KeyFrameA.PositionX);
-            keyframeparams.SetPositionY(settings.KeyFrameA.PositionY);
-            keyframeparams.SetSizeX(settings.KeyFrameA.SizeX);
-            keyframeparams.SetSizeY(settings.KeyFrameA.SizeY);
+                // set border with dveparams
+                dveparams.SetMasked(settings.IsMasked);
+                dveparams.SetMaskTop(settings.MaskTop);
+                dveparams.SetMaskBottom(settings.MaskBottom);
+                dveparams.SetMaskLeft(settings.MaskLeft);
+                dveparams.SetMaskRight(settings.MaskRight);
 
 
-            ForceStateUpdate();
+                dveparams.SetBorderEnabled(settings.IsBordered);
+
+                // setup keyframes
+                IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
+                _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparams);
+
+                keyframeparams.SetPositionX(settings.KeyFrameA.PositionX);
+                keyframeparams.SetPositionY(settings.KeyFrameA.PositionY);
+                keyframeparams.SetSizeX(settings.KeyFrameA.SizeX);
+                keyframeparams.SetSizeY(settings.KeyFrameA.SizeY);
+
+
+                ForceStateUpdate();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         public void SetPIPKeyFrameB(BMDUSKDVESettings settings)
         {
-            IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+            _parent.Dispatcher.Invoke(() =>
+            {
+                IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
 
-            // set border with dveparams
-            dveparams.SetMasked(settings.IsMasked);
-            dveparams.SetMaskTop(settings.MaskTop);
-            dveparams.SetMaskBottom(settings.MaskBottom);
-            dveparams.SetMaskLeft(settings.MaskLeft);
-            dveparams.SetMaskRight(settings.MaskRight);
-
-
-            dveparams.SetBorderEnabled(settings.IsBordered);
-
-            // setup keyframes
-            IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
-            _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparams);
-
-            keyframeparams.SetPositionX(settings.KeyFrameB.PositionX);
-            keyframeparams.SetPositionY(settings.KeyFrameB.PositionY);
-            keyframeparams.SetSizeX(settings.KeyFrameB.SizeX);
-            keyframeparams.SetSizeY(settings.KeyFrameB.SizeY);
+                // set border with dveparams
+                dveparams.SetMasked(settings.IsMasked);
+                dveparams.SetMaskTop(settings.MaskTop);
+                dveparams.SetMaskBottom(settings.MaskBottom);
+                dveparams.SetMaskLeft(settings.MaskLeft);
+                dveparams.SetMaskRight(settings.MaskRight);
 
 
-            ForceStateUpdate();
+                dveparams.SetBorderEnabled(settings.IsBordered);
+
+                // setup keyframes
+                IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
+                _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparams);
+
+                keyframeparams.SetPositionX(settings.KeyFrameB.PositionX);
+                keyframeparams.SetPositionY(settings.KeyFrameB.PositionY);
+                keyframeparams.SetSizeX(settings.KeyFrameB.SizeX);
+                keyframeparams.SetSizeY(settings.KeyFrameB.SizeY);
+
+
+                ForceStateUpdate();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
 

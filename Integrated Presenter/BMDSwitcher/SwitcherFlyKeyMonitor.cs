@@ -10,6 +10,7 @@ namespace Integrated_Presenter.BMDSwitcher
     {
 
         public event KeyFrameEventHandler KeyFrameChanged;
+        public event SwitcherEventHandler KeyFrameStateChange;
 
         public void Notify(_BMDSwitcherKeyFlyParametersEventType eventType, _BMDSwitcherFlyKeyFrame keyFrame)
         {
@@ -22,16 +23,21 @@ namespace Integrated_Presenter.BMDSwitcher
                 case _BMDSwitcherKeyFlyParametersEventType.bmdSwitcherKeyFlyParametersEventTypeRateChanged:
                     break;
                 case _BMDSwitcherKeyFlyParametersEventType.bmdSwitcherKeyFlyParametersEventTypeSizeXChanged:
+                    KeyFrameStateChange?.Invoke(this, null);
                     break;
                 case _BMDSwitcherKeyFlyParametersEventType.bmdSwitcherKeyFlyParametersEventTypeSizeYChanged:
+                    KeyFrameStateChange?.Invoke(this, null);
                     break;
                 case _BMDSwitcherKeyFlyParametersEventType.bmdSwitcherKeyFlyParametersEventTypePositionXChanged:
+                    KeyFrameStateChange?.Invoke(this, null);
                     break;
                 case _BMDSwitcherKeyFlyParametersEventType.bmdSwitcherKeyFlyParametersEventTypePositionYChanged:
+                    KeyFrameStateChange?.Invoke(this, null);
                     break;
                 case _BMDSwitcherKeyFlyParametersEventType.bmdSwitcherKeyFlyParametersEventTypeRotationChanged:
                     break;
                 case _BMDSwitcherKeyFlyParametersEventType.bmdSwitcherKeyFlyParametersEventTypeIsKeyFrameStoredChanged:
+                    KeyFrameStateChange?.Invoke(this, null);
                     break;
                 case _BMDSwitcherKeyFlyParametersEventType.bmdSwitcherKeyFlyParametersEventTypeIsAtKeyFramesChanged:
                     int frame = -1;

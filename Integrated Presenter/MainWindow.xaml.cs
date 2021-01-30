@@ -3140,10 +3140,6 @@ namespace Integrated_Presenter
             });
         }
 
-        private void UpdatePIPSettingsUI()
-        {
-        }
-
         private void ClickOpenPIPLocationControls(object sender, RoutedEventArgs e)
         {
             ShowPIPLocationControl();
