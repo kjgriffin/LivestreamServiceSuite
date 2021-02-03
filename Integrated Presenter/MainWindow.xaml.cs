@@ -2631,7 +2631,7 @@ namespace Integrated_Presenter
         private bool showadvancedpipcontrols = false;
         private void ClickViewAdvancedPIP(object sender, RoutedEventArgs e)
         {
-            ToggleViewAdvancedPresentation();
+            ToggleViewAdvancedPIP();
         }
 
         private void ToggleViewAdvancedPIP()
