@@ -32,6 +32,7 @@ namespace Integrated_Presenter
             SetPIPKeyframeBOnSwitcher = setpipkeybonswitcher;
             PIPSettingsUpdated(current);
             CheckIfAtTarget();
+            _parent.ForceStateUpdateOnSwitcher();
         }
 
         public bool HasClosed { get; set; } = false;
@@ -63,6 +64,7 @@ namespace Integrated_Presenter
 
         private void CheckIfAtTarget()
         {
+            SendCmd = true;
             if (PIPIsAtTarget())
             {
                 // no need to send command to update pip position
@@ -378,6 +380,7 @@ namespace Integrated_Presenter
                 SizeY = pipscale,
             };
             SetPIPKeyframeAOnSwitcher?.Invoke(config);
+            _parent.ForceStateUpdateOnSwitcher();
         }
 
         private void set_as_key_b()
@@ -397,6 +400,7 @@ namespace Integrated_Presenter
                 SizeY = pipscale,
             };
             SetPIPKeyframeBOnSwitcher?.Invoke(config);
+            _parent.ForceStateUpdateOnSwitcher();
         }
 
         private void scale_up()

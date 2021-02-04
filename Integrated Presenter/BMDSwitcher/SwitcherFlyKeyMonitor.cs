@@ -52,6 +52,7 @@ namespace Integrated_Presenter.BMDSwitcher
                 case _BMDSwitcherKeyFlyParametersEventType.bmdSwitcherKeyFlyParametersEventTypeIsRunningChanged:
                     break;
                 default:
+                    KeyFrameStateChange?.Invoke(this, null);
                     break;
             }
         }

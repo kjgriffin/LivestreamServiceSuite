@@ -134,8 +134,8 @@ namespace Integrated_Presenter.BMDSwitcher
                 FTB = this.FTB,
                 TransNextBackground = this.TransNextBackground,
                 TransNextKey1 = this.TransNextKey1,
-                ChromaSettings = this.ChromaSettings,
-                DVESettings = this.DVESettings
+                ChromaSettings = this.ChromaSettings.Copy(),
+                DVESettings = this.DVESettings.Copy(),
             };
 
         }

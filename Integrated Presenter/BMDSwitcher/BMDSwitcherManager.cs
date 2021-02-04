@@ -948,72 +948,75 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_PIPSettings()
         {
-            IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
-
-            int isbordered;
-            int ismasked;
-            double masktop, maskbot, maskleft, maskright;
-            dveparams.GetMasked(out ismasked);
-            dveparams.GetMaskBottom(out maskbot);
-            dveparams.GetMaskTop(out masktop);
-            dveparams.GetMaskLeft(out maskleft);
-            dveparams.GetMaskRight(out maskright);
-            dveparams.GetBorderEnabled(out isbordered);
-
-            double cposx, cposy, csizex, csizey;
-            _BMDSwitcherFlyKeyParamters.GetPositionX(out cposx);
-            _BMDSwitcherFlyKeyParamters.GetPositionY(out cposy);
-            _BMDSwitcherFlyKeyParamters.GetSizeX(out csizex);
-            _BMDSwitcherFlyKeyParamters.GetSizeY(out csizey);
-
-            double aposx, aposy, asizex, asizey;
-            IBMDSwitcherKeyFlyKeyFrameParameters keyframeparamsa;
-            _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparamsa);
-            keyframeparamsa.GetPositionX(out aposx);
-            keyframeparamsa.GetPositionY(out aposy);
-            keyframeparamsa.GetSizeX(out asizex);
-            keyframeparamsa.GetSizeY(out asizey);
-
-            double bposx, bposy, bsizex, bsizey;
-            IBMDSwitcherKeyFlyKeyFrameParameters keyframeparamsb;
-            _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparamsb);
-            keyframeparamsb.GetPositionX(out bposx);
-            keyframeparamsb.GetPositionY(out bposy);
-            keyframeparamsb.GetSizeX(out bsizex);
-            keyframeparamsb.GetSizeY(out bsizey);
-
-
-            _state.DVESettings = new BMDUSKDVESettings()
+            _parent.Dispatcher.Invoke(() =>
             {
-                Current = new KeyFrameSettings()
+                IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+
+                int isbordered;
+                int ismasked;
+                double masktop, maskbot, maskleft, maskright;
+                dveparams.GetMasked(out ismasked);
+                dveparams.GetMaskBottom(out maskbot);
+                dveparams.GetMaskTop(out masktop);
+                dveparams.GetMaskLeft(out maskleft);
+                dveparams.GetMaskRight(out maskright);
+                dveparams.GetBorderEnabled(out isbordered);
+
+                double cposx, cposy, csizex, csizey;
+                _BMDSwitcherFlyKeyParamters.GetPositionX(out cposx);
+                _BMDSwitcherFlyKeyParamters.GetPositionY(out cposy);
+                _BMDSwitcherFlyKeyParamters.GetSizeX(out csizex);
+                _BMDSwitcherFlyKeyParamters.GetSizeY(out csizey);
+
+                double aposx, aposy, asizex, asizey;
+                IBMDSwitcherKeyFlyKeyFrameParameters keyframeparamsa;
+                _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparamsa);
+                keyframeparamsa.GetPositionX(out aposx);
+                keyframeparamsa.GetPositionY(out aposy);
+                keyframeparamsa.GetSizeX(out asizex);
+                keyframeparamsa.GetSizeY(out asizey);
+
+                double bposx, bposy, bsizex, bsizey;
+                IBMDSwitcherKeyFlyKeyFrameParameters keyframeparamsb;
+                _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparamsb);
+                keyframeparamsb.GetPositionX(out bposx);
+                keyframeparamsb.GetPositionY(out bposy);
+                keyframeparamsb.GetSizeX(out bsizex);
+                keyframeparamsb.GetSizeY(out bsizey);
+
+
+                _state.DVESettings = new BMDUSKDVESettings()
                 {
-                    PositionX = cposx,
-                    PositionY = cposy,
-                    SizeX = csizex,
-                    SizeY = csizey
-                },
-                DefaultFillSource = _config?.USKSettings.PIPSettings.DefaultFillSource ?? 0,
-                IsBordered = isbordered,
-                IsMasked = ismasked,
-                MaskBottom = (float)maskbot,
-                MaskTop = (float)masktop,
-                MaskLeft = (float)maskleft,
-                MaskRight = (float)maskright,
-                KeyFrameA = new KeyFrameSettings()
-                {
-                    PositionX = aposx,
-                    PositionY = aposy,
-                    SizeX = asizex,
-                    SizeY = asizey
-                },
-                KeyFrameB = new KeyFrameSettings()
-                {
-                    PositionX = bposx,
-                    PositionY = bposy,
-                    SizeX = bsizex,
-                    SizeY = bsizey
-                }
-            };
+                    Current = new KeyFrameSettings()
+                    {
+                        PositionX = cposx,
+                        PositionY = cposy,
+                        SizeX = csizex,
+                        SizeY = csizey
+                    },
+                    DefaultFillSource = _config?.USKSettings.PIPSettings.DefaultFillSource ?? 0,
+                    IsBordered = isbordered,
+                    IsMasked = ismasked,
+                    MaskBottom = (float)maskbot,
+                    MaskTop = (float)masktop,
+                    MaskLeft = (float)maskleft,
+                    MaskRight = (float)maskright,
+                    KeyFrameA = new KeyFrameSettings()
+                    {
+                        PositionX = aposx,
+                        PositionY = aposy,
+                        SizeX = asizex,
+                        SizeY = asizey
+                    },
+                    KeyFrameB = new KeyFrameSettings()
+                    {
+                        PositionX = bposx,
+                        PositionY = bposy,
+                        SizeX = bsizex,
+                        SizeY = bsizey
+                    }
+                };
+            });
         }
 
         private void ConfigureAudioLevels()
