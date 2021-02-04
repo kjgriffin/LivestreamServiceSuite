@@ -345,8 +345,33 @@ namespace Integrated_Presenter
         }
 
 
+        public void ShowHideShortcuts(bool show)
+        {
+            if (show)
+            {
+                ksc1.Visibility = Visibility.Visible;
+                ksc2.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ksc1.Visibility = Visibility.Collapsed;
+                ksc2.Visibility = Visibility.Collapsed;
+            }
+        }
+
         //public event EventHandler ClickTakeEvent;
         public event TakeSlidePoolEvent TakeSlidePoolSource;
+
+        private string sourceIdNum = "#";
+        public string SourceIDNum
+        {
+            get => sourceIdNum;
+            set {
+                sourceIdNum = value;
+                tbNum1.Text = sourceIdNum;
+                tbNum2.Text = sourceIdNum;
+            }
+        } 
 
         private void ClickChromaStillMode(object sender, RoutedEventArgs e)
         {

@@ -46,10 +46,54 @@
             <StackPanel>
                 <TextBlock TextAlignment="Center" Margin="0,5,20,0" Style="{StaticResource GrayText}">AUDIO PLAYBACK CONTROLS</TextBlock>
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                    <Button Name="BtnRestartAudio" Click="ClickRestartAudio" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
-                    <Button Name="BtnStopAudio" Click="ClickStopAudio" Style="{StaticResource SwitcherButton_Disabled}">STOP</Button>
-                    <Button Name="BtnPauseAudio" Click="ClickPauseAudio" Style="{StaticResource SwitcherButton_Disabled}">PAUSE</Button>
-                    <Button Name="BtnPlayAudio" Click="ClickPlayAudio" Style="{StaticResource SwitcherButton_Disabled}">PLAY</Button>
+                    <Grid>
+                        <Viewbox Name="ksc_1" Panel.ZIndex="1" Height="50" Width="50">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Padding="10, 0" Style="{StaticResource UIShortcutBdr}">
+                                    <Viewbox>
+                                        <TextBlock Style="{StaticResource UIShortcut}">F1</TextBlock>
+                                    </Viewbox>
+                                </Border>
+                            </StackPanel>
+                        </Viewbox>
+                        <Button Name="BtnRestartAudio" Click="ClickRestartAudio" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
+                    </Grid>
+                    <Grid>
+                        <Viewbox Name="ksc_2" Panel.ZIndex="1" Height="50" Width="50">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Padding="10, 0" Style="{StaticResource UIShortcutBdr}">
+                                    <Viewbox>
+                                        <TextBlock Style="{StaticResource UIShortcut}">F2</TextBlock>
+                                    </Viewbox>
+                                </Border>
+                            </StackPanel>
+                        </Viewbox>
+                        <Button Name="BtnStopAudio" Click="ClickStopAudio" Style="{StaticResource SwitcherButton_Disabled}">STOP</Button>
+                    </Grid>
+                    <Grid>
+                        <Viewbox Name="ksc_3" Panel.ZIndex="1" Height="50" Width="50">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Padding="10, 0" Style="{StaticResource UIShortcutBdr}">
+                                    <Viewbox>
+                                        <TextBlock Style="{StaticResource UIShortcut}">F3</TextBlock>
+                                    </Viewbox>
+                                </Border>
+                            </StackPanel>
+                        </Viewbox>
+                        <Button Name="BtnPauseAudio" Click="ClickPauseAudio" Style="{StaticResource SwitcherButton_Disabled}">PAUSE</Button>
+                    </Grid>
+                    <Grid>
+                        <Viewbox Name="ksc_4" Panel.ZIndex="1" Height="50" Width="50">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Padding="10, 0" Style="{StaticResource UIShortcutBdr}">
+                                    <Viewbox>
+                                        <TextBlock Style="{StaticResource UIShortcut}">F4</TextBlock>
+                                    </Viewbox>
+                                </Border>
+                            </StackPanel>
+                        </Viewbox>
+                        <Button Name="BtnPlayAudio" Click="ClickPlayAudio" Style="{StaticResource SwitcherButton_Disabled}">PLAY</Button>
+                    </Grid>
                 </StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>

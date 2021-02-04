@@ -81,6 +81,8 @@ namespace Integrated_Presenter
 
             SlidePoolButtons = new List<SlidePoolSource>() { SlidePoolSource0, SlidePoolSource1, SlidePoolSource2, SlidePoolSource3 };
 
+            ShowHideShortcutsUI();
+
             UpdateRealTimeClock();
             UpdateSlideControls();
             UpdateMediaControls();
@@ -599,14 +601,17 @@ namespace Integrated_Presenter
             switch (CurrentSlideMode)
             {
                 case 0:
+                    BtnNoDrive.Foreground = Brushes.Orange;
                     BtnDrive.Foreground = Brushes.White;
                     BtnJump.Foreground = Brushes.White;
                     break;
                 case 1:
+                    BtnNoDrive.Foreground = Brushes.White;
                     BtnDrive.Foreground = Brushes.Orange;
                     BtnJump.Foreground = Brushes.White;
                     break;
                 case 2:
+                    BtnNoDrive.Foreground = Brushes.White;
                     BtnDrive.Foreground = Brushes.White;
                     BtnJump.Foreground = Brushes.Orange;
                     break;
@@ -808,6 +813,12 @@ namespace Integrated_Presenter
             if (Keyboard.IsKeyDown(Key.LeftShift))
             {
                 IsProgramRowLocked = false;
+            }
+
+            // shortcuts
+            if (e.Key == Key.S)
+            {
+                ToggleShowShortcuts();
             }
 
             // extra features
@@ -1631,6 +1642,10 @@ namespace Integrated_Presenter
             MediaMuted = false;
             CurrentPreview.MarkUnMuted();
             _display?.UnMuteMedia();
+            Dispatcher.Invoke(() =>
+            {
+                miMute.IsChecked = MediaMuted;
+            });
         }
 
         private void muteMedia()
@@ -1638,6 +1653,10 @@ namespace Integrated_Presenter
             MediaMuted = true;
             CurrentPreview.MarkMuted();
             _display?.MuteMedia();
+            Dispatcher.Invoke(() =>
+            {
+                miMute.IsChecked = MediaMuted;
+            });
         }
 
         private async void SlideDriveVideo_Next()
@@ -2353,8 +2372,16 @@ namespace Integrated_Presenter
 
 
 
+        private void ClickSlideNoDriveVideo(object sender, RoutedEventArgs e)
+        {
+            SetBtnSlideMode(0);
+        }
+
+
         private void ClickSlideDriveVideo(object sender, RoutedEventArgs e)
         {
+            SetBtnSlideMode(1);
+            /*
             if (CurrentSlideMode == 1)
             {
                 SetBtnSlideMode(0);
@@ -2363,10 +2390,13 @@ namespace Integrated_Presenter
             {
                 SetBtnSlideMode(1);
             }
+            */
         }
 
         private void ClickSlideSkipMode(object sender, RoutedEventArgs e)
         {
+            SetBtnSlideMode(2);
+            /*
             if (CurrentSlideMode == 2)
             {
                 SetBtnSlideMode(0);
@@ -2375,6 +2405,7 @@ namespace Integrated_Presenter
             {
                 SetBtnSlideMode(2);
             }
+            */
         }
 
 
@@ -3481,6 +3512,164 @@ namespace Integrated_Presenter
         private void ClickPIPRunToB(object sender, RoutedEventArgs e)
         {
             switcherManager?.PerformUSK1RunToKeyFrameB();
+        }
+
+        bool ShowRecordButton = false;
+        private void ToggleViewRecordButton()
+        {
+            ShowRecordButton = !ShowRecordButton;
+            if (ShowRecordButton)
+            {
+                cbRecordButton.IsChecked = true;
+                borderBtnRecording.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                cbRecordButton.IsChecked = false;
+                borderBtnRecording.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ClickViewRecordButton(object sender, RoutedEventArgs e)
+        {
+            ToggleViewRecordButton();
+        }
+
+        private bool _showshortcuts = false;
+        public bool ShowShortcuts
+        {
+            get => _showshortcuts; 
+            set
+            {
+                _showshortcuts = value;
+                ShortcutVisibility = _showshortcuts ? Visibility.Visible : Visibility.Collapsed;
+                ShowHideShortcutsUI();
+            }
+        }
+
+        private void ShowHideShortcutsUI()
+        {
+            // Update Slide Pools
+            SlidePoolSource0.ShowHideShortcuts(ShowShortcuts);
+            SlidePoolSource1.ShowHideShortcuts(ShowShortcuts);
+            SlidePoolSource2.ShowHideShortcuts(ShowShortcuts);
+            SlidePoolSource3.ShowHideShortcuts(ShowShortcuts);
+
+            // audio player
+            audioPlayer?.ShowHideShortcuts(ShowShortcuts);
+
+            // media players
+            CurrentPreview?.ShowHideShortcuts(ShowShortcuts);
+
+            // Update MainWindow UI
+            #region MainWindowUI
+            ksc_cut.Visibility = ShortcutVisibility;
+            ksc_auto.Visibility = ShortcutVisibility;
+            ksc_bkgd.Visibility = ShortcutVisibility;
+
+            ksc_usk1.Visibility = ShortcutVisibility;
+            ksc_usk1t.Visibility = ShortcutVisibility;
+            ksc_usk1m.Visibility = ShortcutVisibility;
+
+            ksc_cf1.Visibility = ShortcutVisibility;
+            ksc_cf2.Visibility = ShortcutVisibility;
+            ksc_cf3.Visibility = ShortcutVisibility;
+            ksc_cf4.Visibility = ShortcutVisibility;
+            ksc_cf5.Visibility = ShortcutVisibility;
+            ksc_cf6.Visibility = ShortcutVisibility;
+            ksc_cf7.Visibility = ShortcutVisibility;
+            ksc_cf8.Visibility = ShortcutVisibility;
+
+            ksc_pf1.Visibility = ShortcutVisibility;
+            ksc_pf2.Visibility = ShortcutVisibility;
+            ksc_pf3.Visibility = ShortcutVisibility;
+            ksc_pf4.Visibility = ShortcutVisibility;
+            ksc_pf5.Visibility = ShortcutVisibility;
+            ksc_pf6.Visibility = ShortcutVisibility;
+            ksc_pf7.Visibility = ShortcutVisibility;
+            ksc_pf8.Visibility = ShortcutVisibility;
+            ksc_pkfa.Visibility = ShortcutVisibility;
+            ksc_pkfb.Visibility = ShortcutVisibility;
+            ksc_pkff.Visibility = ShortcutVisibility;
+            ksc_pl.Visibility = ShortcutVisibility;
+
+            ksc_s1.Visibility = ShortcutVisibility;
+            ksc_s2.Visibility = ShortcutVisibility;
+            ksc_s3.Visibility = ShortcutVisibility;
+            ksc_s4.Visibility = ShortcutVisibility;
+            ksc_s5.Visibility = ShortcutVisibility;
+            ksc_s6.Visibility = ShortcutVisibility;
+            ksc_s7.Visibility = ShortcutVisibility;
+            ksc_s8.Visibility = ShortcutVisibility;
+
+            ksc_ps1.Visibility = ShortcutVisibility;
+            ksc_ps2.Visibility = ShortcutVisibility;
+            ksc_ps3.Visibility = ShortcutVisibility;
+            ksc_ps4.Visibility = ShortcutVisibility;
+            ksc_ps5.Visibility = ShortcutVisibility;
+            ksc_ps6.Visibility = ShortcutVisibility;
+            ksc_ps7.Visibility = ShortcutVisibility;
+            ksc_ps8.Visibility = ShortcutVisibility;
+
+            ksc_r.Visibility = ShortcutVisibility;
+
+            ksc_mplay.Visibility = ShortcutVisibility;
+            ksc_mpause.Visibility = ShortcutVisibility;
+            ksc_mstop.Visibility = ShortcutVisibility;
+            ksc_mrestart.Visibility = ShortcutVisibility;
+
+            ksc_sdm.Visibility = ShortcutVisibility;
+            ksc_sp.Visibility = ShortcutVisibility;
+            ksc_sn.Visibility = ShortcutVisibility;
+            ksc_st.Visibility = ShortcutVisibility;
+
+            ksc_stest.Visibility = ShortcutVisibility;
+            ksc_ftb.Visibility = ShortcutVisibility;
+
+            ksc_dsk1.Visibility = ShortcutVisibility;
+            ksc_dsk1a.Visibility = ShortcutVisibility;
+            ksc_dsk1t.Visibility = ShortcutVisibility;
+            ksc_dsk2.Visibility = ShortcutVisibility;
+            ksc_dsk2a.Visibility = ShortcutVisibility;
+            ksc_dsk2t.Visibility = ShortcutVisibility;
+
+            ksc_ap.Visibility = ShortcutVisibility;
+            ksc_a1.Visibility = ShortcutVisibility;
+            ksc_a2.Visibility = ShortcutVisibility;
+            ksc_a3.Visibility = ShortcutVisibility;
+            ksc_a4.Visibility = ShortcutVisibility;
+            ksc_a5.Visibility = ShortcutVisibility;
+            ksc_a6.Visibility = ShortcutVisibility;
+            ksc_a7.Visibility = ShortcutVisibility;
+            ksc_a8.Visibility = ShortcutVisibility;
+
+            #endregion
+
+        }
+
+        public Visibility ShortcutVisibility { get; set; } = Visibility.Collapsed;
+
+        private void ToggleShowShortcuts()
+        {
+            ShowShortcuts = !ShowShortcuts;
+            miShowShortcuts.IsChecked = ShowShortcuts;
+        }
+
+        private void ClickShowKeyboardShortcuts(object sender, RoutedEventArgs e)
+        {
+            ToggleShowShortcuts();
+        }
+
+        private void ToggleMutePres(object sender, RoutedEventArgs e)
+        {
+            if (MediaMuted)
+            {
+                muteMedia();
+            }
+            else
+            {
+                unmuteMedia();
+            }
         }
     }
 }

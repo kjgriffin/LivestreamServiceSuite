@@ -28,9 +28,31 @@ namespace Integrated_Presenter
         {
             _parent = parent;
             InitializeComponent();
+            ShowHideShortcuts(parent.ShowShortcuts);
             audioplayer.LoadedBehavior = MediaState.Manual;
             audioplayer.MediaOpened += Audioplayer_MediaOpened;
             PlaybackTimer.Elapsed += PlaybackTimer_Elapsed;
+        }
+
+        public void ShowHideShortcuts(bool show)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (show)
+                {
+                    ksc_1.Visibility = Visibility.Visible;
+                    ksc_2.Visibility = Visibility.Visible;
+                    ksc_3.Visibility = Visibility.Visible;
+                    ksc_4.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ksc_1.Visibility = Visibility.Collapsed;
+                    ksc_2.Visibility = Visibility.Collapsed;
+                    ksc_3.Visibility = Visibility.Collapsed;
+                    ksc_4.Visibility = Visibility.Collapsed;
+                }
+            });
         }
 
         private void PlaybackTimer_Elapsed(object sender, ElapsedEventArgs e)

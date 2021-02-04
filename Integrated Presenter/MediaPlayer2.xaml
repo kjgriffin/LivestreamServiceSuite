@@ -21,7 +21,18 @@
             </StackPanel>
         </Viewbox>
         <Rectangle Name="ActionIndicator" Fill="Orange" Panel.ZIndex="10" Height="50" VerticalAlignment="Top"></Rectangle>
-        <Image Grid.Row="1" Name="MuteIcon" Width="70" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5" Panel.ZIndex="100" Source="pack://application:,,,/Icons/Mute2.png" Visibility="Visible"></Image>
+        <Grid Name="MuteIcon" Panel.ZIndex="100" Grid.Row="1" Width="70" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom">
+            <Viewbox Name="ksc_m" Panel.ZIndex="1" Height="30" Width="30">
+                <StackPanel Orientation="Horizontal">
+                    <Border Padding="10, 0" Style="{StaticResource UIShortcutBdr}">
+                        <Viewbox>
+                            <TextBlock Style="{StaticResource UIShortcut}">M</TextBlock>
+                        </Viewbox>
+                    </Border>
+                </StackPanel>
+            </Viewbox>
+            <Image Source="pack://application:,,,/Icons/Mute2.png" Visibility="Visible"></Image>
+        </Grid>
         <Grid Panel.ZIndex="11">
             <TextBlock Panel.ZIndex="100" Margin="10" Name="SeqType" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="30" FontWeight="Bold">SEQ</TextBlock>
             <Viewbox VerticalAlignment="Center">

@@ -136,8 +136,58 @@
                             <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
-                        <Button Grid.Row="0" Width="70" Height="50" Margin="5" Focusable="false" IsTabStop="False" Name="BtnTakeInsert" Click="ClickTakeInsert" Grid.Column="0" Style="{StaticResource SwitcherButton_Disabled}">TAKE INS</Button>
-                        <Button Grid.Row="1" Width="70" Height="50" Margin="5" Focusable="false" IsTabStop="False" Name="BtnTakeReplace" Click="ClickTakeReplace" Grid.Column="0" Style="{StaticResource SwitcherButton_Disabled}">TAKE REP</Button>
+
+                        <Grid Grid.Row="0">
+                            <Viewbox Name="ksc1" IsHitTestVisible="False" Panel.ZIndex="1" Height="60" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Padding="80,0" Margin="15" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Name="tbNum1" Style="{StaticResource UIShortcut}">#</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border  Padding="80,0" Margin="15" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">E</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button Width="70" Height="50" Margin="5" Focusable="false" IsTabStop="False" Name="BtnTakeInsert" Click="ClickTakeInsert" Grid.Column="0" Style="{StaticResource SwitcherButton_Disabled}">TAKE INS</Button>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Viewbox Name="ksc2" IsHitTestVisible="False" Panel.ZIndex="1" Height="60" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Padding="80,0" Margin="15" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Name="tbNum2" Style="{StaticResource UIShortcut}">#</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border  Padding="80,0" Margin="15" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">R</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button Width="70" Height="50" Margin="5" Focusable="false" IsTabStop="False" Name="BtnTakeReplace" Click="ClickTakeReplace" Grid.Column="0" Style="{StaticResource SwitcherButton_Disabled}">TAKE REP</Button>
+                        </Grid>
+                        
                     </Grid>
                 </StackPanel>
 

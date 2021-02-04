@@ -50,19 +50,42 @@ namespace Integrated_Presenter
 
         private bool showingmute = false;
 
+        public void ShowHideShortcuts(bool show)
+        {
+            if (!ShowIfMute)
+                return;
+            Dispatcher.Invoke(() =>
+            {
+                if (show)
+                {
+                    ksc_m.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ksc_m.Visibility = Visibility.Collapsed;
+                }
+            });
+        }
+
         public void MarkMuted()
         {
             showingmute = true;
             if (ShowIfMute)
             {
-                MuteIcon.Visibility = Visibility.Visible;
+                Dispatcher.Invoke(() =>
+                {
+                    MuteIcon.Visibility = Visibility.Visible;
+                });
             }
         }
 
         public void MarkUnMuted()
         {
             showingmute = false;
-            MuteIcon.Visibility = Visibility.Hidden;
+            Dispatcher.Invoke(() =>
+            {
+                MuteIcon.Visibility = Visibility.Hidden;
+            });
         }
 
         private void Mute()

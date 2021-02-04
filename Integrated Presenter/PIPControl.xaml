@@ -10,15 +10,20 @@
         Topmost="true"
         Closed="Window_Closed"
         Width="600"
-        Height="480"
+        Height="490"
         Title="Picture In Picture Positioning">
     <Grid Background="#0D0D0D">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="93*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="60"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid>
+        <Grid Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
@@ -29,23 +34,24 @@
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="0" Style="{StaticResource GrayText}">SCALE</TextBlock>
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="0" Style="{StaticResource GrayText}">[Z/X] SCALE</TextBlock>
             <TextBlock Grid.Row="0" Grid.Column="1" Foreground="Orange" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbScale">0</TextBlock>
-            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="0" Style="{StaticResource GrayText}">POS X</TextBlock>
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="0" Style="{StaticResource GrayText}">[A/D] POS X</TextBlock>
             <TextBlock Grid.Row="1" Grid.Column="1" Foreground="Orange" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbX">0</TextBlock>
-            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="2" Style="{StaticResource GrayText}">POS Y</TextBlock>
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="2" Style="{StaticResource GrayText}">[W/S] POS Y</TextBlock>
             <TextBlock Grid.Row="1" Grid.Column="3" Foreground="Orange" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbY">0</TextBlock>
-            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="2" Grid.Column="0" Style="{StaticResource GrayText}">MASK LR</TextBlock>
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="2" Grid.Column="0" Style="{StaticResource GrayText}">[Q/E] MASK LR</TextBlock>
             <TextBlock Grid.Row="2" Grid.Column="1" Foreground="Orange" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbMaskLR">0</TextBlock>
-            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="2" Grid.Column="2" Style="{StaticResource GrayText}">MASK TB</TextBlock>
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="2" Grid.Column="2" Style="{StaticResource GrayText}">[R/F] MASK TB</TextBlock>
             <TextBlock Grid.Row="2" Grid.Column="3" Foreground="Orange" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbMaskTB">0</TextBlock>
-            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="2" Style="{StaticResource GrayText}">CONTROL</TextBlock>
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="2" Style="{StaticResource GrayText}">[Space] CONTROL</TextBlock>
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Center" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource GrayText}">[NumPad 1-9] Snap To Position</TextBlock>
             <StackPanel Margin="10,2,10,2" Orientation="Horizontal" Grid.Row="0" Grid.Column="4">
                 <Rectangle Name="ctrllight" Width="40" Fill="WhiteSmoke"></Rectangle>
                 <Rectangle Name="cmdlight" Width="20" Fill="Gray"></Rectangle>
             </StackPanel>
         </Grid>
-        <Viewbox Grid.Row="1">
+        <Viewbox Grid.Row="1" Grid.ColumnSpan="2">
             <Grid Name="extragrid" Width="600" Height="450">
                 <Grid Name="displaygrid" Background="Gray" Width="384" Height="216">
                     <Rectangle Name="maskedbox" Width="153.6" Height="86.4" Fill="Black">
