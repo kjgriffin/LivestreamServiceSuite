@@ -713,7 +713,7 @@ namespace SlideCreater
 
         private void ClickHelpCommands(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("explorer.exe", "https://www.github.com/kjgriffin/LivestreamServiceSuite/blob/master/Documentation/SlideCreator/Commands.md");
+            System.Diagnostics.Process.Start("explorer.exe", "https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Slide-Creator-Commands");
         }
     }
 }
