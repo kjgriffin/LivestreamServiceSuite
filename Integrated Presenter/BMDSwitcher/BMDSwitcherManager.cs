@@ -80,6 +80,8 @@ namespace Integrated_Presenter
             _upstreamKey1Monitor.UpstreamKeyOnAirChanged += _upstreamKey1Monitor_UpstreamKeyOnAirChanged;
             _upstreamKey1Monitor.UpstreamKeyFillChanged += _upstreamKey1Monitor_UpstreamKeyFillChanged;
             _upstreamKey1Monitor.UpstreamKeyTypeChanged += _upstreamKey1Monitor_UpstreamKeyTypeChanged;
+            _upstreamKey1Monitor.UpstreamKeyCutChanged += _upstreamKey1Monitor_UpstreamKeyCutChanged;
+            _upstreamKey1Monitor.UpstreamKeyMaskChanged += _upstreamKey1Monitor_UpstreamKeyMaskChanged;
 
             _flykeyMonitor = new SwitcherFlyKeyMonitor();
             _flykeyMonitor.KeyFrameChanged += _flykeyMonitor_KeyFrameChanged;
@@ -104,6 +106,24 @@ namespace Integrated_Presenter
             SwitcherDisconnected();
         }
 
+        private void _upstreamKey1Monitor_UpstreamKeyMaskChanged(object sender, object args)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_USK1();
+                SwitcherStateChanged?.Invoke(_state);
+            });
+        }
+
+        private void _upstreamKey1Monitor_UpstreamKeyCutChanged(object sender, object args)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_USK1();
+                SwitcherStateChanged?.Invoke(_state);
+            });
+        }
+
         private void _flykeyMonitor_KeyFrameStateChange(object sender, object args)
         {
             _parent.Dispatcher.Invoke(() =>
@@ -118,7 +138,7 @@ namespace Integrated_Presenter
         {
             _parent.Dispatcher.Invoke(() =>
             {
-                ForceStateUpdate();
+                ForceStateUpdate_AuxInput();
                 SwitcherStateChanged?.Invoke(_state);
             });
         }
@@ -1237,26 +1257,28 @@ namespace Integrated_Presenter
         {
             _parent.Dispatcher.Invoke(() =>
             {
-                IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+                {
+                    IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
 
-                // set border with dveparams
-                dveparams.SetMasked(settings.IsMasked);
-                dveparams.SetMaskTop(settings.MaskTop);
-                dveparams.SetMaskBottom(settings.MaskBottom);
-                dveparams.SetMaskLeft(settings.MaskLeft);
-                dveparams.SetMaskRight(settings.MaskRight);
+                    // set border with dveparams
+                    dveparams.SetMasked(settings.IsMasked);
+                    dveparams.SetMaskTop(settings.MaskTop);
+                    dveparams.SetMaskBottom(settings.MaskBottom);
+                    dveparams.SetMaskLeft(settings.MaskLeft);
+                    dveparams.SetMaskRight(settings.MaskRight);
 
 
-                dveparams.SetBorderEnabled(settings.IsBordered);
+                    dveparams.SetBorderEnabled(settings.IsBordered);
 
-                // setup keyframes
-                IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
-                _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparams);
+                    // setup keyframes
+                    IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
+                    _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA, out keyframeparams);
 
-                keyframeparams.SetPositionX(settings.KeyFrameA.PositionX);
-                keyframeparams.SetPositionY(settings.KeyFrameA.PositionY);
-                keyframeparams.SetSizeX(settings.KeyFrameA.SizeX);
-                keyframeparams.SetSizeY(settings.KeyFrameA.SizeY);
+                    keyframeparams.SetPositionX(settings.KeyFrameA.PositionX);
+                    keyframeparams.SetPositionY(settings.KeyFrameA.PositionY);
+                    keyframeparams.SetSizeX(settings.KeyFrameA.SizeX);
+                    keyframeparams.SetSizeY(settings.KeyFrameA.SizeY);
+                }
 
 
                 ForceStateUpdate();
@@ -1268,26 +1290,28 @@ namespace Integrated_Presenter
         {
             _parent.Dispatcher.Invoke(() =>
             {
-                IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
+                {
+                    IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
 
-                // set border with dveparams
-                dveparams.SetMasked(settings.IsMasked);
-                dveparams.SetMaskTop(settings.MaskTop);
-                dveparams.SetMaskBottom(settings.MaskBottom);
-                dveparams.SetMaskLeft(settings.MaskLeft);
-                dveparams.SetMaskRight(settings.MaskRight);
+                    // set border with dveparams
+                    dveparams.SetMasked(settings.IsMasked);
+                    dveparams.SetMaskTop(settings.MaskTop);
+                    dveparams.SetMaskBottom(settings.MaskBottom);
+                    dveparams.SetMaskLeft(settings.MaskLeft);
+                    dveparams.SetMaskRight(settings.MaskRight);
 
 
-                dveparams.SetBorderEnabled(settings.IsBordered);
+                    dveparams.SetBorderEnabled(settings.IsBordered);
 
-                // setup keyframes
-                IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
-                _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparams);
+                    // setup keyframes
+                    IBMDSwitcherKeyFlyKeyFrameParameters keyframeparams;
+                    _BMDSwitcherFlyKeyParamters.GetKeyFrameParameters(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB, out keyframeparams);
 
-                keyframeparams.SetPositionX(settings.KeyFrameB.PositionX);
-                keyframeparams.SetPositionY(settings.KeyFrameB.PositionY);
-                keyframeparams.SetSizeX(settings.KeyFrameB.SizeX);
-                keyframeparams.SetSizeY(settings.KeyFrameB.SizeY);
+                    keyframeparams.SetPositionX(settings.KeyFrameB.PositionX);
+                    keyframeparams.SetPositionY(settings.KeyFrameB.PositionY);
+                    keyframeparams.SetSizeX(settings.KeyFrameB.SizeX);
+                    keyframeparams.SetSizeY(settings.KeyFrameB.SizeY);
+                }
 
 
                 ForceStateUpdate();
