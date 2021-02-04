@@ -59,7 +59,8 @@
                     <MenuItem Name="miStartRecord" Header="Recording Start" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationRecordingStart"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Help" IsTabStop="False">
-                    <MenuItem Name="miShowShortcuts" Header="Show Keyboard Shortcuts [S]" IsCheckable="True" IsChecked="False" Click="ClickShowKeyboardShortcuts"></MenuItem> 
+                    <MenuItem Name="miShowShortcuts" Header="Show Keyboard Shortcuts [S]" IsCheckable="True" IsChecked="False" Click="ClickShowKeyboardShortcuts"></MenuItem>
+                    <MenuItem Header="Online Help" IsTabStop="False" Click="ClickShowOnlineHelp"></MenuItem>
                 </MenuItem>
             </Menu>
         </Grid>

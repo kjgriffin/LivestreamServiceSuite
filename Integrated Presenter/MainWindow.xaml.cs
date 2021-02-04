@@ -3671,5 +3671,10 @@ namespace Integrated_Presenter
                 unmuteMedia();
             }
         }
+
+        private void ClickShowOnlineHelp(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", "https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Integrated-Presenter-Shortcuts");
+        }
     }
 }
