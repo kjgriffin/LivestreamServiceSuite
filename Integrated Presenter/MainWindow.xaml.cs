@@ -2957,14 +2957,14 @@ namespace Integrated_Presenter
                         KeyFrameA = new KeyFrameSettings()
                         {
                             PositionX = 9.6,
-                            PositionY = -6,
+                            PositionY = -5.4,
                             SizeX = 0.4,
                             SizeY = 0.4
                         },
                         KeyFrameB = new KeyFrameSettings()
                         {
                             PositionX = 23,
-                            PositionY = -6,
+                            PositionY = -5.4,
                             SizeX = 0.4,
                             SizeY = 0.4
                         }
