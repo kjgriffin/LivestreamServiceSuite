@@ -72,6 +72,8 @@ namespace Integrated_Presenter
             }
         }
 
+        bool enableKeyFrameFeatures = false;
+
 
         private void UpdateUI()
         {
@@ -91,12 +93,21 @@ namespace Integrated_Presenter
             truemaskedbox.Width = displaygrid.Width * truepipscale;
             truemaskedbox.Height = displaygrid.Height * truepipscale;
 
+            if (enableKeyFrameFeatures)
+            {
+                keyamaskbox.Visibility = Visibility.Visible;
+                keybmaskbox.Visibility = Visibility.Visible;
+                keyamaskbox.Width = displaygrid.Width * keyapipscale;
+                keyamaskbox.Height = displaygrid.Height * keyapipscale;
 
-            keyamaskbox.Width = displaygrid.Width * keyapipscale;
-            keyamaskbox.Height = displaygrid.Height * keyapipscale;
-
-            keybmaskbox.Width = displaygrid.Width * keybpipscale;
-            keybmaskbox.Height = displaygrid.Height * keybpipscale;
+                keybmaskbox.Width = displaygrid.Width * keybpipscale;
+                keybmaskbox.Height = displaygrid.Height * keybpipscale;
+            }
+            else
+            {
+                keyamaskbox.Visibility = Visibility.Collapsed;
+                keybmaskbox.Visibility = Visibility.Collapsed;
+            }
 
             // TODO: adjust width/height to account for masking
             viewbox.Width = Math.Max((displaygrid.Width * pipscale) - ((displaygrid.Width * pipscale) * (pipmlr * 2 / xrange)), 0);
@@ -113,21 +124,23 @@ namespace Integrated_Presenter
             double tx = truepipxoff * (displaygrid.Width / xrange);
             double ty = -truepipyoff * (displaygrid.Height / yrange);
 
-
-            double kax = keyapipx * (displaygrid.Width / xrange);
-            double kay = -keyapipy * (displaygrid.Height / yrange);
-
-            double kbx = keybpipx * (displaygrid.Width / xrange);
-            double kby = -keybpipy * (displaygrid.Height / yrange);
-
             maskedbox.RenderTransform = new TranslateTransform(x, y);
             viewbox.RenderTransform = new TranslateTransform(x, y);
 
             truemaskedbox.RenderTransform = new TranslateTransform(tx, ty);
             trueviewbox.RenderTransform = new TranslateTransform(tx, ty);
 
-            keyamaskbox.RenderTransform = new TranslateTransform(kax, kay);
-            keybmaskbox.RenderTransform = new TranslateTransform(kbx, kby);
+            if (enableKeyFrameFeatures)
+            {
+                double kax = keyapipx * (displaygrid.Width / xrange);
+                double kay = -keyapipy * (displaygrid.Height / yrange);
+
+                double kbx = keybpipx * (displaygrid.Width / xrange);
+                double kby = -keybpipy * (displaygrid.Height / yrange);
+
+                keyamaskbox.RenderTransform = new TranslateTransform(kax, kay);
+                keybmaskbox.RenderTransform = new TranslateTransform(kbx, kby);
+            }
 
             tbScale.Text = $"{pipscale:0.##} :: {pipscale * 100:0.##}%";
             tbX.Text = $"{pipxoff:0.##} :: {pipxoff / (xrange / 2) * 100:0.##}%";
@@ -331,6 +344,12 @@ namespace Integrated_Presenter
                 set_as_key_b();
             }
 
+            if (e.Key == Key.K)
+            {
+                enableKeyFrameFeatures = !enableKeyFrameFeatures;
+                UpdateUI();
+            }
+
         }
 
         private bool PIPIsAtTarget()
@@ -365,6 +384,10 @@ namespace Integrated_Presenter
 
         private void set_as_key_a()
         {
+            if (!enableKeyFrameFeatures)
+            {
+                return;
+            }
             BMDUSKDVESettings config = new BMDUSKDVESettings();
             config.IsMasked = pipmtb != 0 || pipmlr != 0 ? 1 : 0;
             config.MaskTop = (float)pipmtb;
@@ -385,6 +408,10 @@ namespace Integrated_Presenter
 
         private void set_as_key_b()
         {
+            if (!enableKeyFrameFeatures)
+            {
+                return;
+            }
             BMDUSKDVESettings config = new BMDUSKDVESettings();
             config.IsMasked = pipmtb != 0 || pipmlr != 0 ? 1 : 0;
             config.MaskTop = (float)pipmtb;
