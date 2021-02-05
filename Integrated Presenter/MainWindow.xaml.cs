@@ -279,6 +279,14 @@ namespace Integrated_Presenter
             UpdateSwitcherUI();
         }
 
+        public void ForceStateUpdateOnSwitcher()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                switcherManager?.ForceStateUpdate();
+            });
+        }
+
         private void ClickPreset(int button)
         {
             switcherManager?.PerformPresetSelect(ConvertButtonToSourceID(button));
