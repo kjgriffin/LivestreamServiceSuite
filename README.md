@@ -1,4 +1,4 @@
-# LivestreamServiceSuite
+# Livestream Service Suite
 
 There are two main projects in the suite.
 
@@ -10,6 +10,6 @@ Controls a BMD ATEM Switcher TV Studio HD for live operations as well as generat
 
 2. Slide Creater
 
-Generates slides for used in a presentation by Integrated Presenter
+Generates slides for use in a presentation by Integrated Presenter
 
 ![image](https://github.com/kjgriffin/LivestreamServiceSuite/blob/master/Documentation/SlideCreator/img/SlideCreatorInAction.PNG)
