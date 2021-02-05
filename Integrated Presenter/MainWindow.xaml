@@ -57,6 +57,8 @@
                 <MenuItem Header="Automation" IsTabStop="False">
                     <MenuItem Name="miTimer1Restart" Header="Timer1 Restart" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationTimer1"></MenuItem>
                     <MenuItem Name="miStartRecord" Header="Recording Start" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationRecordingStart"></MenuItem>
+                    <MenuItem Header="Set Video Preroll Delay" IsTabStop="False" Click="ClickSetVideoPrerollDelay"></MenuItem>
+                    <MenuItem Header="Set Drive Mode Preset Selection Delay" IsTabStop="False" Click="ClickSetDrivePresetSelectDelay"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Help" IsTabStop="False">
                     <MenuItem Name="miShowShortcuts" Header="Show Keyboard Shortcuts [S]" IsCheckable="True" IsChecked="False" Click="ClickShowKeyboardShortcuts"></MenuItem>

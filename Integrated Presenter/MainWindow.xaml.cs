@@ -1771,7 +1771,7 @@ namespace Integrated_Presenter
                 }
                 else
                 {
-                    // turn of usk1 if chroma keyer
+                    // turn off usk1 if chroma keyer
                     if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
                     {
                         switcherManager?.PerformOffAirUSK1();
@@ -1798,7 +1798,7 @@ namespace Integrated_Presenter
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
-                        await Task.Delay(500);
+                        await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
                         switcherManager?.PerformAutoTransition();
                     }
 
@@ -1928,7 +1928,7 @@ namespace Integrated_Presenter
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
-                        await Task.Delay(500);
+                        await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
                         switcherManager?.PerformAutoTransition();
                     }
 
@@ -2069,7 +2069,7 @@ namespace Integrated_Presenter
                     if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
                         ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
-                        await Task.Delay(500);
+                        await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
                         switcherManager?.PerformAutoTransition();
                     }
 
@@ -2991,6 +2991,7 @@ namespace Integrated_Presenter
                 {
                     VideoPreRoll = 2000,
                     ChromaVideoPreRoll = 2000,
+                    PresetSelectDelay = 100,
                 }
 
             };
@@ -3683,6 +3684,41 @@ namespace Integrated_Presenter
         private void ClickShowOnlineHelp(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("explorer.exe", "https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Integrated-Presenter-Shortcuts");
+        }
+
+        private void ClickSetVideoPrerollDelay(object sender, RoutedEventArgs e)
+        {
+            // NOTE FOR NOW ONLY CHANGE VIDEOS, NOT CHROMA KEY VIDEOS
+            InputForm input = new InputForm(_config.PrerollSettings.VideoPreRoll.ToString(), "VIDEO PREROLL (MS)");
+            if (input.ShowDialog() == true)
+            {
+                int preroll = _config.PrerollSettings.VideoPreRoll;
+                try
+                {
+                    preroll = Convert.ToInt32(input.UserInput);
+                }
+                catch
+                {
+                }
+                _config.PrerollSettings.VideoPreRoll = preroll;
+            }
+        }
+
+        private void ClickSetDrivePresetSelectDelay(object sender, RoutedEventArgs e)
+        {
+            InputForm input = new InputForm(_config.PrerollSettings.PresetSelectDelay.ToString(), "PRESET SELECT DELAY (MS)");
+            if (input.ShowDialog() == true)
+            {
+                int preroll = _config.PrerollSettings.PresetSelectDelay;
+                try
+                {
+                    preroll = Convert.ToInt32(input.UserInput);
+                }
+                catch
+                {
+                }
+                _config.PrerollSettings.PresetSelectDelay = preroll;
+            }
         }
     }
 }
