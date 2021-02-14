@@ -274,6 +274,14 @@ namespace Xenon.Helpers
         }
 
 
+        /// <summary>
+        /// Process an image and resolve it to contain only two colors.
+        /// </summary>
+        /// <param name="source">Source image</param>
+        /// <param name="match">Color in original image to keep.</param>
+        /// <param name="tolerance">RGB tolerance to match color to keep.</param>
+        /// <param name="force">Color to replace pixels that don't match.</param>
+        /// <returns></returns>
         public static Bitmap DichotimizeImage(this Bitmap source, Color match, int tolerance, Color force)
         {
             Bitmap res = new Bitmap(source);

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Xenon.Compiler
 {
@@ -11,6 +12,7 @@ namespace Xenon.Compiler
         public string AssetName { get; set; }
         public bool InvertColor { get; set; }
         public string KeyType { get; set; }
+        public string Options { get; set; } = "";
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
@@ -41,13 +43,22 @@ namespace Xenon.Compiler
                 if (Lexer.Inspect("["))
                 {
                     Lexer.Consume();
-                    fullimage.KeyType = Lexer.ConsumeUntil("]");
-                    Lexer.Consume();
-                    Lexer.GobbleWhitespace();
+                    if (Lexer.Inspect("("))
+                    {
+                        Lexer.Consume();
+                        fullimage.Options = Lexer.ConsumeUntil(")");
+                        Lexer.Consume();
+                        Lexer.Consume();
+                        Lexer.GobbleWhitespace();
+                    }
+                    else
+                    {
+                        fullimage.KeyType = Lexer.ConsumeUntil("]");
+                        Lexer.Consume();
+                        Lexer.GobbleWhitespace();
+                    }
                 }
             }
-
-
 
             return fullimage;
 
@@ -84,6 +95,13 @@ namespace Xenon.Compiler
                 imageslide.Data["invert-color"] = InvertColor;
             }
 
+            var match = Regex.Match(Options, @"cc-bw-(?<val>\d{3})");
+
+            if (match.Success)
+            {
+                imageslide.Data["color-correct-black-white"] = Convert.ToInt32(match.Groups["val"].Value);
+            }
+
             project.Slides.Add(imageslide);
         }
 
@@ -92,6 +110,7 @@ namespace Xenon.Compiler
             Debug.WriteLine("<XenonASTAutoFullImage>");
             Debug.WriteLine(AssetName);
             Debug.WriteLine($"Invert-Color: {InvertColor}");
+            Debug.WriteLine($"Options: {Options}");
             Debug.WriteLine("</XenonASTAutoFullImage>");
         }
 

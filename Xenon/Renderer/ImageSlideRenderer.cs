@@ -67,7 +67,18 @@ namespace Xenon.Renderer
                 {
                     invert = (bool)slide.Data["invert-color"];
                 }
-                res.Bitmap = RenderAutoScaled(sourceimage, invert);
+                Color ccm = Color.White;
+                Color ccf = Color.Black;
+                int cct = 0;
+                bool cc = false;
+                if (slide.Data.ContainsKey("color-correct-black-white"))
+                {
+                    cc = true;
+                    ccm = Color.Black;
+                    cct = (int)slide.Data["color-correct-black-white"];
+                    ccf = Color.White;
+                }
+                res.Bitmap = RenderAutoScaled(sourceimage, invert, (cc, ccm, ccf, cct));
                 res.RenderedAs = "Full";
                 if (slide.Data.ContainsKey("key-type"))
                 {
@@ -124,7 +135,7 @@ namespace Xenon.Renderer
 
         }
 
-        private Bitmap RenderAutoScaled(Bitmap sourceimage, bool invertblackandwhite)
+        private Bitmap RenderAutoScaled(Bitmap sourceimage, bool invertblackandwhite, (bool colorcorrect, Color match, Color force, int tolerance) ccoptions)
         {
             /* inspect the image (assumes white background)
                 find edge most (top, left, right, bottom) non-white pixels to determine effective image size
@@ -172,6 +183,13 @@ namespace Xenon.Renderer
                 gfx.Clear(Color.White);
             }
             Bitmap img = sourceimage;
+
+            // apply color-correction before inversion
+            if (ccoptions.colorcorrect)
+            {
+                img = GraphicsHelper.DichotimizeImage(img, ccoptions.match, ccoptions.tolerance, ccoptions.force);    
+            }
+
             if (invertblackandwhite)
             {
                 img = GraphicsHelper.InvertImage(sourceimage);
@@ -247,7 +265,7 @@ namespace Xenon.Renderer
         }
 
 
-        
+
 
 
     }
