@@ -157,14 +157,22 @@ namespace Xenon.Helpers
             return format;
         }
 
-        public static SizeF MeasureStringCharacters(this Graphics gfx, string text, Font font, RectangleF textbox)
+        public static SizeF MeasureStringCharacters(this Graphics gfx, string text, Font _font, RectangleF textbox)
         {
             //StringFormat format = StringFormat.GenericTypographic;
             //format.Trimming = StringTrimming.None;
             //format.FormatFlags = StringFormatFlags.NoWrap;
             //format.LineAlignment = StringAlignment.Near;
+            Font font;
+
+            lock (_font)
+            {
+                font = new Font(_font.FontFamily, _font.Size, _font.Style);
+            }
 
             string measuretext = text;
+
+            SizeF res;
 
             if (Regex.Match(text, "\\s").Success)
             {
@@ -180,7 +188,8 @@ namespace Xenon.Helpers
                 }
                 catch (Exception ex)
                 {
-
+                    Debug.WriteLine($"Error Measuring String '{text}'");
+                    Debug.WriteLine(ex);
                 }
 
 
@@ -193,10 +202,11 @@ namespace Xenon.Helpers
                 }
                 catch (Exception ex)
                 {
-
+                    Debug.WriteLine($"Error Measuring String '{text}'");
+                    Debug.WriteLine(ex);
                 }
 
-                return new SizeF(rectwithextra.Size.Width - rectofextra.Size.Width, font.Height);
+                res = new SizeF(rectwithextra.Size.Width - rectofextra.Size.Width, font.Height);
             }
             else
             {
@@ -205,14 +215,17 @@ namespace Xenon.Helpers
                 format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, measuretext.Length) });
                 try
                 {
-                    return gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx).Size;
+                    res = gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx).Size;
                 }
                 catch (Exception ex)
                 {
-                    return SizeF.Empty;
+                    Debug.WriteLine($"Error Measuring String '{text}'");
+                    Debug.WriteLine(ex);
+                    res = SizeF.Empty;
                 }
             }
-
+            Debug.WriteLine($"Measured '{text}', {res}");
+            return res;
         }
 
 
