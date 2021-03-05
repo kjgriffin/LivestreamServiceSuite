@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <None Remove="version.json" />
+    <None Remove="ViewControls\Images\musicnote.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +25,12 @@
     <EmbeddedResource Include="version.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="ViewControls\Images\musicnote.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

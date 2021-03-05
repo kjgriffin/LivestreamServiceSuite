@@ -41,7 +41,12 @@
                         <!--</Viewbox>-->
                         <Viewbox Grid.Row="1" Stretch="Uniform">
                             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                <Label FontSize="10">
+                                <Label Name="lbbells" FontSize="10">
+                                    <Hyperlink Click="ClickAddAsBells">
+                                        Add Bells 
+                                    </Hyperlink>
+                                </Label> 
+                                <Label Name="lbinsert" FontSize="10">
                                     <Hyperlink Click="ClickFitInsert">
                                         Insert
                                     </Hyperlink>

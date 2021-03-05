@@ -398,23 +398,33 @@ namespace SlideCreater
                 assetItemCtrl.OnFitInsertRequest += AssetItemCtrl_OnFitInsertRequest;
                 assetItemCtrl.OnDeleteAssetRequest += AssetItemCtrl_OnDeleteAssetRequest;
                 assetItemCtrl.OnAutoFitInsertRequest += AssetItemCtrl_OnAutoFitInsertRequest;
+                assetItemCtrl.OnInsertBellsRequest += AssetItemCtrl_OnInsertBellsRequest;
                 assetItemCtrl.OnLiturgyInsertRequest += AssetItemCtrl_OnLiturgyInsertRequest;
 
                 AssetList.Children.Add(assetItemCtrl);
             }
         }
 
+        private void AssetItemCtrl_OnInsertBellsRequest(object sender, ProjectAsset asset)
+        {
+            string InsertCommand = $"\r\n#resource(\"{asset.Name}\", \"audio\")\r\n\r\n#script {{\r\n#Worship Bells;\r\n@arg0:OpenAudioPlayer;\r\n@arg1:LoadAudioFile(Resource_{asset.OriginalFilename})[Load Bells];\r\n@arg1:PresetSelect(7)[Preset Center];\r\n@arg1:DelayMs(100);\r\n@arg0:AutoTrans[Take Center];\r\n@arg0:PlayAuxAudio[Play Bells];\r\n@arg1:DelayMs(1000);\r\narg1:PresetSelect(8)[Preset Pulpit];\r\n}}\r\n";
+            InsertTextCommand(InsertCommand);
+        }
+
         private void AssetItemCtrl_OnLiturgyInsertRequest(object sender, ProjectAsset asset)
         {
             string InsertCommand = $"\r\n#litimage({asset.Name})\r\n";
-            int newindex = TbInput.CaretIndex + InsertCommand.Length;
-            TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
-            TbInput.CaretIndex = newindex;
+            InsertTextCommand(InsertCommand);
         }
 
         private void AssetItemCtrl_OnAutoFitInsertRequest(object sender, ProjectAsset asset)
         {
             string InsertCommand = $"\r\n#autofitimage({asset.Name})\r\n";
+            InsertTextCommand(InsertCommand);
+        }
+
+        private void InsertTextCommand(string InsertCommand)
+        {
             int newindex = TbInput.CaretIndex + InsertCommand.Length;
             TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
             TbInput.CaretIndex = newindex;

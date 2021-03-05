@@ -27,6 +27,7 @@ namespace SlideCreater
         public event InsertAssetEvent OnFitInsertRequest;
         public event InsertAssetEvent OnAutoFitInsertRequest;
         public event InsertAssetEvent OnLiturgyInsertRequest;
+        public event InsertAssetEvent OnInsertBellsRequest;
         public event DeleteAssetEvent OnDeleteAssetRequest;
 
         ProjectAsset Asset;
@@ -50,12 +51,22 @@ namespace SlideCreater
                 ImgAsset.Source = new BitmapImage(new Uri(Asset.CurrentPath));
                 lbhymn.Visibility = Visibility.Visible;
                 lbliturgy.Visibility = Visibility.Visible;
+                lbbells.Visibility = Visibility.Hidden;
             }
             if (Asset.Type == AssetType.Video)
             {
                 VideoAsset.Source = new Uri(Asset.CurrentPath);
                 lbhymn.Visibility = Visibility.Hidden;
                 lbliturgy.Visibility = Visibility.Hidden;
+                lbbells.Visibility = Visibility.Hidden;
+            }
+            if (Asset.Type == AssetType.Audio)
+            {
+                ImgAsset.Source = new BitmapImage(new Uri("pack://application:,,,/ViewControls/Images/musicnote.png"));
+                lbhymn.Visibility = Visibility.Hidden;
+                lbliturgy.Visibility = Visibility.Hidden;
+                lbinsert.Visibility = Visibility.Hidden;
+                lbbells.Visibility = Visibility.Visible;
             }
 
         }
@@ -78,6 +89,11 @@ namespace SlideCreater
         private void ClickLiturgyInsert(object sender, RoutedEventArgs e)
         {
             Dispatcher.Invoke(() => OnLiturgyInsertRequest?.Invoke(this, Asset));
+        }
+
+        private void ClickAddAsBells(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.Invoke(() => OnInsertBellsRequest?.Invoke(this, Asset));
         }
     }
 }
