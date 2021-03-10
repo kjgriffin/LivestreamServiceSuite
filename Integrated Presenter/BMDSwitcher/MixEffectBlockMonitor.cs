@@ -10,6 +10,9 @@ namespace Integrated_Presenter
         public event SwitcherEventHandler ProgramInputChanged;
         public event SwitcherEventHandler PreviewInputChanged;
         public event SwitcherEventHandler FateToBlackFullyChanged;
+        public event SwitcherEventHandler InTransitionChanged;
+        public event SwitcherEventHandler TransitionPositionChanged;
+        public event SwitcherEventHandler TransitionFramesRemainingChanged;
         
 
         public MixEffectBlockMonitor()
@@ -29,6 +32,15 @@ namespace Integrated_Presenter
                     break;
                 case _BMDSwitcherMixEffectBlockEventType.bmdSwitcherMixEffectBlockEventTypeFadeToBlackFullyBlackChanged:
                     FateToBlackFullyChanged?.Invoke(this, null);
+                    break;
+                case _BMDSwitcherMixEffectBlockEventType.bmdSwitcherMixEffectBlockEventTypeTransitionFramesRemainingChanged:
+                    TransitionFramesRemainingChanged?.Invoke(this, null);
+                    break;
+                case _BMDSwitcherMixEffectBlockEventType.bmdSwitcherMixEffectBlockEventTypeTransitionPositionChanged:
+                    TransitionPositionChanged?.Invoke(this, null);
+                    break;
+                case _BMDSwitcherMixEffectBlockEventType.bmdSwitcherMixEffectBlockEventTypeInTransitionChanged:
+                    InTransitionChanged?.Invoke(this, null);
                     break;
                 default:
                     break;

@@ -14,6 +14,10 @@ namespace Integrated_Presenter.BMDSwitcher
             SetDefault();
         }
 
+        public bool InTransition { get; set; }
+        public int TransitionFramesRemaining { get; set; }
+        public double TransitionPosition { get; set; }
+
         public long PresetID { get; set; }
         public long ProgramID { get; set; }
         public long AuxID { get; set; }
@@ -48,6 +52,9 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void SetDefault()
         {
+            InTransition = false;
+            TransitionPosition = 0;
+            TransitionFramesRemaining = 0;
             PresetID = -1;
             ProgramID = -1;
             AuxID = -1;
@@ -120,6 +127,9 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             return new BMDSwitcherState()
             {
+                InTransition = this.InTransition,
+                TransitionFramesRemaining = this.TransitionFramesRemaining,
+                TransitionPosition = this.TransitionPosition,
                 PresetID = this.PresetID,
                 ProgramID = this.ProgramID,
                 AuxID = this.AuxID,

@@ -250,7 +250,8 @@ namespace Integrated_Presenter
 
         private void TakeAutoTransition()
         {
-            switcherManager?.PerformAutoTransition();
+            // use guard mode
+            PerformGuardedAutoTransition();
         }
         private void TakeCutTransition()
         {
@@ -1164,6 +1165,7 @@ namespace Integrated_Presenter
 
             if (e.Key == Key.Enter)
             {
+                // TODO:: Guard with global take transition guard
                 TakeAutoTransition();
             }
 
@@ -1409,7 +1411,8 @@ namespace Integrated_Presenter
                     case AutomationActionType.AutoTrans:
                         Dispatcher.Invoke(() =>
                         {
-                            switcherManager?.PerformAutoTransition();
+                            //switcherManager?.PerformAutoTransition();
+                            PerformGuardedAutoTransition();
                         });
                         break;
                     case AutomationActionType.CutTrans:
@@ -1424,7 +1427,8 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
-                                switcherManager?.PerformAutoTransition();
+                                //switcherManager?.PerformAutoTransition();
+                                PerformGuardedAutoTransition();
                             });
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
@@ -1702,7 +1706,8 @@ namespace Integrated_Presenter
                     // make sure slides aren't the program source
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        switcherManager?.PerformAutoTransition();
+                        //switcherManager?.PerformAutoTransition();
+                        PerformGuardedAutoTransition();
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     Presentation.NextSlide();
@@ -1742,7 +1747,8 @@ namespace Integrated_Presenter
                     long previewsource = switcherState.PresetID;
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        switcherManager?.PerformAutoTransition();
+                        //switcherManager?.PerformAutoTransition();
+                        PerformGuardedAutoTransition();
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     switcherManager?.PerformPresetSelect((int)previewsource);
@@ -1799,7 +1805,8 @@ namespace Integrated_Presenter
                     {
                         ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                         await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
-                        switcherManager?.PerformAutoTransition();
+                        //switcherManager?.PerformAutoTransition();
+                        PerformGuardedAutoTransition();
                     }
 
                 }
@@ -1844,7 +1851,8 @@ namespace Integrated_Presenter
                     // make sure slides aren't the program source
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        switcherManager?.PerformAutoTransition();
+                        //switcherManager?.PerformAutoTransition();
+                        PerformGuardedAutoTransition();
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     Presentation.Override = s;
@@ -1879,7 +1887,8 @@ namespace Integrated_Presenter
                     long previewsource = switcherState.PresetID;
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        switcherManager?.PerformAutoTransition();
+                        //switcherManager?.PerformAutoTransition();
+                        PerformGuardedAutoTransition();
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     switcherManager?.PerformPresetSelect((int)previewsource);
@@ -1929,7 +1938,8 @@ namespace Integrated_Presenter
                     {
                         ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                         await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
-                        switcherManager?.PerformAutoTransition();
+                        //switcherManager?.PerformAutoTransition();
+                        PerformGuardedAutoTransition();
                     }
 
 
@@ -1992,7 +2002,8 @@ namespace Integrated_Presenter
                     // make sure slides aren't the program source
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        switcherManager?.PerformAutoTransition();
+                        //switcherManager?.PerformAutoTransition();
+                        PerformGuardedAutoTransition();
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     slidesUpdated();
@@ -2025,7 +2036,8 @@ namespace Integrated_Presenter
                     long previewsource = switcherState.PresetID;
                     if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                     {
-                        switcherManager?.PerformAutoTransition();
+                        //switcherManager?.PerformAutoTransition();
+                        PerformGuardedAutoTransition();
                         await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                     }
                     switcherManager?.PerformPresetSelect((int)previewsource);
@@ -2070,7 +2082,7 @@ namespace Integrated_Presenter
                     {
                         ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                         await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
-                        switcherManager?.PerformAutoTransition();
+                        PerformGuardedAutoTransition();
                     }
 
 
@@ -2079,6 +2091,22 @@ namespace Integrated_Presenter
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
             }
 
+        }
+
+        private void PerformGuardedAutoTransition()
+        {
+            if (DriveMode_AutoTransitionGuard)
+            {
+                // if guarded, check if transition is already in progress
+                if (!switcherState.InTransition)
+                {
+                    switcherManager?.PerformAutoTransition();
+                }
+            }
+            else
+            {
+                switcherManager?.PerformAutoTransition();
+            }
         }
 
 
@@ -3547,7 +3575,7 @@ namespace Integrated_Presenter
         private bool _showshortcuts = false;
         public bool ShowShortcuts
         {
-            get => _showshortcuts; 
+            get => _showshortcuts;
             set
             {
                 _showshortcuts = value;
@@ -3719,6 +3747,19 @@ namespace Integrated_Presenter
                 }
                 _config.PrerollSettings.PresetSelectDelay = preroll;
             }
+        }
+
+        private bool DriveMode_AutoTransitionGuard = true;
+
+        private void ToggleDriveAutoTransGuard()
+        {
+            DriveMode_AutoTransitionGuard = !DriveMode_AutoTransitionGuard;
+            miDriveAutoTransGuard.IsChecked = DriveMode_AutoTransitionGuard;
+        }
+
+        private void ClickToggleDriveAutoTransGuard(object sender, RoutedEventArgs e)
+        {
+            ToggleDriveAutoTransGuard();
         }
     }
 }

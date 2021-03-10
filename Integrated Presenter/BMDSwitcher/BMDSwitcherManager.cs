@@ -72,6 +72,7 @@ namespace Integrated_Presenter
             _mixEffectBlockMonitor.PreviewInputChanged += _mixEffectBlockMonitor_PreviewInputChanged;
             _mixEffectBlockMonitor.ProgramInputChanged += _mixEffectBlockMonitor_ProgramInputChanged;
             _mixEffectBlockMonitor.FateToBlackFullyChanged += _mixEffectBlockMonitor_FateToBlackFullyChanged;
+            _mixEffectBlockMonitor.InTransitionChanged += _mixEffectBlockMonitor_InTransitionChanged;
 
             _auxMonitor = new BMDSwitcherAuxMonitor();
             _auxMonitor.OnAuxInputChanged += _auxMonitor_OnAuxInputChanged;
@@ -104,6 +105,15 @@ namespace Integrated_Presenter
             }
             _state = new BMDSwitcherState();
             SwitcherDisconnected();
+        }
+
+        private void _mixEffectBlockMonitor_InTransitionChanged(object sender, object args)
+        {
+            _parent.Dispatcher.Invoke(() =>
+            {
+                ForceStateUpdate_TransitionPosition();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _upstreamKey1Monitor_UpstreamKeyMaskChanged(object sender, object args)
@@ -707,6 +717,21 @@ namespace Integrated_Presenter
             long presetid;
             _BMDSwitcherMixEffectBlock1.GetPreviewInput(out presetid);
             _state.PresetID = presetid;
+        }
+
+        private void ForceStateUpdate_TransitionPosition()
+        {
+            double trans_position;
+            uint trans_frames_remaining;
+            int intrans;
+
+            _BMDSwitcherMixEffectBlock1.GetTransitionPosition(out trans_position);
+            _BMDSwitcherMixEffectBlock1.GetTransitionFramesRemaining(out trans_frames_remaining);
+            _BMDSwitcherMixEffectBlock1.GetInTransition(out intrans);
+
+            _state.InTransition = intrans != 0;
+            _state.TransitionFramesRemaining = (int)trans_frames_remaining;
+            _state.TransitionPosition = trans_position;
         }
 
         private void ForceStateUpdate_Transition()
