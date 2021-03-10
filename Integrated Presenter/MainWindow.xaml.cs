@@ -3701,11 +3701,11 @@ namespace Integrated_Presenter
         {
             if (MediaMuted)
             {
-                muteMedia();
+                unmuteMedia();
             }
             else
             {
-                unmuteMedia();
+                muteMedia();
             }
         }
 
