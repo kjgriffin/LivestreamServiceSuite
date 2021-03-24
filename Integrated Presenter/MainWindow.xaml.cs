@@ -1039,7 +1039,15 @@ namespace Integrated_Presenter
             }
             if (e.Key == Key.Right)
             {
-                nextSlide();
+                if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                {
+                    // do a tied-next slide
+                    PerformTiedNextSlide();
+                }
+                else
+                {
+                    nextSlide();
+                }
             }
             if (e.Key == Key.Up)
             {
@@ -2093,9 +2101,9 @@ namespace Integrated_Presenter
 
         }
 
-        private void PerformGuardedAutoTransition()
+        private void PerformGuardedAutoTransition(bool force_guard = false)
         {
-            if (DriveMode_AutoTransitionGuard)
+            if (DriveMode_AutoTransitionGuard || force_guard)
             {
                 // if guarded, check if transition is already in progress
                 if (!switcherState.InTransition)
@@ -2248,6 +2256,14 @@ namespace Integrated_Presenter
 
 
         #region slideshow commands
+
+        private void PerformTiedNextSlide()
+        {
+            // do a next slide and a gaurded auto-trans
+            nextSlide();
+            PerformGuardedAutoTransition(true);
+        }
+
         private void nextSlide()
         {
             if (activepresentation)
