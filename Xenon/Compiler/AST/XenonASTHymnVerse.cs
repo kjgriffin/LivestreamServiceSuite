@@ -11,11 +11,21 @@ namespace Xenon.Compiler
     class XenonASTHymnVerse : IXenonASTCommand
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
+        public string SubName { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTHymnVerse verse = new XenonASTHymnVerse();
             Lexer.GobbleWhitespace();
+
+            // optionally allow params for verse title. used for e.g. 'chorus'/'refrain'/'verse 1' etc.
+            if (Lexer.Inspect("("))
+            {
+                Lexer.Consume();
+                verse.SubName = Lexer.ConsumeUntil(")").Trim();
+                Lexer.Consume();
+                Lexer.GobbleWhitespace();
+            }
 
             Lexer.GobbleandLog("{", "Expect opening brace at start of verse.");
 
@@ -52,6 +62,7 @@ namespace Xenon.Compiler
             slide.Data["number"] = parent.Number;
             slide.Data["tune"] = parent.Tune;
             slide.Data["copyright"] = parent.CopyrightInfo;
+            slide.Data["sub-name"] = SubName;
 
             foreach (var line in vle.LayoutLines)
             {
@@ -67,6 +78,7 @@ namespace Xenon.Compiler
         public void GenerateDebug(Project project)
         {
             Debug.WriteLine("<XenonASTHymnVerse>");
+            Debug.WriteLine($"<SubName='{SubName}'/>");
             foreach (var c in Content)
             {
                 c.GenerateDebug(project);

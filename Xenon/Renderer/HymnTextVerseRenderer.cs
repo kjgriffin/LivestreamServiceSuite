@@ -33,10 +33,15 @@ namespace Xenon.Renderer
             //gfx.DrawRectangle(Pens.Red, Layouts.TextHymnLayout.TextBox);
 
             // draw name
-            gfx.DrawString((string)slide.Data["name"], renderInfo.NameFont, Brushes.Black, Layouts.TextHymnLayout.NameBox, GraphicsHelper.CenterAlign);
+            string name = (string)slide.Data["name"];
+            gfx.DrawString(name, renderInfo.NameFont, Brushes.Black, Layouts.TextHymnLayout.NameBox, GraphicsHelper.CenterAlign);
 
             // draw title
-            gfx.DrawString((string)slide.Data["title"], renderInfo.TitleFont, Brushes.Black, Layouts.TextHymnLayout.TitleBox, GraphicsHelper.CenterAlign);
+            string titleandsubname = (string)slide.Data["sub-name"] == "" ? (string)slide.Data["title"] : $"{(string)slide.Data["title"]}\r\n{(string)slide.Data["sub-name"]}";
+            gfx.DrawString(titleandsubname, renderInfo.TitleFont, Brushes.Black, Layouts.TextHymnLayout.TitleBox, GraphicsHelper.CenterAlign);
+
+            // draw sub-title
+            //gfx.DrawString((string)slide.Data["sub-name"], renderInfo.TitleFont, Brushes.Black, Layouts.TextHymnLayout.TitleBox, GraphicsHelper.CenterAlign);
 
             // draw number and tune
             string numberandtune = (string)slide.Data["tune"] == "" ? $"{(string)slide.Data["number"]}" : $"{(string)slide.Data["number"]}\r\n{(string)slide.Data["tune"]}";
