@@ -1033,6 +1033,12 @@ namespace Integrated_Presenter
 
             // arrow keys + (LCtrl)
             #region slide controls
+
+            if (e.Key == Key.Home)
+            {
+                ResetPresentationToBegining();
+            }
+
             if (e.Key == Key.Left)
             {
                 prevSlide();
@@ -3777,6 +3783,18 @@ namespace Integrated_Presenter
         private void ClickToggleDriveAutoTransGuard(object sender, RoutedEventArgs e)
         {
             ToggleDriveAutoTransGuard();
+        }
+
+        private void ResetSlideshow_Click(object sender, RoutedEventArgs e)
+        {
+            ResetPresentationToBegining();
+        }
+
+        private void ResetPresentationToBegining()
+        {
+            Presentation.StartPres();
+            slidesUpdated();
+            PresentationStateUpdated?.Invoke(Presentation.Current);
         }
     }
 }

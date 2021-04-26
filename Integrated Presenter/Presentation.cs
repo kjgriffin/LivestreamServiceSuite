@@ -200,6 +200,7 @@ namespace Integrated_Presenter
         public void StartPres()
         {
             _currentSlide = 0;
+            _virtualCurrentSlide = 0;
         }
 
     }

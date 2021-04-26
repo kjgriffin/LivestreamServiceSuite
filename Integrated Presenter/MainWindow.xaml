@@ -1156,6 +1156,9 @@
                                                             </Grid>
                                                         </StackPanel>
                                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                            <TextBlock Margin="0,0,10,0">
+                                                                <Hyperlink Name="ResetSlideshow" Click="ResetSlideshow_Click">Reset</Hyperlink>
+                                                            </TextBlock>
                                                             <TextBlock Name="TbCurrSlide" Foreground="Orange">0</TextBlock>
                                                             <TextBlock Foreground="Orange">/</TextBlock>
                                                             <TextBlock Name="TbSlideCount" Foreground="Orange">0</TextBlock>
