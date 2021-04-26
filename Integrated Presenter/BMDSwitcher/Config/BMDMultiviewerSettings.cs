@@ -15,5 +15,7 @@ namespace Integrated_Presenter.BMDSwitcher.Config
         public int Window7 { get; set; }
         public int Window8 { get; set; }
         public int Window9 { get; set; }
+
+        public List<int> ShowVUMetersOnWindows { get; set; } = new List<int>();
     }
 }

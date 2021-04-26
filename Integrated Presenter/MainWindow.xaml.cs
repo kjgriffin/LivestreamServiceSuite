@@ -2954,7 +2954,8 @@ namespace Integrated_Presenter
                     Window6 = 4,
                     Window7 = 3,
                     Window8 = 2,
-                    Window9 = 1
+                    Window9 = 1,
+                    ShowVUMetersOnWindows = new List<int>() // by defaul don't show vu meters
                 },
                 DownstreamKey1Config = new BMDDSKSettings()
                 {

@@ -860,6 +860,12 @@ namespace Integrated_Presenter
             _BMDSwitcherMultiView.SetWindowInput(7, _config.MultiviewerConfig.Window7);
             _BMDSwitcherMultiView.SetWindowInput(8, _config.MultiviewerConfig.Window8);
             _BMDSwitcherMultiView.SetWindowInput(9, _config.MultiviewerConfig.Window9);
+
+            // disable all vu meters
+            for (int i = 0; i < 10; i++)
+            {
+                _BMDSwitcherMultiView.SetVuMeterEnabled((uint)i, _config.MultiviewerConfig.ShowVUMetersOnWindows.Contains(i) ? 1 : 0);
+            }
         }
 
         private void ConfigureUpstreamKey()
