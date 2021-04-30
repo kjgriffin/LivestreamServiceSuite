@@ -1685,7 +1685,7 @@ namespace Integrated_Presenter
             });
         }
 
-        private async void SlideDriveVideo_Next()
+        private async void SlideDriveVideo_Next(bool Tied = false)
         {
             if (Presentation?.Next != null)
             {
@@ -1734,7 +1734,11 @@ namespace Integrated_Presenter
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                     }
                     switcherManager?.PerformAutoOnAirDSK1();
-
+                    // request auto transition if tied and slides aren't preset source
+                    if (Tied && switcherState.PresetID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
+                    {
+                        PerformGuardedAutoTransition();
+                    }
                 }
                 else if (Presentation.Next.Type == SlideType.ChromaKeyStill || Presentation.Next.Type == SlideType.ChromaKeyVideo)
                 {
@@ -2265,19 +2269,25 @@ namespace Integrated_Presenter
 
         private void PerformTiedNextSlide()
         {
+            bool tied = false;
+            // only makes sense to do this in drive mode
+            if (CurrentSlideMode == 1)
+            {
+                // only makes sense to do a tied-next slide for liturgy type slides
+                tied = true;
+            }
             // do a next slide and a gaurded auto-trans
-            nextSlide();
-            PerformGuardedAutoTransition(true);
+            nextSlide(tied);
         }
 
-        private void nextSlide()
+        private void nextSlide(bool Tied = false)
         {
             if (activepresentation)
             {
                 DisableSlidePoolOverrides();
                 if (CurrentSlideMode == 1)
                 {
-                    SlideDriveVideo_Next();
+                    SlideDriveVideo_Next(Tied);
                 }
                 else if (CurrentSlideMode == 2)
                 {
