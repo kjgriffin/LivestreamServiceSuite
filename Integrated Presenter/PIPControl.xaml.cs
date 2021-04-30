@@ -350,6 +350,147 @@ namespace Integrated_Presenter
                 UpdateUI();
             }
 
+
+            // handle number keys for source switching
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (e.Key == Key.D1)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ChangeUSK1FillSource(1);
+                    });
+                }
+                if (e.Key == Key.D2)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ChangeUSK1FillSource(2);
+                    });
+                }
+                if (e.Key == Key.D3)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ChangeUSK1FillSource(3);
+                    });
+                }
+                if (e.Key == Key.D4)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ChangeUSK1FillSource(4);
+                    });
+                }
+                if (e.Key == Key.D5)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ChangeUSK1FillSource(5);
+                    });
+                }
+                if (e.Key == Key.D6)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ChangeUSK1FillSource(6);
+                    });
+                }
+                if (e.Key == Key.D7)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ChangeUSK1FillSource(7);
+                    });
+                }
+                if (e.Key == Key.D8)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ChangeUSK1FillSource(8);
+                    });
+                }
+            }
+            else
+            {
+                if (e.Key == Key.D1)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ClickPreset(1);
+                    });
+                }
+                if (e.Key == Key.D2)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ClickPreset(2);
+                    });
+                }
+                if (e.Key == Key.D3)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ClickPreset(3);
+                    });
+                }
+                if (e.Key == Key.D4)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ClickPreset(4);
+                    });
+                }
+                if (e.Key == Key.D5)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ClickPreset(5);
+                    });
+                }
+                if (e.Key == Key.D6)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ClickPreset(6);
+                    });
+                }
+                if (e.Key == Key.D7)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ClickPreset(7);
+                    });
+                }
+                if (e.Key == Key.D8)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ClickPreset(8);
+                    });
+                }
+            }
+
+            if (e.Key == Key.Enter)
+            {
+                // auto transition
+
+                _parent.Dispatcher.Invoke(() =>
+                {
+                    _parent.TakeAutoTransition();
+                });
+            }
+
+            if (e.Key == Key.Decimal)
+            {
+                // usk1 tie
+                _parent.Dispatcher.Invoke(() =>
+                {
+                    _parent.ToggleTransKey1();
+                });
+            }
+
+
         }
 
         private bool PIPIsAtTarget()

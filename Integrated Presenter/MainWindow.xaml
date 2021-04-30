@@ -382,7 +382,7 @@
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
-                                                       </Viewbox>
+                                                        </Viewbox>
                                                         <Button Focusable="False" Name="btnRecording" Click="ClickToggleRecording" IsTabStop="false" Background="Gray">
                                                             <Button.Template>
                                                                 <ControlTemplate>
@@ -402,7 +402,7 @@
                                                 <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PRESET</TextBlock>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                     <Grid>
-                                                         <Viewbox Name="ksc_s1" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <Viewbox Name="ksc_s1" Panel.ZIndex="1" Height="50" Width="50">
                                                             <StackPanel Orientation="Horizontal">
                                                                 <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
@@ -410,11 +410,11 @@
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
-                                                       </Viewbox>
+                                                        </Viewbox>
                                                         <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_s2" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <Viewbox Name="ksc_s2" Panel.ZIndex="1" Height="50" Width="50">
                                                             <StackPanel Orientation="Horizontal">
                                                                 <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
@@ -422,11 +422,11 @@
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
-                                                       </Viewbox>
+                                                        </Viewbox>
                                                         <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_s3" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <Viewbox Name="ksc_s3" Panel.ZIndex="1" Height="50" Width="50">
                                                             <StackPanel Orientation="Horizontal">
                                                                 <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
@@ -434,11 +434,11 @@
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
-                                                       </Viewbox>
+                                                        </Viewbox>
                                                         <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_s4" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <Viewbox Name="ksc_s4" Panel.ZIndex="1" Height="50" Width="50">
                                                             <StackPanel Orientation="Horizontal">
                                                                 <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
@@ -446,11 +446,11 @@
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
-                                                       </Viewbox>
+                                                        </Viewbox>
                                                         <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_s5" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <Viewbox Name="ksc_s5" Panel.ZIndex="1" Height="50" Width="50">
                                                             <StackPanel Orientation="Horizontal">
                                                                 <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
@@ -458,11 +458,11 @@
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
-                                                       </Viewbox>
+                                                        </Viewbox>
                                                         <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox x:Name="ksc_s6" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <Viewbox x:Name="ksc_s6" Panel.ZIndex="1" Height="50" Width="50">
                                                             <StackPanel Orientation="Horizontal">
                                                                 <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
@@ -470,11 +470,11 @@
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
-                                                       </Viewbox>
+                                                        </Viewbox>
                                                         <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_s7" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <Viewbox Name="ksc_s7" Panel.ZIndex="1" Height="50" Width="50">
                                                             <StackPanel Orientation="Horizontal">
                                                                 <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
@@ -482,11 +482,11 @@
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
-                                                       </Viewbox>
+                                                        </Viewbox>
                                                         <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_s8" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <Viewbox Name="ksc_s8" Panel.ZIndex="1" Height="50" Width="50">
                                                             <StackPanel Orientation="Horizontal">
                                                                 <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
@@ -494,7 +494,7 @@
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
-                                                       </Viewbox>
+                                                        </Viewbox>
                                                         <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                                     </Grid>
                                                 </StackPanel>
@@ -582,7 +582,7 @@
                                                         <Button Name="BtnProgram2" Click="ClickProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_ps3" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                        <Viewbox Name="ksc_ps3" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
                                                             <Grid>
                                                                 <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     +
@@ -731,7 +731,7 @@
                                                         </Viewbox>
                                                         <Button Name="BtnProgram8" Click="ClickProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
                                                     </Grid>
-                                                    
+
 
                                                 </StackPanel>
                                             </StackPanel>
@@ -760,10 +760,10 @@
                                                                 <StackPanel Orientation="Horizontal">
                                                                     <Border Padding="20,0" Style="{StaticResource UIShortcutBdr}">
                                                                         <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">C</TextBlock> 
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">C</TextBlock>
                                                                         </Viewbox>
                                                                     </Border>
-                                                            </StackPanel>
+                                                                </StackPanel>
                                                             </Viewbox>
                                                             <Button Name="BtnCBars" Click="ClickCBars" Style="{StaticResource SwitcherButton_Disabled}">TEST</Button>
                                                         </Grid>
@@ -775,11 +775,11 @@
                                                     <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">TRANSITION</TextBlock>
                                                     <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                                                         <Grid>
-                                                             <Viewbox Name="ksc_auto" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <Viewbox Name="ksc_auto" Panel.ZIndex="1" Height="50" Width="50">
                                                                 <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                                                                     <Border Padding="18,0" Style="{StaticResource UIShortcutBdr}">
                                                                         <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x21B5;</TextBlock> 
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x21B5;</TextBlock>
                                                                         </Viewbox>
                                                                     </Border>
                                                                 </StackPanel>
@@ -791,7 +791,7 @@
                                                                 <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                                                                     <Border Padding="13,0" Style="{StaticResource UIShortcutBdr}">
                                                                         <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x2423;</TextBlock> 
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x2423;</TextBlock>
                                                                         </Viewbox>
                                                                     </Border>
                                                                 </StackPanel>
@@ -804,8 +804,8 @@
                                                                     <Border Style="{StaticResource UIShortcutBdr}">
                                                                         <Viewbox>
                                                                             <StackPanel>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">0</TextBlock> 
-                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock> 
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">0</TextBlock>
+                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
                                                                             </StackPanel>
                                                                         </Viewbox>
                                                                     </Border>
@@ -833,35 +833,35 @@
                                                 <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">USK 1</TextBlock>
 
                                                 <Grid>
-                                                      <Viewbox Name="ksc_usk1t" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <StackPanel>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">.</TextBlock> 
-                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock> 
-                                                                            </StackPanel>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
+                                                    <Viewbox Name="ksc_usk1t" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <StackPanel>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">.</TextBlock>
+                                                                        <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Viewbox>
 
                                                     <Button Name="BtnTransKey1" Click="ClickTransKey1" Style="{StaticResource SwitcherButton_Disabled}">KEY 1</Button>
                                                 </Grid>
 
                                                 <Grid>
-                                                      <Viewbox Name="ksc_usk1" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <StackPanel>
-                                                                        <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock> 
-                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock> 
-                                                                            </StackPanel>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
+                                                    <Viewbox Name="ksc_usk1" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <StackPanel>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                                                        <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Viewbox>
 
                                                     <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">ON AIR</Button>
                                                 </Grid>
@@ -873,8 +873,8 @@
                                                             <Border Style="{StaticResource UIShortcutBdr}">
                                                                 <Viewbox>
                                                                     <StackPanel>
-                                                                        <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock> 
-                                                                        <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock> 
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                                                        <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
                                                                     </StackPanel>
                                                                 </Viewbox>
                                                             </Border>
@@ -939,8 +939,8 @@
                                                                 <Border Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
                                                                         <StackPanel>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock> 
-                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock> 
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
                                                                         </StackPanel>
                                                                     </Viewbox>
                                                                 </Border>
@@ -954,8 +954,8 @@
                                                                 <Border Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
                                                                         <StackPanel>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock> 
-                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock> 
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
                                                                         </StackPanel>
                                                                     </Viewbox>
                                                                 </Border>
@@ -969,8 +969,8 @@
                                                                 <Border Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
                                                                         <StackPanel>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock> 
-                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock> 
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
                                                                         </StackPanel>
                                                                     </Viewbox>
                                                                 </Border>
@@ -989,14 +989,14 @@
                                                                 <Border Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
                                                                         <StackPanel>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">9</TextBlock> 
-                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock> 
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">9</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
                                                                         </StackPanel>
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
                                                         </Viewbox>
-                                                         <Button Name="BtnDSK2Tie" Click="ClickDSK2Tie" Style="{StaticResource SwitcherButton_Disabled}">TIE</Button>
+                                                        <Button Name="BtnDSK2Tie" Click="ClickDSK2Tie" Style="{StaticResource SwitcherButton_Disabled}">TIE</Button>
                                                     </Grid>
                                                     <Grid>
                                                         <Viewbox Name="ksc_dsk2" Panel.ZIndex="1" Height="50" Width="50">
@@ -1004,14 +1004,14 @@
                                                                 <Border Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
                                                                         <StackPanel>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock> 
-                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock> 
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
                                                                         </StackPanel>
                                                                     </Viewbox>
                                                                 </Border>
                                                             </StackPanel>
                                                         </Viewbox>
-                                                    <Button Name="BtnDSK2OnOffAir" Click="ClickDSK2Toggle" Style="{StaticResource SwitcherButton_Disabled}">SPLIT</Button>
+                                                        <Button Name="BtnDSK2OnOffAir" Click="ClickDSK2Toggle" Style="{StaticResource SwitcherButton_Disabled}">SPLIT</Button>
                                                     </Grid>
                                                     <Grid>
                                                         <Viewbox Name="ksc_dsk2a" Panel.ZIndex="1" Height="50" Width="50">
@@ -1019,8 +1019,8 @@
                                                                 <Border Style="{StaticResource UIShortcutBdr}">
                                                                     <Viewbox>
                                                                         <StackPanel>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock> 
-                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock> 
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
                                                                         </StackPanel>
                                                                     </Viewbox>
                                                                 </Border>
@@ -1045,7 +1045,7 @@
                                                         <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
 
                                                             <Grid>
-                                                                 <Viewbox x:Name="ksc_st" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <Viewbox x:Name="ksc_st" Panel.ZIndex="1" Height="50" Width="50">
                                                                     <StackPanel Orientation="Vertical">
                                                                         <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
                                                                             <Viewbox>
@@ -1156,9 +1156,20 @@
                                                             </Grid>
                                                         </StackPanel>
                                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                            <TextBlock Margin="0,0,10,0">
-                                                                <Hyperlink Name="ResetSlideshow" Click="ResetSlideshow_Click">Reset</Hyperlink>
-                                                            </TextBlock>
+                                                            <Grid Margin="0,0,10,0">
+                                                                <Viewbox Name="ksc_slidereset" Panel.ZIndex="1" Height="18" Width="50">
+                                                                    <StackPanel Orientation="Vertical">
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">Home</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                                <TextBlock>
+                                                                    <Hyperlink Name="ResetSlideshow" Click="ResetSlideshow_Click">Reset</Hyperlink>
+                                                                </TextBlock>
+                                                            </Grid>
                                                             <TextBlock Name="TbCurrSlide" Foreground="Orange">0</TextBlock>
                                                             <TextBlock Foreground="Orange">/</TextBlock>
                                                             <TextBlock Name="TbSlideCount" Foreground="Orange">0</TextBlock>
@@ -1230,7 +1241,7 @@
                                                                             </Viewbox>
                                                                         </Border>
                                                                     </StackPanel>
-                                                               </Viewbox>
+                                                                </Viewbox>
                                                                 <Button Name="BtnPauseMedia" Click="ClickPauseMedia" Style="{StaticResource SwitcherButton_Disabled}">PAUSE</Button>
                                                             </Grid>
                                                             <Grid>
@@ -1242,7 +1253,7 @@
                                                                             </Viewbox>
                                                                         </Border>
                                                                     </StackPanel>
-                                                               </Viewbox>
+                                                                </Viewbox>
                                                                 <Button Name="BtnPlayMedia" Click="ClickPlayMedia" Style="{StaticResource SwitcherButton_Disabled}">PLAY</Button>
                                                             </Grid>
                                                         </StackPanel>
@@ -1415,7 +1426,7 @@
                                                 <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">FILL SOURCE</TextBlock>
                                                 <StackPanel Orientation="Horizontal">
                                                     <Grid>
-                                                         <Viewbox Name="ksc_pf1" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                        <Viewbox Name="ksc_pf1" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
                                                             <Grid>
                                                                 <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     +
@@ -1440,7 +1451,7 @@
                                                         <Button IsTabStop="False" Focusable="False" Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_pf2" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                        <Viewbox Name="ksc_pf2" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
                                                             <Grid>
                                                                 <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     +
@@ -1465,7 +1476,7 @@
                                                         <Button IsTabStop="False" Focusable="False" Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox x:Name="ksc_pf3" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                        <Viewbox x:Name="ksc_pf3" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
                                                             <Grid>
                                                                 <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     +
@@ -1490,7 +1501,7 @@
                                                         <Button IsTabStop="False" Focusable="False" Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_pf4" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                        <Viewbox Name="ksc_pf4" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
                                                             <Grid>
                                                                 <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     +
@@ -1515,7 +1526,7 @@
                                                         <Button IsTabStop="False" Focusable="False" Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_pf5" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                        <Viewbox Name="ksc_pf5" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
                                                             <Grid>
                                                                 <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     +
@@ -1540,7 +1551,7 @@
                                                         <Button IsTabStop="False" Focusable="False" Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_pf6" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                        <Viewbox Name="ksc_pf6" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
                                                             <Grid>
                                                                 <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     +
@@ -1565,7 +1576,7 @@
                                                         <Button IsTabStop="False" Focusable="False" Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_pf7" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                        <Viewbox Name="ksc_pf7" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
                                                             <Grid>
                                                                 <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     +
@@ -1590,7 +1601,7 @@
                                                         <Button IsTabStop="False" Focusable="False" Click="ClickPIP7" Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
                                                     </Grid>
                                                     <Grid>
-                                                         <Viewbox Name="ksc_pf8" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                        <Viewbox Name="ksc_pf8" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
                                                             <Grid>
                                                                 <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     +

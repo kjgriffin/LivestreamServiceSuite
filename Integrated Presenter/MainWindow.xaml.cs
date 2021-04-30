@@ -248,7 +248,7 @@ namespace Integrated_Presenter
             SetSwitcherSettings();
         }
 
-        private void TakeAutoTransition()
+        public void TakeAutoTransition()
         {
             // use guard mode
             PerformGuardedAutoTransition();
@@ -288,7 +288,7 @@ namespace Integrated_Presenter
             });
         }
 
-        private void ClickPreset(int button)
+        public void ClickPreset(int button)
         {
             switcherManager?.PerformPresetSelect(ConvertButtonToSourceID(button));
         }
@@ -2671,7 +2671,7 @@ namespace Integrated_Presenter
             USK1RuntoFull();
         }
 
-        private void ChangeUSK1FillSource(int source)
+        public void ChangeUSK1FillSource(int source)
         {
             switcherManager?.PerformUSK1FillSourceSelect(ConvertButtonToSourceID(source));
         }
@@ -2754,7 +2754,7 @@ namespace Integrated_Presenter
             switcherManager?.PerformToggleBackgroundForNextTrans();
         }
 
-        private void ToggleTransKey1()
+        public void ToggleTransKey1()
         {
             switcherManager?.PerformToggleKey1ForNextTrans();
         }
@@ -3009,7 +3009,7 @@ namespace Integrated_Presenter
                         Current = new KeyFrameSettings()
                         {
                             PositionX = 9.6,
-                            PositionY = -6,
+                            PositionY = -5.4,
                             SizeX = 0.4,
                             SizeY = 0.4
                         },
@@ -3682,6 +3682,8 @@ namespace Integrated_Presenter
             ksc_sp.Visibility = ShortcutVisibility;
             ksc_sn.Visibility = ShortcutVisibility;
             ksc_st.Visibility = ShortcutVisibility;
+
+            ksc_slidereset.Visibility = ShortcutVisibility;
 
             ksc_stest.Visibility = ShortcutVisibility;
             ksc_ftb.Visibility = ShortcutVisibility;
