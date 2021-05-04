@@ -4,11 +4,25 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Integrated_Presenter
 {
     public class Presentation
     {
+
+        public async void SuspendInProgressAutomation()
+        {
+            // cancel all current operations
+            tokenSource.Cancel();
+            // yield control for a ms to try and get the token cancellation to propogate
+            await Task.Delay(10);
+            tokenSource = new CancellationTokenSource();
+            // set a new cancel token
+        }
+
+        public CancellationTokenSource tokenSource;
 
         public string Folder { get; set; }
 
@@ -18,6 +32,7 @@ namespace Integrated_Presenter
 
         public bool Create(string folder)
         {
+            tokenSource = new CancellationTokenSource();
             Slides.Clear();
             Folder = folder;
 
@@ -63,7 +78,7 @@ namespace Integrated_Presenter
                         type = SlideType.Empty;
                         break;
                 }
-                Slide s = new Slide() { Source = file, Type = type, PreAction = action };
+                Slide s = new Slide() { Source = file, Type = type };
                 if (s.Type == SlideType.Action)
                 {
                     s.LoadActions();
@@ -71,13 +86,32 @@ namespace Integrated_Presenter
                 Slides.Add(s);
             }
 
-            // attack keyfiles to slides
+            // attach keyfiles to slides
             files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"Key_\d+").Success).ToList();
             foreach (var file in files)
             {
                 var num = Regex.Match(file, @"Key_(?<num>\d+)").Groups["num"].Value;
                 int snum = Convert.ToInt32(num);
                 Slides[snum].KeySource = file;
+            }
+
+            // attach post-scripts to slides
+            files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"Script_\d+").Success).ToList();
+            foreach (var file in files)
+            {
+                // turn file into list of automation actions
+                // add actions as post-actions to slide
+                using (StreamReader sr = new StreamReader(file))
+                {
+                    var lines = sr.ReadToEnd().Split(";", StringSplitOptions.RemoveEmptyEntries).Select(s => (s + ";").Trim()).ToList();
+                    foreach (var line in lines)
+                    {
+                        var num = Regex.Match(file, @"Script_(?<num>\d+)").Groups["num"].Value;
+                        int snum = Convert.ToInt32(num);
+                        AutomationAction action = AutomationAction.Parse(line);
+                        Slides[snum].PostActions.Add(action);
+                    }
+                }
             }
 
 
@@ -165,6 +199,7 @@ namespace Integrated_Presenter
                 _virtualCurrentSlide = SlideCount - 1;
                 _currentSlide = SlideCount - 1;
             }
+            SuspendInProgressAutomation();
         }
 
         public void SkipNextSlide()
@@ -187,6 +222,7 @@ namespace Integrated_Presenter
                 _currentSlide = 0;
                 _virtualCurrentSlide = 0;
             }
+            SuspendInProgressAutomation();
         }
 
         public void SkipPrevSlide()
@@ -201,6 +237,7 @@ namespace Integrated_Presenter
         {
             _currentSlide = 0;
             _virtualCurrentSlide = 0;
+            SuspendInProgressAutomation();
         }
 
     }
@@ -210,10 +247,11 @@ namespace Integrated_Presenter
         public SlideType Type { get; set; }
         public string Source { get; set; }
         public string KeySource { get; set; }
-        public string PreAction { get; set; }
+        //public string PreAction { get; set; }
         public Guid Guid { get; set; } = Guid.NewGuid();
         public List<AutomationAction> SetupActions { get; set; } = new List<AutomationAction>();
         public List<AutomationAction> Actions { get; set; } = new List<AutomationAction>();
+        public List<AutomationAction> PostActions { get; set; } = new List<AutomationAction>();
         public string Title { get; set; } = "";
         public bool AutoOnly { get; set; } = false;
 

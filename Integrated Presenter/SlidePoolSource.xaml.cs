@@ -261,7 +261,7 @@ namespace Integrated_Presenter
                             break;
                     }
                     Source = new Uri(ofd.FileName);
-                    Slide = new Slide() { PreAction = action, Guid = Guid.NewGuid(), Source = ofd.FileName, Type = Type, };
+                    Slide = new Slide() { Guid = Guid.NewGuid(), Source = ofd.FileName, Type = Type, };
                 }
                 else
                 {
@@ -272,7 +272,7 @@ namespace Integrated_Presenter
                     {
                         Type = SlideType.Video;
                     }
-                    Slide = new Slide() { PreAction = "", Guid = Guid.NewGuid(), Source = ofd.FileName, Type = Type };
+                    Slide = new Slide() { Guid = Guid.NewGuid(), Source = ofd.FileName, Type = Type };
                 }
 
                 mediapreview.SetMedia(Source, Type);
@@ -294,7 +294,7 @@ namespace Integrated_Presenter
                 openFileDialog.Filter = "Image (*.png)|*.png";
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    Slide.KeySource = openFileDialog.FileName; 
+                    Slide.KeySource = openFileDialog.FileName;
                 }
                 else
                 {
@@ -314,7 +314,7 @@ namespace Integrated_Presenter
 
         private void UpdateDurationUI()
         {
-            if ((Slide?.Type == SlideType.Video || Slide?.Type == SlideType.ChromaKeyVideo ) && mediapreview.MediaLength != TimeSpan.Zero)
+            if ((Slide?.Type == SlideType.Video || Slide?.Type == SlideType.ChromaKeyVideo) && mediapreview.MediaLength != TimeSpan.Zero)
             {
                 tbDuration.Text = mediapreview.MediaLength.ToString("\\T\\-mm\\:ss");
                 tbDuration.Visibility = Visibility.Visible;
@@ -366,12 +366,13 @@ namespace Integrated_Presenter
         public string SourceIDNum
         {
             get => sourceIdNum;
-            set {
+            set
+            {
                 sourceIdNum = value;
                 tbNum1.Text = sourceIdNum;
                 tbNum2.Text = sourceIdNum;
             }
-        } 
+        }
 
         private void ClickChromaStillMode(object sender, RoutedEventArgs e)
         {

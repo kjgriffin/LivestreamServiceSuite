@@ -14,6 +14,7 @@ using System.Linq;
 using System.Printing;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -32,9 +33,9 @@ namespace Integrated_Presenter
     {
 
 
-        Timer system_second_timer = new Timer();
-        Timer shot_clock_timer = new Timer();
-        Timer gp_timer_1 = new Timer();
+        System.Timers.Timer system_second_timer = new System.Timers.Timer();
+        System.Timers.Timer shot_clock_timer = new System.Timers.Timer();
+        System.Timers.Timer gp_timer_1 = new System.Timers.Timer();
 
         TimeSpan timer1span = TimeSpan.Zero;
 
@@ -1034,6 +1035,11 @@ namespace Integrated_Presenter
             // arrow keys + (LCtrl)
             #region slide controls
 
+            if (e.Key == Key.Back)
+            {
+                Presentation?.SuspendInProgressAutomation();
+            }
+
             if (e.Key == Key.Home)
             {
                 ResetPresentationToBegining();
@@ -1367,7 +1373,7 @@ namespace Integrated_Presenter
             {
                 foreach (var task in s.SetupActions)
                 {
-                    await PerformAutomationAction(task);
+                    await PerformAutomationAction(task, Presentation.tokenSource.Token);
                 }
             });
             Dispatcher.Invoke(() =>
@@ -1388,7 +1394,7 @@ namespace Integrated_Presenter
             {
                 foreach (var task in s.Actions)
                 {
-                    await PerformAutomationAction(task);
+                    await PerformAutomationAction(task, Presentation.tokenSource.Token);
                 }
             });
             Dispatcher.Invoke(() =>
@@ -1398,7 +1404,7 @@ namespace Integrated_Presenter
             });
         }
 
-        private async Task PerformAutomationAction(AutomationAction task)
+        private async Task PerformAutomationAction(AutomationAction task, CancellationToken token)
         {
             await Task.Run(async () =>
             {
@@ -1444,7 +1450,14 @@ namespace Integrated_Presenter
                                 //switcherManager?.PerformAutoTransition();
                                 PerformGuardedAutoTransition();
                             });
-                            await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            try
+                            {
+                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            }
+                            catch (Exception)
+                            {
+                                break;
+                            }
                         }
                         break;
                     case AutomationActionType.DSK1On:
@@ -1651,14 +1664,21 @@ namespace Integrated_Presenter
 
 
                     case AutomationActionType.DelayMs:
-                        await Task.Delay(task.DataI);
+                        try
+                        {
+                            await Task.Delay(task.DataI, token);
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
                         break;
                     case AutomationActionType.None:
                         break;
                     default:
                         break;
                 }
-            });
+            }, token);
         }
 
         private bool MediaMuted = false;
@@ -1829,7 +1849,7 @@ namespace Integrated_Presenter
 
                 }
                 // At this point we've switched to the slide
-                SlideDriveVideo_Action(Presentation.EffectiveCurrent);
+                SlideDriveVideo_to_PostActions(Presentation.EffectiveCurrent);
             }
         }
 
@@ -1963,35 +1983,28 @@ namespace Integrated_Presenter
 
                 }
                 // At this point we've switched to the slide
-                SlideDriveVideo_Action(Presentation.EffectiveCurrent);
+                SlideDriveVideo_to_PostActions(Presentation.EffectiveCurrent);
             }
 
         }
 
-        private void SlideDriveVideo_Action(Slide s)
+        private async void SlideDriveVideo_to_PostActions(Slide s)
         {
-            switch (s.PreAction)
+            // run all the actions
+            try
             {
-                case "t1restart":
-                    if (automationtimer1enabled)
-                    {
-                        timer1span = TimeSpan.Zero;
-                    }
-                    break;
-                case "mastercaution2":
-                    //MasterCautionState = 2;
-                    //UpdateMasterCautionDisplay();
-                    break;
-                case "startrecord":
-                    if (automationrecordstartenabled)
-                    {
-                        mHyperdeckManager?.StartRecording();
-                        isRecording = true;
-                        UpdateRecordButtonUI();
-                    }
-                    break;
-                default:
-                    break;
+                await Task.Run(async () =>
+                            {
+                                foreach (var task in s.PostActions)
+                                {
+                                    await PerformAutomationAction(task, Presentation.tokenSource.Token);
+                                }
+                            }, Presentation.tokenSource.Token);
+
+            }
+            catch (Exception)
+            {
+                return;
             }
         }
 
@@ -2106,7 +2119,7 @@ namespace Integrated_Presenter
 
                 }
                 // Do Action on current slide
-                SlideDriveVideo_Action(Presentation.EffectiveCurrent);
+                SlideDriveVideo_to_PostActions(Presentation.EffectiveCurrent);
             }
 
         }
