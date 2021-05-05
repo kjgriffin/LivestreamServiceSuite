@@ -107,6 +107,24 @@ namespace Integrated_Presenter
             }
         }
 
+        private bool showPostCommandsIfNotShowBlackForActions = false;
+        public bool ShowPostCommandsIfNotShowBlackForActions
+        {
+            get => showPostCommandsIfNotShowBlackForActions;
+            set
+            {
+                showPostCommandsIfNotShowBlackForActions = value;
+                if (showPostCommandsIfNotShowBlackForActions && !ShowBlackForActions)
+                {
+                    PostMessages.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    PostMessages.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
         public bool AutoSilentReplay { get; set; } = false;
         public bool AutoSilentPlayback { get; set; } = false;
 
@@ -281,6 +299,7 @@ namespace Integrated_Presenter
             {
                 ShowBlackSource();
             }
+            ShowPostCommands(slide);
         }
 
         public void SetupComplete(bool complete = true)
@@ -304,6 +323,18 @@ namespace Integrated_Presenter
             else
             {
                 MainMessages.Foreground = Brushes.Orange;
+            }
+        }
+
+        public void PostComplete(bool complete = false)
+        {
+            if (complete)
+            {
+                PostMessages.Foreground = Brushes.White;
+            }
+            else
+            {
+                PostMessages.Foreground = Brushes.Red;
             }
         }
 
@@ -350,6 +381,31 @@ namespace Integrated_Presenter
             }
         }
 
+        private void ShowPostCommands(Slide slide)
+        {
+            if (!ShowBlackForActions)
+            {
+                // Show Commands
+                string description = "";
+                foreach (var action in slide.PostActions)
+                {
+                    if (action?.Message != "")
+                    {
+                        description += action.Message + Environment.NewLine;
+                    }
+                }
+                PostMessages.Text = description.Trim();
+                PostMessages.Visibility = Visibility.Visible;
+
+                // hide pre/main actions since we shouldn't have an action slide that needs post actions
+                MainMessages.Visibility = Visibility.Hidden;
+                SetupMessages.Visibility = Visibility.Hidden;
+
+                PostMessages.Foreground = Brushes.Red;
+
+            }
+        }
+
         private void ShowImage()
         {
             SequenceLabel.Visibility = Visibility.Hidden;
@@ -357,6 +413,7 @@ namespace Integrated_Presenter
             ActionIndicator.Visibility = Visibility.Hidden;
             MainMessages.Visibility = Visibility.Hidden;
             SetupMessages.Visibility = Visibility.Hidden;
+            PostMessages.Visibility = Visibility.Hidden;
             BlackSource.Visibility = Visibility.Hidden;
             _playbacktimer.Stop();
             videoPlayer.Stop();
@@ -380,6 +437,7 @@ namespace Integrated_Presenter
             ActionIndicator.Visibility = Visibility.Hidden;
             MainMessages.Visibility = Visibility.Hidden;
             SetupMessages.Visibility = Visibility.Hidden;
+            PostMessages.Visibility = Visibility.Hidden;
             BlackSource.Visibility = Visibility.Hidden;
             _playbacktimer.Start();
             imagePlayer.Visibility = Visibility.Hidden;
@@ -407,6 +465,7 @@ namespace Integrated_Presenter
             ActionIndicator.Visibility = Visibility.Hidden;
             MainMessages.Visibility = Visibility.Hidden;
             SetupMessages.Visibility = Visibility.Hidden;
+            PostMessages.Visibility = Visibility.Hidden;
         }
 
     }

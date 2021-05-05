@@ -106,6 +106,12 @@ namespace Integrated_Presenter
             CurrentPreview.ShowBlackForActions = false;
             CurrentPreview.ShowIfMute = true;
 
+
+            NextPreview.ShowPostCommandsIfNotShowBlackForActions = true;
+            AfterPreview.ShowPostCommandsIfNotShowBlackForActions = true;
+            PrevPreview.ShowPostCommandsIfNotShowBlackForActions = true;
+            CurrentPreview.ShowPostCommandsIfNotShowBlackForActions = true;
+
             CurrentPreview.OnMediaPlaybackTimeUpdate += CurrentPreview_OnMediaPlaybackTimeUpdate;
             NextPreview.OnMediaLoaded += NextPreview_OnMediaLoaded;
             AfterPreview.OnMediaLoaded += AfterPreview_OnMediaLoaded;
@@ -1359,6 +1365,7 @@ namespace Integrated_Presenter
 
         private bool SetupActionsCompleted = false;
         private bool ActionsCompleted = false;
+        private bool PostActionsCompleted = false;
 
         private Guid currentslideforactions;
 
@@ -1662,6 +1669,13 @@ namespace Integrated_Presenter
                         });
                         break;
 
+                    case AutomationActionType.DriveNextSlide:
+                        Dispatcher.Invoke(() =>
+                        {
+                            SlideDriveVideo_Next();
+                        });
+                        break;
+
 
                     case AutomationActionType.DelayMs:
                         try
@@ -1709,6 +1723,7 @@ namespace Integrated_Presenter
         {
             if (Presentation?.Next != null)
             {
+                PostActionsCompleted = false;
                 if (Presentation.Next.Type == SlideType.Action)
                 {
                     SetupActionsCompleted = false;
@@ -1990,6 +2005,7 @@ namespace Integrated_Presenter
 
         private async void SlideDriveVideo_to_PostActions(Slide s)
         {
+            PostActionsCompleted = false;
             // run all the actions
             try
             {
@@ -2001,21 +2017,33 @@ namespace Integrated_Presenter
                                 }
                             }, Presentation.tokenSource.Token);
 
+                PostActionsCompleted = true;
+                CurrentPreview.PostComplete(true);
             }
             catch (Exception)
             {
+                PostActionsCompleted = true;
+                CurrentPreview.PostComplete(true);
                 return;
             }
         }
 
         private async void SlideDriveVideo_Current()
         {
+            // cancel any in progress actions
+            Presentation.tokenSource.Cancel();
+            SetupActionsCompleted = false;
+            ActionsCompleted = false;
+            PostActionsCompleted = false;
+            CurrentPreview.PostComplete(false);
             if (Presentation?.EffectiveCurrent != null)
             {
                 DisableSlidePoolOverrides();
                 currentpoolsource = null;
                 if (Presentation.EffectiveCurrent.Type == SlideType.Action)
                 {
+                    CurrentPreview.SetupComplete(false);
+                    CurrentPreview.ActionComplete(false);
                     // Re-run setup actions
                     await ExecuteSetupActions(Presentation.EffectiveCurrent);
                     slidesUpdated();
@@ -2228,6 +2256,7 @@ namespace Integrated_Presenter
                 // new slide - mark changes
                 SetupActionsCompleted = false;
                 ActionsCompleted = false;
+                PostActionsCompleted = false;
             }
 
             // update previews
@@ -2250,10 +2279,12 @@ namespace Integrated_Presenter
                         currentGuid = Presentation.Current.Guid;
                     }
                 }
+                NextPreview.PostComplete(false);
                 NextPreview.SetupComplete(SetupActionsCompleted);
                 NextPreview.ActionComplete(false);
                 CurrentPreview.ActionComplete(ActionsCompleted);
                 CurrentPreview.SetupComplete(true);
+                CurrentPreview.PostComplete(PostActionsCompleted);
                 NextPreview.SetMedia(Presentation.Next, false);
                 AfterPreview.SetMedia(Presentation.After, false);
             }
