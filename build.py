@@ -52,7 +52,7 @@ def main():
 
     # change to release build
     version['Mode'] = "Release"
-    with open('./SlideCreater/version.json', "w") as f:
+    with open('./Integrated Presenter/version.json', "w") as f:
         json.dump(version, f)
 
     print(version)
@@ -60,7 +60,7 @@ def main():
 
     # create build number string
     bnum = str(build).zfill(3)
-    bnumstr = "{0}.{1}.{2}.{3}".format(majorversion, minorversion, revison, bnum)
+    bnumstr = "{0}.{1}.{2}.{3}-Release".format(majorversion, minorversion, revison, bnum)
     print("build version: {0}".format(bnumstr))
 
 
