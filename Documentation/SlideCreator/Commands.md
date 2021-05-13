@@ -35,6 +35,7 @@ Below are the following recognized commands:
 - [viewseries](#view-series)
 
 - [Resource](#resource)
+- [Common Scripts](#common-scripts)
 - [Script](#script)
 
 - [Automation Commands](#automation-commands)
@@ -241,17 +242,65 @@ Renders the image with uniform scaling up/down so that the limiting dimension is
 # Auto Fit Image
 
 ## Use:
-    #autofitimage(<assetname>)
+    '#autofitimage('<assetname>')' ['('<invert-color>')'] ['['['('<color-convert>')'][<key-type>]']']
 
 ### assetname \<string>
 - Refers to an asset name from the project assets.
+### invert-color \<bool> (Optional)
+- Will invert color of every pixel only if "true"
+- Would also be applied if global project variable 'invert-autofit' is set
+### color-convert
+    'cc-bw-'(<threshold>)
+    
+    e.g. 'cc-bw-145'
+- Will force image dichotomization to black and white where every pixel with an R, G, or B value whose difference from its respective RGB value for Black is greater than the threshold will be forced White, while all those pixels within tolerance will be forced true Black
+### key-type \<string> (To Be Deprecated)
+- Used to change slide type from 'Full' to the provided value
+- Only current value accepted is 'chroma' which changes the slide's render type from 'Full' to 'ChromaKeyStill'
+- Not known to work with the latest versions of Integrated Presenter
+    - Last supported build: Livestream Service Suite 1.5 [v1.5(1ac4ae9)]
 
 This command is automatically used when an asset is inserted as 'Hymn'
 
-## Render Behaviour
-
+#### Summary
 Renders the image with uniform scaling up/down so that the limiting dimension is not clipped. Auto detects the 'true' size of the image by inspecting every pixel in the image to find the outer pixel for each direction (top, bottom, left, right) that is not white.
 Fills only 93% of slide to pad the image with a white border
+
+### Technical Implementation
+
+Meant for rendering Hymns. The rendering process will be applied in the following sequence:
+
+1. Crop to bounds
+    - Will crop image to Top, Bottom, Left, Right based on 'first' non-white pixel found.
+2. Resize
+    - Applies a uniform scale (limited by earliest bound (width/height))
+    - Rescale to fill 93%
+    - 7% White border left
+3. (Optional) Color correction (dichotomization)
+    - Set pixels to equal match if within tolerance, else force to extreme
+4. (Optional) Color Inversion
+    - Per-pixel inversion. New color calculated by 255-R, 255-G, 255-B
+    - Removes all transparency. Alpha is set to 255.
+
+## Render Behaviour
+
+    #autofitimage(<asset-name>)
+
+![image](./img/ExampleAutoFit.png)
+
+    #autofitimage(<asset-name>)(true)
+
+![image](./img/ExampleAutoFitInvertColor.png)
+
+    #autofitimage(<asset-name>)[(cc-bw-148)]
+
+![image](./img/ExampleAutoFitCC.png)
+
+    #autofitimage(<asset-name>)(true)[(cc-bw-148)]
+
+- Note that color correction currently has no effect if image inversion is applied
+
+![image](./img/ExampleAutoFitInvertCC.png)
 
 # Liturgy Image
 
@@ -266,6 +315,10 @@ This command is automatically used when an asset is inserted as 'Liturgy'
 ## Render Behaviour
 
 Renders the image with uniform scaling up/down so that the limiting dimension is not clipped, based on the 'true size' and then fills 93% available area. Will invert image colors so that black is rendered white and white is rendered black.
+
+    #litimage(<asset-name>)
+
+![image](./img/ExampleLiturgyImage.png)
 
 # Reading
 
@@ -407,12 +460,27 @@ Defines the lyrics for a verse.
 
 ## Use:
 
-    #verse {
+    #verse(<verse-name>) {
         ...lines...
     }
 
+### verse-name /<string> (Optional)
+- adds a verse title displayed under the hymn title
+
 ## Render Behaviour
 Each line will be rendered as one line. No attempt will be made to fit lines that are too large/small. Lines will be spaced equidistant vertically.
+
+    #texthymn("Hymn Title", "Hymn Name", "Alt Tune Name", "Hymnal #111", "Copyright stuff that needs to be put there, but that no-one actually reads") {
+    #verse(Verse Title){
+    #Line 1
+    #Line 2
+    #Line 3
+    #Line 4
+    }
+    }
+
+![image](./img/ExampleTextVerse.png)
+
 
 # Lords Prayer
 
@@ -494,6 +562,41 @@ Rendered as a file copy. File renamed to Resource_\<assetname>
 
 Resource_Bells1.wav
 
+# Common Scripts
+
+## liturgyoff
+
+    #liturgyoff(<title>)
+
+### title \<string>
+- title to name script
+
+e.g.
+
+    #liturgyoff
+
+equivalent to (where default = 'Liturgy Off'):
+
+    #script {
+        #<title-or-default>;
+        @arg0:DSK1FadeOff[Kill Liturgy];
+        @arg1:DelayMs(1000);
+    }
+
+## organintro
+
+    #organintro
+
+equivalent to:
+
+    #script {
+        #Organ Intro;
+        @arg1:PresetSelect(5)[Preset Organ];
+        @arg1:DelayMs(100);
+        @arg0:AutoTrans[Take Organ];
+    }
+
+*** NOTE: This is not recommended for automating transitions directly between 'Full' slide sources and the organ. (would want to add: @arg1:DelayMs(1000); to clear the auto transition before having the slide advance).
 
 # Script
 
