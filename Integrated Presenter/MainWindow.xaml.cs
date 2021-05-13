@@ -63,7 +63,7 @@ namespace Integrated_Presenter
                 VersionInfo = JsonSerializer.Deserialize<BuildVersion>(json);
             }
             // Set title
-            Title = $"Integrated Presenter - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}";
+            Title = $"Integrated Presenter - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
 
 
 

@@ -10,20 +10,18 @@ def main():
     minorversion = version['MinorVersion']
     revison = version['Revision']
     build = version['Build']
-    # increment build number
-    build += 1
+    
 
-    version["Build"] = build
-
-    print(version)
-
-    # save new build number
+    # change to release build
+    version['Mode'] = "Release"
     with open('./SlideCreater/version.json', "w") as f:
         json.dump(version, f)
 
+    print(version)
+
     # create build number string
     bnum = str(build).zfill(3)
-    bnumstr = "{0}.{1}.{2}.{3}".format(majorversion, minorversion, revison, bnum)
+    bnumstr = "{0}.{1}.{2}.{3}-Release".format(majorversion, minorversion, revison, bnum)
     print("build version: {0}".format(bnumstr))
 
     # build SlideCreater
@@ -35,6 +33,13 @@ def main():
     print(scpath)
     os.rename("{0}\SlideCreater.exe".format(scpath), "{0}\SlideCreater_{1}_win_x64.exe".format(scpath, bnumstr))
 
+    # increment build number
+    build += 1
+    version["Build"] = build
+    # save new build number
+    version['Mode'] = "Debug"
+    with open('./SlideCreater/version.json', "w") as f:
+        json.dump(version, f)
 
 
     with open('./Integrated Presenter/version.json') as f:
@@ -44,16 +49,14 @@ def main():
     minorversion = version['MinorVersion']
     revison = version['Revision']
     build = version['Build']
-    # increment build number
-    build += 1
 
-    version["Build"] = build
+    # change to release build
+    version['Mode'] = "Release"
+    with open('./SlideCreater/version.json', "w") as f:
+        json.dump(version, f)
 
     print(version)
 
-    # save new build number
-    with open('./Integrated Presenter/version.json', "w") as f:
-        json.dump(version, f)
 
     # create build number string
     bnum = str(build).zfill(3)
@@ -71,6 +74,13 @@ def main():
     print(scpath)
     os.rename("{0}\Integrated Presenter.exe".format(scpath), "{0}\IntegratedPresenter_{1}_win_x64.exe".format(scpath, bnumstr))
 
+    # increment build number
+    build += 1
+    version["Build"] = build
+    version['Mode'] = "Debug"
+    # save new build number
+    with open('./Integrated Presenter/version.json', "w") as f:
+        json.dump(version, f)
 
 
 if __name__ == '__main__':

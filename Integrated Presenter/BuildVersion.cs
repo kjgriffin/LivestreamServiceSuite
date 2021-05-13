@@ -10,5 +10,6 @@ namespace SlideCreater
         public int MinorVersion { get; set; }
         public int Revision { get; set; }
         public int Build { get; set; }
+        public string Mode { get; set; }
     }
 }

@@ -199,7 +199,7 @@ namespace SlideCreater
                 VersionInfo = JsonSerializer.Deserialize<BuildVersion>(json);
             }
             // Set title
-            Title = $"Slide Creater - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}";
+            Title = $"Slide Creater - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
         }
 
 
