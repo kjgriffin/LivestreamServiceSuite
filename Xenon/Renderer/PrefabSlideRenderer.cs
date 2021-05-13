@@ -87,6 +87,11 @@ namespace Xenon.Renderer
                     case PrefabSlides.LordsPrayer:
                         src = ProjectResources.PrefabSlides.LordsPrayer;
                         break;
+                    // special case for prefab scripts
+                    case PrefabSlides.Script_LiturgyOff:
+                    case PrefabSlides.Script_OrganIntro:
+                        ScriptRenderer sr = new ScriptRenderer();
+                        return sr.RenderSlide(slide, messages);
                 }
 
             }

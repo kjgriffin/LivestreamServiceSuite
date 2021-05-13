@@ -193,6 +193,19 @@ namespace Xenon.Compiler
                 expr.Command = new XenonASTPrefabNiceneCreed();
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Script_LiturgyOff]))
+            {
+                var command = new XenonASTPrefabScriptLiturgyOff();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Script_LiturgyOff]);
+                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Script_OrganIntro]))
+            {
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Script_OrganIntro]);
+                expr.Command = new XenonASTPrefabScriptOrganIntro();
+                return expr;
+            }
             else
             {
                 Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Error, ErrorName = "Unknown Command", ErrorMessage = $"{Lexer.Peek()} is not a recognized command", Token = Lexer.Peek(), Generator = "Compiler" });

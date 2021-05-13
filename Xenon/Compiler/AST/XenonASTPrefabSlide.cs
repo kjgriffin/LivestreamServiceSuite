@@ -13,6 +13,8 @@ namespace Xenon.Compiler
         ApostlesCreed,
         NiceneCreed,
         LordsPrayer,
+        Script_OrganIntro,
+        Script_LiturgyOff,
     }
 
     internal static class PrefabSlideConverter
@@ -33,6 +35,10 @@ namespace Xenon.Compiler
                     return "NiceneCreed";
                 case PrefabSlides.LordsPrayer:
                     return "LordsPrayer";
+                case PrefabSlides.Script_LiturgyOff:
+                    return "LiturgyOff";
+                case PrefabSlides.Script_OrganIntro:
+                    return "OrganIntro";
                 default:
                     return "?";
             }

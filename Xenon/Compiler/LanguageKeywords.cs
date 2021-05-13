@@ -9,6 +9,8 @@ namespace Xenon.Compiler
 
         public static Dictionary<LanguageKeywordCommand, string> Commands = new Dictionary<LanguageKeywordCommand, string>()
         {
+            [LanguageKeywordCommand.Script_LiturgyOff] = "liturgyoff", 
+            [LanguageKeywordCommand.Script_OrganIntro] = "organintro", 
             [LanguageKeywordCommand.SetVar] = "set", 
             [LanguageKeywordCommand.Break] = "break", 
             [LanguageKeywordCommand.Video] = "video", 
@@ -64,6 +66,8 @@ namespace Xenon.Compiler
         LordsPrayer,
         Resource,
         Script,
+        Script_LiturgyOff,
+        Script_OrganIntro,
     }
 
 }
