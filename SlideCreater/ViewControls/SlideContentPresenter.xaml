@@ -11,9 +11,11 @@
             <Viewbox Stretch="Uniform">
                 <Border>
                     <Grid Height="1080" Width="1920">
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="200" Opacity="0.5">Empty Slide</TextBlock>
+                        <Viewbox Panel.ZIndex="2">
+                            <TextBlock Name="textDisplay" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="200" Opacity="0.5">Empty Slide</TextBlock>
+                        </Viewbox>
                         <Image Name="ImgDisplay"></Image>
-                        <MediaElement LoadedBehavior="Manual" Name="VideoDisplay"></MediaElement>
+                        <MediaElement Name="VideoDisplay" LoadedBehavior="Manual"></MediaElement>
                     </Grid>
                 </Border>
             </Viewbox>

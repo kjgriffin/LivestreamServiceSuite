@@ -56,6 +56,9 @@ namespace SlideCreater
             if (Asset.Type == AssetType.Video)
             {
                 VideoAsset.Source = new Uri(Asset.CurrentPath);
+                VideoAsset.MediaEnded += VideoAsset_MediaEnded;
+                VideoAsset.Volume = 0;
+                VideoAsset.Play();
                 lbhymn.Visibility = Visibility.Hidden;
                 lbliturgy.Visibility = Visibility.Hidden;
                 lbbells.Visibility = Visibility.Hidden;
@@ -69,6 +72,12 @@ namespace SlideCreater
                 lbbells.Visibility = Visibility.Visible;
             }
 
+        }
+
+        private void VideoAsset_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            VideoAsset.Stop();
+            VideoAsset.Play();
         }
 
         private void ClickFitInsert(object sender, RoutedEventArgs e)

@@ -34,27 +34,54 @@ namespace SlideCreater
             InitializeComponent();
         }
 
-        public async void ShowSlide()
+        public void ShowSlide()
         {
             ImgDisplay.Source = null;
             VideoDisplay.Source = null;
             if (Slide?.MediaType == MediaType.Image)
             {
+                VideoDisplay.Visibility = Visibility.Hidden;
+                textDisplay.Visibility = Visibility.Hidden;
+                ImgDisplay.Visibility = Visibility.Visible;
                 ImgDisplay.Source = Slide.Bitmap.ConvertToBitmapImage();
             }
             if (Slide?.MediaType == MediaType.Video)
             {
+                ImgDisplay.Visibility = Visibility.Hidden;
+                textDisplay.Visibility = Visibility.Hidden;
+                VideoDisplay.Visibility = Visibility.Visible;
                 VideoDisplay.Source = new Uri(Slide.AssetPath);
-                VideoDisplay.Play();
+                VideoDisplay.MediaEnded += VideoDisplay_MediaEnded;
                 VideoDisplay.Volume = 0;
-                await Task.Delay(5000);
-                VideoDisplay.Pause();
+                VideoDisplay.Play();
             }
+            if (Slide?.MediaType == MediaType.Audio)
+            {
+                VideoDisplay.Visibility = Visibility.Hidden;
+                textDisplay.Visibility = Visibility.Visible;
+                ImgDisplay.Visibility = Visibility.Visible;
+                ImgDisplay.Source = new BitmapImage(new Uri("pack://application:,,,/ViewControls/Images/musicnote.png"));
+                textDisplay.Text = Slide.Name + Slide.CopyExtension;
+            }
+            if (Slide?.MediaType == MediaType.Text)
+            {
+                VideoDisplay.Visibility = Visibility.Hidden;
+                ImgDisplay.Visibility = Visibility.Hidden;
+                textDisplay.Visibility = Visibility.Visible;
+                textDisplay.Text = Slide.Text;
+            }
+        }
+
+        private void VideoDisplay_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            VideoDisplay.Stop();
+            VideoDisplay.Volume = 0;
+            VideoDisplay.Play();
         }
 
         public void PlaySlide()
         {
-            if (Slide.MediaType == MediaType.Video)
+            if (Slide?.MediaType == MediaType.Video)
             {
                 VideoDisplay.Play();
             }
@@ -63,8 +90,12 @@ namespace SlideCreater
         public void Clear()
         {
             Slide = null;
+            textDisplay.Text = "Empty Slide";
+            textDisplay.Visibility = Visibility.Visible;
+            ImgDisplay.Visibility = Visibility.Hidden;
+            VideoDisplay.Visibility = Visibility.Hidden;
             ShowSlide();
         }
-      
+
     }
 }
