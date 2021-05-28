@@ -7,6 +7,7 @@ namespace Xenon.SlideAssembly
     public enum SlideFormat
     {
         Video,
+        FilterImage,
         ScaledImage,
         AutoscaledImage,
         UnscaledImage,

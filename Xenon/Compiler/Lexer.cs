@@ -78,6 +78,7 @@ namespace Xenon.Compiler
             List<string> Seperators = new List<string>() {
                 "\r\n",
                 "//",
+                "::",
                 "?",
                 ";",
                 ",",
@@ -93,6 +94,7 @@ namespace Xenon.Compiler
                 "\\",
                 "$",
                 "\"",
+                "=",
             };
             SplitWords.AddRange(Seperators);
         }
@@ -339,8 +341,9 @@ namespace Xenon.Compiler
         /// Returns a compound string of all tokens until the current token matches the test
         /// </summary>
         /// <param name="test">A regex test pattern</param>
+        /// <param name="errormessage">Additional error message if until token not found</param>
         /// <returns></returns>
-        public string ConsumeUntil(string test)
+        public string ConsumeUntil(string test, string errormessage = "")
         {
             StringBuilder sb = new StringBuilder();
             try
@@ -352,7 +355,7 @@ namespace Xenon.Compiler
             }
             catch (Exception ex)
             {
-                Logger.Log(new XenonCompilerMessage() { ErrorName = "Expecting missing token", ErrorMessage = $"Expecting token <'{test}'>", Generator = "Lexer.ConsumeUnti", Inner = ex.Message, Level = XenonCompilerMessageType.Error, Token = CurrentToken });
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Expecting missing token", ErrorMessage = $"Expecting token <'{test}'>.\r\nAdditional Info: {errormessage}", Generator = "Lexer.ConsumeUnti", Inner = ex.Message, Level = XenonCompilerMessageType.Error, Token = CurrentToken });
                 throw ex;
             }
 
@@ -453,6 +456,12 @@ namespace Xenon.Compiler
                 Logger.Log(new XenonCompilerMessage() { ErrorName = "Syntax: Unexpected Token", ErrorMessage = $"Expecting '{text}', got '{Peek()}'", Level = XenonCompilerMessageType.Error, Token = Peek(), Generator = "Lexer", Inner = additionalinfo });
             }
             return val;
+        }
+
+
+        public override string ToString()
+        {
+            return base.ToString() + $" At Token: {CurrentToken}";
         }
 
     }

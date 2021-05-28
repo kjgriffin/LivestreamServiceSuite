@@ -14,7 +14,6 @@ namespace Xenon.Helpers
     public static class GraphicsHelper
     {
 
-
         /// <summary>
         /// Returns a new bitmap that is trimmed in size to exclude borders of only the color
         /// </summary>

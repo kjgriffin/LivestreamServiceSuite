@@ -59,7 +59,7 @@ namespace Xenon.Compiler
                     }
                 }
             }
-
+           
             return fullimage;
 
         }

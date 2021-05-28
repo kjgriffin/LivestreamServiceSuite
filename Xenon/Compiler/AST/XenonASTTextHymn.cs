@@ -15,6 +15,7 @@ namespace Xenon.Compiler
         public string Tune { get; set; }
         public string Number { get; set; }
         public string CopyrightInfo { get; set; }
+        public bool IsOverlay { get; set; } = false;
 
         public void Generate(Project project, IXenonASTElement _Parent)
         {
@@ -32,6 +33,7 @@ namespace Xenon.Compiler
             Debug.WriteLine($"Tune='{Tune}'");
             Debug.WriteLine($"Number='{Number}'");
             Debug.WriteLine($"CopyrightInfo='{CopyrightInfo}'");
+            Debug.WriteLine($"IsOverlay='{IsOverlay}'");
             foreach (var verse in Verses)
             {
                 verse.GenerateDebug(project);
@@ -51,6 +53,16 @@ namespace Xenon.Compiler
             textHymn.Tune = args["tune"];
             textHymn.Number = args["number"];
             textHymn.CopyrightInfo = args["copyright"];
+
+            if (Lexer.Inspect("("))
+            {
+                Lexer.Consume();
+                string sisoverlay = Lexer.ConsumeUntil(")");
+                bool isoverlay; 
+                bool.TryParse(sisoverlay, out isoverlay);
+                textHymn.IsOverlay = isoverlay;
+                Lexer.Consume();
+            }
 
             Lexer.GobbleWhitespace();
             Lexer.GobbleandLog("{", "Expect opening brace for body of hymn. Verses go here");

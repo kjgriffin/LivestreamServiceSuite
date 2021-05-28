@@ -66,6 +66,13 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)video.Compile(Lexer, Logger);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.FilterImage]))
+            {
+                XenonASTFilterImage fimage = new XenonASTFilterImage();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.FilterImage]);
+                expr.Command = (IXenonASTCommand)fimage.Compile(Lexer, Logger);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.FullImage]))
             {
                 XenonASTFullImage fullimage = new XenonASTFullImage();

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Xenon.Compiler;
+using Xenon.Renderer.ImageFilters;
 
 namespace Xenon.Renderer
 {
@@ -26,6 +27,7 @@ namespace Xenon.Renderer
         TitledLiturgyVerseSlideRenderer tlvsr = new TitledLiturgyVerseSlideRenderer();
         CopySlideRenderer csr = new CopySlideRenderer();
         ScriptRenderer sr = new ScriptRenderer();
+        ImageFilterRenderer ifr = new ImageFilterRenderer();
 
         public SlideRenderer(Project proj)
         {
@@ -68,6 +70,8 @@ namespace Xenon.Renderer
                     return isr.RenderImageSlide(slide, Messages);
                 case SlideFormat.AutoscaledImage:
                     return isr.RenderImageSlide(slide, Messages);
+                case SlideFormat.FilterImage:
+                    return ifr.RenderImageSlide(slide, Messages);
                 case SlideFormat.LiturgyImage:
                     return isr.RenderImageSlide(slide, Messages);
                 case SlideFormat.Reading:

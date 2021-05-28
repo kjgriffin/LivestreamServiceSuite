@@ -194,11 +194,11 @@ namespace Xenon.Renderer
             {
                 img = GraphicsHelper.InvertImage(sourceimage);
             }
+
             gfx.DrawImage(img, new Rectangle(p, s), leftbound, topbound, (rightbound - leftbound), (bottombound - topbound), GraphicsUnit.Pixel);
 
             return bmp;
         }
-
 
         private Bitmap RenderLiturgyImage(Bitmap sourceimage)
         {

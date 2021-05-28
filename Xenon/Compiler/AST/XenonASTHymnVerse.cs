@@ -63,6 +63,7 @@ namespace Xenon.Compiler
             slide.Data["tune"] = parent.Tune;
             slide.Data["copyright"] = parent.CopyrightInfo;
             slide.Data["sub-name"] = SubName;
+            slide.Data["is-overlay"] = parent.IsOverlay;
 
             foreach (var line in vle.LayoutLines)
             {
