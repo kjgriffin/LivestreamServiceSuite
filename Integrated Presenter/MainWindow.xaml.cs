@@ -2143,20 +2143,7 @@ namespace Integrated_Presenter
 
                     }
                 }
-                else
-                {
-                    // just go to the next slide
-                    // next slide
-                    Presentation.NextSlide();
-                    slidesUpdated();
-                    PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
-                    if (Presentation.OverridePres == true)
-                    {
-                        Presentation.OverridePres = false;
-                        slidesUpdated();
-                        PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
-                    }
-                }
+                // Do nothing for nodrive slides
                 // Do Action on current slide
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
             }
