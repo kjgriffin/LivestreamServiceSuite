@@ -25,9 +25,10 @@ namespace Integrated_Presenter
             var files = Directory.GetFiles(Folder).Where(f => Regex.Match(f, "\\d+_.*").Success).OrderBy(p => Convert.ToInt32(Regex.Match(Path.GetFileName(p), "(?<slidenum>\\d+).*").Groups["slidenum"].Value)).ToList();
             foreach (var file in files)
             {
-                var filename = Regex.Match(Path.GetFileName(file), "\\d+_(?<type>[^-]*)-?(?<action>.*)\\.(?<extension>.*)");
+                var filename = Regex.Match(Path.GetFileName(file), @"\d+_(?<type>[^-\.]+)(-(?<action>[^\.]+))?(?<drive>\.nodrive)?\.(?<extension>.*)");
                 string name = filename.Groups["type"].Value;
                 string action = filename.Groups["action"].Value;
+                string drive = filename.Groups["drive"].Value;
                 string extension = filename.Groups["extension"].Value;
 
                 // skip unrecognized files
@@ -64,6 +65,10 @@ namespace Integrated_Presenter
                         break;
                 }
                 Slide s = new Slide() { Source = file, Type = type, PreAction = action };
+                if (drive == ".nodrive")
+                {
+                    s.AutomationEnabled = false;
+                }
                 if (s.Type == SlideType.Action)
                 {
                     s.LoadActions();
@@ -208,6 +213,7 @@ namespace Integrated_Presenter
     public class Slide
     {
         public SlideType Type { get; set; }
+        public bool AutomationEnabled { get; set; } = true;
         public string Source { get; set; }
         public string KeySource { get; set; }
         public string PreAction { get; set; }
