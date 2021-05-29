@@ -75,6 +75,7 @@ namespace Xenon.Compiler
 
             SplitWords = new List<string>();
             SplitWords.AddRange(LanguageKeywords.Commands.Values);
+            SplitWords.AddRange(LanguageKeywords.WholeWords);
             List<string> Seperators = new List<string>() {
                 "\r\n",
                 "//",
@@ -97,6 +98,7 @@ namespace Xenon.Compiler
                 "=",
             };
             SplitWords.AddRange(Seperators);
+            SplitWords = SplitWords.OrderByDescending(s => s.Length).ToList();
         }
 
         private List<string> SplitAndKeep(string text, List<string> splitwords)

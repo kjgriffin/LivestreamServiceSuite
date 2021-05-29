@@ -55,10 +55,16 @@ namespace Xenon.Renderer.ImageFilters
             {
                 case ImageFilter.SolidColorCanvas:
                     return ImageFilters.SolidColorCanvas(inb, inkb, ifparams as SolidColorCanvasFilterParams);
+                case ImageFilter.CenterAssetFill:
+                    return ImageFilters.CenterFillAsset(inb, inkb, ifparams as CenterAssetFillFilterParams);
                 case ImageFilter.Crop:
-                    break;
-                case ImageFilter.Resize:
-                    break;
+                    return ImageFilters.Crop(inb, inkb, ifparams as CropFilterParams);
+                case ImageFilter.UniformStretch:
+                    return ImageFilters.UniformStretch(inb, inkb, ifparams as UniformStretchFilterParams);
+                case ImageFilter.CenterOnBackground:
+                    return ImageFilters.CenterOnBackground(inb, inkb, ifparams as CenterOnBackgroundFilterParams);
+                case ImageFilter.ColorEdit:
+                    return ImageFilters.ColorEdit(inb, inkb, ifparams as ColorEditFilterParams);
             }
             return (inb, inkb);
         }

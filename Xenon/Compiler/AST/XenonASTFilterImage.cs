@@ -11,8 +11,10 @@ namespace Xenon.Compiler
 {
     class XenonASTFilterImage : IXenonASTCommand
     {
-        public string AssetName { get; set; }
         public List<(ImageFilter Type, ImageFilterParams FParams)> Filters { get; set; } = new List<(ImageFilter Type, ImageFilterParams)>();
+
+        private Dictionary<int, string> assetstoresolve = new Dictionary<int, string>();
+        private int assetids = 0;
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
@@ -42,7 +44,23 @@ namespace Xenon.Compiler
                 {
                     CompileFilterCommand_crop(Lexer, Logger);
                 }
-
+                if (filtername == "centerassetfill")
+                {
+                    CompileFilterCommand_centerassetfill(Lexer, Logger);
+                }
+                if (filtername == "uniformstretch")
+                {
+                    CompileFilterCommand_uniformstetch(Lexer, Logger);
+                }
+                if (filtername == "centeronbackground")
+                {
+                    CompileFilterCommand_centeronbackground(Lexer, Logger);
+                }
+                if (filtername == "coloredit")
+                {
+                    CompileFilterCommand_coloredit(Lexer, Logger);
+                }
+                Lexer.GobbleWhitespace();
             }
 
             Lexer.GobbleWhitespace();
@@ -163,6 +181,163 @@ namespace Xenon.Compiler
 
         }
 
+        private void CompileFilterCommand_centerassetfill(Lexer Lexer, XenonErrorLogger Logger)
+        {
+            Lexer.GobbleandLog("::", "Expected '::' after filtername and before filter params.");
+            CenterAssetFillFilterParams fparams = new CenterAssetFillFilterParams();
+            // parse params
+
+            Lexer.GobbleandLog("asset", "Expected 'asset' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            Lexer.GobbleandLog("(", "Expecting '(' to enclose asset name");
+            string pname = Lexer.ConsumeUntil(")", "Expecting paramater: asset");
+            Lexer.GobbleandLog(")", "Expecting ')' to enclose asset name");
+            fparams.AssetPath = assetids.ToString();
+            assetstoresolve[assetids] = pname;
+            assetids++;
+
+            Lexer.GobbleandLog(";", "Expecting ';' at end of filter");
+
+            Filters.Add((ImageFilter.CenterAssetFill, fparams));
+
+        }
+
+        private void CompileFilterCommand_uniformstetch(Lexer Lexer, XenonErrorLogger Logger)
+        {
+            Lexer.GobbleandLog("::", "Expected '::' after filtername and before filter params.");
+            UniformStretchFilterParams fparams = new UniformStretchFilterParams();
+            // parse params
+
+            Lexer.GobbleandLog("width", "Expected 'width' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            string pwidth = Lexer.ConsumeUntil(",");
+            Lexer.GobbleandLog(",", "Expecting ',' before height parameter");
+            int.TryParse(pwidth, out int width);
+            fparams.Width = width;
+
+            Lexer.GobbleandLog("height", "Expected 'height' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            string pheight = Lexer.ConsumeUntil(",");
+            Lexer.GobbleandLog(",", "Expecting ',' before fill parameter");
+            int.TryParse(pheight, out int height);
+            fparams.Height = height;
+
+            Lexer.GobbleandLog("fill", "Expecting 'fill' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            Lexer.GobbleandLog("(", "Expecting open '('");
+            string pcolorfill = Lexer.ConsumeUntil(")", "Expecting parameter: fill (r,g,b) e.g. (0, 132, 39)");
+            Lexer.GobbleandLog(")", "Expecting closing ')'");
+            Lexer.GobbleandLog(",", "Expecting , before next parameter");
+            fparams.Fill = GraphicsHelper.ColorFromRGB(pcolorfill);
+
+            Lexer.GobbleandLog("kfill", "Expecting 'kfill' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            Lexer.GobbleandLog("(", "Expecting open '('");
+            string pkeyfill = Lexer.ConsumeUntil(")", "Expecting parameter: kfill (r,g,b) e.g. (0, 132, 39)");
+            Lexer.GobbleandLog(")", "Expecting closing ')'");
+            fparams.KFill = GraphicsHelper.ColorFromRGB(pkeyfill);
+
+
+            Lexer.GobbleandLog(";", "Expecting ';' at end of filter");
+
+            Filters.Add((ImageFilter.UniformStretch, fparams));
+        }
+
+        private void CompileFilterCommand_centeronbackground(Lexer Lexer, XenonErrorLogger Logger)
+        {
+            Lexer.GobbleandLog("::", "Expected '::' after filtername and before filter params.");
+            CenterOnBackgroundFilterParams fparams = new CenterOnBackgroundFilterParams();
+            // parse params
+
+            Lexer.GobbleandLog("width", "Expected 'width' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            string pwidth = Lexer.ConsumeUntil(",");
+            Lexer.GobbleandLog(",", "Expecting ',' before height parameter");
+            int.TryParse(pwidth, out int width);
+            fparams.Width = width;
+
+            Lexer.GobbleandLog("height", "Expected 'height' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            string pheight = Lexer.ConsumeUntil(",");
+            Lexer.GobbleandLog(",", "Expecting ',' before fill parameter");
+            int.TryParse(pheight, out int height);
+            fparams.Height = height;
+
+            Lexer.GobbleandLog("fill", "Expecting 'fill' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            Lexer.GobbleandLog("(", "Expecting open '('");
+            string pcolorfill = Lexer.ConsumeUntil(")", "Expecting parameter: fill (r,g,b) e.g. (0, 132, 39)");
+            Lexer.GobbleandLog(")", "Expecting closing ')'");
+            Lexer.GobbleandLog(",", "Expecting , before next parameter");
+            fparams.Fill = GraphicsHelper.ColorFromRGB(pcolorfill);
+
+            Lexer.GobbleandLog("kfill", "Expecting 'kfill' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            Lexer.GobbleandLog("(", "Expecting open '('");
+            string pkeyfill = Lexer.ConsumeUntil(")", "Expecting parameter: kfill (r,g,b) e.g. (0, 132, 39)");
+            Lexer.GobbleandLog(")", "Expecting closing ')'");
+            fparams.KFill = GraphicsHelper.ColorFromRGB(pkeyfill);
+
+
+            Lexer.GobbleandLog(";", "Expecting ';' at end of filter");
+
+            Filters.Add((ImageFilter.CenterOnBackground, fparams));
+        }
+
+        private void CompileFilterCommand_coloredit(Lexer Lexer, XenonErrorLogger Logger)
+        {
+            Lexer.GobbleandLog("::", "Expected '::' after filtername and before filter params.");
+            ColorEditFilterParams fparams = new ColorEditFilterParams();
+            // parse params
+
+            Lexer.GobbleandLog("identifier", "Expecting 'identifier' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            Lexer.GobbleandLog("(", "Expecting open '('");
+            string pcolorrgb = Lexer.ConsumeUntil(")", "Expecting parameter: identifier (r,g,b) e.g. (0, 132, 39)");
+            Lexer.GobbleandLog(")", "Expecting closing ')'");
+            Lexer.GobbleandLog(",", "Expecting , before next parameter");
+            fparams.Identifier = GraphicsHelper.ColorFromRGB(pcolorrgb);
+
+            Lexer.GobbleandLog("replace", "Expecting 'replace' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            Lexer.GobbleandLog("(", "Expecting open '('");
+            string preplacergb = Lexer.ConsumeUntil(")", "Expecting parameter: replace (r,g,b) e.g. (0, 132, 39)");
+            Lexer.GobbleandLog(")", "Expecting closing ')'");
+            Lexer.GobbleandLog(",", "Expecting , before next parameter");
+            fparams.Replace = GraphicsHelper.ColorFromRGB(preplacergb);
+
+            Lexer.GobbleandLog("exclude", "Expected 'exclude' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            string pexclude = Lexer.ConsumeUntil(",", "Expecting paramater: exclude (True, False)");
+            Lexer.GobbleandLog(",", "Expecting ',' before next parameter");
+            bool.TryParse(pexclude, out bool exclude);
+            fparams.IsExcludeMatch = exclude;
+
+            Lexer.GobbleandLog("forkey", "Expected 'exclude' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to start parameter value");
+            string pkey = Lexer.ConsumeUntil(",", "Expecting paramater: exclude (True, False)");
+            Lexer.GobbleandLog(",", "Expecting ',' before next parameter");
+            bool.TryParse(pkey, out bool key);
+            fparams.ForKey = key;
+
+            Lexer.GobbleandLog("rtol", "Expecting 'rtol' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to starrt parameter value");
+            fparams.RTolerance = Convert.ToInt32(Lexer.ConsumeUntil(",", "Expecting tolerance value e.g. 123"));
+            Lexer.GobbleandLog(",", "Expecting ',' before next parameter");
+            Lexer.GobbleWhitespace();
+            Lexer.GobbleandLog("gtol", "Expecting 'gtol' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to starrt parameter value");
+            fparams.GTolerance = Convert.ToInt32(Lexer.ConsumeUntil(",", "Expecting tolerance value e.g. 123"));
+            Lexer.GobbleandLog(",", "Expecting ',' before next parameter");
+            Lexer.GobbleWhitespace();
+            Lexer.GobbleandLog("btol", "Expecting 'btol' parameter");
+            Lexer.GobbleandLog("=", "Expecting '=' to starrt parameter value");
+            fparams.BTolerance = Convert.ToInt32(Lexer.ConsumeUntil(";", "Expecting tolerance value e.g. 123"));
+            Lexer.GobbleandLog(";", "Expecting ';' at end of filter");
+
+            Filters.Add((ImageFilter.ColorEdit, fparams));
+
+        }
 
         public void Generate(Project project, IXenonASTElement _Project)
         {
@@ -171,16 +346,24 @@ namespace Xenon.Compiler
             imageslide.Name = "UNNAMED_image";
             imageslide.Number = project.NewSlideNumber;
             imageslide.Lines = new List<SlideLine>();
+            imageslide.Asset = "";
 
-            string assetpath = "";
-            var asset = project.Assets.Find(p => p.Name == AssetName);
-            if (asset != null)
+
+            // resolve assets used in filters
+            foreach (var f in Filters)
             {
-                assetpath = asset.CurrentPath;
+                if (f.Type == ImageFilter.CenterAssetFill)
+                {
+                    int id = int.Parse((f.FParams as CenterAssetFillFilterParams).AssetPath);
+                    var asset = project.Assets.Find(p => p.Name == assetstoresolve[id]);
+                    if (asset != null)
+                    {
+                        (f.FParams as CenterAssetFillFilterParams).AssetPath = asset.CurrentPath;
+                    }
+                }
             }
 
             imageslide.Format = SlideFormat.FilterImage;
-            imageslide.Asset = assetpath;
             imageslide.MediaType = MediaType.Image;
 
             // set filter data
@@ -193,7 +376,6 @@ namespace Xenon.Compiler
         public void GenerateDebug(Project project)
         {
             Debug.WriteLine("<XenonASTFilterImage>");
-            Debug.WriteLine(AssetName);
             Debug.WriteLine("<Filters>");
             Debug.WriteLine(Filters);
             Debug.WriteLine("</Filters>");

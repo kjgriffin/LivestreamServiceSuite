@@ -6,8 +6,11 @@ namespace Xenon.Renderer.ImageFilters
 {
     enum ImageFilter
     {
+        CenterAssetFill,
         SolidColorCanvas,
         Crop,
-        Resize,
+        UniformStretch,
+        CenterOnBackground,
+        ColorEdit,
     }
 }

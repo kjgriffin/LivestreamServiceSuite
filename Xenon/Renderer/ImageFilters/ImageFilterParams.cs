@@ -9,7 +9,15 @@ namespace Xenon.Renderer.ImageFilters
     {
     }
 
-    class SolidColorCanvasFilterParams: ImageFilterParams
+    class CenterAssetFillFilterParams : ImageFilterParams
+    {
+        /// <summary>
+        /// Path to image asset.
+        /// </summary>
+        public string AssetPath { get; set; }
+    }
+
+    class SolidColorCanvasFilterParams : ImageFilterParams
     {
         /// <summary>
         /// Width of canvas.
@@ -66,6 +74,39 @@ namespace Xenon.Renderer.ImageFilters
         public int BTolerance { get; set; }
     }
 
+    class ColorEditFilterParams : ImageFilterParams
+    {
+        /// <summary>
+        /// Color to match for applying color edit to.
+        /// </summary>
+        public Color Identifier { get; set; }
+        /// <summary>
+        /// Color to replace editied pixels with.
+        /// </summary>
+        public Color Replace { get; set; }
+        /// <summary>
+        /// If True will instead replace all pixels that don't match identifier within tolerance.
+        /// </summary>
+        public bool IsExcludeMatch { get; set; }
+        /// <summary>
+        /// True if should be applied on key instead of slide.
+        /// </summary>
+        public bool ForKey { get; set; }
+        /// <summary>
+        /// R tolerance.
+        /// </summary>
+        public int RTolerance { get; set; }
+        /// <summary>
+        /// G tolerance.
+        /// </summary>
+        public int GTolerance { get; set; }
+        /// <summary>
+        /// B tolerance.
+        /// </summary>
+        public int BTolerance { get; set; }
+
+    }
+        
     class UniformStretchFilterParams : ImageFilterParams
     {
         /// <summary>
@@ -76,6 +117,35 @@ namespace Xenon.Renderer.ImageFilters
         /// Target Height.
         /// </summary>
         public int Height { get; set; }
+        /// <summary>
+        /// Color to fill extra space.
+        /// </summary>
+        public Color Fill { get; set; }
+        /// <summary>
+        /// Color to fill key extra space.
+        /// </summary>
+        public Color KFill { get; set; }
     }
+
+    class CenterOnBackgroundFilterParams : ImageFilterParams
+    {
+        /// <summary>
+        /// Background width.
+        /// </summary>
+        public int Width { get; set; }
+        /// <summary>
+        /// Background height.
+        /// </summary>
+        public int Height { get; set; }
+        /// <summary>
+        /// Background color.
+        /// </summary>
+        public Color Fill { get; set; }
+        /// <summary>
+        /// Background key color.
+        /// </summary>
+        public Color KFill { get; set; }
+    }
+
 
 }

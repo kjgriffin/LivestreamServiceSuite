@@ -7,6 +7,35 @@ namespace Xenon.Compiler
     static class LanguageKeywords
     {
 
+        public static List<string> WholeWords = new List<string>()
+        {
+            "solidcolorcanvas",
+            "crop",
+            "centerassetfill",
+            "asset",
+            "width",
+            "height",
+            "color",
+            "kcolor",
+            "bound",
+            "Top",
+            "Left",
+            "Bottom",
+            "Right",
+            "True",
+            "False",
+            "icolor",
+            "rtol",
+            "gtol",
+            "btol",
+            "uniformstretch",
+            "fill",
+            "kfill",
+            "centeronbackground",
+            "coloredit",
+            "forkey",
+        };
+
         public static Dictionary<LanguageKeywordCommand, string> Commands = new Dictionary<LanguageKeywordCommand, string>()
         {
             [LanguageKeywordCommand.Script_LiturgyOff] = "liturgyoff", 
