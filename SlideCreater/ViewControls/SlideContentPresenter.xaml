@@ -12,10 +12,11 @@
                 <Border>
                     <Grid Height="1080" Width="1920">
                         <Viewbox Panel.ZIndex="2">
-                            <TextBlock Name="textDisplay" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="200" Opacity="0.5">Empty Slide</TextBlock>
+                            <TextBlock Foreground="Gray" Name="textDisplay" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="200" Opacity="0.5">Empty Slide</TextBlock>
                         </Viewbox>
                         <Image Name="ImgDisplay"></Image>
                         <MediaElement Name="VideoDisplay" LoadedBehavior="Manual"></MediaElement>
+                        <Rectangle Name="background"></Rectangle>
                     </Grid>
                 </Border>
             </Viewbox>

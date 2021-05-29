@@ -283,6 +283,12 @@ namespace SlideCreater
                 tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Succeded]: Slides built!";
             });
 
+            UpdatePreviews();
+
+        }
+
+        private void UpdatePreviews()
+        {
             slidelist.Items.Clear();
             slidepreviews.Clear();
             // add all slides to list
@@ -292,7 +298,7 @@ namespace SlideCreater
                 slideContentPresenter.Width = slidelist.Width;
                 slideContentPresenter.Slide = slide;
                 slideContentPresenter.Height = 200;
-                slideContentPresenter.ShowSlide();
+                slideContentPresenter.ShowSlide(previewkeys);
                 slidelist.Items.Add(slideContentPresenter);
                 slidepreviews.Add(slideContentPresenter);
             }
@@ -301,10 +307,14 @@ namespace SlideCreater
             if (slides?.Count > 0)
             {
                 FocusSlide.Slide = slides.First();
-                FocusSlide.ShowSlide();
+                FocusSlide.ShowSlide(previewkeys);
                 slidelist.SelectedIndex = 0;
+                tbSlideCount.Text = $"Slides: {slides.First().Number + 1}/{slides.Count()}";
             }
-
+            else
+            {
+                tbSlideCount.Text = $"Slides: {slides.Count()}";
+            }
 
         }
 
@@ -314,13 +324,14 @@ namespace SlideCreater
         private void SelectSlideToPreview(object sender, RenderedSlide slide)
         {
             FocusSlide.Slide = slide;
-            FocusSlide.ShowSlide();
+            FocusSlide.ShowSlide(previewkeys);
             FocusSlide.PlaySlide();
             this.slide = slides.FindIndex(s => s == slide) + 1;
             if (this.slide >= slides.Count)
             {
                 this.slide = 0;
             }
+            tbSlideCount.Text = $"Slides: {slide.Number + 1}/{slides.Count()}";
         }
 
         List<RenderedSlide> slides = new List<RenderedSlide>();
@@ -330,7 +341,7 @@ namespace SlideCreater
         private void Show(object sender, RoutedEventArgs e)
         {
             FocusSlide.Slide = slides[slide];
-            FocusSlide.ShowSlide();
+            FocusSlide.ShowSlide(previewkeys);
             if (slide + 1 < slides.Count)
             {
                 slide += 1;
@@ -724,6 +735,24 @@ namespace SlideCreater
         private void ClickHelpCommands(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("explorer.exe", "https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Slide-Creator-Commands");
+        }
+
+        private bool previewkeys = false;
+
+        private void ClickTogglePreviewSlide(object sender, RoutedEventArgs e)
+        {
+            previewkeys = false;
+            mipreviewkey.IsChecked = false;
+            mipreviewslide.IsChecked = true;
+            UpdatePreviews();
+        }
+
+        private void ClickTogglePreviewKey(object sender, RoutedEventArgs e)
+        {
+            previewkeys = true;
+            mipreviewkey.IsChecked = true;
+            mipreviewslide.IsChecked = false;
+            UpdatePreviews();
         }
     }
 }

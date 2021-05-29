@@ -24,6 +24,10 @@
                 <MenuItem Click="ClickSave" Header="Save"></MenuItem>
                 <MenuItem Click="ClickSaveJSON" Header="Save JSON"></MenuItem>
             </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem Name="mipreviewslide" Click="ClickTogglePreviewSlide" Header="Preview Slides" IsChecked="true" IsCheckable="true"></MenuItem>
+                <MenuItem Name="mipreviewkey" Click="ClickTogglePreviewKey" Header="Preview Keys" IsCheckable="true"></MenuItem>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="Commands" Click="ClickHelpCommands"></MenuItem>
             </MenuItem>
@@ -119,12 +123,15 @@
         </Grid>
 
         <Grid Grid.Row="3">
-            <StatusBar Name="sbStatus" Background="LightGray">
+            <StatusBar Name="sbStatus" Background="LightGray" HorizontalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Name="tbProjectStatus" Foreground="White" Margin="10,0,10,0"></TextBlock>
                     <TextBlock Name="tbActionStatus" Foreground="White" Margin="10, 0, 10, 0"></TextBlock>
                     <TextBlock Name="tbSubActionStatus" Foreground="White" Margin="10, 0, 10, 0"></TextBlock>
                     <ProgressBar x:Name="pbActionStatus" Value="0" Foreground="green" Width="100" Visibility="Hidden"></ProgressBar>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Name="tbSlideCount" Foreground="White" Margin="10, 0, 10, 0" HorizontalAlignment="Right"></TextBlock>
                 </StackPanel>
             </StatusBar>
         </Grid>

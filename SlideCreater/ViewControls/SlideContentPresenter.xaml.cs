@@ -34,41 +34,71 @@ namespace SlideCreater
             InitializeComponent();
         }
 
-        public void ShowSlide()
+        private bool keydisplay = false;
+        public void ShowSlide(bool showkey)
         {
-            ImgDisplay.Source = null;
-            VideoDisplay.Source = null;
-            if (Slide?.MediaType == MediaType.Image)
+            keydisplay = showkey;
+            background.Visibility = Visibility.Hidden;
+            if (showkey)
             {
-                VideoDisplay.Visibility = Visibility.Hidden;
-                textDisplay.Visibility = Visibility.Hidden;
-                ImgDisplay.Visibility = Visibility.Visible;
-                ImgDisplay.Source = Slide.Bitmap.ConvertToBitmapImage();
+                if (Slide.KeyBitmap != null)
+                {
+                    VideoDisplay.Visibility = Visibility.Hidden;
+                    textDisplay.Visibility = Visibility.Hidden;
+                    ImgDisplay.Visibility = Visibility.Visible;
+                    ImgDisplay.Source = Slide.KeyBitmap.ConvertToBitmapImage();
+                }
+                else
+                {
+                    VideoDisplay.Visibility = Visibility.Hidden;
+                    textDisplay.Text = "NO KEY";
+                    // handle action slides being auto loaded with black keys
+                    if (Slide.RenderedAs == "Action")
+                    {
+                        background.Fill = Brushes.Black;
+                        background.Visibility = Visibility.Visible;
+                        textDisplay.Text = "AUTO BLACK KEY\r\n(for action)";
+                    }
+                    textDisplay.Visibility = Visibility.Visible;
+                    ImgDisplay.Visibility = Visibility.Hidden;
+                }
             }
-            if (Slide?.MediaType == MediaType.Video)
+            else
             {
-                ImgDisplay.Visibility = Visibility.Hidden;
-                textDisplay.Visibility = Visibility.Hidden;
-                VideoDisplay.Visibility = Visibility.Visible;
-                VideoDisplay.Source = new Uri(Slide.AssetPath);
-                VideoDisplay.MediaEnded += VideoDisplay_MediaEnded;
-                VideoDisplay.Volume = 0;
-                VideoDisplay.Play();
-            }
-            if (Slide?.MediaType == MediaType.Audio)
-            {
-                VideoDisplay.Visibility = Visibility.Hidden;
-                textDisplay.Visibility = Visibility.Visible;
-                ImgDisplay.Visibility = Visibility.Visible;
-                ImgDisplay.Source = new BitmapImage(new Uri("pack://application:,,,/ViewControls/Images/musicnote.png"));
-                textDisplay.Text = Slide.Name + Slide.CopyExtension;
-            }
-            if (Slide?.MediaType == MediaType.Text)
-            {
-                VideoDisplay.Visibility = Visibility.Hidden;
-                ImgDisplay.Visibility = Visibility.Hidden;
-                textDisplay.Visibility = Visibility.Visible;
-                textDisplay.Text = Slide.Text;
+                ImgDisplay.Source = null;
+                VideoDisplay.Source = null;
+                if (Slide?.MediaType == MediaType.Image)
+                {
+                    VideoDisplay.Visibility = Visibility.Hidden;
+                    textDisplay.Visibility = Visibility.Hidden;
+                    ImgDisplay.Visibility = Visibility.Visible;
+                    ImgDisplay.Source = Slide.Bitmap.ConvertToBitmapImage();
+                }
+                if (Slide?.MediaType == MediaType.Video)
+                {
+                    ImgDisplay.Visibility = Visibility.Hidden;
+                    textDisplay.Visibility = Visibility.Hidden;
+                    VideoDisplay.Visibility = Visibility.Visible;
+                    VideoDisplay.Source = new Uri(Slide.AssetPath);
+                    VideoDisplay.MediaEnded += VideoDisplay_MediaEnded;
+                    VideoDisplay.Volume = 0;
+                    VideoDisplay.Play();
+                }
+                if (Slide?.MediaType == MediaType.Audio)
+                {
+                    VideoDisplay.Visibility = Visibility.Hidden;
+                    textDisplay.Visibility = Visibility.Visible;
+                    ImgDisplay.Visibility = Visibility.Visible;
+                    ImgDisplay.Source = new BitmapImage(new Uri("pack://application:,,,/ViewControls/Images/musicnote.png"));
+                    textDisplay.Text = Slide.Name + Slide.CopyExtension;
+                }
+                if (Slide?.MediaType == MediaType.Text)
+                {
+                    VideoDisplay.Visibility = Visibility.Hidden;
+                    ImgDisplay.Visibility = Visibility.Hidden;
+                    textDisplay.Visibility = Visibility.Visible;
+                    textDisplay.Text = Slide.Text;
+                }
             }
         }
 
@@ -81,7 +111,7 @@ namespace SlideCreater
 
         public void PlaySlide()
         {
-            if (Slide?.MediaType == MediaType.Video)
+            if (Slide?.MediaType == MediaType.Video && !keydisplay)
             {
                 VideoDisplay.Play();
             }
@@ -89,12 +119,14 @@ namespace SlideCreater
 
         public void Clear()
         {
+            keydisplay = false;
             Slide = null;
             textDisplay.Text = "Empty Slide";
             textDisplay.Visibility = Visibility.Visible;
+            background.Visibility = Visibility.Hidden;
             ImgDisplay.Visibility = Visibility.Hidden;
             VideoDisplay.Visibility = Visibility.Hidden;
-            ShowSlide();
+            ShowSlide(keydisplay);
         }
 
     }
