@@ -205,7 +205,7 @@ namespace SlideCreater
 
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
-
+            TryAutoSave();
             string text = TbInput.Text;
             _proj.SourceCode = text;
 
@@ -362,41 +362,47 @@ namespace SlideCreater
             ofd.Multiselect = true;
             if (ofd.ShowDialog() == true)
             {
-                AssetsChanged();
-                // add assets
-                foreach (var file in ofd.FileNames)
+                AddAssetsFromPaths(ofd.FileNames);
+            }
+            TryAutoSave();
+        }
+
+        private void AddAssetsFromPaths(IEnumerable<string> filenames)
+        {
+            AssetsChanged();
+            // add assets
+            foreach (var file in filenames)
+            {
+                // copy to tmp folder
+                string tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, "assets", System.IO.Path.GetFileName(file));
+                try
                 {
-                    // copy to tmp folder
-                    string tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, "assets", System.IO.Path.GetFileName(file));
-                    try
-                    {
-                        File.Copy(file, tmpassetpath, true);
-                    }
-                    catch (Exception)
-                    {
-                        MessageBox.Show($"Unable to load {file}", "Load Asset Failed");
-                    }
-
-                    ProjectAsset asset = new ProjectAsset();
-                    if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
-                    {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio };
-                    }
-                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
-                    {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
-                    }
-                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
-                    {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
-                    }
-
-
-
-                    Assets.Add(asset);
-                    _proj.Assets = Assets;
-                    ShowProjectAssets();
+                    File.Copy(file, tmpassetpath, true);
                 }
+                catch (Exception)
+                {
+                    MessageBox.Show($"Unable to load {file}", "Load Asset Failed");
+                }
+
+                ProjectAsset asset = new ProjectAsset();
+                if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
+                {
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio };
+                }
+                else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
+                {
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
+                }
+                else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
+                {
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
+                }
+
+
+
+                Assets.Add(asset);
+                _proj.Assets = Assets;
+                ShowProjectAssets();
             }
         }
 
@@ -447,6 +453,7 @@ namespace SlideCreater
             Assets.Remove(asset);
             _proj.Assets = Assets;
             ShowProjectAssets();
+            TryAutoSave();
         }
 
         private void AssetItemCtrl_OnFitInsertRequest(object sender, ProjectAsset asset)
@@ -467,6 +474,7 @@ namespace SlideCreater
 
         private async void ExportSlides(object sender, RoutedEventArgs e)
         {
+            TryAutoSave();
             ActionState = ActionState.Exporting;
             SaveFileDialog ofd = new SaveFileDialog();
             ofd.Title = "Select Output Folder";
@@ -492,7 +500,7 @@ namespace SlideCreater
 
         private async void SaveProject()
         {
-
+            TryAutoSave();
             var saveprogress = new Progress<int>(percent =>
             {
                 Dispatcher.Invoke(() =>
@@ -524,6 +532,7 @@ namespace SlideCreater
 
         private void SaveAsJSON()
         {
+            TryAutoSave();
             _proj.SourceCode = TbInput.Text;
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
@@ -711,6 +720,7 @@ namespace SlideCreater
             AssetsChanged();
             FocusSlide.Clear();
             slidepreviews.Clear();
+            TryAutoSave();
         }
 
         private void ClickSaveJSON(object sender, RoutedEventArgs e)
@@ -753,6 +763,76 @@ namespace SlideCreater
             mipreviewkey.IsChecked = true;
             mipreviewslide.IsChecked = false;
             UpdatePreviews();
+        }
+
+        private void TryAutoSave()
+        {
+            // create a simple json and store it in temp files
+            string tmppath = System.IO.Path.Join(System.IO.Path.GetTempPath(), "slidecreaterautosaves");
+            string filename = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.autosave.json";
+            string fullpath = System.IO.Path.Join(tmppath, filename);
+            AutoSave save = new AutoSave();
+            foreach (var asset in Assets)
+            {
+                save.SourceAssets.Add(asset.OriginalPath);
+            }
+            save.SourceCode = TbInput.Text;
+            try
+            {
+                string json = JsonSerializer.Serialize(save);
+                if (!Directory.Exists(tmppath))
+                {
+                    Directory.CreateDirectory(tmppath);
+                }
+                using (TextWriter writer = new StreamWriter(fullpath))
+                {
+                    writer.Write(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                tbConsole.Text += $"Autosave Failed {ex}";
+            }
+        }
+
+        private void RecoverAutoSave(object sender, RoutedEventArgs e)
+        {
+            // open tmp files folder and let 'em select an autosave
+            string tmppath = System.IO.Path.GetTempPath();
+            // check if we have a slidecreaterautosaves folder
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Recover Autosave";
+            ofd.Filter = "Autosaves (*.json)|*.json";
+            ofd.Multiselect = false;
+            if (Directory.Exists(System.IO.Path.Join(tmppath, "slidecreaterautosaves")))
+            {
+                ofd.InitialDirectory = System.IO.Path.Join(tmppath, "slidecreaterautosaves");
+            }
+            if (ofd.ShowDialog() == true)
+            {
+                // then load it in
+                try
+                {
+                    using (TextReader reader = new StreamReader(ofd.FileName))
+                    {
+                        string json = reader.ReadToEnd();
+                        AutoSave save = JsonSerializer.Deserialize<AutoSave>(json);
+                        OverwriteWithAutoSave(save);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to recover autosave: {ex}", "Recovery Failed");
+                }
+            }
+        }
+
+        private void OverwriteWithAutoSave(AutoSave save)
+        {
+            NewProject();
+            // load assets
+            AddAssetsFromPaths(save.SourceAssets);
+            TbInput.Text = save.SourceCode;
         }
     }
 }
