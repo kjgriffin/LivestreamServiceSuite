@@ -834,5 +834,19 @@ namespace SlideCreater
             AddAssetsFromPaths(save.SourceAssets);
             TbInput.Text = save.SourceCode;
         }
+
+        private async void ClickImportService(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Import from save of Lutheran Service Bulletin";
+            ofd.Filter = "LSB Service (*.html)|*.html";
+            if (ofd.ShowDialog() == true)
+            {
+                LutheRun.LSBParser parser = new LutheRun.LSBParser();
+                await parser.ParseHTML(ofd.FileName);
+                parser.CompileToXenon();
+                TbInput.Text = "/*\r\n" + parser.XenonDebug() + "*/\r\n" + parser.XenonText;
+            }
+        }
     }
 }

@@ -28,6 +28,9 @@
                 <MenuItem Name="mipreviewslide" Click="ClickTogglePreviewSlide" Header="Preview Slides" IsChecked="true" IsCheckable="true"></MenuItem>
                 <MenuItem Name="mipreviewkey" Click="ClickTogglePreviewKey" Header="Preview Keys" IsCheckable="true"></MenuItem>
             </MenuItem>
+            <MenuItem Header="Import">
+                <MenuItem Name="miimport" Click="ClickImportService" Header="Import from LSB Service"></MenuItem>
+            </MenuItem>
             <MenuItem Header="Recovery">
                 <MenuItem Click="RecoverAutoSave" Header="Recover Auto Save"></MenuItem> 
             </MenuItem>

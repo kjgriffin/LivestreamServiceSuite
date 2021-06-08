@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LutheRun\LutheRun.csproj" />
     <ProjectReference Include="..\Xenon\Xenon.csproj" />
   </ItemGroup>
 
