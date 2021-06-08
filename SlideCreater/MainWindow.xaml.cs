@@ -206,7 +206,7 @@ namespace SlideCreater
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
             TryAutoSave();
-            string text = TbInput.Text;
+            string text = TbInput.GetAllText();
             _proj.SourceCode = text;
 
             tbConsole.Text = string.Empty;
@@ -442,9 +442,10 @@ namespace SlideCreater
 
         private void InsertTextCommand(string InsertCommand)
         {
-            int newindex = TbInput.CaretIndex + InsertCommand.Length;
-            TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
-            TbInput.CaretIndex = newindex;
+            TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
+            //int newindex = TbInput.CaretIndex + InsertCommand.Length;
+            //TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
+            //TbInput.CaretIndex = newindex;
         }
 
         private void AssetItemCtrl_OnDeleteAssetRequest(object sender, ProjectAsset asset)
@@ -467,9 +468,10 @@ namespace SlideCreater
             {
                 InsertCommand = $"\r\n#fitimage({asset.Name})\r\n";
             }
-            int newindex = TbInput.CaretIndex + InsertCommand.Length;
-            TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
-            TbInput.CaretIndex = newindex;
+            TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
+            //int newindex = TbInput.CaretIndex + InsertCommand.Length;
+            //TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
+            //TbInput.CaretIndex = newindex;
         }
 
         private async void ExportSlides(object sender, RoutedEventArgs e)
@@ -511,7 +513,7 @@ namespace SlideCreater
                 });
             });
 
-            _proj.SourceCode = TbInput.Text;
+            _proj.SourceCode = TbInput.GetAllText();
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
             //sfd.DefaultExt = "json";
@@ -533,7 +535,7 @@ namespace SlideCreater
         private void SaveAsJSON()
         {
             TryAutoSave();
-            _proj.SourceCode = TbInput.Text;
+            _proj.SourceCode = TbInput.GetAllText();
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
             sfd.DefaultExt = "json";
@@ -569,7 +571,7 @@ namespace SlideCreater
                 slidelist.Items.Clear();
                 slidepreviews.Clear();
                 _proj = Project.Load(ofd.FileName);
-                TbInput.Text = _proj.SourceCode;
+                TbInput.SetText(_proj.SourceCode);
                 Assets = _proj.Assets;
                 try
                 {
@@ -611,7 +613,7 @@ namespace SlideCreater
                 FocusSlide.Clear();
                 _proj.CleanupResources();
                 _proj = await Project.LoadProject(ofd.FileName);
-                TbInput.Text = _proj.SourceCode;
+                TbInput.SetText(_proj.SourceCode);
                 Assets = _proj.Assets;
                 try
                 {
@@ -648,7 +650,7 @@ namespace SlideCreater
             Assets.Clear();
             AssetList.Children.Clear();
             FocusSlide.Clear();
-            TbInput.Text = string.Empty;
+            TbInput.SetText(string.Empty);
             _proj.CleanupResources();
             _proj = new Project(true);
 
@@ -687,12 +689,9 @@ namespace SlideCreater
         }
 
         private bool dirty = false;
-        private void SourceTextChanged(object sender, TextChangedEventArgs e)
-        {
-            dirty = true;
-            ProjectState = ProjectState.Dirty;
-            ActionState = ActionState.Ready;
-        }
+        //private void SourceTextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //}
 
         private void AssetsChanged()
         {
@@ -776,7 +775,7 @@ namespace SlideCreater
             {
                 save.SourceAssets.Add(asset.OriginalPath);
             }
-            save.SourceCode = TbInput.Text;
+            save.SourceCode = TbInput.GetAllText();
             try
             {
                 string json = JsonSerializer.Serialize(save);
@@ -832,7 +831,7 @@ namespace SlideCreater
             NewProject();
             // load assets
             AddAssetsFromPaths(save.SourceAssets);
-            TbInput.Text = save.SourceCode;
+            TbInput.SetText(save.SourceCode);
         }
 
         private async void ClickImportService(object sender, RoutedEventArgs e)
@@ -845,8 +844,15 @@ namespace SlideCreater
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
                 await parser.ParseHTML(ofd.FileName);
                 parser.CompileToXenon();
-                TbInput.Text = "/*\r\n" + parser.XenonDebug() + "*/\r\n" + parser.XenonText;
+                TbInput.SetText("/*\r\n" + parser.XenonDebug() + "*/\r\n" + parser.XenonText);
             }
+        }
+
+        private void SourceTextChanged(object sender, TextChangedEventArgs e)
+        {
+            dirty = true;
+            ProjectState = ProjectState.Dirty;
+            ActionState = ActionState.Ready;
         }
     }
 }

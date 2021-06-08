@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SlideCreater"
+        xmlns:local="clr-namespace:SlideCreater" xmlns:uicontrols="clr-namespace:UIControls;assembly=UIControls"
         mc:Ignorable="d"
         Closing="OnWindowClosing"
         Title="Slide Creater" Height="800" Width="1000">
@@ -82,7 +82,7 @@
                         <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
                     <ScrollViewer Grid.Row="0">
-                        <TextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged" TextWrapping="WrapWithOverflow" SpellCheck.IsEnabled="True" AcceptsReturn="True" AcceptsTab="True"></TextBox>
+                        <uicontrols:BetterTextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged"></uicontrols:BetterTextBox>
                     </ScrollViewer>
                     <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"></GridSplitter>
                     <Grid Grid.Row="2">
