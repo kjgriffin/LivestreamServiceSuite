@@ -18,7 +18,7 @@
                         <Grid>
                             <Rectangle Stretch="Fill" Fill="{StaticResource BackgroundTileBrush}"></Rectangle>
                             <Viewbox>
-                                <TextBlock Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.4">Unloaded Asset</TextBlock>
+                                <TextBlock Name="tbunloaded" Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.4">Unloaded Asset</TextBlock>
                             </Viewbox>
                             <Image Name="ImgAsset" Stretch="Uniform"></Image>
                             <MediaElement LoadedBehavior="Manual" Name="VideoAsset" StretchDirection="DownOnly" Stretch="Uniform"></MediaElement>
@@ -31,7 +31,13 @@
                         </Grid.RowDefinitions>
                         <!--<Viewbox Grid.Row="0" Stretch="Uniform">-->
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Name="AssetName" Margin="5,5,0,5" MaxWidth="70">Asset name</TextBlock>
+                            <TextBlock Name="AssetName" Margin="5,5,0,5" MaxWidth="70">Asset name
+                                <TextBlock.ToolTip>
+                                    <ToolTip>
+                                        <Label Name="ttName">Asset name</Label>
+                                    </ToolTip>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
                             <Label FontSize="10">
                                 <Hyperlink Click="ClickDeleteAsset">
                                     X

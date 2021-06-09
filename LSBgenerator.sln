@@ -19,7 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{849F6492
 		build.py = build.py
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LutheRun", "LutheRun\LutheRun.csproj", "{70A08E74-3F6E-432E-AB55-B657658120AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LutheRun", "LutheRun\LutheRun.csproj", "{70A08E74-3F6E-432E-AB55-B657658120AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIControls", "UIControls\UIControls.csproj", "{8F689666-41A7-491B-8AC8-642A661924CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{70A08E74-3F6E-432E-AB55-B657658120AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70A08E74-3F6E-432E-AB55-B657658120AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70A08E74-3F6E-432E-AB55-B657658120AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F689666-41A7-491B-8AC8-642A661924CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F689666-41A7-491B-8AC8-642A661924CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F689666-41A7-491B-8AC8-642A661924CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F689666-41A7-491B-8AC8-642A661924CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

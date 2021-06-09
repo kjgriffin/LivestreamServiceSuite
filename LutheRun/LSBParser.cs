@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Html.Parser;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,9 @@ namespace LutheRun
 
         public string XenonText { get => stringBuilder.ToString(); }
 
+        private string ServiceFileName;
+
+
 
         public string XenonDebug()
         {
@@ -30,6 +34,7 @@ namespace LutheRun
 
         public async Task ParseHTML(string path)
         {
+            ServiceFileName = path;
             string html = "";
             try
             {
@@ -123,9 +128,26 @@ namespace LutheRun
 
         public void CompileToXenon()
         {
+            stringBuilder.Clear();
+            stringBuilder.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{System.IO.Path.GetFileName(ServiceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
             foreach (var se in serviceElements)
             {
                 stringBuilder.AppendLine(se.XenonAutoGen());
+            }
+        }
+
+        public async Task LoadWebAssets(Action<Bitmap, string, string> addImageAsAsset)
+        {
+            foreach (var se in serviceElements.Select(s => s as IDownloadWebResource))
+            {
+                if (se != null)
+                {
+                    await se.GetResourcesFromWeb();
+                    foreach (var image in se.Images)
+                    {
+                        addImageAsAsset(image.Bitmap, image.RetinaScreenURL, image.InferedName);
+                    }
+                }
             }
         }
 

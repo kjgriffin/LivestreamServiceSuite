@@ -844,6 +844,9 @@ namespace SlideCreater
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
                 await parser.ParseHTML(ofd.FileName);
                 parser.CompileToXenon();
+                await parser.LoadWebAssets(_proj.CreateImageAsset);
+                AssetsChanged();
+                ShowProjectAssets();
                 TbInput.SetText("/*\r\n" + parser.XenonDebug() + "*/\r\n" + parser.XenonText);
             }
         }

@@ -94,9 +94,9 @@ namespace UIControls
                     {
                         if (run != null)
                         {
-                            if (run.Text.StartsWith("///"))
+                            if (run.Text.StartsWith("/// "))
                             {
-                                run.Foreground = Brushes.LightGray;
+                                run.Foreground = Brushes.Gray;
                             }
                             else if (run.Text.StartsWith("//"))
                             {

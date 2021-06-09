@@ -16,7 +16,7 @@ namespace LutheRun
 
         public string DebugString()
         {
-            return $"///XENON DEBUG::Parsed as UNKNOWN. {Unknown}";
+            return $"/// XENON DEBUG::Parsed as UNKNOWN. {Unknown}";
         }
 
         public string XenonAutoGen()

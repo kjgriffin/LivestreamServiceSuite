@@ -94,6 +94,13 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)autofit.Compile(Lexer, Logger);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.StitchedImage]))
+            {
+                XenonASTStitchedHymn hymn = new XenonASTStitchedHymn();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.StitchedImage]);
+                expr.Command = (IXenonASTCommand)hymn.Compile(Lexer, Logger);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]))
             {
                 XenonASTLiturgyImage liturgyimage = new XenonASTLiturgyImage();

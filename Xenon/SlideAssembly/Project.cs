@@ -9,6 +9,8 @@ using System.Windows;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Drawing;
+using System.Linq;
 
 namespace Xenon.SlideAssembly
 {
@@ -214,5 +216,21 @@ namespace Xenon.SlideAssembly
                 }
             }
         }
+
+        public void CreateImageAsset(Bitmap b, string sourceurl, string name)
+        {
+            string tmpassetpath = System.IO.Path.Combine(LoadTmpPath, "assets", sourceurl.Split("/").Last());
+            try
+            {
+                b.Save(tmpassetpath);
+                ProjectAsset asset = new ProjectAsset() { Id = Guid.NewGuid(), LoadedTempPath = tmpassetpath, Name = name, OriginalPath = sourceurl, Type = AssetType.Image };
+                Assets.Add(asset);
+            }
+            catch (Exception)
+            {
+            }
+
+        }
+
     }
 }

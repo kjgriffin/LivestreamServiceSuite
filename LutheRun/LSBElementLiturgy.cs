@@ -18,14 +18,14 @@ namespace LutheRun
 
         public string DebugString()
         {
-            return $"///XENON DEBUG::Parsed as LSB_ELEMENT_LITURGY. LiturgyText:'{LiturgyText}'";
+            return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_LITURGY. LiturgyText:'{LiturgyText}'";
         }
 
         public string XenonAutoGen()
         {
             if (LiturgyText.Trim() != String.Empty)
             {
-                return "///<XENON_AUTO_GEN>\r\n#liturgy{\r\n" + LiturgyText + "\r\n}\r\n///</XENON_AUTO_GEN>";
+                return "/// <XENON_AUTO_GEN>\r\n#liturgy{\r\n" + LiturgyText + "\r\n}\r\n/// </XENON_AUTO_GEN>";
             }
             return "";
         }

@@ -18,7 +18,7 @@ namespace Xenon.LayoutEngine
             VerseLayoutLine line = new VerseLayoutLine();
             foreach (var word in words)
             {
-                if (word == "\r\n")
+                if (word == "\r\n" || word == "\n")
                 {
                     if (line.Words.Count > 0)
                     {
