@@ -96,7 +96,9 @@
                             </TextBlock>
                         </Grid>
                         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                            <TextBlock Name="tbConsole"></TextBlock>
+                            <!--<TextBlock Name="tbConsole"></TextBlock>-->
+                            <!--<FlowDocument Name="error_report"></FlowDocument>-->
+                            <StackPanel Name="error_report" Orientation="Vertical"></StackPanel>
                         </ScrollViewer>
                     </Grid>
                 </Grid>

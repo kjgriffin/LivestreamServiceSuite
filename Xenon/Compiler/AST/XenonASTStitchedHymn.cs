@@ -83,7 +83,7 @@ namespace Xenon.Compiler.AST
 
         public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Generating StitchedHymn", ErrorName = "Generate Debug Message", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
+            Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating StitchedHymn {HymnName}", ErrorName = "Generate Debug Message", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
             // main steps
             // 1. Figure out how many lines/stanzas and how many stanzas there are
             // 2. Figure out if we can squish everything on one slide, or if we need to go stanza by stanza
@@ -178,6 +178,34 @@ namespace Xenon.Compiler.AST
 
             // check for a case 2 hymn
             int numverses = CollatedLines.First().words.Count;
+
+            if (numverses == 0)
+            {
+                // just a bunch of image lines...
+                // can stop right here and build a slide
+                Slide slide = new Slide();
+                slide.Name = $"stitchedhymn";
+                slide.Number = project.NewSlideNumber;
+                slide.Asset = "";
+                slide.Lines = new List<SlideLine>();
+                slide.Format = SlideFormat.StichedImage;
+                slide.MediaType = MediaType.Image;
+
+                slide.Data["title"] = Title;
+                slide.Data["hymnname"] = HymnName;
+                slide.Data["number"] = Number;
+                slide.Data["copyright"] = CopyrightInfo;
+                if (CopyrightText != CopyrightTune)
+                {
+                    slide.Data["copyright-text"] = CopyrightText;
+                    slide.Data["copyright-tune"] = CopyrightTune;
+                }
+
+                slide.Data["ordered-images"] = CollatedLines.Select(l => l.music).ToList();
+                project.Slides.Add(slide);
+                return;
+            }
+
             List<(LSBImageResource music, List<LSBImageResource> words)> VerseCollatedLines = new List<(LSBImageResource music, List<LSBImageResource> words)>();
             List<(LSBImageResource music, List<LSBImageResource> words)> RefrainCollatedLines = new List<(LSBImageResource music, List<LSBImageResource> words)>();
             bool foundrefrain = false;

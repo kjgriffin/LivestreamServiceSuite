@@ -200,6 +200,43 @@ namespace LutheRun
             public string RetinaScreenURL { get; set; } = "";
             public string InferedName { get; set; } = "";
             public Bitmap Bitmap { get; set; }
+
+            public static HymnImageLine Parse(IElement element, string name)
+            {
+                HymnImageLine imageline = new HymnImageLine();
+                var picture = element.Children.First();
+                var sources = picture?.Children.Where(c => c.LocalName == "source");
+                foreach (var source in sources)
+                {
+                    if (source.Attributes["media"].Value == "print")
+                    {
+                        imageline.PrintURL = source.Attributes["srcset"].Value;
+                    }
+                    else if (source.Attributes["media"].Value == "screen")
+                    {
+                        string src = source.Attributes["srcset"].Value;
+                        var urls = src.Split(", ");
+                        foreach (var url in urls)
+                        {
+                            if (url.Contains("retina"))
+                            {
+                                string s = url.Trim();
+                                if (s.EndsWith(" 2x"))
+                                {
+                                    s = s.Substring(0, s.Length - 3);
+                                }
+                                imageline.RetinaScreenURL = s.Trim();
+                            }
+                            else
+                            {
+                                imageline.ScreenURL = url.Trim();
+                            }
+                        }
+                    }
+                }
+                imageline.InferedName = name;
+                return imageline;
+            }
         }
 
 

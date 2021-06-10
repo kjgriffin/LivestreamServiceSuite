@@ -1,10 +1,12 @@
-﻿using AngleSharp.Html.Parser;
+﻿using AngleSharp.Dom;
+using AngleSharp.Html.Parser;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LutheRun
@@ -97,6 +99,16 @@ namespace LutheRun
                 }
                 else if (element.ClassList.Contains("static"))
                 {
+                    if (ParseAsPrefab(element))
+                    {
+                        return;
+                    }
+
+                    if (ParsePropperAsFullMusic(element))
+                    {
+                        return;
+                    }
+
                     // is liturgy responsorial if it contains lsb-content elements
                     foreach (var child in element.Children.Where(c => c.LocalName == "lsb-content"))
                     {
@@ -130,11 +142,65 @@ namespace LutheRun
                         }
                     }
                 }
+                else if (element.ClassList.Contains("proper"))
+                {
+                    if (ParseAsPrefab(element))
+                    {
+                        return;
+                    }
+                    if (ParsePropperAsFullMusic(element))
+                    {
+                        return;
+                    }
+                }
                 else
                 {
                     serviceElements.Add(LSBElementUnknown.Parse(element));
                 }
             }
+        }
+
+        private bool ParsePropperAsFullMusic(IElement element)
+        {
+            var caption = LSBElementCaption.Parse(element) as LSBElementCaption;
+            if (caption != null && caption?.Caption != string.Empty)
+            {
+                // reasonably sure this might have something interesting
+                // we're expecting multiple images in the content
+                foreach (var content in element.Children.Where(c => c.LocalName == "lsb-content"))
+                {
+                    var images = content.Children.Where(c => c.ClassList.Contains("image"));
+                    if (images.Count() > 1)
+                    {
+                        serviceElements.Add(LSBElementHymn.Parse(element));
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool ParseAsPrefab(IElement element)
+        {
+            var caption = LSBElementCaption.Parse(element) as LSBElementCaption;
+            if (caption != null && caption?.Caption != string.Empty)
+            {
+                string ctext = Regex.Replace(caption.Caption, @"[^\w ]", "");
+                // first check if is known element (Creed/Prayer)
+                Dictionary<string, string> prefabs = new Dictionary<string, string>()
+                {
+                    ["Apostles Creed"] = "apostlescreed",
+                    ["Nicene Creed"] = "nicenecreed",
+                    ["Lords Prayer"] = "lordsprayer",
+                };
+                if (prefabs.Keys.Contains(ctext))
+                {
+                    // use a prefab instead
+                    serviceElements.Add(new LSBElementIsPrefab(prefabs[ctext], element.StrippedText()));
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void CompileToXenon()

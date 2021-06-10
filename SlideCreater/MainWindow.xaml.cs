@@ -22,6 +22,7 @@ using Xenon.Renderer;
 using Xenon.Helpers;
 using Xenon.SlideAssembly;
 using Xenon.AssetManagment;
+using System.Diagnostics;
 
 namespace SlideCreater
 {
@@ -213,8 +214,7 @@ namespace SlideCreater
             string text = TbInput.GetAllText();
             _proj.SourceCode = text;
 
-            tbConsole.Text = string.Empty;
-
+            //tbConsole.Text = string.Empty;
 
             var compileprogress = new Progress<int>(percent =>
             {
@@ -246,13 +246,7 @@ namespace SlideCreater
                 {
                     ActionState = ActionState.ErrorBuilding;
                 });
-                tbConsole.Dispatcher.Invoke(() =>
-                {
-                    foreach (var msg in builder.Messages)
-                    {
-                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: {msg}";
-                    }
-                });
+                UpdateErrorReport(builder.Messages);
                 return;
             }
 
@@ -268,11 +262,7 @@ namespace SlideCreater
                 sbStatus.Dispatcher.Invoke(() =>
                 {
                     ActionState = ActionState.ErrorBuilding;
-                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: Unknown Reason? {ex}";
-                    foreach (var err in builder.Messages)
-                    {
-                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Error]: {err}";
-                    }
+                    UpdateErrorReport(builder.Messages, new XenonCompilerMessage() { ErrorMessage = $"Render failed for reason: {ex}", ErrorName = "Render Failure", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Error, Token = "" });
                 });
                 return;
             }
@@ -280,15 +270,50 @@ namespace SlideCreater
             sbStatus.Dispatcher.Invoke(() =>
             {
                 ActionState = ActionState.SuccessBuilding;
-                foreach (var msg in builder.Messages)
-                {
-                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Message]: {msg}";
-                }
-                tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Succeded]: Slides built!";
+                UpdateErrorReport(builder.Messages, new XenonCompilerMessage() { ErrorMessage = "Slides build!", ErrorName = "Render Success", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
             });
 
             UpdatePreviews();
 
+        }
+
+        private void UpdateErrorReport(List<XenonCompilerMessage> messages, XenonCompilerMessage other = null)
+        {
+            error_report.Dispatcher.Invoke(() =>
+            {
+                error_report.Children.Clear();
+                if (other != null)
+                {
+                    messages.Insert(0, other);
+                }
+                foreach (var msg in messages)
+                {
+                    //Paragraph p = new Paragraph(new Run(msg.ToString()));
+                    TextBlock p = new TextBlock();
+                    p.Text = msg.ToString();
+                    switch (msg.Level)
+                    {
+                        case XenonCompilerMessageType.Debug:
+                            p.Foreground = System.Windows.Media.Brushes.Purple;
+                            break;
+                        case XenonCompilerMessageType.Message:
+                            p.Foreground = System.Windows.Media.Brushes.Black;
+                            break;
+                        case XenonCompilerMessageType.Info:
+                            p.Foreground = System.Windows.Media.Brushes.LightBlue;
+                            break;
+                        case XenonCompilerMessageType.Warning:
+                            p.Foreground = System.Windows.Media.Brushes.Yellow;
+                            break;
+                        case XenonCompilerMessageType.Error:
+                            p.Foreground = System.Windows.Media.Brushes.Red;
+                            break;
+                        default:
+                            break;
+                    }
+                    error_report.Children.Add(p);
+                }
+            });
         }
 
         private void UpdatePreviews()
@@ -794,7 +819,8 @@ namespace SlideCreater
             }
             catch (Exception ex)
             {
-                tbConsole.Text += $"Autosave Failed {ex}";
+                //tbConsole.Text += $"Autosave Failed {ex}";
+                Debug.WriteLine($"Autosave Failed {ex}");
             }
         }
 
