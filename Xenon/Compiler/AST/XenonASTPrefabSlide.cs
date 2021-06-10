@@ -55,7 +55,7 @@ namespace Xenon.Compiler
             return this;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent)
+        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide slide = new Slide();
             slide.Name = "UNNAMED_prefab";

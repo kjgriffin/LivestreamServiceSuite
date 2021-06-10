@@ -1,11 +1,118 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
+using System.Linq;
 
 namespace Xenon.LayoutEngine
 {
+
+    class StitchedImageHymnVerses
+    {
+
+        public List<StitchedImageHymnStanza> Verses { get; set; }
+        public StitchedImageHymnStanza Refrain { get; set; }
+        public bool RepeatingPostRefrain { get; set; }
+
+        public List<LSBImageResource> OrderAllAsOne()
+        {
+            List<LSBImageResource> res = new List<LSBImageResource>();
+
+            for (int linenum = 0; linenum < Verses.First().Lines; linenum++)
+            {
+                for (int versenum = 0; versenum < Verses.Count; versenum++)
+                {
+                    if (versenum == 0)
+                    {
+                        res.Add(Verses[0].GetLine(linenum).Music);
+                    }
+                    res.Add(Verses[versenum].GetLine(linenum).Text);
+                }
+            }
+            if (RepeatingPostRefrain)
+            {
+                for (int linenum = 0; linenum < Refrain.Lines; linenum++)
+                {
+                    res.Add(Refrain.GetLine(linenum).Music);
+                    res.Add(Refrain.GetLine(linenum).Text);
+                }
+            }
+            return res;
+        }
+
+        public List<LSBImageResource> OrderRefrain()
+        {
+            List<LSBImageResource> res = new List<LSBImageResource>();
+            if (RepeatingPostRefrain)
+            {
+                for (int linenum = 0; linenum < Refrain.Lines; linenum++)
+                {
+                    res.Add(Refrain.GetLine(linenum).Music);
+                    res.Add(Refrain.GetLine(linenum).Text);
+                }
+            }
+            return res;
+        }
+
+        public List<LSBImageResource> OrderVerse(int versenum)
+        {
+            List<LSBImageResource> res = new List<LSBImageResource>();
+            if (versenum > Verses.Count)
+            {
+                return res;
+            }
+
+            for (int i = 0; i < Verses[versenum].Lines; i++)
+            {
+                res.Add(Verses[versenum].GetLine(i).Music);
+                res.Add(Verses[versenum].GetLine(i).Text);
+            }
+            return res;
+        }
+
+    }
+
+
     class StitchedImageHymnStanza
     {
-        //public 
+        public int Lines { get => pairedlines.Count; }
+        public List<LSBImageResource> AllAsssets { get; }
+
+        private List<LSBPairedHymnLine> pairedlines = new List<LSBPairedHymnLine>();
+
+        public LSBPairedHymnLine GetLine(int line)
+        {
+            return pairedlines[line];
+        }
+
+        public StitchedImageHymnStanza(IEnumerable<LSBPairedHymnLine> lines)
+        {
+            pairedlines = lines.ToList();
+        }
+
     }
+
+    class LSBPairedHymnLine
+    {
+        public LSBImageResource Music { get; private set; }
+        public LSBImageResource Text { get; private set; }
+
+        public LSBPairedHymnLine(LSBImageResource music, LSBImageResource text)
+        {
+            Music = music;
+            Text = text;
+        }
+    }
+
+    class LSBImageResource
+    {
+        public string AssetRef { get; private set; }
+        public Size Size { get; private set; }
+        public LSBImageResource(string assetref, Size size)
+        {
+            AssetRef = assetref;
+            Size = size;
+        }
+    }
+
 }

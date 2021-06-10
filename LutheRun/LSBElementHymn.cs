@@ -80,13 +80,13 @@ namespace LutheRun
                                 }
                             }
                         }
-                        imageline.InferedName = $"Hymn_{res.Caption}_{res.imageIndex++}";
                     }
+                    imageline.InferedName = $"Hymn_{res.Caption.Replace(",", "")}_{res.imageIndex++}";
                     res.ImageUrls.Add(imageline);
                 }
                 else if (child.ClassList.Contains("copyright"))
                 {
-                    res.Copyright = child.StrippedText();
+                    res.Copyright = res.Copyright + child.StrippedText();
                 }
             }
 
@@ -170,18 +170,18 @@ namespace LutheRun
         {
             var tasks = ImageUrls.Select(async imageurls =>
             {
-                 // use screenurls
-                 try
-                 {
-                     System.Net.WebRequest request = System.Net.WebRequest.Create(imageurls.ScreenURL);
-                     System.Net.WebResponse response = await request.GetResponseAsync();
-                     System.IO.Stream responsestream = response.GetResponseStream();
-                     imageurls.Bitmap = new Bitmap(responsestream);
-                 }
-                 catch (Exception ex)
-                 {
-                     Debug.WriteLine($"Failed trying to download: {imageurls.ScreenURL}\r\n{ex}");
-                 }
+                // use screenurls
+                try
+                {
+                    System.Net.WebRequest request = System.Net.WebRequest.Create(imageurls.ScreenURL);
+                    System.Net.WebResponse response = await request.GetResponseAsync();
+                    System.IO.Stream responsestream = response.GetResponseStream();
+                    imageurls.Bitmap = new Bitmap(responsestream);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed trying to download: {imageurls.ScreenURL}\r\n{ex}");
+                }
             });
             return Task.WhenAll(tasks);
         }

@@ -15,6 +15,6 @@
             <Button Grid.Row="0" Click="Button_Click">Test</Button>
             <Button Grid.Row="0" Click="Button_Click_1">Test</Button>
         </StackPanel>
-        <local:BetterTextBox x:Name="tb" Grid.Row="1"></local:BetterTextBox>
+        <local:SyntaxTextBox x:Name="tb" Grid.Row="1"></local:SyntaxTextBox>
     </Grid>
 </Window>

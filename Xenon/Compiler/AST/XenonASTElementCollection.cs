@@ -16,11 +16,11 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
-        void IXenonASTElement.Generate(Project project, IXenonASTElement _Parent)
+        void IXenonASTElement.Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             foreach (var elem in Elements)
             {
-                elem.Generate(project, _Parent);
+                elem.Generate(project, _Parent, Logger);
             }
         }
 

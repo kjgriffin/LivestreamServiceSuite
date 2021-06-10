@@ -103,6 +103,10 @@ namespace LutheRun
                         ParseLSBServiceElement(child);
                     }
                 }
+                else if (element.ClassList.Contains("reading"))
+                {
+                    serviceElements.Add(LSBElementReading.Parse(element));
+                }
                 else if (element.ClassList.Contains("hymn"))
                 {
                     serviceElements.Add(LSBElementHymn.Parse(element));
@@ -110,12 +114,19 @@ namespace LutheRun
                 else if (element.ClassList.Contains("option-group") || element.ClassList.Contains("group"))
                 {
                     // select all sub lsb-elements what are group selected
-                    var selectedgroup = element.Children.Where(c => c.LocalName == "lsb-service-element" && c.ClassList.Contains("group") && c.ClassList.Contains("selected"));
+                    var selectedgroup = element.Children.Where(c => c.LocalName == "lsb-service-element" && c.ClassList.Contains("selected"));
                     foreach (var selectedelement in selectedgroup)
                     {
-                        foreach (var lsbserviceelement in selectedelement.Children.Where(c => c.LocalName == "lsb-service-element"))
+                        if (selectedelement.ClassList.Contains("group"))
                         {
-                            ParseLSBServiceElement(lsbserviceelement);
+                            foreach (var lsbserviceelement in selectedelement.Children.Where(c => c.LocalName == "lsb-service-element"))
+                            {
+                                ParseLSBServiceElement(lsbserviceelement);
+                            }
+                        }
+                        else if (selectedelement.ClassList.Contains("static"))
+                        {
+                            ParseLSBServiceElement(selectedelement);
                         }
                     }
                 }

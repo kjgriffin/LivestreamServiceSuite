@@ -73,7 +73,7 @@ namespace Xenon.Compiler
             return liturgy;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent)
+        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
 
             Dictionary<string, string> otherspeakers = new Dictionary<string, string>();

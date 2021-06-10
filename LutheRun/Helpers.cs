@@ -18,6 +18,8 @@ namespace LutheRun
             foreach (var line in lines)
             {
                 string s = Regex.Replace(line, @"\s", " ").Trim();
+                s = Regex.Replace(s, @"(?<ender>[;,.!?:])", "${ender} ");
+                s = Regex.Replace(s, @"\s+", " ").Trim();
                 if (s != string.Empty)
                 {
                     sb.AppendLine(s);

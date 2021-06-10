@@ -46,7 +46,7 @@ namespace SlideCreater
         SuccessExporting,
         ErrorExporting,
         Saving,
-
+        Downloading,
 
     }
 
@@ -143,6 +143,10 @@ namespace SlideCreater
                 case ActionState.Saving:
                     tbActionStatus.Text = "Saving...";
                     sbStatus.Background = System.Windows.Media.Brushes.Purple;
+                    break;
+                case ActionState.Downloading:
+                    tbActionStatus.Text = "Downloading resources...";
+                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
                     break;
                 default:
                     break;
@@ -841,12 +845,15 @@ namespace SlideCreater
             ofd.Filter = "LSB Service (*.html)|*.html";
             if (ofd.ShowDialog() == true)
             {
+                ActionState = ActionState.Building;
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
                 await parser.ParseHTML(ofd.FileName);
                 parser.CompileToXenon();
+                ActionState = ActionState.Downloading;
                 await parser.LoadWebAssets(_proj.CreateImageAsset);
                 AssetsChanged();
                 ShowProjectAssets();
+                ActionState = ActionState.Ready;
                 TbInput.SetText("/*\r\n" + parser.XenonDebug() + "*/\r\n" + parser.XenonText);
             }
         }

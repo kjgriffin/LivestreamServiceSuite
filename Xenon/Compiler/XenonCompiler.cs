@@ -8,6 +8,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Xenon.Compiler
 {
@@ -47,7 +48,7 @@ namespace Xenon.Compiler
 
         public bool CompilerSucess { get; set; } = false;
 
-        public Project Compile(Project proj, string input, List<ProjectAsset> assets, IProgress<int> progress)
+        public Task<Project> Compile(Project proj, string input, List<ProjectAsset> assets, IProgress<int> progress)
         {
             CompilerSucess = false; 
 
@@ -68,7 +69,7 @@ namespace Xenon.Compiler
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Failed", ErrorMessage = "Failed to compile project. Check syntax.", Generator = "Compiler", Level = XenonCompilerMessageType.Message });
                 Debug.WriteLine($"Compilation Failed \n{ex}");
-                return proj;
+                return Task.FromResult(proj);
             }
 
             progress.Report(50);
@@ -78,13 +79,13 @@ namespace Xenon.Compiler
             {
                 proj?.Clear();
                 proj.SourceCode = input;
-                p.Generate(proj, null);
+                p.Generate(proj, null, Logger);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Generation Failed \n{ex}");
                 p.GenerateDebug(proj);
-                return proj;
+                return Task.FromResult(proj);
             }
 
 
@@ -95,7 +96,7 @@ namespace Xenon.Compiler
             progress.Report(100);
 
             CompilerSucess = true;
-            return proj;
+            return Task.FromResult(proj);
         }
 
     }

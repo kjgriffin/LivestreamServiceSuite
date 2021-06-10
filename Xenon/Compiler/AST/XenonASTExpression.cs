@@ -10,9 +10,9 @@ namespace Xenon.Compiler
     {
         public IXenonASTCommand Command { get; set; }
 
-        public void Generate(Project project, IXenonASTElement _Parent)
+        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            Command?.Generate(project, _Parent);
+            Command?.Generate(project, _Parent, Logger);
         }
 
         public void GenerateDebug(Project project)
