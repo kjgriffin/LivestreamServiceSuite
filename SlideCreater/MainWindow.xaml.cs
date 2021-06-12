@@ -294,19 +294,24 @@ namespace SlideCreater
                     switch (msg.Level)
                     {
                         case XenonCompilerMessageType.Debug:
-                            p.Foreground = System.Windows.Media.Brushes.Purple;
+                            p.Background = System.Windows.Media.Brushes.LightGray;
+                            p.Foreground = System.Windows.Media.Brushes.Black;
                             break;
                         case XenonCompilerMessageType.Message:
+                            p.Background = System.Windows.Media.Brushes.DeepSkyBlue;
                             p.Foreground = System.Windows.Media.Brushes.Black;
                             break;
                         case XenonCompilerMessageType.Info:
-                            p.Foreground = System.Windows.Media.Brushes.LightBlue;
+                            p.Background = System.Windows.Media.Brushes.WhiteSmoke;
+                            p.Foreground = System.Windows.Media.Brushes.Black;
                             break;
                         case XenonCompilerMessageType.Warning:
-                            p.Foreground = System.Windows.Media.Brushes.Yellow;
+                            p.Background = System.Windows.Media.Brushes.Orange;
+                            p.Foreground = System.Windows.Media.Brushes.Black;
                             break;
                         case XenonCompilerMessageType.Error:
-                            p.Foreground = System.Windows.Media.Brushes.Red;
+                            p.Background = System.Windows.Media.Brushes.Red;
+                            p.Foreground = System.Windows.Media.Brushes.Black;
                             break;
                         default:
                             break;

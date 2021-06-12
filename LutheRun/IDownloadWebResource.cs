@@ -8,7 +8,7 @@ namespace LutheRun
 {
     interface IDownloadWebResource
     {
-        Task GetResourcesFromWeb();
+        Task GetResourcesFromWeb(string path = "");
         IEnumerable<LSBElementHymn.HymnImageLine> Images { get; }
     }
 }

@@ -87,9 +87,11 @@ namespace Xenon.Renderer
 
             // TODO: FIX
 
-            var resized = ImageFilters.ImageFilters.UniformStretch(sbmp, sbmp, new ImageFilters.UniformStretchFilterParams() { Fill = Color.White, KFill = Color.White, Height = 1080, Width = 1920 });
+            var resized = ImageFilters.ImageFilters.UniformStretch(sbmp, sbmp, new ImageFilters.UniformStretchFilterParams() { Fill = Color.White, KFill = Color.White, Height = (int)(1080 * .97), Width = (int)(1920 *.97) });
 
-            res.Bitmap = resized.b;
+            var bordered = ImageFilters.ImageFilters.CenterOnBackground(resized.b, resized.k, new ImageFilters.CenterOnBackgroundFilterParams() { Fill = Color.White, KFill = Color.White, Width = 1920, Height = 1080 });
+
+            res.Bitmap = bordered.b;
             res.KeyBitmap = kbmp;
             return res;
         }

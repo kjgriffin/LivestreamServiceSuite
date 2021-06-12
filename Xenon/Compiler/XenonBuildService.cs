@@ -24,17 +24,17 @@ namespace Xenon.Compiler
 
         public async Task<bool> BuildProject(Project proj, string inputtext, List<ProjectAsset> Assets, IProgress<int> progress)
         {
-            await Task.Run(async () =>
+            try
             {
-                try
+                await Task.Run(async () =>
                 {
                     Project = await compiler.Compile(proj, inputtext, Assets, progress);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString(), "Master Compiler Exception");
-                }
-            });
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Master Compiler Exception");
+            }
 
             Messages.AddRange(compiler.Logger.AllErrors);
             return compiler.CompilerSucess;

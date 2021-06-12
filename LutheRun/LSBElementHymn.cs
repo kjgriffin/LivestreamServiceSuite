@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -81,6 +82,8 @@ namespace LutheRun
                             }
                         }
                     }
+                    var img = picture.Children.FirstOrDefault(c => c.LocalName == "img");
+                    imageline.LocalPath = img?.Attributes["src"].Value;
                     imageline.InferedName = $"Hymn_{res.Caption.Replace(",", "")}_{res.imageIndex++}";
                     res.ImageUrls.Add(imageline);
                 }
@@ -166,10 +169,24 @@ namespace LutheRun
             return sb.ToString();
         }
 
-        public Task GetResourcesFromWeb()
+        public Task GetResourcesFromWeb(string localpath = "")
         {
             var tasks = ImageUrls.Select(async imageurls =>
             {
+                // try loading locally
+                string path = Path.Combine(localpath, imageurls.LocalPath);
+                string file = Path.GetFullPath(path);
+                if (File.Exists(file)) {
+                    try
+                    {
+                        imageurls.Bitmap = new Bitmap(file);
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Failed to load local file {path} because {ex}. Falling back to web.");
+                    }
+                }
                 // use screenurls
                 try
                 {

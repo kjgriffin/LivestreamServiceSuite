@@ -14,6 +14,36 @@ namespace Xenon.LayoutEngine
         public StitchedImageHymnStanza Refrain { get; set; }
         public bool RepeatingPostRefrain { get; set; }
 
+
+        /// <summary>
+        /// Checks if the hymn's verses and refrains total the provided number of source lines.
+        /// </summary>
+        /// <param name="lines">Number of lines the hymn should total</param>
+        /// <returns>True if hymn passes sanity check.</returns>
+        public bool PerformSanityCheck(int lines)
+        {
+            int hlines = ComputeSourceLinesUsed();
+            return hlines == lines;
+        }
+
+        public int ComputeSourceLinesUsed()
+        {
+            int hlines = 0;
+            foreach (var verse in Verses)
+            {
+                // add number of lines the verse has
+                hlines += verse.Lines;
+                // add 1 for the line of verse music
+                hlines += 1;
+            }
+            if (RepeatingPostRefrain)
+            {
+                hlines += Refrain.Lines * 2;
+            }
+
+            return hlines;
+        }
+
         public List<LSBImageResource> OrderAllAsOne()
         {
             List<LSBImageResource> res = new List<LSBImageResource>();

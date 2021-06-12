@@ -125,6 +125,16 @@ namespace LutheRun
                 }
                 else if (element.ClassList.Contains("option-group") || element.ClassList.Contains("group"))
                 {
+                    var singlechild = element.Children.Where(c => c.LocalName == "lsb-service-element");
+                    if (singlechild.Count() == 1)
+                    {
+                        if (singlechild.First().ClassList.Contains("static"))
+                        {
+                            ParseLSBServiceElement(singlechild.First());
+                            return;
+                        }
+                    }
+
                     // select all sub lsb-elements what are group selected
                     var selectedgroup = element.Children.Where(c => c.LocalName == "lsb-service-element" && c.ClassList.Contains("selected"));
                     foreach (var selectedelement in selectedgroup)
@@ -219,7 +229,7 @@ namespace LutheRun
             {
                 if (se != null)
                 {
-                    await se.GetResourcesFromWeb();
+                    await se.GetResourcesFromWeb(Path.GetDirectoryName(ServiceFileName));
                     foreach (var image in se.Images)
                     {
                         addImageAsAsset(image.Bitmap, image.RetinaScreenURL, image.InferedName);

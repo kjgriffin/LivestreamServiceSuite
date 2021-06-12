@@ -17,6 +17,7 @@ namespace Xenon.Compiler.AST
         public string HymnName { get; set; }
         public string Number { get; set; }
         public string CopyrightInfo { get; set; }
+        public bool StitchAll { get; set; }
 
         private string CopyrightTune
         {
@@ -66,6 +67,16 @@ namespace Xenon.Compiler.AST
             hymn.CopyrightInfo = args["copyright"];
 
             Lexer.GobbleWhitespace();
+
+            if (Lexer.Inspect("("))
+            {
+                var optionalparams = Lexer.ConsumeArgList(false, "stitchall");
+                if (optionalparams["stitchall"] == "stitchall")
+                {
+                    hymn.StitchAll = true;
+                }
+                Lexer.GobbleWhitespace();
+            }
 
             Lexer.GobbleandLog("{", "Expected opening '{'");
             while (!Lexer.InspectEOF() && !Lexer.Inspect("}"))
@@ -127,8 +138,45 @@ namespace Xenon.Compiler.AST
             // perhaps we'll do a best effort (focused on making the default [read: no-refrain] cases work)
             // we'll try sorting out refrains - but we'll flag it, and add a comment line for manual inspection
 
+            if (StitchAll)
+            {
+                // just a bunch of image lines...
+                // can stop right here and build a slide
+                Slide slide = new Slide();
+                slide.Name = $"stitchedhymn";
+                slide.Number = project.NewSlideNumber;
+                slide.Asset = "";
+                slide.Lines = new List<SlideLine>();
+                slide.Format = SlideFormat.StichedImage;
+                slide.MediaType = MediaType.Image;
+
+                slide.Data["title"] = Title;
+                slide.Data["hymnname"] = HymnName;
+                slide.Data["number"] = Number;
+                slide.Data["copyright"] = CopyrightInfo;
+                if (CopyrightText != CopyrightTune)
+                {
+                    slide.Data["copyright-text"] = CopyrightText;
+                    slide.Data["copyright-tune"] = CopyrightTune;
+                }
+
+                slide.Data["ordered-images"] = ImageSizes.Select(i => new LSBImageResource(i.Key, i.Value)).ToList();
+                project.Slides.Add(slide);
+
+
+                var heightaprox = 200 + ImageSizes.Select(i => i.Value.Height).Aggregate((item, sum) => sum + item);
+                if (heightaprox > 1200)
+                {
+                    Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Hymn over height: {HymnName}. Hymn requested with 'stichall' flag, but hymn is expected to have {heightaprox} height.", ErrorName = "StitchAll Overheight", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = "" });
+                }
+
+                return;
+
+            }
+
             bool unconfidentaboutrefrain = false;
             bool unconfidentaboutlinetype = false;
+            const int refrainheight = 136;
             LSBImageResource linemusic = null;
             List<LSBImageResource> linetexts = new List<LSBImageResource>();
             List<(LSBImageResource music, List<LSBImageResource> words)> CollatedLines = new List<(LSBImageResource music, List<LSBImageResource> words)>();
@@ -137,6 +185,9 @@ namespace Xenon.Compiler.AST
                 // check for new music line
                 if (ImageSizes[ImageAssets[i]].Height > 95)
                 {
+                    if (ImageSizes[ImageAssets[i]].Height > 130 && i == 0)
+                    {
+                    }
                     // add previous lines
                     if (linemusic != null)
                     {
@@ -161,6 +212,15 @@ namespace Xenon.Compiler.AST
             {
                 CollatedLines.Add((linemusic, linetexts));
             }
+
+            if (unconfidentaboutlinetype)
+            {
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Unconfident about linetype for hymn {HymnName}", ErrorName = "Autogen Unconfident", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = "" });
+            }
+            //if (unconfidentaboutlinetype)
+            //{
+            //Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Unconfident about refrain for hymn {HymnName}", ErrorName = "Autogen Unconfident", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = "" });
+            //}
 
             // now we go through collated lines and try and understand if they're regular verses/ if we got into refrains
             // and then uncollate and turn into verse based format
@@ -203,6 +263,14 @@ namespace Xenon.Compiler.AST
 
                 slide.Data["ordered-images"] = CollatedLines.Select(l => l.music).ToList();
                 project.Slides.Add(slide);
+
+                var heightaprox = 200 + CollatedLines.Select(l => l.music.Size.Height).Aggregate((item, sum) => sum + item);
+                if (heightaprox > 1200)
+                {
+                    Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Hymn over height: {HymnName}. Hymn interpreted to have only one verse,w with all lines on the same slide. Expected to have {heightaprox} height.", ErrorName = "Verse Overheight", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = "" });
+                }
+
+
                 return;
             }
 
@@ -249,6 +317,13 @@ namespace Xenon.Compiler.AST
             StitchedImageHymnStanza refrain = new StitchedImageHymnStanza(refrainlines);
 
             StitchedImageHymnVerses hymn = new StitchedImageHymnVerses() { Refrain = refrain, RepeatingPostRefrain = foundrefrain, Verses = stanzas };
+
+            // At this point we should probably double check that total lines of refrain and all verses is the same number of lines we started with
+            // if not- then we probably split it into verses/refrains incorrectly
+            if (!hymn.PerformSanityCheck(ImageAssets.Count()))
+            {
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Unconfident splitting verses/refrains for {HymnName}", ErrorName = "Autogen Unconfident", Generator = "XenonASTStitchedHymn:Generate()", Inner = $"Provided {ImageAssets.Count()} source images. Generated Hymn only uses {hymn.ComputeSourceLinesUsed()}", Level = XenonCompilerMessageType.Warning, Token = "" });
+            }
 
             // 2. add the height of all the images. if height > 1200??? then we'll do it by stanza
             const int MaxHeightForImags = 1200;
@@ -307,6 +382,7 @@ namespace Xenon.Compiler.AST
                     }
 
                     slide.Data["ordered-images"] = hymn.OrderVerse(versenum++);
+
                     project.Slides.Add(slide);
 
                     if (hymn.RepeatingPostRefrain)
