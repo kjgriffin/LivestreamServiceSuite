@@ -39,35 +39,37 @@ namespace Xenon.Renderer
             // find max width of images and compare
             int twidth = (int)gfx.MeasureString(hymnname, new Font("Arial", 36, FontStyle.Bold)).Width;
             int width = Math.Max(twidth, imageresources.Select(i => i.Size.Width).Max());
-            int height = 100 + imageresources.Select(i => i.Size.Height).Aggregate((a, b) => a + b) + 30;
+            int height = 120 + imageresources.Select(i => i.Size.Height).Aggregate((a, b) => a + b) + 30;
             Bitmap sbmp = new Bitmap(width, height);
             Graphics g = Graphics.FromImage(sbmp);
 
             g.Clear(Color.White);
 
             // draw text
-            g.DrawString(hymnname, new Font("Arial", 36, FontStyle.Bold), Brushes.Black, new Rectangle(0, 0, width, 100), GraphicsHelper.CenterAlign);
-            g.DrawString(title, new Font("Arial", 30, FontStyle.Regular), Brushes.Black, new Rectangle(0, 0, width, 100), GraphicsHelper.LeftVerticalCenterAlign);
-            g.DrawString(number, new Font("Arial", 30, FontStyle.Regular), Brushes.Black, new Rectangle(0, 0, width, 100), GraphicsHelper.RightVerticalCenterAlign);
+            g.DrawString(hymnname, new Font("Arial", 34, FontStyle.Bold), Brushes.Black, new Rectangle(width/4, 0, width/2, 150), GraphicsHelper.CenterAlign);
+            //g.DrawRectangle(Pens.Red, new Rectangle(width/4, 0, width/2, 150));
+            g.DrawString(title, new Font("Arial", 28, FontStyle.Regular), Brushes.Black, new Rectangle(0, 0, 500, 150), GraphicsHelper.LeftVerticalCenterAlign);
+            //g.DrawRectangle(Pens.Blue, new Rectangle(0, 0, 500, 150));
+            g.DrawString(number, new Font("Arial", 28, FontStyle.Italic), Brushes.Black, new Rectangle(0, 0, width, 100), GraphicsHelper.RightVerticalCenterAlign);
             // draw copyright
             if (slide.Data.ContainsKey("copyright-text"))
             {
                 string copyrighttune = (string)slide.Data.GetOrDefault("copyright-tune", "");
                 string copyrighttext = (string)slide.Data.GetOrDefault("copyright-text", "");
                 g.DrawString(copyrighttune, new Font("Arial", 8, FontStyle.Regular), Brushes.Gray, new Rectangle(0, height - 30, width, 15), GraphicsHelper.LeftVerticalCenterAlign);
-                g.DrawRectangle(Pens.Orange, 0, height - 30, width, 15);
-                g.DrawRectangle(Pens.Orange, 0, height - 15, width, 15);
+                //g.DrawRectangle(Pens.Orange, 0, height - 30, width, 15);
+                //g.DrawRectangle(Pens.Orange, 0, height - 15, width, 15);
                 g.DrawString(copyrighttext, new Font("Arial", 8, FontStyle.Regular), Brushes.Gray, new Rectangle(0, height - 15, width, 15), GraphicsHelper.LeftVerticalCenterAlign);
             }
             else
             {
                 string copyright = (string)slide.Data.GetOrDefault("copyright", "");
                 g.DrawString(copyright, new Font("Arial", 8, FontStyle.Regular), Brushes.Gray, new Rectangle(0, height - 20, width, 20), GraphicsHelper.LeftVerticalCenterAlign);
-                g.DrawRectangle(Pens.Blue, 0, height - 20, width, 20);
+                //g.DrawRectangle(Pens.Blue, 0, height - 20, width, 20);
             }
 
             // draw all images
-            int hoff = 100;
+            int hoff = 120;
             foreach (var image in imageresources)
             {
                 // load image
@@ -76,7 +78,7 @@ namespace Xenon.Renderer
                     Bitmap b = new Bitmap(projassets.Find(a => a.Name == image.AssetRef).CurrentPath);
                     int x = (width - b.Width) / 2;
                     g.DrawImage(b, x, hoff, b.Width, b.Height);
-                    g.DrawRectangle(Pens.Red, x, hoff, b.Width, b.Height);
+                    //g.DrawRectangle(Pens.Red, x, hoff, b.Width, b.Height);
                     hoff += b.Height;
                 }
                 catch (Exception ex)
@@ -85,7 +87,6 @@ namespace Xenon.Renderer
                 }
             }
 
-            // TODO: FIX
 
             var resized = ImageFilters.ImageFilters.UniformStretch(sbmp, sbmp, new ImageFilters.UniformStretchFilterParams() { Fill = Color.White, KFill = Color.White, Height = (int)(1080 * .97), Width = (int)(1920 *.97) });
 

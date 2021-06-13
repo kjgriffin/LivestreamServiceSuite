@@ -127,6 +127,7 @@ namespace LutheRun
             string number = "LSB " + match.Groups["number"]?.Value.Trim() ?? "";
             string tune = "";
             string copyright = Copyright;
+            sb.AppendLine("/// <XENON_AUTO_GEN>");
             sb.Append($"#texthymn(\"{title}\", \"{name}\", \"{tune}\", \"{number}\", \"{copyright}\") {{\r\n");
 
             foreach (var verse in TextVerses)
@@ -140,6 +141,7 @@ namespace LutheRun
                 sb.AppendLine("}");
             }
             sb.Append("}");
+            sb.AppendLine("/// </XENON_AUTO_GEN>");
             return sb.ToString();
         }
 

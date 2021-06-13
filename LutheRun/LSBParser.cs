@@ -150,6 +150,13 @@ namespace LutheRun
                         {
                             ParseLSBServiceElement(selectedelement);
                         }
+                        else if (selectedelement.ClassList.Contains("prayer"))
+                        {
+                            foreach (var c in selectedelement.Children.Where(x => x.LocalName == "lsb-content"))
+                            {
+                                ParseLSBServiceElement(c);
+                            }
+                        }
                     }
                 }
                 else if (element.ClassList.Contains("proper"))
@@ -161,6 +168,13 @@ namespace LutheRun
                     if (ParsePropperAsFullMusic(element))
                     {
                         return;
+                    }
+                }
+                else if (element.ClassList.Contains("prayer"))
+                {
+                    foreach (var c in element.Children.Where(x => x.LocalName == "lsb-content"))
+                    {
+                        ParseLSBServiceElement(c);
                     }
                 }
                 else

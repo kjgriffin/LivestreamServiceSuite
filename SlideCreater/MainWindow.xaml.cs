@@ -435,7 +435,7 @@ namespace SlideCreater
 
 
                 Assets.Add(asset);
-                _proj.Assets = Assets;
+                _proj.Assets.Add(asset);
                 ShowProjectAssets();
             }
         }
