@@ -40,5 +40,10 @@ namespace LutheRun
             return s.Split(Environment.NewLine).ToList();
         }
 
+        public static IEnumerable<T> ItemAsEnumerable<T>(this T item)
+        {
+            yield return item;
+        }
+
     }
 }

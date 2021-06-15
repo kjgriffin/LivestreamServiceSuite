@@ -29,13 +29,9 @@ namespace Xenon.LayoutEngine
         public int ComputeSourceLinesUsed()
         {
             int hlines = 0;
-            foreach (var verse in Verses)
-            {
-                // add number of lines the verse has
-                hlines += verse.Lines;
-                // add 1 for the line of verse music
-                hlines += 1;
-            }
+            // assumes all verses have same number of lines (this should be true according to how it was generated anyways)
+            var v1 = Verses.First();
+            hlines += v1.Lines + v1.Lines * Verses.Count();
             if (RepeatingPostRefrain)
             {
                 hlines += Refrain.Lines * 2;

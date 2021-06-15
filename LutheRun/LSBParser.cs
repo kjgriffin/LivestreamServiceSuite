@@ -84,6 +84,10 @@ namespace LutheRun
                 {
                     serviceElements.Add(LSBElementLiturgy.Parse(element));
                 }
+                foreach (var imageline in element.Children.Where(c => c.ClassList.Contains("image")))
+                {
+                    serviceElements.Add(LSBElementLiturgySung.Parse(imageline));
+                }
             }
             else
             {
@@ -165,13 +169,17 @@ namespace LutheRun
                     {
                         return;
                     }
-                    if (ParsePropperAsFullMusic(element))
+                    if (ParsePropperAsFullMusic(element) == true)
                     {
                         return;
                     }
                 }
                 else if (element.ClassList.Contains("prayer"))
                 {
+                    if (ParseAsPrefab(element))
+                    {
+                        return;
+                    }
                     foreach (var c in element.Children.Where(x => x.LocalName == "lsb-content"))
                     {
                         ParseLSBServiceElement(c);
@@ -196,7 +204,21 @@ namespace LutheRun
                     var images = content.Children.Where(c => c.ClassList.Contains("image"));
                     if (images.Count() > 1)
                     {
-                        serviceElements.Add(LSBElementHymn.Parse(element));
+                        LSBElementHymn hymn = LSBElementHymn.Parse(element);
+                        // check that we really want this as a hymn
+                        if (hymn.Lines <= 2)
+                        {
+                            // lets do it as litimage instead
+                            return false;
+                        }
+                        int variance = hymn.LineWidthVariance(ServiceFileName);
+                        if (variance > 10)
+                        {
+                            // pretty sure it's not one thing, but lots of sung liturgy
+                            return false;
+                        }
+
+                        serviceElements.Add(hymn);
                         return true;
                     }
                 }
@@ -237,19 +259,18 @@ namespace LutheRun
             }
         }
 
-        public async Task LoadWebAssets(Action<Bitmap, string, string> addImageAsAsset)
+        public Task LoadWebAssets(Action<Bitmap, string, string> addImageAsAsset)
         {
-            foreach (var se in serviceElements.Select(s => s as IDownloadWebResource))
+            IEnumerable<IDownloadWebResource> resources = serviceElements.Select(s => s as IDownloadWebResource).Where(s => s != null);
+            IEnumerable<Task> tasks = resources.Select(async s =>
             {
-                if (se != null)
+                await s.GetResourcesFromWeb(Path.GetDirectoryName(ServiceFileName));
+                foreach (var image in s.Images)
                 {
-                    await se.GetResourcesFromWeb(Path.GetDirectoryName(ServiceFileName));
-                    foreach (var image in se.Images)
-                    {
-                        addImageAsAsset(image.Bitmap, image.RetinaScreenURL, image.InferedName);
-                    }
+                    addImageAsAsset(image.Bitmap, image.RetinaScreenURL, image.InferedName);
                 }
-            }
+            });
+            return Task.WhenAll(tasks);
         }
 
     }

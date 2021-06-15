@@ -277,6 +277,19 @@ namespace SlideCreater
 
         }
 
+
+        private Dictionary<XenonCompilerMessageType, bool> MessageVisiblity = new Dictionary<XenonCompilerMessageType, bool>()
+        {
+
+            [XenonCompilerMessageType.Debug] = false,
+            [XenonCompilerMessageType.Message] = true,
+            [XenonCompilerMessageType.Info] = false,
+            [XenonCompilerMessageType.Warning] = true,
+            [XenonCompilerMessageType.Error] = true,
+        };
+
+
+        List<XenonCompilerMessage> logs = new List<XenonCompilerMessage>();
         private void UpdateErrorReport(List<XenonCompilerMessage> messages, XenonCompilerMessage other = null)
         {
             error_report.Dispatcher.Invoke(() =>
@@ -286,6 +299,7 @@ namespace SlideCreater
                 {
                     messages.Insert(0, other);
                 }
+                logs = messages;
                 foreach (var msg in messages)
                 {
                     //Paragraph p = new Paragraph(new Run(msg.ToString()));
@@ -316,7 +330,10 @@ namespace SlideCreater
                         default:
                             break;
                     }
-                    error_report.Children.Add(p);
+                    if (MessageVisiblity[msg.Level])
+                    {
+                        error_report.Children.Add(p);
+                    }
                 }
             });
         }
@@ -665,6 +682,7 @@ namespace SlideCreater
                 ProjectState = ProjectState.Saved;
                 ActionState = ActionState.Ready;
             }
+            UpdateErrorReport(new List<XenonCompilerMessage>());
 
         }
 
@@ -690,6 +708,8 @@ namespace SlideCreater
 
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
+
+            UpdateErrorReport(new List<XenonCompilerMessage>());
 
         }
 
@@ -894,6 +914,18 @@ namespace SlideCreater
             dirty = true;
             ProjectState = ProjectState.Dirty;
             ActionState = ActionState.Ready;
+        }
+
+        private void cb_message_view_debug_Click(object sender, RoutedEventArgs e)
+        {
+            MessageVisiblity[XenonCompilerMessageType.Debug] = cb_message_view_debug.IsChecked ?? false;
+            UpdateErrorReport(logs);
+        }
+
+        private void cb_message_view_info_Click(object sender, RoutedEventArgs e)
+        {
+            MessageVisiblity[XenonCompilerMessageType.Info] = cb_message_view_debug.IsChecked ?? false;
+            UpdateErrorReport(logs);
         }
     }
 }
