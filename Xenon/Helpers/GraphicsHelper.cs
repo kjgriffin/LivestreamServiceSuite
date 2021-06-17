@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
 using System.Text;
@@ -20,12 +21,12 @@ namespace Xenon.Helpers
         /// <param name="source">The source bitmap</param>
         /// <param name="color">Color of border to ignore</param>
         /// <returns>Trimmed bitmap</returns>
-        public static Bitmap TrimBitmap(this Bitmap source, System.Drawing.Color color)
+        public static Bitmap TrimBitmap(this Bitmap source, System.Drawing.Color color, bool omitalpha = true)
         {
-            int t = source.SearchBitmapForColor(color, 1).y;
-            int b = source.SearchBitmapForColor(color, 2).y;
-            int l = source.SearchBitmapForColor(color, 3).x;
-            int r = source.SearchBitmapForColor(color, 4).x;
+            int t = source.SearchBitmapForColor(color, 1, omitalpha).y;
+            int b = source.SearchBitmapForColor(color, 2, omitalpha).y;
+            int l = source.SearchBitmapForColor(color, 3, omitalpha).x;
+            int r = source.SearchBitmapForColor(color, 4, omitalpha).x;
 
             Rectangle rect = new Rectangle(l, t, r - l, b - t);
 
@@ -45,9 +46,13 @@ namespace Xenon.Helpers
         /// <param name="col"></param>
         /// <param name="type"> 1: top, 2: bottom, 3: left, 4: right</param>
         /// <returns></returns>
-        public static (int x, int y) SearchBitmapForColor(this Bitmap source, System.Drawing.Color col, int type)
+        public static (int x, int y) SearchBitmapForColor(this Bitmap source, System.Drawing.Color col, int type, bool omitalpha = true)
         {
-            System.Drawing.Color test = System.Drawing.Color.FromArgb(255, col.R, col.G, col.B);
+            System.Drawing.Color test = col;
+            if (omitalpha)
+            {
+                test = System.Drawing.Color.FromArgb(255, col.R, col.G, col.B);
+            }
             if (type == 1)
             {
                 for (int y = 0; y < source.Height; y++)
@@ -228,6 +233,30 @@ namespace Xenon.Helpers
         }
 
 
+        public static Bitmap InvertImageWithMatrix(this Bitmap source)
+        {
+            Bitmap dest = new Bitmap(source.Width, source.Height);
+
+            ColorMatrix m = new ColorMatrix(new float[][]
+            {
+                new float[] {-1, 0, 0, 0, 0 },
+                new float[] {0, -1, 0, 0, 0 },
+                new float[] {0, 0, -1, 0, 0 },
+                new float[] {0, 0, 0, 1, 0 },
+                new float[] {1, 1, 1, 0, 1 },
+            });
+
+            using (ImageAttributes a = new ImageAttributes())
+            {
+                a.SetColorMatrix(m);
+                using (Graphics g = Graphics.FromImage(dest))
+                {
+                    g.DrawImage(source, new Rectangle(0, 0, source.Width, source.Height), 0, 0, source.Width, source.Height, GraphicsUnit.Pixel, a);
+                }
+            }
+            return dest;
+        }
+
         public static Bitmap InvertImage(this Bitmap source)
         {
             /*
@@ -242,6 +271,27 @@ namespace Xenon.Helpers
                     Color inv = res.GetPixel(x, y);
                     inv = Color.FromArgb(255, 255 - inv.R, 255 - inv.G, 255 - inv.B);
                     res.SetPixel(x, y, inv);
+                }
+            }
+            return res;
+        }
+
+        public static Bitmap ConvertTransparencyToGreyscale(this Bitmap source)
+        {
+            /*
+                https://stackoverflow.com/questions/33024881/invert-image-faster-in-c-sharp
+             */
+            Bitmap res = new Bitmap(source);
+
+            for (int y = 0; y < res.Height; y++)
+            {
+                for (int x = 0; x < res.Width; x++)
+                {
+                    Color inv = res.GetPixel(x, y);
+                    if (inv.R != 0 && inv.G != 0 && inv.B != 0 && inv.A != 255)
+                    {
+                        res.SetPixel(x, y, Color.FromArgb(255, 255 - inv.A, 255 - inv.A, 255 - inv.A));
+                    }
                 }
             }
             return res;
@@ -344,6 +394,18 @@ namespace Xenon.Helpers
         //{
 
         //}
+
+        public static Bitmap Rescale(this Bitmap source, double scale)
+        {
+            int width = (int)(source.Width * scale);
+            int height = (int)(source.Height * scale);
+            Bitmap newimage = new Bitmap(width, height, source.PixelFormat);
+            using (Graphics g = Graphics.FromImage(newimage))
+            {
+                g.DrawImage(source, new Rectangle(0, 0, width, height), new RectangleF(0, 0, source.Width, source.Height), GraphicsUnit.Pixel);
+                return newimage;
+            }
+        }
 
 
         internal static StringFormat TopLeftAlign => new StringFormat() { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Near };

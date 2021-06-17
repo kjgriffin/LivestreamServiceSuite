@@ -46,7 +46,12 @@ namespace LutheRun
                 // need to perform some image manipulation. crop based on black&white to find true size
                 if (image.Loaded)
                 {
-                    int iwidth = Xenon.Helpers.GraphicsHelper.TrimBitmap(image.Bitmap, Color.White).Width;
+                    //int iwidth = Xenon.Helpers.GraphicsHelper.TrimBitmap(image.Bitmap, Color.FromArgb(230, 230, 230)).Width;
+                    var nb = Xenon.Helpers.GraphicsHelper.Rescale(image.Bitmap, 2);
+                    var tb = Xenon.Helpers.GraphicsHelper.TrimBitmap(nb, Color.FromArgb(0,0,0,0), false);
+                    // resize image here?
+                    image.Bitmap = tb;
+                    var iwidth = tb.Width;
                     if (first)
                     {
                         width = iwidth;
@@ -302,8 +307,8 @@ namespace LutheRun
                                // use screenurls
                                try
                                {
-                                   System.Diagnostics.Debug.WriteLine($"Fetching image {ScreenURL} from web.");
-                                   System.Net.WebRequest request = System.Net.WebRequest.Create(ScreenURL);
+                                   System.Diagnostics.Debug.WriteLine($"Fetching image {RetinaScreenURL} from web.");
+                                   System.Net.WebRequest request = System.Net.WebRequest.Create(RetinaScreenURL);
                                    System.Net.WebResponse response = await request.GetResponseAsync();
                                    System.IO.Stream responsestream = response.GetResponseStream();
                                    Bitmap = new Bitmap(responsestream);
@@ -311,7 +316,7 @@ namespace LutheRun
                                }
                                catch (Exception ex)
                                {
-                                   Debug.WriteLine($"Failed trying to download: {ScreenURL}\r\n{ex}");
+                                   Debug.WriteLine($"Failed trying to download: {RetinaScreenURL}\r\n{ex}");
                                }
                            });
 
