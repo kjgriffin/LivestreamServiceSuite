@@ -13,7 +13,7 @@ namespace Xenon.Compiler.AST
             return this;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent)
+        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             // add 1 slides for each image we have to render
             for (int i = 1; i <= 1; i++)

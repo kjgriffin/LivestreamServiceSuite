@@ -22,6 +22,7 @@ using Xenon.Renderer;
 using Xenon.Helpers;
 using Xenon.SlideAssembly;
 using Xenon.AssetManagment;
+using System.Diagnostics;
 
 namespace SlideCreater
 {
@@ -46,7 +47,7 @@ namespace SlideCreater
         SuccessExporting,
         ErrorExporting,
         Saving,
-
+        Downloading,
 
     }
 
@@ -144,6 +145,10 @@ namespace SlideCreater
                     tbActionStatus.Text = "Saving...";
                     sbStatus.Background = System.Windows.Media.Brushes.Purple;
                     break;
+                case ActionState.Downloading:
+                    tbActionStatus.Text = "Downloading resources...";
+                    sbStatus.Background = System.Windows.Media.Brushes.Orange;
+                    break;
                 default:
                     break;
             }
@@ -206,11 +211,10 @@ namespace SlideCreater
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
             TryAutoSave();
-            string text = TbInput.Text;
+            string text = TbInput.GetAllText();
             _proj.SourceCode = text;
 
-            tbConsole.Text = string.Empty;
-
+            //tbConsole.Text = string.Empty;
 
             var compileprogress = new Progress<int>(percent =>
             {
@@ -242,13 +246,7 @@ namespace SlideCreater
                 {
                     ActionState = ActionState.ErrorBuilding;
                 });
-                tbConsole.Dispatcher.Invoke(() =>
-                {
-                    foreach (var msg in builder.Messages)
-                    {
-                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: {msg}";
-                    }
-                });
+                UpdateErrorReport(builder.Messages);
                 return;
             }
 
@@ -264,11 +262,7 @@ namespace SlideCreater
                 sbStatus.Dispatcher.Invoke(() =>
                 {
                     ActionState = ActionState.ErrorBuilding;
-                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Failed]: Unknown Reason? {ex}";
-                    foreach (var err in builder.Messages)
-                    {
-                        tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Error]: {err}";
-                    }
+                    UpdateErrorReport(builder.Messages, new XenonCompilerMessage() { ErrorMessage = $"Render failed for reason: {ex}", ErrorName = "Render Failure", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Error, Token = "" });
                 });
                 return;
             }
@@ -276,15 +270,72 @@ namespace SlideCreater
             sbStatus.Dispatcher.Invoke(() =>
             {
                 ActionState = ActionState.SuccessBuilding;
-                foreach (var msg in builder.Messages)
-                {
-                    tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Renderer Message]: {msg}";
-                }
-                tbConsole.Text = tbConsole.Text + $"{Environment.NewLine}[Render Succeded]: Slides built!";
+                UpdateErrorReport(builder.Messages, new XenonCompilerMessage() { ErrorMessage = "Slides build!", ErrorName = "Render Success", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
             });
 
             UpdatePreviews();
 
+        }
+
+
+        private Dictionary<XenonCompilerMessageType, bool> MessageVisiblity = new Dictionary<XenonCompilerMessageType, bool>()
+        {
+
+            [XenonCompilerMessageType.Debug] = false,
+            [XenonCompilerMessageType.Message] = true,
+            [XenonCompilerMessageType.Info] = false,
+            [XenonCompilerMessageType.Warning] = true,
+            [XenonCompilerMessageType.Error] = true,
+        };
+
+
+        List<XenonCompilerMessage> logs = new List<XenonCompilerMessage>();
+        private void UpdateErrorReport(List<XenonCompilerMessage> messages, XenonCompilerMessage other = null)
+        {
+            error_report.Dispatcher.Invoke(() =>
+            {
+                error_report.Children.Clear();
+                if (other != null)
+                {
+                    messages.Insert(0, other);
+                }
+                logs = messages;
+                foreach (var msg in messages)
+                {
+                    //Paragraph p = new Paragraph(new Run(msg.ToString()));
+                    TextBlock p = new TextBlock();
+                    p.Text = msg.ToString();
+                    switch (msg.Level)
+                    {
+                        case XenonCompilerMessageType.Debug:
+                            p.Background = System.Windows.Media.Brushes.LightGray;
+                            p.Foreground = System.Windows.Media.Brushes.Black;
+                            break;
+                        case XenonCompilerMessageType.Message:
+                            p.Background = System.Windows.Media.Brushes.DeepSkyBlue;
+                            p.Foreground = System.Windows.Media.Brushes.Black;
+                            break;
+                        case XenonCompilerMessageType.Info:
+                            p.Background = System.Windows.Media.Brushes.WhiteSmoke;
+                            p.Foreground = System.Windows.Media.Brushes.Black;
+                            break;
+                        case XenonCompilerMessageType.Warning:
+                            p.Background = System.Windows.Media.Brushes.Orange;
+                            p.Foreground = System.Windows.Media.Brushes.Black;
+                            break;
+                        case XenonCompilerMessageType.Error:
+                            p.Background = System.Windows.Media.Brushes.Red;
+                            p.Foreground = System.Windows.Media.Brushes.Black;
+                            break;
+                        default:
+                            break;
+                    }
+                    if (MessageVisiblity[msg.Level])
+                    {
+                        error_report.Children.Add(p);
+                    }
+                }
+            });
         }
 
         private void UpdatePreviews()
@@ -401,7 +452,7 @@ namespace SlideCreater
 
 
                 Assets.Add(asset);
-                _proj.Assets = Assets;
+                _proj.Assets.Add(asset);
                 ShowProjectAssets();
             }
         }
@@ -442,9 +493,10 @@ namespace SlideCreater
 
         private void InsertTextCommand(string InsertCommand)
         {
-            int newindex = TbInput.CaretIndex + InsertCommand.Length;
-            TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
-            TbInput.CaretIndex = newindex;
+            TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
+            //int newindex = TbInput.CaretIndex + InsertCommand.Length;
+            //TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
+            //TbInput.CaretIndex = newindex;
         }
 
         private void AssetItemCtrl_OnDeleteAssetRequest(object sender, ProjectAsset asset)
@@ -467,9 +519,10 @@ namespace SlideCreater
             {
                 InsertCommand = $"\r\n#fitimage({asset.Name})\r\n";
             }
-            int newindex = TbInput.CaretIndex + InsertCommand.Length;
-            TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
-            TbInput.CaretIndex = newindex;
+            TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
+            //int newindex = TbInput.CaretIndex + InsertCommand.Length;
+            //TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
+            //TbInput.CaretIndex = newindex;
         }
 
         private async void ExportSlides(object sender, RoutedEventArgs e)
@@ -511,7 +564,7 @@ namespace SlideCreater
                 });
             });
 
-            _proj.SourceCode = TbInput.Text;
+            _proj.SourceCode = TbInput.GetAllText();
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
             //sfd.DefaultExt = "json";
@@ -533,7 +586,7 @@ namespace SlideCreater
         private void SaveAsJSON()
         {
             TryAutoSave();
-            _proj.SourceCode = TbInput.Text;
+            _proj.SourceCode = TbInput.GetAllText();
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
             sfd.DefaultExt = "json";
@@ -569,7 +622,7 @@ namespace SlideCreater
                 slidelist.Items.Clear();
                 slidepreviews.Clear();
                 _proj = Project.Load(ofd.FileName);
-                TbInput.Text = _proj.SourceCode;
+                TbInput.SetText(_proj.SourceCode);
                 Assets = _proj.Assets;
                 try
                 {
@@ -611,7 +664,7 @@ namespace SlideCreater
                 FocusSlide.Clear();
                 _proj.CleanupResources();
                 _proj = await Project.LoadProject(ofd.FileName);
-                TbInput.Text = _proj.SourceCode;
+                TbInput.SetText(_proj.SourceCode);
                 Assets = _proj.Assets;
                 try
                 {
@@ -629,6 +682,7 @@ namespace SlideCreater
                 ProjectState = ProjectState.Saved;
                 ActionState = ActionState.Ready;
             }
+            UpdateErrorReport(new List<XenonCompilerMessage>());
 
         }
 
@@ -648,12 +702,14 @@ namespace SlideCreater
             Assets.Clear();
             AssetList.Children.Clear();
             FocusSlide.Clear();
-            TbInput.Text = string.Empty;
+            TbInput.SetText(string.Empty);
             _proj.CleanupResources();
             _proj = new Project(true);
 
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
+
+            UpdateErrorReport(new List<XenonCompilerMessage>());
 
         }
 
@@ -687,12 +743,9 @@ namespace SlideCreater
         }
 
         private bool dirty = false;
-        private void SourceTextChanged(object sender, TextChangedEventArgs e)
-        {
-            dirty = true;
-            ProjectState = ProjectState.Dirty;
-            ActionState = ActionState.Ready;
-        }
+        //private void SourceTextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //}
 
         private void AssetsChanged()
         {
@@ -776,7 +829,7 @@ namespace SlideCreater
             {
                 save.SourceAssets.Add(asset.OriginalPath);
             }
-            save.SourceCode = TbInput.Text;
+            save.SourceCode = TbInput.GetAllText();
             try
             {
                 string json = JsonSerializer.Serialize(save);
@@ -791,7 +844,8 @@ namespace SlideCreater
             }
             catch (Exception ex)
             {
-                tbConsole.Text += $"Autosave Failed {ex}";
+                //tbConsole.Text += $"Autosave Failed {ex}";
+                Debug.WriteLine($"Autosave Failed {ex}");
             }
         }
 
@@ -832,7 +886,46 @@ namespace SlideCreater
             NewProject();
             // load assets
             AddAssetsFromPaths(save.SourceAssets);
-            TbInput.Text = save.SourceCode;
+            TbInput.SetText(save.SourceCode);
+        }
+
+        private async void ClickImportService(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Import from save of Lutheran Service Bulletin";
+            ofd.Filter = "LSB Service (*.html)|*.html";
+            if (ofd.ShowDialog() == true)
+            {
+                ActionState = ActionState.Building;
+                LutheRun.LSBParser parser = new LutheRun.LSBParser();
+                await parser.ParseHTML(ofd.FileName);
+                parser.CompileToXenon();
+                ActionState = ActionState.Downloading;
+                await parser.LoadWebAssets(_proj.CreateImageAsset);
+                AssetsChanged();
+                ShowProjectAssets();
+                ActionState = ActionState.Ready;
+                TbInput.SetText("/*\r\n" + parser.XenonDebug() + "*/\r\n" + parser.XenonText);
+            }
+        }
+
+        private void SourceTextChanged(object sender, TextChangedEventArgs e)
+        {
+            dirty = true;
+            ProjectState = ProjectState.Dirty;
+            ActionState = ActionState.Ready;
+        }
+
+        private void cb_message_view_debug_Click(object sender, RoutedEventArgs e)
+        {
+            MessageVisiblity[XenonCompilerMessageType.Debug] = cb_message_view_debug.IsChecked ?? false;
+            UpdateErrorReport(logs);
+        }
+
+        private void cb_message_view_info_Click(object sender, RoutedEventArgs e)
+        {
+            MessageVisiblity[XenonCompilerMessageType.Info] = cb_message_view_debug.IsChecked ?? false;
+            UpdateErrorReport(logs);
         }
     }
 }

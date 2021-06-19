@@ -10,9 +10,9 @@ namespace Xenon.Compiler
     {
         public IXenonASTCommand Command { get; set; }
 
-        public void Generate(Project project, IXenonASTElement _Parent)
+        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            Command?.Generate(project, _Parent);
+            Command?.Generate(project, _Parent, Logger);
         }
 
         public void GenerateDebug(Project project)
@@ -92,6 +92,13 @@ namespace Xenon.Compiler
                 XenonASTAutoFitImage autofit = new XenonASTAutoFitImage();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.AutoFitImage]);
                 expr.Command = (IXenonASTCommand)autofit.Compile(Lexer, Logger);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.StitchedImage]))
+            {
+                XenonASTStitchedHymn hymn = new XenonASTStitchedHymn();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.StitchedImage]);
+                expr.Command = (IXenonASTCommand)hymn.Compile(Lexer, Logger);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]))

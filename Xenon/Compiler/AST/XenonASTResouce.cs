@@ -22,7 +22,7 @@ namespace Xenon.Compiler
             return resource;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent)
+        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide res = new Slide
             {

@@ -6,7 +6,7 @@ using Xenon.Helpers;
 
 namespace Xenon.Renderer.ImageFilters
 {
-    static class ImageFilters
+    public static class ImageFilters
     {
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace Xenon.Renderer.ImageFilters
                 for (int x = 0; x < _b.Width; x++)
                 {
                     Color pix = source.GetPixel(x, y);
-                    if (Math.Abs(pix.R - fparams.Identifier.R) <= fparams.RTolerance && Math.Abs(pix.G - fparams.Identifier.G) <= fparams.GTolerance && Math.Abs(pix.B - fparams.Identifier.B) <= fparams.BTolerance)
+                    if (Math.Abs(pix.R - fparams.Identifier.R) <= fparams.RTolerance && Math.Abs(pix.G - fparams.Identifier.G) <= fparams.GTolerance && Math.Abs(pix.B - fparams.Identifier.B) <= fparams.BTolerance && ((Math.Abs(pix.A - fparams.Identifier.A) <= fparams.ATolerance && fparams.CheckAlpha) || !fparams.CheckAlpha))
                     {
                         if (!fparams.IsExcludeMatch)
                         {

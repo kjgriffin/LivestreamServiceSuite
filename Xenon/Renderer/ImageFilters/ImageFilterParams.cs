@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Xenon.Renderer.ImageFilters
 {
-    class ImageFilterParams
+    public class ImageFilterParams
     {
     }
 
-    class CenterAssetFillFilterParams : ImageFilterParams
+    public class CenterAssetFillFilterParams : ImageFilterParams
     {
         /// <summary>
         /// Path to image asset.
@@ -17,7 +17,7 @@ namespace Xenon.Renderer.ImageFilters
         public string AssetPath { get; set; }
     }
 
-    class SolidColorCanvasFilterParams : ImageFilterParams
+    public class SolidColorCanvasFilterParams : ImageFilterParams
     {
         /// <summary>
         /// Width of canvas.
@@ -37,7 +37,7 @@ namespace Xenon.Renderer.ImageFilters
         public Color KBackground { get; set; }
     }
 
-    class CropFilterParams : ImageFilterParams
+    public class CropFilterParams : ImageFilterParams
     {
 
         public enum CropBound
@@ -74,7 +74,7 @@ namespace Xenon.Renderer.ImageFilters
         public int BTolerance { get; set; }
     }
 
-    class ColorEditFilterParams : ImageFilterParams
+    public class ColorEditFilterParams : ImageFilterParams
     {
         /// <summary>
         /// Color to match for applying color edit to.
@@ -104,10 +104,18 @@ namespace Xenon.Renderer.ImageFilters
         /// B tolerance.
         /// </summary>
         public int BTolerance { get; set; }
+        /// <summary>
+        /// Alpha tolerance.
+        /// </summary>
+        public int ATolerance { get; set; } = 0;
+        /// <summary>
+        /// If true alpha will also be compared.
+        /// </summary>
+        public bool CheckAlpha { get; set; } = false;
 
     }
         
-    class UniformStretchFilterParams : ImageFilterParams
+    public class UniformStretchFilterParams : ImageFilterParams
     {
         /// <summary>
         /// Target Width.
@@ -127,7 +135,7 @@ namespace Xenon.Renderer.ImageFilters
         public Color KFill { get; set; }
     }
 
-    class CenterOnBackgroundFilterParams : ImageFilterParams
+    public class CenterOnBackgroundFilterParams : ImageFilterParams
     {
         /// <summary>
         /// Background width.

@@ -28,6 +28,7 @@ namespace Xenon.Renderer
         CopySlideRenderer csr = new CopySlideRenderer();
         ScriptRenderer sr = new ScriptRenderer();
         ImageFilterRenderer ifr = new ImageFilterRenderer();
+        StitchedImageRenderer sir = new StitchedImageRenderer();
 
         public SlideRenderer(Project proj)
         {
@@ -74,6 +75,8 @@ namespace Xenon.Renderer
                     return ifr.RenderImageSlide(slide, Messages);
                 case SlideFormat.LiturgyImage:
                     return isr.RenderImageSlide(slide, Messages);
+                case SlideFormat.StichedImage:
+                    return sir.RenderSlide(slide, Messages, _project.Assets);
                 case SlideFormat.Reading:
                     return rsr.RenderSlide(_project.Layouts.ReadingLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.SermonTitle:

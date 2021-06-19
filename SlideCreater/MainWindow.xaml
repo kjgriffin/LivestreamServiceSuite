@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SlideCreater"
+        xmlns:local="clr-namespace:SlideCreater" xmlns:uicontrols="clr-namespace:UIControls;assembly=UIControls"
         mc:Ignorable="d"
         Closing="OnWindowClosing"
         Title="Slide Creater" Height="800" Width="1000">
@@ -27,6 +27,9 @@
             <MenuItem Header="View">
                 <MenuItem Name="mipreviewslide" Click="ClickTogglePreviewSlide" Header="Preview Slides" IsChecked="true" IsCheckable="true"></MenuItem>
                 <MenuItem Name="mipreviewkey" Click="ClickTogglePreviewKey" Header="Preview Keys" IsCheckable="true"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Import">
+                <MenuItem Name="miimport" Click="ClickImportService" Header="Import from LSB Service"></MenuItem>
             </MenuItem>
             <MenuItem Header="Recovery">
                 <MenuItem Click="RecoverAutoSave" Header="Recover Auto Save"></MenuItem> 
@@ -79,7 +82,7 @@
                         <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
                     <ScrollViewer Grid.Row="0">
-                        <TextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged" TextWrapping="WrapWithOverflow" SpellCheck.IsEnabled="True" AcceptsReturn="True" AcceptsTab="True"></TextBox>
+                        <uicontrols:BetterTextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged"></uicontrols:BetterTextBox>
                     </ScrollViewer>
                     <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"></GridSplitter>
                     <Grid Grid.Row="2">
@@ -88,12 +91,20 @@
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0" Background="LightGray">
-                            <TextBlock>
-                                Render Output:
-                            </TextBlock>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock>
+                                Error List:
+                                </TextBlock>
+                                <StackPanel Orientation="Horizontal" Margin="50,0,0,0">
+                                    <CheckBox Name="cb_message_view_debug" Click="cb_message_view_debug_Click">Debug</CheckBox>
+                                    <CheckBox Name="cb_message_view_info" Click="cb_message_view_info_Click">Info</CheckBox>
+                                </StackPanel>
+                            </StackPanel>
                         </Grid>
                         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                            <TextBlock Name="tbConsole"></TextBlock>
+                            <!--<TextBlock Name="tbConsole"></TextBlock>-->
+                            <!--<FlowDocument Name="error_report"></FlowDocument>-->
+                            <StackPanel Name="error_report" Orientation="Vertical"></StackPanel>
                         </ScrollViewer>
                     </Grid>
                 </Grid>

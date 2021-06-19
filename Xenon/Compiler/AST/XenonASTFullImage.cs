@@ -32,7 +32,7 @@ namespace Xenon.Compiler
             return fullimage;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent)
+        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             // create a full image slide
             Slide imageslide = new Slide();

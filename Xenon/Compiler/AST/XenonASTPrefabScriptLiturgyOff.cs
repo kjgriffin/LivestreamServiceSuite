@@ -24,7 +24,7 @@ namespace Xenon.Compiler.AST
             return this;
         }
 
-        void IXenonASTElement.Generate(Project project, IXenonASTElement _Parent)
+        void IXenonASTElement.Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide slide = new Slide();
             slide.Name = "UNNAMED_prefab_script";

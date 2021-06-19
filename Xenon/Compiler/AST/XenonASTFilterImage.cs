@@ -339,7 +339,7 @@ namespace Xenon.Compiler
 
         }
 
-        public void Generate(Project project, IXenonASTElement _Project)
+        public void Generate(Project project, IXenonASTElement _Project, XenonErrorLogger Logger)
         {
             // create a full image slide
             Slide imageslide = new Slide();

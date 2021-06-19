@@ -26,7 +26,7 @@ namespace Xenon.Compiler
 
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent)
+        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide readingslide = new Slide();
             readingslide.Name = "UNNAMED_reading";

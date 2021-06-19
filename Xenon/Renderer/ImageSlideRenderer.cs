@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using Xenon.Helpers;
+using Xenon.Renderer.ImageFilters;
 
 
 namespace Xenon.Renderer
@@ -187,7 +188,7 @@ namespace Xenon.Renderer
             // apply color-correction before inversion
             if (ccoptions.colorcorrect)
             {
-                img = GraphicsHelper.DichotimizeImage(img, ccoptions.match, ccoptions.tolerance, ccoptions.force);    
+                img = GraphicsHelper.DichotimizeImage(img, ccoptions.match, ccoptions.tolerance, ccoptions.force);
             }
 
             if (invertblackandwhite)
@@ -215,7 +216,17 @@ namespace Xenon.Renderer
 
             double fillsize = 0.93;
 
-            Bitmap trimmed = sourceimage.TrimBitmap(Color.White);
+            Bitmap ssb = sourceimage;
+            int rescale = sourceimage.Width < 1500 ? 2 : 1;
+            Bitmap nb = new Bitmap(sourceimage.Width * rescale, sourceimage.Height * rescale);
+
+            using (Graphics g = Graphics.FromImage(nb))
+            {
+                g.Clear(Color.White);
+                g.DrawImage(sourceimage, 0, 0, sourceimage.Width * rescale, sourceimage.Height * rescale);
+            }
+
+            Bitmap trimmed = nb.TrimBitmap(Color.White);
 
             xscale = (double)(Layout.LiturgyLayout.Key.Width * fillsize) / trimmed.Width;
             yscale = (double)(Layout.LiturgyLayout.Key.Height * fillsize) / trimmed.Height;
@@ -227,7 +238,7 @@ namespace Xenon.Renderer
 
             gfx.Clear(System.Drawing.Color.Gray);
             gfx.FillRectangle(System.Drawing.Brushes.Black, Layout.LiturgyLayout.Key);
-            gfx.DrawImage(GraphicsHelper.InvertImage(trimmed), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
+            gfx.DrawImage(trimmed.InvertImage(), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
             return bmp;
 
         }
@@ -247,7 +258,19 @@ namespace Xenon.Renderer
 
             double fillsize = 0.93;
 
-            Bitmap trimmed = sourceimage.TrimBitmap(Color.White);
+            Bitmap alpharemoved = ImageFilters.ImageFilters.ColorEdit(sourceimage, sourceimage, new ColorEditFilterParams()
+            {
+                ForKey = false,
+                IsExcludeMatch = false,
+                Identifier = Color.FromArgb(0, 0, 0, 0),
+                RTolerance = 0,
+                GTolerance = 0,
+                BTolerance = 0,
+                ATolerance = 0,
+                CheckAlpha = true,
+                Replace = Color.FromArgb(255, 255, 255, 255),
+            }).b;
+            Bitmap trimmed = alpharemoved.TrimBitmap(Color.White);
 
             xscale = (double)(Layout.LiturgyLayout.Key.Width * fillsize) / trimmed.Width;
             yscale = (double)(Layout.LiturgyLayout.Key.Height * fillsize) / trimmed.Height;

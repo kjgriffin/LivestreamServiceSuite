@@ -43,6 +43,7 @@ namespace SlideCreater
         {
             // display name
             AssetName.Text = Asset.Name;
+            ttName.Content = Asset.Name;
             // load image/video
             ImgAsset.Source = null;
             VideoAsset.Source = null;
@@ -52,6 +53,7 @@ namespace SlideCreater
                 lbhymn.Visibility = Visibility.Visible;
                 lbliturgy.Visibility = Visibility.Visible;
                 lbbells.Visibility = Visibility.Hidden;
+                tbunloaded.Visibility = Visibility.Hidden;
             }
             if (Asset.Type == AssetType.Video)
             {
@@ -62,6 +64,7 @@ namespace SlideCreater
                 lbhymn.Visibility = Visibility.Hidden;
                 lbliturgy.Visibility = Visibility.Hidden;
                 lbbells.Visibility = Visibility.Hidden;
+                tbunloaded.Visibility = Visibility.Hidden;
             }
             if (Asset.Type == AssetType.Audio)
             {
@@ -70,6 +73,7 @@ namespace SlideCreater
                 lbliturgy.Visibility = Visibility.Hidden;
                 lbinsert.Visibility = Visibility.Hidden;
                 lbbells.Visibility = Visibility.Visible;
+                tbunloaded.Visibility = Visibility.Hidden;
             }
 
         }

@@ -24,17 +24,24 @@ namespace Xenon.Compiler
 
         public async Task<bool> BuildProject(Project proj, string inputtext, List<ProjectAsset> Assets, IProgress<int> progress)
         {
-            await Task.Run(() =>
+            try
             {
-                try
+                await Task.Run(async () =>
                 {
-                    Project = compiler.Compile(proj, inputtext, Assets, progress);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString(), "Master Compiler Exception");
-                }
-            });
+                    try
+                    {
+                        Project = await compiler.Compile(proj, inputtext, Assets, progress);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Master Compiler Exception");
+            }
 
             Messages.AddRange(compiler.Logger.AllErrors);
             return compiler.CompilerSucess;
@@ -58,12 +65,12 @@ namespace Xenon.Compiler
                     int completedslidecount = 0;
 
                     Parallel.ForEach(project.Slides, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, (Slide s) =>
-                     {
-                         slides.Add(sr.RenderSlide(s, Messages));
-                         Interlocked.Increment(ref completedslidecount);
-                         int prog = (int)(completedslidecount / (double)project.Slides.Count * 100);
-                         progress.Report(prog);
-                     });
+                    {
+                        slides.Add(sr.RenderSlide(s, Messages));
+                        Interlocked.Increment(ref completedslidecount);
+                        int prog = (int)(completedslidecount / (double)project.Slides.Count * 100);
+                        progress.Report(prog);
+                    });
 
                 });
             }

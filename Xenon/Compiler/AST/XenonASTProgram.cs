@@ -11,11 +11,12 @@ namespace Xenon.Compiler
 
         public List<XenonASTExpression> Expressions { get; set; } = new List<XenonASTExpression>();
 
-        public void Generate(Project project, IXenonASTElement _Parent)
+        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             foreach (var item in Expressions)
             {
-                item.Generate(project, this);
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression", ErrorName = "Project Generation Debug", Generator = "XenonASTProgram:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
+                item.Generate(project, this, Logger);
             }
         }
 
