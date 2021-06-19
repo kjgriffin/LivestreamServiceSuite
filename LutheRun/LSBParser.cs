@@ -206,16 +206,20 @@ namespace LutheRun
                     {
                         LSBElementHymn hymn = LSBElementHymn.Parse(element);
                         // check that we really want this as a hymn
-                        if (hymn.Lines <= 2)
+                        // biggest clue is separate text lines
+                        if (!hymn.HasSeperateTextLines())
                         {
-                            // lets do it as litimage instead
-                            return false;
-                        }
-                        int variance = hymn.LineWidthVariance(ServiceFileName);
-                        if (variance > 10)
-                        {
-                            // pretty sure it's not one thing, but lots of sung liturgy
-                            return false;
+                            if (hymn.Lines <= 2)
+                            {
+                                // lets do it as litimage instead
+                                return false;
+                            }
+                            int variance = hymn.LineWidthVariance(Path.GetDirectoryName(ServiceFileName));
+                            if (variance > 10 * hymn.Lines)
+                            {
+                                // pretty sure it's not one thing, but lots of sung liturgy
+                                return false;
+                            }
                         }
 
                         serviceElements.Add(hymn);
@@ -264,7 +268,7 @@ namespace LutheRun
             IEnumerable<IDownloadWebResource> resources = serviceElements.Select(s => s as IDownloadWebResource).Where(s => s != null);
             IEnumerable<Task> tasks = resources.Select(async s =>
             {
-                await s.GetResourcesFromWeb(Path.GetDirectoryName(ServiceFileName));
+                await s.GetResourcesFromLocalOrWeb(Path.GetDirectoryName(ServiceFileName));
                 foreach (var image in s.Images)
                 {
                     addImageAsAsset(image.Bitmap, image.RetinaScreenURL, image.InferedName);

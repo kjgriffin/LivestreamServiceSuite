@@ -237,7 +237,8 @@ namespace Xenon.Compiler.AST
              */
 
             // check for a case 2 hymn
-            int numverses = CollatedLines.First().words.Count;
+            var firstcollated = CollatedLines.FirstOrDefault();
+            int numverses = firstcollated.words?.Count ?? 0;
 
             if (numverses == 0)
             {
@@ -261,10 +262,10 @@ namespace Xenon.Compiler.AST
                     slide.Data["copyright-tune"] = CopyrightTune;
                 }
 
-                slide.Data["ordered-images"] = CollatedLines.Select(l => l.music).ToList();
+                slide.Data["ordered-images"] = ImageAssets.Select(i => new LSBImageResource(i, ImageSizes[i])).ToList();
                 project.Slides.Add(slide);
 
-                var heightaprox = 200 + CollatedLines.Select(l => l.music.Size.Height).Aggregate((item, sum) => sum + item);
+                var heightaprox = 200 + ImageAssets.Select(i => ImageSizes[i].Height).Aggregate((item, sum) => sum + item);
                 if (heightaprox > 1200)
                 {
                     Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Hymn over height: {HymnName}. Hymn interpreted to have only one verse,w with all lines on the same slide. Expected to have {heightaprox} height.", ErrorName = "Verse Overheight", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = "" });

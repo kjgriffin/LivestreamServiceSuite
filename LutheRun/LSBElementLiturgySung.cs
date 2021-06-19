@@ -66,7 +66,7 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_SUNG_LITUGY.";
         }
 
-        public Task GetResourcesFromWeb(string localpath = "")
+        public Task GetResourcesFromLocalOrWeb(string localpath = "")
         {
             return Task.Run(async () =>
             {

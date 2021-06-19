@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Xenon.Helpers;
 
 namespace LutheRun
 {
@@ -35,23 +36,44 @@ namespace LutheRun
             }
         }
 
+        public bool HasSeperateTextLines(string localpath = "")
+        {
+            int textlines = 0;
+
+            Task.Run(() => GetResourcesFromLocalOrWeb(localpath)).Wait();
+            foreach (var image in ImageUrls)
+            {
+                if (image.Loaded)
+                {
+                    //var tb = Xenon.Helpers.GraphicsHelper.TrimBitmap(image.Bitmap, Color.FromArgb(0, 0, 0, 0), false);
+                    if (image.Bitmap.Height < 45)
+                    {
+                        textlines += 1;
+                    }
+                }
+            }
+
+            return textlines > 0;
+
+        }
+
         public int LineWidthVariance(string localpath = "")
         {
             int variance = 0;
             int width = 0;
             bool first = true;
-            Task.Run(() => GetResourcesFromWeb(localpath)).Wait();
+            Task.Run(() => GetResourcesFromLocalOrWeb(localpath)).Wait();
             foreach (var image in ImageUrls)
             {
                 // need to perform some image manipulation. crop based on black&white to find true size
                 if (image.Loaded)
                 {
                     //int iwidth = Xenon.Helpers.GraphicsHelper.TrimBitmap(image.Bitmap, Color.FromArgb(230, 230, 230)).Width;
-                    var nb = Xenon.Helpers.GraphicsHelper.Rescale(image.Bitmap, 2);
-                    var tb = Xenon.Helpers.GraphicsHelper.TrimBitmap(nb, Color.FromArgb(0,0,0,0), false);
+                    //var nb = Xenon.Helpers.GraphicsHelper.Rescale(image.Bitmap, 2);
+                    var iwidth = Xenon.Helpers.GraphicsHelper.TrimBitmap(image.Bitmap, Color.FromArgb(0, 0, 0, 0), false).Width;
                     // resize image here?
-                    image.Bitmap = tb;
-                    var iwidth = tb.Width;
+                    //image.Bitmap = tb;
+                    //var iwidth = image.Bitmap.Width;
                     if (first)
                     {
                         width = iwidth;
@@ -215,13 +237,13 @@ namespace LutheRun
             return sb.ToString();
         }
 
-        public Task GetResourcesFromWeb(string localpath = "")
+        public Task GetResourcesFromLocalOrWeb(string localpath = "")
         {
             var tasks = ImageUrls.Select(async imageurls =>
             {
                 if (!imageurls.Loaded)
                 {
-                    await imageurls.GetResourcesFromWeb(localpath);
+                    await imageurls.GetResourcesFromLocalOrWeb(localpath);
                 }
             });
             return Task.WhenAll(tasks);
@@ -282,41 +304,57 @@ namespace LutheRun
                 return imageline;
             }
 
-            public Task GetResourcesFromWeb(string localpath = "")
+            public Task GetResourcesFromLocalOrWeb(string localpath = "")
             {
 
                 return Task.Run(async () =>
                            {
+                               Bitmap b = null;
                                // try loading locally
                                string path = Path.Combine(localpath, LocalPath);
                                string file = Path.GetFullPath(path);
+                               bool foundlocal = false;
                                if (File.Exists(file))
                                {
                                    try
                                    {
                                        System.Diagnostics.Debug.WriteLine($"Loading image from local file {path}.");
-                                       Bitmap = new Bitmap(file);
-                                       Loaded = true;
-                                       return;
+                                       b = new Bitmap(file);
+                                       foundlocal = true;
                                    }
                                    catch (Exception ex)
                                    {
                                        System.Diagnostics.Debug.WriteLine($"Failed to load local file {path} because {ex}. Falling back to web.");
                                    }
                                }
-                               // use screenurls
+                               if (!foundlocal)
+                               {
+                                   System.Diagnostics.Debug.WriteLine($"Failed to load local file {path} since it does not exist. Falling back to web.");
+                                   // use screenurls
+                                   try
+                                   {
+                                       System.Diagnostics.Debug.WriteLine($"Fetching image {ScreenURL} from web.");
+                                       System.Net.WebRequest request = System.Net.WebRequest.Create(ScreenURL);
+                                       System.Net.WebResponse response = await request.GetResponseAsync();
+                                       System.IO.Stream responsestream = response.GetResponseStream();
+                                       b = new Bitmap(responsestream);
+                                   }
+                                   catch (Exception ex)
+                                   {
+                                       Debug.WriteLine($"Failed trying to download: {ScreenURL}\r\n{ex}");
+                                   }
+                               }
                                try
                                {
-                                   System.Diagnostics.Debug.WriteLine($"Fetching image {RetinaScreenURL} from web.");
-                                   System.Net.WebRequest request = System.Net.WebRequest.Create(RetinaScreenURL);
-                                   System.Net.WebResponse response = await request.GetResponseAsync();
-                                   System.IO.Stream responsestream = response.GetResponseStream();
-                                   Bitmap = new Bitmap(responsestream);
-                                   Loaded = true;
+                                   if (b != null)
+                                   {
+                                       Bitmap = b;
+                                       Loaded = true;
+                                   }
                                }
                                catch (Exception ex)
                                {
-                                   Debug.WriteLine($"Failed trying to download: {RetinaScreenURL}\r\n{ex}");
+                                   Debug.WriteLine($"Failed setting image for: {file}\r\n{ex}");
                                }
                            });
 

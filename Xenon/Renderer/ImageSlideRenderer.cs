@@ -216,29 +216,17 @@ namespace Xenon.Renderer
 
             double fillsize = 0.93;
 
-            Bitmap alpharemoved = ImageFilters.ImageFilters.ColorEdit(sourceimage, sourceimage, new ColorEditFilterParams()
+            Bitmap ssb = sourceimage;
+            int rescale = sourceimage.Width < 1500 ? 2 : 1;
+            Bitmap nb = new Bitmap(sourceimage.Width * rescale, sourceimage.Height * rescale);
+
+            using (Graphics g = Graphics.FromImage(nb))
             {
-                ForKey = false,
-                IsExcludeMatch = false,
-                Identifier = Color.FromArgb(0, 0, 0, 0),
-                RTolerance = 0,
-                GTolerance = 0,
-                BTolerance = 0,
-                ATolerance = 0,
-                CheckAlpha = true,
-                Replace = Color.FromArgb(255, 255, 255, 255),
-            }).b;
+                g.Clear(Color.White);
+                g.DrawImage(sourceimage, 0, 0, sourceimage.Width * rescale, sourceimage.Height * rescale);
+            }
 
-            alpharemoved.Save("D:\\tmp\\test\\debug_no_alpha.png");
-
-            Bitmap trimmed = alpharemoved.TrimBitmap(Color.White);
-            trimmed.Save("D:\\tmp\\test\\debug_trimmed.png");
-
-            Bitmap alphacorrected = trimmed.ConvertTransparencyToGreyscale();
-            alphacorrected.Save("D:\\tmp\\test\\debug_alphacorrected.png");
-
-            Bitmap inverted = GraphicsHelper.InvertImage(alphacorrected);
-            inverted.Save("D:\\tmp\\test\\debug_inverted.png");
+            Bitmap trimmed = nb.TrimBitmap(Color.White);
 
             xscale = (double)(Layout.LiturgyLayout.Key.Width * fillsize) / trimmed.Width;
             yscale = (double)(Layout.LiturgyLayout.Key.Height * fillsize) / trimmed.Height;
@@ -250,7 +238,7 @@ namespace Xenon.Renderer
 
             gfx.Clear(System.Drawing.Color.Gray);
             gfx.FillRectangle(System.Drawing.Brushes.Black, Layout.LiturgyLayout.Key);
-            gfx.DrawImage(GraphicsHelper.InvertImage(trimmed), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
+            gfx.DrawImage(trimmed.InvertImage(), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
             return bmp;
 
         }

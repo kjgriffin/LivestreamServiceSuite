@@ -28,7 +28,14 @@ namespace Xenon.Compiler
             {
                 await Task.Run(async () =>
                 {
-                    Project = await compiler.Compile(proj, inputtext, Assets, progress);
+                    try
+                    {
+                        Project = await compiler.Compile(proj, inputtext, Assets, progress);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
                 });
             }
             catch (Exception ex)
