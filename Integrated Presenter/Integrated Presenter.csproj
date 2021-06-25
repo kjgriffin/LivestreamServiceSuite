@@ -79,6 +79,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ATEMControl\ATEMControl.csproj" />
     <ProjectReference Include="..\MockSwitcher\MockSwitcher.csproj" />
+    <ProjectReference Include="..\PresentationEngine\PresentationEngine.csproj" />
   </ItemGroup>
 
 </Project>

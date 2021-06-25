@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ATEMControl\ATEMControl.csproj" />
+    <ProjectReference Include="..\PresentationEngine\PresentationEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>

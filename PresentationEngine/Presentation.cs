@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 
 namespace Integrated_Presenter
 {
+    public delegate void PresentationStateUpdate(Slide currentslide);
+    
     public class Presentation
     {
 

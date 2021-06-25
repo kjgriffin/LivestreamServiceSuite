@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Integrated_Presenter.BMDSwitcher
 {
-    class MockBMDSwitcherManager : IBMDSwitcherManager
+    public class MockBMDSwitcherManager : IBMDSwitcherManager
     {
         public bool GoodConnection { get; set; } = false;
 
@@ -17,7 +17,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public event SwitcherStateChange SwitcherStateChanged;
 
-        public MockBMDSwitcherManager(MainWindow parent)
+        public MockBMDSwitcherManager(Action<PresentationStateUpdate> subscribeToPresentationChanges, BMDSwitcherConfigSettings config)
         {
             _state = new BMDSwitcherState();
             _state.SetDefault();
@@ -32,8 +32,8 @@ namespace Integrated_Presenter.BMDSwitcher
                 [7] = "center",
                 [8] = "left"
             };
-            mockMultiviewer = new MockMultiviewer(mapping, parent.Config);
-            parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
+            mockMultiviewer = new MockMultiviewer(mapping, config);
+            subscribeToPresentationChanges(Parent_PresentationStateUpdated);
         }
 
         private void Parent_PresentationStateUpdated(Slide currentslide)

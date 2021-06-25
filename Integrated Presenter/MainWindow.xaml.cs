@@ -22,7 +22,6 @@ using System.Windows.Media;
 namespace Integrated_Presenter
 {
 
-    public delegate void PresentationStateUpdate(Slide currentslide);
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -229,7 +228,7 @@ namespace Integrated_Presenter
 
         private void MockConnectSwitcher()
         {
-            switcherManager = new MockBMDSwitcherManager(this);
+            switcherManager = new MockBMDSwitcherManager(SubscribeMockSwitcherToPresentationChanges, Config);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.TryConnect("localhost");
             EnableSwitcherControls();
@@ -239,6 +238,11 @@ namespace Integrated_Presenter
             }
             // load current config
             SetSwitcherSettings();
+        }
+
+        private void SubscribeMockSwitcherToPresentationChanges(PresentationStateUpdate callback)
+        {
+            PresentationStateUpdated += callback;
         }
 
         public void TakeAutoTransition()
