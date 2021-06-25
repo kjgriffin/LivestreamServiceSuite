@@ -1,5 +1,4 @@
 ﻿using BMDSwitcherAPI;
-using Integrated_Presenter.BMDHyperdeck;
 using Integrated_Presenter.BMDSwitcher;
 using Integrated_Presenter.BMDSwitcher.Config;
 using Integrated_Presenter.ViewModels;
@@ -44,8 +43,6 @@ namespace Integrated_Presenter
         BMDSwitcherConfigSettings _config;
 
 
-        BMDHyperdeckManager mHyperdeckManager;
-
         List<SlidePoolSource> SlidePoolButtons;
 
         private BuildVersion VersionInfo;
@@ -68,9 +65,6 @@ namespace Integrated_Presenter
 
 
 
-
-            mHyperdeckManager = new BMDHyperdeckManager();
-            mHyperdeckManager.OnMessageFromHyperDeck += MHyperdeckManager_OnMessageFromHyperDeck;
 
             // set a default config
             SetDefaultConfig();
@@ -2020,7 +2014,6 @@ namespace Integrated_Presenter
                 case "startrecord":
                     if (automationrecordstartenabled)
                     {
-                        mHyperdeckManager?.StartRecording();
                         isRecording = true;
                         UpdateRecordButtonUI();
                     }
@@ -3259,17 +3252,14 @@ namespace Integrated_Presenter
 
         private void ClickConnectHyperdeck(object sender, RoutedEventArgs e)
         {
-            mHyperdeckManager?.Connect();
         }
 
         private void ClickRecordStart(object sender, RoutedEventArgs e)
         {
-            mHyperdeckManager?.StartRecording();
         }
 
         private void ClickRecordStop(object sender, RoutedEventArgs e)
         {
-            mHyperdeckManager?.StopRecording();
         }
 
         private void SetPIPPosition(BMDUSKDVESettings config)
@@ -3330,50 +3320,18 @@ namespace Integrated_Presenter
 
         private void HyperDeckMonitorWindow_OnTextCommand(object sender, string cmd)
         {
-            mHyperdeckManager?.Send(cmd);
         }
 
         private void ClickToggleRecording(object sender, RoutedEventArgs e)
         {
-            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
-            {
-                if (isRecording)
-                {
-                    isRecording = false;
-                    mHyperdeckManager?.StopRecording();
-                }
-                else
-                {
-                    isRecording = true;
-                    mHyperdeckManager?.StartRecording();
-                }
-                UpdateRecordButtonUI();
-            }
-            else
-            {
-                isRecording = false;
-                UpdateRecordButtonUI();
-            }
         }
 
         private void TryStartRecording()
         {
-            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
-            {
-                isRecording = true;
-                mHyperdeckManager?.StartRecording();
-            }
-            UpdateRecordButtonUI();
         }
 
         private void TryStopRecording()
         {
-            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
-            {
-                isRecording = false;
-                mHyperdeckManager?.StopRecording();
-            }
-            UpdateRecordButtonUI();
         }
 
         bool automationtimer1enabled = true;
@@ -3401,7 +3359,6 @@ namespace Integrated_Presenter
 
         private void ClickDisconnectHyperdeck(object sender, RoutedEventArgs e)
         {
-            mHyperdeckManager?.Disconnect();
         }
 
 

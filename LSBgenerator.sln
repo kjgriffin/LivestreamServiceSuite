@@ -9,10 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlideCreater", "SlideCreate
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenon", "Xenon\Xenon.csproj", "{F6A028CA-ED5B-4EEB-9CE6-30ABD9850730}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VonEX", "VonEX\VonEX.csproj", "{1399AF18-296F-42D0-911E-300E529BCC4E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HyperdeckControl", "HyperdeckControl\HyperdeckControl.csproj", "{A216B9D7-5820-46ED-8172-FE2B1DFF31A7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{849F6492-9995-4E47-A7BA-E49C0129C5A8}"
 	ProjectSection(SolutionItems) = preProject
 		Build.bat = Build.bat
@@ -21,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{849F6492
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LutheRun", "LutheRun\LutheRun.csproj", "{70A08E74-3F6E-432E-AB55-B657658120AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIControls", "UIControls\UIControls.csproj", "{8F689666-41A7-491B-8AC8-642A661924CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UIControls", "UIControls\UIControls.csproj", "{8F689666-41A7-491B-8AC8-642A661924CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,14 +37,6 @@ Global
 		{F6A028CA-ED5B-4EEB-9CE6-30ABD9850730}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6A028CA-ED5B-4EEB-9CE6-30ABD9850730}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6A028CA-ED5B-4EEB-9CE6-30ABD9850730}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1399AF18-296F-42D0-911E-300E529BCC4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1399AF18-296F-42D0-911E-300E529BCC4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1399AF18-296F-42D0-911E-300E529BCC4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1399AF18-296F-42D0-911E-300E529BCC4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A216B9D7-5820-46ED-8172-FE2B1DFF31A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A216B9D7-5820-46ED-8172-FE2B1DFF31A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A216B9D7-5820-46ED-8172-FE2B1DFF31A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A216B9D7-5820-46ED-8172-FE2B1DFF31A7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{70A08E74-3F6E-432E-AB55-B657658120AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{70A08E74-3F6E-432E-AB55-B657658120AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70A08E74-3F6E-432E-AB55-B657658120AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
