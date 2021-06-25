@@ -1,0 +1,78 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Mock\Images\black.png" />
+    <None Remove="Mock\Images\cbars.png" />
+    <None Remove="Mock\Images\centercam.PNG" />
+    <None Remove="Mock\Images\centershot.PNG" />
+    <None Remove="Mock\Images\greenscreen1.png" />
+    <None Remove="Mock\Images\leftcam.PNG" />
+    <None Remove="Mock\Images\leftshot.PNG" />
+    <None Remove="Mock\Images\leftshot1.PNG" />
+    <None Remove="Mock\Images\organcam.PNG" />
+    <None Remove="Mock\Images\organshot.PNG" />
+    <None Remove="Mock\Images\rightcam.PNG" />
+    <None Remove="Mock\Images\rightshot.PNG" />
+    <None Remove="Mock\Images\videofile.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ATEMControl\ATEMControl.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Mock\Images\black.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\cbars.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\centercam.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\centershot.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\greenscreen1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\leftcam.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\leftshot.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\leftshot1.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\organcam.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\organshot.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\rightcam.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\rightshot.PNG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Mock\Images\videofile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Mock\MockMultiviewerWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+</Project>

@@ -1,7 +1,6 @@
 ﻿using BMDSwitcherAPI;
 using Integrated_Presenter.BMDSwitcher;
 using Integrated_Presenter.BMDSwitcher.Config;
-using Integrated_Presenter.ViewModels;
 using Microsoft.Win32;
 using SlideCreater;
 using System;

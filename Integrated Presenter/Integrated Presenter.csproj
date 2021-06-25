@@ -23,19 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="BMDSwitcher\Mock\Images\black.png" />
-    <None Remove="BMDSwitcher\Mock\Images\cbars.png" />
-    <None Remove="BMDSwitcher\Mock\Images\centercam.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\centershot.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\greenscreen1.png" />
-    <None Remove="BMDSwitcher\Mock\Images\leftcam.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\leftshot.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\leftshot1.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\organcam.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\organshot.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\rightcam.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\rightshot.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\videofile.png" />
     <None Remove="Icons\keyframepushleft.png" />
     <None Remove="Icons\keyframepushright.png" />
     <None Remove="Icons\keyframetobox.png" />
@@ -57,45 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="BMDSwitcher\Mock\Images\black.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\cbars.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\centercam.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\centershot.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\greenscreen1.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\leftcam.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\leftshot.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\leftshot1.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\organcam.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\organshot.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\rightcam.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\rightshot.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\videofile.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Icons\keyframepushleft.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -122,6 +70,15 @@
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.IO.Ports" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ATEMControl\ATEMControl.csproj" />
+    <ProjectReference Include="..\MockSwitcher\MockSwitcher.csproj" />
   </ItemGroup>
 
 </Project>

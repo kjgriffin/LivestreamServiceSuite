@@ -29,10 +29,6 @@ namespace Integrated_Presenter
         private IBMDSwitcherDownstreamKey _BMDSwitcherDownstreamKey2;
         private List<IBMDSwitcherInput> _BMDSwitcherInputs = new List<IBMDSwitcherInput>();
         private IBMDSwitcherMultiView _BMDSwitcherMultiView;
-        private IBMDSwitcherMediaPlayer _BMDSwitcherMediaPlayer1;
-        private IBMDSwitcherMediaPlayer _BMDSwitcherMediaPlayer2;
-        private IBMDSwitcherMediaPool _BMDSwitcherMediaPool;
-        private IBMDSwitcherKeyDVEParameters _BMDSwitcherDVEParameters;
         private IBMDSwitcherKeyFlyParameters _BMDSwitcherFlyKeyParamters;
         private IBMDSwitcherTransitionParameters _BMDSwitcherTransitionParameters;
 
@@ -486,34 +482,7 @@ namespace Integrated_Presenter
 
         }
 
-        private bool InitializeMediaPool()
-        {
-            _BMDSwitcherMediaPool = (IBMDSwitcherMediaPool)_BMDSwitcher;
-            return true;
-        }
-
-        private bool InitializeMediaPlayers()
-        {
-            IBMDSwitcherMediaPlayerIterator mediaPlayerIterator = null;
-            IntPtr mediaPlayerPtr;
-            Guid mediaPlayerIID = typeof(IBMDSwitcherMediaPlayerIterator).GUID;
-            _BMDSwitcher.CreateIterator(ref mediaPlayerIID, out mediaPlayerPtr);
-            if (mediaPlayerPtr == null)
-            {
-                return false;
-            }
-            mediaPlayerIterator = (IBMDSwitcherMediaPlayerIterator)Marshal.GetObjectForIUnknown(mediaPlayerPtr);
-            if (mediaPlayerIterator == null)
-            {
-                return false;
-            }
-
-            mediaPlayerIterator.Next(out _BMDSwitcherMediaPlayer1);
-            mediaPlayerIterator.Next(out _BMDSwitcherMediaPlayer2);
-
-            return true;
-        }
-
+      
         private void SwitcherConnected()
         {
             // add callbacks (monitors switcher connection)
@@ -528,10 +497,8 @@ namespace Integrated_Presenter
             bool auxsource = InitializeAuxInput();
             bool multiviewer = InitializeMultiView();
 
-            bool mediapool = InitializeMediaPool();
-            bool mediaplayers = InitializeMediaPlayers();
 
-            GoodConnection = mixeffects && auxsource && downstreamkeyers && upstreamkeyers && inputsources && multiviewer && mediaplayers && mediapool;
+            GoodConnection = mixeffects && auxsource && downstreamkeyers && upstreamkeyers && inputsources && multiviewer;
 
             MessageBox.Show("Connected to Switcher", "Connection Success");
 
