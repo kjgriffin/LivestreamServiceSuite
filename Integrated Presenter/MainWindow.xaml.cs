@@ -138,7 +138,6 @@ namespace Integrated_Presenter
 
         private void MHyperdeckManager_OnMessageFromHyperDeck(object sender, string message)
         {
-            hyperDeckMonitorWindow?.AddMessage(message);
         }
 
         private void Gp_timer_1_Elapsed(object sender, ElapsedEventArgs e)
@@ -2666,7 +2665,6 @@ namespace Integrated_Presenter
             _display?.Close();
             _keydisplay?.Close();
             switcherManager?.Close();
-            hyperDeckMonitorWindow?.Close();
             audioPlayer?.Close();
             pipctrl?.Close();
         }
@@ -3205,31 +3203,6 @@ namespace Integrated_Presenter
         SerialPort? projectorSerialPort;
         private void ConnectProjector()
         {
-            var ports = SerialPort.GetPortNames();
-            ConnectComPort dialog = new ConnectComPort(ports.ToList());
-            dialog.ShowDialog();
-            if (dialog.Selected)
-            {
-                string port = dialog.Port;
-
-                if (projectorSerialPort != null)
-                {
-                    if (projectorSerialPort.IsOpen)
-                    {
-                        projectorSerialPort.Close();
-                    }
-                }
-                projectorSerialPort = new SerialPort(port, 9600);
-                try
-                {
-                    projectorSerialPort.Open();
-                }
-                catch (Exception)
-                {
-                    return;
-                }
-                projectorconnected = true;
-            }
         }
 
         private void ClickConnectProjector(object sender, RoutedEventArgs e)
@@ -3299,24 +3272,9 @@ namespace Integrated_Presenter
         {
         }
 
-        HyperDeckMonitorWindow hyperDeckMonitorWindow;
 
         private void OpenHyperdeckMonitorWindow(object sender, RoutedEventArgs e)
         {
-            if (hyperDeckMonitorWindow == null)
-            {
-                hyperDeckMonitorWindow = new HyperDeckMonitorWindow();
-                hyperDeckMonitorWindow.OnTextCommand += HyperDeckMonitorWindow_OnTextCommand;
-            }
-            if (hyperDeckMonitorWindow.IsClosed)
-            {
-                hyperDeckMonitorWindow = new HyperDeckMonitorWindow();
-                hyperDeckMonitorWindow.OnTextCommand += HyperDeckMonitorWindow_OnTextCommand;
-            }
-
-            hyperDeckMonitorWindow.Show();
-
-
 
 
         }

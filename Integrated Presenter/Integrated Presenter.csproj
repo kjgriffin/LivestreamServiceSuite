@@ -23,10 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Icons\keyframepushleft.png" />
-    <None Remove="Icons\keyframepushright.png" />
-    <None Remove="Icons\keyframetobox.png" />
-    <None Remove="Icons\keyframetofill.png" />
     <None Remove="Icons\Mute2.png" />
     <None Remove="Keys\WhiteKey.png" />
     <None Remove="version.json" />
@@ -44,18 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Icons\keyframepushleft.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\keyframepushright.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\keyframetobox.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\keyframetofill.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Icons\Mute2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -70,10 +54,6 @@
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.IO.Ports" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModels\" />
   </ItemGroup>
 
   <ItemGroup>

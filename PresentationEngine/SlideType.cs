@@ -1,5 +1,14 @@
-﻿public enum SlideType
+﻿namespace Integrated_Presenter
 {
-    Video,
-    Image
+    public enum SlideType
+    {
+        Full,
+        Liturgy,
+        Video,
+        ChromaKeyVideo,
+        ChromaKeyStill,
+        Action,
+        Empty
+    }
+
 }
