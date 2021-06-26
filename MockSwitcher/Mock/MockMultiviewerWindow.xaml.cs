@@ -20,6 +20,16 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
     /// </summary>
     public partial class MockMultiviewerWindow : Window
     {
+
+        private readonly Uri img_LECTERN = new Uri("pack://application:,,,/MockSwitcher;component/Mock/Images/leftshot.png");
+        private readonly Uri img_CENTER = new Uri("pack://application:,,,/MockSwitcher;component/Mock/Images/centershot.png");
+        private readonly Uri img_PULPIT = new Uri("pack://application:,,,/MockSwitcher;component/Mock/Images/rightshot.png");
+        private readonly Uri img_ORGAN = new Uri("pack://application:,,,/MockSwitcher;component/Mock/Images/organshot.png");
+        private readonly Uri img_CBARS = new Uri("pack://application:,,,/MockSwitcher;component/Mock/Images/cbars.png");
+        private readonly Uri img_BLACK = new Uri("pack://application:,,,/MockSwitcher;component/Mock/Images/black.png");
+        private readonly Uri img_VIDEO = new Uri("pack://application:,,,/MockSwitcher;component/Mock/Images/videofile.png");
+        private readonly Uri img_GREENSCREEN = new Uri("pack://application:,,,/MockSwitcher;component/Mock/Images/greenscreen1.png");
+
         private Dictionary<int, string> SourceMap;
         public MockMultiviewerWindow(Dictionary<int, string> sourcemap)
         {
@@ -68,26 +78,26 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 switch (SourceMap[inputID])
                 {
                     case "left":
-                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/leftshot.png"));
+                        return new BitmapImage(img_LECTERN);
                     case "center":
-                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/centershot.png"));
+                        return new BitmapImage(img_CENTER);
                     case "right":
-                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/rightshot.png"));
+                        return new BitmapImage(img_PULPIT);
                     case "organ":
-                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/organshot.png"));
+                        return new BitmapImage(img_ORGAN);
                     case "slide":
                         return ImgSlide.Source;
                     case "key":
                         return ImgKey.Source;
                     case "colorbars":
-                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/cbars.png"));
+                        return new BitmapImage(img_CBARS);
                     default:
-                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                        return new BitmapImage(img_BLACK);
                 }
             }
             else
             {
-                return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                return new BitmapImage(img_BLACK);
             }
         }
 
@@ -143,11 +153,11 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         {
             if (slide.Type == SlideType.Empty)
             {
-                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                control.Source = new BitmapImage(img_BLACK);
             }
             else if (slide.Type == SlideType.Action)
             {
-                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                control.Source = new BitmapImage(img_BLACK);
             }
             else
             {
@@ -157,7 +167,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 }
                 else
                 {
-                    control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                    control.Source = new BitmapImage(img_BLACK);
                 }
             }
         }
@@ -166,11 +176,11 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         {
             if (slide.Type == SlideType.Video)
             {
-                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/videofile.png"));
+                control.Source = new BitmapImage(img_VIDEO);
             }
             else if (slide.Type == SlideType.Empty)
             {
-                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                control.Source = new BitmapImage(img_BLACK);
             }
             else if (slide.Type == SlideType.ChromaKeyStill)
             {
@@ -178,11 +188,11 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             }
             else if (slide.Type == SlideType.ChromaKeyVideo)
             {
-                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/greenscreen1.png"));
+                control.Source = new BitmapImage(img_GREENSCREEN);
             }
             else if (slide.Type == SlideType.Action)
             {
-                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                control.Source = new BitmapImage(img_BLACK);
             }
             else
             {
