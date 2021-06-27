@@ -23,26 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Icons\Mute2.png" />
     <None Remove="Keys\WhiteKey.png" />
     <None Remove="version.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <COMReference Include="BMDSwitcherAPI.dll">
-      <Guid>8a92b919-156c-4d61-94ef-03f9be4004b0</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-    </COMReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Icons\Mute2.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Keys\WhiteKey.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

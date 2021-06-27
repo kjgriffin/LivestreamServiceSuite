@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PresentationEngine;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -9,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Integrated_Presenter
 {
@@ -18,7 +20,8 @@ namespace Integrated_Presenter
     public partial class PresenterDisplay : Window
     {
 
-        MainWindow _control;
+        AutomationEngine _automation;
+        
 
         public bool IsWindowVisilbe { get; set; }
 
@@ -34,10 +37,10 @@ namespace Integrated_Presenter
 
         private bool ShowKey;
 
-        public PresenterDisplay(MainWindow parent, bool ShowKey)
+        public PresenterDisplay(AutomationEngine automation, bool ShowKey)
         {
             InitializeComponent();
-            _control = parent;
+            _automation = automation;
             mediaPlayerA.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdateA;
             mediaPlayerB.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdateB;
             mediaPlayerC.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdateC;
@@ -55,7 +58,7 @@ namespace Integrated_Presenter
 
         }
 
-        private void _controlPanel_OnWindowClosing(object sender, EventArgs e)
+        private void _automationPanel_OnWindowClosing(object sender, EventArgs e)
         {
             mediaPlayerA.OnMediaPlaybackTimeUpdate -= MediaPlayer_OnMediaPlaybackTimeUpdateA;
             mediaPlayerB.OnMediaPlaybackTimeUpdate -= MediaPlayer_OnMediaPlaybackTimeUpdateB;
@@ -82,7 +85,7 @@ namespace Integrated_Presenter
         {
             if (activeplayer == player)
             {
-                _control.Dispatcher.Invoke(() =>
+                _automation.Dispatcher.Invoke(() =>
                 {
                     OnMediaPlaybackTimeUpdated?.Invoke(this, e);
                 });
@@ -111,7 +114,7 @@ namespace Integrated_Presenter
         public void StartMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+            if (_automation.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _automation.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -131,7 +134,7 @@ namespace Integrated_Presenter
         public void PauseMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+            if (_automation.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _automation.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -151,7 +154,7 @@ namespace Integrated_Presenter
         public void RestartMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+            if (_automation.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _automation.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -171,7 +174,7 @@ namespace Integrated_Presenter
         public void StopMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+            if (_automation.Presentation.EffectiveCurrent.Type == SlideType.Video || _automation.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -205,7 +208,7 @@ namespace Integrated_Presenter
 
         public void ShowSlide(bool asKey)
         {
-            Slide slidetoshow = _control.Presentation.EffectiveCurrent;
+            Slide slidetoshow = _automation.Presentation.EffectiveCurrent;
 
             if (slidetoshow.Guid == curentslide)
             {
@@ -243,23 +246,23 @@ namespace Integrated_Presenter
 
 
             // Update next/prev players if needed
-            if (_control.Presentation.Next.Guid != nextslide)
+            if (_automation.Presentation.Next.Guid != nextslide)
             {
                 // pre-cue the next slide into the next player
-                SetSlideForPlayer(nextplayer, _control.Presentation.Next);
+                SetSlideForPlayer(nextplayer, _automation.Presentation.Next);
             }
-            if (_control.Presentation.Prev.Guid != prevslide)
+            if (_automation.Presentation.Prev.Guid != prevslide)
             {
                 // pre-cue the next slide into the prev player
-                SetSlideForPlayer(prevplayer, _control.Presentation.Prev);
+                SetSlideForPlayer(prevplayer, _automation.Presentation.Prev);
             }
 
 
 
 
-            curentslide = _control.Presentation.EffectiveCurrent.Guid;
-            nextslide = _control.Presentation.Next.Guid;
-            prevslide = _control.Presentation.Prev.Guid;
+            curentslide = _automation.Presentation.EffectiveCurrent.Guid;
+            nextslide = _automation.Presentation.Next.Guid;
+            prevslide = _automation.Presentation.Prev.Guid;
         }
 
         private void ShowActivePlayer()

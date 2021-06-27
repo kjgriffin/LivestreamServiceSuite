@@ -27,7 +27,7 @@ namespace Integrated_Presenter
             InitializeComponent();
             mediapreview.OnMediaLoaded += Mediapreview_OnMediaLoaded;
             mediapreview.OnMediaPlaybackTimeUpdate += Mediapreview_OnMediaPlaybackTimeUpdate;
-            mediapreview.videoPlayer.Volume = 0;
+            mediapreview.Mute();
             mediapreview.AutoSilentPlayback = true;
             mediapreview.AutoSilentReplay = true;
             UpdateDurationUI();
@@ -202,25 +202,25 @@ namespace Integrated_Presenter
 
         public void PlayMedia()
         {
-            mediapreview.videoPlayer.Volume = 0;
+            mediapreview.Mute();
             mediapreview.PlayMedia();
         }
 
         public void PauseMedia()
         {
-            mediapreview.videoPlayer.Volume = 0;
+            mediapreview.Mute();
             mediapreview.PauseMedia();
         }
 
         public void StopMedia()
         {
-            mediapreview.videoPlayer.Volume = 0;
+            mediapreview.Mute();
             mediapreview.StopMedia();
         }
 
         public void RestartMedia()
         {
-            mediapreview.videoPlayer.Volume = 0;
+            mediapreview.Mute();
             mediapreview.ReplayMedia();
         }
 

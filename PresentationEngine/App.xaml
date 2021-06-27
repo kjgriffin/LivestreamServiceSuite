@@ -4,6 +4,40 @@
              xmlns:local="clr-namespace:PresentationEngine"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style x:Key="UIShortcutBdr" TargetType="Border">
+            <Setter Property="IsHitTestVisible" Value="False"></Setter>
+            <Setter Property="BorderBrush" Value="Gray"></Setter>
+            <Setter Property="BorderThickness" Value="3"></Setter>
+            <Setter Property="CornerRadius" Value="10"></Setter>
+            <Setter Property="Panel.ZIndex" Value="1"></Setter>
+            <Setter Property="Padding" Value="15, 8, 15, 8"></Setter>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="White" Opacity="0.5"></SolidColorBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Border.Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="3" Direction="-120" Color="White" Opacity="0.9" BlurRadius="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="UIShortcut" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black"></Setter>
+            <Setter Property="Panel.ZIndex" Value="2"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="IsHitTestVisible" Value="False"></Setter>
+            <!--<Setter Property="TextBlock.Effect">-->
+            <!--<Setter.Value>-->
+            <!--<DropShadowEffect ShadowDepth="4" Direction="-120" Color="Gray" Opacity="0.8" BlurRadius="1"/>-->
+            <!--</Setter.Value>-->
+            <!--</Setter>-->
+            <Setter Property="FontSize" Value="50"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="Opacity" Value="1"></Setter>
+        </Style>
+
     </Application.Resources>
 </Application>

@@ -31,7 +31,7 @@
                     </Border>
                 </StackPanel>
             </Viewbox>
-            <Image Source="pack://application:,,,/Icons/Mute2.png" Visibility="Visible"></Image>
+            <Image Source="pack://application:,,,/PresentationEngine;component/Icons/Mute2.png" Visibility="Visible"></Image>
         </Grid>
         <Grid Panel.ZIndex="11">
             <TextBlock Panel.ZIndex="100" Margin="10" Name="SeqType" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="30" FontWeight="Bold">SEQ</TextBlock>

@@ -88,12 +88,12 @@ namespace Integrated_Presenter
             });
         }
 
-        private void Mute()
+        public void Mute()
         {
             videoPlayer.Volume = 0;
         }
 
-        private void UnMute()
+        public void UnMute()
         {
             videoPlayer.Volume = 1;
         }

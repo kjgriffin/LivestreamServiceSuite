@@ -1,5 +1,4 @@
-﻿using BMDSwitcherAPI;
-using Integrated_Presenter.BMDSwitcher;
+﻿using Integrated_Presenter.BMDSwitcher;
 using Integrated_Presenter.BMDSwitcher.Config;
 using Microsoft.Win32;
 using SlideCreater;
@@ -2369,7 +2368,7 @@ namespace Integrated_Presenter
                     _keydisplay.StartMediaPlayback();
                     if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                     {
-                        CurrentPreview.videoPlayer.Volume = 0;
+                        CurrentPreview.Mute();
                         CurrentPreview.PlayMedia();
                     }
                     else
@@ -2387,7 +2386,7 @@ namespace Integrated_Presenter
                 _keydisplay.PauseMediaPlayback();
                 if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
-                    CurrentPreview.videoPlayer.Volume = 0;
+                    CurrentPreview.Mute();
                     CurrentPreview.PauseMedia();
                 }
                 else
@@ -2404,8 +2403,8 @@ namespace Integrated_Presenter
                 _keydisplay.StopMediaPlayback();
                 if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
-                    CurrentPreview.videoPlayer.Volume = 0;
-                    CurrentPreview.videoPlayer.Stop();
+                    CurrentPreview.Mute();
+                    CurrentPreview.StopMedia();
                 }
                 else
                 {
@@ -2421,7 +2420,7 @@ namespace Integrated_Presenter
                 _keydisplay.RestartMediaPlayback();
                 if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
                 {
-                    CurrentPreview.videoPlayer.Volume = 0;
+                    CurrentPreview.Mute();
                     CurrentPreview.ReplayMedia();
                 }
                 else
@@ -2995,7 +2994,7 @@ namespace Integrated_Presenter
                 },
                 MultiviewerConfig = new BMDMultiviewerSettings()
                 {
-                    Layout = (int)_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop, // 12
+                    Layout = 12, //(int)_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop, // 12
                     Window2 = 8,
                     Window3 = 7,
                     Window4 = 6,
