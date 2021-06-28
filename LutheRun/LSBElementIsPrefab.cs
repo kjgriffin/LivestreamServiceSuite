@@ -22,7 +22,7 @@ namespace LutheRun
 
         public string XenonAutoGen()
         {
-            return $"/// <XENON_AUTO_GEN>\r\n#{Prefab}\r\n/// </XENON_AUTO_GEN>";
+            return $"#{Prefab}";
         }
     }
 }

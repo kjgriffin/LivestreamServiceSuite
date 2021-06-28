@@ -24,7 +24,8 @@ namespace LutheRun
 
         public string XenonAutoGen()
         {
-            return $"/// <XENON_AUTO_GEN>\r\n/// Heading: {Heading.Replace('\"', '\'')}\r\n/// </XENON_AUTO_GEN>";
+            //return $"/// <XENON_AUTO_GEN>\r\n/// Heading: {Heading.Replace('\"', '\'')}\r\n/// </XENON_AUTO_GEN>";
+            return $"// Heading: {Heading.Replace('\"', '\'')}";
         }
     }
 }

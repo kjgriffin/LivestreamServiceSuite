@@ -45,6 +45,7 @@ namespace Xenon.Compiler
         }
 
         public XenonErrorLogger Logger { get; set; } = new XenonErrorLogger();
+        public XMLErrorGenerator XMLMessageGenerator = new XMLErrorGenerator();
 
         public bool CompilerSucess { get; set; } = false;
 
@@ -63,6 +64,7 @@ namespace Xenon.Compiler
             try
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Started", ErrorMessage = "Starting to compile", Generator = "Compiler", Level = XenonCompilerMessageType.Debug });
+                XMLMessageGenerator.AddXMLNotes(input, Logger);
                 p = (XenonASTProgram)p.Compile(Lexer, Logger);
             }
             catch (Exception ex)

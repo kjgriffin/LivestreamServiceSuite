@@ -61,7 +61,7 @@ namespace LutheRun
         public string XenonAutoGen()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("/// <XENON_AUTO_GEN>");
+            //sb.AppendLine("/// <XENON_AUTO_GEN>");
             if (PreLiturgy.Trim() != string.Empty)
             {
                 sb.AppendLine($"#liturgy{{\r\n{PreLiturgy}\r\n}}");
@@ -71,7 +71,7 @@ namespace LutheRun
             {
                 sb.AppendLine($"#liturgy{{\r\n{PostLiturgy}\r\n}}");
             }
-            sb.AppendLine("/// </XENON_AUTO_GEN>");
+            //sb.AppendLine("/// </XENON_AUTO_GEN>");
             return sb.ToString();
         }
     }

@@ -25,7 +25,8 @@ namespace LutheRun
         {
             if (LiturgyText.Trim() != String.Empty)
             {
-                return "/// <XENON_AUTO_GEN>\r\n#liturgy{\r\n" + LiturgyText + "\r\n}\r\n/// </XENON_AUTO_GEN>";
+                //return "/// <XENON_AUTO_GEN>\r\n#liturgy{\r\n" + LiturgyText + "\r\n}\r\n/// </XENON_AUTO_GEN>";
+                return "#liturgy{\r\n" + LiturgyText + "\r\n}";
             }
             return "";
         }

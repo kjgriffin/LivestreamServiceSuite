@@ -176,10 +176,10 @@ namespace LutheRun
         {
             // Assumes that any text verses will always be at the end.
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("/// <XENON_AUTO_GEN>");
+            //sb.AppendLine("/// <XENON_AUTO_GEN>");
             sb.AppendLine(XenonAutoGenImageHymn());
             sb.AppendLine(XenonAutoGenTextHymn());
-            sb.AppendLine("/// </XENON_AUTO_GEN>");
+            //sb.AppendLine("/// </XENON_AUTO_GEN>");
             return sb.ToString();
         }
 

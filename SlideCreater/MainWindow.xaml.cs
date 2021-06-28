@@ -905,7 +905,8 @@ namespace SlideCreater
                 AssetsChanged();
                 ShowProjectAssets();
                 ActionState = ActionState.Ready;
-                TbInput.SetText("/*\r\n" + parser.XenonDebug() + "*/\r\n" + parser.XenonText);
+                //TbInput.SetText("/*\r\n" + parser.XenonDebug() + "*/\r\n" + parser.XenonText);
+                TbInput.SetText(parser.XenonText);
             }
         }
 
