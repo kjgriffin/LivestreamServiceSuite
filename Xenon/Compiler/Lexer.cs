@@ -357,7 +357,7 @@ namespace Xenon.Compiler
             }
             catch (Exception ex)
             {
-                Logger.Log(new XenonCompilerMessage() { ErrorName = "Expecting missing token", ErrorMessage = $"Expecting token <'{test}'>.\r\nAdditional Info: {errormessage}", Generator = "Lexer.ConsumeUnti", Inner = ex.Message, Level = XenonCompilerMessageType.Error, Token = CurrentToken });
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Expecting missing token", ErrorMessage = $"Expecting token <'{test}'>.\r\nAdditional Info: {errormessage}", Generator = "Lexer.ConsumeUntil", Inner = ex.Message, Level = XenonCompilerMessageType.Error, Token = CurrentToken });
                 throw ex;
             }
 

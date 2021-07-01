@@ -36,7 +36,7 @@ namespace Xenon.Compiler
             // gaurd against empty file
             if (Lexer.InspectEOF())
             {
-                Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Message, ErrorName = "Empty Project", ErrorMessage = "Program contains no symbols.", Token = Lexer.EOFText });
+                Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Info, ErrorName = "Empty Project", ErrorMessage = "Program contains no symbols.", Token = Lexer.EOFText, Generator = "Compile() XenonASTProgram" });
                 return p;
             }
             do

@@ -18,7 +18,7 @@ namespace Xenon.Compiler
                 var m = Regex.Match(line, @"/// </MANUAL_UPDATE name=\'(?<name>.*)\'>");
                 if (m.Success)
                 {
-                    logger.Log(new XenonCompilerMessage() { ErrorName = $"Manual Update Required for {m.Groups["name"].Value}", ErrorMessage = $"Found command marked for manual update of {m.Groups["name"].Value}.", Generator = "XMLErrorGenerator", Inner = "", Level = XenonCompilerMessageType.Warning });
+                    logger.Log(new XenonCompilerMessage() { ErrorName = $"Manual Update Required for {m.Groups["name"].Value}", ErrorMessage = $"Found command marked for manual update of {m.Groups["name"].Value}.", Generator = "XMLErrorGenerator", Inner = "", Level = XenonCompilerMessageType.ManualIntervention });
                 }
             }
 

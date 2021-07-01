@@ -251,6 +251,7 @@ namespace SlideCreater
             }
 
 
+            UpdateErrorReport(builder.Messages, new XenonCompilerMessage() { ErrorMessage = "Compiled Successfully!", ErrorName = "Project Compiled", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
 
 
             try
@@ -285,56 +286,25 @@ namespace SlideCreater
             [XenonCompilerMessageType.Message] = true,
             [XenonCompilerMessageType.Info] = false,
             [XenonCompilerMessageType.Warning] = true,
+            [XenonCompilerMessageType.ManualIntervention] = true,
             [XenonCompilerMessageType.Error] = true,
         };
 
 
         List<XenonCompilerMessage> logs = new List<XenonCompilerMessage>();
+        List<XenonCompilerMessage> alllogs = new List<XenonCompilerMessage>();
         private void UpdateErrorReport(List<XenonCompilerMessage> messages, XenonCompilerMessage other = null)
         {
-            error_report.Dispatcher.Invoke(() =>
+            error_report_view.Dispatcher.Invoke(() =>
             {
-                error_report.Children.Clear();
                 if (other != null)
                 {
                     messages.Insert(0, other);
                 }
-                logs = messages;
-                foreach (var msg in messages)
-                {
-                    //Paragraph p = new Paragraph(new Run(msg.ToString()));
-                    TextBlock p = new TextBlock();
-                    p.Text = msg.ToString();
-                    switch (msg.Level)
-                    {
-                        case XenonCompilerMessageType.Debug:
-                            p.Background = System.Windows.Media.Brushes.LightGray;
-                            p.Foreground = System.Windows.Media.Brushes.Black;
-                            break;
-                        case XenonCompilerMessageType.Message:
-                            p.Background = System.Windows.Media.Brushes.DeepSkyBlue;
-                            p.Foreground = System.Windows.Media.Brushes.Black;
-                            break;
-                        case XenonCompilerMessageType.Info:
-                            p.Background = System.Windows.Media.Brushes.WhiteSmoke;
-                            p.Foreground = System.Windows.Media.Brushes.Black;
-                            break;
-                        case XenonCompilerMessageType.Warning:
-                            p.Background = System.Windows.Media.Brushes.Orange;
-                            p.Foreground = System.Windows.Media.Brushes.Black;
-                            break;
-                        case XenonCompilerMessageType.Error:
-                            p.Background = System.Windows.Media.Brushes.Red;
-                            p.Foreground = System.Windows.Media.Brushes.Black;
-                            break;
-                        default:
-                            break;
-                    }
-                    if (MessageVisiblity[msg.Level])
-                    {
-                        error_report.Children.Add(p);
-                    }
-                }
+                alllogs = messages;
+                logs = messages.Where(m => MessageVisiblity[m.Level] == true).ToList();
+                
+                error_report_view.ItemsSource = logs;
             });
         }
 
@@ -921,13 +891,13 @@ namespace SlideCreater
         private void cb_message_view_debug_Click(object sender, RoutedEventArgs e)
         {
             MessageVisiblity[XenonCompilerMessageType.Debug] = cb_message_view_debug.IsChecked ?? false;
-            UpdateErrorReport(logs);
+            UpdateErrorReport(alllogs);
         }
 
         private void cb_message_view_info_Click(object sender, RoutedEventArgs e)
         {
             MessageVisiblity[XenonCompilerMessageType.Info] = cb_message_view_debug.IsChecked ?? false;
-            UpdateErrorReport(logs);
+            UpdateErrorReport(alllogs);
         }
     }
 }
