@@ -60,7 +60,7 @@ namespace LutheRun
             {
                 sb.AppendLine("/// </MANUAL_UPDATE name='anthem'>");
                 sb.AppendLine("//> INSERTION POINT: anthem");
-                sb.AppendLine($"#anthem(\"{Caption}\", \"{SubCaption}\", \"\", \"\")");
+                sb.AppendLine($"#anthemtitle(\"{Caption}\", \"{SubCaption}\", \"\", \"\")");
             }
             else if (ctest.Contains("sermon"))
             {

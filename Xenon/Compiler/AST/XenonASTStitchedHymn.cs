@@ -94,7 +94,7 @@ namespace Xenon.Compiler.AST
 
         public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating StitchedHymn {HymnName}", ErrorName = "Generate Debug Message", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
+            Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating StitchedHymn {HymnName}", ErrorName = "Generation Debug Log", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
             // main steps
             // 1. Figure out how many lines/stanzas and how many stanzas there are
             // 2. Figure out if we can squish everything on one slide, or if we need to go stanza by stanza

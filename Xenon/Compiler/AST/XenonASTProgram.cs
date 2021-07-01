@@ -15,7 +15,7 @@ namespace Xenon.Compiler
         {
             foreach (var item in Expressions)
             {
-                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression", ErrorName = "Project Generation Debug", Generator = "XenonASTProgram:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression {item.Command.GetType()}", ErrorName = "Project Generation Debug", Generator = "XenonASTProgram:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
                 item.Generate(project, this, Logger);
             }
         }
