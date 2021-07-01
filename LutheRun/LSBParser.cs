@@ -23,6 +23,11 @@ namespace LutheRun
         private string ServiceFileName;
 
 
+        public void Serviceify()
+        {
+            serviceElements = Serviceifier.AddAdditionalInferedElements(serviceElements);
+        }
+
 
         public string XenonDebug()
         {
@@ -77,6 +82,33 @@ namespace LutheRun
 
         private void ParseLSBServiceElement(AngleSharp.Dom.IElement element)
         {
+            /*
+            bool checkforselection = false;
+            if (element.ClassList.Contains("option-group"))
+            {
+                checkforselection = true;
+            }
+            if (element.Children.All(x => x.LocalName == "lsb-service-element"))
+            {
+                bool allseperate = true;
+                if (checkforselection)
+                {
+                    allseperate = false;
+                    if (element.Children.All(x => !x.ClassList.Contains("selected")))
+                    {
+                        allseperate = true;
+                    }
+                }
+                if (allseperate)
+                {
+                    foreach (var child in element.Children)
+                    {
+                        ParseLSBServiceElement(child);
+                    }
+                }
+                return;
+            }
+            */
 
             if (element.LocalName == "lsb-content")
             {

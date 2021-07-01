@@ -98,6 +98,10 @@ namespace UIControls
                             {
                                 run.Foreground = Brushes.Gray;
                             }
+                            if (run.Text.StartsWith("//>"))
+                            {
+                                run.Foreground = Brushes.Orange;
+                            }
                             else if (run.Text.StartsWith("//"))
                             {
                                 run.Foreground = Brushes.Green;

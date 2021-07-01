@@ -899,6 +899,7 @@ namespace SlideCreater
                 ActionState = ActionState.Building;
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
                 await parser.ParseHTML(ofd.FileName);
+                parser.Serviceify();
                 parser.CompileToXenon();
                 ActionState = ActionState.Downloading;
                 await parser.LoadWebAssets(_proj.CreateImageAsset);
