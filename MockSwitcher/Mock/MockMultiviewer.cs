@@ -1,11 +1,12 @@
-﻿using Integrated_Presenter.BMDSwitcher.Config;
-using Integrated_Presenter.BMDSwitcher.Mock;
+﻿using IntegratedPresenter.BMDSwitcher.Config;
+using IntegratedPresenter.BMDSwitcher.Mock;
+using IntegratedPresenter.Presentation;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Integrated_Presenter.BMDSwitcher
+namespace IntegratedPresenter.BMDSwitcher
 {
     public class MockMultiviewer
     {

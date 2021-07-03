@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Integrated_Presenter.BMDSwitcher
+namespace IntegratedPresenter.BMDSwitcher
 {
     public delegate void KeyFrameEventHandler(object sender, int keyframe);
     class SwitcherFlyKeyMonitor: IBMDSwitcherKeyFlyParametersCallback

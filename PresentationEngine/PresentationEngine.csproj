@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ATEMControl\ATEMControl.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Icons\Mute2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

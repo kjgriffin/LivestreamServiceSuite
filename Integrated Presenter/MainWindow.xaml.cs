@@ -1,5 +1,6 @@
-﻿using Integrated_Presenter.BMDSwitcher;
-using Integrated_Presenter.BMDSwitcher.Config;
+﻿using IntegratedPresenter.BMDSwitcher;
+using IntegratedPresenter.BMDSwitcher.Config;
+using IntegratedPresenter.Presentation;
 using Microsoft.Win32;
 using SlideCreater;
 using System;
@@ -18,7 +19,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter
 {
 
     /// <summary>
@@ -59,12 +60,16 @@ namespace Integrated_Presenter
             // Set title
             Title = $"Integrated Presenter - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
 
-
-
-
-
             // set a default config
             SetDefaultConfig();
+
+            // TODO: cleanup here too
+
+            m_automation = new AutomationEngine(Dispatcher, ref switcherManager, _config);
+            m_automation.OnPresentationSlideChanged += M_automation_OnPresentationSlideChanged;
+
+
+
 
             HideAdvancedPresControls();
             HideAdvancedPIPControls();
@@ -82,7 +87,6 @@ namespace Integrated_Presenter
             UpdateProgramRowLockButtonUI();
             UpdateRecordButtonUI();
 
-            this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
             NextPreview.AutoSilentPlayback = true;
             AfterPreview.AutoSilentPlayback = true;
             PrevPreview.AutoSilentPlayback = true;
@@ -113,6 +117,11 @@ namespace Integrated_Presenter
             gp_timer_1.Interval = 1000;
             gp_timer_1.Elapsed += Gp_timer_1_Elapsed;
             gp_timer_1.Start();
+        }
+
+        private void M_automation_OnPresentationSlideChanged(Slide currentslide)
+        {
+            slidesUpdated();
         }
 
         private void CurrentPreview_OnMediaPlaybackTimeUpdate(object sender, MediaPlaybackTimeEventArgs e)
@@ -240,7 +249,8 @@ namespace Integrated_Presenter
 
         private void SubscribeMockSwitcherToPresentationChanges(PresentationStateUpdate callback)
         {
-            PresentationStateUpdated += callback;
+            //PresentationStateUpdated += callback;
+            m_automation.OnPresentationSlideChanged += callback;
         }
 
         public void TakeAutoTransition()
@@ -624,8 +634,8 @@ namespace Integrated_Presenter
 
         private void UpdateSlideNums()
         {
-            TbCurrSlide.Text = Presentation?.CurrentSlide.ToString() ?? "0";
-            TbSlideCount.Text = Presentation?.SlideCount.ToString() ?? "0";
+            TbCurrSlide.Text = m_automation?.Presentation?.CurrentSlide.ToString() ?? "0";
+            TbSlideCount.Text = m_automation?.Presentation?.SlideCount.ToString() ?? "0";
         }
 
         private void ResetSlideMediaTimes()
@@ -637,9 +647,9 @@ namespace Integrated_Presenter
 
         private void UpdateSlideControls()
         {
-            if (Presentation != null)
+            if (m_automation?.Presentation != null)
             {
-                if (Presentation.SlideCount > 0)
+                if (m_automation?.Presentation.SlideCount > 0)
                 {
 
                     BtnNext.Style = Application.Current.FindResource("SwitcherButton") as Style;
@@ -669,7 +679,7 @@ namespace Integrated_Presenter
                 {
                     if (ShowEffectiveCurrentPreview)
                     {
-                        if (Presentation?.EffectiveCurrent.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                        if (m_automation?.Presentation?.EffectiveCurrent.Type == SlideType.Video || m_automation?.Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
 
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
@@ -678,7 +688,7 @@ namespace Integrated_Presenter
                     }
                     else
                     {
-                        if (Presentation?.Current.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                        if (m_automation?.Presentation?.Current.Type == SlideType.Video || m_automation?.Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
                             tbPreviewCurrentVideoDuration.Visibility = Visibility.Visible;
@@ -701,7 +711,7 @@ namespace Integrated_Presenter
                 {
                     if (ShowEffectiveCurrentPreview)
                     {
-                        if (Presentation?.EffectiveCurrent.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                        if (m_automation?.Presentation?.EffectiveCurrent.Type == SlideType.Video || m_automation?.Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
 
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
@@ -715,7 +725,7 @@ namespace Integrated_Presenter
                     }
                     else
                     {
-                        if (Presentation?.Current.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                        if (m_automation?.Presentation?.Current.Type == SlideType.Video || m_automation?.Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
                             tbPreviewCurrentVideoDuration.Visibility = Visibility.Visible;
@@ -732,7 +742,7 @@ namespace Integrated_Presenter
                     tbPreviewCurrentVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewCurrentVideoDuration.Text = "";
                 }
-                if (Presentation?.Next.Type == SlideType.Video || Presentation?.Next.Type == SlideType.ChromaKeyVideo)
+                if (m_automation?.Presentation?.Next.Type == SlideType.Video || m_automation?.Presentation?.Next.Type == SlideType.ChromaKeyVideo)
                 {
                     NextPreview.PlayMedia();
                     if (NextPreview.MediaLength != TimeSpan.Zero)
@@ -746,7 +756,7 @@ namespace Integrated_Presenter
                     tbPreviewNextVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewNextVideoDuration.Text = "";
                 }
-                if (Presentation?.After.Type == SlideType.Video || Presentation?.After.Type == SlideType.ChromaKeyVideo)
+                if (m_automation?.Presentation?.After.Type == SlideType.Video || m_automation?.Presentation?.After.Type == SlideType.ChromaKeyVideo)
                 {
                     AfterPreview.PlayMedia();
                     if (AfterPreview.MediaLength != TimeSpan.Zero)
@@ -760,7 +770,7 @@ namespace Integrated_Presenter
                     tbPreviewAfterVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewAfterVideoDuration.Text = "";
                 }
-                if (Presentation?.Prev.Type == SlideType.Video || Presentation?.Prev.Type == SlideType.ChromaKeyVideo)
+                if (m_automation?.Presentation?.Prev.Type == SlideType.Video || m_automation?.Presentation?.Prev.Type == SlideType.ChromaKeyVideo)
                 {
                     PrevPreview.PlayMedia();
                     if (PrevPreview.MediaLength != TimeSpan.Zero)
@@ -779,9 +789,9 @@ namespace Integrated_Presenter
 
         private void UpdateMediaControls()
         {
-            if (Presentation != null)
+            if (m_automation?.Presentation != null)
             {
-                if (Presentation.EffectiveCurrent.Type == SlideType.Video)
+                if (m_automation?.Presentation.EffectiveCurrent.Type == SlideType.Video)
                 {
                     BtnPlayMedia.Style = Application.Current.FindResource("SwitcherButton") as Style;
                     BtnPauseMedia.Style = Application.Current.FindResource("SwitcherButton") as Style;
@@ -1576,7 +1586,7 @@ namespace Integrated_Presenter
                         });
                         break;
                     case AutomationActionType.LoadAudio:
-                        string filename = Path.Join(Presentation.Folder, task.DataS);
+                        string filename = Path.Join(m_automation?.Presentation.Folder, task.DataS);
                         Dispatcher.Invoke(() =>
                         {
                             audioPlayer.OpenAudio(filename);
@@ -1662,7 +1672,7 @@ namespace Integrated_Presenter
         {
             MediaMuted = false;
             CurrentPreview.MarkUnMuted();
-            _display?.UnMuteMedia();
+            //_display?.UnMuteMedia();
             Dispatcher.Invoke(() =>
             {
                 miMute.IsChecked = MediaMuted;
@@ -1673,7 +1683,7 @@ namespace Integrated_Presenter
         {
             MediaMuted = true;
             CurrentPreview.MarkMuted();
-            _display?.MuteMedia();
+            //_display?.MuteMedia();
             Dispatcher.Invoke(() =>
             {
                 miMute.IsChecked = MediaMuted;
@@ -1682,6 +1692,7 @@ namespace Integrated_Presenter
 
         private async void SlideDriveVideo_Next(bool Tied = false)
         {
+            /*
             if (Presentation?.Next != null)
             {
 
@@ -1843,10 +1854,13 @@ namespace Integrated_Presenter
                 // At this point we've switched to the slide
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
             }
+
+            */
         }
 
         private async void SlideUndrive_ToSlide(Slide s)
         {
+            /*
             if (s != null && Presentation != null)
             {
                 Presentation.Override = s;
@@ -1854,10 +1868,12 @@ namespace Integrated_Presenter
                 slidesUpdated();
                 PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
             }
+            */
         }
 
         private async void SlideDriveVideo_ToSlide(Slide s)
         {
+            /*
             if (s != null && Presentation != null)
             {
                 if (s.AutomationEnabled)
@@ -1996,6 +2012,8 @@ namespace Integrated_Presenter
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
             }
 
+            */
+
         }
 
         private void SlideDriveVideo_Action(Slide s)
@@ -2026,6 +2044,7 @@ namespace Integrated_Presenter
 
         private async void SlideDriveVideo_Current()
         {
+            /*
             if (Presentation?.EffectiveCurrent != null)
             {
                 DisableSlidePoolOverrides();
@@ -2142,6 +2161,8 @@ namespace Integrated_Presenter
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
             }
 
+            */
+
         }
 
         private void PerformGuardedAutoTransition(bool force_guard = false)
@@ -2163,54 +2184,13 @@ namespace Integrated_Presenter
 
         #endregion
 
-
-        bool activepresentation = false;
-        Presentation _pres;
-        public Presentation Presentation { get => _pres; }
-
-        public event PresentationStateUpdate PresentationStateUpdated;
-
-        PresenterDisplay _display;
-        PresenterDisplay _keydisplay;
+        // TODO: cleanup where this lives...
+        // for now put it here to get stuff working again
+        AutomationEngine m_automation;
 
         private void OpenPresentation(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select Presentation";
-            if (ofd.ShowDialog() == true)
-            {
-                string path = System.IO.Path.GetDirectoryName(ofd.FileName);
-                // create new presentation
-                Presentation pres = new Presentation();
-                pres.Create(path);
-                pres.StartPres();
-                _pres = pres;
-                activepresentation = true;
-
-                // overwrite display of old presentation if already open
-                if (_display != null && _display.IsWindowVisilbe)
-                {
-                }
-                else
-                {
-                    _display = new PresenterDisplay(this, false);
-                    _display.OnMediaPlaybackTimeUpdated += _display_OnMediaPlaybackTimeUpdated;
-                    // start display
-                    _display.Show();
-                }
-
-                if (_keydisplay == null && !(_keydisplay?.IsWindowVisilbe ?? false))
-                {
-                    _keydisplay = new PresenterDisplay(this, true);
-                    // no need to get playback event info
-                    _keydisplay.Show();
-                }
-
-                DisableSlidePoolOverrides();
-                slidesUpdated();
-
-                PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
-            }
+            m_automation.LoadPresentation();
         }
 
         private void _display_OnMediaPlaybackTimeUpdated(object sender, MediaPlaybackTimeEventArgs e)
@@ -2220,13 +2200,11 @@ namespace Integrated_Presenter
             TbMediaTimeCurrent.Text = e.Current.ToString("m\\:ss");
             TbMediaTimeDurration.Text = e.Length.ToString("m\\:ss");
             // synchronize current preview
-            if (Math.Abs(CurrentPreview.videoPlayer.Position.TotalMilliseconds - e.Current.TotalMilliseconds) > 400)
-            {
-                CurrentPreview.videoPlayer.Position = e.Current;
-            }
+            CurrentPreview.ForceResync(e.Current, 400);
         }
 
 
+        // TODO: figure out if we even need to bother with this anymore. Seems like this feature is always used now. Lets make it default.
         public bool ShowEffectiveCurrentPreview = true;
 
         private void ClickToggleShowEffectiveCurrentPreview(object sender, RoutedEventArgs e)
@@ -2239,8 +2217,8 @@ namespace Integrated_Presenter
 
         private void slidesUpdated()
         {
-            _display?.ShowSlide(false);
-            _keydisplay?.ShowSlide(true);
+            //_display?.ShowSlide(false);
+            //_keydisplay?.ShowSlide(true);
 
             // mark update for slides
             if (currentslideforactions != currentGuid)
@@ -2251,32 +2229,38 @@ namespace Integrated_Presenter
             }
 
             // update previews
-            if (Presentation != null)
+            // TODO: put all the action completion tracking into AutomationEngine and re-write UI handling of it
+            // For now just update media
+            if (m_automation?.Presentation != null)
             {
-                PrevPreview.SetMedia(Presentation.Prev, false);
+                PrevPreview.SetMedia(m_automation?.Presentation.Prev, false);
                 if (ShowEffectiveCurrentPreview)
                 {
-                    if (currentGuid != Presentation.EffectiveCurrent.Guid)
+                    if (currentGuid != m_automation?.Presentation.EffectiveCurrent.Guid)
                     {
-                        CurrentPreview.SetMedia(Presentation.EffectiveCurrent, false);
-                        currentGuid = Presentation.EffectiveCurrent.Guid;
+                        CurrentPreview.SetMedia(m_automation?.Presentation.EffectiveCurrent, false);
+                        currentGuid = m_automation.Presentation.EffectiveCurrent.Guid;
                     }
                 }
                 else
                 {
-                    if (currentGuid != Presentation.Current.Guid)
+                    if (currentGuid != m_automation?.Presentation.Current.Guid)
                     {
-                        CurrentPreview.SetMedia(Presentation.Current, false);
-                        currentGuid = Presentation.Current.Guid;
+                        CurrentPreview.SetMedia(m_automation?.Presentation.Current, false);
+                        currentGuid = m_automation.Presentation.Current.Guid;
                     }
                 }
                 NextPreview.SetupComplete(SetupActionsCompleted);
                 NextPreview.ActionComplete(false);
                 CurrentPreview.ActionComplete(ActionsCompleted);
                 CurrentPreview.SetupComplete(true);
-                NextPreview.SetMedia(Presentation.Next, false);
-                AfterPreview.SetMedia(Presentation.After, false);
+                NextPreview.SetMedia(m_automation?.Presentation.Next, false);
+                AfterPreview.SetMedia(m_automation?.Presentation.After, false);
             }
+
+            NextPreview.SetMedia(m_automation?.Presentation?.Next, false);
+            NextPreview.SetMedia(m_automation?.Presentation?.After, false);
+
             UpdateSlidePreviewControls();
             currentslideforactions = currentGuid;
         }
@@ -2315,6 +2299,7 @@ namespace Integrated_Presenter
 
         private void nextSlide(bool Tied = false)
         {
+            /*
             if (activepresentation)
             {
                 DisableSlidePoolOverrides();
@@ -2336,9 +2321,26 @@ namespace Integrated_Presenter
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                 }
             }
+            */
+
+            switch (CurrentSlideMode)
+            {
+                case 0:
+                    m_automation.CurrentSlideMode = DriveMode.Undriven;
+                    break;
+                case 1:
+                    m_automation.CurrentSlideMode = DriveMode.Drive;
+                    break;
+                case 2:
+                    m_automation.CurrentSlideMode = DriveMode.Skip;
+                    break;
+            }
+
+            m_automation.NextSlide();
         }
         private void prevSlide()
         {
+            /*
             if (activepresentation)
             {
                 if (CurrentSlideMode == 2)
@@ -2356,10 +2358,13 @@ namespace Integrated_Presenter
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                 }
             }
+            */
+            m_automation.PrevSlide();
         }
 
         private void playMedia()
         {
+            /*
             if (activepresentation)
             {
                 Dispatcher.Invoke(() =>
@@ -2377,57 +2382,62 @@ namespace Integrated_Presenter
                     }
                 });
             }
+            */
+            m_automation.PlayMedia();
         }
         private void pauseMedia()
         {
-            if (activepresentation)
-            {
-                _display.PauseMediaPlayback();
-                _keydisplay.PauseMediaPlayback();
-                if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
-                {
-                    CurrentPreview.Mute();
-                    CurrentPreview.PauseMedia();
-                }
-                else
-                {
-                    currentpoolsource.PauseMedia();
-                }
-            }
+            //if (activepresentation)
+            //{
+            //    _display.PauseMediaPlayback();
+            //    _keydisplay.PauseMediaPlayback();
+            //    if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
+            //    {
+            //        CurrentPreview.Mute();
+            //        CurrentPreview.PauseMedia();
+            //    }
+            //    else
+            //    {
+            //        currentpoolsource.PauseMedia();
+            //    }
+            //}
+            m_automation.PauseMedia();
         }
         private void stopMedia()
         {
-            if (activepresentation)
-            {
-                _display.StopMediaPlayback();
-                _keydisplay.StopMediaPlayback();
-                if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
-                {
-                    CurrentPreview.Mute();
-                    CurrentPreview.StopMedia();
-                }
-                else
-                {
-                    currentpoolsource.StopMedia();
-                }
-            }
+            //if (activepresentation)
+            //{
+            //    _display.StopMediaPlayback();
+            //    _keydisplay.StopMediaPlayback();
+            //    if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
+            //    {
+            //        CurrentPreview.Mute();
+            //        CurrentPreview.StopMedia();
+            //    }
+            //    else
+            //    {
+            //        currentpoolsource.StopMedia();
+            //    }
+            //}
+            m_automation.StopMedia();
         }
         private void restartMedia()
         {
-            if (activepresentation)
-            {
-                _display.RestartMediaPlayback();
-                _keydisplay.RestartMediaPlayback();
-                if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
-                {
-                    CurrentPreview.Mute();
-                    CurrentPreview.ReplayMedia();
-                }
-                else
-                {
-                    currentpoolsource.RestartMedia();
-                }
-            }
+            //if (activepresentation)
+            //{
+            //    _display.RestartMediaPlayback();
+            //    _keydisplay.RestartMediaPlayback();
+            //    if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
+            //    {
+            //        CurrentPreview.Mute();
+            //        CurrentPreview.ReplayMedia();
+            //    }
+            //    else
+            //    {
+            //        currentpoolsource.RestartMedia();
+            //    }
+            //}
+            m_automation.RestartMedia();
         }
 
         #endregion
@@ -2620,6 +2630,7 @@ namespace Integrated_Presenter
         private void TakeSlidePoolSlide(Slide s, int num, bool replaceMode, bool driven)
         {
 
+            /*
             for (int i = 0; i < 4; i++)
             {
                 if (num != i)
@@ -2645,6 +2656,7 @@ namespace Integrated_Presenter
             {
                 SlideUndrive_ToSlide(s);
             }
+            */
 
 
         }
@@ -2661,8 +2673,7 @@ namespace Integrated_Presenter
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
-            _display?.Close();
-            _keydisplay?.Close();
+            m_automation?.Shutdown();
             switcherManager?.Close();
             audioPlayer?.Close();
             pipctrl?.Close();
@@ -3760,9 +3771,12 @@ namespace Integrated_Presenter
 
         private void ResetPresentationToBegining()
         {
+
+            /*
             Presentation.StartPres();
             slidesUpdated();
             PresentationStateUpdated?.Invoke(Presentation.Current);
+            */
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter.Presentation
 {
     public class AutomationAction
     {

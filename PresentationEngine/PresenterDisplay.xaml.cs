@@ -1,4 +1,5 @@
-﻿using PresentationEngine;
+﻿using IntegratedPresenter.Presentation;
+using PresentationEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter
 {
     /// <summary>
     /// Interaction logic for PresenterDisplay.xaml
@@ -52,7 +53,7 @@ namespace Integrated_Presenter
             blackcover.Visibility = Visibility.Hidden;
 
             this.ShowKey = ShowKey;
-            ShowSlide(this.ShowKey);
+            ShowSlide();
 
             Title = ShowKey ? "Presentation Key Source" : "Presentation Display";
 
@@ -114,7 +115,7 @@ namespace Integrated_Presenter
         public void StartMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_automation.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _automation.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+            if (_automation.Presentation.EffectiveCurrent.Type == SlideType.Video || _automation.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -134,7 +135,7 @@ namespace Integrated_Presenter
         public void PauseMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_automation.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _automation.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+            if (_automation.Presentation.EffectiveCurrent.Type == SlideType.Video || _automation.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -154,7 +155,7 @@ namespace Integrated_Presenter
         public void RestartMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_automation.Presentation.EffectiveCurrent.Type == Integrated_Presenter.SlideType.Video || _automation.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+            if (_automation.Presentation.EffectiveCurrent.Type == SlideType.Video || _automation.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -206,7 +207,7 @@ namespace Integrated_Presenter
         }
 
 
-        public void ShowSlide(bool asKey)
+        public void ShowSlide()
         {
             Slide slidetoshow = _automation.Presentation.EffectiveCurrent;
 

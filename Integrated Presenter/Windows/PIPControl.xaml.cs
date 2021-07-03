@@ -1,4 +1,4 @@
-﻿using Integrated_Presenter.BMDSwitcher.Config;
+﻿using IntegratedPresenter.BMDSwitcher.Config;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter
 {
     /// <summary>
     /// Interaction logic for PIPControl.xaml

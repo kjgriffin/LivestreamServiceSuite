@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter
 {
     /// <summary>
     /// Interaction logic for Connection.xaml

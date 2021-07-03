@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter.Presentation
 {
     public delegate void PresentationStateUpdate(Slide currentslide);
     

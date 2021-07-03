@@ -1,11 +1,12 @@
-﻿using Integrated_Presenter.BMDSwitcher.Config;
+﻿using IntegratedPresenter.BMDSwitcher.Config;
+using IntegratedPresenter.Presentation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Integrated_Presenter.BMDSwitcher
+namespace IntegratedPresenter.BMDSwitcher
 {
     public class MockBMDSwitcherManager : IBMDSwitcherManager
     {

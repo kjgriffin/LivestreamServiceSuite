@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter
 {
     public class MixEffectBlockMonitor : IBMDSwitcherMixEffectBlockCallback
     {

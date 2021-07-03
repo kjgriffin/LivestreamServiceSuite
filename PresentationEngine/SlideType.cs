@@ -1,4 +1,4 @@
-﻿namespace Integrated_Presenter
+﻿namespace IntegratedPresenter.Presentation
 {
     public enum SlideType
     {

@@ -1,9 +1,9 @@
-﻿<Window x:Class="Integrated_Presenter.BMDSwitcher.Mock.MockMultiviewerWindow"
+﻿<Window x:Class="IntegratedPresenter.BMDSwitcher.Mock.MockMultiviewerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Integrated_Presenter.BMDSwitcher.Mock"
+        xmlns:local="clr-namespace:IntegratedPresenter.BMDSwitcher.Mock"
         mc:Ignorable="d"
         Title="MockMultiviewer" Height="1000" Width="1750">
     <Grid Background="Black">

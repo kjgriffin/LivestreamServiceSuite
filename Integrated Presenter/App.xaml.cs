@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter
 {
     /// <summary>
     /// Interaction logic for App.xaml

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IntegratedPresenter.Presentation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter
 {
 
 
@@ -183,6 +184,14 @@ namespace Integrated_Presenter
                 }
                 catch { }
             });
+        }
+
+        public void ForceResync(TimeSpan synctime, int ms_tolerance)
+        {
+            if (Math.Abs(videoPlayer.Position.TotalMilliseconds - synctime.TotalSeconds) > ms_tolerance)
+            {
+                videoPlayer.Position = synctime;
+            }
         }
 
         public void PlayMedia()

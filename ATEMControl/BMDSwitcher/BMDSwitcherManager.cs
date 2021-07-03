@@ -1,6 +1,6 @@
 ﻿using BMDSwitcherAPI;
-using Integrated_Presenter.BMDSwitcher;
-using Integrated_Presenter.BMDSwitcher.Config;
+using IntegratedPresenter.BMDSwitcher;
+using IntegratedPresenter.BMDSwitcher.Config;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter
 {
 
     public delegate void SwitcherStateChange(BMDSwitcherState args);

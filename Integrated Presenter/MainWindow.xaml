@@ -1,9 +1,9 @@
-﻿<Window xmlns:Presenter="clr-namespace:Integrated_Presenter"  x:Class="Integrated_Presenter.MainWindow"
+﻿<Window xmlns:Presenter="clr-namespace:IntegratedPresenter"  x:Class="IntegratedPresenter.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Integrated_Presenter"
+        xmlns:local="clr-namespace:IntegratedPresenter" xmlns:local1="clr-namespace:IntegratedPresenter;assembly=PresentationEngine"
         mc:Ignorable="d"
         Closing="OnClosing"
         PreviewKeyDown="WindowKeyDown"
@@ -1920,13 +1920,13 @@
                         <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
                             <Border BorderBrush="Red" BorderThickness="2,2,2,2">
                                 <Grid>
-                                    <local:MediaPlayer2  x:Name="CurrentPreview" Height="270" Width="480"></local:MediaPlayer2>
+                                    <local1:MediaPlayer2  x:Name="CurrentPreview" Height="270" Width="480"></local1:MediaPlayer2>
                                     <Border Name="PrevPreviewDisplay" BorderBrush="Orange" Height="108" Width="192" BorderThickness="2,2,2,2">
                                         <Border.RenderTransform>
                                             <TranslateTransform X="144" Y="-81"></TranslateTransform>
                                         </Border.RenderTransform>
                                         <Grid>
-                                            <local:MediaPlayer2 Opacity="0.5" x:Name="PrevPreview"></local:MediaPlayer2>
+                                            <local1:MediaPlayer2 Opacity="0.5" x:Name="PrevPreview"></local1:MediaPlayer2>
                                             <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">00:00:00</TextBlock>
                                         </Grid>
                                     </Border>
@@ -1947,13 +1947,13 @@
                         <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Top">
                             <Border BorderBrush="Green" BorderThickness="2,2,2,2">
                                 <Grid>
-                                    <local:MediaPlayer2 x:Name="NextPreview" Height="270" Width="480"></local:MediaPlayer2>
+                                    <local1:MediaPlayer2 x:Name="NextPreview" Height="270" Width="480"></local1:MediaPlayer2>
                                     <Border Name="AfterPreviewDisplay" BorderBrush="Blue" Height="108" Width="192" BorderThickness="2,2,2,2">
                                         <Border.RenderTransform>
                                             <TranslateTransform X="144" Y="81"></TranslateTransform>
                                         </Border.RenderTransform>
                                         <Grid>
-                                            <local:MediaPlayer2 Opacity="0.5" x:Name="AfterPreview" ></local:MediaPlayer2>
+                                            <local1:MediaPlayer2 Opacity="0.5" x:Name="AfterPreview" ></local1:MediaPlayer2>
                                             <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">00:00:00</TextBlock>
                                         </Grid>
                                     </Border>

@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using IntegratedPresenter.Presentation;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter
 {
     /// <summary>
     /// Interaction logic for SlidePoolSource.xaml

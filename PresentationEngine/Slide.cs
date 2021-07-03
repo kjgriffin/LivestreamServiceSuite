@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter.Presentation
 {
     public class Slide
     {
