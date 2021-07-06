@@ -170,14 +170,17 @@ namespace UIControls
                                         newpar.Inlines.Add(otherrun);
                                     }
 
-                                    if (offset > sindex)
+                                    if (currentposition.Parent == run)
                                     {
-                                        offset -= sindex;
-                                        newrunpos = otherrun;
-                                    }
-                                    else
-                                    {
-                                        newrunpos = cmdrun;
+                                        if (offset > sindex)
+                                        {
+                                            offset -= sindex;
+                                            newrunpos = otherrun;
+                                        }
+                                        else
+                                        {
+                                            newrunpos = cmdrun;
+                                        }
                                     }
 
                                 }
@@ -185,7 +188,10 @@ namespace UIControls
                                 {
                                     Run nr = new Run(run.Text) { Foreground = Brushes.Blue };
                                     newpar.Inlines.Add(nr);
-                                    newrunpos = nr;
+                                    if (currentposition.Parent == run)
+                                    {
+                                        newrunpos = nr;
+                                    }
                                 }
                             }
                             else
