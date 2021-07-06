@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -80,13 +81,25 @@ namespace UIControls
             }
         }
 
+
+        FlowDocument setdoc = new FlowDocument();
+
         private void PerformTextHighlighting(string overwritetext = "")
         {
             _LOCK_isalreadyhighlighting = true;
 
+            TextPointer currentposition = tb.CaretPosition;
+            TextPointer newpos = null;
+
+            FlowDocument newdoc = new FlowDocument();
+
+            Run newrunpos = null;
+            int offset = 0;
+
             foreach (var par in tb.Document.Blocks.Select(b => b as Paragraph))
             {
                 // check if line comment
+                Paragraph newpar = new Paragraph();
                 if (par != null)
                 {
                     // check if starts with comments
@@ -94,29 +107,119 @@ namespace UIControls
                     {
                         if (run != null)
                         {
+
                             if (run.Text.StartsWith("/// "))
                             {
-                                run.Foreground = Brushes.Gray;
+                                Run nr = new Run(run.Text) { Foreground = Brushes.Gray };
+                                newpar.Inlines.Add(nr);
+                                //run.Foreground = Brushes.Gray;
+                                if (currentposition.Parent == run)
+                                {
+                                    offset = currentposition.GetOffsetToPosition(run.ContentStart) * -1;
+                                    newrunpos = nr;
+                                }
+
                             }
-                            if (run.Text.StartsWith("//>"))
+                            else if (run.Text.StartsWith("//>"))
                             {
-                                run.Foreground = Brushes.Orange;
+                                Run nr = new Run(run.Text) { Foreground = Brushes.Orange };
+                                newpar.Inlines.Add(nr);
+                                //run.Foreground = Brushes.Orange;
+                                if (currentposition.Parent == run)
+                                {
+                                    offset = currentposition.GetOffsetToPosition(run.ContentStart) * -1;
+                                    newrunpos = nr;
+                                }
                             }
                             else if (run.Text.StartsWith("//"))
                             {
-                                run.Foreground = Brushes.Green;
+                                Run nr = new Run(run.Text) { Foreground = Brushes.Green };
+                                newpar.Inlines.Add(nr);
+                                //run.Foreground = Brushes.Green;
+
+                                if (currentposition.Parent == run)
+                                {
+                                    offset = currentposition.GetOffsetToPosition(run.ContentStart) * -1;
+                                    newrunpos = nr;
+                                }
+
                             }
                             else if (run.Text.StartsWith("#"))
                             {
-                                run.Foreground = Brushes.Blue;
+
+                                if (currentposition.Parent == run)
+                                {
+                                    offset = currentposition.GetOffsetToPosition(run.ContentStart) * -1;
+                                }
+
+                                // split run into command/ rest
+                                var sindex = run.Text.IndexOfAny(new[] { ' ', '{', '(' });
+                                var cmd = "";
+                                var other = "";
+                                if (sindex != -1)
+                                {
+                                    cmd = run.Text.Substring(0, sindex);
+                                    Run cmdrun = new Run(cmd) { Foreground = Brushes.Blue };
+                                    newpar.Inlines.Add(cmdrun);
+                                    Run otherrun = null;
+                                    if (run.Text.Length > sindex)
+                                    {
+                                        //other = run.Text.Substring(sindex -1, run.Text.Length -1);
+                                        other = run.Text.Remove(0, cmd.Length);
+                                        otherrun = new Run(other) { Foreground = Brushes.Black };
+                                        newpar.Inlines.Add(otherrun);
+                                    }
+
+                                    if (offset > sindex)
+                                    {
+                                        offset -= sindex;
+                                        newrunpos = otherrun;
+                                    }
+                                    else
+                                    {
+                                        newrunpos = cmdrun;
+                                    }
+
+                                }
+                                else
+                                {
+                                    Run nr = new Run(run.Text) { Foreground = Brushes.Blue };
+                                    newpar.Inlines.Add(nr);
+                                    newrunpos = nr;
+                                }
                             }
                             else
                             {
-                                run.Foreground = Brushes.Black;
+                                //run.Foreground = Brushes.Black;
+                                Run nr = new Run(run.Text) { Foreground = Brushes.Black };
+                                newpar.Inlines.Add(nr);
+
+                                if (currentposition.Parent == run)
+                                {
+                                    offset = currentposition.GetOffsetToPosition(run.ContentStart) * -1;
+                                    newrunpos = nr;
+                                }
+
                             }
                         }
                     }
                 }
+                newdoc.Blocks.Add(newpar);
+            }
+
+            setdoc = newdoc;
+            tb.Document.Blocks.Clear();
+            tb.Document.Blocks.AddRange(newdoc.Blocks.ToList());
+
+            if (newrunpos != null)
+            {
+                var localpointer = newrunpos.ContentStart;
+                newpos = localpointer.GetPositionAtOffset(offset, LogicalDirection.Forward);
+            }
+
+            if (newpos != null)
+            {
+                tb.CaretPosition = newpos;
             }
 
             _LOCK_isalreadyhighlighting = false;
@@ -125,11 +228,11 @@ namespace UIControls
         bool _LOCK_isalreadyhighlighting = false;
         private void tb_TextChanged(object sender, TextChangedEventArgs e)
         {
+            TextChanged?.Invoke(sender, e);
             if (!_LOCK_isalreadyhighlighting)
             {
                 PerformTextHighlighting();
             }
-            TextChanged?.Invoke(sender, e);
         }
 
         private void tb_PreviewTextInput(object sender, TextCompositionEventArgs e)
