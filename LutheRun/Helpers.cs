@@ -10,6 +10,24 @@ namespace LutheRun
     static class Helpers
     {
 
+        public static string StringTogether(this IEnumerable<string> s, string seperator = "")
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var str in s)
+            {
+                sb.Append(str);
+                if (!string.IsNullOrEmpty(seperator))
+                {
+                    sb.Append(seperator);
+                }
+            }
+            if (!string.IsNullOrEmpty(seperator))
+            {
+                sb.Remove(sb.Length - seperator.Length, seperator.Length);
+            }
+            return sb.ToString();
+        }
+
         public static string StrippedText(this IElement element)
         {
             StringBuilder sb = new StringBuilder();

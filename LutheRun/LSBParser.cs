@@ -76,7 +76,7 @@ namespace LutheRun
             serviceElements.Clear();
             foreach (var e in dom)
             {
-                ParseLSBServiceElement(e);
+                _ParseLSBServiceElement(e);
             }
         }
 
@@ -223,6 +223,155 @@ namespace LutheRun
                 }
             }
         }
+
+
+
+
+
+        private bool _ParseLSBServiceElement(IElement element)
+        {
+            if (element.ClassList.Contains("caption"))
+            {
+                serviceElements.Add(LSBElementCaption.Parse(element));
+                return true;
+            }
+            else if (element.ClassList.Contains("heading"))
+            {
+                serviceElements.Add(LSBElementHeading.Parse(element));
+                return true;
+            }
+            else if (element.ClassList.Contains("hymn"))
+            {
+                serviceElements.Add(LSBElementHymn.Parse(element));
+                return true;
+            }
+            else if (element.ClassList.Contains("reading"))
+            {
+                serviceElements.Add(LSBElementReading.Parse(element));
+                return true;
+            }
+            else if (element.ClassList.Contains("prayer"))
+            {
+                return _ParseLSBPrayerElement(element);
+            }
+            else if (element.ClassList.Contains("proper"))
+            {
+                return _ParseLSBProperElement(element);
+            }
+            else if (element.ClassList.Contains("static"))
+            {
+                return _ParseLSBStaticElement(element);
+            }
+            else if (element.ClassList.Contains("option-group"))
+            {
+                return _ParseLSBOptionGroupElement(element);
+            }
+            else if (element.ClassList.Contains("group"))
+            {
+                return _ParseLSBGroupElement(element);
+            }
+            serviceElements.Add(LSBElementUnknown.Parse(element));
+            return false;
+        }
+
+        private bool _ParseLSBPrayerElement(IElement element)
+        {
+            // capture known prayers we have prefab slides for
+            if (ParseAsPrefab(element))
+            {
+                return true;
+            }
+            // otherwise just spit it out as liturgy
+            return _ParseLSBElementIntoLiturgy(element);
+        }
+
+        private bool _ParseLSBProperElement(IElement element)
+        {
+            if (ParseAsPrefab(element))
+            {
+                return true;
+            }
+            if (ParsePropperAsFullMusic(element))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool _ParseLSBStaticElement(IElement element)
+        {
+            if (ParseAsPrefab(element))
+            {
+                return true;
+            }
+            if (ParsePropperAsFullMusic(element))
+            {
+                return true;
+            }
+            return _ParseLSBElementIntoLiturgy(element);
+        }
+
+        private bool _ParseLSBOptionGroupElement(IElement element)
+        {
+            // only parse selected element if in option group
+            var selectedelement = element.Children.Where(c => c.LocalName == "lsb-service-element" && c.ClassList.Contains("selected"));
+            foreach (var elem in selectedelement)
+            {
+                _ParseLSBServiceElement(elem);
+            }
+            return true;
+        }
+
+        private bool _ParseLSBGroupElement(IElement element)
+        {
+            var subelements = element.Children.Where(c => c.LocalName == "lsb-service-element");
+            foreach (var elem in subelements)
+            {
+                _ParseLSBServiceElement(elem);
+            }
+            return true;
+        }
+
+        private bool _ParseLSBElementIntoLiturgy(IElement element)
+        {
+            foreach (var content in element.Children.Where(x => x.LocalName == "lsb-content"))
+            {
+                _ParseLSBContentIntoLiturgy(content);
+            }
+            return true;
+        }
+
+
+        private bool _ParseLSBContentIntoLiturgy(IElement contentelement)
+        {
+            List<string> ltext = new List<string>();
+            foreach (var child in contentelement.Children.Where(c => c.ClassList.Contains("lsb-responsorial") || c.ClassList.Contains("lsb-responsorial-continued") || c.ClassList.Contains("image")))
+            {
+                if (child.ClassList.Contains("lsb-responsorial") || child.ClassList.Contains("lsb-responsorial-continued"))
+                {
+                    var l = LSBElementLiturgy.Parse(child) as LSBElementLiturgy;
+                    ltext.Add(l.LiturgyText);
+                }
+                else if (child.ClassList.Contains("image"))
+                {
+                    if (ltext.Any())
+                    {
+                        serviceElements.Add(LSBElementLiturgy.Create(ltext.StringTogether(Environment.NewLine)));
+                        ltext.Clear();
+                    }
+                    serviceElements.Add(LSBElementLiturgySung.Parse(child));
+                }
+            }
+            if (ltext.Any())
+            {
+                serviceElements.Add(LSBElementLiturgy.Create(ltext.StringTogether(Environment.NewLine)));
+                ltext.Clear();
+            }
+            return true;
+        }
+
+
+
 
         private bool ParsePropperAsFullMusic(IElement element)
         {

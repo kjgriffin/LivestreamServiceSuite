@@ -16,6 +16,11 @@ namespace LutheRun
             return new LSBElementLiturgy() { LiturgyText = element.StrippedText() };
         }
 
+        public static ILSBElement Create(string liturgyText)
+        {
+            return new LSBElementLiturgy() { LiturgyText = liturgyText };
+        }
+
         public string DebugString()
         {
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_LITURGY. LiturgyText:'{LiturgyText}'";
