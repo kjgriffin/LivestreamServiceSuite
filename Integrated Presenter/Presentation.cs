@@ -85,6 +85,26 @@ namespace Integrated_Presenter
                 Slides[snum].KeySource = file;
             }
 
+            // attach postshot to slides
+            files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"Postshot_\d+").Success).ToList();
+            foreach (var file in files)
+            {
+                var num = Regex.Match(file, @"Postshot_(?<num>\d+)").Groups["num"].Value;
+                int snum = Convert.ToInt32(num);
+                try
+                {
+                    using (StreamReader sr = new StreamReader(file))
+                    {
+                        var n = sr.ReadToEnd();
+                        int sid = Convert.ToInt32(n);
+                        Slides[snum].PostsetId = sid;
+                        Slides[snum].PostsetEnabled = true;
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
 
             return false;
         }
@@ -222,6 +242,10 @@ namespace Integrated_Presenter
         public List<AutomationAction> Actions { get; set; } = new List<AutomationAction>();
         public string Title { get; set; } = "";
         public bool AutoOnly { get; set; } = false;
+
+        public int PresetId { get; set; }
+        public bool PostsetEnabled { get; set; } = false;
+        public int PostsetId { get; set; }
 
         public void LoadActions()
         {

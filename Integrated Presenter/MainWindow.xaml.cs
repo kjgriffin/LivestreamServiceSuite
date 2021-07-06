@@ -1350,6 +1350,8 @@ namespace Integrated_Presenter
 
         #region SlideDriveVideo
 
+        private bool _FeatureFlag_PresetShot = true;
+        private bool _FeatureFlag_PostsetShot = true;
 
         private bool SetupActionsCompleted = false;
         private bool ActionsCompleted = false;
@@ -1694,6 +1696,7 @@ namespace Integrated_Presenter
                 {
                     if (Presentation.Next.Type == SlideType.Action)
                     {
+                        // doesn't make sense to put preset shot on actions slides. Write it into the script as a @arg1:PresetSelect(#) insead
                         SetupActionsCompleted = false;
                         ActionsCompleted = false;
                         // run stetup actions
@@ -1712,9 +1715,15 @@ namespace Integrated_Presenter
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                         await ExecuteActionSlide(Presentation.EffectiveCurrent);
+                        // again doesn't make sense to have postset shot. Write it into the script as a @arg:PresetSelect(#) instead
                     }
                     else if (Presentation.Next.Type == SlideType.Liturgy)
                     {
+                        // liturgy will handle presetshot as a require-preset
+                        // will set the preset if not selected
+                        // not sure this will ever be used, since it does enforce (meaning that manual override won't be availalbe)...
+                        // for now we won't implement a preset shot, since I'm not sure what we'd expect it to do.
+
                         // turn of usk1 if chroma keyer
                         if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
                         {
@@ -1741,6 +1750,17 @@ namespace Integrated_Presenter
                         if (Tied && switcherState.PresetID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
                             PerformGuardedAutoTransition();
+                        }
+
+                        // Handle a postshot selection by setting up the preset
+                        // wait for auto transition to clear
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        {
+                            if (switcherState.InTransition)
+                            {
+                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            }
+                            switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
                     }
                     else if (Presentation.Next.Type == SlideType.ChromaKeyStill || Presentation.Next.Type == SlideType.ChromaKeyVideo)
@@ -1795,6 +1815,8 @@ namespace Integrated_Presenter
                         // turn on chroma key once playout has started
                         switcherManager?.PerformOnAirUSK1();
 
+                        // chroma keys won't do postset shots
+
                     }
                     else
                     {
@@ -1830,6 +1852,16 @@ namespace Integrated_Presenter
                             PerformGuardedAutoTransition();
                         }
 
+                        // wait for pre-roll to clear the preset before setting up a new preset shot
+                        // wait for auto transition to clear
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        {
+                            if (switcherState.InTransition)
+                            {
+                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            }
+                            switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
+                        }
                     }
                 }
                 else
@@ -1898,6 +1930,16 @@ namespace Integrated_Presenter
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                         switcherManager?.PerformAutoOnAirDSK1();
 
+                        // Handle a postshot selection by setting up the preset
+                        // wait for auto transition to clear
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        {
+                            if (switcherState.InTransition)
+                            {
+                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            }
+                            switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
+                        }
                     }
                     else if (s.Type == SlideType.ChromaKeyStill || s.Type == SlideType.ChromaKeyVideo)
                     {
@@ -1979,7 +2021,16 @@ namespace Integrated_Presenter
                             PerformGuardedAutoTransition();
                         }
 
-
+                        // Handle a postshot selection by setting up the preset
+                        // wait for auto transition to clear
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        {
+                            if (switcherState.InTransition)
+                            {
+                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            }
+                            switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
+                        }
                     }
                 }
                 else
@@ -2065,6 +2116,16 @@ namespace Integrated_Presenter
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                         switcherManager?.PerformAutoOnAirDSK1();
 
+                        // Handle a postshot selection by setting up the preset
+                        // wait for auto transition to clear
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        {
+                            if (switcherState.InTransition)
+                            {
+                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            }
+                            switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
+                        }
                     }
                     else if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyStill || Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                     {
@@ -2140,7 +2201,16 @@ namespace Integrated_Presenter
                             PerformGuardedAutoTransition();
                         }
 
-
+                        // Handle a postshot selection by setting up the preset
+                        // wait for auto transition to clear
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        {
+                            if (switcherState.InTransition)
+                            {
+                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            }
+                            switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
+                        }
                     }
                 }
                 // Do nothing for nodrive slides
