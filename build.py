@@ -1,7 +1,15 @@
 import json
 import os
+import argparse
 
 def main():
+
+    parser = argparse.ArgumentParser(description="Generate Official Builds")
+    parser.add_argument("mode", type=str, default="Release", help="build mode: Experimental/Release etc.")
+
+    args = parser.parse_args();
+    print(args.mode)
+
     print("starting builds...")
     with open('./SlideCreater/version.json') as f:
         version = json.load(f)
@@ -13,7 +21,7 @@ def main():
     
 
     # change to release build
-    version['Mode'] = "Release"
+    version['Mode'] = args.mode
     with open('./SlideCreater/version.json', "w") as f:
         json.dump(version, f)
 
@@ -21,7 +29,7 @@ def main():
 
     # create build number string
     bnum = str(build).zfill(3)
-    bnumstr = "{0}.{1}.{2}.{3}-Release".format(majorversion, minorversion, revison, bnum)
+    bnumstr = "{0}.{1}.{2}.{3}-{4}".format(majorversion, minorversion, revison, bnum, args.mode)
     print("build version: {0}".format(bnumstr))
 
     # build SlideCreater
@@ -51,7 +59,7 @@ def main():
     build = version['Build']
 
     # change to release build
-    version['Mode'] = "Release"
+    version['Mode'] = args.mode
     with open('./Integrated Presenter/version.json', "w") as f:
         json.dump(version, f)
 
@@ -60,7 +68,7 @@ def main():
 
     # create build number string
     bnum = str(build).zfill(3)
-    bnumstr = "{0}.{1}.{2}.{3}-Release".format(majorversion, minorversion, revison, bnum)
+    bnumstr = "{0}.{1}.{2}.{3}-{4}".format(majorversion, minorversion, revison, bnum, args.mode)
     print("build version: {0}".format(bnumstr))
 
 
