@@ -6,6 +6,7 @@ namespace LutheRun
 {
     class LSBElementIsPrefab : ILSBElement
     {
+        public string PostsetCmd { get; set; }
         public string Prefab { get; private set; }
         public string SourceText { get; private set; }
 

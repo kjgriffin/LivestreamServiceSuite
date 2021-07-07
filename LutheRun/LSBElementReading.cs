@@ -9,6 +9,7 @@ namespace LutheRun
     class LSBElementReading : ILSBElement
     {
 
+        public string PostsetCmd { get; set; }
         public string ReadingTitle { get; private set; } = "";
         public string ReadingReference { get; private set; } = "";
         public string PreLiturgy { get; private set; } = "";

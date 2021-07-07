@@ -9,6 +9,7 @@ namespace LutheRun
     {
 
         public string LiturgyText { get; private set; }
+        public string PostsetCmd { get; set; } = "";
 
         public static ILSBElement Parse(IElement element)
         {
@@ -31,7 +32,7 @@ namespace LutheRun
             if (LiturgyText.Trim() != String.Empty)
             {
                 //return "/// <XENON_AUTO_GEN>\r\n#liturgy{\r\n" + LiturgyText + "\r\n}\r\n/// </XENON_AUTO_GEN>";
-                return "#liturgy{\r\n" + LiturgyText + "\r\n}";
+                return "#liturgy{\r\n" + LiturgyText + "\r\n}" + PostsetCmd;
             }
             return "";
         }

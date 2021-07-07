@@ -89,7 +89,7 @@ namespace Integrated_Presenter
             files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"Postset_\d+").Success).ToList();
             foreach (var file in files)
             {
-                var num = Regex.Match(file, @"Postshot_(?<num>\d+)").Groups["num"].Value;
+                var num = Regex.Match(file, @"Postset_(?<num>\d+)").Groups["num"].Value;
                 int snum = Convert.ToInt32(num);
                 try
                 {

@@ -7,6 +7,7 @@ namespace LutheRun
     interface ILSBElement
     {
 
+        public string PostsetCmd { get; set; }
         public string DebugString();
         public string XenonAutoGen();
 

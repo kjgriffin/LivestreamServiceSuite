@@ -15,6 +15,7 @@ namespace LutheRun
     class LSBElementHymn : ILSBElement, IDownloadWebResource
     {
 
+        public string PostsetCmd { get; set; } = "";
         public string Caption { get; private set; } = "";
         public string SubCaption { get; private set; } = "";
         public string Copyright { get; private set; } = "";
@@ -177,8 +178,21 @@ namespace LutheRun
             // Assumes that any text verses will always be at the end.
             StringBuilder sb = new StringBuilder();
             //sb.AppendLine("/// <XENON_AUTO_GEN>");
-            sb.AppendLine(XenonAutoGenImageHymn());
-            sb.AppendLine(XenonAutoGenTextHymn());
+
+            // may want to get a bit more advanced for split image/text hymns to apply first only on image and last only on text
+            // for now we'll just put it on both
+
+            var imagehymn = XenonAutoGenImageHymn();
+            var texthymn = XenonAutoGenTextHymn();
+
+            if (!string.IsNullOrEmpty(imagehymn))
+            {
+                sb.AppendLine(XenonAutoGenImageHymn() + PostsetCmd);
+            }
+            if (!string.IsNullOrEmpty(texthymn))
+            {
+                sb.AppendLine(XenonAutoGenTextHymn() + PostsetCmd);
+            }
             //sb.AppendLine("/// </XENON_AUTO_GEN>");
             return sb.ToString();
         }

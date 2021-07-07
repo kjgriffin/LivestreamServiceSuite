@@ -13,6 +13,7 @@ namespace LutheRun
 {
     class LSBElementLiturgySung : ILSBElement, IDownloadWebResource
     {
+        public string PostsetCmd { get; set; }
         private HymnImageLine Image;
 
         public IEnumerable<HymnImageLine> Images => Image.ItemAsEnumerable();

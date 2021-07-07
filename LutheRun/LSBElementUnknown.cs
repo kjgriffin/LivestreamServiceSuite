@@ -7,6 +7,7 @@ namespace LutheRun
     class LSBElementUnknown : ILSBElement
     {
 
+        public string PostsetCmd { get; set; }
         public string Unknown { get; private set; } = "";
 
         public static ILSBElement Parse(AngleSharp.Dom.IElement element)

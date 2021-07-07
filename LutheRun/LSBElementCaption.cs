@@ -8,6 +8,7 @@ namespace LutheRun
 {
     class LSBElementCaption : ILSBElement
     {
+        public string PostsetCmd { get; set; }
 
         public string Caption { get; private set; } = "";
         public string SubCaption { get; private set; } = "";

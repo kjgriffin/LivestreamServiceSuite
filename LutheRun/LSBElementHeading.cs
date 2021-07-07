@@ -7,6 +7,7 @@ namespace LutheRun
 {
     class LSBElementHeading : ILSBElement
     {
+        public string PostsetCmd { get; set; }
 
        public string Heading { get; private set; } = "";
 

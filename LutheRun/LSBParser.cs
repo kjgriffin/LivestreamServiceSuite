@@ -25,7 +25,7 @@ namespace LutheRun
 
         public void Serviceify()
         {
-            serviceElements = Serviceifier.AddAdditionalInferedElements(serviceElements);
+            serviceElements = Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(serviceElements));
         }
 
 
