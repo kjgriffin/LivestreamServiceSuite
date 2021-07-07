@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Integrated_Presenter"
+             xmlns:local="clr-namespace:Integrated_Presenter" xmlns:viewmodels="clr-namespace:Integrated_Presenter.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -11,6 +11,11 @@
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
+        <Grid Panel.ZIndex="100" Grid.Row="0" Grid.RowSpan="2" Width="96" Height="54" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Viewbox Width="96" Height="54">
+                <viewmodels:PostsetUI x:Name="postset" Visibility="Hidden"></viewmodels:PostsetUI>
+            </Viewbox>
+        </Grid>
         <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close" Grid.RowSpan="2"></MediaElement>
         <Image Name="imagePlayer" Grid.RowSpan="2"></Image>
         <Rectangle Name="BlackSource" Fill="Black" Grid.RowSpan="2"></Rectangle>

@@ -2329,12 +2329,14 @@ namespace Integrated_Presenter
             if (Presentation != null)
             {
                 PrevPreview.SetMedia(Presentation.Prev, false);
+                UpdatePostsetUi(PrevPreview, Presentation.Prev);
                 if (ShowEffectiveCurrentPreview)
                 {
                     if (currentGuid != Presentation.EffectiveCurrent.Guid)
                     {
                         CurrentPreview.SetMedia(Presentation.EffectiveCurrent, false);
                         currentGuid = Presentation.EffectiveCurrent.Guid;
+                        UpdatePostsetUi(CurrentPreview, Presentation.EffectiveCurrent);
                     }
                 }
                 else
@@ -2343,6 +2345,7 @@ namespace Integrated_Presenter
                     {
                         CurrentPreview.SetMedia(Presentation.Current, false);
                         currentGuid = Presentation.Current.Guid;
+                        UpdatePostsetUi(CurrentPreview, Presentation.Current);
                     }
                 }
                 NextPreview.SetupComplete(SetupActionsCompleted);
@@ -2351,9 +2354,24 @@ namespace Integrated_Presenter
                 CurrentPreview.SetupComplete(true);
                 NextPreview.SetMedia(Presentation.Next, false);
                 AfterPreview.SetMedia(Presentation.After, false);
+                UpdatePostsetUi(NextPreview, Presentation.Next);
+                UpdatePostsetUi(AfterPreview, Presentation.After);
             }
             UpdateSlidePreviewControls();
             currentslideforactions = currentGuid;
+        }
+
+        private void UpdatePostsetUi(MediaPlayer2 preview, Slide slide)
+        {
+            if (slide.PostsetEnabled)
+            {
+                preview.ShowPostset = true;
+                preview.SetPostset(slide.PostsetId);
+            }
+            else
+            {
+                preview.ShowPostset = false;
+            }
         }
 
 

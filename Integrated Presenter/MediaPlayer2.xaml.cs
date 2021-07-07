@@ -114,6 +114,39 @@ namespace Integrated_Presenter
 
         public bool ShowBlackForActions { get; set; } = true;
 
+        private bool _showpostset = false;
+        public bool ShowPostset
+        {
+            get => _showpostset;
+            set
+            {
+                _showpostset = value;
+                SetPostset(_postsetid);
+            }
+        }
+
+        private int _postsetid = -1;
+        public void SetPostset(int id)
+        {
+            _postsetid = id;
+            if (!_showpostset)
+            {
+                postset.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                if (_postsetid > -1)
+                {
+                    postset.SetPostset(_postsetid);
+                    postset.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    postset.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
         private void VideoPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
             if (AutoSilentPlayback)
