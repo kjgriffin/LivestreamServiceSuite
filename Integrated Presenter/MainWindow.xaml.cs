@@ -1747,16 +1747,19 @@ namespace Integrated_Presenter
                         }
                         switcherManager?.PerformAutoOnAirDSK1();
                         // request auto transition if tied and slides aren't preset source
+
+                        bool waitfortrans = false;
                         if (Tied && switcherState.PresetID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
                             PerformGuardedAutoTransition();
+                            waitfortrans = true;
                         }
 
                         // Handle a postshot selection by setting up the preset
                         // wait for auto transition to clear
                         if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
                         {
-                            if (switcherState.InTransition)
+                            if (waitfortrans)
                             {
                                 await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                             }
@@ -1844,19 +1847,21 @@ namespace Integrated_Presenter
                             playMedia();
                             await Task.Delay(_config?.PrerollSettings.VideoPreRoll ?? 0);
                         }
+                        bool waitfortrans = false;
                         if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
                             ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                             await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
                             //switcherManager?.PerformAutoTransition();
                             PerformGuardedAutoTransition();
+                            waitfortrans = true;
                         }
 
                         // wait for pre-roll to clear the preset before setting up a new preset shot
                         // wait for auto transition to clear
                         if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
                         {
-                            if (switcherState.InTransition)
+                            if (waitfortrans)
                             {
                                 await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                             }
@@ -1931,13 +1936,8 @@ namespace Integrated_Presenter
                         switcherManager?.PerformAutoOnAirDSK1();
 
                         // Handle a postshot selection by setting up the preset
-                        // wait for auto transition to clear
                         if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
                         {
-                            if (switcherState.InTransition)
-                            {
-                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
-                            }
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
                     }
@@ -2013,19 +2013,21 @@ namespace Integrated_Presenter
                             await Task.Delay(_config?.PrerollSettings.VideoPreRoll ?? 0);
                         }
 
+                        bool waitfortrans = false;
                         if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
                             ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                             await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
                             //switcherManager?.PerformAutoTransition();
                             PerformGuardedAutoTransition();
+                            waitfortrans = true;
                         }
 
                         // Handle a postshot selection by setting up the preset
                         // wait for auto transition to clear
                         if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
                         {
-                            if (switcherState.InTransition)
+                            if (waitfortrans)
                             {
                                 await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                             }
@@ -2120,10 +2122,6 @@ namespace Integrated_Presenter
                         // wait for auto transition to clear
                         if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
                         {
-                            if (switcherState.InTransition)
-                            {
-                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
-                            }
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
                     }
@@ -2194,6 +2192,7 @@ namespace Integrated_Presenter
                             await Task.Delay(_config?.PrerollSettings.VideoPreRoll ?? 0);
                         }
 
+                        bool waitfortrans = false;
                         if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
                             ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
@@ -2205,7 +2204,7 @@ namespace Integrated_Presenter
                         // wait for auto transition to clear
                         if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
                         {
-                            if (switcherState.InTransition)
+                            if (waitfortrans)
                             {
                                 await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                             }
