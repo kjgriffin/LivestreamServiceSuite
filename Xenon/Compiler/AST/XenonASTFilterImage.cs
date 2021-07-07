@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Xenon.Renderer.ImageFilters;
 using Xenon.Helpers;
+using Xenon.Compiler.AST;
 
 namespace Xenon.Compiler
 {
@@ -339,7 +340,7 @@ namespace Xenon.Compiler
 
         }
 
-        public void Generate(Project project, IXenonASTElement _Project, XenonErrorLogger Logger)
+        public void Generate(Project project, IXenonASTElement _parent, XenonErrorLogger Logger)
         {
             // create a full image slide
             Slide imageslide = new Slide();
@@ -369,6 +370,7 @@ namespace Xenon.Compiler
             // set filter data
             imageslide.Data["filter-chain"] = Filters;
 
+            imageslide.AddPostset(_parent, true, true);
 
             project.Slides.Add(imageslide);
         }

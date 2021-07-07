@@ -78,6 +78,7 @@ namespace Xenon.Compiler.AST
                 slide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
             }
 
+            slide.AddPostset(_Parent, true, true);
 
             project.Slides.Add(slide);
         }

@@ -86,7 +86,7 @@ namespace Integrated_Presenter
             }
 
             // attach postshot to slides
-            files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"Postshot_\d+").Success).ToList();
+            files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"Postset_\d+").Success).ToList();
             foreach (var file in files)
             {
                 var num = Regex.Match(file, @"Postshot_(?<num>\d+)").Groups["num"].Value;

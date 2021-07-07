@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Xenon.Compiler.AST;
 
 namespace Xenon.Compiler
 {
@@ -32,7 +33,7 @@ namespace Xenon.Compiler
 
         }
 
-        public void Generate(Project project, IXenonASTElement _Project, XenonErrorLogger Logger)
+        public void Generate(Project project, IXenonASTElement _parent, XenonErrorLogger Logger)
         {
             // create a full image slide
             Slide imageslide = new Slide();
@@ -52,6 +53,8 @@ namespace Xenon.Compiler
             imageslide.Asset = assetpath;
             imageslide.MediaType = MediaType.Image;
             imageslide.Data["key-type"] = KeyType;
+
+            imageslide.AddPostset(_parent, true, true);
 
             project.Slides.Add(imageslide);
         }

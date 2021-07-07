@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text;
 using Xenon.Helpers;
 using System.Linq;
+using Xenon.Compiler.AST;
 
 namespace Xenon.Compiler
 {
@@ -57,7 +58,7 @@ namespace Xenon.Compiler
                 sermonslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
             }
 
-
+            sermonslide.AddPostset(_Parent, true, true);
             project.Slides.Add(sermonslide);
 
 

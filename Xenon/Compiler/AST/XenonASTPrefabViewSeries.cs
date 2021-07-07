@@ -27,6 +27,7 @@ namespace Xenon.Compiler.AST
                 slide.Data["layoutnum"] = i;
                 slide.MediaType = MediaType.Image;
                 slide.Format = SlideFormat.Prefab;
+                slide.AddPostset(_Parent, true, true);
                 project.Slides.Add(slide);
             }
         }

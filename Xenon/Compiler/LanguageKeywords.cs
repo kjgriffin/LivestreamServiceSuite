@@ -66,6 +66,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.LordsPrayer] = "lordsprayer", 
             [LanguageKeywordCommand.Resource] = "resource", 
             [LanguageKeywordCommand.Script] = "script", 
+            [LanguageKeywordCommand.Postset] = "postset",
         };
 
 
@@ -101,6 +102,7 @@ namespace Xenon.Compiler
         Script,
         Script_LiturgyOff,
         Script_OrganIntro,
+        Postset, // Doesn't translate into a true AST command, but is of same priority so we'd better add it here
     }
 
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime;
 using System.Collections.Generic;
 using System.Text;
+using Xenon.Compiler.AST;
 
 namespace Xenon.Compiler
 {
@@ -56,6 +57,8 @@ namespace Xenon.Compiler
             videoslide.Asset = AssetName;
             videoslide.MediaType = MediaType.Video;
             videoslide.Data["key-type"] = KeyType;
+
+            videoslide.AddPostset(_Parent, true, true);
 
             project.Slides.Add(videoslide);
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Xenon.Compiler.AST;
 
 namespace Xenon.Compiler
 {
@@ -52,6 +53,8 @@ namespace Xenon.Compiler
             imageslide.Asset = assetpath;
             imageslide.MediaType = MediaType.Image;
             imageslide.Data["key-type"] = KeyType;
+
+            imageslide.AddPostset(_Parent, true, true);
 
             project.Slides.Add(imageslide);
         }

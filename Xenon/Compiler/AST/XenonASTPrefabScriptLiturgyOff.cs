@@ -38,6 +38,7 @@ namespace Xenon.Compiler.AST
             slide.Data["prefabtype"] = PrefabSlides.Script_LiturgyOff;
             slide.MediaType = MediaType.Empty;
             slide.Format = SlideFormat.Prefab;
+            slide.AddPostset(_Parent, true, true);
             project.Slides.Add(slide);
         }
 

@@ -153,7 +153,7 @@ namespace UIControls
                                 }
 
                                 // split run into command/ rest
-                                var sindex = run.Text.IndexOfAny(new[] { ' ', '{', '(' });
+                                var sindex = run.Text.IndexOfAny(new[] { ' ', '{', '(', ':' });
                                 var cmd = "";
                                 var other = "";
                                 if (sindex != -1)

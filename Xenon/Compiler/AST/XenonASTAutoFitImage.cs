@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using Xenon.Compiler.AST;
 
 namespace Xenon.Compiler
 {
@@ -64,7 +65,7 @@ namespace Xenon.Compiler
 
         }
 
-        public void Generate(Project project, IXenonASTElement _Project, XenonErrorLogger Logger)
+        public void Generate(Project project, IXenonASTElement _parent, XenonErrorLogger Logger)
         {
             // create a full image slide
             Slide imageslide = new Slide();
@@ -101,6 +102,8 @@ namespace Xenon.Compiler
             {
                 imageslide.Data["color-correct-black-white"] = Convert.ToInt32(match.Groups["val"].Value);
             }
+
+            imageslide.AddPostset(_parent, true, true);
 
             project.Slides.Add(imageslide);
         }

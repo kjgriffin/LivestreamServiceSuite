@@ -49,8 +49,18 @@ namespace Xenon.Renderer
                         sw.Write(rs.Text);
                     }
                 }
-                
-            } 
+
+                // generate optional Postset
+                if (rs.IsPostset)
+                {
+                    string filename = Path.Join(directory, $"Postset_{slide.Number}.txt");
+                    using (StreamWriter sw = new StreamWriter(filename, false))
+                    {
+                        sw.Write(rs.Postset);
+                    }
+                }
+
+            }
         }
     }
 }

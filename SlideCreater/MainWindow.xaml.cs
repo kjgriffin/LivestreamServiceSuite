@@ -23,6 +23,7 @@ using Xenon.Helpers;
 using Xenon.SlideAssembly;
 using Xenon.AssetManagment;
 using System.Diagnostics;
+using SlideCreater.ViewControls;
 
 namespace SlideCreater
 {
@@ -311,10 +312,12 @@ namespace SlideCreater
         private void UpdatePreviews()
         {
             slidelist.Items.Clear();
-            slidepreviews.Clear();
+            //slidepreviews.Clear();
+            previews.Clear();
             // add all slides to list
             foreach (var slide in slides)
             {
+                /*
                 SlideContentPresenter slideContentPresenter = new SlideContentPresenter();
                 slideContentPresenter.Width = slidelist.Width;
                 slideContentPresenter.Slide = slide;
@@ -322,6 +325,12 @@ namespace SlideCreater
                 slideContentPresenter.ShowSlide(previewkeys);
                 slidelist.Items.Add(slideContentPresenter);
                 slidepreviews.Add(slideContentPresenter);
+                */
+                MegaSlidePreviewer previewer = new MegaSlidePreviewer();
+                previewer.Width = slidelist.Width;
+                previewer.Slide = slide;
+                slidelist.Items.Add(previewer);
+                previews.Add(previewer);
             }
 
             // update focusslide
@@ -340,7 +349,8 @@ namespace SlideCreater
         }
 
         Project _proj = new Project(true);
-        List<SlideContentPresenter> slidepreviews = new List<SlideContentPresenter>();
+        //List<SlideContentPresenter> slidepreviews = new List<SlideContentPresenter>();
+        List<MegaSlidePreviewer> previews = new List<MegaSlidePreviewer>();
 
         private void SelectSlideToPreview(object sender, RenderedSlide slide)
         {
@@ -590,7 +600,8 @@ namespace SlideCreater
             {
                 Assets.Clear();
                 slidelist.Items.Clear();
-                slidepreviews.Clear();
+                //slidepreviews.Clear();
+                previews.Clear();
                 _proj = Project.Load(ofd.FileName);
                 TbInput.SetText(_proj.SourceCode);
                 Assets = _proj.Assets;
@@ -630,7 +641,8 @@ namespace SlideCreater
             {
                 Assets.Clear();
                 slidelist.Items.Clear();
-                slidepreviews.Clear();
+                //slidepreviews.Clear();
+                previews.Clear();
                 FocusSlide.Clear();
                 _proj.CleanupResources();
                 _proj = await Project.LoadProject(ofd.FileName);
@@ -668,7 +680,8 @@ namespace SlideCreater
             }
             dirty = false;
             slidelist.Items.Clear();
-            slidepreviews.Clear();
+            //slidepreviews.Clear();
+            previews.Clear();
             Assets.Clear();
             AssetList.Children.Clear();
             FocusSlide.Clear();
@@ -742,7 +755,8 @@ namespace SlideCreater
             ShowProjectAssets();
             AssetsChanged();
             FocusSlide.Clear();
-            slidepreviews.Clear();
+            //slidepreviews.Clear();
+            previews.Clear();
             TryAutoSave();
         }
 
@@ -758,10 +772,11 @@ namespace SlideCreater
 
         private void slidelist_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SlideContentPresenter scp = (SlideContentPresenter)slidelist.SelectedItem;
-            if (scp != null)
+            //SlideContentPresenter scp = (SlideContentPresenter)slidelist.SelectedItem;
+            MegaSlidePreviewer msp = slidelist.SelectedItem as MegaSlidePreviewer;
+            if (msp != null)
             {
-                SelectSlideToPreview(sender, scp.Slide);
+                SelectSlideToPreview(sender, msp.main.Slide);
             }
         }
 

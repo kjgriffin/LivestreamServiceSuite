@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="SlideCreater.ViewControls.MegaSlidePreviewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SlideCreater.ViewControls" xmlns:slidecreater="clr-namespace:SlideCreater"
+             mc:Ignorable="d" 
+             d:DesignHeight="108" d:DesignWidth="384">
+    <Grid Width="800" Height="270">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="230"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Viewbox Stretch="Uniform" Grid.Row="0">
+            <StackPanel Orientation="Horizontal" Width="3840" Height="1080">
+                <slidecreater:SlideContentPresenter x:Name="main"></slidecreater:SlideContentPresenter>
+                <slidecreater:SlideContentPresenter x:Name="key"></slidecreater:SlideContentPresenter>
+            </StackPanel>
+        </Viewbox>
+        <Grid Grid.Row="1">
+            <StackPanel Orientation="Horizontal">
+                <Label FontWeight="Bold">Postset:</Label>
+                <Label Name="postset"></Label> 
+            </StackPanel> 
+        </Grid>
+    </Grid>
+</UserControl>

@@ -49,6 +49,14 @@ namespace Xenon.Renderer
         {
             var res = _RenderSlide(s, Messages);
             res.Number = s.Number;
+            
+            // attach Postset
+            if (s.Data.ContainsKey("postset"))
+            {
+                res.IsPostset = true;
+                res.Postset = (int)s.Data["postset"];
+            }
+
             return res;
         }
 

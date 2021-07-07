@@ -9,10 +9,17 @@ namespace Xenon.Compiler
     class XenonASTExpression : IXenonASTElement
     {
         public IXenonASTCommand Command { get; set; }
+        public bool Postset { get; set; } = false;
+        public bool Postset_forAll { get => Postset_All >= 0; }
+        public bool Postset_forFirst { get => Postset_First >= 0; }
+        public bool Postset_forLast { get => Postset_Last >= 0; }
+        public int Postset_All { get; set; } = -1;
+        public int Postset_First { get; set; } = -1;
+        public int Postset_Last { get; set; } = -1;
 
         public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            Command?.Generate(project, _Parent, Logger);
+            Command?.Generate(project, this, Logger);
         }
 
         public void GenerateDebug(Project project)
@@ -24,12 +31,74 @@ namespace Xenon.Compiler
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
         {
+            XenonASTExpression expr;
+            // parse expressions command
             if (Lexer.GobbleandLog("#"))
             {
-                return CompileCommand(Lexer, Logger);
+                expr = CompileCommand(Lexer, Logger);
+            }
+            else
+            {
+                throw new XenonCompilerException();
             }
 
-            throw new XenonCompilerException();
+            Lexer.GobbleWhitespace();
+
+            // parse optional expression postshot
+            if (!Lexer.InspectEOF())
+            {
+                if (Lexer.Inspect("::"))
+                {
+                    CompilePostset(expr, Lexer, Logger);
+                }
+            }
+
+            return expr;
+        }
+
+        private void CompilePostset(XenonASTExpression expr, Lexer lexer, XenonErrorLogger logger)
+        {
+            lexer.Gobble("::");
+
+            lexer.GobbleandLog("postset", "Expected 'postset' tag.");
+
+            var args = lexer.ConsumeOptionalNamedArgsUnenclosed("all", "first", "last");
+
+            if (args.ContainsKey("all"))
+            {
+                if (int.TryParse(args["all"], out int val))
+                {
+                    expr.Postset_All = val;
+                }
+            }
+            if (args.ContainsKey("first"))
+            {
+                if (int.TryParse(args["first"], out int val))
+                {
+                    expr.Postset_First = val;
+                }
+            }
+            if (args.ContainsKey("last"))
+            {
+                if (int.TryParse(args["last"], out int val))
+                {
+                    expr.Postset_Last = val;
+                }
+            }
+
+            // handle missing params
+
+            expr.Postset = true;
+
+            if (!expr.Postset_forAll && !expr.Postset_forFirst && !expr.Postset_forLast)
+            {
+                // bad params
+                // let it compile still
+                expr.Postset = false;
+                // log error
+                logger.Log(new XenonCompilerMessage() { ErrorName = "Missing 'postset' parameters", ErrorMessage = $"Expression marked to have 'postset' but no parameters were provided. Use any of 'all', 'first', 'last'.", Generator = "XenonASTExpression.CompilePostset", Inner = "Will ignore postset.", Token = "", Level = XenonCompilerMessageType.Error });
+            }
+
         }
 
         private XenonASTExpression CompileCommand(Lexer Lexer, XenonErrorLogger Logger)

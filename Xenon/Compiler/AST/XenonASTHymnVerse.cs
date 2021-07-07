@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Xenon.Compiler.AST;
 
 namespace Xenon.Compiler
 {
@@ -71,6 +72,8 @@ namespace Xenon.Compiler
                 SlideLine sl = new SlideLine() { Content = new List<SlideLineContent>() { slc } };
                 slide.Lines.Add(sl);
             }
+
+            slide.AddPostset(parent._localParent, parent._localVNum == 0, parent._localVNum == parent._localVerses);
 
             project.Slides.Add(slide);
 

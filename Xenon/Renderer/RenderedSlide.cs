@@ -18,9 +18,12 @@ namespace Xenon.Renderer
         public Bitmap KeyBitmap {get; set;}
         public int Number { get; set; }
 
+        public bool IsPostset { get; set; }
+        public int Postset { get; set; }
+
         public static RenderedSlide Default()
         {
-            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", CopyExtension = "", Text = "", Name = "", RenderedAs = "Default", Number = 0 };
+            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", CopyExtension = "", Text = "", Name = "", RenderedAs = "Default", Number = 0, IsPostset = false, Postset = -1 };
         }
     }
 }

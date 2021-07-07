@@ -17,11 +17,19 @@ namespace Xenon.Compiler
         public string CopyrightInfo { get; set; }
         public bool IsOverlay { get; set; } = false;
 
+        public IXenonASTElement _localParent;
+        public int _localVNum;
+        public int _localVerses;
+
         public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+            _localVNum = 0;
+            _localParent = _Parent;
+            _localVerses = Verses.Count;
             foreach (var verse in Verses)
             {
                 verse.Generate(project, this, Logger);
+                _localVNum += 1;
             }
         }
 

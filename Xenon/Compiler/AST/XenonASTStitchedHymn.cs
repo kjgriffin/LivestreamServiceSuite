@@ -161,6 +161,9 @@ namespace Xenon.Compiler.AST
                 }
 
                 slide.Data["ordered-images"] = ImageSizes.Select(i => new LSBImageResource(i.Key, i.Value)).ToList();
+
+                slide.AddPostset(_Parent, true, true);
+
                 project.Slides.Add(slide);
 
 
@@ -263,6 +266,9 @@ namespace Xenon.Compiler.AST
                 }
 
                 slide.Data["ordered-images"] = ImageAssets.Select(i => new LSBImageResource(i, ImageSizes[i])).ToList();
+
+                slide.AddPostset(_Parent, true, true);
+
                 project.Slides.Add(slide);
 
                 var heightaprox = 200 + ImageAssets.Select(i => ImageSizes[i].Height).Aggregate((item, sum) => sum + item);
@@ -356,6 +362,7 @@ namespace Xenon.Compiler.AST
                 }
 
                 slide.Data["ordered-images"] = hymn.OrderAllAsOne();
+                slide.AddPostset(_Parent, true, true);
                 project.Slides.Add(slide);
             }
             else
@@ -384,6 +391,7 @@ namespace Xenon.Compiler.AST
 
                     slide.Data["ordered-images"] = hymn.OrderVerse(versenum++);
 
+                    slide.AddPostset(_Parent, versenum == 0, hymn.Verses.Count == versenum && !hymn.RepeatingPostRefrain);
                     project.Slides.Add(slide);
 
                     if (hymn.RepeatingPostRefrain)
@@ -407,6 +415,10 @@ namespace Xenon.Compiler.AST
                         }
 
                         refrainslide.Data["ordered-images"] = hymn.OrderRefrain();
+
+
+                        refrainslide.AddPostset(_Parent, false, hymn.Verses.Count == versenum);
+
                         project.Slides.Add(refrainslide);
                     }
                 }

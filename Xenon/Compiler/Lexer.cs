@@ -74,7 +74,7 @@ namespace Xenon.Compiler
             // initialize SplitWords
 
             SplitWords = new List<string>();
-            SplitWords.AddRange(LanguageKeywords.Commands.Values);
+            SplitWords.AddRange(LanguageKeywords.Commands.Values.OrderByDescending(p => p));
             SplitWords.AddRange(LanguageKeywords.WholeWords);
             List<string> Seperators = new List<string>() {
                 "\r\n",
@@ -364,6 +364,28 @@ namespace Xenon.Compiler
             return sb.ToString();
         }
 
+
+        public string ConsumeUntil(IEnumerable<string> tests, string errormessage = "")
+        {
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                while(!tests.Contains(Peek()))
+                {
+                    sb.Append(Consume());
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(new XenonCompilerMessage()
+                {
+                    ErrorName = "Expecting missing token",
+                    ErrorMessage = $"Expecting tokens <'{tests.Aggregate((acc, v) => acc + "," + v)}'>.\r\nAdditional Info: {errormessage}", Generator = "Lexer.ConsumeUntil", Inner = ex.Message, Level = XenonCompilerMessageType.Error, Token = CurrentToken });
+                throw ex;
+            }
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Advance to the next non-whitespace token
         /// </summary>
@@ -441,6 +463,44 @@ namespace Xenon.Compiler
             GobbleWhitespace();
             GobbleandLog(ConsumeArgList_EndSeq);
 
+            return res;
+        }
+
+
+        public Dictionary<string, string> ConsumeOptionalNamedArgsUnenclosed(params string[] paramnames)
+        {
+            Dictionary<string, string> res = new Dictionary<string, string>();
+            GobbleandLog(ConsumeArgList_StartSeq, $"Expected opening {ConsumeArgList_StartSeq} to begin parameter list.");
+
+            int found = 0;
+            // inspect for each optional parameter until ending sequence
+            while (!Inspect(ConsumeArgList_EndSeq))
+            {
+                GobbleWhitespace();
+                if (found == paramnames.Length)
+                {
+                    // too many parameters, we should be done
+                    Logger.Log(new XenonCompilerMessage() { ErrorName = "Bad Arguments", ErrorMessage = $"Found too many parameters for command. Expected only {paramnames}", Generator = "Lexer.ConsumeOptionalNamedArgsUnenclosed", Inner = "", Token = CurrentToken, Level = XenonCompilerMessageType.Error });
+                    return res;
+                }
+                // try a parameter
+                var name = Peek();
+                if (paramnames.Contains(name))
+                {
+                    // eat it
+                    found += 1;
+                    Consume();
+                    GobbleWhitespace();
+                    GobbleandLog("=", $"Expecting '=' before value of parameter {name}");
+                    var endtokens = new[] { ConsumeArgList_EndSeq, ConsumeArgList_SepSeq };
+                    string val = ConsumeUntil(endtokens, $"Expecting {endtokens} after value for parameter {name}.");
+                    GobbleWhitespace();
+                    Gobble(ConsumeArgList_SepSeq);
+                    res.Add(name, val);
+                    GobbleWhitespace();
+                }
+            }
+            Consume();
             return res;
         }
 

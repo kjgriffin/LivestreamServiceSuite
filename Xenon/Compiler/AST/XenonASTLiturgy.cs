@@ -172,6 +172,8 @@ namespace Xenon.Compiler
             int speakers = 0;
             string startspeaker = layoutEngine.LiturgyTextLines.FirstOrDefault().Speaker ?? "";
 
+            bool first = true;
+
             foreach (var line in layoutEngine.LiturgyTextLines)
             {
                 if (lastspeaker != line.Speaker)
@@ -186,6 +188,8 @@ namespace Xenon.Compiler
                 if (overheight || overspeakerswitch || incorrrectspeakerorder || paragraphwrapissue)
                 {
                     // need to start a new slide for this one
+                    liturgyslide.AddPostset(_Parent, first, false);
+                    first = false;
                     project.Slides.Add(liturgyslide);
                     // create new slide
                     liturgyslide = new Slide
@@ -237,6 +241,7 @@ namespace Xenon.Compiler
                 );
             }
             // add slide to project
+            liturgyslide.AddPostset(_Parent, first, true);
             project.Slides.Add(liturgyslide);
         }
 
