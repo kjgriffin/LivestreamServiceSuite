@@ -78,7 +78,8 @@ namespace LutheRun
             // always start with copyright
             // default to preset center after copyright (though bells would handle this...)
             // may want to be smart too-> if there's a prelude we could do soemthing else
-            newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Center));
+            //newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Center));
+            newservice.Add(new ExternalPrefab("#copyright"));
 
             // warn abouth prelude? (if not present??)
 
@@ -103,6 +104,7 @@ namespace LutheRun
                 // add postsets
 
                 // for hymns, if liturgy follows -> set postset center for first&last on hymn
+                /*
                 var h = element as LSBElementHymn;
                 if (h != null)
                 {
@@ -134,6 +136,7 @@ namespace LutheRun
                         }
                     }
                 }
+                */
 
                 if (LiturgyElements.Contains(element.GetType()))
                 {
