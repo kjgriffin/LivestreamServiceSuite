@@ -56,6 +56,7 @@ namespace UIControls
 
         public void InsertLinesAfterCursor(IEnumerable<string> lines, bool focus = false)
         {
+            _LOCK_allow_hightlight_to_rebuild_document = true;
             FrameworkContentElement obj = tb.CaretPosition.GetAdjacentElement(LogicalDirection.Forward) as FrameworkContentElement;
             while (obj != null)
             {
@@ -79,6 +80,8 @@ namespace UIControls
             {
                 tb.Focus();
             }
+            _LOCK_allow_hightlight_to_rebuild_document = false;
+            PerformTextHighlighting();
         }
 
 
@@ -86,7 +89,7 @@ namespace UIControls
 
         private void PerformTextHighlighting(string overwritetext = "")
         {
-            _LOCK_isalreadyhighlighting = true;
+            _LOCK_allow_hightlight_to_rebuild_document = true;
 
             TextPointer currentposition = tb.CaretPosition;
             TextPointer newpos = null;
@@ -228,14 +231,14 @@ namespace UIControls
                 tb.CaretPosition = newpos;
             }
 
-            _LOCK_isalreadyhighlighting = false;
+            _LOCK_allow_hightlight_to_rebuild_document = false;
         }
 
-        bool _LOCK_isalreadyhighlighting = false;
+        bool _LOCK_allow_hightlight_to_rebuild_document = false;
         private void tb_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextChanged?.Invoke(sender, e);
-            if (!_LOCK_isalreadyhighlighting)
+            if (!_LOCK_allow_hightlight_to_rebuild_document)
             {
                 PerformTextHighlighting();
             }
@@ -243,7 +246,7 @@ namespace UIControls
 
         private void tb_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            if (!_LOCK_isalreadyhighlighting)
+            if (!_LOCK_allow_hightlight_to_rebuild_document)
             {
                 //PerformTextHighlighting();
             }

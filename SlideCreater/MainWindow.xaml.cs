@@ -474,6 +474,7 @@ namespace SlideCreater
         private void InsertTextCommand(string InsertCommand)
         {
             TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
+            //TbInput.InsertTextAtCursor(InsertCommand);
             //int newindex = TbInput.CaretIndex + InsertCommand.Length;
             //TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
             //TbInput.CaretIndex = newindex;
@@ -499,7 +500,8 @@ namespace SlideCreater
             {
                 InsertCommand = $"\r\n#fitimage({asset.Name})\r\n";
             }
-            TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
+            InsertTextCommand(InsertCommand);
+            //TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
             //int newindex = TbInput.CaretIndex + InsertCommand.Length;
             //TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
             //TbInput.CaretIndex = newindex;
