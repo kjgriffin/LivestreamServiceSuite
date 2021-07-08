@@ -143,7 +143,7 @@ namespace Xenon.SlideAssembly
 
         }
 
-        public static async Task<Project> LoadProject(string filename)
+        public static Task<Project> LoadProject(string filename)
         {
 
             Project p = null;
@@ -182,7 +182,7 @@ namespace Xenon.SlideAssembly
 
             }
 
-            return p;
+            return Task.FromResult(p);
         }
 
         public static Project Load(string filename)
