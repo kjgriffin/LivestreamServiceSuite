@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BMDSwitcherAPI;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,5 +18,23 @@ namespace Integrated_Presenter.BMDSwitcher.Config
         public int Window9 { get; set; }
 
         public List<int> ShowVUMetersOnWindows { get; set; } = new List<int>();
+
+        public static BMDMultiviewerSettings Default()
+        {
+            return new BMDMultiviewerSettings()
+            {
+                Layout = (int)_BMDSwitcherMultiViewLayout.bmdSwitcherMultiViewLayoutProgramTop, // 12
+                Window2 = 8,
+                Window3 = 7,
+                Window4 = 6,
+                Window5 = 5,
+                Window6 = 4,
+                Window7 = 3,
+                Window8 = 2,
+                Window9 = 1,
+                ShowVUMetersOnWindows = new List<int>() // by defaul don't show vu meters
+            };
+        }
+
     }
 }

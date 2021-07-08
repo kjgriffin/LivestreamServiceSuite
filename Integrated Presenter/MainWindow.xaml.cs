@@ -2900,6 +2900,13 @@ namespace Integrated_Presenter
         {
             // update UI
             UpdateUIButtonLabels();
+
+            // Update previews
+            PrevPreview.SetMVConfigForPostset(_config.MultiviewerConfig);
+            CurrentPreview.SetMVConfigForPostset(_config.MultiviewerConfig);
+            NextPreview.SetMVConfigForPostset(_config.MultiviewerConfig);
+            AfterPreview.SetMVConfigForPostset(_config.MultiviewerConfig);
+
             // config switcher
             switcherManager?.ConfigureSwitcher(_config);
         }

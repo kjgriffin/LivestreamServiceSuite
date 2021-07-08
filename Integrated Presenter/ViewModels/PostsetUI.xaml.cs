@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Integrated_Presenter.BMDSwitcher.Config;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -23,45 +24,30 @@ namespace Integrated_Presenter.ViewModels
             InitializeComponent();
         }
 
-        public void SetPostset(int id)
+        public void SetPostset(int id, BMDMultiviewerSettings config)
         {
+
+            // figure out which 'window' corresponds to the provided camera id
+            Dictionary<int, int> mappedwindows = new Dictionary<int, int>();
+            mappedwindows[8] = config.Window2;
+            mappedwindows[7] = config.Window3;
+            mappedwindows[6] = config.Window4;
+            mappedwindows[5] = config.Window5;
+            mappedwindows[4] = config.Window6;
+            mappedwindows[3] = config.Window7;
+            mappedwindows[2] = config.Window8;
+            mappedwindows[1] = config.Window9;
+
             Dispatcher.Invoke(() =>
             {
-                cam1.Background = Brushes.Transparent;
-                cam2.Background = Brushes.Transparent;
-                cam3.Background = Brushes.Transparent;
-                cam4.Background = Brushes.Transparent;
-                cam5.Background = Brushes.Transparent;
-                cam6.Background = Brushes.Transparent;
-                cam7.Background = Brushes.Transparent;
-                cam8.Background = Brushes.Transparent;
-                switch (id)
-                {
-                    case 1:
-                        cam1.Background = Brushes.Green;
-                        break;
-                    case 2:
-                        cam2.Background = Brushes.Green;
-                        break;
-                    case 3:
-                        cam3.Background = Brushes.Green;
-                        break;
-                    case 4:
-                        cam4.Background = Brushes.Green;
-                        break;
-                    case 5:
-                        cam5.Background = Brushes.Green;
-                        break;
-                    case 6:
-                        cam6.Background = Brushes.Green;
-                        break;
-                    case 7:
-                        cam7.Background = Brushes.Green;
-                        break;
-                    case 8:
-                        cam8.Background = Brushes.Green;
-                        break;
-                }
+                cam1.Background = mappedwindows[1] == id ? Brushes.Green : Brushes.Transparent;
+                cam2.Background = mappedwindows[2] == id ? Brushes.Green : Brushes.Transparent;
+                cam3.Background = mappedwindows[3] == id ? Brushes.Green : Brushes.Transparent;
+                cam4.Background = mappedwindows[4] == id ? Brushes.Green : Brushes.Transparent;
+                cam5.Background = mappedwindows[5] == id ? Brushes.Green : Brushes.Transparent;
+                cam6.Background = mappedwindows[6] == id ? Brushes.Green : Brushes.Transparent;
+                cam7.Background = mappedwindows[7] == id ? Brushes.Green : Brushes.Transparent;
+                cam8.Background = mappedwindows[8] == id ? Brushes.Green : Brushes.Transparent;
             });
         }
     }

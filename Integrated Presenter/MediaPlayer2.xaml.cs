@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Integrated_Presenter.BMDSwitcher.Config;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -137,7 +138,7 @@ namespace Integrated_Presenter
             {
                 if (_postsetid > -1)
                 {
-                    postset.SetPostset(_postsetid);
+                    postset.SetPostset(_postsetid, _mvconfig);
                     postset.Visibility = Visibility.Visible;
                 }
                 else
@@ -145,6 +146,14 @@ namespace Integrated_Presenter
                     postset.Visibility = Visibility.Hidden;
                 }
             }
+        }
+
+        BMDMultiviewerSettings _mvconfig = BMDMultiviewerSettings.Default();
+
+        public void SetMVConfigForPostset(BMDMultiviewerSettings config)
+        {
+            _mvconfig = config;
+            SetPostset(_postsetid);
         }
 
         private void VideoPlayer_MediaOpened(object sender, RoutedEventArgs e)
