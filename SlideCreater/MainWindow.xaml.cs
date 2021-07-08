@@ -440,16 +440,32 @@ namespace SlideCreater
         private void ShowProjectAssets()
         {
             AssetList.Children.Clear();
+
+            bool loaderrors = false;
+            List<string> missingassets = new List<string>();
+
             foreach (var asset in _proj.Assets)
             {
-                AssetItemControl assetItemCtrl = new AssetItemControl(asset);
-                assetItemCtrl.OnFitInsertRequest += AssetItemCtrl_OnFitInsertRequest;
-                assetItemCtrl.OnDeleteAssetRequest += AssetItemCtrl_OnDeleteAssetRequest;
-                assetItemCtrl.OnAutoFitInsertRequest += AssetItemCtrl_OnAutoFitInsertRequest;
-                assetItemCtrl.OnInsertBellsRequest += AssetItemCtrl_OnInsertBellsRequest;
-                assetItemCtrl.OnLiturgyInsertRequest += AssetItemCtrl_OnLiturgyInsertRequest;
+                try
+                {
+                    AssetItemControl assetItemCtrl = new AssetItemControl(asset);
+                    assetItemCtrl.OnFitInsertRequest += AssetItemCtrl_OnFitInsertRequest;
+                    assetItemCtrl.OnDeleteAssetRequest += AssetItemCtrl_OnDeleteAssetRequest;
+                    assetItemCtrl.OnAutoFitInsertRequest += AssetItemCtrl_OnAutoFitInsertRequest;
+                    assetItemCtrl.OnInsertBellsRequest += AssetItemCtrl_OnInsertBellsRequest;
+                    assetItemCtrl.OnLiturgyInsertRequest += AssetItemCtrl_OnLiturgyInsertRequest;
+                    AssetList.Children.Add(assetItemCtrl);
+                }
+                catch (FileNotFoundException ex)
+                {
+                    loaderrors = true;
+                    missingassets.Add(asset.Name);
+                }
+            }
 
-                AssetList.Children.Add(assetItemCtrl);
+            if (loaderrors)
+            {
+                throw new Exception($"Missing ({missingassets.Count}) asset(s): {missingassets.Aggregate((agg, item) => agg + ", '" + item + "'")}");
             }
         }
 
@@ -658,7 +674,7 @@ namespace SlideCreater
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to load project assets");
+                    MessageBox.Show(ex.ToString(), "Failed to load project assets");
                     Assets.Clear();
                     _proj.Assets.Clear();
                     ProjectState = ProjectState.LoadError;

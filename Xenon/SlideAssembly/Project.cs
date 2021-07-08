@@ -93,17 +93,7 @@ namespace Xenon.SlideAssembly
                 int count = Assets.Count;
 
                 int completed = 0;
-                // copy assets
-                //foreach (var asset in Assets)
-                //{
-                //    ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
-                //    completed++;
-                //    progress.Report(5 + (int)((double)completed / (double)count * 100 * 0.9));
-                //}
-
-
-
-
+              
                 Parallel.ForEach(Assets, (asset) =>
                  {
                      ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
@@ -111,9 +101,6 @@ namespace Xenon.SlideAssembly
                      double assetssaved = (completed / (double)count) * 100;
                      progress.Report(5 + (int)(assetssaved * 0.85));
                  });
-
-                // update project assets to point to zip
-
 
                 progress.Report(90);
 
