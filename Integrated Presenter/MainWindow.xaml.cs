@@ -1,5 +1,4 @@
 ﻿using BMDSwitcherAPI;
-using Integrated_Presenter.BMDHyperdeck;
 using Integrated_Presenter.BMDSwitcher;
 using Integrated_Presenter.BMDSwitcher.Config;
 using Integrated_Presenter.ViewModels;
@@ -44,8 +43,6 @@ namespace Integrated_Presenter
         BMDSwitcherConfigSettings _config;
 
 
-        BMDHyperdeckManager mHyperdeckManager;
-
         List<SlidePoolSource> SlidePoolButtons;
 
         private BuildVersion VersionInfo;
@@ -67,10 +64,6 @@ namespace Integrated_Presenter
 
 
 
-
-
-            mHyperdeckManager = new BMDHyperdeckManager();
-            mHyperdeckManager.OnMessageFromHyperDeck += MHyperdeckManager_OnMessageFromHyperDeck;
 
             // set a default config
             SetDefaultConfig();
@@ -142,11 +135,6 @@ namespace Integrated_Presenter
         private void NextPreview_OnMediaLoaded(object sender, MediaPlaybackTimeEventArgs e)
         {
             UpdateSlidePreviewControls();
-        }
-
-        private void MHyperdeckManager_OnMessageFromHyperDeck(object sender, string message)
-        {
-            hyperDeckMonitorWindow?.AddMessage(message);
         }
 
         private void Gp_timer_1_Elapsed(object sender, ElapsedEventArgs e)
@@ -810,7 +798,7 @@ namespace Integrated_Presenter
         }
 
 
-        private void WindowKeyDown(object sender, KeyEventArgs e)
+        private async void WindowKeyDown(object sender, KeyEventArgs e)
         {
 
             // dont enable shortcuts when focused on textbox
@@ -854,18 +842,7 @@ namespace Integrated_Presenter
             }
 
 
-            // recording
-
-            if (e.Key == Key.F5)
-            {
-                TryStartRecording();
-            }
-
-            if (e.Key == Key.F6)
-            {
-                TryStopRecording();
-            }
-
+            
             // audio
 
             if (e.Key == Key.A)
@@ -1048,11 +1025,11 @@ namespace Integrated_Presenter
                 if (Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
                     // do a tied-next slide
-                    PerformTiedNextSlide();
+                    await PerformTiedNextSlide();
                 }
                 else
                 {
-                    nextSlide();
+                    await nextSlide();
                 }
             }
             if (e.Key == Key.Up)
@@ -1079,7 +1056,7 @@ namespace Integrated_Presenter
             }
             if (e.Key == Key.T)
             {
-                SlideDriveVideo_Current();
+                await SlideDriveVideo_Current();
             }
             #endregion
 
@@ -1522,16 +1499,8 @@ namespace Integrated_Presenter
                         }
                         break;
                     case AutomationActionType.RecordStart:
-                        Dispatcher.Invoke(() =>
-                        {
-                            TryStartRecording();
-                        });
                         break;
                     case AutomationActionType.RecordStop:
-                        Dispatcher.Invoke(() =>
-                        {
-                            TryStopRecording();
-                        });
                         break;
 
                     case AutomationActionType.Timer1Restart:
@@ -1687,7 +1656,7 @@ namespace Integrated_Presenter
             });
         }
 
-        private async void SlideDriveVideo_Next(bool Tied = false)
+        private async Task SlideDriveVideo_Next(bool Tied = false)
         {
             if (Presentation?.Next != null)
             {
@@ -1887,7 +1856,7 @@ namespace Integrated_Presenter
             }
         }
 
-        private async void SlideUndrive_ToSlide(Slide s)
+        private void SlideUndrive_ToSlide(Slide s)
         {
             if (s != null && Presentation != null)
             {
@@ -1898,7 +1867,7 @@ namespace Integrated_Presenter
             }
         }
 
-        private async void SlideDriveVideo_ToSlide(Slide s)
+        private async Task SlideDriveVideo_ToSlide(Slide s)
         {
             if (s != null && Presentation != null)
             {
@@ -2073,7 +2042,6 @@ namespace Integrated_Presenter
                 case "startrecord":
                     if (automationrecordstartenabled)
                     {
-                        mHyperdeckManager?.StartRecording();
                         isRecording = true;
                         UpdateRecordButtonUI();
                     }
@@ -2083,7 +2051,7 @@ namespace Integrated_Presenter
             }
         }
 
-        private async void SlideDriveVideo_Current()
+        private async Task SlideDriveVideo_Current()
         {
             if (Presentation?.EffectiveCurrent != null)
             {
@@ -2393,7 +2361,7 @@ namespace Integrated_Presenter
 
         #region slideshow commands
 
-        private void PerformTiedNextSlide()
+        private async Task PerformTiedNextSlide()
         {
             bool tied = false;
             // only makes sense to do this in drive mode
@@ -2403,17 +2371,17 @@ namespace Integrated_Presenter
                 tied = true;
             }
             // do a next slide and a gaurded auto-trans
-            nextSlide(tied);
+            await nextSlide(tied);
         }
 
-        private void nextSlide(bool Tied = false)
+        private async Task nextSlide(bool Tied = false)
         {
             if (activepresentation)
             {
                 DisableSlidePoolOverrides();
                 if (CurrentSlideMode == 1)
                 {
-                    SlideDriveVideo_Next(Tied);
+                    await SlideDriveVideo_Next(Tied);
                 }
                 else if (CurrentSlideMode == 2)
                 {
@@ -2543,9 +2511,9 @@ namespace Integrated_Presenter
         {
             playMedia();
         }
-        private void ClickNextSlide(object sender, RoutedEventArgs e)
+        private async void ClickNextSlide(object sender, RoutedEventArgs e)
         {
-            nextSlide();
+            await nextSlide();
         }
         private void ClickPrevSlide(object sender, RoutedEventArgs e)
         {
@@ -2660,9 +2628,9 @@ namespace Integrated_Presenter
             cbPrevAfter.IsChecked = displayPrevAfter;
         }
 
-        private void ClickTakeSlide(object sender, RoutedEventArgs e)
+        private async void ClickTakeSlide(object sender, RoutedEventArgs e)
         {
-            SlideDriveVideo_Current();
+            await SlideDriveVideo_Current();
         }
 
 
@@ -2710,7 +2678,7 @@ namespace Integrated_Presenter
 
         SlidePoolSource currentpoolsource = null;
 
-        private void TakeSlidePoolSlide(Slide s, int num, bool replaceMode, bool driven)
+        private async void TakeSlidePoolSlide(Slide s, int num, bool replaceMode, bool driven)
         {
 
             for (int i = 0; i < 4; i++)
@@ -2732,7 +2700,7 @@ namespace Integrated_Presenter
 
             if (driven)
             {
-                SlideDriveVideo_ToSlide(s);
+                await SlideDriveVideo_ToSlide(s);
             }
             else
             {
@@ -2757,7 +2725,6 @@ namespace Integrated_Presenter
             _display?.Close();
             _keydisplay?.Close();
             switcherManager?.Close();
-            hyperDeckMonitorWindow?.Close();
             audioPlayer?.Close();
             pipctrl?.Close();
         }
@@ -3292,43 +3259,6 @@ namespace Integrated_Presenter
             gcAdvancedProjector.Width = new GridLength(0);
         }
 
-        bool projectorconnected = false;
-        SerialPort? projectorSerialPort;
-        private void ConnectProjector()
-        {
-            var ports = SerialPort.GetPortNames();
-            ConnectComPort dialog = new ConnectComPort(ports.ToList());
-            dialog.ShowDialog();
-            if (dialog.Selected)
-            {
-                string port = dialog.Port;
-
-                if (projectorSerialPort != null)
-                {
-                    if (projectorSerialPort.IsOpen)
-                    {
-                        projectorSerialPort.Close();
-                    }
-                }
-                projectorSerialPort = new SerialPort(port, 9600);
-                try
-                {
-                    projectorSerialPort.Open();
-                }
-                catch (Exception)
-                {
-                    return;
-                }
-                projectorconnected = true;
-            }
-        }
-
-        private void ClickConnectProjector(object sender, RoutedEventArgs e)
-        {
-            ConnectProjector();
-        }
-
-
 
         bool isRecording = false;
 
@@ -3342,21 +3272,6 @@ namespace Integrated_Presenter
             {
                 btnRecording.Background = Brushes.Gray;
             }
-        }
-
-        private void ClickConnectHyperdeck(object sender, RoutedEventArgs e)
-        {
-            mHyperdeckManager?.Connect();
-        }
-
-        private void ClickRecordStart(object sender, RoutedEventArgs e)
-        {
-            mHyperdeckManager?.StartRecording();
-        }
-
-        private void ClickRecordStop(object sender, RoutedEventArgs e)
-        {
-            mHyperdeckManager?.StopRecording();
         }
 
         private void SetPIPPosition(BMDUSKDVESettings config)
@@ -3393,76 +3308,7 @@ namespace Integrated_Presenter
         {
         }
 
-        HyperDeckMonitorWindow hyperDeckMonitorWindow;
-
-        private void OpenHyperdeckMonitorWindow(object sender, RoutedEventArgs e)
-        {
-            if (hyperDeckMonitorWindow == null)
-            {
-                hyperDeckMonitorWindow = new HyperDeckMonitorWindow();
-                hyperDeckMonitorWindow.OnTextCommand += HyperDeckMonitorWindow_OnTextCommand;
-            }
-            if (hyperDeckMonitorWindow.IsClosed)
-            {
-                hyperDeckMonitorWindow = new HyperDeckMonitorWindow();
-                hyperDeckMonitorWindow.OnTextCommand += HyperDeckMonitorWindow_OnTextCommand;
-            }
-
-            hyperDeckMonitorWindow.Show();
-
-
-
-
-        }
-
-        private void HyperDeckMonitorWindow_OnTextCommand(object sender, string cmd)
-        {
-            mHyperdeckManager?.Send(cmd);
-        }
-
-        private void ClickToggleRecording(object sender, RoutedEventArgs e)
-        {
-            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
-            {
-                if (isRecording)
-                {
-                    isRecording = false;
-                    mHyperdeckManager?.StopRecording();
-                }
-                else
-                {
-                    isRecording = true;
-                    mHyperdeckManager?.StartRecording();
-                }
-                UpdateRecordButtonUI();
-            }
-            else
-            {
-                isRecording = false;
-                UpdateRecordButtonUI();
-            }
-        }
-
-        private void TryStartRecording()
-        {
-            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
-            {
-                isRecording = true;
-                mHyperdeckManager?.StartRecording();
-            }
-            UpdateRecordButtonUI();
-        }
-
-        private void TryStopRecording()
-        {
-            if (mHyperdeckManager != null && mHyperdeckManager.IsConnected)
-            {
-                isRecording = false;
-                mHyperdeckManager?.StopRecording();
-            }
-            UpdateRecordButtonUI();
-        }
-
+      
         bool automationtimer1enabled = true;
         bool automationrecordstartenabled = true;
 
@@ -3478,20 +3324,7 @@ namespace Integrated_Presenter
             miStartRecord.IsChecked = automationrecordstartenabled;
         }
 
-        private void ClickDisconnectProjector(object sender, RoutedEventArgs e)
-        {
-            if (projectorconnected)
-            {
-                projectorSerialPort.Close();
-            }
-        }
-
-        private void ClickDisconnectHyperdeck(object sender, RoutedEventArgs e)
-        {
-            mHyperdeckManager?.Disconnect();
-        }
-
-
+ 
         private bool ProgramRowLocked = true;
 
         private bool IsProgramRowLocked

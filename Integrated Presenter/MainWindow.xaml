@@ -25,12 +25,6 @@
                     <MenuItem Click="ClickConnect" Header="Switcher" IsTabStop="False"></MenuItem>
                     <Separator></Separator>
                     <MenuItem Click="ClickConnectMock" Header="Mock Switcher" IsTabStop="False"></MenuItem>
-                    <Separator></Separator>
-                    <MenuItem Click="ClickConnectProjector" Header="Projector" IsTabStop="False"></MenuItem>
-                    <MenuItem Click="ClickConnectHyperdeck" Header="Hyperdeck" IsTabStop="False"></MenuItem>
-                    <Separator></Separator>
-                    <MenuItem Click="ClickDisconnectProjector" Header="Disconnect Projector" IsTabStop="False"></MenuItem>
-                    <MenuItem Click="ClickDisconnectHyperdeck" Header="Disconnect Hyperdeck" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
@@ -47,7 +41,6 @@
                     <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP [P]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
                     <MenuItem Name="cbAdvancedPIPMovement" Header="Advanced PIP Location [L]" IsTabStop="False" Click="ClickViewAdvancedPIPLocation"></MenuItem>
                     <MenuItem Header="Aux Output [X]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAuxOutput"></MenuItem>
-                    <MenuItem Header="Hyperdeck Monitor" IsTabStop="False" Click="OpenHyperdeckMonitorWindow"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Settings" IsTabStop="False">
                     <MenuItem Header="Export Settings" Click="SaveSettings" IsTabStop="False"></MenuItem>
@@ -383,7 +376,7 @@
                                                                 </Border>
                                                             </StackPanel>
                                                         </Viewbox>
-                                                        <Button Focusable="False" Name="btnRecording" Click="ClickToggleRecording" IsTabStop="false" Background="Gray">
+                                                        <Button Focusable="False" Name="btnRecording" IsTabStop="false" Background="Gray">
                                                             <Button.Template>
                                                                 <ControlTemplate>
                                                                     <Ellipse Cursor="Hand" Margin="5" Width="60" Height="60" Fill="{TemplateBinding Property=Background}"></Ellipse>
