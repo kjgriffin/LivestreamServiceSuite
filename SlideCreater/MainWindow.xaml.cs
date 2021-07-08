@@ -304,7 +304,7 @@ namespace SlideCreater
                 }
                 alllogs = messages;
                 logs = messages.Where(m => MessageVisiblity[m.Level] == true).ToList();
-                
+
                 error_report_view.ItemsSource = logs;
             });
         }
@@ -528,12 +528,12 @@ namespace SlideCreater
             }
         }
 
-        private void ClickSave(object sender, RoutedEventArgs e)
+        private async void ClickSave(object sender, RoutedEventArgs e)
         {
-            SaveProject();
+            await SaveProject();
         }
 
-        private async void SaveProject()
+        private async Task SaveProject()
         {
             TryAutoSave();
             var saveprogress = new Progress<int>(percent =>
@@ -584,11 +584,12 @@ namespace SlideCreater
         }
 
 
-        private void OpenProjectJSON()
+        private async Task OpenProjectJSON()
         {
             if (dirty)
             {
-                if (!CheckSaveChanges())
+                bool saved = await CheckSaveChanges();
+                if (!saved)
                 {
                     return;
                 }
@@ -626,11 +627,12 @@ namespace SlideCreater
 
         }
 
-        private async void OpenProject()
+        private async Task OpenProject()
         {
             if (dirty)
             {
-                if (!CheckSaveChanges())
+                bool saved = await CheckSaveChanges();
+                if (!saved)
                 {
                     return;
                 }
@@ -671,11 +673,12 @@ namespace SlideCreater
         }
 
 
-        private void NewProject()
+        private async Task NewProject()
         {
             if (dirty)
             {
-                if (!CheckSaveChanges())
+                bool saved = await CheckSaveChanges();
+                if (!saved)
                 {
                     return;
                 }
@@ -702,12 +705,12 @@ namespace SlideCreater
         /// Return true if should proceed, false to abort
         /// </summary>
         /// <returns></returns>
-        private bool CheckSaveChanges()
+        private async Task<bool> CheckSaveChanges()
         {
             var res = MessageBox.Show("Do you want to save your changes?", "Save Changes", MessageBoxButton.YesNoCancel);
             if (res == MessageBoxResult.Yes)
             {
-                SaveProject();
+                await SaveProject();
                 return true;
             }
             else if (res == MessageBoxResult.No)
@@ -717,14 +720,14 @@ namespace SlideCreater
             return false;
         }
 
-        private void ClickOpen(object sender, RoutedEventArgs e)
+        private async void ClickOpen(object sender, RoutedEventArgs e)
         {
-            OpenProject();
+            await OpenProject();
         }
 
-        private void ClickNew(object sender, RoutedEventArgs e)
+        private async void ClickNew(object sender, RoutedEventArgs e)
         {
-            NewProject();
+            await NewProject();
         }
 
         private bool dirty = false;
@@ -739,11 +742,12 @@ namespace SlideCreater
             ActionState = ActionState.Ready;
         }
 
-        private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        private async void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (dirty)
             {
-                if (!CheckSaveChanges())
+                bool saved = await CheckSaveChanges();
+                if (!saved)
                 {
                     e.Cancel = true;
                 }
@@ -767,9 +771,9 @@ namespace SlideCreater
             SaveAsJSON();
         }
 
-        private void ClickOpenJSON(object sender, RoutedEventArgs e)
+        private async void ClickOpenJSON(object sender, RoutedEventArgs e)
         {
-            OpenProjectJSON();
+            await OpenProjectJSON();
         }
 
         private void slidelist_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -836,7 +840,7 @@ namespace SlideCreater
             }
         }
 
-        private void RecoverAutoSave(object sender, RoutedEventArgs e)
+        private async void RecoverAutoSave(object sender, RoutedEventArgs e)
         {
             // open tmp files folder and let 'em select an autosave
             string tmppath = System.IO.Path.GetTempPath();
@@ -858,7 +862,7 @@ namespace SlideCreater
                     {
                         string json = reader.ReadToEnd();
                         AutoSave save = JsonSerializer.Deserialize<AutoSave>(json);
-                        OverwriteWithAutoSave(save);
+                        await OverwriteWithAutoSave(save);
                     }
                 }
                 catch (Exception ex)
@@ -868,9 +872,9 @@ namespace SlideCreater
             }
         }
 
-        private void OverwriteWithAutoSave(AutoSave save)
+        private async Task OverwriteWithAutoSave(AutoSave save)
         {
-            NewProject();
+            await NewProject();
             // load assets
             AddAssetsFromPaths(save.SourceAssets);
             TbInput.SetText(save.SourceCode);
@@ -916,5 +920,6 @@ namespace SlideCreater
             MessageVisiblity[XenonCompilerMessageType.Info] = cb_message_view_debug.IsChecked ?? false;
             UpdateErrorReport(alllogs);
         }
+
     }
 }

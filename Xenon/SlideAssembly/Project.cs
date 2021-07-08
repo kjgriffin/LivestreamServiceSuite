@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Drawing;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Xenon.SlideAssembly
 {
@@ -176,6 +177,21 @@ namespace Xenon.SlideAssembly
 
                 // unzip all assets
                 archive.ExtractToDirectory(p._loadTmpPath, true);
+
+                // update all asset temp locations
+                foreach (var asset in p.Assets)
+                {
+                    asset.UpdateTmpLocation(Path.Combine(p._loadTmpPath, "assets"));
+                }
+
+                // try checking that extraction worked...
+                foreach (var assetfile in p.Assets)
+                {
+                    if (!System.IO.File.Exists(assetfile.CurrentPath))
+                    {
+                        Debug.WriteLine($"Failed to extract file {assetfile.CurrentPath} for {assetfile.Name}");
+                    }
+                }
 
             }
 

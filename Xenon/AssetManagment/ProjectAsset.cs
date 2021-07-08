@@ -29,5 +29,11 @@ namespace Xenon.AssetManagment
         public string Name { get; set; }
         public string OriginalFilename { get => Path.GetFileName(CurrentPath); }
         public AssetType Type { get; set; }
+
+        public void UpdateTmpLocation(string newtempdirectory)
+        {
+            LoadedTempPath = Path.Combine(newtempdirectory, OriginalFilename);
+        }
+
     }
 }

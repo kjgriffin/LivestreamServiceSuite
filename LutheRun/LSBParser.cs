@@ -48,7 +48,7 @@ namespace LutheRun
                 using (TextReader reader = new StreamReader(path))
                 {
                     html = await reader.ReadToEndAsync();
-                    ParseHTMLIntoDOM(html);
+                    await ParseHTMLIntoDOM(html);
                 }
             }
             catch (Exception)
@@ -56,7 +56,7 @@ namespace LutheRun
             }
         }
 
-        private async void ParseHTMLIntoDOM(string html)
+        private async Task ParseHTMLIntoDOM(string html)
         {
             var parser = new HtmlParser();
             var document = await parser.ParseDocumentAsync(html);
