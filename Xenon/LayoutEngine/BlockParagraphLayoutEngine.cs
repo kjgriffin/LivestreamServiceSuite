@@ -97,7 +97,7 @@ namespace Xenon.LayoutEngine
             We will assume that the line should be balanced so that all lines (except the last spilled line) are approx equal size and the last line still meets the min length
              */
 
-            double spillfactor = 0.3;
+            double spillfactor = 0.4;
             double targetwidth = ComputeApproxLineTargetWidth(textbox.Width, spillfactor, line.Words);
 
             // compute goondess of breaking the line after this word
@@ -157,10 +157,17 @@ namespace Xenon.LayoutEngine
                     // endbonus [0-1] * weight
                     // nextwordscore
                     double targetwidthweight = 1;
-                    double endbonusweight = 0.2;
+
+                    // 0.2 seems a bit too low, rarely forces a break
+                    // 0.8 is a bit too aggressive, almost always forces break if line is over 30% full....
+                    // perhaps this needs to be a compound weight -> start 0.3, and increase as width increases
+                    // idea is as we approach the width of the line we get more eager to break at punctuation
+                    double endbonusweight = 0.3 + Math.Pow((1 - widthdiff), 2);
 
                     double score = (((1 - widthdiff) * targetwidthweight) + (endbounus * endbonusweight)) * nextwordscore;
                     scoredwords.Add((score, word));
+
+                    Debug.WriteLine($"Scored @{score:0.000}, tw@{(1-widthdiff) * targetwidthweight:0.000}, eb{endbounus * endbonusweight:0.000}, nw@{nextwordscore:0} for '{word.Value}'");
                 }
 
 
