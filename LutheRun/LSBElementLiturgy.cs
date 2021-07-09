@@ -14,7 +14,30 @@ namespace LutheRun
         public static ILSBElement Parse(IElement element)
         {
             // process liturgy text
-            return new LSBElementLiturgy() { LiturgyText = element.StrippedText() };
+
+            StringBuilder sb = new StringBuilder();
+
+            var lines = element.ExtractTextAsLiturgy();
+
+            foreach (var line in lines)
+            {
+                if (line.hasspeaker)
+                {
+                    if (sb.Length > 0)
+                    {
+                        sb.AppendLine();
+                    }
+                    sb.Append(line.speaker);
+                    sb.Append(" ");
+                    sb.Append(line.value);
+                }
+                else
+                {
+                    sb.Append(line.value);
+                }
+            }
+
+            return new LSBElementLiturgy() { LiturgyText = sb.ToString() };
         }
 
         public static ILSBElement Create(string liturgyText)

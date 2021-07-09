@@ -58,6 +58,120 @@ namespace LutheRun
             return s.Split(Environment.NewLine).ToList();
         }
 
+        public static List<(bool hasspeaker, string speaker, string value)> ExtractTextAsLiturgy(this IElement element)
+        {
+            List<(bool hasspeaker, string speaker, string value)> lines = new List<(bool hasspeaker, string speaker, string value)>();
+
+            // perform a recursive decent over the element tree
+            // be context-aware and extract text performing replacements as nessecary
+
+            // TODO: handle lsb-responsorial/lsb-responsorial-continued different from lsb-responsorial_poetry
+
+            bool foundspeaker = false;
+            bool expectspeaker = false;
+            string speaker = "";
+            StringBuilder sb = new StringBuilder();
+
+            List<IElement> flattree = element.ElementTreeToFlatList();
+
+            foreach (var node in flattree)
+            {
+                if (node.LocalName == "lsb-content")
+                {
+                    continue;
+                }
+                if (node.LocalName == "p")
+                {
+                    // begin new line
+                    // add old line
+                    if (sb.Length > 0)
+                    {
+                        lines.Add((foundspeaker, speaker, sb.ToString()));
+                        sb.Clear();
+                        speaker = "";
+                        foundspeaker = false;
+                    }
+
+                    if (node.ClassList.Contains("lsb-responsorial-continued"))
+                    {
+                        expectspeaker = false;
+                    }
+                    else
+                    {
+                        expectspeaker = true;
+                    }
+                }
+                else if (node.LocalName == "br")
+                {
+                    sb.AppendLine();
+                }
+                else
+                {
+                    if (node.ClassList.Contains("lsb-symbol"))
+                    {
+                        if (expectspeaker)
+                        {
+                            speaker = node.Text();
+                            expectspeaker = false;
+                            foundspeaker = true;
+                        }
+                        else
+                        {
+                            string s = node.Text().Trim();
+                            if (s.Length > 0)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.Append(" ");
+                                }
+                                sb.Append(s);
+                            }
+                        }
+                    }
+                    else if (node.ClassList.Contains("Apple-tab-span"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        string s = node.Text().Trim();
+                        if (s.Length > 0)
+                        {
+                            if (sb.Length > 0)
+                            {
+                                sb.Append(" ");
+                            }
+                            sb.Append(s);
+                        }
+                    }
+                }
+            }
+
+            if (sb.Length > 0)
+            {
+                lines.Add((foundspeaker, speaker, sb.ToString()));
+                sb.Clear();
+            }
+
+            return lines;
+        }
+
+
+        public static List<IElement> ElementTreeToFlatList(this IElement root)
+        {
+            List<IElement> list = new List<IElement>();
+
+            list.Add(root);
+
+            foreach (var child in root.Children)
+            {
+                list.AddRange(ElementTreeToFlatList(child));
+            }
+
+            return list;
+        }
+
+
         public static IEnumerable<T> ItemAsEnumerable<T>(this T item)
         {
             yield return item;

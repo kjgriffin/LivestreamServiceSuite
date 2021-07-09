@@ -295,6 +295,10 @@ namespace LutheRun
             {
                 return true;
             }
+            if (ParsePropperAsIntroit(element))
+            {
+                return true;
+            }
             return false;
         }
 
@@ -371,6 +375,24 @@ namespace LutheRun
         }
 
 
+
+        private bool ParsePropperAsIntroit(IElement element)
+        {
+            var caption = LSBElementCaption.Parse(element) as LSBElementCaption;
+            if (caption == null || caption?.Caption == string.Empty)
+            {
+                return false;
+            }
+
+            if (!caption.Caption.ToLower().Contains("introit"))
+            {
+                return false;
+            }
+
+            var lines = element.Children.Where(c => c.LocalName == "lsb-content").FirstOrDefault().ExtractTextAsLiturgy();
+
+            return true;
+        }
 
 
         private bool ParsePropperAsFullMusic(IElement element)
