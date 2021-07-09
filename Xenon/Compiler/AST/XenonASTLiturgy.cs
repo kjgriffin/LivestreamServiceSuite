@@ -174,6 +174,7 @@ namespace Xenon.Compiler
 
             bool first = true;
 
+            int lineindexnum = 0;
             foreach (var line in layoutEngine.LiturgyTextLines)
             {
                 if (lastspeaker != line.Speaker)
@@ -185,7 +186,12 @@ namespace Xenon.Compiler
                 bool overspeakerswitch = speakers > 2; // Rule 2
                 bool incorrrectspeakerorder = (startspeaker == "C" && line.Speaker != "C") || (startspeaker == "R" && line.Speaker != "R"); // Rule 1
                 bool paragraphwrapissue = speakers > 1 && line.MultilineParagraph; // Rule 3
-                if (overheight || overspeakerswitch || incorrrectspeakerorder || paragraphwrapissue)
+
+                // Asethetic rule: if next line is continuation of speaker, and is super short -> if we're nearind end of slide, push it all to the next slide since it will look better there?
+                var nextwidth = lineindexnum + 1 < layoutEngine.LiturgyTextLines.Count ? layoutEngine.LiturgyTextLines[lineindexnum + 1].Width : project.Layouts.LiturgyLayout.GetRenderInfo().TextBox.Width;
+                bool looksbettertopushtonextslide = lastspeaker == line.Speaker && nextwidth < 0.7 * project.Layouts.LiturgyLayout.GetRenderInfo().TextBox.Width && lineheight > project.Layouts.LiturgyLayout.GetRenderInfo().TextBox.Height / 2;
+
+                if (overheight || overspeakerswitch || incorrrectspeakerorder || paragraphwrapissue || looksbettertopushtonextslide)
                 {
                     // need to start a new slide for this one
                     liturgyslide.AddPostset(_Parent, first, false);
@@ -239,6 +245,7 @@ namespace Xenon.Compiler
                         }
                     }
                 );
+                lineindexnum += 1;
             }
             // add slide to project
             liturgyslide.AddPostset(_Parent, first, true);
