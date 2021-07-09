@@ -54,7 +54,7 @@ namespace Xenon.LayoutEngine
         static Font flsbbold = new Font("LSBSymbol", 36, FontStyle.Bold);
         static Font flsbitalic = new Font("LSBSymbol", 36, FontStyle.Italic);
 
-        static public List<LiturgyTextLine> LayoutLiturgyIntoTextLines(Rectangle textbox, LiturgyLine line)
+        static public List<LiturgyTextLine> LayoutLiturgyIntoTextLines(Rectangle textbox, LiturgyLine line, double externalscaleendbonusweight = 1)
         {
             List<LiturgyTextLine> textlines = new List<LiturgyTextLine>();
 
@@ -121,7 +121,7 @@ namespace Xenon.LayoutEngine
             {
 
                 // prevent starting a line with whitespace
-                if (Regex.Match(remainingline.First().Value, "\\s").Success)
+                if (string.IsNullOrWhiteSpace(remainingline.First().Value))
                 {
                     remainingline.RemoveAt(0);
                 }
@@ -162,7 +162,8 @@ namespace Xenon.LayoutEngine
                     // 0.8 is a bit too aggressive, almost always forces break if line is over 30% full....
                     // perhaps this needs to be a compound weight -> start 0.3, and increase as width increases
                     // idea is as we approach the width of the line we get more eager to break at punctuation
-                    double endbonusweight = 0.3 + Math.Pow((1 - widthdiff), 2);
+                    // allow externally overriding the endbonus (by setting the externalweight to 0)
+                    double endbonusweight = (0.3 + Math.Pow((1 - widthdiff), 2)) * externalscaleendbonusweight;
 
                     double score = (((1 - widthdiff) * targetwidthweight) + (endbounus * endbonusweight)) * nextwordscore;
                     scoredwords.Add((score, word));

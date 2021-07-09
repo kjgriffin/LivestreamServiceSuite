@@ -144,11 +144,11 @@ namespace Xenon.LayoutEngine
                 trimmedwords.Add(word);
             }
             // remove whitespace
-            while (trimmedwords.FindIndex(r => Regex.Match(r, "\\s").Success) == 0)
+            while (trimmedwords.FindIndex(r => string.IsNullOrWhiteSpace(r)) == 0)
             {
                 trimmedwords.RemoveAt(0);
             }
-            while (trimmedwords.Count > 0 && trimmedwords.FindLastIndex(r => Regex.Match(r, "\\s").Success) == trimmedwords.Count - 1)
+            while (trimmedwords.Count > 0 && trimmedwords.FindLastIndex(r => string.IsNullOrWhiteSpace(r)) == trimmedwords.Count - 1)
             {
                 trimmedwords.RemoveAt(trimmedwords.Count - 1);
             }
@@ -172,12 +172,12 @@ namespace Xenon.LayoutEngine
             List<string> result = new List<string>();
             // copy words
             words.ForEach(w => result.Add(w));
-            // remove whitespace
-            while (result.FindIndex(r => Regex.Match(r, "\\s").Success) == 0)
+            // remove trailing/leading whitespace
+            while (result.FindIndex(r => string.IsNullOrWhiteSpace(r)) == 0)
             {
                 result.RemoveAt(0);
             }
-            while (result.Count > 0 && result.FindLastIndex(r => Regex.Match(r, "\\s").Success) == result.Count - 1)
+            while (result.Count > 0 && result.FindLastIndex(r => string.IsNullOrWhiteSpace(r)) == result.Count - 1)
             {
                 result.RemoveAt(result.Count - 1);
             }
@@ -189,7 +189,7 @@ namespace Xenon.LayoutEngine
         {
             foreach (var speakerline in LiturgyLines)
             {
-                var tlines = BlockParagraphLayoutEngine.LayoutLiturgyIntoTextLines(textbox, speakerline);
+                var tlines = BlockParagraphLayoutEngine.LayoutLiturgyIntoTextLines(textbox, speakerline, 0); // don't let the layout engine eagerly break lines on punctuation
                 LiturgyTextLines.AddRange(tlines);
             }
         }

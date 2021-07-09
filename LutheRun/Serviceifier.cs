@@ -38,6 +38,7 @@ namespace LutheRun
             typeof(LSBElementLiturgySung),
             typeof(LSBElementReading),
             typeof(LSBElementCaption),
+            typeof(LSBElementIntroit),
         };
 
 
@@ -111,7 +112,7 @@ namespace LutheRun
                         if (LiturgyElements.Contains(nextelement.GetType()))
                         {
                             // preset center for everything expect liturgy or sermon
-                            if (nextelement is LSBElementLiturgy)
+                            if (nextelement is LSBElementLiturgy || nextelement  is LSBElementIntroit)
                             {
                                 element.PostsetCmd = $"::postset(last={(int)Camera.Center})";
                             }

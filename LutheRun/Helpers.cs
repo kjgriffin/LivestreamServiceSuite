@@ -65,8 +65,6 @@ namespace LutheRun
             // perform a recursive decent over the element tree
             // be context-aware and extract text performing replacements as nessecary
 
-            // TODO: handle lsb-responsorial/lsb-responsorial-continued different from lsb-responsorial_poetry
-
             bool foundspeaker = false;
             bool expectspeaker = false;
             string speaker = "";
@@ -156,6 +154,105 @@ namespace LutheRun
             return lines;
         }
 
+        public static List<(bool hasspeaker, string speaker, string value)> ExtractTextAsLiturgicalPoetry(this IElement element)
+        {
+            List<(bool hasspeaker, string speaker, string value)> lines = new List<(bool hasspeaker, string speaker, string value)>();
+
+            // perform a recursive decent over the element tree
+            // be context-aware and extract text performing replacements as nessecary
+
+            bool foundspeaker = false;
+            bool expectspeaker = false;
+            string speaker = "";
+            StringBuilder sb = new StringBuilder();
+
+            List<IElement> flattree = element.ElementTreeToFlatList();
+
+            foreach (var node in flattree)
+            {
+                if (node.LocalName == "lsb-content")
+                {
+                    continue;
+                }
+                if (node.LocalName == "p")
+                {
+                    // begin new line
+                    // add old line
+                    if (sb.Length > 0)
+                    {
+                        lines.Add((foundspeaker, speaker, sb.ToString().Trim()));
+                        sb.Clear();
+                        speaker = "";
+                        foundspeaker = false;
+                    }
+
+                    if (node.ClassList.Contains("lsb-responsorial_poetry"))
+                    {
+                        expectspeaker = true;
+                    }
+                }
+                else if (node.LocalName == "br")
+                {
+                    // for poetry, line breaks seem to be well placed, so we'll borrow LSB's nicely layed out lines and hope they fit nicely
+                    if (sb.Length > 0)
+                    {
+                        lines.Add((foundspeaker, speaker, sb.ToString().Trim()));
+                        sb.Clear();
+                        // here we'll let speakers continue until we definitivly find a new one... this may not work with symbol detection
+                    }
+                }
+                else
+                {
+                    if (node.ClassList.Contains("lsb-symbol"))
+                    {
+                        if (expectspeaker)
+                        {
+                            speaker = node.Text();
+                            expectspeaker = false;
+                            foundspeaker = true;
+                        }
+                        else
+                        {
+                            AddNodeText(sb, node);
+                        }
+                    }
+                    else if (node.ClassList.Contains("Apple-tab-span"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        AddNodeText(sb, node);
+                    }
+                }
+            }
+
+            if (sb.Length > 0)
+            {
+                lines.Add((foundspeaker, speaker, sb.ToString().Trim()));
+                sb.Clear();
+            }
+
+            return lines;
+        }
+
+        private static void AddNodeText(StringBuilder sb, IElement node)
+        {
+            string nt = node.Text();
+            string s = nt.Trim();
+            if (s.Length > 0)
+            {
+                if (sb.Length > 0 && char.IsWhiteSpace(nt.FirstOrDefault()))
+                {
+                    sb.Append(" ");
+                }
+                sb.Append(s);
+                if (sb.Length > 0 && nt.Length > 1 && char.IsWhiteSpace(nt.LastOrDefault()))
+                {
+                    sb.Append(" ");
+                }
+            }
+        }
 
         public static List<IElement> ElementTreeToFlatList(this IElement root)
         {

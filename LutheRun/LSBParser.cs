@@ -389,7 +389,7 @@ namespace LutheRun
                 return false;
             }
 
-            var lines = element.Children.Where(c => c.LocalName == "lsb-content").FirstOrDefault().ExtractTextAsLiturgy();
+            serviceElements.Add(LSBElementIntroit.Parse(element));
 
             return true;
         }
