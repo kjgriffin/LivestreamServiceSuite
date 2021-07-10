@@ -61,16 +61,41 @@ namespace LutheRun
 
         public string XenonAutoGen()
         {
+
+            var postset = PostsetCmd.ExtractPostsetValues();
+
+            string first = postset.first != -1 ? $"::postset(first={postset.first})" : "";
+            string last = postset.last != -1 ? $"::postset(last={postset.last})" : "";
+
+            bool prelit = PreLiturgy.Trim() != string.Empty;
+            bool postlit = PostLiturgy.Trim() != string.Empty;
+
+            string onreadingpostset = "";
+            if (first != string.Empty && last != string.Empty && !prelit && !postlit)
+            {
+                // need to rewrite
+                onreadingpostset = $"::postset(first={postset.first}, last={postset.last})";
+            }
+            else if (!prelit)
+            {
+                onreadingpostset = first;
+            }
+            else if (!postlit)
+            {
+                onreadingpostset = last;
+            }
+
+
             StringBuilder sb = new StringBuilder();
             //sb.AppendLine("/// <XENON_AUTO_GEN>");
-            if (PreLiturgy.Trim() != string.Empty)
+            if (prelit)
             {
-                sb.AppendLine($"#liturgy{{\r\n{PreLiturgy}\r\n}}");
+                sb.AppendLine($"#liturgy{{\r\n{PreLiturgy}\r\n}}{first}");
             }
-            sb.AppendLine($"#reading(\"{ReadingTitle}\", \"{ReadingReference}\")");
-            if (PostLiturgy.Trim() != string.Empty)
+            sb.AppendLine($"#reading(\"{ReadingTitle}\", \"{ReadingReference}\"){onreadingpostset}");
+            if (postlit)
             {
-                sb.AppendLine($"#liturgy{{\r\n{PostLiturgy}\r\n}}");
+                sb.AppendLine($"#liturgy{{\r\n{PostLiturgy}\r\n}}{last}");
             }
             //sb.AppendLine("/// </XENON_AUTO_GEN>");
             return sb.ToString();

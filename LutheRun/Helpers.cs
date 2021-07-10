@@ -254,6 +254,37 @@ namespace LutheRun
             }
         }
 
+        public static (int first, int last, int all) ExtractPostsetValues(this string cmd)
+        {
+            var match = Regex.Match(cmd, @"::postset\(\s*(?<par1>\w+)\s*=\s*(?<val1>\d+)(,\s*(?<par2>\w+)\s*=\s*(?<val2>\d+))?(,\s*(?<par3>\w+)\s*=\s*(?<val3>\d+))?\s*\)");
+            Dictionary<string, int> extractedvalues = new Dictionary<string, int>();
+            if (match.Success)
+            {
+                if (match.Groups["par1"].Success)
+                {
+                    extractedvalues[match.Groups["par1"].Value] = Convert.ToInt32(match.Groups["val1"].Value);
+                }
+                if (match.Groups["par2"].Success)
+                {
+                    extractedvalues[match.Groups["par2"].Value] = Convert.ToInt32(match.Groups["val2"].Value);
+                }
+                if (match.Groups["par3"].Success)
+                {
+                    extractedvalues[match.Groups["par3"].Value] = Convert.ToInt32(match.Groups["val3"].Value);
+                }
+            }
+
+            int first = -1;
+            int last = -1;
+            int all = -1;
+
+            extractedvalues.TryGetValue("first", out first);
+            extractedvalues.TryGetValue("last", out last);
+            extractedvalues.TryGetValue("asll", out all);
+
+            return (first, last, all);
+        }
+
         public static List<IElement> ElementTreeToFlatList(this IElement root)
         {
             List<IElement> list = new List<IElement>();

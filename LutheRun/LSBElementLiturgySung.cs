@@ -108,7 +108,7 @@ namespace LutheRun
             StringBuilder sb = new StringBuilder();
 
             //sb.AppendLine("/// <XENON_AUTO_GEN>");
-            sb.AppendLine($"#litimage({Image.InferedName})");
+            sb.AppendLine($"#litimage({Image.InferedName}){PostsetCmd}");
             //sb.AppendLine("/// </XENON_AUTO_GEN>");
 
             return sb.ToString();

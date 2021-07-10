@@ -79,7 +79,7 @@ namespace LutheRun
             // always start with copyright
             // default to preset center after copyright (though bells would handle this...)
             // may want to be smart too-> if there's a prelude we could do soemthing else
-            newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Center));
+            newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Organ));
 
             // warn abouth prelude? (if not present??)
 
@@ -101,40 +101,95 @@ namespace LutheRun
                 }
 
 
-                // add postsets
+                // Add postsets
 
-                // for hymns, if liturgy follows -> set postset center for first&last on hymn
-                var h = element as LSBElementHymn;
-                if (h != null)
+                bool setlast = false;
+                Camera lastselection = 0;
+
+                bool setfirst = false;
+                Camera firstseelection = 0;
+
+                if ((nextelement as LSBElementCaption)?.Caption.ToLower().Contains("sermon") == true)
                 {
-                    if (nextelement != null)
+                    setlast = true;
+                    lastselection = Camera.Pulpit;
+                }
+                if (nextelement is LSBElementReading)
+                {
+                    setlast = true;
+                    lastselection = Camera.Lectern;
+                }
+                if (nextelement is LSBElementLiturgySung)
+                {
+                    setlast = true;
+                    lastselection = Camera.Organ;
+                }
+                if (nextelement is LSBElementLiturgy || nextelement is LSBElementIntroit)
+                {
+                    setlast = true;
+                    lastselection = Camera.Center;
+                }
+
+
+                if ((element as LSBElementCaption)?.Caption.ToLower().Contains("sermon") == true)
+                {
+                    if (!setlast)
                     {
-                        if (LiturgyElements.Contains(nextelement.GetType()))
-                        {
-                            // preset center for everything expect liturgy or sermon
-                            if (nextelement is LSBElementLiturgy || nextelement  is LSBElementIntroit)
-                            {
-                                element.PostsetCmd = $"::postset(last={(int)Camera.Center})";
-                            }
-                            else if (nextelement is LSBElementLiturgySung)
-                            {
-                                element.PostsetCmd = $"::postset(last={(int)Camera.Organ})";
-                            }
-                            else if (nextelement is LSBElementCaption)
-                            {
-                                var c = nextelement as LSBElementCaption;
-                                if (c.Caption.ToLower().Contains("sermon"))
-                                {
-                                    element.PostsetCmd = $"::postset(last={(int)Camera.Pulpit})";
-                                }
-                            }
-                            else if (nextelement is LSBElementReading)
-                            {
-                                element.PostsetCmd = $"::postset(last={(int)Camera.Lectern})";
-                            }
-                        }
+                        setlast = true;
+                        lastselection = Camera.Center;
                     }
                 }
+                if (element is LSBElementLiturgySung)
+                {
+                    if (!setlast)
+                    {
+                        setlast = true;
+                        lastselection = Camera.Center;
+                    }
+                    else
+                    {
+                        // not sure what we should do here.
+                        // next element is also requesting to set last...
+                        // for now let it override, since the center postset is more just a handy help- less a nessecary
+                        // probably handled by rule for any liturgy-type to set first to liturgy (maybe)
+                    }
+                }
+                if (element is LSBElementLiturgy || element is LSBElementIntroit || element is LSBElementLiturgySung || element is LSBElementReading)
+                {
+                    // since we're setting the first here, if a last was previously set it will overwrite so we can be a bit more aggressive with
+                    // selecting elements to set a first for
+                    if (!setfirst)
+                    {
+                        setfirst = true;
+                        firstseelection = Camera.Center;
+                    }
+                }
+
+                // Create Postset command
+                StringBuilder sb = new StringBuilder();
+                if (setfirst || setlast)
+                {
+                    sb.Append("::postset(");
+                    if (setfirst)
+                    {
+                        sb.Append("first=");
+                        sb.Append((int)firstseelection);
+                        if (setlast)
+                        {
+                            sb.Append(", ");
+                        }
+                    }
+                    if (setlast)
+                    {
+                        sb.Append("last=");
+                        sb.Append((int)lastselection);
+                    }
+                    sb.Append(")");
+                }
+                element.PostsetCmd = sb.ToString();
+
+
+
 
                 if (LiturgyElements.Contains(element.GetType()))
                 {

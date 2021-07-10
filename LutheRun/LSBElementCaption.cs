@@ -49,25 +49,25 @@ namespace LutheRun
             {
                 sb.AppendLine("/// </MANUAL_UPDATE name='prelude'>");
                 sb.AppendLine("//> INSERTION POINT: prelude");
-                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\", \"horizontal\")");
+                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\", \"horizontal\"){PostsetCmd}");
             }
             else if (ctest.Contains("postlude"))
             {
                 sb.AppendLine("/// </MANUAL_UPDATE name='postlude'>");
                 sb.AppendLine("//> INSERTION POINT: postlude");
-                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\", \"horizontal\")");
+                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\", \"horizontal\"){PostsetCmd}");
             }
             else if (ctest.Contains("anthem"))
             {
                 sb.AppendLine("/// </MANUAL_UPDATE name='anthem'>");
                 sb.AppendLine("//> INSERTION POINT: anthem");
-                sb.AppendLine($"#anthemtitle(\"{Caption}\", \"{SubCaption}\", \"\", \"\")");
+                sb.AppendLine($"#anthemtitle(\"{Caption}\", \"{SubCaption}\", \"\", \"\"){PostsetCmd}");
             }
             else if (ctest.Contains("sermon"))
             {
                 sb.AppendLine("/// </MANUAL_UPDATE name='sermon'>");
                 sb.AppendLine("//> INSERTION POINT: sermon");
-                sb.AppendLine($"#sermon(\"TITLE\", \"REFERENCE\", \"PREACHER\")");
+                sb.AppendLine($"#sermon(\"TITLE\", \"REFERENCE\", \"PREACHER\"){PostsetCmd}");
             }
             return sb.ToString();
         }

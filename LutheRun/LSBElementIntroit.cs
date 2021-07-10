@@ -47,6 +47,9 @@ namespace LutheRun
 
             string lastspeaker = "$";
 
+            int tcmdnum = 0;
+            int totalcomands = (int)Math.Ceiling(Lines.Count / 2.0);
+            var postset = PostsetCmd.ExtractPostsetValues();
 
             int lnum = 0;
             foreach (var line in Lines)
@@ -54,6 +57,7 @@ namespace LutheRun
                 if (lnum > 1)
                 {
                     lnum = 0;
+                    tcmdnum += 1;
                 }
 
                 if (line.hasspeaker)
@@ -80,14 +84,84 @@ namespace LutheRun
                     sb.Append(lastspeaker);
                     sb.Append(" ");
                     sb.AppendLine(line.text);
-                    sb.AppendLine("}");
+                    sb.Append("}");
+                    string fval = "";
+                    string lval = "";
+                    if (tcmdnum == 0)
+                    {
+                        if (postset.first != -1)
+                        {
+                            fval = $"first={postset.first}";
+                        }
+                    }
+                    if (tcmdnum == totalcomands - 1)
+                    {
+                        if (postset.last != -1)
+                        {
+                            lval = $"last={postset.last}";
+                        }
+                    }
+                    if (fval != string.Empty || lval != string.Empty)
+                    {
+                        sb.Append("::postset(");
+                        if (fval != string.Empty)
+                        {
+                            sb.Append(fval);
+                            if (lval != string.Empty)
+                            {
+                                sb.Append(", ");
+                            }
+                        }
+                        if (lval != string.Empty)
+                        {
+                            sb.Append(lval);
+                        }
+                        sb.Append(")");
+                    }
+                    sb.AppendLine();
                 }
                 lnum += 1;
             }
 
             if (lnum == 1)
             {
-                sb.AppendLine("}");
+                sb.Append("}");
+
+                string fval = "";
+                string lval = "";
+                if (tcmdnum == 0)
+                {
+                    if (postset.first != -1)
+                    {
+                        fval = $"first={postset.first}";
+                    }
+                }
+                if (tcmdnum == totalcomands - 1)
+                {
+                    if (postset.last != -1)
+                    {
+                        lval = $"last={postset.last}";
+                    }
+                }
+                if (fval != string.Empty || lval != string.Empty)
+                {
+                    sb.Append("::postset(");
+                    if (fval != string.Empty)
+                    {
+                        sb.Append(fval);
+                        if (lval != string.Empty)
+                        {
+                            sb.Append(", ");
+                        }
+                    }
+                    if (lval != string.Empty)
+                    {
+                        sb.Append(lval);
+                    }
+                    sb.Append(")");
+                }
+
+                sb.AppendLine();
             }
 
             return sb.ToString();
