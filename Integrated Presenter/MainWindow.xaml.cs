@@ -1536,7 +1536,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
-                                timer1span = TimeSpan.Zero;
+                                ResetGpTimer1();
                             });
                         }
                         break;
@@ -2060,7 +2060,7 @@ namespace Integrated_Presenter
                 case "t1restart":
                     if (automationtimer1enabled)
                     {
-                        timer1span = TimeSpan.Zero;
+                        ResetGpTimer1();
                     }
                     break;
                 case "mastercaution2":
@@ -2697,11 +2697,17 @@ namespace Integrated_Presenter
 
         private void ClickResetgpTimer1(object sender, MouseButtonEventArgs e)
         {
+            ResetGpTimer1();
+        }
+
+        private void ResetGpTimer1()
+        {
             gp_timer_1.Stop();
             timer1span = TimeSpan.Zero;
             UpdateGPTimer1();
             gp_timer_1.Start();
             GpT1Shots = 0;
+
         }
 
 
@@ -3805,6 +3811,11 @@ namespace Integrated_Presenter
         }
 
         private void ClickResetgpTimer2(object sender, MouseButtonEventArgs e)
+        {
+            ResetGpTimer2();
+        }
+
+        private void ResetGpTimer2()
         {
             gp_timer_2.Stop();
             timer2span = TimeSpan.Zero;
