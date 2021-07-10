@@ -34,11 +34,14 @@ namespace Integrated_Presenter
         Timer system_second_timer = new Timer();
         Timer shot_clock_timer = new Timer();
         Timer gp_timer_1 = new Timer();
+        Timer gp_timer_2 = new Timer();
 
         TimeSpan timer1span = TimeSpan.Zero;
+        TimeSpan timer2span = TimeSpan.Zero;
 
         TimeSpan timeonshot = TimeSpan.Zero;
-        TimeSpan warnShottime = new TimeSpan(0, 2, 30);
+        TimeSpan prewarnShottime = new TimeSpan(0, 0, 50);
+        TimeSpan warnShottime = new TimeSpan(0, 1, 30);
 
         BMDSwitcherConfigSettings _config;
 
@@ -115,6 +118,16 @@ namespace Integrated_Presenter
             gp_timer_1.Interval = 1000;
             gp_timer_1.Elapsed += Gp_timer_1_Elapsed;
             gp_timer_1.Start();
+
+            gp_timer_2.Interval = 1000;
+            gp_timer_2.Elapsed += Gp_timer_2_Elapsed1;
+            gp_timer_2.Start();
+        }
+
+        private void Gp_timer_2_Elapsed1(object sender, ElapsedEventArgs e)
+        {
+            timer2span = timer2span.Add(new TimeSpan(0, 0, 1));
+            UpdateGPTimer2();
         }
 
         private void CurrentPreview_OnMediaPlaybackTimeUpdate(object sender, MediaPlaybackTimeEventArgs e)
@@ -151,6 +164,14 @@ namespace Integrated_Presenter
             });
         }
 
+        private void UpdateGPTimer2()
+        {
+            TbGPTimer2.Dispatcher.Invoke(() =>
+            {
+                TbGPTimer2.Text = timer2span.ToString("mm\\:ss");
+            });
+        }
+
         private void Shot_clock_timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             timeonshot = timeonshot.Add(new TimeSpan(0, 0, 1));
@@ -165,6 +186,10 @@ namespace Integrated_Presenter
             if (timeonshot > warnShottime)
             {
                 TbShotClock.Foreground = Brushes.Red;
+            }
+            else if (timeonshot > prewarnShottime)
+            {
+                TbShotClock.Foreground = Brushes.Yellow;
             }
             else
             {
@@ -255,6 +280,9 @@ namespace Integrated_Presenter
             {
                 timeonshot = TimeSpan.Zero;
                 UpdateShotClock();
+                TotalShots += 1;
+                GpT1Shots += 1;
+                GpT2Shots += 1;
             }
             // update ui
             switcherState = args;
@@ -842,7 +870,7 @@ namespace Integrated_Presenter
             }
 
 
-            
+
             // audio
 
             if (e.Key == Key.A)
@@ -2673,6 +2701,7 @@ namespace Integrated_Presenter
             timer1span = TimeSpan.Zero;
             UpdateGPTimer1();
             gp_timer_1.Start();
+            GpT1Shots = 0;
         }
 
 
@@ -3315,7 +3344,7 @@ namespace Integrated_Presenter
         {
         }
 
-      
+
         bool automationtimer1enabled = true;
         bool automationrecordstartenabled = true;
 
@@ -3331,7 +3360,7 @@ namespace Integrated_Presenter
             miStartRecord.IsChecked = automationrecordstartenabled;
         }
 
- 
+
         private bool ProgramRowLocked = true;
 
         private bool IsProgramRowLocked
@@ -3773,6 +3802,79 @@ namespace Integrated_Presenter
             Presentation.StartPres();
             slidesUpdated();
             PresentationStateUpdated?.Invoke(Presentation.Current);
+        }
+
+        private void ClickResetgpTimer2(object sender, MouseButtonEventArgs e)
+        {
+            gp_timer_2.Stop();
+            timer2span = TimeSpan.Zero;
+            UpdateGPTimer2();
+            gp_timer_2.Start();
+            GpT2Shots = 0;
+        }
+
+
+        private int _totalShots = 0;
+        private int _gpT1Shots = 0;
+        private int _gpT2Shots = 0;
+
+        private int TotalShots
+        {
+            get => _totalShots;
+            set
+            {
+                _totalShots = value;
+                UpdateTOSShots();
+            }
+        }
+
+        private int GpT1Shots
+        {
+            get => _gpT1Shots;
+            set
+            {
+                _gpT1Shots = value;
+                UpdateGPT1Shots();
+            }
+        }
+
+        private int GpT2Shots
+        {
+            get => _gpT2Shots;
+            set
+            {
+                _gpT2Shots = value;
+                UpdateGP2Shots();
+            }
+        }
+
+        private void ClickResetTotalShotCount(object sender, MouseButtonEventArgs e)
+        {
+            TotalShots = 0;
+        }
+
+        private void UpdateTOSShots()
+        {
+            tb_tos_TotalShots.Dispatcher.Invoke(() =>
+            {
+                tb_tos_TotalShots.Text = _totalShots.ToString();
+            });
+        }
+
+        private void UpdateGPT1Shots()
+        {
+            tb_t1_shots.Dispatcher.Invoke(() =>
+            {
+                tb_t1_shots.Text = _gpT1Shots.ToString();
+            });
+        }
+
+        private void UpdateGP2Shots()
+        {
+            tb_t2_shots.Dispatcher.Invoke(() =>
+            {
+                tb_t2_shots.Text = _gpT2Shots.ToString();
+            });
         }
     }
 }

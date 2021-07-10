@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Integrated_Presenter"
+        xmlns:local="clr-namespace:Integrated_Presenter" xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         mc:Ignorable="d"
         Closing="OnClosing"
         PreviewKeyDown="WindowKeyDown"
@@ -347,6 +347,12 @@
                                                     <Viewbox>
                                                         <TextBlock Name="TbShotClock" Foreground="Orange">00:00</TextBlock>
                                                     </Viewbox>
+                                                    <Viewbox Width="100" Height="20" Margin="0,-10,0,0" Cursor="Hand" MouseDown="ClickResetTotalShotCount">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource GrayText}">Total Shots:</TextBlock>
+                                                            <TextBlock Name="tb_tos_TotalShots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
+                                                        </StackPanel>
+                                                    </Viewbox>
                                                 </StackPanel>
                                             </Border>
                                             <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="120">
@@ -354,6 +360,26 @@
                                                     <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 1</TextBlock>
                                                     <Viewbox>
                                                         <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer1" Name="TbGPTimer1" Foreground="Orange">00:00</TextBlock>
+                                                    </Viewbox>
+                                                    <Viewbox Width="100" Height="20" Margin="0,-10,0,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource GrayText}">Shots:</TextBlock>
+                                                            <TextBlock Name="tb_t1_shots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
+                                                        </StackPanel>
+                                                    </Viewbox>
+                                                </StackPanel>
+                                            </Border>
+                                            <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="120">
+                                                <StackPanel>
+                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 2</TextBlock>
+                                                    <Viewbox>
+                                                        <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer2" Name="TbGPTimer2" Foreground="Orange">00:00</TextBlock>
+                                                    </Viewbox>
+                                                    <Viewbox Width="100" Height="20" Margin="0,-10,0,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource GrayText}">Shots:</TextBlock>
+                                                            <TextBlock Name="tb_t2_shots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
+                                                        </StackPanel>
                                                     </Viewbox>
                                                 </StackPanel>
                                             </Border>
