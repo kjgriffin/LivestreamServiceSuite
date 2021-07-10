@@ -26,8 +26,8 @@
             </StackPanel>
         </Viewbox>
         <Rectangle Name="ActionIndicator" Fill="Orange" Panel.ZIndex="10" Height="50" VerticalAlignment="Top"></Rectangle>
-        <Grid Name="MuteIcon" Panel.ZIndex="100" Grid.Row="1" Width="70" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom">
-            <Viewbox Name="ksc_m" Panel.ZIndex="1" Height="30" Width="30">
+        <Grid Name="MuteIcon" Visibility="Hidden" Panel.ZIndex="100" Grid.Row="1" Width="70" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom">
+            <Viewbox Visibility="Hidden" Name="ksc_m" Panel.ZIndex="1" Height="30" Width="30">
                 <StackPanel Orientation="Horizontal">
                     <Border Padding="10, 0" Style="{StaticResource UIShortcutBdr}">
                         <Viewbox>
