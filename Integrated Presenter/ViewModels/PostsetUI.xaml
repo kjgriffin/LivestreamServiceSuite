@@ -20,17 +20,17 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Background="green" BorderBrush="gray" BorderThickness="1"></Border>
-        <Border Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Background="Transparent" BorderBrush="gray" BorderThickness="1"></Border>
+        <Border Opacity="0.5" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Background="green" BorderBrush="gray" BorderThickness="1"></Border>
+        <Border Opacity="0.5"  Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Background="Black" BorderBrush="gray" BorderThickness="1"></Border>
 
-        <Border Name="cam8" Grid.Row="2" Grid.Column="0" Background="Transparent" BorderBrush="gray" BorderThickness="1"></Border>
-        <Border Name="cam7" Grid.Row="2" Grid.Column="1" Background="Transparent" BorderBrush="gray" BorderThickness="1"></Border>
-        <Border Name="cam6" Grid.Row="2" Grid.Column="2" Background="Transparent" BorderBrush="gray" BorderThickness="1"></Border>
-        <Border Name="cam5" Grid.Row="2" Grid.Column="3" Background="Transparent" BorderBrush="gray" BorderThickness="1"></Border>
-        <Border Name="cam4" Grid.Row="3" Grid.Column="0" Background="Transparent" BorderBrush="gray" BorderThickness="1"></Border>
-        <Border Name="cam3" Grid.Row="3" Grid.Column="1" Background="Transparent" BorderBrush="gray" BorderThickness="1"></Border>
-        <Border Name="cam2" Grid.Row="3" Grid.Column="2" Background="Transparent" BorderBrush="gray" BorderThickness="1"></Border>
-        <Border Name="cam1" Grid.Row="3" Grid.Column="3" Background="Transparent" BorderBrush="gray" BorderThickness="1"></Border>
+        <Border Opacity="0.5" Name="cam8" Grid.Row="2" Grid.Column="0" Background="Black" BorderBrush="gray" BorderThickness="1"></Border>
+        <Border Opacity="0.5" Name="cam7" Grid.Row="2" Grid.Column="1" Background="Black" BorderBrush="gray" BorderThickness="1"></Border>
+        <Border Opacity="0.5" Name="cam6" Grid.Row="2" Grid.Column="2" Background="Black" BorderBrush="gray" BorderThickness="1"></Border>
+        <Border Opacity="0.5" Name="cam5" Grid.Row="2" Grid.Column="3" Background="Black" BorderBrush="gray" BorderThickness="1"></Border>
+        <Border Opacity="0.5" Name="cam4" Grid.Row="3" Grid.Column="0" Background="Black" BorderBrush="gray" BorderThickness="1"></Border>
+        <Border Opacity="0.5" Name="cam3" Grid.Row="3" Grid.Column="1" Background="Black" BorderBrush="gray" BorderThickness="1"></Border>
+        <Border Opacity="0.5" Name="cam2" Grid.Row="3" Grid.Column="2" Background="Black" BorderBrush="gray" BorderThickness="1"></Border>
+        <Border Opacity="0.5" Name="cam1" Grid.Row="3" Grid.Column="3" Background="Black" BorderBrush="gray" BorderThickness="1"></Border>
 
     </Grid>
 </UserControl>
