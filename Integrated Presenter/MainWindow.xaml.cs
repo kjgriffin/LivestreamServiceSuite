@@ -2757,6 +2757,10 @@ namespace Integrated_Presenter
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
+            // stop timers
+            gp_timer_1?.Stop();
+            gp_timer_2?.Stop();
+            shot_clock_timer?.Stop();
             _display?.Close();
             _keydisplay?.Close();
             switcherManager?.Close();
