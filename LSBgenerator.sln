@@ -19,6 +19,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LutheRun", "LutheRun\LutheR
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UIControls", "UIControls\UIControls.csproj", "{8F689666-41A7-491B-8AC8-642A661924CC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwitcherControl", "SwitcherControl\SwitcherControl.csproj", "{651BCC46-4FC7-4512-886C-DF26EBD814CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configurations", "Configurations\Configurations.csproj", "{FAC5902F-9781-403F-8F98-3538AF059AFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{8F689666-41A7-491B-8AC8-642A661924CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F689666-41A7-491B-8AC8-642A661924CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F689666-41A7-491B-8AC8-642A661924CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{651BCC46-4FC7-4512-886C-DF26EBD814CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{651BCC46-4FC7-4512-886C-DF26EBD814CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{651BCC46-4FC7-4512-886C-DF26EBD814CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{651BCC46-4FC7-4512-886C-DF26EBD814CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAC5902F-9781-403F-8F98-3538AF059AFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAC5902F-9781-403F-8F98-3538AF059AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAC5902F-9781-403F-8F98-3538AF059AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAC5902F-9781-403F-8F98-3538AF059AFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
