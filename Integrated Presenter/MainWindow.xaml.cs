@@ -2258,6 +2258,13 @@ namespace Integrated_Presenter
                 _pres = pres;
                 activepresentation = true;
 
+                // apply config if required
+                if (pres.HasSwitcherConfig)
+                {
+                    _config = pres.Config;
+                    SetSwitcherSettings();
+                }
+
                 // overwrite display of old presentation if already open
                 if (_display != null && _display.IsWindowVisilbe)
                 {

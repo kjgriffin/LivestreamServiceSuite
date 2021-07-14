@@ -16,8 +16,4 @@
     </COMReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="FeatureConfig\" />
-  </ItemGroup>
-
 </Project>

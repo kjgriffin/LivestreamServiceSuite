@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace Integrated_Presenter
 {
     public class Presentation
     {
+
+        public bool HasSwitcherConfig { get; private set; } = false;
+        public BMDSwitcher.Config.BMDSwitcherConfigSettings Config { get; private set; }
 
         public string Folder { get; set; }
 
@@ -103,6 +107,19 @@ namespace Integrated_Presenter
                 }
                 catch (Exception)
                 {
+                }
+            }
+
+            // find config file if it exists
+            var configfile = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"BMDSwitcherConfig").Success).FirstOrDefault();
+
+            if (File.Exists(configfile))
+            {
+                using (StreamReader sr = new StreamReader(configfile))
+                {
+                    var cfg = sr.ReadToEnd();
+                    Config = JsonSerializer.Deserialize<BMDSwitcher.Config.BMDSwitcherConfigSettings>(cfg);
+                    HasSwitcherConfig = true;
                 }
             }
 
