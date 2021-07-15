@@ -36,7 +36,6 @@
                     <MenuItem Header="Preview Effective Current" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowEffectiveCurrentPreview"></MenuItem>
                     <MenuItem Name="cbShowCurrentVideoCountdownTimer" Header="Video Countdown Timer (Current)" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowCurrentVideoCountdownTimer"></MenuItem>
                     <MenuItem Name="cbAdvancedPresentation" Header="Advanced Presentation [Q]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
-                    <MenuItem Name="cbRecordButton" Header="Show Record Button" IsTabStop="False" Click="ClickViewRecordButton" Focusable="False" IsChecked="False" IsCheckable="True"></MenuItem>
                     <MenuItem Header="Audio Player [A]" IsTabStop="False" Click="ClickViewAudioPlayer"></MenuItem>
                     <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP [P]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
                     <MenuItem Name="cbAdvancedPIPMovement" Header="Advanced PIP Location [L]" IsTabStop="False" Click="ClickViewAdvancedPIPLocation"></MenuItem>
@@ -53,6 +52,7 @@
                     <MenuItem Header="Set Video Preroll Delay" IsTabStop="False" Click="ClickSetVideoPrerollDelay"></MenuItem>
                     <MenuItem Header="Set Drive Mode Preset Selection Delay" IsTabStop="False" Click="ClickSetDrivePresetSelectDelay"></MenuItem>
                     <MenuItem Name="miDriveAutoTransGuard" Header="Enable Drive Mode Auto Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleDriveAutoTransGuard"></MenuItem>
+                    <MenuItem Name="miCutTransitionGuard" Header="Enable Cut Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleCutTransGuard"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Help" IsTabStop="False">
                     <MenuItem Name="miShowShortcuts" Header="Show Keyboard Shortcuts [S]" IsCheckable="True" IsChecked="False" Click="ClickShowKeyboardShortcuts"></MenuItem>

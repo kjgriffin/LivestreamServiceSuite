@@ -7,6 +7,7 @@ using SlideCreater;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -85,7 +86,6 @@ namespace Integrated_Presenter
             UpdateSlideModeButtons();
             DisableAuxControls();
             UpdateProgramRowLockButtonUI();
-            UpdateRecordButtonUI();
 
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
             NextPreview.AutoSilentPlayback = true;
@@ -261,14 +261,51 @@ namespace Integrated_Presenter
             SetSwitcherSettings();
         }
 
+
         public void TakeAutoTransition()
         {
             // use guard mode
             PerformGuardedAutoTransition();
         }
+
+        private bool _FeatureFlag_GaurdCutTransition = true;
+
+
+        Stopwatch cuttranstimeout = new Stopwatch();
+        private bool _cutTransCompletedTimeout = true;
+
+        private void RequestCutTransition()
+        {
+            if (!_FeatureFlag_GaurdCutTransition)
+            {
+                TakeCutTransition();
+            }
+            else
+            {
+                PerformGuardCutTransition();
+            }
+        }
+
         private void TakeCutTransition()
         {
+            _cutTransCompletedTimeout = false;
+            cuttranstimeout.Reset();
+            cuttranstimeout.Start();
             switcherManager?.PerformCutTransition();
+        }
+
+        private void PerformGuardCutTransition()
+        {
+            // enforce a 100ms timeout between requests for cut transition.
+            // intended only for responses to user input. Main case is accounting for a twitchy space bar. @Carl Khul this one's for you :)
+            if (cuttranstimeout.ElapsedMilliseconds > 100 || _cutTransCompletedTimeout)
+            {
+                // safe to request cut transition
+                // can also stop timer since we're all good
+                cuttranstimeout.Stop();
+                _cutTransCompletedTimeout = true;
+                TakeCutTransition();
+            }
         }
 
 
@@ -680,15 +717,15 @@ namespace Integrated_Presenter
             UpdateSlidePreviewControls();
         }
 
-        private bool showCurrentVideoTimeOnPreview = true;
+        private bool _FeatureFlag_showCurrentVideoTimeOnPreview = true;
 
         private void UpdateSlideCurrentPreviewTimes()
         {
             Dispatcher.Invoke(() =>
             {
-                if (showCurrentVideoTimeOnPreview)
+                if (_FeatureFlag_showCurrentVideoTimeOnPreview)
                 {
-                    if (ShowEffectiveCurrentPreview)
+                    if (_FeatureFlag_ShowEffectiveCurrentPreview)
                     {
                         if (Presentation?.EffectiveCurrent.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
@@ -718,9 +755,9 @@ namespace Integrated_Presenter
         {
             Dispatcher.Invoke(() =>
             {
-                if (showCurrentVideoTimeOnPreview)
+                if (_FeatureFlag_showCurrentVideoTimeOnPreview)
                 {
-                    if (ShowEffectiveCurrentPreview)
+                    if (_FeatureFlag_ShowEffectiveCurrentPreview)
                     {
                         if (Presentation?.EffectiveCurrent.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
@@ -1179,7 +1216,7 @@ namespace Integrated_Presenter
             // transition controls
             if (e.Key == Key.Space)
             {
-                TakeCutTransition();
+                RequestCutTransition();
             }
 
             if (e.Key == Key.Enter)
@@ -1355,7 +1392,7 @@ namespace Integrated_Presenter
 
         #region SlideDriveVideo
 
-        private bool _FeatureFlag_PresetShot = true;
+        private bool _FeatureFlag_PresetShot = false;
         private bool _FeatureFlag_PostsetShot = true;
 
         private bool SetupActionsCompleted = false;
@@ -1439,6 +1476,8 @@ namespace Integrated_Presenter
                     case AutomationActionType.CutTrans:
                         Dispatcher.Invoke(() =>
                         {
+                            // Will always allow automation to perform cut transition.
+                            // Gaurded Cut transition is only for debouncing/preventing operators using a keyboard from spamming cut requests.
                             switcherManager?.PerformCutTransition();
                         });
                         break;
@@ -1532,7 +1571,7 @@ namespace Integrated_Presenter
                         break;
 
                     case AutomationActionType.Timer1Restart:
-                        if (automationtimer1enabled)
+                        if (_FeatureFlag_automationtimer1enabled)
                         {
                             Dispatcher.Invoke(() =>
                             {
@@ -1754,7 +1793,7 @@ namespace Integrated_Presenter
 
                         // Handle a postshot selection by setting up the preset
                         // wait for auto transition to clear
-                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
                         {
                             if (waitfortrans)
                             {
@@ -1856,7 +1895,7 @@ namespace Integrated_Presenter
 
                         // wait for pre-roll to clear the preset before setting up a new preset shot
                         // wait for auto transition to clear
-                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
                         {
                             if (waitfortrans)
                             {
@@ -1933,7 +1972,7 @@ namespace Integrated_Presenter
                         switcherManager?.PerformAutoOnAirDSK1();
 
                         // Handle a postshot selection by setting up the preset
-                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
                         {
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
@@ -2022,7 +2061,7 @@ namespace Integrated_Presenter
 
                         // Handle a postshot selection by setting up the preset
                         // wait for auto transition to clear
-                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
                         {
                             if (waitfortrans)
                             {
@@ -2058,20 +2097,9 @@ namespace Integrated_Presenter
             switch (s.PreAction)
             {
                 case "t1restart":
-                    if (automationtimer1enabled)
+                    if (_FeatureFlag_automationtimer1enabled)
                     {
                         ResetGpTimer1();
-                    }
-                    break;
-                case "mastercaution2":
-                    //MasterCautionState = 2;
-                    //UpdateMasterCautionDisplay();
-                    break;
-                case "startrecord":
-                    if (automationrecordstartenabled)
-                    {
-                        isRecording = true;
-                        UpdateRecordButtonUI();
                     }
                     break;
                 default:
@@ -2116,7 +2144,7 @@ namespace Integrated_Presenter
 
                         // Handle a postshot selection by setting up the preset
                         // wait for auto transition to clear
-                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
                         {
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
@@ -2198,7 +2226,7 @@ namespace Integrated_Presenter
 
                         // Handle a postshot selection by setting up the preset
                         // wait for auto transition to clear
-                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true)
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
                         {
                             if (waitfortrans)
                             {
@@ -2217,7 +2245,7 @@ namespace Integrated_Presenter
 
         private void PerformGuardedAutoTransition(bool force_guard = false)
         {
-            if (DriveMode_AutoTransitionGuard || force_guard)
+            if (_FeatureFlag_DriveMode_AutoTransitionGuard || force_guard)
             {
                 // if guarded, check if transition is already in progress
                 if (!switcherState.InTransition)
@@ -2305,11 +2333,11 @@ namespace Integrated_Presenter
         }
 
 
-        public bool ShowEffectiveCurrentPreview = true;
+        public bool _FeatureFlag_ShowEffectiveCurrentPreview = true;
 
         private void ClickToggleShowEffectiveCurrentPreview(object sender, RoutedEventArgs e)
         {
-            ShowEffectiveCurrentPreview = !ShowEffectiveCurrentPreview;
+            _FeatureFlag_ShowEffectiveCurrentPreview = !_FeatureFlag_ShowEffectiveCurrentPreview;
         }
 
 
@@ -2333,7 +2361,7 @@ namespace Integrated_Presenter
             {
                 PrevPreview.SetMedia(Presentation.Prev, false);
                 UpdatePostsetUi(PrevPreview, Presentation.Prev);
-                if (ShowEffectiveCurrentPreview)
+                if (_FeatureFlag_ShowEffectiveCurrentPreview)
                 {
                     if (currentGuid != Presentation.EffectiveCurrent.Guid)
                     {
@@ -2378,10 +2406,10 @@ namespace Integrated_Presenter
         }
 
 
-        bool displayPrevAfter = true;
+        bool _FeatureFlag_displayPrevAfter = true;
         private void UIUpdateDisplayPrevAfter()
         {
-            if (displayPrevAfter)
+            if (_FeatureFlag_displayPrevAfter)
             {
                 AfterPreviewDisplay.Visibility = Visibility.Visible;
                 PrevPreviewDisplay.Visibility = Visibility.Visible;
@@ -2462,7 +2490,7 @@ namespace Integrated_Presenter
                 {
                     _display.StartMediaPlayback();
                     _keydisplay.StartMediaPlayback();
-                    if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
+                    if (!Presentation.OverridePres || _FeatureFlag_ShowEffectiveCurrentPreview)
                     {
                         CurrentPreview.videoPlayer.Volume = 0;
                         CurrentPreview.PlayMedia();
@@ -2480,7 +2508,7 @@ namespace Integrated_Presenter
             {
                 _display.PauseMediaPlayback();
                 _keydisplay.PauseMediaPlayback();
-                if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
+                if (!Presentation.OverridePres || _FeatureFlag_ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
                     CurrentPreview.PauseMedia();
@@ -2497,7 +2525,7 @@ namespace Integrated_Presenter
             {
                 _display.StopMediaPlayback();
                 _keydisplay.StopMediaPlayback();
-                if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
+                if (!Presentation.OverridePres || _FeatureFlag_ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
                     CurrentPreview.videoPlayer.Stop();
@@ -2514,7 +2542,7 @@ namespace Integrated_Presenter
             {
                 _display.RestartMediaPlayback();
                 _keydisplay.RestartMediaPlayback();
-                if (!Presentation.OverridePres || ShowEffectiveCurrentPreview)
+                if (!Presentation.OverridePres || _FeatureFlag_ShowEffectiveCurrentPreview)
                 {
                     CurrentPreview.videoPlayer.Volume = 0;
                     CurrentPreview.ReplayMedia();
@@ -2608,7 +2636,7 @@ namespace Integrated_Presenter
 
         private void ClickCutTrans(object sender, RoutedEventArgs e)
         {
-            TakeCutTransition();
+            RequestCutTransition();
         }
         private void ClickAutoTrans(object sender, RoutedEventArgs e)
         {
@@ -2658,9 +2686,9 @@ namespace Integrated_Presenter
 
         private void ToggleViewPrevAfter()
         {
-            displayPrevAfter = !displayPrevAfter;
+            _FeatureFlag_displayPrevAfter = !_FeatureFlag_displayPrevAfter;
             UIUpdateDisplayPrevAfter();
-            cbPrevAfter.IsChecked = displayPrevAfter;
+            cbPrevAfter.IsChecked = _FeatureFlag_displayPrevAfter;
         }
 
         private async void ClickTakeSlide(object sender, RoutedEventArgs e)
@@ -2669,7 +2697,7 @@ namespace Integrated_Presenter
         }
 
 
-        bool _viewAdvancedPresentation = false;
+        bool _FeatureFlag_viewAdvancedPresentation = false;
         private void ClickViewAdvancedPresentation(object sender, RoutedEventArgs e)
         {
             ToggleViewAdvancedPresentation();
@@ -2677,14 +2705,14 @@ namespace Integrated_Presenter
 
         private void ToggleViewAdvancedPresentation()
         {
-            _viewAdvancedPresentation = !_viewAdvancedPresentation;
+            _FeatureFlag_viewAdvancedPresentation = !_FeatureFlag_viewAdvancedPresentation;
 
-            if (_viewAdvancedPresentation)
+            if (_FeatureFlag_viewAdvancedPresentation)
                 ShowAdvancedPresControls();
             else
                 HideAdvancedPresControls();
 
-            cbAdvancedPresentation.IsChecked = _viewAdvancedPresentation;
+            cbAdvancedPresentation.IsChecked = _FeatureFlag_viewAdvancedPresentation;
 
         }
 
@@ -2866,7 +2894,7 @@ namespace Integrated_Presenter
         }
 
 
-        private bool showadvancedpipcontrols = false;
+        private bool _FeatureFlag_showadvancedpipcontrols = false;
         private void ClickViewAdvancedPIP(object sender, RoutedEventArgs e)
         {
             ToggleViewAdvancedPIP();
@@ -2874,9 +2902,9 @@ namespace Integrated_Presenter
 
         private void ToggleViewAdvancedPIP()
         {
-            showadvancedpipcontrols = !showadvancedpipcontrols;
+            _FeatureFlag_showadvancedpipcontrols = !_FeatureFlag_showadvancedpipcontrols;
 
-            if (showadvancedpipcontrols)
+            if (_FeatureFlag_showadvancedpipcontrols)
             {
                 ShowAdvancedPIPControls();
             }
@@ -2884,7 +2912,7 @@ namespace Integrated_Presenter
             {
                 HideAdvancedPIPControls();
             }
-            cbAdvancedPresentation.IsChecked = showadvancedpipcontrols;
+            cbAdvancedPresentation.IsChecked = _FeatureFlag_showadvancedpipcontrols;
 
         }
 
@@ -3076,7 +3104,7 @@ namespace Integrated_Presenter
 
         public BMDSwitcherConfigSettings Config { get => _config; }
 
-        bool showAuxButons = false;
+        bool _FeatureFlag_showAuxButons = false;
         private void ClickViewAuxOutput(object sender, RoutedEventArgs e)
         {
             ToggleAuxRow();
@@ -3084,8 +3112,8 @@ namespace Integrated_Presenter
 
         private void ToggleAuxRow()
         {
-            showAuxButons = !showAuxButons;
-            if (showAuxButons)
+            _FeatureFlag_showAuxButons = !_FeatureFlag_showAuxButons;
+            if (_FeatureFlag_showAuxButons)
             {
                 ShowAuxButtonControls();
             }
@@ -3167,32 +3195,18 @@ namespace Integrated_Presenter
 
         private void ShowAuxButtonControls()
         {
-            showAuxButons = true;
+            _FeatureFlag_showAuxButons = true;
             gridbtns.Width = 770;
             gcAdvancedProjector.Width = new GridLength(1.2, GridUnitType.Star);
         }
 
         private void HideAuxButtonConrols()
         {
-            showAuxButons = false;
+            _FeatureFlag_showAuxButons = false;
             gridbtns.Width = 660;
             gcAdvancedProjector.Width = new GridLength(0);
         }
 
-
-        bool isRecording = false;
-
-        private void UpdateRecordButtonUI()
-        {
-            if (isRecording)
-            {
-                btnRecording.Background = Brushes.Red;
-            }
-            else
-            {
-                btnRecording.Background = Brushes.Gray;
-            }
-        }
 
         private void SetPIPPosition(BMDUSKDVESettings config)
         {
@@ -3229,19 +3243,19 @@ namespace Integrated_Presenter
         }
 
 
-        bool automationtimer1enabled = true;
-        bool automationrecordstartenabled = true;
+        bool _FeatureFlag_automationtimer1enabled = true;
+        bool _FeatureFlag_automationrecordstartenabled = true;
 
         private void ClickToggleAutomationTimer1(object sender, RoutedEventArgs e)
         {
-            automationtimer1enabled = !automationtimer1enabled;
-            miTimer1Restart.IsChecked = automationtimer1enabled;
+            _FeatureFlag_automationtimer1enabled = !_FeatureFlag_automationtimer1enabled;
+            miTimer1Restart.IsChecked = _FeatureFlag_automationtimer1enabled;
         }
 
         private void ClickToggleAutomationRecordingStart(object sender, RoutedEventArgs e)
         {
-            automationrecordstartenabled = !automationrecordstartenabled;
-            miStartRecord.IsChecked = automationrecordstartenabled;
+            _FeatureFlag_automationrecordstartenabled = !_FeatureFlag_automationrecordstartenabled;
+            miStartRecord.IsChecked = _FeatureFlag_automationrecordstartenabled;
         }
 
 
@@ -3325,8 +3339,8 @@ namespace Integrated_Presenter
 
         private void ToggleShowCurrentVideoCountdownTimer()
         {
-            showCurrentVideoTimeOnPreview = !showCurrentVideoTimeOnPreview;
-            cbShowCurrentVideoCountdownTimer.IsChecked = showCurrentVideoTimeOnPreview;
+            _FeatureFlag_showCurrentVideoTimeOnPreview = !_FeatureFlag_showCurrentVideoTimeOnPreview;
+            cbShowCurrentVideoCountdownTimer.IsChecked = _FeatureFlag_showCurrentVideoTimeOnPreview;
         }
 
         private void ClickDVEMode(object sender, RoutedEventArgs e)
@@ -3461,27 +3475,6 @@ namespace Integrated_Presenter
         private void ClickPIPRunToB(object sender, RoutedEventArgs e)
         {
             switcherManager?.PerformUSK1RunToKeyFrameB();
-        }
-
-        bool ShowRecordButton = false;
-        private void ToggleViewRecordButton()
-        {
-            ShowRecordButton = !ShowRecordButton;
-            if (ShowRecordButton)
-            {
-                cbRecordButton.IsChecked = true;
-                borderBtnRecording.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                cbRecordButton.IsChecked = false;
-                borderBtnRecording.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void ClickViewRecordButton(object sender, RoutedEventArgs e)
-        {
-            ToggleViewRecordButton();
         }
 
         private bool _showshortcuts = false;
@@ -3663,12 +3656,12 @@ namespace Integrated_Presenter
             }
         }
 
-        private bool DriveMode_AutoTransitionGuard = true;
+        private bool _FeatureFlag_DriveMode_AutoTransitionGuard = true;
 
         private void ToggleDriveAutoTransGuard()
         {
-            DriveMode_AutoTransitionGuard = !DriveMode_AutoTransitionGuard;
-            miDriveAutoTransGuard.IsChecked = DriveMode_AutoTransitionGuard;
+            _FeatureFlag_DriveMode_AutoTransitionGuard = !_FeatureFlag_DriveMode_AutoTransitionGuard;
+            miDriveAutoTransGuard.IsChecked = _FeatureFlag_DriveMode_AutoTransitionGuard;
         }
 
         private void ClickToggleDriveAutoTransGuard(object sender, RoutedEventArgs e)
@@ -3764,6 +3757,17 @@ namespace Integrated_Presenter
             {
                 tb_t2_shots.Text = _gpT2Shots.ToString();
             });
+        }
+
+        private void ClickToggleCutTransGuard(object sender, RoutedEventArgs e)
+        {
+            ToggleCutTransGuard();
+        }
+
+        private void ToggleCutTransGuard()
+        {
+            _FeatureFlag_GaurdCutTransition = !_FeatureFlag_GaurdCutTransition;
+            miCutTransitionGuard.IsChecked = _FeatureFlag_GaurdCutTransition;
         }
     }
 }
