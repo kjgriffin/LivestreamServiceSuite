@@ -13,11 +13,19 @@ namespace Integrated_Presenter.BMDSwitcher
         MockMultiviewerWindow multiviewerWindow;
         BMDSwitcherConfigSettings _config;
 
+        public event SwitcherDisconnectedEvent OnMockWindowClosed;
+
         public MockMultiviewer(Dictionary<int, string> sourcemap, BMDSwitcherConfigSettings config)
         {
             multiviewerWindow = new MockMultiviewerWindow(sourcemap);
             _config = config;
             multiviewerWindow.Show();
+            multiviewerWindow.Closed += MultiviewerWindow_Closed;
+        }
+
+        private void MultiviewerWindow_Closed(object sender, EventArgs e)
+        {
+            OnMockWindowClosed?.Invoke();
         }
 
         public void UpdateSlideInput(Slide s)

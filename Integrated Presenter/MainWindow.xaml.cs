@@ -234,6 +234,7 @@ namespace Integrated_Presenter
             {
                 switcherManager = new BMDSwitcherManager(this);
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
+                switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
                 if (switcherManager.TryConnect(connectWindow.IP))
                 {
                     EnableSwitcherControls();
@@ -247,10 +248,18 @@ namespace Integrated_Presenter
             SetSwitcherSettings();
         }
 
+        private void SwitcherManager_OnSwitcherDisconnected()
+        {
+            DisableSwitcherControls(); // yeah... so this won't really do everything yet. Eventually I'll get around to fixing the UI here.
+            // Important part -> set switcherManager to null so we don't try and access it when its disconnected
+            switcherManager = null;
+        }
+
         private void MockConnectSwitcher()
         {
             switcherManager = new MockBMDSwitcherManager(this);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
+            switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
             switcherManager.TryConnect("localhost");
             EnableSwitcherControls();
             if (!shot_clock_timer.Enabled)

@@ -3,11 +3,15 @@ using Integrated_Presenter.BMDSwitcher.Config;
 
 namespace Integrated_Presenter
 {
+
+    public delegate void SwitcherDisconnectedEvent();
+
     public interface IBMDSwitcherManager
     {
         bool GoodConnection { get; set; }
 
         event SwitcherStateChange SwitcherStateChanged;
+        event SwitcherDisconnectedEvent OnSwitcherDisconnected;
 
         BMDSwitcherState ForceStateUpdate();
         BMDSwitcherState GetCurrentState();

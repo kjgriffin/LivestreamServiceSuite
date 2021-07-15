@@ -52,6 +52,7 @@ namespace Integrated_Presenter
 
 
         public event SwitcherStateChange SwitcherStateChanged;
+        public event SwitcherDisconnectedEvent OnSwitcherDisconnected;
 
         public bool GoodConnection { get; set; } = false;
         bool IBMDSwitcherManager.GoodConnection { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -107,6 +108,7 @@ namespace Integrated_Presenter
             SwitcherDisconnected();
         }
 
+      
         private void _mixEffectBlockMonitor_InTransitionChanged(object sender, object args)
         {
             _parent.Dispatcher.Invoke(() =>

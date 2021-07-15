@@ -17,6 +17,7 @@ namespace Integrated_Presenter.BMDSwitcher
         MockMultiviewer mockMultiviewer;
 
         public event SwitcherStateChange SwitcherStateChanged;
+        public event SwitcherDisconnectedEvent OnSwitcherDisconnected;
 
         public MockBMDSwitcherManager(MainWindow parent)
         {
@@ -34,7 +35,13 @@ namespace Integrated_Presenter.BMDSwitcher
                 [8] = "left"
             };
             mockMultiviewer = new MockMultiviewer(mapping, parent.Config);
+            mockMultiviewer.OnMockWindowClosed += MockMultiviewer_OnMockWindowClosed;
             parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
+        }
+
+        private void MockMultiviewer_OnMockWindowClosed()
+        {
+            OnSwitcherDisconnected?.Invoke();
         }
 
         private void Parent_PresentationStateUpdated(Slide currentslide)
