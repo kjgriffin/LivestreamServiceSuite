@@ -227,12 +227,27 @@ namespace Integrated_Presenter
 
         #region BMD Switcher
 
+        private void SwitcherConnectedUiUpdate(bool connected)
+        {
+            if (connected)
+            {
+                tb_switcherConnection.Text = "Connected";
+                tb_switcherConnection.Foreground = Brushes.LimeGreen;
+            }
+            else
+            {
+                tb_switcherConnection.Text = "Disconnected";
+                tb_switcherConnection.Foreground = Brushes.Red;
+            }
+        }
+
         private void ConnectSwitcher()
         {
             Connection connectWindow = new Connection("Connect to Switcher", "Switcher IP Address:", "192.168.2.120");
             bool? res = connectWindow.ShowDialog();
             if (res == true)
             {
+                SwitcherConnectedUiUpdate(true);
                 switcherManager = new BMDSwitcherManager(this);
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
                 switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
@@ -254,6 +269,7 @@ namespace Integrated_Presenter
             DisableSwitcherControls(); // yeah... so this won't really do everything yet. Eventually I'll get around to fixing the UI here.
             // Important part -> set switcherManager to null so we don't try and access it when its disconnected
             switcherManager = null;
+            SwitcherConnectedUiUpdate(false);
         }
 
         private void MockConnectSwitcher()
@@ -262,6 +278,7 @@ namespace Integrated_Presenter
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
             switcherManager.TryConnect("localhost");
+            SwitcherConnectedUiUpdate(true);
             EnableSwitcherControls();
             if (!shot_clock_timer.Enabled)
             {
@@ -322,6 +339,10 @@ namespace Integrated_Presenter
         BMDSwitcherState _lastState = new BMDSwitcherState();
         private void SwitcherManager_SwitcherStateChanged(BMDSwitcherState args)
         {
+            if (args == null)
+            {
+                return;
+            }
             // update shot clock
             if (args.IsDifferentShot(_lastState))
             {
@@ -518,6 +539,14 @@ namespace Integrated_Presenter
             }
         }
 
+        private void DisableKeyerUI()
+        {
+            BtnDVE.Foreground = Brushes.White;
+            BtnChroma.Foreground = Brushes.White;
+            PIPControls.Visibility = Visibility.Hidden;
+            ChromaControls.Visibility = Visibility.Hidden;
+        }
+
         private void EnableKeyerControls()
         {
 
@@ -551,17 +580,139 @@ namespace Integrated_Presenter
 
         }
 
+        private void DisableKeyerControls()
+        {
+
+            string style = "SwitcherButton_Disabled";
+
+            BtnUSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
+
+            BtnPIPFillProgram1.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram2.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram3.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram4.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram5.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram6.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram7.Style = (Style)Application.Current.FindResource(style);
+            BtnPIPFillProgram8.Style = (Style)Application.Current.FindResource(style);
+
+            BtnChromaFillProgram1.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram2.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram3.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram4.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram5.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram6.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram7.Style = (Style)Application.Current.FindResource(style);
+            BtnChromaFillProgram8.Style = (Style)Application.Current.FindResource(style);
+
+            style = "OffLight";
+            BtnUSK1OnOffAir.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+
+            BtnPIPFillProgram1.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPIPFillProgram2.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPIPFillProgram3.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPIPFillProgram4.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPIPFillProgram5.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPIPFillProgram6.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPIPFillProgram7.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPIPFillProgram8.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+
+            BtnChromaFillProgram1.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnChromaFillProgram2.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnChromaFillProgram3.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnChromaFillProgram4.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnChromaFillProgram5.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnChromaFillProgram6.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnChromaFillProgram7.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+
+            //string pipstyle = "PIPControlButton";
+            //BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
+
+        }
+
+
         private void DisableSwitcherControls()
         {
 
-            BtnPreset1.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
-            BtnPreset2.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
-            BtnPreset3.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
-            BtnPreset4.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
-            BtnPreset5.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
-            BtnPreset6.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
-            BtnPreset7.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
-            BtnPreset8.Style = (Style)Application.Current.FindResource("SwitcherButton_Disabled");
+            string style = "SwitcherButton_Disabled";
+
+            BtnPreset1.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset2.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset3.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset4.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset5.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset6.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset7.Style = (Style)Application.Current.FindResource(style);
+            BtnPreset8.Style = (Style)Application.Current.FindResource(style);
+
+            BtnProgram1.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram2.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram3.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram4.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram5.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram6.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram7.Style = (Style)Application.Current.FindResource(style);
+            BtnProgram8.Style = (Style)Application.Current.FindResource(style);
+
+            BtnDSK1Tie.Style = (Style)Application.Current.FindResource(style);
+            BtnDSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
+            BtnDSK1Auto.Style = (Style)Application.Current.FindResource(style);
+
+            BtnDSK2Tie.Style = (Style)Application.Current.FindResource(style);
+            BtnDSK2OnOffAir.Style = (Style)Application.Current.FindResource(style);
+            BtnDSK2Auto.Style = (Style)Application.Current.FindResource(style);
+
+            BtnFTB.Style = (Style)Application.Current.FindResource(style);
+            BtnCBars.Style = (Style)Application.Current.FindResource(style);
+
+            BtnAutoTrans.Style = (Style)Application.Current.FindResource(style);
+            BtnCutTrans.Style = (Style)Application.Current.FindResource(style);
+
+            BtnBackgroundTrans.Style = (Style)Application.Current.FindResource(style);
+            BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
+
+            style = "OffLight";
+            BtnPreset1.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPreset2.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPreset3.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPreset4.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPreset5.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPreset6.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPreset7.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnPreset8.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+
+            BtnProgram1.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnProgram2.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnProgram3.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnProgram4.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnProgram5.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnProgram6.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnProgram7.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnProgram8.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+
+            BtnDSK1Tie.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnDSK1OnOffAir.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnDSK1Auto.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+
+            BtnDSK2Tie.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnDSK2OnOffAir.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnDSK2Auto.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+
+            BtnFTB.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnCBars.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+
+            BtnAutoTrans.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnCutTrans.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+
+            BtnBackgroundTrans.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnTransKey1.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+
+            DisableKeyerControls();
+            DisableAuxControls();
+            DisableKeyerUI();
+
         }
 
         private void UpdatePresetButtonStyles()
@@ -2352,7 +2503,18 @@ namespace Integrated_Presenter
 
         private void ClickToggleShowEffectiveCurrentPreview(object sender, RoutedEventArgs e)
         {
-            _FeatureFlag_ShowEffectiveCurrentPreview = !_FeatureFlag_ShowEffectiveCurrentPreview;
+            ToggleShowEffectiveCurrentPreview();
+        }
+
+        private void ToggleShowEffectiveCurrentPreview()
+        {
+            SetShowEffectiveCurrentPreview(!_FeatureFlag_ShowEffectiveCurrentPreview);
+        }
+
+        private void SetShowEffectiveCurrentPreview(bool showeffective)
+        {
+            _FeatureFlag_ShowEffectiveCurrentPreview = showeffective;
+            cbShowEffectiveCurrent.IsChecked = _FeatureFlag_ShowEffectiveCurrentPreview;
         }
 
 
@@ -3223,6 +3385,16 @@ namespace Integrated_Presenter
             BtnAux7.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
             BtnAux8.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
             BtnAuxPgm.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
+
+            BtnAux1.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnAux2.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnAux3.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnAux4.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnAux5.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnAux6.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnAux7.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnAux8.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
+            BtnAuxPgm.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
         }
 
         private void ShowAuxButtonControls()
@@ -3276,11 +3448,15 @@ namespace Integrated_Presenter
 
 
         bool _FeatureFlag_automationtimer1enabled = true;
-        bool _FeatureFlag_automationrecordstartenabled = true;
 
         private void ClickToggleAutomationTimer1(object sender, RoutedEventArgs e)
         {
-            _FeatureFlag_automationtimer1enabled = !_FeatureFlag_automationtimer1enabled;
+            SetEnableSermonTimer(!_FeatureFlag_automationtimer1enabled);
+        }
+
+        private void SetEnableSermonTimer(bool enabled)
+        {
+            _FeatureFlag_automationtimer1enabled = enabled;
             miTimer1Restart.IsChecked = _FeatureFlag_automationtimer1enabled;
         }
 
@@ -3685,7 +3861,13 @@ namespace Integrated_Presenter
 
         private void ToggleDriveAutoTransGuard()
         {
-            _FeatureFlag_DriveMode_AutoTransitionGuard = !_FeatureFlag_DriveMode_AutoTransitionGuard;
+            SetEnableDriveAutoTransGuard(!_FeatureFlag_DriveMode_AutoTransitionGuard);
+            miDriveAutoTransGuard.IsChecked = _FeatureFlag_DriveMode_AutoTransitionGuard;
+        }
+
+        private void SetEnableDriveAutoTransGuard(bool enabled)
+        {
+            _FeatureFlag_DriveMode_AutoTransitionGuard = enabled;
             miDriveAutoTransGuard.IsChecked = _FeatureFlag_DriveMode_AutoTransitionGuard;
         }
 
@@ -3791,7 +3973,12 @@ namespace Integrated_Presenter
 
         private void ToggleCutTransGuard()
         {
-            _FeatureFlag_GaurdCutTransition = !_FeatureFlag_GaurdCutTransition;
+            SetCutTransGuard(!_FeatureFlag_GaurdCutTransition);
+        }
+
+        private void SetCutTransGuard(bool enabled)
+        {
+            _FeatureFlag_GaurdCutTransition = enabled;
             miCutTransitionGuard.IsChecked = _FeatureFlag_GaurdCutTransition;
         }
 
@@ -3822,7 +4009,7 @@ namespace Integrated_Presenter
         {
             _m_integratedPresenterFeatures = config;
             SetViewPrevAfter(config.ViewSettings.View_PrevAfterPreviews);
-            _FeatureFlag_ShowEffectiveCurrentPreview = config.ViewSettings.View_PreviewEffectiveCurrent;
+            SetShowEffectiveCurrentPreview(config.ViewSettings.View_PreviewEffectiveCurrent);
             SetViewAdvancedPIP(config.ViewSettings.View_AdvancedDVE);
             SetViewAuxRow(config.ViewSettings.View_AuxOutput);
             SetViewAdvancedPresentation(config.ViewSettings.View_AdvancedPresentation);
@@ -3835,9 +4022,9 @@ namespace Integrated_Presenter
                 OpenAudioPlayer();
             }
 
-            _FeatureFlag_GaurdCutTransition = config.AutomationSettings.EnableCutTransGuard;
-            _FeatureFlag_automationtimer1enabled = config.AutomationSettings.EnableSermonTimer;
-            _FeatureFlag_DriveMode_AutoTransitionGuard = config.AutomationSettings.EnableDriveModeAutoTransGuard;
+            SetCutTransGuard(config.AutomationSettings.EnableCutTransGuard);
+            SetEnableSermonTimer(config.AutomationSettings.EnableSermonTimer);
+            SetEnableDriveAutoTransGuard(config.AutomationSettings.EnableDriveModeAutoTransGuard);
             SetPostsetEnabled(config.AutomationSettings.EnablePostset);
 
             if (config.PresentationSettings.StartPresentationMuted)
