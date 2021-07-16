@@ -67,6 +67,9 @@ namespace Integrated_Presenter
             Title = $"Integrated Presenter - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
 
 
+            // set size
+            Width = 1200;
+            Height = 500;
 
 
             // set a default config
@@ -3116,7 +3119,9 @@ namespace Integrated_Presenter
 
         private void HideAdvancedPIPControls()
         {
+            //var heightreduction = grAdvancedPIP.ActualHeight;
             grAdvancedPIP.Height = new GridLength(0);
+            //Height -= heightreduction;
         }
 
         private void ToggleTransBkgd()
