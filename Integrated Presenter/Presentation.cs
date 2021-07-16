@@ -12,7 +12,10 @@ namespace Integrated_Presenter
     {
 
         public bool HasSwitcherConfig { get; private set; } = false;
-        public BMDSwitcher.Config.BMDSwitcherConfigSettings Config { get; private set; }
+        public BMDSwitcher.Config.BMDSwitcherConfigSettings SwitcherConfig { get; private set; }
+
+        public bool HasUserConfig { get; private set; } = false;
+        public Configurations.FeatureConfig.IntegratedPresenterFeatures UserConfig { get; private set; }
 
         public string Folder { get; set; }
 
@@ -110,7 +113,7 @@ namespace Integrated_Presenter
                 }
             }
 
-            // find config file if it exists
+            // find switcher config file if it exists
             var configfile = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"BMDSwitcherConfig").Success).FirstOrDefault();
 
             if (File.Exists(configfile))
@@ -118,10 +121,24 @@ namespace Integrated_Presenter
                 using (StreamReader sr = new StreamReader(configfile))
                 {
                     var cfg = sr.ReadToEnd();
-                    Config = JsonSerializer.Deserialize<BMDSwitcher.Config.BMDSwitcherConfigSettings>(cfg);
+                    SwitcherConfig = JsonSerializer.Deserialize<BMDSwitcher.Config.BMDSwitcherConfigSettings>(cfg);
                     HasSwitcherConfig = true;
                 }
             }
+
+            // find user config file if it exists
+            configfile = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"IntegratedPresenterUserConfig").Success).FirstOrDefault();
+
+            if (File.Exists(configfile))
+            {
+                using (StreamReader sr = new StreamReader(configfile))
+                {
+                    var cfg = sr.ReadToEnd();
+                    UserConfig = JsonSerializer.Deserialize<Configurations.FeatureConfig.IntegratedPresenterFeatures>(cfg);
+                    HasUserConfig = true;
+                }
+            }
+
 
             return false;
         }

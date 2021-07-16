@@ -2450,8 +2450,12 @@ namespace Integrated_Presenter
                 // apply config if required
                 if (pres.HasSwitcherConfig)
                 {
-                    _config = pres.Config;
+                    _config = pres.SwitcherConfig;
                     SetSwitcherSettings();
+                }
+                if (pres.HasUserConfig)
+                {
+                    LoadUserSettings(pres.UserConfig);
                 }
 
                 // overwrite display of old presentation if already open
