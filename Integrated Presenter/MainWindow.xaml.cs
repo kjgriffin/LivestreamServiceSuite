@@ -4038,6 +4038,34 @@ namespace Integrated_Presenter
 
         }
 
+        private Configurations.FeatureConfig.IntegratedPresenterFeatures GetCurrentUserSettings()
+        {
+            return new Configurations.FeatureConfig.IntegratedPresenterFeatures()
+            {
+                AutomationSettings = new Configurations.FeatureConfig.IntegratedPresentationFeatures_Automation()
+                {
+                    EnableCutTransGuard = _FeatureFlag_GaurdCutTransition,
+                    EnableDriveModeAutoTransGuard = _FeatureFlag_DriveMode_AutoTransitionGuard,
+                    EnablePostset = _FeatureFlag_PostsetShot,
+                    EnableSermonTimer = _FeatureFlag_automationtimer1enabled,
+                },
+                PresentationSettings = new Configurations.FeatureConfig.IntegratedPresentationFeatures_Presentation()
+                {
+                    StartPresentationMuted = MediaMuted,
+                },
+                ViewSettings = new Configurations.FeatureConfig.IntegratedPresentationFeatures_View()
+                {
+                    View_PrevAfterPreviews = _FeatureFlag_displayPrevAfter,
+                    View_AdvancedDVE = _FeatureFlag_showadvancedpipcontrols,
+                    View_AdvancedPresentation = _FeatureFlag_viewAdvancedPresentation,
+                    View_AuxOutput = _FeatureFlag_showAuxButons,
+                    View_PreviewEffectiveCurrent = _FeatureFlag_ShowEffectiveCurrentPreview,
+                    View_DefaultOpenAdvancedPIPLocation = IntegratedPresenterFeatures.ViewSettings.View_DefaultOpenAdvancedPIPLocation,
+                    View_DefaultOpenAudioPlayer = IntegratedPresenterFeatures.ViewSettings.View_DefaultOpenAudioPlayer,
+                },
+            };
+        }
+
         private void LoadUserDefault(object sender, RoutedEventArgs e)
         {
             LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures.Default());
@@ -4062,7 +4090,7 @@ namespace Integrated_Presenter
             sfd.Filter = "JSON Files (*.json)|*.json";
             if (sfd.ShowDialog() == true)
             {
-                IntegratedPresenterFeatures?.Save(sfd.FileName);
+                GetCurrentUserSettings()?.Save(sfd.FileName);
             }
         }
     }
