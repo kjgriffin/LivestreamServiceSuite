@@ -84,6 +84,9 @@ namespace Integrated_Presenter
 
             ShowHideShortcutsUI();
 
+            // start with no switcher connection so disable all controls correctly
+            DisableSwitcherControls();
+
             UpdateRealTimeClock();
             UpdateSlideControls();
             UpdateMediaControls();
@@ -269,7 +272,7 @@ namespace Integrated_Presenter
 
         private void SwitcherManager_OnSwitcherDisconnected()
         {
-            DisableSwitcherControls(); // yeah... so this won't really do everything yet. Eventually I'll get around to fixing the UI here.
+            DisableSwitcherControls();
             // Important part -> set switcherManager to null so we don't try and access it when its disconnected
             switcherManager = null;
             SwitcherConnectedUiUpdate(false);
@@ -544,12 +547,20 @@ namespace Integrated_Presenter
                 PIPControls.Visibility = Visibility.Hidden;
                 ChromaControls.Visibility = Visibility.Visible;
             }
+            BtnDVE.Background = Brushes.Red;
+            BtnChroma.Background = Brushes.Red;
+            BtnDVE.Cursor = Cursors.Hand;
+            BtnChroma.Cursor = Cursors.Hand;
         }
 
         private void DisableKeyerUI()
         {
-            BtnDVE.Foreground = Brushes.White;
-            BtnChroma.Foreground = Brushes.White;
+            BtnDVE.Foreground = Brushes.WhiteSmoke;
+            BtnChroma.Foreground = Brushes.WhiteSmoke;
+            BtnDVE.Background = Brushes.WhiteSmoke;
+            BtnChroma.Background = Brushes.WhiteSmoke;
+            BtnDVE.Cursor = Cursors.Arrow;
+            BtnChroma.Cursor = Cursors.Arrow;
             PIPControls.Visibility = Visibility.Hidden;
             ChromaControls.Visibility = Visibility.Hidden;
         }
@@ -632,10 +643,10 @@ namespace Integrated_Presenter
             BtnChromaFillProgram6.Background = (RadialGradientBrush)Application.Current.FindResource(style);
             BtnChromaFillProgram7.Background = (RadialGradientBrush)Application.Current.FindResource(style);
 
-            //string pipstyle = "PIPControlButton";
-            //BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
-            //BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
-            //BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
+            string pipstyle = "InactivePIPControlButton";
+            BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
 
         }
 
