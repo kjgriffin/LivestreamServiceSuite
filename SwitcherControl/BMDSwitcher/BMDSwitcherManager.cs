@@ -310,6 +310,12 @@ namespace Integrated_Presenter
 
         }
 
+        public void Disconnect()
+        {
+            OnSwitcherDisconnected?.Invoke();
+            SwitcherDisconnected();
+        }
+
         private bool InitializeInputSources()
         {
             // get all input sources

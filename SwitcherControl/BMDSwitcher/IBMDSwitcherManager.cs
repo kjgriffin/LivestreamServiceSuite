@@ -32,6 +32,7 @@ namespace Integrated_Presenter
         void PerformToggleDSK2();
         void PerformToggleFTB();
         bool TryConnect(string address);
+        void Disconnect();
         void PerformToggleUSK1();
         void PerformOnAirUSK1();
         void PerformOffAirUSK1();

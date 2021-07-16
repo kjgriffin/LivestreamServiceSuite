@@ -25,6 +25,8 @@
                     <MenuItem Click="ClickConnect" Header="Switcher" IsTabStop="False"></MenuItem>
                     <Separator></Separator>
                     <MenuItem Click="ClickConnectMock" Header="Mock Switcher" IsTabStop="False"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Click="ClickDisconnectSwitcher" Header="Disconnect" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Presentation" IsTabStop="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>

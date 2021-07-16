@@ -140,6 +140,12 @@ namespace Integrated_Presenter.BMDSwitcher
             return true;
         }
 
+        public void Disconnect()
+        {
+            OnSwitcherDisconnected?.Invoke();
+            mockMultiviewer.Close();
+        }
+
         public void PerformAutoOffAirDSK2()
         {
             _state.DSK2OnAir = false;

@@ -249,6 +249,11 @@ namespace Integrated_Presenter
 
         private void ConnectSwitcher()
         {
+            if (switcherManager != null)
+            {
+                // we already have a connection
+                return;
+            }
             Connection connectWindow = new Connection("Connect to Switcher", "Switcher IP Address:", "192.168.2.120");
             bool? res = connectWindow.ShowDialog();
             if (res == true)
@@ -280,6 +285,11 @@ namespace Integrated_Presenter
 
         private void MockConnectSwitcher()
         {
+            if (switcherManager != null)
+            {
+                // we already have a connection
+                return;
+            }
             switcherManager = new MockBMDSwitcherManager(this);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
@@ -4137,6 +4147,14 @@ namespace Integrated_Presenter
             if (sfd.ShowDialog() == true)
             {
                 GetCurrentUserSettings()?.Save(sfd.FileName);
+            }
+        }
+
+        private void ClickDisconnectSwitcher(object sender, RoutedEventArgs e)
+        {
+            if (switcherManager != null)
+            {
+                switcherManager.Disconnect();
             }
         }
     }
