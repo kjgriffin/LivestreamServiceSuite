@@ -42,17 +42,21 @@
                     <MenuItem Header="Aux Output [X]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAuxOutput"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Settings" IsTabStop="False">
-                    <MenuItem Header="Export Settings" Click="SaveSettings" IsTabStop="False"></MenuItem>
-                    <MenuItem Header="Load Settings" Click="LoadSettings" IsTabStop="False"></MenuItem>
-                    <MenuItem Header="Load Default" Click="LoadDefault" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Export Switcher Settings" Click="SaveSettings" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load Switcher Settings" Click="LoadSettings" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load Switcher Default" Click="LoadDefault" IsTabStop="False"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Header="Export User Settings" Click="SaveUserSettings" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load User Settings" Click="LoadUserSettings" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load User Default" Click="LoadUserDefault" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Automation" IsTabStop="False">
                     <MenuItem Name="miTimer1Restart" Header="Timer1 Restart" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationTimer1"></MenuItem>
-                    <MenuItem Name="miStartRecord" Header="Recording Start" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationRecordingStart"></MenuItem>
                     <MenuItem Header="Set Video Preroll Delay" IsTabStop="False" Click="ClickSetVideoPrerollDelay"></MenuItem>
                     <MenuItem Header="Set Drive Mode Preset Selection Delay" IsTabStop="False" Click="ClickSetDrivePresetSelectDelay"></MenuItem>
                     <MenuItem Name="miDriveAutoTransGuard" Header="Enable Drive Mode Auto Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleDriveAutoTransGuard"></MenuItem>
                     <MenuItem Name="miCutTransitionGuard" Header="Enable Cut Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleCutTransGuard"></MenuItem>
+                    <MenuItem Name="miPostset" Header="Enable Postset" IsCheckable="True" IsChecked="True" Click="ClickTogglePostsetFeature"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Help" IsTabStop="False">
                     <MenuItem Name="miShowShortcuts" Header="Show Keyboard Shortcuts [S]" IsCheckable="True" IsChecked="False" Click="ClickShowKeyboardShortcuts"></MenuItem>

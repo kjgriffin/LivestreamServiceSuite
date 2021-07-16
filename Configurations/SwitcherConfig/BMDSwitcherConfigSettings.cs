@@ -33,19 +33,32 @@ namespace Integrated_Presenter.BMDSwitcher.Config
         public static BMDSwitcherConfigSettings Load(string filename)
         {
             var src = "";
-            using (var sr = new StreamReader(filename))
+            try
             {
-                src = sr.ReadToEnd();
+                using (var sr = new StreamReader(filename))
+                {
+                    src = sr.ReadToEnd();
+                }
+                return JsonSerializer.Deserialize<BMDSwitcherConfigSettings>(src);
             }
-            return JsonSerializer.Deserialize<BMDSwitcherConfigSettings>(src);
+            catch (Exception)
+            {
+                return Configurations.SwitcherConfig.DefaultConfig.GetDefaultConfig();
+            }
         }
 
         public void Save(string filename)
         {
-            var obj = JsonSerializer.Serialize(this);
-            using (var sw = new StreamWriter(filename))
+            try
             {
-                sw.Write(obj);
+                var obj = JsonSerializer.Serialize(this);
+                using (var sw = new StreamWriter(filename))
+                {
+                    sw.Write(obj);
+                }
+            }
+            catch (Exception)
+            {
             }
         }
 

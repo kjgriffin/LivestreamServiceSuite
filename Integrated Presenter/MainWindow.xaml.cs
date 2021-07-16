@@ -71,6 +71,7 @@ namespace Integrated_Presenter
 
             // set a default config
             SetDefaultConfig();
+            LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures.Default());
 
             HideAdvancedPresControls();
             HideAdvancedPIPControls();
@@ -2326,6 +2327,11 @@ namespace Integrated_Presenter
 
                 PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
             }
+            // preserve mute status
+            if (MediaMuted)
+            {
+                muteMedia();
+            }
         }
 
         private void _display_OnMediaPlaybackTimeUpdated(object sender, MediaPlaybackTimeEventArgs e)
@@ -2403,7 +2409,7 @@ namespace Integrated_Presenter
 
         private void UpdatePostsetUi(MediaPlayer2 preview, Slide slide)
         {
-            if (slide.PostsetEnabled)
+            if (slide.PostsetEnabled && _FeatureFlag_PostsetShot)
             {
                 preview.ShowPostset = true;
                 preview.SetPostset(slide.PostsetId);
@@ -2695,9 +2701,14 @@ namespace Integrated_Presenter
 
         private void ToggleViewPrevAfter()
         {
-            _FeatureFlag_displayPrevAfter = !_FeatureFlag_displayPrevAfter;
-            UIUpdateDisplayPrevAfter();
+            SetViewPrevAfter(!_FeatureFlag_displayPrevAfter);
+        }
+
+        private void SetViewPrevAfter(bool show)
+        {
+            _FeatureFlag_displayPrevAfter = show;
             cbPrevAfter.IsChecked = _FeatureFlag_displayPrevAfter;
+            UIUpdateDisplayPrevAfter();
         }
 
         private async void ClickTakeSlide(object sender, RoutedEventArgs e)
@@ -2714,7 +2725,12 @@ namespace Integrated_Presenter
 
         private void ToggleViewAdvancedPresentation()
         {
-            _FeatureFlag_viewAdvancedPresentation = !_FeatureFlag_viewAdvancedPresentation;
+            SetViewAdvancedPresentation(!_FeatureFlag_viewAdvancedPresentation);
+        }
+
+        private void SetViewAdvancedPresentation(bool show)
+        {
+            _FeatureFlag_viewAdvancedPresentation = show;
 
             if (_FeatureFlag_viewAdvancedPresentation)
                 ShowAdvancedPresControls();
@@ -2722,7 +2738,6 @@ namespace Integrated_Presenter
                 HideAdvancedPresControls();
 
             cbAdvancedPresentation.IsChecked = _FeatureFlag_viewAdvancedPresentation;
-
         }
 
         private void ShowAdvancedPresControls()
@@ -2911,8 +2926,12 @@ namespace Integrated_Presenter
 
         private void ToggleViewAdvancedPIP()
         {
-            _FeatureFlag_showadvancedpipcontrols = !_FeatureFlag_showadvancedpipcontrols;
+            SetViewAdvancedPIP(!_FeatureFlag_showadvancedpipcontrols);
+        }
 
+        private void SetViewAdvancedPIP(bool show)
+        {
+            _FeatureFlag_showadvancedpipcontrols = show;
             if (_FeatureFlag_showadvancedpipcontrols)
             {
                 ShowAdvancedPIPControls();
@@ -2922,7 +2941,6 @@ namespace Integrated_Presenter
                 HideAdvancedPIPControls();
             }
             cbAdvancedPresentation.IsChecked = _FeatureFlag_showadvancedpipcontrols;
-
         }
 
         private void ShowAdvancedPIPControls()
@@ -3121,7 +3139,12 @@ namespace Integrated_Presenter
 
         private void ToggleAuxRow()
         {
-            _FeatureFlag_showAuxButons = !_FeatureFlag_showAuxButons;
+            SetViewAuxRow(!_FeatureFlag_showAuxButons);
+        }
+
+        private void SetViewAuxRow(bool show)
+        {
+            _FeatureFlag_showAuxButons = show;
             if (_FeatureFlag_showAuxButons)
             {
                 ShowAuxButtonControls();
@@ -3260,13 +3283,6 @@ namespace Integrated_Presenter
             _FeatureFlag_automationtimer1enabled = !_FeatureFlag_automationtimer1enabled;
             miTimer1Restart.IsChecked = _FeatureFlag_automationtimer1enabled;
         }
-
-        private void ClickToggleAutomationRecordingStart(object sender, RoutedEventArgs e)
-        {
-            _FeatureFlag_automationrecordstartenabled = !_FeatureFlag_automationrecordstartenabled;
-            miStartRecord.IsChecked = _FeatureFlag_automationrecordstartenabled;
-        }
-
 
         private bool ProgramRowLocked = true;
 
@@ -3777,6 +3793,90 @@ namespace Integrated_Presenter
         {
             _FeatureFlag_GaurdCutTransition = !_FeatureFlag_GaurdCutTransition;
             miCutTransitionGuard.IsChecked = _FeatureFlag_GaurdCutTransition;
+        }
+
+        private void ClickTogglePostsetFeature(object sender, RoutedEventArgs e)
+        {
+            TogglePostset();
+        }
+
+        private void TogglePostset()
+        {
+            SetPostsetEnabled(!_FeatureFlag_PostsetShot);
+        }
+
+        private void SetPostsetEnabled(bool enabled)
+        {
+            _FeatureFlag_PostsetShot = enabled;
+            miPostset.IsChecked = _FeatureFlag_PostsetShot;
+            PrevPreview.ShowPostset = _FeatureFlag_PostsetShot;
+            CurrentPreview.ShowPostset = _FeatureFlag_PostsetShot;
+            NextPreview.ShowPostset = _FeatureFlag_PostsetShot;
+            AfterPreview.ShowPostset = _FeatureFlag_PostsetShot;
+        }
+
+
+        private Configurations.FeatureConfig.IntegratedPresenterFeatures IntegratedPresenterFeatures { get => _m_integratedPresenterFeatures; }
+        private Configurations.FeatureConfig.IntegratedPresenterFeatures _m_integratedPresenterFeatures = Configurations.FeatureConfig.IntegratedPresenterFeatures.Default();
+        private void LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures config)
+        {
+            _m_integratedPresenterFeatures = config;
+            SetViewPrevAfter(config.ViewSettings.View_PrevAfterPreviews);
+            _FeatureFlag_ShowEffectiveCurrentPreview = config.ViewSettings.View_PreviewEffectiveCurrent;
+            SetViewAdvancedPIP(config.ViewSettings.View_AdvancedDVE);
+            SetViewAuxRow(config.ViewSettings.View_AuxOutput);
+            SetViewAdvancedPresentation(config.ViewSettings.View_AdvancedPresentation);
+            if (config.ViewSettings.View_DefaultOpenAdvancedPIPLocation)
+            {
+                ShowPIPLocationControl();
+            }
+            if (config.ViewSettings.View_DefaultOpenAudioPlayer)
+            {
+                OpenAudioPlayer();
+            }
+
+            _FeatureFlag_GaurdCutTransition = config.AutomationSettings.EnableCutTransGuard;
+            _FeatureFlag_automationtimer1enabled = config.AutomationSettings.EnableSermonTimer;
+            _FeatureFlag_DriveMode_AutoTransitionGuard = config.AutomationSettings.EnableDriveModeAutoTransGuard;
+            SetPostsetEnabled(config.AutomationSettings.EnablePostset);
+
+            if (config.PresentationSettings.StartPresentationMuted)
+            {
+                muteMedia();
+            }
+            else
+            {
+                unmuteMedia();
+            }
+
+        }
+
+        private void LoadUserDefault(object sender, RoutedEventArgs e)
+        {
+            LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures.Default());
+        }
+
+        private void LoadUserSettings(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "JSON Files (*.json)|*.json";
+            if (ofd.ShowDialog() == true)
+            {
+                LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures.Load(ofd.FileName));
+            }
+        }
+
+        private void SaveUserSettings(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.FileName = "IntegratedPresenterUserConfig";
+            sfd.AddExtension = true;
+            sfd.DefaultExt = "json";
+            sfd.Filter = "JSON Files (*.json)|*.json";
+            if (sfd.ShowDialog() == true)
+            {
+                IntegratedPresenterFeatures?.Save(sfd.FileName);
+            }
         }
     }
 }
