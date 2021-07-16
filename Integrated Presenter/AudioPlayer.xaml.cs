@@ -198,5 +198,14 @@ namespace Integrated_Presenter
             }
             e.Handled = true;
         }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                PlaybackTimer.Stop();
+                StopAudio();
+            });
+        }
     }
 }

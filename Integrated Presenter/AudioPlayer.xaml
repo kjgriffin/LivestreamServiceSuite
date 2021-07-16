@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Background="#3f3f3f"
         PreviewKeyDown="Window_PreviewKeyDown"
+        Closed="Window_Closed"
         Topmost="True"
         Title="Audio Player" Height="240" Width="400">
     <Grid>
