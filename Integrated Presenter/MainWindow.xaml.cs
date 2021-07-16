@@ -503,16 +503,20 @@ namespace Integrated_Presenter
             BtnDSK1Tie.Style = (Style)Application.Current.FindResource(style);
             BtnDSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
             BtnDSK1Auto.Style = (Style)Application.Current.FindResource(style);
+            BtnDSK1Auto.Background = (RadialGradientBrush)Application.Current.FindResource("GrayLight");
 
             BtnDSK2Tie.Style = (Style)Application.Current.FindResource(style);
             BtnDSK2OnOffAir.Style = (Style)Application.Current.FindResource(style);
             BtnDSK2Auto.Style = (Style)Application.Current.FindResource(style);
+            BtnDSK2Auto.Background = (RadialGradientBrush)Application.Current.FindResource("GrayLight");
 
             BtnFTB.Style = (Style)Application.Current.FindResource(style);
             BtnCBars.Style = (Style)Application.Current.FindResource(style);
 
             BtnAutoTrans.Style = (Style)Application.Current.FindResource(style);
+            BtnAutoTrans.Background = (RadialGradientBrush)Application.Current.FindResource("GrayLight");
             BtnCutTrans.Style = (Style)Application.Current.FindResource(style);
+            BtnCutTrans.Background = (RadialGradientBrush)Application.Current.FindResource("GrayLight");
 
             BtnBackgroundTrans.Style = (Style)Application.Current.FindResource(style);
             BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
@@ -2544,14 +2548,12 @@ namespace Integrated_Presenter
             if (Presentation != null)
             {
                 PrevPreview.SetMedia(Presentation.Prev, false);
-                UpdatePostsetUi(PrevPreview, Presentation.Prev);
                 if (_FeatureFlag_ShowEffectiveCurrentPreview)
                 {
                     if (currentGuid != Presentation.EffectiveCurrent.Guid)
                     {
                         CurrentPreview.SetMedia(Presentation.EffectiveCurrent, false);
                         currentGuid = Presentation.EffectiveCurrent.Guid;
-                        UpdatePostsetUi(CurrentPreview, Presentation.EffectiveCurrent);
                     }
                 }
                 else
@@ -2560,7 +2562,6 @@ namespace Integrated_Presenter
                     {
                         CurrentPreview.SetMedia(Presentation.Current, false);
                         currentGuid = Presentation.Current.Guid;
-                        UpdatePostsetUi(CurrentPreview, Presentation.Current);
                     }
                 }
                 NextPreview.SetupComplete(SetupActionsCompleted);
@@ -2569,11 +2570,29 @@ namespace Integrated_Presenter
                 CurrentPreview.SetupComplete(true);
                 NextPreview.SetMedia(Presentation.Next, false);
                 AfterPreview.SetMedia(Presentation.After, false);
+            }
+            UpdateSlidePreviewControls();
+            UpdatePreviewsPostets();
+            currentslideforactions = currentGuid;
+        }
+
+        private void UpdatePreviewsPostets()
+        {
+            // update previews
+            if (Presentation != null)
+            {
+                UpdatePostsetUi(PrevPreview, Presentation.Prev);
+                if (_FeatureFlag_ShowEffectiveCurrentPreview)
+                {
+                    UpdatePostsetUi(CurrentPreview, Presentation.EffectiveCurrent);
+                }
+                else
+                {
+                    UpdatePostsetUi(CurrentPreview, Presentation.Current);
+                }
                 UpdatePostsetUi(NextPreview, Presentation.Next);
                 UpdatePostsetUi(AfterPreview, Presentation.After);
             }
-            UpdateSlidePreviewControls();
-            currentslideforactions = currentGuid;
         }
 
         private void UpdatePostsetUi(MediaPlayer2 preview, Slide slide)
@@ -3569,7 +3588,10 @@ namespace Integrated_Presenter
             switcherManager?.SetUSK1TypeDVE();
             // force blocking state update
             SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate());
-            ShowKeyerUI();
+            if (switcherManager != null)
+            {
+                ShowKeyerUI();
+            }
         }
 
         private void SetSwitcherKeyerChroma()
@@ -3577,13 +3599,16 @@ namespace Integrated_Presenter
             //switcherManager?.ConfigureUSK1Chroma(_config.USKSettings.ChromaSettings);
             switcherManager?.SetUSK1TypeChroma();
             // force blocking state update
-            SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate() ?? new BMDSwitcherState());
-            tbChromaHue.Text = switcherState.ChromaSettings.Hue.ToString();
-            tbChromaGain.Text = switcherState.ChromaSettings.Gain.ToString();
-            tbChromaLift.Text = switcherState.ChromaSettings.Lift.ToString();
-            tbChromaYSuppress.Text = switcherState.ChromaSettings.YSuppress.ToString();
-            tbChromaNarrow.Text = switcherState.ChromaSettings.Narrow.ToString();
-            ShowKeyerUI();
+            if (switcherManager != null)
+            {
+                SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate() ?? new BMDSwitcherState());
+                tbChromaHue.Text = switcherState.ChromaSettings.Hue.ToString();
+                tbChromaGain.Text = switcherState.ChromaSettings.Gain.ToString();
+                tbChromaLift.Text = switcherState.ChromaSettings.Lift.ToString();
+                tbChromaYSuppress.Text = switcherState.ChromaSettings.YSuppress.ToString();
+                tbChromaNarrow.Text = switcherState.ChromaSettings.Narrow.ToString();
+                ShowKeyerUI();
+            }
         }
 
         private void ClickApplyChromaSettings(object sender, RoutedEventArgs e)
@@ -4009,6 +4034,7 @@ namespace Integrated_Presenter
             CurrentPreview.ShowPostset = _FeatureFlag_PostsetShot;
             NextPreview.ShowPostset = _FeatureFlag_PostsetShot;
             AfterPreview.ShowPostset = _FeatureFlag_PostsetShot;
+            UpdatePreviewsPostets();
         }
 
 
