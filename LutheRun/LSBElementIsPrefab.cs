@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AngleSharp.Dom;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,10 +11,13 @@ namespace LutheRun
         public string Prefab { get; private set; }
         public string SourceText { get; private set; }
 
-        public LSBElementIsPrefab(string command, string elementtext)
+        public IElement SourceHTML { get; private set; }
+
+        public LSBElementIsPrefab(string command, string elementtext, IElement source)
         {
             Prefab = command;
             SourceText = elementtext;
+            SourceHTML = source;
         }
 
         public string DebugString()

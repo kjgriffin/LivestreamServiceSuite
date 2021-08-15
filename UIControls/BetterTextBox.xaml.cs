@@ -36,6 +36,11 @@ namespace UIControls
             return new TextRange(tb.Document.ContentStart, tb.Document.ContentEnd).Text;
         }
 
+        public void SetFontSize(int size)
+        {
+            tb.FontSize = size;
+        }
+
         public void SetText(string text)
         {
             var lines = text.Split(Environment.NewLine);

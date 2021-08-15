@@ -15,6 +15,8 @@ namespace LutheRun
         public string PreLiturgy { get; private set; } = "";
         public string PostLiturgy { get; private set; } = "";
 
+        public IElement SourceHTML { get; private set; }
+
         public static ILSBElement Parse(IElement element)
         {
             var caption = LSBElementCaption.Parse(element.Children.First(e => e.ClassList.Contains("lsb-caption"))) as LSBElementCaption;
@@ -46,6 +48,7 @@ namespace LutheRun
             }
 
             LSBElementReading reading = new LSBElementReading();
+            reading.SourceHTML = element;
             reading.ReadingTitle = caption.Caption;
             reading.ReadingReference = caption.SubCaption;
             reading.PreLiturgy = preliturgy;

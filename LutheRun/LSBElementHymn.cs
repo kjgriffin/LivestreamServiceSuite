@@ -28,6 +28,8 @@ namespace LutheRun
         private List<HymnTextVerse> TextVerses = new List<HymnTextVerse>();
         private List<HymnImageLine> ImageUrls = new List<HymnImageLine>();
 
+        public IElement SourceHTML { get; private set; }
+
 
         public int Lines
         {
@@ -93,6 +95,7 @@ namespace LutheRun
         {
             // all hymns have caption and subcaption
             var res = new LSBElementHymn();
+            res.SourceHTML = element;
             res.Caption = element.QuerySelectorAll(".caption-text").FirstOrDefault()?.TextContent ?? "";
             res.SubCaption = element.QuerySelectorAll(".subcaption-text").FirstOrDefault()?.TextContent ?? "";
 

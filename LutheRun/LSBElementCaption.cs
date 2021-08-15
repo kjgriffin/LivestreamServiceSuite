@@ -13,9 +13,12 @@ namespace LutheRun
         public string Caption { get; private set; } = "";
         public string SubCaption { get; private set; } = "";
 
+        public IElement SourceHTML { get; private set; }
+
         public static ILSBElement Parse(IElement element)
         {
             var res = new LSBElementCaption();
+            res.SourceHTML = element;
             res.Caption = element.QuerySelectorAll(".caption-text").FirstOrDefault()?.TextContent ?? "";
             res.SubCaption = element.QuerySelectorAll(".subcaption-text").FirstOrDefault()?.TextContent ?? "";
             return res;

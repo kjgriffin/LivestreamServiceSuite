@@ -58,6 +58,19 @@ namespace LutheRun
             return s.Split(Environment.NewLine).ToList();
         }
 
+        public static List<string> ParagraphText2(this IElement paragraph)
+        {
+            // get all the text of the paragraph
+            string s = paragraph.InnerHtml;
+
+            s = s.Replace("<br>", Environment.NewLine);
+            s = s.Replace("&nbsp;", " ");
+
+            s = Regex.Replace(s, "<span.*\\/span>", "");
+
+            return s.Split(Environment.NewLine).ToList();
+        }
+
         public static List<(bool hasspeaker, string speaker, string value)> ExtractTextAsLiturgy(this IElement element)
         {
             List<(bool hasspeaker, string speaker, string value)> lines = new List<(bool hasspeaker, string speaker, string value)>();
@@ -189,6 +202,12 @@ namespace LutheRun
                     if (node.ClassList.Contains("lsb-responsorial_poetry"))
                     {
                         expectspeaker = true;
+                    }
+
+                    var textlines = node.ParagraphText2();
+                    foreach (var tl in textlines)
+                    {
+                        lines.Add((foundspeaker, speaker, tl.Trim()));
                     }
                 }
                 else if (node.LocalName == "br")

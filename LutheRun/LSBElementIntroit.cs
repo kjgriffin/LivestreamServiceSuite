@@ -14,6 +14,8 @@ namespace LutheRun
         public List<(bool hasspeaker, string speaker, string text)> Lines { get; private set; } = new List<(bool hasspeaker, string speaker, string text)>();
         public string PostsetCmd { get; set; } = "";
 
+        public IElement SourceHTML { get; private set; }
+
         public static ILSBElement Parse(IElement element)
         {
             var lines = new List<(bool, string, string)>();
@@ -24,7 +26,7 @@ namespace LutheRun
 
             var caption = LSBElementCaption.Parse(element) as LSBElementCaption;
 
-            return new LSBElementIntroit() { Lines = lines, Caption = caption?.Caption };
+            return new LSBElementIntroit() { Lines = lines, Caption = caption?.Caption, SourceHTML = element };
 
         }
 

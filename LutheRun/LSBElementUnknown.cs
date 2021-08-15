@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AngleSharp.Dom;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,9 +11,11 @@ namespace LutheRun
         public string PostsetCmd { get; set; }
         public string Unknown { get; private set; } = "";
 
+        public IElement SourceHTML { get; private set; }
+
         public static ILSBElement Parse(AngleSharp.Dom.IElement element)
         {
-            return new LSBElementUnknown() { Unknown = element.StrippedText() };
+            return new LSBElementUnknown() { Unknown = element.StrippedText(), SourceHTML = element };
         }
 
         public string DebugString()

@@ -52,7 +52,7 @@ namespace LutheRun
                 var caption = element as LSBElementCaption;
                 if (caption != null)
                 {
-                    if (new[] { "bells", "prelude", "postlude", "anthem", "sermon" }.Contains(caption.Caption.ToLower()))
+                    if (new[] { "bells", "prelude", "postlude", "anthem", "sermon" }.Any(c => caption.Caption.ToLower().Contains(c)))
                     {
                         trimmed.Add(element);
                     }

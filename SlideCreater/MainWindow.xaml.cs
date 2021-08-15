@@ -937,5 +937,16 @@ namespace SlideCreater
             UpdateErrorReport(alllogs);
         }
 
+        private void ClickImportServiceAdv(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Import from save of Lutheran Service Bulletin";
+            ofd.Filter = "LSB Service (*.html)|*.html";
+            if (ofd.ShowDialog() == true)
+            {
+                WebViewUI webViewUI = new WebViewUI(ofd.FileName);
+                webViewUI.Show();
+            }
+        }
     }
 }

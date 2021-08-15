@@ -541,8 +541,6 @@ namespace Integrated_Presenter
 
             GoodConnection = mixeffects && auxsource && downstreamkeyers && upstreamkeyers && inputsources && multiviewer && mediaplayers && mediapool;
 
-            MessageBox.Show("Connected to Switcher", "Connection Success");
-
             // update state
             _parent.Dispatcher.Invoke(() =>
             {

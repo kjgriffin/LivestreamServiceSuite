@@ -11,6 +11,8 @@ namespace LutheRun
         public string LiturgyText { get; private set; }
         public string PostsetCmd { get; set; } = "";
 
+        public IElement SourceHTML { get; private set; }
+
         public static ILSBElement Parse(IElement element)
         {
             // process liturgy text
@@ -40,9 +42,9 @@ namespace LutheRun
             return new LSBElementLiturgy() { LiturgyText = sb.ToString() };
         }
 
-        public static ILSBElement Create(string liturgyText)
+        public static ILSBElement Create(string liturgyText, IElement source)
         {
-            return new LSBElementLiturgy() { LiturgyText = liturgyText };
+            return new LSBElementLiturgy() { LiturgyText = liturgyText, SourceHTML = source};
         }
 
         public string DebugString()

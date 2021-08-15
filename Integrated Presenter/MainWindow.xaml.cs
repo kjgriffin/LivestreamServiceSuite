@@ -233,12 +233,17 @@ namespace Integrated_Presenter
 
         #region BMD Switcher
 
-        private void SwitcherConnectedUiUpdate(bool connected)
+        private void SwitcherConnectedUiUpdate(bool connected, bool searching = false)
         {
             if (connected)
             {
                 tb_switcherConnection.Text = "Connected";
                 tb_switcherConnection.Foreground = Brushes.LimeGreen;
+            }
+            else if (searching)
+            {
+                tb_switcherConnection.Text = "Searching...";
+                tb_switcherConnection.Foreground = Brushes.Yellow;
             }
             else
             {
@@ -247,7 +252,7 @@ namespace Integrated_Presenter
             }
         }
 
-        private void ConnectSwitcher()
+        private async Task ConnectSwitcher()
         {
             if (switcherManager != null)
             {
@@ -262,17 +267,29 @@ namespace Integrated_Presenter
                 switcherManager = new BMDSwitcherManager(this);
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
                 switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
+                SwitcherConnectedUiUpdate(false, true);
+
+                await Task.Delay(100).ConfigureAwait(true);
+
+                // give UI update time
                 if (switcherManager.TryConnect(connectWindow.IP))
                 {
                     EnableSwitcherControls();
+                    // load current config
+                    SetSwitcherSettings();
+                    if (!shot_clock_timer.Enabled)
+                    {
+                        shot_clock_timer.Start();
+                    }
                 }
-                if (!shot_clock_timer.Enabled)
+                else
                 {
-                    shot_clock_timer.Start();
+                    SwitcherConnectedUiUpdate(false);
+                    switcherManager.SwitcherStateChanged -= SwitcherManager_SwitcherStateChanged;
+                    switcherManager.OnSwitcherDisconnected -= SwitcherManager_OnSwitcherDisconnected;
+                    switcherManager = null;
                 }
             }
-            // load current config
-            SetSwitcherSettings();
         }
 
         private void SwitcherManager_OnSwitcherDisconnected()

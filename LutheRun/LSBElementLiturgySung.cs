@@ -18,9 +18,12 @@ namespace LutheRun
 
         public IEnumerable<HymnImageLine> Images => Image.ItemAsEnumerable();
 
+        public IElement SourceHTML { get; private set; }
+
         public static LSBElementLiturgySung Parse(IElement element)
         {
             LSBElementLiturgySung res = new LSBElementLiturgySung();
+            res.SourceHTML = element;
             HymnImageLine imageline = new HymnImageLine();
             var pictures = element?.Children.Where(c => c.LocalName == "picture");
             foreach (var picture in pictures)

@@ -16,7 +16,11 @@ namespace LutheRun
 
         private StringBuilder stringBuilder = new StringBuilder();
 
-        private List<ILSBElement> serviceElements = new List<ILSBElement>();
+        public List<ILSBElement> ServiceElements { get; private set; } = new List<ILSBElement>();
+
+        public List<IElement> TopLevelServiceElements { get; private set; }
+
+        public IElement HTMLHead { get; private set; }
 
         public string XenonText { get => stringBuilder.ToString(); }
 
@@ -25,14 +29,14 @@ namespace LutheRun
 
         public void Serviceify()
         {
-            serviceElements = Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(serviceElements));
+            ServiceElements = Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(ServiceElements));
         }
 
 
         public string XenonDebug()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var se in serviceElements)
+            foreach (var se in ServiceElements)
             {
                 sb.AppendLine(se.DebugString());
             }
@@ -61,11 +65,14 @@ namespace LutheRun
             var parser = new HtmlParser();
             var document = await parser.ParseDocumentAsync(html);
 
+            var head = document.All.Where(e => e.LocalName == "head").FirstOrDefault();
+            HTMLHead = head;
+
             var bulletin = document.All.Where(e => e.Id == "bulletin_surface").FirstOrDefault();
             if (bulletin != null)
             {
-                var service = bulletin.Children.First().Children.First().Children.First().Children.Where(e => e.LocalName == "lsb-service-element").ToList();
-                ParseDOMElements(service);
+                TopLevelServiceElements = bulletin.Children.First().Children.First().Children.First().Children.Where(e => e.LocalName == "lsb-service-element").ToList();
+                ParseDOMElements(TopLevelServiceElements);
             }
 
         }
@@ -73,7 +80,7 @@ namespace LutheRun
         private void ParseDOMElements(List<AngleSharp.Dom.IElement> dom)
         {
             List<ILSBElement> elements = new List<ILSBElement>();
-            serviceElements.Clear();
+            ServiceElements.Clear();
             foreach (var e in dom)
             {
                 _ParseLSBServiceElement(e);
@@ -114,11 +121,11 @@ namespace LutheRun
             {
                 if (element.Children.Any(c => c.ClassList.Contains("lsb-responsorial")))
                 {
-                    serviceElements.Add(LSBElementLiturgy.Parse(element));
+                    ServiceElements.Add(LSBElementLiturgy.Parse(element));
                 }
                 foreach (var imageline in element.Children.Where(c => c.ClassList.Contains("image")))
                 {
-                    serviceElements.Add(LSBElementLiturgySung.Parse(imageline));
+                    ServiceElements.Add(LSBElementLiturgySung.Parse(imageline));
                 }
             }
             else
@@ -126,12 +133,12 @@ namespace LutheRun
 
                 if (element.ClassList.Contains("heading"))
                 {
-                    serviceElements.Add(LSBElementHeading.Parse(element));
+                    ServiceElements.Add(LSBElementHeading.Parse(element));
                 }
                 else if (element.ClassList.Contains("caption"))
                 {
                     // TODO: do something different for anthem-titles, sermon-titles, postlude/preludes. Ignore others???
-                    serviceElements.Add(LSBElementCaption.Parse(element));
+                    ServiceElements.Add(LSBElementCaption.Parse(element));
                 }
                 else if (element.ClassList.Contains("static"))
                 {
@@ -153,11 +160,11 @@ namespace LutheRun
                 }
                 else if (element.ClassList.Contains("reading"))
                 {
-                    serviceElements.Add(LSBElementReading.Parse(element));
+                    ServiceElements.Add(LSBElementReading.Parse(element));
                 }
                 else if (element.ClassList.Contains("hymn"))
                 {
-                    serviceElements.Add(LSBElementHymn.Parse(element));
+                    ServiceElements.Add(LSBElementHymn.Parse(element));
                 }
                 else if (element.ClassList.Contains("option-group") || element.ClassList.Contains("group"))
                 {
@@ -219,7 +226,7 @@ namespace LutheRun
                 }
                 else
                 {
-                    serviceElements.Add(LSBElementUnknown.Parse(element));
+                    ServiceElements.Add(LSBElementUnknown.Parse(element));
                 }
             }
         }
@@ -232,22 +239,22 @@ namespace LutheRun
         {
             if (element.ClassList.Contains("caption"))
             {
-                serviceElements.Add(LSBElementCaption.Parse(element));
+                ServiceElements.Add(LSBElementCaption.Parse(element));
                 return true;
             }
             else if (element.ClassList.Contains("heading"))
             {
-                serviceElements.Add(LSBElementHeading.Parse(element));
+                ServiceElements.Add(LSBElementHeading.Parse(element));
                 return true;
             }
             else if (element.ClassList.Contains("hymn"))
             {
-                serviceElements.Add(LSBElementHymn.Parse(element));
+                ServiceElements.Add(LSBElementHymn.Parse(element));
                 return true;
             }
             else if (element.ClassList.Contains("reading"))
             {
-                serviceElements.Add(LSBElementReading.Parse(element));
+                ServiceElements.Add(LSBElementReading.Parse(element));
                 return true;
             }
             else if (element.ClassList.Contains("prayer"))
@@ -270,7 +277,7 @@ namespace LutheRun
             {
                 return _ParseLSBGroupElement(element);
             }
-            serviceElements.Add(LSBElementUnknown.Parse(element));
+            ServiceElements.Add(LSBElementUnknown.Parse(element));
             return false;
         }
 
@@ -360,15 +367,15 @@ namespace LutheRun
                 {
                     if (ltext.Any())
                     {
-                        serviceElements.Add(LSBElementLiturgy.Create(ltext.StringTogether(Environment.NewLine)));
+                        ServiceElements.Add(LSBElementLiturgy.Create(ltext.StringTogether(Environment.NewLine), contentelement));
                         ltext.Clear();
                     }
-                    serviceElements.Add(LSBElementLiturgySung.Parse(child));
+                    ServiceElements.Add(LSBElementLiturgySung.Parse(child));
                 }
             }
             if (ltext.Any())
             {
-                serviceElements.Add(LSBElementLiturgy.Create(ltext.StringTogether(Environment.NewLine)));
+                ServiceElements.Add(LSBElementLiturgy.Create(ltext.StringTogether(Environment.NewLine), contentelement));
                 ltext.Clear();
             }
             return true;
@@ -389,7 +396,7 @@ namespace LutheRun
                 return false;
             }
 
-            serviceElements.Add(LSBElementIntroit.Parse(element));
+            ServiceElements.Add(LSBElementIntroit.Parse(element));
 
             return true;
         }
@@ -425,7 +432,7 @@ namespace LutheRun
                             }
                         }
 
-                        serviceElements.Add(hymn);
+                        ServiceElements.Add(hymn);
                         return true;
                     }
                 }
@@ -449,7 +456,7 @@ namespace LutheRun
                 if (prefabs.Keys.Contains(ctext))
                 {
                     // use a prefab instead
-                    serviceElements.Add(new LSBElementIsPrefab(prefabs[ctext], element.StrippedText()));
+                    ServiceElements.Add(new LSBElementIsPrefab(prefabs[ctext], element.StrippedText(), element));
                     return true;
                 }
             }
@@ -460,7 +467,7 @@ namespace LutheRun
         {
             stringBuilder.Clear();
             stringBuilder.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{System.IO.Path.GetFileName(ServiceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
-            foreach (var se in serviceElements)
+            foreach (var se in ServiceElements)
             {
                 stringBuilder.AppendLine(se.XenonAutoGen());
             }
@@ -468,7 +475,7 @@ namespace LutheRun
 
         public Task LoadWebAssets(Action<Bitmap, string, string> addImageAsAsset)
         {
-            IEnumerable<IDownloadWebResource> resources = serviceElements.Select(s => s as IDownloadWebResource).Where(s => s != null);
+            IEnumerable<IDownloadWebResource> resources = ServiceElements.Select(s => s as IDownloadWebResource).Where(s => s != null);
             IEnumerable<Task> tasks = resources.Select(async s =>
             {
                 await s.GetResourcesFromLocalOrWeb(Path.GetDirectoryName(ServiceFileName));

@@ -30,6 +30,7 @@
             </MenuItem>
             <MenuItem Header="Import">
                 <MenuItem Name="miimport" Click="ClickImportService" Header="Import from LSB Service"></MenuItem>
+                <MenuItem Name="miimport_adv" Click="ClickImportServiceAdv" Header="Import Wizard"></MenuItem>
             </MenuItem>
             <MenuItem Header="Recovery">
                 <MenuItem Click="RecoverAutoSave" Header="Recover Auto Save"></MenuItem> 
