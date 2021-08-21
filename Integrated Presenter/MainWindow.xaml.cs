@@ -281,6 +281,7 @@ namespace Integrated_Presenter
                     {
                         shot_clock_timer.Start();
                     }
+                    SwitcherConnectedUiUpdate(true);
                 }
                 else
                 {
