@@ -84,6 +84,7 @@ namespace Xenon.Renderer
                 catch (Exception ex)
                 {
                     messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = "Error loading image", ErrorName = "Error Loading Asset", Generator = "StitchedImageRenderer", Inner = ex.Message, Level = Compiler.XenonCompilerMessageType.Error, Token = image.AssetRef });
+                    return null;
                 }
             }
 

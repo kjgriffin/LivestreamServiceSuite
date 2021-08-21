@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace LutheRun
 {
-    interface IDownloadWebResource
+
+    public interface ILoadResourceAsync
     {
         Task GetResourcesFromLocalOrWeb(string path = "");
+    }
+
+    interface IDownloadWebResource : ILoadResourceAsync
+    {
         IEnumerable<LSBElementHymn.HymnImageLine> Images { get; }
     }
 }

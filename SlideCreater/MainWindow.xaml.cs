@@ -237,42 +237,59 @@ namespace SlideCreater
 
             ActionState = ActionState.Building;
 
+            alllogs.Clear();
+
             // compile text
             XenonBuildService builder = new XenonBuildService();
-            bool success = await builder.BuildProject(_proj, _proj.SourceCode, Assets, compileprogress);
+            //bool success = await builder.BuildProject(_proj, _proj.SourceCode, Assets, compileprogress);
+            builder.Messages.Clear();
 
-            if (!success)
+            UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Compilation Started", ErrorName = "Compilation Started", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
+            var build = await builder.BuildProjectAsync(_proj, compileprogress);
+
+            if (!build.success)
             {
                 sbStatus.Dispatcher.Invoke(() =>
                 {
                     ActionState = ActionState.ErrorBuilding;
                 });
-                UpdateErrorReport(builder.Messages);
+                alllogs.AddRange(builder.Messages);
+                UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Compilation Failed!", ErrorName = "Compilation Failure", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Error, Token = "" });
                 return;
             }
 
 
-            UpdateErrorReport(builder.Messages, new XenonCompilerMessage() { ErrorMessage = "Compiled Successfully!", ErrorName = "Project Compiled", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
+            alllogs.AddRange(builder.Messages);
+            builder.Messages.Clear();
+            UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Compiled Successfully!", ErrorName = "Project Compiled", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
 
 
-            try
-            {
-                slides = await builder.RenderProject(_proj, rendererprogress);
-            }
-            catch (Exception ex)
-            {
-                sbStatus.Dispatcher.Invoke(() =>
-                {
-                    ActionState = ActionState.ErrorBuilding;
-                    UpdateErrorReport(builder.Messages, new XenonCompilerMessage() { ErrorMessage = $"Render failed for reason: {ex}", ErrorName = "Render Failure", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Error, Token = "" });
-                });
-                return;
-            }
+            //try
+            //{
+            //slides = await builder.RenderProject(_proj, rendererprogress);
+            UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Render Starting", ErrorName = "Render Starting", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
+            slides = (await builder.RenderProjectAsync(build.project, rendererprogress)).OrderBy(s => s.Number).ToList();
+
+
+            alllogs.AddRange(builder.Messages);
+            builder.Messages.Clear();
+            UpdateErrorReport(alllogs);
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    sbStatus.Dispatcher.Invoke(() =>
+            //    {
+            //        ActionState = ActionState.ErrorBuilding;
+            //        UpdateErrorReport(builder.Messages, new XenonCompilerMessage() { ErrorMessage = $"Render failed for reason: {ex}", ErrorName = "Render Failure", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Error, Token = "" });
+            //    });
+            //    return;
+            //}
 
             sbStatus.Dispatcher.Invoke(() =>
             {
                 ActionState = ActionState.SuccessBuilding;
-                UpdateErrorReport(builder.Messages, new XenonCompilerMessage() { ErrorMessage = "Slides build!", ErrorName = "Render Success", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
+                UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Slides built!", ErrorName = "Render Success", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
             });
 
             UpdatePreviews();
@@ -435,6 +452,46 @@ namespace SlideCreater
                 _proj.Assets.Add(asset);
                 ShowProjectAssets();
             }
+        }
+
+        private void AddNamedAssetsFromPaths(IEnumerable<(string path, string name)> assets)
+        {
+            AssetsChanged();
+            // add assets
+            foreach (var (path, name) in assets)
+            {
+                // copy to tmp folder
+                string tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, "assets", System.IO.Path.GetFileName(path));
+                try
+                {
+                    File.Copy(path, tmpassetpath, true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Unable to load {name}, '{path}'", $"Load Asset Failed with exception {ex}");
+                }
+
+                ProjectAsset asset = new ProjectAsset();
+                if (Regex.IsMatch(System.IO.Path.GetExtension(path).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
+                {
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Audio };
+                }
+                else if (Regex.IsMatch(System.IO.Path.GetExtension(path).ToLower(), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
+                {
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
+                }
+                else if (Regex.IsMatch(System.IO.Path.GetExtension(path).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
+                {
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
+                }
+
+
+
+                Assets.Add(asset);
+                _proj.Assets.Add(asset);
+                ShowProjectAssets();
+            }
+
         }
 
         private void ShowProjectAssets()
@@ -944,9 +1001,20 @@ namespace SlideCreater
             ofd.Filter = "LSB Service (*.html)|*.html";
             if (ofd.ShowDialog() == true)
             {
-                WebViewUI webViewUI = new WebViewUI(ofd.FileName);
+                WebViewUI webViewUI = new WebViewUI(ofd.FileName, CreateProjectFromImportWizard);
                 webViewUI.Show();
             }
+        }
+
+        private async void CreateProjectFromImportWizard(List<(string, string)> assets, string text)
+        {
+            await NewProject();
+            _proj.SourceCode = text;
+            TbInput.SetText(text);
+
+            // add all assets
+            AddNamedAssetsFromPaths(assets);
+
         }
     }
 }

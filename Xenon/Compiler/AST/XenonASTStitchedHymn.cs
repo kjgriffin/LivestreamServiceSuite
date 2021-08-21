@@ -107,12 +107,21 @@ namespace Xenon.Compiler.AST
 
             foreach (var item in ImageAssets)
             {
+                string assetpath = project.Assets.Find(a => a.Name == item)?.CurrentPath ?? "";
                 try
                 {
-                    using (Bitmap b = new Bitmap(project.Assets.Find(a => a.Name == item).CurrentPath))
+                    if (!string.IsNullOrEmpty(assetpath))
                     {
-                        ImageSizes[item] = b.Size;
-                        Debug.WriteLine($"Image {item} has size {b.Size}");
+                        using (Bitmap b = new Bitmap(assetpath))
+                        {
+                            ImageSizes[item] = b.Size;
+                            Debug.WriteLine($"Image {item} has size {b.Size}");
+                        }
+                    }
+                    else
+                    {
+                        Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Generating StitchedHymn", ErrorName = "Failed to load image asset", Generator = "XenonASTStitchedHymn:Generate()", Inner = $"{item}", Level = XenonCompilerMessageType.Warning, Token = "" });
+                        Debug.WriteLine($"Error opening image to check size: {item}");
                     }
                 }
                 catch (Exception ex)

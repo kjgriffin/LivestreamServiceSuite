@@ -49,9 +49,63 @@ namespace Xenon.Compiler
 
         public bool CompilerSucess { get; set; } = false;
 
+        public Task<Project> Compile(Project proj, IProgress<int> progress = null)
+        {
+            CompilerSucess = false;
+
+            progress?.Report(0);
+
+            string preproc = Lexer.StripComments(proj.SourceCode);
+            Lexer.Tokenize(preproc);
+
+            progress?.Report(10);
+
+            XenonASTProgram p = new XenonASTProgram();
+            try
+            {
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Started", ErrorMessage = "Starting to compile", Generator = "Compiler", Level = XenonCompilerMessageType.Debug });
+                XMLMessageGenerator.AddXMLNotes(proj.SourceCode, Logger);
+                p = (XenonASTProgram)p.Compile(Lexer, Logger);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Failed", ErrorMessage = "Failed to compile project. Check syntax.", Generator = "Compiler", Level = XenonCompilerMessageType.Error });
+                Debug.WriteLine($"Compilation Failed \n{ex}");
+                return Task.FromResult(proj);
+            }
+
+            progress?.Report(50);
+
+            try
+            {
+                proj?.ClearSlidesAndVariables();
+                p?.Generate(proj, null, Logger);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Generation Failed \n{ex}");
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Failed", ErrorMessage = "Failed to generate project. Something went wrong after the project was compiled.", Generator = "Project.Generate()", Inner = $"Generate threw exception {ex} at callstack {Environment.StackTrace}", Level = XenonCompilerMessageType.Error });
+                p.GenerateDebug(proj);
+                return Task.FromResult(proj);
+            }
+
+            progress?.Report(90);
+
+
+
+            string jsonproj = JsonSerializer.Serialize<Project>(proj);
+            Debug.WriteLine(jsonproj);
+
+            progress?.Report(100);
+
+            CompilerSucess = true;
+            return Task.FromResult(proj);
+
+        }
+
         public Task<Project> Compile(Project proj, string input, List<ProjectAsset> assets, IProgress<int> progress)
         {
-            CompilerSucess = false; 
+            CompilerSucess = false;
 
             progress.Report(0);
 

@@ -122,6 +122,13 @@ namespace Xenon.SlideAssembly
             slidenum = 0;
         }
 
+        internal void ClearSlidesAndVariables()
+        {
+            Slides.Clear();
+            ProjectVariables.Clear();
+            slidenum = 0;
+        }
+
         private string _loadTmpPath = "";
         private bool disposedValue;
 

@@ -25,5 +25,11 @@ namespace Xenon.Helpers
                     }))
             );
         }
+
+        public static IEnumerable<T> ItemAsEnumerable<T>(this T item)
+        {
+            yield return item;
+        }
+
     }
 }

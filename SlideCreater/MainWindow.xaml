@@ -102,11 +102,11 @@
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
-                        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <!--<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">-->
                             <!--<TextBlock Name="tbConsole"></TextBlock>-->
                             <!--<FlowDocument Name="error_report"></FlowDocument>-->
                             <!--<StackPanel Name="error_report" Orientation="Vertical"></StackPanel>-->
-                            <ListView Name="error_report_view">
+                            <ListView Grid.Row="1" Name="error_report_view">
                                 <ListView.Resources>
                                     <Style TargetType="{x:Type ListViewItem}">
                                         <Style.Triggers>
@@ -144,7 +144,7 @@
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                        </ScrollViewer>
+                        <!--</ScrollViewer>-->
                     </Grid>
                 </Grid>
             </Grid>
