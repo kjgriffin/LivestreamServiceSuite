@@ -155,7 +155,7 @@ namespace LutheRun
                     }
                     var img = picture.Children.FirstOrDefault(c => c.LocalName == "img");
                     imageline.LocalPath = img?.Attributes["src"].Value;
-                    imageline.InferedName = $"Hymn_{res.Caption.Replace(",", "")}_{res.imageIndex++}";
+                    imageline.InferedName = $"Hymn_{res.Caption.Replace(",", "")}_{res.imageIndex++}_{LSBParser.elementID}";
                     res.ImageUrls.Add(imageline);
                 }
                 else if (child.ClassList.Contains("copyright"))

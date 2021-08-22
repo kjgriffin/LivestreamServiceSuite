@@ -26,6 +26,9 @@ namespace LutheRun
 
         private string ServiceFileName;
 
+        private static int m_elementID = 0;
+        public static int elementID { get =>  m_elementID++; }
+
 
         public void Serviceify()
         {
@@ -45,6 +48,8 @@ namespace LutheRun
 
         public async Task ParseHTML(string path)
         {
+            m_elementID = 0;
+
             ServiceFileName = path;
             string html = "";
             try

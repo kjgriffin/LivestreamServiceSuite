@@ -106,13 +106,18 @@ namespace SlideCreater
                 }
             }
             // remove duplicate assets
+            HashSet<string> uniquenames = new HashSet<string>();
             HashSet<string> uniqueassetpaths = new HashSet<string>();
             List<(string, string)> uniqueassets = new List<(string, string)>();
             foreach (var asset in assets)
             {
                 if (!uniqueassetpaths.Contains(asset.CurrentPath))
                 {
-                    uniqueassets.Add((asset.CurrentPath, asset.Name));
+                    if (!uniquenames.Contains(asset.Name))
+                    {
+                        uniqueassets.Add((asset.CurrentPath, asset.Name));
+                        uniquenames.Add(asset.Name);
+                    }
                 }
                 uniqueassetpaths.Add(asset.CurrentPath);
             }
