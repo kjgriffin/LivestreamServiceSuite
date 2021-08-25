@@ -26,6 +26,7 @@ namespace LutheRun
             res.SourceHTML = element;
             HymnImageLine imageline = new HymnImageLine();
             var pictures = element?.Children.Where(c => c.LocalName == "picture");
+            int localid = 0;
             foreach (var picture in pictures)
             {
                 var sources = picture?.Children.Where(c => c.LocalName == "source");
@@ -58,7 +59,9 @@ namespace LutheRun
                     }
                     var img = picture.Children.FirstOrDefault(c => c.LocalName == "img");
                     imageline.LocalPath = img?.Attributes["src"].Value;
-                    imageline.InferedName = $"LiturgySung_{Guid.NewGuid().ToString()}";
+                    // guid for uniqueness was a bad idea since we don't seem to be able to recreate them...
+                    // for now use the parser's unique id generation (though not ideal code style)
+                    imageline.InferedName = $"LiturgySung_{LSBParser.elementID}-{localid++}";
                     res.Image = imageline;
                 }
             }
