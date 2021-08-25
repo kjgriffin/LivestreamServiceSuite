@@ -297,9 +297,18 @@ namespace LutheRun
             int last = -1;
             int all = -1;
 
-            extractedvalues.TryGetValue("first", out first);
-            extractedvalues.TryGetValue("last", out last);
-            extractedvalues.TryGetValue("asll", out all);
+            if (extractedvalues.ContainsKey("first"))
+            {
+                extractedvalues.TryGetValue("first", out first);
+            }
+            if (extractedvalues.ContainsKey("last"))
+            {
+                extractedvalues.TryGetValue("last", out last);
+            }
+            if (extractedvalues.ContainsKey("all"))
+            {
+                extractedvalues.TryGetValue("all", out all);
+            }
 
             return (first, last, all);
         }

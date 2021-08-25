@@ -22,6 +22,7 @@ namespace LutheRun
         // TODO: make this a bit less hardcoded
         enum Camera
         {
+            Unset = -1,
             Pulpit = 8,
             Center = 7,
             Lectern = 6,
@@ -104,10 +105,10 @@ namespace LutheRun
                 // Add postsets
 
                 bool setlast = false;
-                Camera lastselection = 0;
+                Camera lastselection = Camera.Unset;
 
                 bool setfirst = false;
-                Camera firstseelection = 0;
+                Camera firstseelection = Camera.Unset;
 
                 if ((nextelement as LSBElementCaption)?.Caption.ToLower().Contains("sermon") == true)
                 {
@@ -167,7 +168,7 @@ namespace LutheRun
 
                 // Create Postset command
                 StringBuilder sb = new StringBuilder();
-                if (setfirst || setlast)
+                if ((setfirst && firstseelection != Camera.Unset) || (setlast && lastselection != Camera.Unset))
                 {
                     sb.Append("::postset(");
                     if (setfirst)
