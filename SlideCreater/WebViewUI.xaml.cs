@@ -133,8 +133,7 @@ namespace SlideCreater
                 c?.Dispose();
             }
             elementlist.Items.Clear();
-            browser.Dispose();
-            Cef.Shutdown();
+            //browser.Dispose();
         }
     }
 }

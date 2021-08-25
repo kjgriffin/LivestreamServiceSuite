@@ -52,7 +52,7 @@ namespace Xenon.Compiler
         {
             try
             {
-                var res = await compiler.Compile(proj, progress);
+                var res = await Task.Run(() => compiler.Compile(proj, progress));
                 Messages.AddRange(compiler.Logger.AllErrors);
                 return (true, res);
             }

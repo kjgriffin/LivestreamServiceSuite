@@ -79,7 +79,7 @@ namespace Xenon.Renderer
                 // draw speaker
                 if ((string)slide.Data["drawspeaker"] == "true" && lastspeaker != line.Speaker)
                 {
-                    SizeF speakersize = gfx.MeasureStringCharacters(line.Speaker, flsbregular, new RectangleF(0, 0, 100, 100));
+                    SizeF speakersize = gfx.MeasureStringCharacters(line.Speaker, ref flsbregular, new RectangleF(0, 0, 100, 100));
                     float jog = 0.07f * (gfx.DpiY * speakersize.Height / 72);
                     xoffset = (Layouts.TitleLiturgyVerseLayout.Textbox.Width / 2) - ((line.Width) + speakersize.Width) / 2;
                     gfx.DrawString(line.Speaker, flsbregular, Brushes.Teal, Layouts.TitleLiturgyVerseLayout.Textbox.Move(Layouts.TitleLiturgyVerseLayout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Move(0, (int)-jog).Location, GraphicsHelper.DefaultStringFormat());

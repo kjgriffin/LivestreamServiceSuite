@@ -161,75 +161,74 @@ namespace Xenon.Helpers
             return format;
         }
 
-        public static SizeF MeasureStringCharacters(this Graphics gfx, string text, Font _font, RectangleF textbox)
+        public static SizeF MeasureStringCharacters(this Graphics gfx, string text, ref Font _font, RectangleF textbox)
         {
             //StringFormat format = StringFormat.GenericTypographic;
             //format.Trimming = StringTrimming.None;
             //format.FormatFlags = StringFormatFlags.NoWrap;
             //format.LineAlignment = StringAlignment.Near;
-            Font font;
-
-            lock (_font)
+            using (Font font = new Font(_font.FontFamily, _font.Size, _font.Style))
             {
-                font = new Font(_font.FontFamily, _font.Size, _font.Style);
+
+                string measuretext = text;
+
+                SizeF res;
+
+                if (Regex.Match(text, "\\s").Success)
+                {
+                    StringFormat format = DefaultStringFormat();
+                    measuretext = $"{text}.";
+                    gfx = Graphics.FromHwnd((IntPtr)0);
+                    format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, measuretext.Length) });
+                    var rectwithextra = RectangleF.Empty;
+                    try
+                    {
+                        rectwithextra = gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error Measuring String '{text}'");
+                        Debug.WriteLine(ex);
+                        Debug.WriteLine(Environment.StackTrace);
+                    }
+
+
+                    format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, ".".Length) });
+
+                    var rectofextra = RectangleF.Empty;
+                    try
+                    {
+                        rectofextra = gfx.MeasureCharacterRanges(".", font, textbox, format)[0].GetBounds(gfx);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error Measuring String '{text}'");
+                        Debug.WriteLine(ex);
+                        Debug.WriteLine(Environment.StackTrace);
+                    }
+
+                    res = new SizeF(rectwithextra.Size.Width - rectofextra.Size.Width, font.Height);
+                }
+                else
+                {
+                    StringFormat format = DefaultStringFormat();
+                    gfx = Graphics.FromHwnd((IntPtr)0);
+                    format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, measuretext.Length) });
+                    try
+                    {
+                        res = gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx).Size;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error Measuring String '{text}'");
+                        Debug.WriteLine(ex);
+                        Debug.WriteLine(Environment.StackTrace);
+                        res = SizeF.Empty;
+                    }
+                }
+                Debug.WriteLine($"Measured '{text}', {res}");
+                return res;
             }
-
-            string measuretext = text;
-
-            SizeF res;
-
-            if (Regex.Match(text, "\\s").Success)
-            {
-                StringFormat format = DefaultStringFormat();
-                measuretext = $"{text}.";
-                gfx = Graphics.FromHwnd((IntPtr)0);
-                format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, measuretext.Length) });
-                var rectwithextra = RectangleF.Empty;
-                try
-                {
-
-                    rectwithextra = gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error Measuring String '{text}'");
-                    Debug.WriteLine(ex);
-                }
-
-
-                format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, ".".Length) });
-
-                var rectofextra = RectangleF.Empty;
-                try
-                {
-                    rectofextra = gfx.MeasureCharacterRanges(".", font, textbox, format)[0].GetBounds(gfx);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error Measuring String '{text}'");
-                    Debug.WriteLine(ex);
-                }
-
-                res = new SizeF(rectwithextra.Size.Width - rectofextra.Size.Width, font.Height);
-            }
-            else
-            {
-                StringFormat format = DefaultStringFormat();
-                gfx = Graphics.FromHwnd((IntPtr)0);
-                format.SetMeasurableCharacterRanges(new CharacterRange[] { new CharacterRange(0, measuretext.Length) });
-                try
-                {
-                    res = gfx.MeasureCharacterRanges(measuretext, font, textbox, format)[0].GetBounds(gfx).Size;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error Measuring String '{text}'");
-                    Debug.WriteLine(ex);
-                    res = SizeF.Empty;
-                }
-            }
-            Debug.WriteLine($"Measured '{text}', {res}");
-            return res;
         }
 
 

@@ -101,7 +101,7 @@ namespace Xenon.Renderer
                 // draw speaker
                 if (drawspeaker)
                 {
-                    float jog = 0.07f * (gfx.DpiY * gfx.MeasureStringCharacters(linewords.Speaker, flsbregular, speakerblock).Height / 72);
+                    float jog = 0.07f * (gfx.DpiY * gfx.MeasureStringCharacters(linewords.Speaker, ref flsbregular, speakerblock).Height / 72);
                     gfx.DrawString(linewords.Speaker, flsbregular, speakercol, speakerblock.Move(0, -jog), centeralign);
                     // make speaker fully opaque
                     kgfx.DrawString(linewords.Speaker, flsbregular, Brushes.White, speakerblock.Move(0, -jog), centeralign);
@@ -111,7 +111,7 @@ namespace Xenon.Renderer
                 foreach (var word in linewords.Words)
                 {
                     Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
-                    float jog = word.IsLSBSymbol ? 0.07f * (gfx.DpiY * gfx.MeasureStringCharacters(linewords.Speaker, f, speakerblock).Height / 72) : 0;
+                    float jog = word.IsLSBSymbol ? 0.07f * (gfx.DpiY * gfx.MeasureStringCharacters(linewords.Speaker, ref f, speakerblock).Height / 72) : 0;
                     gfx.DrawString(word.Value, f, textcol, text.Move(xoffset, linepos + interspace * linenum).Move(0, -jog).Location, GraphicsHelper.DefaultStringFormat());
                     // make text fully opaque 
                     kgfx.DrawString(word.Value, f, Brushes.White, text.Move(xoffset, linepos + interspace * linenum).Move(0, -jog).Location, GraphicsHelper.DefaultStringFormat());

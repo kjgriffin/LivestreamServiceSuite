@@ -79,7 +79,7 @@ namespace Xenon.Compiler
             try
             {
                 proj?.ClearSlidesAndVariables();
-                p?.Generate(proj, null, Logger);
+                p?.Generate(proj, null, Logger, progress);
             }
             catch (Exception ex)
             {

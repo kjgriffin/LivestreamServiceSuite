@@ -73,7 +73,7 @@ namespace Xenon.LayoutEngine
             foreach (var word in line.Words)
             {
                 Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
-                var size = gfx.MeasureStringCharacters(word.Value, f, textbox);
+                var size = gfx.MeasureStringCharacters(word.Value, ref f, textbox);
                 // adjust for dpi scaling of text
                 word.Size = new SizeF(size.Width * zoomx, size.Height * zoomy);
                 word.IsSized = true;

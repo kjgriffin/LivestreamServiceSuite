@@ -235,8 +235,6 @@ namespace SlideCreater
                 });
             });
 
-            ActionState = ActionState.Building;
-
             alllogs.Clear();
 
             // compile text
@@ -245,6 +243,12 @@ namespace SlideCreater
             builder.Messages.Clear();
 
             UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Compilation Started", ErrorName = "Compilation Started", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
+            sbStatus.Dispatcher.Invoke(() =>
+            {
+                ActionState = ActionState.Building;
+            });
+
+
             var build = await builder.BuildProjectAsync(_proj, compileprogress);
 
             if (!build.success)

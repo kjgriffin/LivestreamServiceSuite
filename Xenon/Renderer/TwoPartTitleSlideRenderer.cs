@@ -30,7 +30,7 @@ namespace Xenon.Renderer
 
             Font bf = new Font(Layouts.TwoPartTitleLayout.Font, FontStyle.Bold);
 
-            var lineheight = gfx.MeasureStringCharacters(slide.Lines[0].Content[0].Data, bf, Layouts.AnthemTitleLayout.Key);
+            var lineheight = gfx.MeasureStringCharacters(slide.Lines[0].Content[0].Data, ref bf, Layouts.AnthemTitleLayout.Key);
 
             if ((string)slide.Data["orientation"] == "vertical")
             {
