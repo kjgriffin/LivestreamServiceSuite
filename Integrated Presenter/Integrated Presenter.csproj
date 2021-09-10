@@ -59,7 +59,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Log4Net.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <Resource Include="BMDSwitcher\Mock\Images\black.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

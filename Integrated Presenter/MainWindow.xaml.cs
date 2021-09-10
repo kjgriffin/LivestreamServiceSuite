@@ -75,8 +75,13 @@ namespace Integrated_Presenter
             Height = 500;
 
             // enable logging
-            log4net.Config.XmlConfigurator.Configure(new Uri("pack://application:,,,/Log4Net.config"));
-            
+            using (Stream cstream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Integrated_Presenter.Log4Net.config"))
+            {
+                log4net.Config.XmlConfigurator.Configure(cstream);
+            }
+
+            _logger.Info($"{Title} Started.");
+
 
             // set a default config
             SetDefaultConfig();
@@ -420,50 +425,61 @@ namespace Integrated_Presenter
 
         public void ClickPreset(int button)
         {
+            _logger.Debug($"USER INPUT requested Preset Source Changed to button {button}. Switcher commaned to change preset source.");
             switcherManager?.PerformPresetSelect(ConvertButtonToSourceID(button));
         }
 
         private void ClickAux(int button)
         {
+            _logger.Debug($"USER INPUT requested Aux Source Changed to button {button}. Switcher commaned to change aux source.");
             switcherManager?.PerformAuxSelect(ConvertButtonToSourceID(button));
         }
 
         private void ClickProgram(int button)
         {
+            _logger.Debug($"USER INPUT requested Program Source Changed to button {button}");
             if (!IsProgramRowLocked)
             {
+                _logger.Debug($"Commanding Switcher to change program source to button {button}");
                 switcherManager?.PerformProgramSelect(ConvertButtonToSourceID(button));
             }
         }
 
         private void ToggleUSK1()
         {
+            _logger.Debug($"Commanding Switcher to toggle USK1 ON/Off air");
             switcherManager?.PerformToggleUSK1();
         }
 
         private void ToggleDSK1()
         {
+            _logger.Debug($"Commanding Switcher to toggle DSK1 ON/Off air");
             switcherManager?.PerformToggleDSK1();
         }
         private void ToggleTieDSK1()
         {
+            _logger.Debug($"Commanding Switcher to toggle DSK1 tied state");
             switcherManager?.PerformTieDSK1();
         }
         private void AutoDSK1()
         {
+            _logger.Debug($"Commanding Switcher to Auto Fade ON/OFF DSK1");
             switcherManager?.PerformTakeAutoDSK1();
         }
 
         private void ToggleDSK2()
         {
+            _logger.Debug($"Commanding Switcher to toggle DSK2 ON/OFF air");
             switcherManager?.PerformToggleDSK2();
         }
         private void ToggleTieDSK2()
         {
+            _logger.Debug($"Commanding Switcher to toggle DSK2 tied state");
             switcherManager?.PerformTieDSK2();
         }
         private void AutoDSK2()
         {
+            _logger.Debug($"Commanding Switcher to Auto Fade ON/OFF DSK2");
             switcherManager?.PerformTakeAutoDSK2();
         }
 
@@ -1091,6 +1107,8 @@ namespace Integrated_Presenter
                 return;
             }
 
+            _logger.Debug($"User Input [Keyboard] -- ({e.Key})");
+
             if (Keyboard.IsKeyDown(Key.LeftShift))
             {
                 IsProgramRowLocked = false;
@@ -1139,18 +1157,22 @@ namespace Integrated_Presenter
             {
                 if (e.Key == Key.F1)
                 {
+                    _logger.Debug("User Input [Keyboard] -- (F1) RestartAudio");
                     audioPlayer?.RestartAudio();
                 }
                 if (e.Key == Key.F2)
                 {
+                    _logger.Debug("User Input [Keyboard] -- (F2) StopAudio");
                     audioPlayer?.StopAudio();
                 }
                 if (e.Key == Key.F3)
                 {
+                    _logger.Debug("User Input [Keyboard] -- (F3) PauseAudio");
                     audioPlayer?.PauseAudio();
                 }
                 if (e.Key == Key.F4)
                 {
+                    _logger.Debug("User Input [Keyboard] -- (F4) PlayAudio");
                     audioPlayer?.PlayAudio();
                 }
             }
@@ -1160,10 +1182,12 @@ namespace Integrated_Presenter
                 MediaMuted = !MediaMuted;
                 if (MediaMuted)
                 {
+                    _logger.Debug("User Input [Keyboard] -- (m) Media Muted");
                     muteMedia();
                 }
                 else
                 {
+                    _logger.Debug("User Input [Keyboard] -- (m) Media UnMuted");
                     unmuteMedia();
                 }
             }
@@ -1297,11 +1321,13 @@ namespace Integrated_Presenter
 
             if (e.Key == Key.Home)
             {
+                _logger.Debug("USER INPUT [Keyboard] -- (home) ResetPresentationToBeginning");
                 ResetPresentationToBegining();
             }
 
             if (e.Key == Key.Left)
             {
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) prevSlide()");
                 prevSlide();
             }
             if (e.Key == Key.Right)
@@ -1309,10 +1335,12 @@ namespace Integrated_Presenter
                 if (Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
                     // do a tied-next slide
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) PerformTiedNextSlide()");
                     await PerformTiedNextSlide();
                 }
                 else
                 {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) nextSlide()");
                     await nextSlide();
                 }
             }
@@ -1320,10 +1348,12 @@ namespace Integrated_Presenter
             {
                 if (Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) restartMedia()");
                     restartMedia();
                 }
                 else
                 {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) playMedia()");
                     playMedia();
                 }
             }
@@ -1331,15 +1361,18 @@ namespace Integrated_Presenter
             {
                 if (Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) stopMedia()");
                     stopMedia();
                 }
                 else
                 {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) pauseMedia()");
                     pauseMedia();
                 }
             }
             if (e.Key == Key.T)
             {
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) SlideDriveVideo_Current()");
                 await SlideDriveVideo_Current();
             }
             #endregion
@@ -1418,29 +1451,41 @@ namespace Integrated_Presenter
             if (e.Key == Key.B)
             {
                 if (Keyboard.IsKeyDown(Key.Z))
+                {
                     ClickAux(10);
+                }
                 else
+                {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Commanding Switcher to Toggle Fade to Black.");
                     switcherManager?.PerformToggleFTB();
+                }
             }
 
             // color bars
             if (e.Key == Key.C)
             {
                 if (Keyboard.IsKeyDown(Key.Z))
+                {
                     ClickAux(11);
+                }
                 else
+                {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Commanding Switcher to set Program Source to Color Bars.");
                     SetProgramColorBars();
+                }
             }
 
             // transition controls
             if (e.Key == Key.Space)
             {
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) RequestCutTransition()");
                 RequestCutTransition();
             }
 
             if (e.Key == Key.Enter)
             {
                 // TODO:: Guard with global take transition guard
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) AutoTransition()");
                 TakeAutoTransition();
             }
 
@@ -1670,18 +1715,21 @@ namespace Integrated_Presenter
                     case AutomationActionType.PresetSelect:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Preset Select {task.DataI}");
                             switcherManager?.PerformPresetSelect(task.DataI);
                         });
                         break;
                     case AutomationActionType.ProgramSelect:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Program Select {task.DataI}");
                             switcherManager?.PerformProgramSelect(task.DataI);
                         });
                         break;
                     case AutomationActionType.AuxSelect:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Aux Select {task.DataI}");
                             switcherManager?.PerformAuxSelect(task.DataI);
                         });
                         break;
@@ -1689,6 +1737,7 @@ namespace Integrated_Presenter
                         Dispatcher.Invoke(() =>
                         {
                             //switcherManager?.PerformAutoTransition();
+                            _logger.Debug($"(PerformAutomationAction) -- AutoTrans (gaurded)");
                             PerformGuardedAutoTransition();
                         });
                         break;
@@ -1697,6 +1746,7 @@ namespace Integrated_Presenter
                         {
                             // Will always allow automation to perform cut transition.
                             // Gaurded Cut transition is only for debouncing/preventing operators using a keyboard from spamming cut requests.
+                            _logger.Debug($"(PerformAutomationAction) -- Cut (unguarded)");
                             switcherManager?.PerformCutTransition();
                         });
                         break;
@@ -1707,6 +1757,7 @@ namespace Integrated_Presenter
                             Dispatcher.Invoke(() =>
                             {
                                 //switcherManager?.PerformAutoTransition();
+                                _logger.Debug($"(PerformAutomationAction) -- AutoTrans (guarded), requred since 'slide' source was on air : AutoTakePresetIfOnSlide");
                                 PerformGuardedAutoTransition();
                             });
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
@@ -1717,6 +1768,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- Toggle DSK1 since current state is OFF and requested state is ON");
                                 switcherManager?.PerformToggleDSK1();
                             });
                         }
@@ -1726,6 +1778,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- Toggle DSK1 since current state is ON and requested state is OFF");
                                 switcherManager?.PerformToggleDSK1();
                             });
                         }
@@ -1735,6 +1788,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- FADE ON DSK1 since current state is OFF and requested state is ON");
                                 switcherManager?.PerformAutoOnAirDSK1();
                             });
                         }
@@ -1744,6 +1798,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- FADE OFF DSK1 since current state is ON and requested state is OFF");
                                 switcherManager?.PerformAutoOffAirDSK1();
                             });
                         }
@@ -1753,6 +1808,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- Toggle DSK2 since current state is OFF and requested state is ON");
                                 switcherManager?.PerformToggleDSK2();
                             });
                         }
@@ -1762,6 +1818,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- Toggle DSK2 since current state is ON and requested state is OFF");
                                 switcherManager?.PerformToggleDSK2();
                             });
                         }
@@ -1771,6 +1828,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- FADE ON DSK2 since current state is OFF and requested state is ON");
                                 switcherManager?.PerformAutoOnAirDSK2();
                             });
                         }
@@ -1780,6 +1838,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- FADE OFF DSK2 since current state is ON and requested state is OFF");
                                 switcherManager?.PerformAutoOffAirDSK2();
                             });
                         }
@@ -1794,6 +1853,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- Reset gp timer 1");
                                 ResetGpTimer1();
                             });
                         }
@@ -1804,6 +1864,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- USK1 ON air since current state is OFF and requsted state is ON");
                                 switcherManager?.PerformOnAirUSK1();
                             });
                         }
@@ -1813,6 +1874,7 @@ namespace Integrated_Presenter
                         {
                             Dispatcher.Invoke(() =>
                             {
+                                _logger.Debug($"(PerformAutomationAction) -- USK1 OFF air since current state is ON and requsted state is OFF");
                                 switcherManager?.PerformOffAirUSK1();
                             });
                         }
@@ -1820,12 +1882,14 @@ namespace Integrated_Presenter
                     case AutomationActionType.USK1SetTypeChroma:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Configure USK1 for type chroma");
                             switcherManager?.SetUSK1TypeChroma();
                         });
                         break;
                     case AutomationActionType.USK1SetTypeDVE:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Configure USK1 for type DVE PIP");
                             switcherManager?.SetUSK1TypeDVE();
                         });
                         break;
@@ -1833,6 +1897,7 @@ namespace Integrated_Presenter
                     case AutomationActionType.OpenAudioPlayer:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Opened Audio Player");
                             OpenAudioPlayer();
                             Focus();
                         });
@@ -1841,30 +1906,35 @@ namespace Integrated_Presenter
                         string filename = Path.Join(Presentation.Folder, task.DataS);
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Load Audio File {filename} to Aux Player");
                             audioPlayer.OpenAudio(filename);
                         });
                         break;
                     case AutomationActionType.PlayAuxAudio:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Aux:PlayAudio()");
                             audioPlayer.PlayAudio();
                         });
                         break;
                     case AutomationActionType.StopAuxAudio:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Aux:StopAudio()");
                             audioPlayer.StopAudio();
                         });
                         break;
                     case AutomationActionType.PauseAuxAudio:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Aux:PauseAudio()");
                             audioPlayer.PauseAudio();
                         });
                         break;
                     case AutomationActionType.ReplayAuxAudio:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- Aux:RestartAudio()");
                             audioPlayer.RestartAudio();
                         });
                         break;
@@ -1872,47 +1942,55 @@ namespace Integrated_Presenter
                     case AutomationActionType.PlayMedia:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- playMedia()");
                             playMedia();
                         });
                         break;
                     case AutomationActionType.PauseMedia:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- pauseMedia()");
                             pauseMedia();
                         });
                         break;
                     case AutomationActionType.StopMedia:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- stopMedia()");
                             stopMedia();
                         });
                         break;
                     case AutomationActionType.RestartMedia:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- restartMedia()");
                             restartMedia();
                         });
                         break;
                     case AutomationActionType.MuteMedia:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- muteMedia()");
                             muteMedia();
                         });
                         break;
                     case AutomationActionType.UnMuteMedia:
                         Dispatcher.Invoke(() =>
                         {
+                            _logger.Debug($"(PerformAutomationAction) -- unmuteMedia()");
                             unmuteMedia();
                         });
                         break;
 
 
                     case AutomationActionType.DelayMs:
+                        _logger.Debug($"(PerformAutomationAction) -- delay for {task.DataI} ms");
                         await Task.Delay(task.DataI);
                         break;
                     case AutomationActionType.None:
                         break;
                     default:
+                        _logger.Debug($"(PerformAutomationAction) -- UNKNOWN ACTION {task.Action}");
                         break;
                 }
             });
@@ -1944,6 +2022,7 @@ namespace Integrated_Presenter
 
         private async Task SlideDriveVideo_Next(bool Tied = false)
         {
+            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) invoked.");
             if (Presentation?.Next != null)
             {
 
@@ -1954,8 +2033,10 @@ namespace Integrated_Presenter
                         // doesn't make sense to put preset shot on actions slides. Write it into the script as a @arg1:PresetSelect(#) insead
                         SetupActionsCompleted = false;
                         ActionsCompleted = false;
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Starting Setup Actions for Action Slide");
                         // run stetup actions
                         await ExecuteSetupActions(Presentation.Next);
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Finished running Setup Actions for Action Slide");
 
                         if (Presentation.Next.AutoOnly)
                         {
@@ -1963,13 +2044,17 @@ namespace Integrated_Presenter
                             // There really shouldn't be any need.
                             // We also cant run a script's setup actions immediatley afterward.
                             // again it shouldn't be nessecary, since in both cases you can add it to the fullauto slide's setup actions
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- AutoOnly so advancing to NextSlide()");
                             Presentation.NextSlide();
                         }
                         // Perform slide actions
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Taking NextSlide() of type ACTION");
                         Presentation.NextSlide();
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Starting Actions for Action Slide");
                         await ExecuteActionSlide(Presentation.EffectiveCurrent);
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Finished running Actions for Action Slide");
                         // again doesn't make sense to have postset shot. Write it into the script as a @arg:PresetSelect(#) instead
                     }
                     else if (Presentation.Next.Type == SlideType.Liturgy)
@@ -1982,15 +2067,18 @@ namespace Integrated_Presenter
                         // turn of usk1 if chroma keyer
                         if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
                         {
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding USK1 OFF air for LITURY type slide.");
                             switcherManager?.PerformOffAirUSK1();
                         }
                         // make sure slides aren't the program source
                         if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
                             //switcherManager?.PerformAutoTransition();
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding AutoTrans (gaurded) since current source is 'slide'. For LITUGY type slide.");
                             PerformGuardedAutoTransition();
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Taking NextSlide() of type LITURGY");
                         Presentation.NextSlide();
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
@@ -2000,12 +2088,14 @@ namespace Integrated_Presenter
                             slidesUpdated();
                             PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                         }
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding DSK1 FADE ON. For LITUGY type slide.");
                         switcherManager?.PerformAutoOnAirDSK1();
                         // request auto transition if tied and slides aren't preset source
 
                         bool waitfortrans = false;
                         if (Tied && switcherState.PresetID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding AutoTrans (gaurded) since Tied transition requested and current prest source is not 'slide'. For LITURGY type slide.");
                             PerformGuardedAutoTransition();
                             waitfortrans = true;
                         }
@@ -2016,8 +2106,10 @@ namespace Integrated_Presenter
                         {
                             if (waitfortrans)
                             {
+                                _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for autotrans to complete. For LITURGY type slide.");
                                 await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                             }
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command preset select for postset shot. For LITURGY type slide.");
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
                     }
@@ -3636,6 +3728,7 @@ namespace Integrated_Presenter
         private void SetSwitcherKeyerDVE()
         {
             //switcherManager?.ConfigureUSK1PIP(_config.USKSettings.PIPSettings);
+            _logger.Debug("Commanding Switcher to reconfigure USK1 for DVE PIP.");
             switcherManager?.SetUSK1TypeDVE();
             // force blocking state update
             SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate());
@@ -3648,6 +3741,7 @@ namespace Integrated_Presenter
         private void SetSwitcherKeyerChroma()
         {
             //switcherManager?.ConfigureUSK1Chroma(_config.USKSettings.ChromaSettings);
+            _logger.Debug("Commanding Switcher to reconfigure USK1 for chroma key.");
             switcherManager?.SetUSK1TypeChroma();
             // force blocking state update
             if (switcherManager != null)
