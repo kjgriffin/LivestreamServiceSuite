@@ -42,6 +42,7 @@
     <None Remove="Icons\keyframetofill.png" />
     <None Remove="Icons\Mute2.png" />
     <None Remove="Keys\WhiteKey.png" />
+    <None Remove="Log4Net.config" />
     <None Remove="version.json" />
   </ItemGroup>
 
@@ -57,6 +58,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Log4Net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Resource Include="BMDSwitcher\Mock\Images\black.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -120,6 +124,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.12" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.IO.Ports" Version="4.7.0" />
   </ItemGroup>

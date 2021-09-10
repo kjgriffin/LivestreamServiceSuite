@@ -20,6 +20,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using log4net;
 
 namespace Integrated_Presenter
 {
@@ -51,6 +52,8 @@ namespace Integrated_Presenter
 
         private BuildVersion VersionInfo;
 
+        private readonly ILog _logger = LogManager.GetLogger("MainWLogger");
+
         public MainWindow()
         {
             DataContext = this;
@@ -71,6 +74,9 @@ namespace Integrated_Presenter
             Width = 1200;
             Height = 500;
 
+            // enable logging
+            log4net.Config.XmlConfigurator.Configure(new Uri("pack://application:,,,/Log4Net.config"));
+            
 
             // set a default config
             SetDefaultConfig();
@@ -257,6 +263,7 @@ namespace Integrated_Presenter
             if (switcherManager != null)
             {
                 // we already have a connection
+                _logger.Debug("ConnectSwitcher() called, but switcherManager already initialized. Ignored.");
                 return;
             }
             Connection connectWindow = new Connection("Connect to Switcher", "Switcher IP Address:", "192.168.2.120");
@@ -274,6 +281,7 @@ namespace Integrated_Presenter
                 // give UI update time
                 if (switcherManager.TryConnect(connectWindow.IP))
                 {
+                    _logger.Debug("ConnectSwitcher() -- successfull, switcherManager initialized.");
                     EnableSwitcherControls();
                     // load current config
                     SetSwitcherSettings();
@@ -285,6 +293,7 @@ namespace Integrated_Presenter
                 }
                 else
                 {
+                    _logger.Warn("ConnectSwitcher() -- failed to connect.");
                     SwitcherConnectedUiUpdate(false);
                     switcherManager.SwitcherStateChanged -= SwitcherManager_SwitcherStateChanged;
                     switcherManager.OnSwitcherDisconnected -= SwitcherManager_OnSwitcherDisconnected;
@@ -295,6 +304,7 @@ namespace Integrated_Presenter
 
         private void SwitcherManager_OnSwitcherDisconnected()
         {
+            _logger.Warn("SwitcherManager_OnSwitcherDisconnected() event handled.");
             DisableSwitcherControls();
             // Important part -> set switcherManager to null so we don't try and access it when its disconnected
             switcherManager = null;
@@ -305,6 +315,7 @@ namespace Integrated_Presenter
         {
             if (switcherManager != null)
             {
+                _logger.Debug("MockConnectSwitcher() called, but switcherManager already initialied. Ignored.");
                 // we already have a connection
                 return;
             }
@@ -312,6 +323,7 @@ namespace Integrated_Presenter
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
             switcherManager.TryConnect("localhost");
+            _logger.Debug("MockConnectSwitcher() initialized switcherManger with mock switcher.");
             SwitcherConnectedUiUpdate(true);
             EnableSwitcherControls();
             if (!shot_clock_timer.Enabled)
