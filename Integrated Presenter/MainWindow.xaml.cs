@@ -2033,10 +2033,10 @@ namespace Integrated_Presenter
                         // doesn't make sense to put preset shot on actions slides. Write it into the script as a @arg1:PresetSelect(#) insead
                         SetupActionsCompleted = false;
                         ActionsCompleted = false;
-                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Starting Setup Actions for Action Slide");
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Starting Setup Actions for Action Slide ({Presentation.CurrentSlide})");
                         // run stetup actions
                         await ExecuteSetupActions(Presentation.Next);
-                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Finished running Setup Actions for Action Slide");
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Finished running Setup Actions for Action Slide ({Presentation.CurrentSlide})");
 
                         if (Presentation.Next.AutoOnly)
                         {
@@ -2044,17 +2044,17 @@ namespace Integrated_Presenter
                             // There really shouldn't be any need.
                             // We also cant run a script's setup actions immediatley afterward.
                             // again it shouldn't be nessecary, since in both cases you can add it to the fullauto slide's setup actions
-                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- AutoOnly so advancing to NextSlide()");
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- AutoOnly so advancing to NextSlide() from Slide ({Presentation.CurrentSlide})");
                             Presentation.NextSlide();
                         }
                         // Perform slide actions
-                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Taking NextSlide() of type ACTION");
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Taking NextSlide() from Slide ({Presentation.CurrentSlide}) of type ACTION");
                         Presentation.NextSlide();
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
-                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Starting Actions for Action Slide");
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Starting Actions for Action Slide ({Presentation.CurrentSlide})");
                         await ExecuteActionSlide(Presentation.EffectiveCurrent);
-                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Finished running Actions for Action Slide");
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Finished running Actions for Action Slide ({Presentation.CurrentSlide})");
                         // again doesn't make sense to have postset shot. Write it into the script as a @arg:PresetSelect(#) instead
                     }
                     else if (Presentation.Next.Type == SlideType.Liturgy)
@@ -2067,18 +2067,18 @@ namespace Integrated_Presenter
                         // turn of usk1 if chroma keyer
                         if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
                         {
-                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding USK1 OFF air for LITURY type slide.");
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding USK1 OFF air for LITURY type slide ({Presentation.CurrentSlide}).");
                             switcherManager?.PerformOffAirUSK1();
                         }
                         // make sure slides aren't the program source
                         if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
                             //switcherManager?.PerformAutoTransition();
-                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding AutoTrans (gaurded) since current source is 'slide'. For LITUGY type slide.");
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding AutoTrans (gaurded) since current source is 'slide'. For LITUGY type slide ({Presentation.CurrentSlide}).");
                             PerformGuardedAutoTransition();
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
-                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Taking NextSlide() of type LITURGY");
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Taking NextSlide() from ({Presentation.CurrentSlide}) of type LITURGY");
                         Presentation.NextSlide();
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
@@ -2088,14 +2088,14 @@ namespace Integrated_Presenter
                             slidesUpdated();
                             PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                         }
-                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding DSK1 FADE ON. For LITUGY type slide.");
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding DSK1 FADE ON. For LITUGY type slide ({Presentation.CurrentSlide}).");
                         switcherManager?.PerformAutoOnAirDSK1();
                         // request auto transition if tied and slides aren't preset source
 
                         bool waitfortrans = false;
                         if (Tied && switcherState.PresetID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
-                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding AutoTrans (gaurded) since Tied transition requested and current prest source is not 'slide'. For LITURGY type slide.");
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding AutoTrans (gaurded) since Tied transition requested and current prest source is not 'slide'. For LITURGY type slide ({Presentation.CurrentSlide}).");
                             PerformGuardedAutoTransition();
                             waitfortrans = true;
                         }
@@ -2106,10 +2106,10 @@ namespace Integrated_Presenter
                         {
                             if (waitfortrans)
                             {
-                                _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for autotrans to complete. For LITURGY type slide.");
+                                _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for autotrans to complete. For LITURGY type slide ({Presentation.CurrentSlide}).");
                                 await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                             }
-                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command preset select for postset shot. For LITURGY type slide.");
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command preset select for postset shot. For LITURGY type slide ({Presentation.CurrentSlide}).");
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
                     }
@@ -2173,13 +2173,16 @@ namespace Integrated_Presenter
                         // turn off usk1 if chroma keyer
                         if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
                         {
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command switcher USK1 to go OFF Air for slide ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
                             switcherManager?.PerformOffAirUSK1();
                         }
                         if (switcherState.DSK1OnAir)
                         {
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command switcher DSK1 to go OFF Air for slide ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
                             switcherManager?.PerformAutoOffAirDSK1();
                             await Task.Delay((_config.DownstreamKey1Config.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Taking NextSlide() from ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
                         Presentation.NextSlide();
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
@@ -2191,15 +2194,18 @@ namespace Integrated_Presenter
                         }
                         if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                         {
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- playMedia() for slide ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
                             playMedia();
                             await Task.Delay(_config?.PrerollSettings.VideoPreRoll ?? 0);
                         }
                         bool waitfortrans = false;
                         if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command switcher to Preset 'slide' source for slide ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
                             ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                             await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
                             //switcherManager?.PerformAutoTransition();
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command AutoTrans [Gaurded] for slide ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
                             PerformGuardedAutoTransition();
                             waitfortrans = true;
                         }
@@ -2210,14 +2216,17 @@ namespace Integrated_Presenter
                         {
                             if (waitfortrans)
                             {
+                                _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Wait for AutoTrans complete on slide ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
                                 await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                             }
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) --  Command Preset Select for postset {Presentation.EffectiveCurrent.PostsetId} on slide ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
                     }
                 }
                 else
                 {
+                    _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- [No Automation] Taking NextSlide() on slide ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
                     Presentation.NextSlide();
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
