@@ -1,7 +1,9 @@
 ﻿using BMDSwitcherAPI;
 using Integrated_Presenter.BMDSwitcher.Config;
+using log4net;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,8 +21,21 @@ namespace Integrated_Presenter.BMDSwitcher
         public event SwitcherStateChange SwitcherStateChanged;
         public event SwitcherDisconnectedEvent OnSwitcherDisconnected;
 
+        private ILog _logger;
+
         public MockBMDSwitcherManager(MainWindow parent)
         {
+            // initialize logger
+            // enable logging
+            using (Stream cstream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Integrated_Presenter.Log4Net_switcher.config"))
+            {
+                log4net.Config.XmlConfigurator.Configure(cstream);
+            }
+
+            _logger = LogManager.GetLogger("SwitcherLogger");
+            _logger.Info($"[Mock SW] Switcher Logger for {parent?.Title} Started.");
+
+
             _state = new BMDSwitcherState();
             _state.SetDefault();
             Dictionary<int, string> mapping = new Dictionary<int, string>()
@@ -41,26 +56,31 @@ namespace Integrated_Presenter.BMDSwitcher
 
         private void MockMultiviewer_OnMockWindowClosed()
         {
+            _logger.Info($"[Mock SW] USER requested close");
             OnSwitcherDisconnected?.Invoke();
         }
 
         private void Parent_PresentationStateUpdated(Slide currentslide)
         {
+            _logger.Info($"[Mock SW] Presentation State was updated");
             mockMultiviewer.UpdateSlideInput(currentslide);
         }
 
         public BMDSwitcherState ForceStateUpdate()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             return _state;
         }
 
         public BMDSwitcherState GetCurrentState()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             return _state;
         }
 
         public void PerformAutoTransition()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state = mockMultiviewer.PerformAutoTransition(_state);
             if (_state.TransNextKey1)
             {
@@ -71,6 +91,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformCutTransition()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // take all layers
             if (_state.TransNextKey1)
             {
@@ -111,6 +132,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformPresetSelect(int sourceID)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()} {sourceID}");
             _state.PresetID = (long)sourceID;
             mockMultiviewer.SetPresetInput(sourceID);
             SwitcherStateChanged?.Invoke(_state);
@@ -118,6 +140,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformProgramSelect(int sourceID)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()} {sourceID}");
             _state.ProgramID = (long)sourceID;
             mockMultiviewer.SetProgramInput(sourceID);
             SwitcherStateChanged?.Invoke(_state);
@@ -125,6 +148,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformToggleDSK1()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DSK1OnAir = !_state.DSK1OnAir;
             mockMultiviewer.SetDSK1(_state.DSK1OnAir);
             mockMultiviewer.SetTieDSK1(_state.DSK1Tie);
@@ -133,6 +157,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public bool TryConnect(string address)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // we can connect to anything (since its a mock)
             GoodConnection = true;
             ForceStateUpdate();
@@ -142,12 +167,14 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void Disconnect()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             OnSwitcherDisconnected?.Invoke();
             mockMultiviewer.Close();
         }
 
         public void PerformAutoOffAirDSK2()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DSK2OnAir = false;
             mockMultiviewer.FadeDSK2(false);
             SwitcherStateChanged?.Invoke(_state);
@@ -155,6 +182,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformAutoOnAirDSK2()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DSK2OnAir = true;
             mockMultiviewer.FadeDSK2(true);
             SwitcherStateChanged?.Invoke(_state);
@@ -162,6 +190,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public async void PerformTakeAutoDSK1()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DSK1OnAir = !_state.DSK1OnAir;
             mockMultiviewer.FadeDSK1(_state.DSK1OnAir);
             await Task.Delay(1000);
@@ -170,6 +199,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public async void PerformTakeAutoDSK2()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DSK2OnAir = !_state.DSK2OnAir;
             mockMultiviewer.FadeDSK2(_state.DSK2OnAir);
             await Task.Delay(1000);
@@ -178,6 +208,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformTieDSK1()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DSK1Tie = !_state.DSK1Tie;
             mockMultiviewer.SetTieDSK1(_state.DSK1Tie);
             SwitcherStateChanged?.Invoke(_state);
@@ -185,6 +216,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformTieDSK2()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DSK2Tie = !_state.DSK2Tie;
             mockMultiviewer.SetTieDSK2(_state.DSK2Tie);
             SwitcherStateChanged?.Invoke(_state);
@@ -192,6 +224,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformToggleDSK2()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DSK2OnAir = !_state.DSK2OnAir;
             mockMultiviewer.SetDSK2(_state.DSK2OnAir);
             mockMultiviewer.SetTieDSK2(_state.DSK2Tie);
@@ -200,6 +233,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public async void PerformToggleFTB()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.FTB = !_state.FTB;
             mockMultiviewer.SetFTB(_state.FTB);
             await Task.Delay(1000);
@@ -208,6 +242,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformAutoOffAirDSK1()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DSK1OnAir = false;
             mockMultiviewer.FadeDSK1(false);
             SwitcherStateChanged?.Invoke(_state);
@@ -215,6 +250,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformAutoOnAirDSK1()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DSK1OnAir = true;
             mockMultiviewer.FadeDSK1(true);
             SwitcherStateChanged?.Invoke(_state);
@@ -222,6 +258,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformToggleUSK1()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1OnAir = !_state.USK1OnAir;
             // update multiviewer
             if (_state.USK1OnAir)
@@ -237,11 +274,13 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void Close()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             mockMultiviewer.Close();
         }
 
         public void ConfigureSwitcher(BMDSwitcherConfigSettings config)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1KeyType = config.USKSettings.IsChroma == 1 ? 2 : 1;
             if (config.USKSettings.IsChroma == 1)
             {
@@ -259,6 +298,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformUSK1RunToKeyFrameA()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1KeyFrame = 1;
             _state.DVESettings.Current = _state.DVESettings.KeyFrameA;
             SwitcherStateChanged?.Invoke(_state);
@@ -266,6 +306,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformUSK1RunToKeyFrameB()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1KeyFrame = 2;
             _state.DVESettings.Current = _state.DVESettings.KeyFrameB;
             SwitcherStateChanged?.Invoke(_state);
@@ -273,6 +314,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformUSK1RunToKeyFrameFull()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1KeyFrame = 0;
             _state.DVESettings.Current = new KeyFrameSettings() { PositionX = 0, PositionY = 0, SizeX = 1, SizeY = 1 };
             SwitcherStateChanged?.Invoke(_state);
@@ -280,12 +322,14 @@ namespace Integrated_Presenter.BMDSwitcher
 
         void IBMDSwitcherManager.PerformUSK1FillSourceSelect(int sourceID)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1FillSource = sourceID;
             SwitcherStateChanged?.Invoke(_state);
         }
 
         void IBMDSwitcherManager.PerformToggleBackgroundForNextTrans()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
 
             // only allow deselection if at least one layer is selected
             if (_state.TransNextBackground)
@@ -307,6 +351,7 @@ namespace Integrated_Presenter.BMDSwitcher
         void IBMDSwitcherManager.PerformToggleKey1ForNextTrans()
         {
 
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // only allow deselection if at least one layer is selected
             if (_state.TransNextKey1)
             {
@@ -325,6 +370,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void SetPIPPosition(BMDUSKDVESettings settings)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DVESettings.Current = settings.Current;
             _state.DVESettings.MaskTop = settings.MaskTop;
             _state.DVESettings.MaskBottom = settings.MaskBottom;
@@ -337,6 +383,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void SetPIPKeyFrameA(BMDUSKDVESettings settings)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DVESettings.IsMasked = settings.IsMasked;
             _state.DVESettings.MaskTop = settings.MaskTop;
             _state.DVESettings.MaskBottom = settings.MaskBottom;
@@ -349,6 +396,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void SetPIPKeyFrameB(BMDUSKDVESettings settings)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.DVESettings.IsMasked = settings.IsMasked;
             _state.DVESettings.MaskTop = settings.MaskTop;
             _state.DVESettings.MaskBottom = settings.MaskBottom;
@@ -362,18 +410,21 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void ConfigureUSK1PIP(BMDUSKDVESettings settings)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1KeyType = 1;
             SwitcherStateChanged?.Invoke(_state);
         }
 
         public void ConfigureUSK1Chroma(BMDUSKChromaSettings settings)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1KeyType = 2;
             SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformOnAirUSK1()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1OnAir = true;
             mockMultiviewer.SetUSK1OnAir(_state);
             SwitcherStateChanged?.Invoke(_state);
@@ -381,6 +432,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformOffAirUSK1()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1OnAir = false;
             mockMultiviewer.SetUSK1OffAir(_state);
             SwitcherStateChanged?.Invoke(_state);
@@ -388,6 +440,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void SetUSK1TypeDVE()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1KeyType = 1;
             mockMultiviewer.setUSK1KeyType(1);
             SwitcherStateChanged?.Invoke(_state);
@@ -395,6 +448,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void SetUSK1TypeChroma()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1KeyType = 2;
             mockMultiviewer.setUSK1KeyType(2);
             SwitcherStateChanged?.Invoke(_state);
@@ -402,6 +456,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformSetKey1OnForNextTrans()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.TransNextKey1 = true;
             mockMultiviewer.SetUSK1ForNextTrans(true, _state);
             SwitcherStateChanged?.Invoke(_state);
@@ -409,6 +464,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformSetKey1OffForNextTrans()
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.TransNextKey1 = false;
             mockMultiviewer.SetUSK1ForNextTrans(false, _state);
             SwitcherStateChanged?.Invoke(_state);
@@ -416,6 +472,7 @@ namespace Integrated_Presenter.BMDSwitcher
 
         public void PerformAuxSelect(int sourceID)
         {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()} {sourceID}");
             _state.AuxID = sourceID;
             SwitcherStateChanged?.Invoke(_state);
         }

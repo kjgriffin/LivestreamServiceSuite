@@ -76,7 +76,7 @@ namespace Integrated_Presenter
             }
 
             _logger = LogManager.GetLogger("SwitcherLogger");
-            _logger.Info($"Switcher Logger for {parent?.Title} Started.");
+            _logger.Info($"[BMD HW] Switcher Logger for {parent?.Title} Started.");
 
 
             _parent = parent;

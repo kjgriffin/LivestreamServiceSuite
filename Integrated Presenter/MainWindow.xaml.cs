@@ -2804,19 +2804,19 @@ namespace Integrated_Presenter
                 DisableSlidePoolOverrides();
                 if (CurrentSlideMode == 1)
                 {
-                    _logger.Debug("nextSlid() -- Calling SlideDriveVideo_Next");
+                    _logger.Debug("nextSlide() -- Calling SlideDriveVideo_Next");
                     await SlideDriveVideo_Next(Tied);
                 }
                 else if (CurrentSlideMode == 2)
                 {
-                    _logger.Debug("nextSlid() -- skipping next slide");
+                    _logger.Debug("nextSlide() -- skipping next slide");
                     Presentation.SkipNextSlide();
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                 }
                 else
                 {
-                    _logger.Debug("nextSlid() -- overriding next slide");
+                    _logger.Debug("nextSlide() -- overriding next slide");
                     Presentation.OverridePres = false;
                     Presentation.NextSlide();
                     slidesUpdated();
@@ -2830,14 +2830,14 @@ namespace Integrated_Presenter
             {
                 if (CurrentSlideMode == 2)
                 {
-                    _logger.Debug("nextSlid() -- skipping prev slide");
+                    _logger.Debug("nextSlide() -- skipping prev slide");
                     Presentation.SkipPrevSlide();
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                 }
                 else
                 {
-                    _logger.Debug("nextSlid() -- going to previous slide");
+                    _logger.Debug("nextSlide() -- going to previous slide");
                     DisableSlidePoolOverrides();
                     Presentation.OverridePres = false;
                     Presentation.PrevSlide();
