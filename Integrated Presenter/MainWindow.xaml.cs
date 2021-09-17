@@ -1583,34 +1583,42 @@ namespace Integrated_Presenter
         #region PresetButtonClick
         private void ClickPreset1(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickPreset(1);
         }
         private void ClickPreset2(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickPreset(2);
         }
         private void ClickPreset3(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickPreset(3);
         }
         private void ClickPreset4(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickPreset(4);
         }
         private void ClickPreset5(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickPreset(5);
         }
         private void ClickPreset6(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickPreset(6);
         }
         private void ClickPreset7(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickPreset(7);
         }
         private void ClickPreset8(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickPreset(8);
         }
         #endregion
@@ -1619,34 +1627,42 @@ namespace Integrated_Presenter
 
         private void ClickProgram8(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickProgram(8);
         }
         private void ClickProgram7(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickProgram(7);
         }
         private void ClickProgram6(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickProgram(6);
         }
         private void ClickProgram5(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickProgram(5);
         }
         private void ClickProgram4(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickProgram(4);
         }
         private void ClickProgram3(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickProgram(3);
         }
         private void ClickProgram2(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickProgram(2);
         }
         private void ClickProgram1(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickProgram(1);
         }
         #endregion
@@ -1666,6 +1682,7 @@ namespace Integrated_Presenter
 
         private async Task ExecuteSetupActions(Slide s)
         {
+            _logger.Debug($"Begin Execution of setup actions for slide {s.Title}");
             Dispatcher.Invoke(() =>
             {
                 SetupActionsCompleted = false;
@@ -1683,10 +1700,12 @@ namespace Integrated_Presenter
                 SetupActionsCompleted = true;
                 CurrentPreview.SetupComplete(true);
             });
+            _logger.Debug($"Completed Execution of setup actions for slide {s.Title}");
         }
 
         private async Task ExecuteActionSlide(Slide s)
         {
+            _logger.Debug($"Begin Execution of actions for slide {s.Title}");
             Dispatcher.Invoke(() =>
             {
                 ActionsCompleted = false;
@@ -1704,6 +1723,7 @@ namespace Integrated_Presenter
                 ActionsCompleted = true;
                 CurrentPreview.ActionComplete(true);
             });
+            _logger.Debug($"Completed Execution of actions for slide {s.Title}");
         }
 
         private async Task PerformAutomationAction(AutomationAction task)
@@ -2245,6 +2265,7 @@ namespace Integrated_Presenter
 
         private void SlideUndrive_ToSlide(Slide s)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (s != null && Presentation != null)
             {
                 Presentation.Override = s;
@@ -2256,6 +2277,7 @@ namespace Integrated_Presenter
 
         private async Task SlideDriveVideo_ToSlide(Slide s)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (s != null && Presentation != null)
             {
                 if (s.AutomationEnabled)
@@ -2414,6 +2436,7 @@ namespace Integrated_Presenter
 
         private void SlideDriveVideo_Action(Slide s)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             switch (s.PreAction)
             {
                 case "t1restart":
@@ -2429,6 +2452,7 @@ namespace Integrated_Presenter
 
         private async Task SlideDriveVideo_Current()
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (Presentation?.EffectiveCurrent != null)
             {
                 DisableSlidePoolOverrides();
@@ -2671,6 +2695,7 @@ namespace Integrated_Presenter
 
         private void ClickToggleShowEffectiveCurrentPreview(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleShowEffectiveCurrentPreview();
         }
 
@@ -2786,6 +2811,7 @@ namespace Integrated_Presenter
 
         private async Task PerformTiedNextSlide()
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             bool tied = false;
             // only makes sense to do this in drive mode
             if (CurrentSlideMode == 1)
@@ -2799,6 +2825,7 @@ namespace Integrated_Presenter
 
         private async Task nextSlide(bool Tied = false)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (activepresentation)
             {
                 DisableSlidePoolOverrides();
@@ -2925,26 +2952,32 @@ namespace Integrated_Presenter
         #region slide/media buttons
         private void ClickRestartMedia(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             restartMedia();
         }
         private void ClickStopMedia(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             stopMedia();
         }
         private void ClickPauseMedia(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             pauseMedia();
         }
         private void ClickPlayMedia(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             playMedia();
         }
         private async void ClickNextSlide(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             await nextSlide();
         }
         private void ClickPrevSlide(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             prevSlide();
         }
         #endregion
@@ -2953,10 +2986,12 @@ namespace Integrated_Presenter
 
         private void ClickConnectMock(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             MockConnectSwitcher();
         }
         private async void ClickConnect(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             await ConnectSwitcher();
         }
 
@@ -2964,12 +2999,14 @@ namespace Integrated_Presenter
 
         private void ClickSlideNoDriveVideo(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetBtnSlideMode(0);
         }
 
 
         private void ClickSlideDriveVideo(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetBtnSlideMode(1);
             /*
             if (CurrentSlideMode == 1)
@@ -2985,6 +3022,7 @@ namespace Integrated_Presenter
 
         private void ClickSlideSkipMode(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetBtnSlideMode(2);
             /*
             if (CurrentSlideMode == 2)
@@ -3001,56 +3039,68 @@ namespace Integrated_Presenter
 
         private void ClickCutTrans(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             RequestCutTransition();
         }
         private void ClickAutoTrans(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             TakeAutoTransition();
         }
 
         private void ClickDSK1Toggle(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleDSK1();
         }
 
         private void ClickDSK1Auto(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             AutoDSK1();
         }
         private void ClickDSK1Tie(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleTieDSK1();
         }
 
         private void ClickDSK2Tie(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleTieDSK2();
         }
         private void ClickDSK2Toggle(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleDSK2();
         }
         private void ClickDSK2Auto(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             AutoDSK2();
         }
         private void ClickFTB(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             switcherManager?.PerformToggleFTB();
         }
 
         private void ClickUSK1Toggle(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleUSK1();
         }
 
         private void ClickViewPrevAfter(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleViewPrevAfter();
         }
 
         private void ToggleViewPrevAfter()
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetViewPrevAfter(!_FeatureFlag_displayPrevAfter);
         }
 
@@ -3063,6 +3113,7 @@ namespace Integrated_Presenter
 
         private async void ClickTakeSlide(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             await SlideDriveVideo_Current();
         }
 
@@ -3070,6 +3121,7 @@ namespace Integrated_Presenter
         bool _FeatureFlag_viewAdvancedPresentation = false;
         private void ClickViewAdvancedPresentation(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleViewAdvancedPresentation();
         }
 
@@ -3106,6 +3158,7 @@ namespace Integrated_Presenter
 
         private void ClickResetgpTimer1(object sender, MouseButtonEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ResetGpTimer1();
         }
 
@@ -3124,7 +3177,7 @@ namespace Integrated_Presenter
 
         private async void TakeSlidePoolSlide(Slide s, int num, bool replaceMode, bool driven)
         {
-
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} slide: {s.Title} from pool source {num} {(replaceMode ? "in replace mode" : "in insert mode")} and {(driven ? "" : "not")} driven");
             for (int i = 0; i < 4; i++)
             {
                 if (num != i)
@@ -3180,91 +3233,109 @@ namespace Integrated_Presenter
 
         private void ClickTakeSP0(object sender, Slide s, bool replaceMode, bool driven)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             TakeSlidePoolSlide(s, 0, replaceMode, driven);
         }
 
         private void ClickTakeSP1(object sender, Slide s, bool replaceMode, bool driven)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             TakeSlidePoolSlide(s, 1, replaceMode, driven);
         }
 
         private void ClickTakeSP2(object sender, Slide s, bool replaceMode, bool driven)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             TakeSlidePoolSlide(s, 2, replaceMode, driven);
         }
 
         private void ClickTakeSP3(object sender, Slide s, bool replaceMode, bool driven)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             TakeSlidePoolSlide(s, 3, replaceMode, driven);
         }
 
         private void ClickConfigureSwitcher(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetSwitcherSettings();
         }
 
         private void USK1RuntoA()
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             switcherManager?.PerformUSK1RunToKeyFrameA();
         }
 
         private void USK1RuntoB()
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             switcherManager?.PerformUSK1RunToKeyFrameB();
         }
 
         private void USK1RuntoFull()
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             switcherManager?.PerformUSK1RunToKeyFrameFull();
         }
 
         private void ClickPIPRunToFull(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             USK1RuntoFull();
         }
 
         public void ChangeUSK1FillSource(int source)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             switcherManager?.PerformUSK1FillSourceSelect(ConvertButtonToSourceID(source));
         }
 
         private void ClickPIP1(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(1);
         }
 
         private void ClickPIP2(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(2);
         }
 
         private void ClickPIP3(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(3);
         }
 
         private void ClickPIP4(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(4);
         }
 
         private void ClickPIP5(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(5);
         }
 
         private void ClickPIP6(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(6);
         }
 
         private void ClickPIP7(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(7);
         }
 
         private void ClickPIP8(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(8);
         }
 
@@ -3272,6 +3343,7 @@ namespace Integrated_Presenter
         private bool _FeatureFlag_showadvancedpipcontrols = false;
         private void ClickViewAdvancedPIP(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleViewAdvancedPIP();
         }
 
@@ -3318,16 +3390,19 @@ namespace Integrated_Presenter
 
         private void ClickTransBkgd(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleTransBkgd();
         }
 
         private void ClickTransKey1(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleTransKey1();
         }
 
         private void SaveSettings(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.FileName = "BMDSwitcherConfig";
             sfd.AddExtension = true;
@@ -3341,6 +3416,7 @@ namespace Integrated_Presenter
 
         private void LoadSettings(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "JSON Files (*.json)|*.json";
             if (ofd.ShowDialog() == true)
@@ -3479,6 +3555,7 @@ namespace Integrated_Presenter
 
         private void SetDefaultConfig()
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             _config = Configurations.SwitcherConfig.DefaultConfig.GetDefaultConfig();
         }
 
@@ -3487,6 +3564,7 @@ namespace Integrated_Presenter
         bool _FeatureFlag_showAuxButons = false;
         private void ClickViewAuxOutput(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleAuxRow();
         }
 
@@ -3510,44 +3588,53 @@ namespace Integrated_Presenter
 
         private void ClickAux1(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickAux(1);
         }
 
         private void ClickAux2(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickAux(2);
         }
 
         private void ClickAux3(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickAux(3);
         }
 
         private void ClickAux4(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickAux(4);
         }
 
         private void ClickAux5(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickAux(5);
         }
 
         private void ClickAux6(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickAux(6);
         }
 
         private void ClickAux7(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickAux(7);
         }
         private void ClickAux8(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickAux(8);
         }
         private void ClickAuxPgm(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ClickAux(12);
         }
 
@@ -3613,6 +3700,7 @@ namespace Integrated_Presenter
 
         private void ClickOpenPIPLocationControls(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ShowPIPLocationControl();
         }
 
@@ -3642,6 +3730,7 @@ namespace Integrated_Presenter
 
         private void ClickToggleAutomationTimer1(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetEnableSermonTimer(!_FeatureFlag_automationtimer1enabled);
         }
 
@@ -3682,6 +3771,7 @@ namespace Integrated_Presenter
 
         private void ClickBtnProgramLock(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             IsProgramRowLocked = !IsProgramRowLocked;
         }
 
@@ -3689,15 +3779,18 @@ namespace Integrated_Presenter
 
         private void ClickViewAudioPlayer(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             OpenAudioPlayer();
         }
 
         private void OpenAudioPlayer()
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (audioPlayer != null)
             {
                 if (!audioPlayer.IsVisible)
                 {
+                    _logger.Info($"Audio player is no longer visible. Re-initialize audio player.");
                     audioPlayer = new AudioPlayer(this);
                     audioPlayer.Show();
                 }
@@ -3708,6 +3801,7 @@ namespace Integrated_Presenter
             }
             else
             {
+                _logger.Info($"Audio player not initialized. Creating new audio player.");
                 audioPlayer = new AudioPlayer(this);
                 audioPlayer.Show();
             }
@@ -3716,6 +3810,7 @@ namespace Integrated_Presenter
 
         private void ClickCBars(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetProgramColorBars();
         }
 
@@ -3726,6 +3821,7 @@ namespace Integrated_Presenter
 
         private void ClickToggleShowCurrentVideoCountdownTimer(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleShowCurrentVideoCountdownTimer();
         }
 
@@ -3737,11 +3833,13 @@ namespace Integrated_Presenter
 
         private void ClickDVEMode(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetSwitcherKeyerDVE();
         }
 
         private void ClickChromaMode(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetSwitcherKeyerChroma();
         }
 
@@ -3778,6 +3876,7 @@ namespace Integrated_Presenter
 
         private void ClickApplyChromaSettings(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             double hue = 0;
             double gain = 0;
             double lift = 0;
@@ -3804,52 +3903,62 @@ namespace Integrated_Presenter
 
         private void ClickChroma1(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(1);
         }
 
         private void ClickChroma2(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(2);
         }
 
         private void ClickChroma3(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(3);
         }
 
         private void ClickChroma4(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(4);
         }
 
         private void ClickChroma5(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(5);
         }
 
         private void ClickChroma6(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(6);
         }
 
         private void ClickChroma7(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(7);
         }
 
         private void ClickChroma8(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ChangeUSK1FillSource(8);
         }
 
         private void LoadDefault(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetSwitcherSettings();
         }
 
         PIPControl pipctrl;
         private void ClickViewAdvancedPIPLocation(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ShowPIPLocationControl();
         }
 
@@ -3869,11 +3978,13 @@ namespace Integrated_Presenter
 
         private void ClickPIPRunToA(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             switcherManager?.PerformUSK1RunToKeyFrameA();
         }
 
         private void ClickPIPRunToB(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             switcherManager?.PerformUSK1RunToKeyFrameB();
         }
 
@@ -4001,11 +4112,13 @@ namespace Integrated_Presenter
 
         private void ClickShowKeyboardShortcuts(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleShowShortcuts();
         }
 
         private void ToggleMutePres(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (MediaMuted)
             {
                 unmuteMedia();
@@ -4018,11 +4131,13 @@ namespace Integrated_Presenter
 
         private void ClickShowOnlineHelp(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             System.Diagnostics.Process.Start("explorer.exe", "https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Integrated-Presenter-Shortcuts");
         }
 
         private void ClickSetVideoPrerollDelay(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             // NOTE FOR NOW ONLY CHANGE VIDEOS, NOT CHROMA KEY VIDEOS
             InputForm input = new InputForm(_config.PrerollSettings.VideoPreRoll.ToString(), "VIDEO PREROLL (MS)");
             if (input.ShowDialog() == true)
@@ -4041,6 +4156,7 @@ namespace Integrated_Presenter
 
         private void ClickSetDrivePresetSelectDelay(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             InputForm input = new InputForm(_config.PrerollSettings.PresetSelectDelay.ToString(), "PRESET SELECT DELAY (MS)");
             if (input.ShowDialog() == true)
             {
@@ -4072,16 +4188,19 @@ namespace Integrated_Presenter
 
         private void ClickToggleDriveAutoTransGuard(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleDriveAutoTransGuard();
         }
 
         private void ResetSlideshow_Click(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ResetPresentationToBegining();
         }
 
         private void ResetPresentationToBegining()
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             Presentation.StartPres();
             slidesUpdated();
             PresentationStateUpdated?.Invoke(Presentation.Current);
@@ -4089,6 +4208,7 @@ namespace Integrated_Presenter
 
         private void ClickResetgpTimer2(object sender, MouseButtonEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ResetGpTimer2();
         }
 
@@ -4138,6 +4258,7 @@ namespace Integrated_Presenter
 
         private void ClickResetTotalShotCount(object sender, MouseButtonEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             TotalShots = 0;
         }
 
@@ -4167,6 +4288,7 @@ namespace Integrated_Presenter
 
         private void ClickToggleCutTransGuard(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ToggleCutTransGuard();
         }
 
@@ -4183,6 +4305,7 @@ namespace Integrated_Presenter
 
         private void ClickTogglePostsetFeature(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             TogglePostset();
         }
 
@@ -4268,11 +4391,13 @@ namespace Integrated_Presenter
 
         private void LoadUserDefault(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures.Default());
         }
 
         private void LoadUserSettings(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "JSON Files (*.json)|*.json";
             if (ofd.ShowDialog() == true)
@@ -4283,6 +4408,7 @@ namespace Integrated_Presenter
 
         private void SaveUserSettings(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.FileName = "IntegratedPresenterUserConfig";
             sfd.AddExtension = true;
@@ -4296,6 +4422,7 @@ namespace Integrated_Presenter
 
         private void ClickDisconnectSwitcher(object sender, RoutedEventArgs e)
         {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (switcherManager != null)
             {
                 switcherManager.Disconnect();
