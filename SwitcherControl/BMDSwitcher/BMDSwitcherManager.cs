@@ -10,6 +10,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using log4net;
+using System.IO;
 
 namespace Integrated_Presenter
 {
@@ -61,8 +63,22 @@ namespace Integrated_Presenter
 
         private BMDSwitcherConfigSettings _config;
 
+
+        private ILog _logger;
+
         public BMDSwitcherManager(Window parent)
         {
+            // initialize logger
+            // enable logging
+            using (Stream cstream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Integrated_Presenter.Log4Net_switcher.config"))
+            {
+                log4net.Config.XmlConfigurator.Configure(cstream);
+            }
+
+            _logger = LogManager.GetLogger("SwitcherLogger");
+            _logger.Info($"Switcher Logger for {parent?.Title} Started.");
+
+
             _parent = parent;
 
             _switcherMonitor = new SwitcherMonitor();
@@ -102,15 +118,18 @@ namespace Integrated_Presenter
             _BMDSwitcherDiscovery = new CBMDSwitcherDiscovery();
             if (_BMDSwitcherDiscovery == null)
             {
+                _logger.Error("Could not create Switcher Discovery Instance.\nATEM Switcher Software not found/installed");
                 MessageBox.Show("Could not create Switcher Discovery Instance.\nATEM Switcher Software not found/installed", "Error");
             }
             _state = new BMDSwitcherState();
             SwitcherDisconnected();
+            _logger.Info("Initialized Switcher with disconnected state. Setup monitor callbacks.");
         }
 
-      
+
         private void _mixEffectBlockMonitor_InTransitionChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_TransitionPosition();
@@ -120,6 +139,7 @@ namespace Integrated_Presenter
 
         private void _upstreamKey1Monitor_UpstreamKeyMaskChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_USK1();
@@ -129,6 +149,7 @@ namespace Integrated_Presenter
 
         private void _upstreamKey1Monitor_UpstreamKeyCutChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_USK1();
@@ -138,6 +159,7 @@ namespace Integrated_Presenter
 
         private void _flykeyMonitor_KeyFrameStateChange(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_USK1();
@@ -148,6 +170,7 @@ namespace Integrated_Presenter
 
         private void _auxMonitor_OnAuxInputChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_AuxInput();
@@ -157,6 +180,7 @@ namespace Integrated_Presenter
 
         private void _upstreamKey1Monitor_UpstreamKeyTypeChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_USK1();
@@ -168,6 +192,7 @@ namespace Integrated_Presenter
 
         private void _upstreamKey1Monitor_UpstreamKeyFillChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_USK1();
@@ -177,6 +202,7 @@ namespace Integrated_Presenter
 
         private void _transitionMontitor_OnNextTransitionSelectionChanged(object sender)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_Transition();
@@ -186,6 +212,7 @@ namespace Integrated_Presenter
 
         private void _flykeyMonitor_KeyFrameChanged(object sender, int keyframe)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_USK1();
@@ -196,16 +223,19 @@ namespace Integrated_Presenter
         private void InputMonitor_ShortNameChanged(object sender, object args)
         {
             //throw new NotImplementedException();
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
 
         private void InputMonitor_LongNameChanged(object sender, object args)
         {
             //throw new NotImplementedException();
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
 
 
         private void _upstreamKey1Monitor_UpstreamKeyOnAirChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_USK1();
@@ -215,6 +245,7 @@ namespace Integrated_Presenter
 
         private void _mixEffectBlockMonitor_FateToBlackFullyChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_FTB();
@@ -224,6 +255,7 @@ namespace Integrated_Presenter
 
         private void _dsk2Manager_TieChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_DSK2();
@@ -233,6 +265,7 @@ namespace Integrated_Presenter
 
         private void _dsk2Manager_OnAirChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_DSK2();
@@ -242,6 +275,7 @@ namespace Integrated_Presenter
 
         private void _dsk1Manager_TieChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_DSK1();
@@ -251,6 +285,7 @@ namespace Integrated_Presenter
 
         private void _dsk1Manager_OnAirChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_DSK1();
@@ -260,6 +295,7 @@ namespace Integrated_Presenter
 
         private void _mixEffectBlockMonitor_ProgramInputChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_ProgramInput();
@@ -269,6 +305,7 @@ namespace Integrated_Presenter
 
         private void _mixEffectBlockMonitor_PreviewInputChanged(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 ForceStateUpdate_PreviewInput();
@@ -278,6 +315,7 @@ namespace Integrated_Presenter
 
         private void _switcherMonitor_SwitcherDisconnected(object sender, object args)
         {
+            _logger.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
             SwitcherDisconnected();
         }
 
@@ -287,6 +325,7 @@ namespace Integrated_Presenter
             _BMDSwitcherConnectToFailure failReason = 0;
             try
             {
+                _logger.Info($"Attempting synchronous connection to switcher on {address}");
                 _BMDSwitcherDiscovery.ConnectTo(address, out _BMDSwitcher, out failReason);
                 SwitcherConnected();
                 return true;
@@ -296,12 +335,15 @@ namespace Integrated_Presenter
                 switch (failReason)
                 {
                     case _BMDSwitcherConnectToFailure.bmdSwitcherConnectToFailureNoResponse:
+                        _logger.Error($"Failed to connect to bmd switcher. No Response.");
                         MessageBox.Show("No response from Switcher", "Error");
                         break;
                     case _BMDSwitcherConnectToFailure.bmdSwitcherConnectToFailureIncompatibleFirmware:
+                        _logger.Error($"Failed to connect to bmd switcher. Incompatible firmware.");
                         MessageBox.Show("Switcher has incompatible firmware", "Error");
                         break;
                     default:
+                        _logger.Error($"Failed to connect to bmd switcher. Unknown reason.");
                         MessageBox.Show("Switcher failed to connect for unknown reason", "Error");
                         break;
                 }
@@ -312,12 +354,14 @@ namespace Integrated_Presenter
 
         public void Disconnect()
         {
+            _logger.Debug($"[BMD HW] Runnning {System.Reflection.MethodBase.GetCurrentMethod()}");
             OnSwitcherDisconnected?.Invoke();
             SwitcherDisconnected();
         }
 
         private bool InitializeInputSources()
         {
+            _logger.Info("[BMD HW] Initializing Input Sources");
             // get all input sources
             IBMDSwitcherInputIterator inputIterator = null;
             IntPtr inputIteratorPtr;
@@ -329,6 +373,7 @@ namespace Integrated_Presenter
             }
             else
             {
+                _logger.Error($"[BMD HW] input iterator null");
                 return false;
             }
             if (inputIterator != null)
@@ -348,6 +393,7 @@ namespace Integrated_Presenter
             }
             else
             {
+                _logger.Error($"[BMD HW] failed to iterate inputs");
                 return false;
             }
 
@@ -356,6 +402,7 @@ namespace Integrated_Presenter
 
         private bool InitializeAuxInput()
         {
+            _logger.Info("[BMD HW] Initializing Aux Sources");
             // get all input sources
             IBMDSwitcherInputIterator inputIterator = null;
             IntPtr inputIteratorPtr;
@@ -367,6 +414,7 @@ namespace Integrated_Presenter
             }
             else
             {
+                _logger.Error($"[BMD HW] aux iterator null");
                 return false;
             }
             if (inputIterator != null)
@@ -378,11 +426,13 @@ namespace Integrated_Presenter
                 return true;
             }
 
+            _logger.Error($"[BMD HW] failed to iterate aux sources");
             return false;
         }
 
         private bool InitializeMultiView()
         {
+            _logger.Info("[BMD HW] Initializing Multiview");
             IntPtr multiViewPtr;
             Guid multiViewIID = typeof(IBMDSwitcherMultiViewIterator).GUID;
             _BMDSwitcher.CreateIterator(ref multiViewIID, out multiViewPtr);
@@ -393,6 +443,7 @@ namespace Integrated_Presenter
             IBMDSwitcherMultiViewIterator multiViewIterator = (IBMDSwitcherMultiViewIterator)Marshal.GetObjectForIUnknown(multiViewPtr);
             if (multiViewIterator == null)
             {
+                _logger.Error($"[BMD HW] failed to initialize multiview");
                 return false;
             }
 
@@ -404,6 +455,7 @@ namespace Integrated_Presenter
 
         private bool InitializeMixEffectBlock()
         {
+            _logger.Info($"[BMD HW] initialize mix effect blocks");
             // get mixeffectblock1
             IBMDSwitcherMixEffectBlockIterator meIterator = null;
             IntPtr meIteratorPtr;
@@ -414,13 +466,17 @@ namespace Integrated_Presenter
                 meIterator = (IBMDSwitcherMixEffectBlockIterator)Marshal.GetObjectForIUnknown(meIteratorPtr);
             }
             if (meIterator == null)
+            {
+                _logger.Error($"[BMD HW] mix effect block iterator null");
                 return false;
+            }
 
 
             meIterator.Next(out _BMDSwitcherMixEffectBlock1);
 
             if (_BMDSwitcherMixEffectBlock1 == null)
             {
+                _logger.Error($"[BMD HW] failed to initialize mix effect block");
                 MessageBox.Show("Unexpected: Could not get first mix effect block", "Error");
                 return false;
             }
@@ -438,6 +494,7 @@ namespace Integrated_Presenter
 
         private bool InitializeUpstreamKeyers()
         {
+            _logger.Info($"[BMD HW] initialize upstream keyers");
             IBMDSwitcherKeyIterator keyIterator;
             IntPtr keyItrPtr;
             Guid keyItrIID = typeof(IBMDSwitcherKeyIterator).GUID;
@@ -457,6 +514,7 @@ namespace Integrated_Presenter
 
         private bool InitializeDownstreamKeyers()
         {
+            _logger.Info($"[BMD HW] initialize downstream keyers");
             // get downstream keyers
             IBMDSwitcherDownstreamKeyIterator dskIterator = null;
             IntPtr dskIteratorPtr;
@@ -467,7 +525,10 @@ namespace Integrated_Presenter
                 dskIterator = (IBMDSwitcherDownstreamKeyIterator)Marshal.GetObjectForIUnknown(dskIteratorPtr);
             }
             if (dskIterator == null)
+            {
+                _logger.Error($"[BMD HW] downstream key iterator null");
                 return false;
+            }
 
             if (dskIterator != null)
             {
@@ -482,6 +543,7 @@ namespace Integrated_Presenter
 
             if (_BMDSwitcherDownstreamKey1 == null || _BMDSwitcherDownstreamKey2 == null)
             {
+                _logger.Error($"[BMD HW] failed to iterate downstream keyers");
                 MessageBox.Show("Unexpected: Could not get one of the downstream keyers", "Error");
                 return false;
             }
@@ -496,23 +558,27 @@ namespace Integrated_Presenter
 
         private bool InitializeMediaPool()
         {
+            _logger.Info($"[BMD HW] initialize media pool");
             _BMDSwitcherMediaPool = (IBMDSwitcherMediaPool)_BMDSwitcher;
             return true;
         }
 
         private bool InitializeMediaPlayers()
         {
+            _logger.Info($"[BMD HW] initialize media players");
             IBMDSwitcherMediaPlayerIterator mediaPlayerIterator = null;
             IntPtr mediaPlayerPtr;
             Guid mediaPlayerIID = typeof(IBMDSwitcherMediaPlayerIterator).GUID;
             _BMDSwitcher.CreateIterator(ref mediaPlayerIID, out mediaPlayerPtr);
             if (mediaPlayerPtr == null)
             {
+                _logger.Error($"[BMD HW] media player iterator null");
                 return false;
             }
             mediaPlayerIterator = (IBMDSwitcherMediaPlayerIterator)Marshal.GetObjectForIUnknown(mediaPlayerPtr);
             if (mediaPlayerIterator == null)
             {
+                _logger.Error($"[BMD HW] failed to iterate media players");
                 return false;
             }
 
@@ -524,6 +590,7 @@ namespace Integrated_Presenter
 
         private void SwitcherConnected()
         {
+            _logger.Debug($"[BMD HW] Called SwitcherConnected()");
             // add callbacks (monitors switcher connection)
             _BMDSwitcher.AddCallback(_switcherMonitor);
 
@@ -551,6 +618,7 @@ namespace Integrated_Presenter
 
         private void SwitcherDisconnected()
         {
+            _logger.Debug($"[BMD HW] Called SwitcherDisconnected(). Removing Monitor Callbacks");
             GoodConnection = false;
 
             _parent.Dispatcher.Invoke(() =>
@@ -612,6 +680,7 @@ namespace Integrated_Presenter
 
         public BMDSwitcherState ForceStateUpdate()
         {
+            _logger.Debug($"[BMD HW] Called ForceStateUpdate()");
             if (GoodConnection)
             {
                 // update state
@@ -631,6 +700,7 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_AuxInput()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             long source;
             _BMDSwitcherAuxInput.GetInputSource(out source);
             _state.AuxID = source;
@@ -638,6 +708,7 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_USK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             int onair;
             _BMDSwitcherUpstreamKey1.GetOnAir(out onair);
             _state.USK1OnAir = onair != 0;
@@ -691,6 +762,7 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_DSK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             int dsk1onair;
             int dsk1tie;
             _BMDSwitcherDownstreamKey1.GetOnAir(out dsk1onair);
@@ -701,6 +773,7 @@ namespace Integrated_Presenter
         }
         private void ForceStateUpdate_DSK2()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             int dsk2onair;
             int dsk2tie;
             _BMDSwitcherDownstreamKey2.GetOnAir(out dsk2onair);
@@ -711,6 +784,7 @@ namespace Integrated_Presenter
         }
         private void ForceStateUpdate_ProgramInput()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // get current program source
             long programid;
             _BMDSwitcherMixEffectBlock1.GetProgramInput(out programid);
@@ -719,6 +793,7 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_PreviewInput()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // get current preset source
             long presetid;
             _BMDSwitcherMixEffectBlock1.GetPreviewInput(out presetid);
@@ -727,6 +802,7 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_TransitionPosition()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             double trans_position;
             uint trans_frames_remaining;
             int intrans;
@@ -742,6 +818,7 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_Transition()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherTransitionSelection sel;
             _BMDSwitcherTransitionParameters.GetNextTransitionSelection(out sel);
             int selection = (int)sel;
@@ -753,6 +830,7 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_FTB()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             int ftb;
             _BMDSwitcherMixEffectBlock1.GetFadeToBlackFullyBlack(out ftb);
             _state.FTB = ftb != 0;
@@ -767,6 +845,7 @@ namespace Integrated_Presenter
 
         public void ConfigureSwitcher(BMDSwitcherConfigSettings config)
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _config = config;
             ConfigureMixEffectBlock();
             ConfigureAux();
@@ -783,11 +862,13 @@ namespace Integrated_Presenter
 
         private void ConfigureAux()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherAuxInput.SetInputSource(_config.DefaultAuxSource);
         }
 
         private void ConfigureMixEffectBlock()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherMixEffectBlock1.SetFadeToBlackRate((uint)_config.MixEffectSettings.FTBRate);
 
             IBMDSwitcherTransitionMixParameters mixParameters = (IBMDSwitcherTransitionMixParameters)_BMDSwitcherMixEffectBlock1;
@@ -796,6 +877,7 @@ namespace Integrated_Presenter
 
         private void ConfigureCameraSources()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
 
             // set input source names
             foreach (var inputsource in _BMDSwitcherInputs)
@@ -816,12 +898,14 @@ namespace Integrated_Presenter
 
         private void ConfigureDownstreamKeys()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             ConfigureDownstreamKey1();
             ConfigureDownstreamKey2();
         }
 
         private void ConfigureDownstreamKey1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherDownstreamKey1.SetInputFill(_config.DownstreamKey1Config.InputFill);
             _BMDSwitcherDownstreamKey1.SetInputCut(_config.DownstreamKey1Config.InputCut);
             _BMDSwitcherDownstreamKey1.SetRate((uint)_config.DownstreamKey1Config.Rate);
@@ -839,6 +923,7 @@ namespace Integrated_Presenter
 
         private void ConfigureDownstreamKey2()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherDownstreamKey2.SetInputFill(_config.DownstreamKey2Config.InputFill);
             _BMDSwitcherDownstreamKey2.SetInputCut(_config.DownstreamKey2Config.InputCut);
             _BMDSwitcherDownstreamKey2.SetRate((uint)_config.DownstreamKey2Config.Rate);
@@ -857,6 +942,7 @@ namespace Integrated_Presenter
 
         private void ConfigureMultiviewer()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherMultiView.SetLayout((_BMDSwitcherMultiViewLayout)_config.MultiviewerConfig.Layout);
             _BMDSwitcherMultiView.SetWindowInput(2, _config.MultiviewerConfig.Window2);
             _BMDSwitcherMultiView.SetWindowInput(3, _config.MultiviewerConfig.Window3);
@@ -876,6 +962,7 @@ namespace Integrated_Presenter
 
         private void ConfigureUpstreamKey()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (_config.USKSettings.IsChroma == 1)
             {
                 ConfigureUSKforChroma();
@@ -890,6 +977,7 @@ namespace Integrated_Presenter
 
         private void ConfigureUSKforChroma()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
 
             ConfigureUSK1ChromaSettings();
@@ -899,6 +987,7 @@ namespace Integrated_Presenter
 
         private void ConfigureUSK1ChromaSettings()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // set initial fill to slide
             _BMDSwitcherUpstreamKey1.SetInputFill(_config.USKSettings.ChromaSettings.FillSource);
 
@@ -914,6 +1003,7 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_ChromaSettings()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             IBMDSwitcherKeyChromaParameters chromaParameters = (IBMDSwitcherKeyChromaParameters)_BMDSwitcherUpstreamKey1;
             double hue, gain, lift, ysuppress;
             int narrow;
@@ -935,6 +1025,7 @@ namespace Integrated_Presenter
 
         private void ConfigureUSKforPictureInPicture()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
 
             ConfigureDVEPIPSettings();
@@ -944,6 +1035,7 @@ namespace Integrated_Presenter
 
         private void ConfigureDVEPIPSettings()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // set initial fill source to center
             _BMDSwitcherUpstreamKey1.SetInputFill(_config.USKSettings.PIPSettings.DefaultFillSource);
 
@@ -985,6 +1077,7 @@ namespace Integrated_Presenter
 
         private void ForceStateUpdate_PIPSettings()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
@@ -1058,6 +1151,7 @@ namespace Integrated_Presenter
 
         private void ConfigureAudioLevels()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             IBMDSwitcherAudioMixer mixer = (IBMDSwitcherAudioMixer)_BMDSwitcher;
 
             mixer.SetProgramOutGain(_config.AudioSettings.ProgramOutGain);
@@ -1100,6 +1194,7 @@ namespace Integrated_Presenter
 
         public void PerformPresetSelect(int sourceID)
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {sourceID}");
             if (GoodConnection)
             {
                 _BMDSwitcherMixEffectBlock1.SetPreviewInput((long)sourceID);
@@ -1108,6 +1203,7 @@ namespace Integrated_Presenter
 
         public void PerformProgramSelect(int sourceID)
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {sourceID}");
             if (GoodConnection)
             {
                 _BMDSwitcherMixEffectBlock1.SetProgramInput((long)sourceID);
@@ -1116,6 +1212,7 @@ namespace Integrated_Presenter
 
         public void PerformCutTransition()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (GoodConnection)
             {
                 _BMDSwitcherMixEffectBlock1.PerformCut();
@@ -1124,6 +1221,7 @@ namespace Integrated_Presenter
 
         public void PerformAutoTransition()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (GoodConnection)
             {
                 _BMDSwitcherMixEffectBlock1.PerformAutoTransition();
@@ -1132,87 +1230,106 @@ namespace Integrated_Presenter
 
         public void PerformToggleUSK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {(_state.USK1OnAir ? 0 : 1)}");
             _BMDSwitcherUpstreamKey1.SetOnAir(_state.USK1OnAir ? 0 : 1);
         }
 
         public void PerformTieUSK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             //_BMDSwitcherUpstreamKey1.set
         }
 
         public void PerformToggleDSK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {(_state.DSK1OnAir ? 0 : 1)}");
             _BMDSwitcherDownstreamKey1.SetOnAir(_state.DSK1OnAir ? 0 : 1);
         }
         public void PerformTieDSK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {(_state.DSK1Tie ? 0 : 1)}");
             _BMDSwitcherDownstreamKey1.SetTie(_state.DSK1Tie ? 0 : 1);
         }
         public void PerformTakeAutoDSK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherDownstreamKey1.PerformAutoTransition();
         }
         public void PerformAutoOnAirDSK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} 1");
             _BMDSwitcherDownstreamKey1.PerformAutoTransitionInDirection(1);
         }
         public void PerformAutoOffAirDSK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} 0");
             _BMDSwitcherDownstreamKey1.PerformAutoTransitionInDirection(0);
         }
         public void PerformToggleDSK2()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {(_state.DSK2OnAir ? 0 : 1)}");
             _BMDSwitcherDownstreamKey2.SetOnAir(_state.DSK2OnAir ? 0 : 1);
         }
         public void PerformTieDSK2()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {(_state.DSK2Tie ? 0 : 1)}");
             _BMDSwitcherDownstreamKey2.SetTie(_state.DSK2Tie ? 0 : 1);
         }
         public void PerformTakeAutoDSK2()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherDownstreamKey2.PerformAutoTransition();
         }
         public void PerformAutoOnAirDSK2()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} 1");
             _BMDSwitcherDownstreamKey2.PerformAutoTransitionInDirection(1);
         }
         public void PerformAutoOffAirDSK2()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} 0");
             _BMDSwitcherDownstreamKey2.PerformAutoTransitionInDirection(0);
         }
 
         public void PerformToggleFTB()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherMixEffectBlock1.PerformFadeToBlack();
         }
 
         public void Close()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             SwitcherDisconnected();
         }
 
         public void PerformUSK1RunToKeyFrameA()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherFlyKeyParamters.RunToKeyFrame(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameA);
         }
 
         public void PerformUSK1RunToKeyFrameB()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherFlyKeyParamters.RunToKeyFrame(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameB);
         }
 
         public void PerformUSK1RunToKeyFrameFull()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherFlyKeyParamters.RunToKeyFrame(_BMDSwitcherFlyKeyFrame.bmdSwitcherFlyKeyFrameFull);
         }
 
         public void PerformUSK1FillSourceSelect(int sourceID)
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherUpstreamKey1.SetInputFill(sourceID);
         }
 
         void IBMDSwitcherManager.PerformToggleBackgroundForNextTrans()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // only allow deselection if at least one layer is selected
             if (_state.TransNextBackground)
             {
@@ -1239,7 +1356,7 @@ namespace Integrated_Presenter
 
         void IBMDSwitcherManager.PerformToggleKey1ForNextTrans()
         {
-
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
 
             // only allow deselection if at least one layer is selected
             if (_state.TransNextKey1)
@@ -1267,6 +1384,7 @@ namespace Integrated_Presenter
 
         public void SetPIPPosition(BMDUSKDVESettings settings)
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 IBMDSwitcherKeyDVEParameters dveparams = (IBMDSwitcherKeyDVEParameters)_BMDSwitcherUpstreamKey1;
@@ -1295,6 +1413,7 @@ namespace Integrated_Presenter
 
         public void SetPIPKeyFrameA(BMDUSKDVESettings settings)
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 {
@@ -1328,6 +1447,7 @@ namespace Integrated_Presenter
 
         public void SetPIPKeyFrameB(BMDUSKDVESettings settings)
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 {
@@ -1362,6 +1482,7 @@ namespace Integrated_Presenter
 
         public void ConfigureUSK1PIP(BMDUSKDVESettings settings)
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _config.USKSettings.IsDVE = 1;
             _config.USKSettings.IsChroma = 0;
             _config.USKSettings.PIPSettings = settings;
@@ -1372,6 +1493,7 @@ namespace Integrated_Presenter
 
         public void ConfigureUSK1Chroma(BMDUSKChromaSettings settings)
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _config.USKSettings.IsDVE = 0;
             _config.USKSettings.IsChroma = 1;
             _config.USKSettings.ChromaSettings = settings;
@@ -1383,6 +1505,7 @@ namespace Integrated_Presenter
 
         public void PerformOnAirUSK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 _BMDSwitcherUpstreamKey1.SetOnAir(1);
@@ -1391,6 +1514,7 @@ namespace Integrated_Presenter
 
         public void PerformOffAirUSK1()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 _BMDSwitcherUpstreamKey1.SetOnAir(0);
@@ -1399,6 +1523,7 @@ namespace Integrated_Presenter
 
         public void SetUSK1TypeDVE()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
@@ -1408,6 +1533,7 @@ namespace Integrated_Presenter
 
         public void SetUSK1TypeChroma()
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
@@ -1418,15 +1544,18 @@ namespace Integrated_Presenter
         public void PerformSetKey1OnForNextTrans()
         {
 
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
 
         public void PerformSetKey1OffForNextTrans()
         {
 
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
         }
 
         public void PerformAuxSelect(int sourceID)
         {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _parent.Dispatcher.Invoke(() =>
             {
                 _BMDSwitcherAuxInput?.SetInputSource(sourceID);

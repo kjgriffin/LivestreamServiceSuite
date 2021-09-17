@@ -378,6 +378,10 @@ namespace Xenon.Compiler.AST
             {
                 // go verse by verse
                 int versenum = 0;
+
+                // if we want to lock all slides to same size, we need to find max size and then specify it for all generated slides
+
+
                 foreach (var verse in hymn.Verses)
                 {
                     Slide slide = new Slide();

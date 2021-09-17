@@ -52,7 +52,7 @@ namespace Integrated_Presenter
 
         private BuildVersion VersionInfo;
 
-        private readonly ILog _logger = LogManager.GetLogger("MainWLogger");
+        private readonly ILog _logger = LogManager.GetLogger("UserLogger");
 
         public MainWindow()
         {
@@ -2605,15 +2605,18 @@ namespace Integrated_Presenter
                 pres.StartPres();
                 _pres = pres;
                 activepresentation = true;
+                _logger.Info($"Loaded Presentation from {path}");
 
                 // apply config if required
                 if (pres.HasSwitcherConfig)
                 {
+                    _logger.Info($"Presentation loading specified switcher configuration. Re-configuring now.");
                     _config = pres.SwitcherConfig;
                     SetSwitcherSettings();
                 }
                 if (pres.HasUserConfig)
                 {
+                    _logger.Info($"Presentation loading specified setting user settings. Re-configuring now.");
                     LoadUserSettings(pres.UserConfig);
                 }
 
@@ -2623,6 +2626,7 @@ namespace Integrated_Presenter
                 }
                 else
                 {
+                    _logger.Info($"Graphics Engine has no active display window. Creating window now.");
                     _display = new PresenterDisplay(this, false);
                     _display.OnMediaPlaybackTimeUpdated += _display_OnMediaPlaybackTimeUpdated;
                     // start display
@@ -2631,6 +2635,7 @@ namespace Integrated_Presenter
 
                 if (_keydisplay == null && !(_keydisplay?.IsWindowVisilbe ?? false))
                 {
+                    _logger.Info($"Graphics Engine has no active key window. Creating window now.");
                     _keydisplay = new PresenterDisplay(this, true);
                     // no need to get playback event info
                     _keydisplay.Show();
@@ -2799,16 +2804,19 @@ namespace Integrated_Presenter
                 DisableSlidePoolOverrides();
                 if (CurrentSlideMode == 1)
                 {
+                    _logger.Debug("nextSlid() -- Calling SlideDriveVideo_Next");
                     await SlideDriveVideo_Next(Tied);
                 }
                 else if (CurrentSlideMode == 2)
                 {
+                    _logger.Debug("nextSlid() -- skipping next slide");
                     Presentation.SkipNextSlide();
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                 }
                 else
                 {
+                    _logger.Debug("nextSlid() -- overriding next slide");
                     Presentation.OverridePres = false;
                     Presentation.NextSlide();
                     slidesUpdated();
@@ -2822,12 +2830,14 @@ namespace Integrated_Presenter
             {
                 if (CurrentSlideMode == 2)
                 {
+                    _logger.Debug("nextSlid() -- skipping prev slide");
                     Presentation.SkipPrevSlide();
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                 }
                 else
                 {
+                    _logger.Debug("nextSlid() -- going to previous slide");
                     DisableSlidePoolOverrides();
                     Presentation.OverridePres = false;
                     Presentation.PrevSlide();
@@ -2945,9 +2955,9 @@ namespace Integrated_Presenter
         {
             MockConnectSwitcher();
         }
-        private void ClickConnect(object sender, RoutedEventArgs e)
+        private async void ClickConnect(object sender, RoutedEventArgs e)
         {
-            ConnectSwitcher();
+            await ConnectSwitcher();
         }
 
 
@@ -3165,6 +3175,7 @@ namespace Integrated_Presenter
             switcherManager?.Close();
             audioPlayer?.Close();
             pipctrl?.Close();
+            _logger.Info("Integrated Presenter requested to close by USER");
         }
 
         private void ClickTakeSP0(object sender, Slide s, bool replaceMode, bool driven)
