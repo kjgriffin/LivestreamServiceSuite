@@ -2053,10 +2053,10 @@ namespace Integrated_Presenter
                         // doesn't make sense to put preset shot on actions slides. Write it into the script as a @arg1:PresetSelect(#) insead
                         SetupActionsCompleted = false;
                         ActionsCompleted = false;
-                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Starting Setup Actions for Action Slide ({Presentation.CurrentSlide})");
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Starting Setup Actions for Action Slide ({Presentation.CurrentSlide}) <next {Presentation.Next.Title}>");
                         // run stetup actions
                         await ExecuteSetupActions(Presentation.Next);
-                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Finished running Setup Actions for Action Slide ({Presentation.CurrentSlide})");
+                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Finished running Setup Actions for Action Slide ({Presentation.CurrentSlide}) <next {Presentation.Next.Title}>");
 
                         if (Presentation.Next.AutoOnly)
                         {
@@ -2064,7 +2064,7 @@ namespace Integrated_Presenter
                             // There really shouldn't be any need.
                             // We also cant run a script's setup actions immediatley afterward.
                             // again it shouldn't be nessecary, since in both cases you can add it to the fullauto slide's setup actions
-                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- AutoOnly so advancing to NextSlide() from Slide ({Presentation.CurrentSlide})");
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- AutoOnly so advancing to NextSlide() from Slide ({Presentation.CurrentSlide}) <next {Presentation.Next.Title}>");
                             Presentation.NextSlide();
                         }
                         // Perform slide actions
@@ -2284,6 +2284,7 @@ namespace Integrated_Presenter
                 {
                     if (s.Type == SlideType.Action)
                     {
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- About to ExecuteSetupActions() for slide {s.Title}");
                         // Run Setup Actions
                         await ExecuteSetupActions(s);
                         // Execute Slide Actions
@@ -2291,6 +2292,7 @@ namespace Integrated_Presenter
                         Presentation.OverridePres = true;
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- About to ExecuteActionSlide() for slide {s.Title}");
                         await ExecuteActionSlide(s);
                     }
                     else if (s.Type == SlideType.Liturgy)
@@ -2298,11 +2300,13 @@ namespace Integrated_Presenter
                         // turn of usk1 if chroma keyer
                         if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to go OFF AIR on USK1 for slide {s.Title}");
                             switcherManager?.PerformOffAirUSK1();
                         }
                         // make sure slides aren't the program source
                         if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to transition from 'slide' source to preset source for slide {s.Title}");
                             //switcherManager?.PerformAutoTransition();
                             PerformGuardedAutoTransition();
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
@@ -2316,6 +2320,7 @@ namespace Integrated_Presenter
                         // Handle a postshot selection by setting up the preset
                         if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to set preset source for slide's postset for slide {s.Title}");
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
                     }
@@ -2324,6 +2329,7 @@ namespace Integrated_Presenter
                         // turn of downstream keys
                         if (switcherState.DSK1OnAir)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to go OFF AIR with DSK1 for set for slide {s.Title}");
                             switcherManager?.PerformAutoOffAirDSK1();
                             await Task.Delay((_config.DownstreamKey1Config.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
@@ -2331,23 +2337,28 @@ namespace Integrated_Presenter
                         // set usk1 to chroma (using curently loaded settings)
                         if (switcherState.USK1OnAir)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to go ON AIR with USK1 for slide slide {s.Title}");
                             switcherManager?.PerformOffAirUSK1();
                         }
                         if (switcherState.USK1KeyType != 2)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to configure USK1 for chromakey for slide {s.Title}");
                             switcherManager?.SetUSK1TypeChroma();
                         }
                         // select fill source to be slide, since slide is marked as key it must be the key source
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to set USK1 fill source to 'slide' slide {s.Title}");
                         switcherManager?.PerformUSK1FillSourceSelect(_config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId);
 
                         // pull slide off air (and then reset the preview to the old source)
                         long previewsource = switcherState.PresetID;
                         if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to take 'slide' source OFF AIR and transition to preset source for slide {s.Title}");
                             //switcherManager?.PerformAutoTransition();
                             PerformGuardedAutoTransition();
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to set preset source back to {previewsource} for slide {s.Title}");
                         switcherManager?.PerformPresetSelect((int)previewsource);
 
                         // set slide
@@ -2360,11 +2371,13 @@ namespace Integrated_Presenter
                         // start mediaplayout
                         if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Begin Media playback for slide {s.Title}");
                             playMedia();
                             await Task.Delay(_config?.PrerollSettings.ChromaVideoPreRoll ?? 0);
                         }
 
                         // turn on chroma key once playout has started
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to go ON AIR on USK1 for slide {s.Title}");
                         switcherManager?.PerformOnAirUSK1();
 
                     }
@@ -2373,10 +2386,12 @@ namespace Integrated_Presenter
                         // turn of usk1 if chroma keyer
                         if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to go OFF AIR on USK1 for slide {s.Title}");
                             switcherManager?.PerformOffAirUSK1();
                         }
                         if (switcherState.DSK1OnAir)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Commanding switcher to go OFF AIR on DSK1 for slide {s.Title}");
                             switcherManager?.PerformAutoOffAirDSK1();
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
@@ -2387,6 +2402,7 @@ namespace Integrated_Presenter
 
                         if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Begin Media playback for slide {s.Title}");
                             playMedia();
                             await Task.Delay(_config?.PrerollSettings.VideoPreRoll ?? 0);
                         }
@@ -2394,9 +2410,11 @@ namespace Integrated_Presenter
                         bool waitfortrans = false;
                         if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Command switcher to select 'slide' for preset source for slide {s.Title}");
                             ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                             await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
                             //switcherManager?.PerformAutoTransition();
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Command switcher to transition 'slide' form preset source to program source for slide {s.Title}");
                             PerformGuardedAutoTransition();
                             waitfortrans = true;
                         }
@@ -2405,6 +2423,7 @@ namespace Integrated_Presenter
                         // wait for auto transition to clear
                         if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Command switcher to select preset source for postset shot for slide {s.Title}");
                             if (waitfortrans)
                             {
                                 await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
@@ -2417,6 +2436,7 @@ namespace Integrated_Presenter
                 {
                     // just go to the next slide
                     // next slide
+                    _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. Take NextSlide() for slide {s.Title}");
                     Presentation.NextSlide();
                     slidesUpdated();
                     PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
@@ -2429,6 +2449,7 @@ namespace Integrated_Presenter
 
                 }
                 // At this point we've switched to the slide
+                _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. About to call SlideDriveVideo_Action() for slide {s.Title}");
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
             }
 
@@ -2455,16 +2476,19 @@ namespace Integrated_Presenter
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (Presentation?.EffectiveCurrent != null)
             {
+                _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. About to call DisableSlidePoolOverrides() for slide {Presentation.EffectiveCurrent.Title}");
                 DisableSlidePoolOverrides();
                 currentpoolsource = null;
                 if (Presentation.EffectiveCurrent.AutomationEnabled)
                 {
                     if (Presentation.EffectiveCurrent.Type == SlideType.Action)
                     {
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. About to re-run SetupActions for slide {Presentation.EffectiveCurrent.Title}");
                         // Re-run setup actions
                         await ExecuteSetupActions(Presentation.EffectiveCurrent);
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. About to re-run Actions for slide {Presentation.EffectiveCurrent.Title}");
                         // Run Actions
                         await ExecuteActionSlide(Presentation.EffectiveCurrent);
                     }
@@ -2473,23 +2497,27 @@ namespace Integrated_Presenter
                         // turn of usk1 if chroma keyer
                         if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to go OFF AIR for USK1 for slide {Presentation.EffectiveCurrent.Title}");
                             switcherManager?.PerformOffAirUSK1();
                         }
                         // make sure slides aren't the program source
                         if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to transition from 'slide' as program source to preset source for slide {Presentation.EffectiveCurrent.Title}");
                             //switcherManager?.PerformAutoTransition();
                             PerformGuardedAutoTransition();
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
                         slidesUpdated();
                         PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to go ON AIR for DSK1 for slide {Presentation.EffectiveCurrent.Title}");
                         switcherManager?.PerformAutoOnAirDSK1();
 
                         // Handle a postshot selection by setting up the preset
                         // wait for auto transition to clear
                         if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to select preset source for slide's postset shot for slide {Presentation.EffectiveCurrent.Title}");
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
                     }
@@ -2498,6 +2526,7 @@ namespace Integrated_Presenter
                         // turn of downstream keys
                         if (switcherState.DSK1OnAir)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to go OFF AIR for DSK1 for slide {Presentation.EffectiveCurrent.Title}");
                             switcherManager?.PerformAutoOffAirDSK1();
                             await Task.Delay((_config.DownstreamKey1Config.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
@@ -2505,23 +2534,28 @@ namespace Integrated_Presenter
                         // set usk1 to chroma (using curently loaded settings)
                         if (switcherState.USK1OnAir)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to go OFF AIR for USK1 for slide {Presentation.EffectiveCurrent.Title}");
                             switcherManager?.PerformOffAirUSK1();
                         }
                         if (switcherState.USK1KeyType != 2)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to configure USK1 as chromakey for slide {Presentation.EffectiveCurrent.Title}");
                             switcherManager?.SetUSK1TypeChroma();
                         }
                         // select fill source to be slide, since slide is marked as key it must be the key source
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to set USK1 fill source to 'slide' for slide {Presentation.EffectiveCurrent.Title}");
                         switcherManager?.PerformUSK1FillSourceSelect(_config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId);
 
                         // pull slide off air (and then reset the preview to the old source)
                         long previewsource = switcherState.PresetID;
                         if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to transition program source from 'slide' to preset source for slide {Presentation.EffectiveCurrent.Title}");
                             //switcherManager?.PerformAutoTransition();
                             PerformGuardedAutoTransition();
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to select preset source to {previewsource} for slide {Presentation.EffectiveCurrent.Title}");
                         switcherManager?.PerformPresetSelect((int)previewsource);
 
                         // set slide
@@ -2531,11 +2565,13 @@ namespace Integrated_Presenter
                         // start mediaplayout
                         if (Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Begin media playback for slide {Presentation.EffectiveCurrent.Title}");
                             playMedia();
                             await Task.Delay(_config?.PrerollSettings.ChromaVideoPreRoll ?? 0);
                         }
 
                         // turn on chroma key once playout has started
+                        _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to go ON AIR for USK1 for slide {Presentation.EffectiveCurrent.Title}");
                         switcherManager?.PerformOnAirUSK1();
 
                     }
@@ -2544,10 +2580,12 @@ namespace Integrated_Presenter
                         // turn of usk1 if chroma keyer
                         if (switcherState.USK1OnAir && switcherState.USK1KeyType == 2)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to go OFF AIR for USK1 for slide {Presentation.EffectiveCurrent.Title}");
                             switcherManager?.PerformOffAirUSK1();
                         }
                         if (switcherState.DSK1OnAir)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to go OFF AIR for DSK1 for slide {Presentation.EffectiveCurrent.Title}");
                             switcherManager?.PerformAutoOffAirDSK1();
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
@@ -2556,6 +2594,7 @@ namespace Integrated_Presenter
 
                         if (Presentation.EffectiveCurrent.Type == SlideType.Video)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Begin media playback for slide {Presentation.EffectiveCurrent.Title}");
                             playMedia();
                             await Task.Delay(_config?.PrerollSettings.VideoPreRoll ?? 0);
                         }
@@ -2563,8 +2602,10 @@ namespace Integrated_Presenter
                         bool waitfortrans = false;
                         if (switcherState.ProgramID != _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to select 'slide' as preset source for slide {Presentation.EffectiveCurrent.Title}");
                             ClickPreset(_config.Routing.Where(r => r.KeyName == "slide").First().ButtonId);
                             await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to transition preset source 'slide' to program source for slide {Presentation.EffectiveCurrent.Title}");
                             PerformGuardedAutoTransition();
                         }
 
@@ -2572,6 +2613,7 @@ namespace Integrated_Presenter
                         // wait for auto transition to clear
                         if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
                         {
+                            _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to select preset source for slide's postset shot for slide {Presentation.EffectiveCurrent.Title}");
                             if (waitfortrans)
                             {
                                 await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
@@ -2582,6 +2624,7 @@ namespace Integrated_Presenter
                 }
                 // Do nothing for nodrive slides
                 // Do Action on current slide
+                _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. About to call SlideDriveVideo_Action() for slide {Presentation.EffectiveCurrent.Title}");
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
             }
 
