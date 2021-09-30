@@ -23,6 +23,9 @@
                 <MenuItem Click="ClickOpenJSON" Header="Open from JSON"></MenuItem>
                 <MenuItem Click="ClickSave" Header="Save"></MenuItem>
                 <MenuItem Click="ClickSaveJSON" Header="Save JSON"></MenuItem>
+                <Separator></Separator>
+                <MenuItem Click="ClickTrustyOpen" Header="Trusty Open"></MenuItem>
+                <MenuItem Click="ClickTrustySave" Header="Trusty Save"></MenuItem>
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Name="mipreviewslide" Click="ClickTogglePreviewSlide" Header="Preview Slides" IsChecked="true" IsCheckable="true"></MenuItem>

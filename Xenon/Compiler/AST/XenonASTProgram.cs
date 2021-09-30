@@ -20,7 +20,7 @@ namespace Xenon.Compiler
                 Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression {item.Command.GetType()}", ErrorName = "Project Generation Debug", Generator = "XenonASTProgram:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
                 item.Generate(project, this, Logger);
                 prog++;
-                progress.Report(cprog + (((prog * 100) / total) * ((100 - cprog) / 100)));
+                progress?.Report(cprog + (((prog * 100) / total) * ((100 - cprog) / 100)));
             }
         }
 

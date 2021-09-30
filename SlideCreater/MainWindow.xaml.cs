@@ -24,6 +24,8 @@ using Xenon.SlideAssembly;
 using Xenon.AssetManagment;
 using System.Diagnostics;
 using SlideCreater.ViewControls;
+using Xenon.SaveLoad;
+using System.IO.Compression;
 
 namespace SlideCreater
 {
@@ -787,7 +789,8 @@ namespace SlideCreater
             var res = MessageBox.Show("Do you want to save your changes?", "Save Changes", MessageBoxButton.YesNoCancel);
             if (res == MessageBoxResult.Yes)
             {
-                await SaveProject();
+                //await SaveProject();
+                await TrustySave();
                 return true;
             }
             else if (res == MessageBoxResult.No)
@@ -971,6 +974,7 @@ namespace SlideCreater
                 parser.CompileToXenon();
                 ActionState = ActionState.Downloading;
                 await parser.LoadWebAssets(_proj.CreateImageAsset);
+                Assets = _proj.Assets;
                 AssetsChanged();
                 ShowProjectAssets();
                 ActionState = ActionState.Ready;
@@ -1018,6 +1022,130 @@ namespace SlideCreater
 
             // add all assets
             AddNamedAssetsFromPaths(assets);
+
+        }
+
+        private async void ClickTrustySave(object sender, RoutedEventArgs e)
+        {
+            await TrustySave();
+        }
+
+        private async Task TrustySave()
+        {
+            var saveprogress = new Progress<int>(percent =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    ActionState = ActionState.Saving;
+
+                    switch (percent)
+                    {
+                        case var expression when percent < 1:
+                            tbSubActionStatus.Text = $"Saving Project [create readme]: {percent}%";
+                            break;
+                        case var expression when percent >= 1 && percent < 5:
+                            tbSubActionStatus.Text = $"Saving Project [create assets folder]: {percent}%";
+                            break;
+                        case var expression when percent >= 5 && percent < 90:
+                            tbSubActionStatus.Text = $"Saving Project [copying assets]: {percent}%";
+                            break;
+                        case var expression when percent >= 90 && percent < 95:
+                            tbSubActionStatus.Text = $"Saving Project [creating assets map]: {percent}%";
+                            break;
+                        case var expression when percent >= 95:
+                            tbSubActionStatus.Text = $"Saving Project [copying source code]: {percent}%";
+                            break;
+                        default:
+                            tbSubActionStatus.Text = $"Saving Project: {percent}%";
+                            break;
+                    }
+                    pbActionStatus.Value = percent;
+                });
+            });
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Save Project";
+            sfd.DefaultExt = "zip";
+            sfd.AddExtension = false;
+            sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}.trusty";
+            if (sfd.ShowDialog() == true)
+            {
+                await Xenon.SaveLoad.TrustySave.SaveTrustily(_proj, sfd.FileName, saveprogress, VersionInfo.ToString());
+                Dispatcher.Invoke(() =>
+                {
+                    dirty = false;
+                    ProjectState = ProjectState.Saved;
+                    ActionState = ActionState.Ready;
+                });
+            }
+        }
+
+        private async void ClickTrustyOpen(object sender, RoutedEventArgs e)
+        {
+            await NewProject();
+
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Load Trusty Project";
+            ofd.DefaultExt = "zip";
+            ofd.Filter = "Trusty Projects (*.trusty.zip)|*.trusty.zip";
+            if (ofd.ShowDialog() == true)
+            {
+                await TrustyOpen(ofd.FileName);
+            }
+        }
+
+        private async Task TrustyOpen(string filename)
+        {
+            string sourcecode = "";
+            using (ZipArchive archive = ZipFile.OpenRead(filename))
+            {
+                // dump source code
+                var sourcecodefile = archive.GetEntry("sourcecode.txt");
+                if (sourcecodefile != null)
+                {
+                    using (StreamReader sr = new StreamReader(sourcecodefile.Open()))
+                    {
+                        sourcecode = await sr.ReadToEndAsync();
+                    }
+                }
+                TbInput.SetText(sourcecode);
+                Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
+                var assetfilemapfile = archive.GetEntry("assets.json");
+                if (assetfilemapfile != null)
+                {
+                    using (StreamReader sr = new StreamReader(assetfilemapfile.Open()))
+                    {
+                        string json = await sr.ReadToEndAsync();
+                        assetfilemap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    }
+                }
+
+                archive.ExtractToDirectory(_proj.LoadTmpPath);
+
+                AssetsChanged();
+                // add assets
+                foreach (var assetkey in assetfilemap.Keys)
+                {
+                    var file = assetfilemap[assetkey];
+                    var tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, file);
+                    ProjectAsset asset = new ProjectAsset();
+                    if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
+                    {
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio };
+                    }
+                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
+                    {
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
+                    }
+                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
+                    {
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
+                    }
+                    Assets.Add(asset);
+                    _proj.Assets.Add(asset);
+                    ShowProjectAssets();
+                }
+            }
 
         }
     }
