@@ -57,6 +57,9 @@ namespace Xenon.Renderer
                 res.Postset = (int)s.Data["postset"];
             }
 
+            // we can premultiple here if nessecary
+            res.Bitmap = res.Bitmap?.PreMultipleWithAlpha(res.KeyBitmap);
+
             return res;
         }
 

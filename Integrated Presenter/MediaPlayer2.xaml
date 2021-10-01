@@ -44,5 +44,10 @@
                 <TextBlock Margin="1" Name="SequenceLabel" Foreground="Black" HorizontalAlignment="Center">Automated Slide</TextBlock>
             </Viewbox>
         </Grid>
+        <Rectangle Name="backgroundfill" Grid.RowSpan="2" Panel.ZIndex="-1">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="Black"></SolidColorBrush>
+            </Rectangle.Fill>
+        </Rectangle>
     </Grid>
 </UserControl>

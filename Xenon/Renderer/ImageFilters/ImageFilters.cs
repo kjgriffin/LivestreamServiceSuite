@@ -298,6 +298,35 @@ namespace Xenon.Renderer.ImageFilters
             return (_b, _k);
         }
 
+        /// <summary>
+        /// Returns a new Bitmap the same size as the src, but with each pixels' rbg values premultipled against the alphakey.
+        /// </summary>
+        /// <param name="src">Source Bitmap to premultiply</param>
+        /// <param name="alphakey">The alpha channel to premultipily against. Is assumed to be the same size and grayscale.</param>
+        /// <returns>The premultipled Bitmap image with an alpha channel.</returns>
+        public static Bitmap PreMultipleWithAlpha(this Bitmap src, Bitmap alphakey)
+        {
+            if (src.Size != alphakey.Size)
+            {
+                return src;
+            }
+
+            Bitmap b = new Bitmap(src.Width, src.Height);
+            for (int y = 0; y < src.Height; y++)
+            {
+                for (int x = 0; x < src.Width; x++)
+                {
+                    Color color = src.GetPixel(x, y);
+                    Color acolor = alphakey.GetPixel(x, y);
+                    // assume alpha r == g == b (grayscale)
+                    int alpha = acolor.R;
+                    b.SetPixel(x, y, Color.FromArgb(alpha, (int)(alpha / 255.0d * (double)color.R), (int)(alpha / 255.0d * (double)color.G), (int)(alpha / 255.0d * (double)color.B)));
+                }
+            }
+
+            return b;
+        }
+
 
     }
 }
