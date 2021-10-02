@@ -42,6 +42,10 @@ namespace Integrated_Presenter
             mediaPlayerB.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdateB;
             mediaPlayerC.OnMediaPlaybackTimeUpdate += MediaPlayer_OnMediaPlaybackTimeUpdateC;
 
+            mediaPlayerA.ShowTileBackground(false);
+            mediaPlayerB.ShowTileBackground(false);
+            mediaPlayerC.ShowTileBackground(false);
+
             activeplayer = 2;
             prevplayer = 1;
             nextplayer = 3;

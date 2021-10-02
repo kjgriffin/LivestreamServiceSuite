@@ -156,6 +156,18 @@ namespace Integrated_Presenter
             SetPostset(_postsetid);
         }
 
+        public void ShowTileBackground(bool show = true)
+        {
+            if (show)
+            {
+                backgroundfill.Style = Resources["CheckBackgroundFill"] as Style;
+            }
+            else
+            {
+                backgroundfill.Fill = new SolidColorBrush(Colors.Black);
+            }
+        }
+
         private void VideoPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
             if (AutoSilentPlayback)

@@ -44,7 +44,13 @@
                 <TextBlock Margin="1" Name="SequenceLabel" Foreground="Black" HorizontalAlignment="Center">Automated Slide</TextBlock>
             </Viewbox>
         </Grid>
-        <Rectangle Name="backgroundfill" Grid.RowSpan="2" Panel.ZIndex="-1">
+        <Rectangle Name="backgroundfill" Grid.RowSpan="2" Panel.ZIndex="-1" Style="{StaticResource CheckBackgroundFill}">
+            <!--<Rectangle.Fill>-->
+                <!--<SolidColorBrush Color="Black"></SolidColorBrush>-->
+                <!--<DrawingBrush ></DrawingBrush>-->
+            <!--</Rectangle.Fill>-->
+        </Rectangle>
+        <Rectangle Name="blackbase" Grid.RowSpan="2" Panel.ZIndex="-2">
             <Rectangle.Fill>
                 <SolidColorBrush Color="Black"></SolidColorBrush>
             </Rectangle.Fill>

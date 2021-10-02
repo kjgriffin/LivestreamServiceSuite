@@ -21,6 +21,23 @@
         </Style>
 
 
+        <Style x:Key="CheckBackgroundFill" TargetType="{x:Type Rectangle}">
+            <Setter Property="Fill">
+                <Setter.Value>
+                    <DrawingBrush TileMode="Tile" Viewport="0,0,32,32" ViewportUnits="Absolute">
+                        <DrawingBrush.Drawing>
+                            <GeometryDrawing Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0z" Brush="LightGray"/>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Opacity">
+                <Setter.Value>0.1</Setter.Value>
+            </Setter>
+        </Style>
+
+
+
 
         <ControlTemplate x:Key="DarkMenuItemControl" TargetType="{x:Type MenuItem}">
             <Border x:Name="templateRoot" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
@@ -127,15 +144,15 @@
             <Setter Property="Background">
                 <Setter.Value>
                     <SolidColorBrush Color="White" Opacity="0.5"></SolidColorBrush>
-                </Setter.Value> 
+                </Setter.Value>
             </Setter>
             <Setter Property="Border.Effect">
                 <Setter.Value>
                     <DropShadowEffect ShadowDepth="3" Direction="-120" Color="White" Opacity="0.9" BlurRadius="2"/>
-                </Setter.Value> 
+                </Setter.Value>
             </Setter>
         </Style>
-        
+
         <Style x:Key="UIShortcut" TargetType="TextBlock">
             <Setter Property="Foreground" Value="Black"></Setter>
             <Setter Property="Panel.ZIndex" Value="2"></Setter>
@@ -143,9 +160,9 @@
             <Setter Property="VerticalAlignment" Value="Center"></Setter>
             <Setter Property="IsHitTestVisible" Value="False"></Setter>
             <!--<Setter Property="TextBlock.Effect">-->
-                <!--<Setter.Value>-->
-                    <!--<DropShadowEffect ShadowDepth="4" Direction="-120" Color="Gray" Opacity="0.8" BlurRadius="1"/>-->
-                <!--</Setter.Value>--> 
+            <!--<Setter.Value>-->
+            <!--<DropShadowEffect ShadowDepth="4" Direction="-120" Color="Gray" Opacity="0.8" BlurRadius="1"/>-->
+            <!--</Setter.Value>-->
             <!--</Setter>-->
             <Setter Property="FontSize" Value="50"></Setter>
             <Setter Property="FontWeight" Value="Bold"></Setter>
