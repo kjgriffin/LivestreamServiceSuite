@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Text;
 using Xenon.Helpers;
 
@@ -323,6 +325,77 @@ namespace Xenon.Renderer.ImageFilters
                     b.SetPixel(x, y, Color.FromArgb(alpha, (int)(alpha / 255.0d * (double)color.R), (int)(alpha / 255.0d * (double)color.G), (int)(alpha / 255.0d * (double)color.B)));
                 }
             }
+
+            return b;
+        }
+
+        /// <summary>
+        /// Returns a new Bitmap the same size as the src, but with each pixels' rbg values premultipled against the alphakey.
+        /// </summary>
+        /// <param name="src">Source Bitmap to premultiply</param>
+        /// <param name="alphakey">The alpha channel to premultipily against. Is assumed to be the same size and grayscale.</param>
+        /// <returns>The premultipled Bitmap image with an alpha channel.</returns>
+        public static Bitmap PreMultiplyWithAlphaFast(this Bitmap src, Bitmap alphakey)
+        {
+            if (src.Size != alphakey.Size)
+            {
+                return src;
+            }
+
+            Bitmap b = new Bitmap(src.Width, src.Height);
+
+            BitmapData srcdata = src.LockBits(new Rectangle(0, 0, src.Width, src.Height), ImageLockMode.ReadOnly, src.PixelFormat);
+            BitmapData alphadata = alphakey.LockBits(new Rectangle(0, 0, alphakey.Width, alphakey.Height), ImageLockMode.ReadOnly, alphakey.PixelFormat);
+            BitmapData newdata = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), ImageLockMode.WriteOnly, b.PixelFormat);
+
+            int srcbytesperpixel = Bitmap.GetPixelFormatSize(src.PixelFormat) / 8;
+            int alphadatabytesperpixel = Bitmap.GetPixelFormatSize(alphakey.PixelFormat) / 8;
+            int newdatabytesperpixel = Bitmap.GetPixelFormatSize(b.PixelFormat) / 8;
+
+            byte[] srcpixels = new byte[srcdata.Stride * src.Height];
+            byte[] alphapixels = new byte[alphadata.Stride * alphakey.Height];
+            byte[] newpixels = new byte[newdata.Stride * b.Height];
+
+            IntPtr ptrFirstSrcPixel = srcdata.Scan0;
+            IntPtr ptrFirstAlphaPixel = alphadata.Scan0;
+            IntPtr ptrFirstNewPixel = newdata.Scan0;
+
+            Marshal.Copy(ptrFirstSrcPixel, srcpixels, 0, srcpixels.Length);
+            Marshal.Copy(ptrFirstAlphaPixel, alphapixels, 0, alphapixels.Length);
+
+            int srcHeightInPixels = srcdata.Height;
+            int srcWidthInPixels = srcdata.Width * srcbytesperpixel;
+            int alphaHeightInPixels = alphadata.Height;
+            int alphaWidthInPixels = alphadata.Width * alphadatabytesperpixel;
+            int newHeightInPixels = newdata.Height;
+            int newWidthInPixels = newdata.Width * newdatabytesperpixel;
+
+            for (int y = 0; y < srcHeightInPixels; y++)
+            {
+                int currentLine = y * srcdata.Stride;
+                for (int x = 0; x < srcWidthInPixels; x = x + srcbytesperpixel)
+                {
+                    int srcBlue = srcpixels[currentLine + x];
+                    int srcGreen = srcpixels[currentLine + x + 1];
+                    int srcRed = srcpixels[currentLine + x + 2];
+
+                    int alphaBlue = alphapixels[currentLine + x];
+                    int alphaGreen = alphapixels[currentLine + x + 1];
+                    int alphaRed = alphapixels[currentLine + x + 2];
+
+                    double alpha = (double)alphaBlue / 255.0d;
+                    newpixels[currentLine + x] = (byte)(alpha * srcBlue);
+                    newpixels[currentLine + x + 1] = (byte)(alpha * srcGreen);
+                    newpixels[currentLine + x + 2] = (byte)(alpha * srcRed);
+                    newpixels[currentLine + x + 3] = (byte)(alphaBlue);
+                }
+            }
+
+            Marshal.Copy(newpixels, 0, ptrFirstNewPixel, newpixels.Length);
+
+            src.UnlockBits(srcdata);
+            alphakey.UnlockBits(alphadata);
+            b.UnlockBits(newdata);
 
             return b;
         }
