@@ -33,7 +33,8 @@ def main():
     print("build version: {0}".format(bnumstr))
 
     # build SlideCreater
-    buildcmd_slidecreater = 'dotnet publish SlideCreater -c Release -p:PublishDir=.\..\publish\{0}\SlideCreater -p:PublishReadyToRun=true -p:PublishSingleFile=true --self-contained true -r win-x64-aot'.format(bnumstr)
+    #buildcmd_slidecreater = 'dotnet publish SlideCreater -c Release -p:PublishDir=.\..\publish\{0}\SlideCreater -p:PublishReadyToRun=true -p:PublishSingleFile=true --self-contained true -r win-x64-aot'.format(bnumstr)
+    buildcmd_slidecreater = 'msbuild "SlideCreater" -r /t:publish /p:PublishDir=".\..\publish\{0}\SlideCreater" /p:Configuration=Release /p:SelfContained=true /p:RuntimeIdentifier=win-x64-aot /p:PublishSingleFile=true'.format(bnumstr)
     os.system(buildcmd_slidecreater) 
     # rename with build number
     cwd = os.getcwd()
