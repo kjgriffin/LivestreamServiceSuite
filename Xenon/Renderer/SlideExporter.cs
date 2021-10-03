@@ -5,6 +5,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using Xenon.Compiler;
+using System.Linq;
+using System.Text.Json;
 
 namespace Xenon.Renderer
 {
@@ -61,6 +63,24 @@ namespace Xenon.Renderer
                 }
 
             }
+
+            // generate non-standard config file to load BMD switcher for DSK1 to use pre-multipled key if rendered for premultipled alpha
+            if (proj.ProjectVariables.TryGetValue("global.rendermode.alpha", out List<string> rendermode))
+            {
+                if (rendermode.Any(s => s == "premultiplied"))
+                {
+                    var config = Configurations.SwitcherConfig.DefaultConfig.GetDefaultConfig();
+                    config.DownstreamKey1Config.IsPremultipled = 1;
+                    string json = JsonSerializer.Serialize(config);
+                    string filename = Path.Join(directory, $"BMDSwitcherConfig.json");
+                    using (StreamWriter sw = new StreamWriter(filename, false))
+                    {
+                        sw.Write(json);
+                    }
+                }
+            }
+
+
         }
     }
 }
