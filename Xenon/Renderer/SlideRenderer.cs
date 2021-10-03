@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text;
 using Xenon.Compiler;
 using Xenon.Renderer.ImageFilters;
+using System.Linq;
 
 namespace Xenon.Renderer
 {
@@ -49,7 +50,7 @@ namespace Xenon.Renderer
         {
             var res = _RenderSlide(s, Messages);
             res.Number = s.Number;
-            
+
             // attach Postset
             if (s.Data.ContainsKey("postset"))
             {
@@ -58,7 +59,13 @@ namespace Xenon.Renderer
             }
 
             // we can premultiple here if nessecary
-            res.Bitmap = res.Bitmap?.PreMultipleWithAlpha(res.KeyBitmap);
+            if (_project.ProjectVariables.TryGetValue("global.rendermode.alpha", out List<string> rendermode))
+            {
+                if (rendermode.Any(s => s == "premultiplied"))
+                {
+                    res.Bitmap = res.Bitmap?.PreMultiplyWithAlphaFast(res.KeyBitmap);
+                }
+            }
 
             return res;
         }
