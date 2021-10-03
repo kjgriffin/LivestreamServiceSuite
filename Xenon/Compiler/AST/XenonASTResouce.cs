@@ -32,6 +32,7 @@ namespace Xenon.Compiler
             };
             res.Format = SlideFormat.ResourceCopy;
             res.Asset = project.Assets.Find(p => p.Name == AssetName).CurrentPath;
+            res.Data["resource.name"] = AssetName;
             if (Assettype == "audio")
             {
                 res.MediaType = MediaType.Audio;

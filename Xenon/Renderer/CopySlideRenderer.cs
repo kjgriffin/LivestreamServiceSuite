@@ -19,7 +19,15 @@ namespace Xenon.Renderer
             // only do audio for now
             res.MediaType = MediaType.Audio;
             res.RenderedAs = "Resource";
-            res.Name = Path.GetFileNameWithoutExtension(slide.Asset);
+            if (slide.Data.TryGetValue("resource.name", out object name))
+            {
+                res.Name = (string)name;
+            }
+            else
+            {
+                res.Name = Path.GetFileNameWithoutExtension(slide.Asset);
+                messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = $"Resource name was not specified. Will use original file name {res.Name}, but this may not produce the expected result.", ErrorName = "Resource Name Mismatch", Generator = "CopySlideRenderer", Inner = "", Level = Compiler.XenonCompilerMessageType.Warning, Token = "" });
+            }
             res.CopyExtension = Path.GetExtension(slide.Asset);
             res.AssetPath = slide.Asset;
             return res;
