@@ -22,15 +22,31 @@ namespace Integrated_Presenter
         Action<BMDUSKDVESettings> SetPIPOnSwitcher;
         Action<BMDUSKDVESettings> SetPIPKeyframeAOnSwitcher;
         Action<BMDUSKDVESettings> SetPIPKeyframeBOnSwitcher;
+        Func<int, int> ConvertButtonToSourceID;
+
         MainWindow _parent;
-        public PIPControl(MainWindow parent, Action<BMDUSKDVESettings> setpiponswitcher, Action<BMDUSKDVESettings> setpipkeyaonswitcher, Action<BMDUSKDVESettings> setpipkeybonswitcher, BMDUSKDVESettings current)
+        public PIPControl(MainWindow parent, Action<BMDUSKDVESettings> setpiponswitcher, Action<BMDUSKDVESettings> setpipkeyaonswitcher, Action<BMDUSKDVESettings> setpipkeybonswitcher, BMDUSKDVESettings current, long? USK1FillSource, Func<int, int> convertbuttontosourceid)
         {
             InitializeComponent();
+
+            pipfills[0] = preset_PIP_1;
+            pipfills[1] = preset_PIP_2;
+            pipfills[2] = preset_PIP_3;
+            pipfills[3] = preset_PIP_4;
+            pipfills[4] = preset_PIP_5;
+            pipfills[5] = preset_PIP_6;
+            pipfills[6] = preset_PIP_7;
+            pipfills[7] = preset_PIP_8;
+
             _parent = parent;
             SetPIPOnSwitcher = setpiponswitcher;
             SetPIPKeyframeAOnSwitcher = setpipkeyaonswitcher;
             SetPIPKeyframeBOnSwitcher = setpipkeybonswitcher;
-            PIPSettingsUpdated(current);
+            ConvertButtonToSourceID = convertbuttontosourceid;
+            PIPSettingsUpdated(current, USK1FillSource ?? 0);
+
+            presetfillsource = (int)USK1FillSource;
+
             CheckIfAtTarget();
             _parent.ForceStateUpdateOnSwitcher();
         }
@@ -38,13 +54,15 @@ namespace Integrated_Presenter
         public bool HasClosed { get; set; } = false;
 
 
-        public void PIPSettingsUpdated(BMDUSKDVESettings state)
+        public void PIPSettingsUpdated(BMDUSKDVESettings state, long USK1FillSource)
         {
             truepipxoff = state.Current.PositionX;
             truepipyoff = state.Current.PositionY;
             truepipscale = Math.Max(state.Current.SizeX, state.Current.SizeY);
-            truepipmlr = state.IsMasked == 1 ? Math.Max(state.MaskLeft, state.MaskRight) : 0;
-            truepipmtb = state.IsMasked == 1 ? Math.Max(state.MaskTop, state.MaskBottom) : 0;
+            truepipml = state.IsMasked == 1 ? state.MaskLeft : 0;
+            truepipmr = state.IsMasked == 1 ? state.MaskRight : 0;
+            truepipmt = state.IsMasked == 1 ? state.MaskTop : 0;
+            truepipmb = state.IsMasked == 1 ? state.MaskBottom : 0;
 
             keyapipscale = Math.Max(state.KeyFrameA.SizeX, state.KeyFrameA.SizeY);
             keyapipx = state.KeyFrameA.PositionX;
@@ -53,6 +71,8 @@ namespace Integrated_Presenter
             keybpipscale = Math.Max(state.KeyFrameB.SizeX, state.KeyFrameB.SizeY);
             keybpipx = state.KeyFrameB.PositionX;
             keybpipy = state.KeyFrameB.PositionY;
+
+            currentfillsource = (int)USK1FillSource;
 
             CheckIfAtTarget();
 
@@ -74,6 +94,8 @@ namespace Integrated_Presenter
 
         bool enableKeyFrameFeatures = false;
 
+
+        Border[] pipfills = new Border[8];
 
         private void UpdateUI()
         {
@@ -110,25 +132,31 @@ namespace Integrated_Presenter
             }
 
             // TODO: adjust width/height to account for masking
-            viewbox.Width = Math.Max((displaygrid.Width * pipscale) - ((displaygrid.Width * pipscale) * (pipmlr * 2 / xrange)), 0);
-            viewbox.Height = Math.Max((displaygrid.Height * pipscale) - ((displaygrid.Height * pipscale) * (pipmtb * 2 / yrange)), 0);
+            viewbox.Width = Math.Max((displaygrid.Width * pipscale) - ((displaygrid.Width * pipscale) * ((pipml + pipmr) / xrange)), 0);
+            viewbox.Height = Math.Max((displaygrid.Height * pipscale) - ((displaygrid.Height * pipscale) * ((pipmt + pipmb) / yrange)), 0);
 
-            trueviewbox.Width = Math.Max((displaygrid.Width * truepipscale) - ((displaygrid.Width * truepipscale) * (truepipmlr * 2 / xrange)), 0);
-            trueviewbox.Height = Math.Max((displaygrid.Height * truepipscale) - ((displaygrid.Height * truepipscale) * (truepipmtb * 2 / yrange)), 0);
+            trueviewbox.Width = Math.Max((displaygrid.Width * truepipscale) - ((displaygrid.Width * truepipscale) * ((truepipml + truepipmr) / xrange)), 0);
+            trueviewbox.Height = Math.Max((displaygrid.Height * truepipscale) - ((displaygrid.Height * truepipscale) * ((truepipmt + truepipmb) / yrange)), 0);
 
 
             // position the rectangles
             double x = pipxoff * (displaygrid.Width / xrange);
             double y = -pipyoff * (displaygrid.Height / yrange);
 
+            double slewx = x + (((pipml - pipmr) / 2) * pipscale * (displaygrid.Width / xrange));
+            double slewy = y + (((pipmt - pipmb) / 2) * pipscale * (displaygrid.Height / yrange));
+
             double tx = truepipxoff * (displaygrid.Width / xrange);
             double ty = -truepipyoff * (displaygrid.Height / yrange);
 
+            double tslewx = tx + (((truepipml - truepipmr) / 2) * pipscale * (displaygrid.Width / xrange));
+            double tslewy = ty + (((truepipmt - truepipmb) / 2) * truepipscale * (displaygrid.Height / yrange));
+
             maskedbox.RenderTransform = new TranslateTransform(x, y);
-            viewbox.RenderTransform = new TranslateTransform(x, y);
+            viewbox.RenderTransform = new TranslateTransform(slewx, slewy);
 
             truemaskedbox.RenderTransform = new TranslateTransform(tx, ty);
-            trueviewbox.RenderTransform = new TranslateTransform(tx, ty);
+            trueviewbox.RenderTransform = new TranslateTransform(tslewx, tslewy);
 
             if (enableKeyFrameFeatures)
             {
@@ -145,10 +173,37 @@ namespace Integrated_Presenter
             tbScale.Text = $"{pipscale:0.##} :: {pipscale * 100:0.##}%";
             tbX.Text = $"{pipxoff:0.##} :: {pipxoff / (xrange / 2) * 100:0.##}%";
             tbY.Text = $"{pipyoff:0.##} :: {pipyoff / (yrange / 2) * 100:0.##}%";
-            tbMaskLR.Text = $"{pipmlr:0.##} :: {pipmlr / maxmlr * 100:0.##}%";
-            tbMaskTB.Text = $"{pipmtb:0.##} :: {pipmtb / maxmtb * 100:0.##}%";
+            tbMaskLR.Text = $"{pipml:0.##}/{pipmr:0.##} :: {(pipml + pipmr) / 2 / maxmlr * 100:0.##}%";
+            tbMaskTB.Text = $"{pipmt:0.##}/{pipmb:0.##} :: {(pipmt + pipmb) / 2 / maxmtb * 100:0.##}%";
+
+            tbFineMode.Text = mode_FineControl ? "FINE" : "OFF";
+            tbFineMode.Foreground = mode_FineControl ? Brushes.Yellow : Brushes.LightSlateGray;
+
+            tbSlewDrive.Text = mode_SlewDrive ? "ON" : "OFF";
+            tbSlewDrive.Foreground = mode_SlewDrive ? Brushes.Yellow : Brushes.LightSlateGray;
+
+
+            for (int i = 0; i < 8; i++)
+            {
+                pipfills[i].Background = Brushes.Gray;
+                pipfills[i].BorderBrush = Brushes.Transparent;
+                if (currentfillsource == ConvertButtonToSourceID(i + 1))
+                {
+                    pipfills[i].Background = Brushes.Red;
+                    if (presetfillsource == i + 1)
+                    {
+                        pipfills[i].BorderBrush = Brushes.LimeGreen;
+                    }
+                }
+                else if (presetfillsource == i + 1)
+                {
+                    pipfills[i].Background = Brushes.LimeGreen;
+                }
+            }
 
         }
+
+        const double EPSILON = 0.01;
 
         const double truedisplaywidth = 1920;
         const double truedisplayheight = 1080;
@@ -174,14 +229,22 @@ namespace Integrated_Presenter
         double pipxoff = 0;
         double pipyoff = 0;
 
-        double pipmlr = 0;
-        double pipmtb = 0;
+        //double pipmlr = 0;
+        //double pipmtb = 0;
+
+        double pipml = 0;
+        double pipmr = 0;
+        double pipmt = 0;
+        double pipmb = 0;
+
 
         double truepipscale = 0.4;
         double truepipxoff = 9.6;
         double truepipyoff = 5.4;
-        double truepipmlr = 0;
-        double truepipmtb = 0;
+        double truepipml = 0;
+        double truepipmr = 0;
+        double truepipmt = 0;
+        double truepipmb = 0;
 
         double keyapipscale = 0;
         double keyapipx = 0;
@@ -190,11 +253,41 @@ namespace Integrated_Presenter
         double keybpipx = 0;
         double keybpipy = 0;
 
+        int currentfillsource = 0;
+        int presetfillsource = 0;
+
 
 
         double scalespeed = 0.1;
         double translationspeed = 0.1;
         double maskspeed = 0.1;
+
+
+        bool mode_SlewDrive = true;
+
+        bool mode_FineControl
+        {
+            get
+            {
+                return scalespeed < 0.1 || translationspeed < 0.1 || maskspeed < 0.1;
+            }
+            set
+            {
+                if (value)
+                {
+                    scalespeed = 0.01;
+                    translationspeed = 0.01;
+                    maskspeed = 0.01;
+                }
+                else
+                {
+                    scalespeed = 0.1;
+                    translationspeed = 0.1;
+                    maskspeed = 0.1;
+                }
+                UpdateUI();
+            }
+        }
 
 
         bool sendcmd = false;
@@ -296,6 +389,40 @@ namespace Integrated_Presenter
                 translate_right();
             }
 
+            if (e.Key == Key.G)
+            {
+                mask_lr_tb_reset();
+            }
+
+
+            if (e.Key == Key.J)
+            {
+                mask_lr_slew_left();
+            }
+            if (e.Key == Key.L)
+            {
+                mask_lr_slew_right();
+            }
+            if (e.Key == Key.I)
+            {
+                mask_tb_slew_up();
+            }
+            if (e.Key == Key.K)
+            {
+                mask_tb_slew_down();
+            }
+
+            if (e.Key == Key.H)
+            {
+                mask_slew_center();
+            }
+
+            if (e.Key == Key.U)
+            {
+                toggle_slewdrive();
+            }
+
+
             if (e.Key == Key.NumPad7)
             {
                 to_top_left();
@@ -344,15 +471,68 @@ namespace Integrated_Presenter
                 set_as_key_b();
             }
 
+            /* ignore keyframes for now, replace with maskoffsets
             if (e.Key == Key.K)
             {
                 enableKeyFrameFeatures = !enableKeyFrameFeatures;
                 UpdateUI();
             }
+            */
 
 
             // handle number keys for source switching
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            if (Keyboard.IsKeyDown(Key.LeftShift))
+            {
+                if (e.Key == Key.D1)
+                {
+                    presetfillsource = 1;
+                    sendcmd = true;
+                    UpdateUI();
+                }
+                if (e.Key == Key.D2)
+                {
+                    presetfillsource = 2;
+                    sendcmd = true;
+                    UpdateUI();
+                }
+                if (e.Key == Key.D3)
+                {
+                    presetfillsource = 3;
+                    sendcmd = true;
+                    UpdateUI();
+                }
+                if (e.Key == Key.D4)
+                {
+                    presetfillsource = 4;
+                    sendcmd = true;
+                    UpdateUI();
+                }
+                if (e.Key == Key.D5)
+                {
+                    presetfillsource = 5;
+                    sendcmd = true;
+                    UpdateUI();
+                }
+                if (e.Key == Key.D6)
+                {
+                    presetfillsource = 6;
+                    sendcmd = true;
+                    UpdateUI();
+                }
+                if (e.Key == Key.D7)
+                {
+                    presetfillsource = 7;
+                    sendcmd = true;
+                    UpdateUI();
+                }
+                if (e.Key == Key.D8)
+                {
+                    presetfillsource = 8;
+                    sendcmd = true;
+                    UpdateUI();
+                }
+            }
+            else if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 if (e.Key == Key.D1)
                 {
@@ -490,12 +670,18 @@ namespace Integrated_Presenter
                 });
             }
 
-
+            if (e.Key == Key.RightShift)
+            {
+                mode_FineControl = true;
+            }
         }
+
+
+
 
         private bool PIPIsAtTarget()
         {
-            return pipscale == truepipscale && pipxoff == truepipxoff && pipyoff == truepipyoff && pipmlr == truepipmlr && pipmtb == truepipmlr;
+            return pipscale == truepipscale && pipxoff == truepipxoff && pipyoff == truepipyoff && pipml == truepipml && pipmr == truepipmr && pipmt == truepipmt && pipmb == truepipmb && ConvertButtonToSourceID(presetfillsource) == currentfillsource;
         }
 
         private void SwitcherPIPUpdate()
@@ -511,14 +697,22 @@ namespace Integrated_Presenter
                 config.Current.PositionY = pipyoff;
                 config.Current.SizeX = pipscale;
                 config.Current.SizeY = pipscale;
-                config.IsMasked = pipmtb != 0 || pipmlr != 0 ? 1 : 0;
+                config.IsMasked = (pipml != 0 || pipmr != 0 || pipmt != 0 | pipmb != 0) ? 1 : 0;
                 config.IsBordered = 0; // no border
-                config.MaskTop = (float)pipmtb;
-                config.MaskBottom = (float)pipmtb;
-                config.MaskLeft = (float)pipmlr;
-                config.MaskRight = (float)pipmlr;
+                config.MaskTop = (float)pipmt;
+                config.MaskBottom = (float)pipmb;
+                config.MaskLeft = (float)pipml;
+                config.MaskRight = (float)pipmr;
 
                 SetPIPOnSwitcher?.Invoke(config);
+
+                if (currentfillsource != presetfillsource)
+                {
+                    _parent.Dispatcher.Invoke(() =>
+                    {
+                        _parent.ChangeUSK1FillSource(presetfillsource);
+                    });
+                }
             }
 
         }
@@ -530,11 +724,11 @@ namespace Integrated_Presenter
                 return;
             }
             BMDUSKDVESettings config = new BMDUSKDVESettings();
-            config.IsMasked = pipmtb != 0 || pipmlr != 0 ? 1 : 0;
-            config.MaskTop = (float)pipmtb;
-            config.MaskBottom = (float)pipmtb;
-            config.MaskLeft = (float)pipmlr;
-            config.MaskRight = (float)pipmlr;
+            config.IsMasked = (pipmt != 0 || pipmb != 0 || pipml != 0 || pipmr != 0) ? 1 : 0;
+            config.MaskTop = (float)pipmt;
+            config.MaskBottom = (float)pipmb;
+            config.MaskLeft = (float)pipml;
+            config.MaskRight = (float)pipmr;
             config.IsBordered = 0; // no border
             config.KeyFrameA = new KeyFrameSettings()
             {
@@ -554,11 +748,11 @@ namespace Integrated_Presenter
                 return;
             }
             BMDUSKDVESettings config = new BMDUSKDVESettings();
-            config.IsMasked = pipmtb != 0 || pipmlr != 0 ? 1 : 0;
-            config.MaskTop = (float)pipmtb;
-            config.MaskBottom = (float)pipmtb;
-            config.MaskLeft = (float)pipmlr;
-            config.MaskRight = (float)pipmlr;
+            config.IsMasked = (pipmt != 0 || pipmb != 0 || pipml != 0 || pipmr != 0) ? 1 : 0;
+            config.MaskTop = (float)pipmt;
+            config.MaskBottom = (float)pipmb;
+            config.MaskLeft = (float)pipml;
+            config.MaskRight = (float)pipmr;
             config.IsBordered = 0; // no border
             config.KeyFrameB = new KeyFrameSettings()
             {
@@ -596,13 +790,30 @@ namespace Integrated_Presenter
             UpdateUI();
         }
 
+        private void mask_lr_tb_reset()
+        {
+            pipml = minmlr;
+            pipmr = minmlr;
+            pipmt = minmtb;
+            pipmb = minmtb;
+
+            SendCmd = true;
+            SwitcherPIPUpdate();
+            UpdateUI();
+        }
+
 
         private void mask_lr_increase()
         {
-            pipmlr += maskspeed;
-            if (pipmlr > maxmlr)
+            pipml += maskspeed;
+            pipmr += maskspeed;
+            if (pipml > maxmlr)
             {
-                pipmlr = maxmlr;
+                pipml = maxmlr;
+            }
+            if (pipmr > maxmlr)
+            {
+                pipmr = maxmlr;
             }
 
             SendCmd = true;
@@ -612,10 +823,15 @@ namespace Integrated_Presenter
 
         private void mask_lr_decrease()
         {
-            pipmlr -= maskspeed;
-            if (pipmlr < minmlr)
+            pipml -= maskspeed;
+            pipmr -= maskspeed;
+            if (pipml < minmlr)
             {
-                pipmlr = minmlr;
+                pipml = minmlr;
+            }
+            if (pipmr < minmlr)
+            {
+                pipmr = minmlr;
             }
 
             SendCmd = true;
@@ -623,12 +839,145 @@ namespace Integrated_Presenter
             UpdateUI();
         }
 
+        private void mask_slew_center()
+        {
+            double pipmlravg = (pipml + pipmr) / 2;
+            double pipmtbavg = (pipmt + pipmb) / 2;
+
+            pipml = pipmlravg;
+            pipmr = pipmlravg;
+            pipmt = pipmtbavg;
+            pipmb = pipmtbavg;
+
+            SendCmd = true;
+            SwitcherPIPUpdate();
+            UpdateUI();
+        }
+
+        private void mask_lr_slew_left()
+        {
+            if (pipml == minmlr)
+            {
+                return;
+            }
+            pipml -= maskspeed;
+            pipmr += maskspeed;
+            if (pipml < minmlr + EPSILON)
+            {
+                pipml = minmlr;
+            }
+            if (pipmr + EPSILON > maxmlr)
+            {
+                pipmr = maxmlr;
+            }
+
+            if (mode_SlewDrive)
+            {
+                translate_right(maskspeed * pipscale);
+            }
+
+            SendCmd = true;
+            SwitcherPIPUpdate();
+            UpdateUI();
+        }
+
+        private void mask_lr_slew_right()
+        {
+            if (pipmr == minmlr)
+            {
+                return;
+            }
+            pipml += maskspeed;
+            pipmr -= maskspeed;
+            if (pipmr < minmlr + EPSILON)
+            {
+                pipmr = minmlr;
+            }
+            if (pipml + EPSILON > maxmlr)
+            {
+                pipml = maxmlr;
+            }
+
+            if (mode_SlewDrive)
+            {
+                translate_left(maskspeed * pipscale);
+            }
+
+
+            SendCmd = true;
+            SwitcherPIPUpdate();
+            UpdateUI();
+        }
+
+        private void mask_tb_slew_up()
+        {
+            if (pipmt == minmtb)
+            {
+                return;
+            }
+            pipmt -= maskspeed;
+            pipmb += maskspeed;
+            if (pipmt < minmtb + EPSILON)
+            {
+                pipmt = minmtb;
+            }
+            if (pipmb + EPSILON > maxmtb)
+            {
+                pipmb = maxmtb;
+            }
+
+            if (mode_SlewDrive)
+            {
+                translate_down(maskspeed * pipscale);
+            }
+
+
+            SendCmd = true;
+            SwitcherPIPUpdate();
+            UpdateUI();
+        }
+
+        private void mask_tb_slew_down()
+        {
+            if (pipmb == minmtb)
+            {
+                return;
+            }
+            pipmb -= maskspeed;
+            pipmt += maskspeed;
+            if (pipmb < minmtb + EPSILON)
+            {
+                pipmb = minmtb;
+            }
+            if (pipmt + EPSILON > maxmtb)
+            {
+                pipmt = maxmtb;
+            }
+
+            if (mode_SlewDrive)
+            {
+                translate_up(maskspeed * pipscale);
+            }
+
+
+            SendCmd = true;
+            SwitcherPIPUpdate();
+            UpdateUI();
+        }
+
+
+
         private void mask_tb_increase()
         {
-            pipmtb += maskspeed;
-            if (pipmtb > maxmtb)
+            pipmt += maskspeed;
+            pipmb += maskspeed;
+            if (pipmt > maxmtb)
             {
-                pipmtb = maxmtb;
+                pipmt = maxmtb;
+            }
+            if (pipmb > maxmtb)
+            {
+                pipmb = maxmtb;
             }
 
             SendCmd = true;
@@ -638,10 +987,15 @@ namespace Integrated_Presenter
 
         private void mask_tb_decrease()
         {
-            pipmtb -= maskspeed;
-            if (pipmtb < minmtb)
+            pipmt -= maskspeed;
+            pipmb -= maskspeed;
+            if (pipmt < minmtb)
             {
-                pipmtb = minmtb;
+                pipmt = minmtb;
+            }
+            if (pipmb < minmtb)
+            {
+                pipmb = minmtb;
             }
 
             SendCmd = true;
@@ -652,7 +1006,11 @@ namespace Integrated_Presenter
 
         private void translate_left()
         {
-            pipxoff -= translationspeed;
+            translate_left(translationspeed);
+        }
+        private void translate_left(double speed)
+        {
+            pipxoff -= speed;
             if (pipxoff < minx)
             {
                 pipxoff = minx;
@@ -665,12 +1023,15 @@ namespace Integrated_Presenter
 
         private void translate_right()
         {
-            pipxoff += translationspeed;
+            translate_right(translationspeed);
+        }
+        private void translate_right(double speed)
+        {
+            pipxoff += speed;
             if (pipxoff > maxx)
             {
                 pipxoff = maxx;
             }
-
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -679,7 +1040,11 @@ namespace Integrated_Presenter
 
         private void translate_down()
         {
-            pipyoff -= translationspeed;
+            translate_down(translationspeed);
+        }
+        private void translate_down(double speed)
+        {
+            pipyoff -= speed;
             if (pipyoff < miny)
             {
                 pipyoff = miny;
@@ -692,7 +1057,11 @@ namespace Integrated_Presenter
 
         private void translate_up()
         {
-            pipyoff += translationspeed;
+            translate_up(translationspeed);
+        }
+        private void translate_up(double speed)
+        {
+            pipyoff += speed;
             if (pipyoff > maxy)
             {
                 pipyoff = maxy;
@@ -714,27 +1083,40 @@ namespace Integrated_Presenter
             {
                 CmdMode = false;
             }
+            if (e.Key == Key.RightShift)
+            {
+                mode_FineControl = false;
+            }
         }
 
 
         private (double x, double y) calc_centers()
         {
             double fullhalfwidth = xrange / 2 * pipscale;
-            double halfwidth = fullhalfwidth - (pipmlr * pipscale);
+            double halfwidth = fullhalfwidth - ((pipml + pipmr) / 2 * pipscale);
 
             double fullhalfheight = yrange / 2 * pipscale;
-            double halfheight = fullhalfheight - (pipmtb * pipscale);
+            double halfheight = fullhalfheight - ((pipmt + pipmb) / 2 * pipscale);
 
             return (halfwidth, halfheight);
+        }
+
+        private (double cx, double cy) compensate_slew_centers()
+        {
+            double xslew = -((pipml - pipmr) / 2 * pipscale);
+            double yslew = ((pipmt - pipmb) / 2 * pipscale);
+
+            return (xslew, yslew);
         }
 
 
         private void to_top_left()
         {
             var h = calc_centers();
+            var s = compensate_slew_centers();
 
-            pipxoff = -xrange / 2 + h.x;
-            pipyoff = yrange / 2 - h.y;
+            pipxoff = -xrange / 2 + h.x + s.cx;
+            pipyoff = yrange / 2 - h.y + s.cy;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -744,9 +1126,10 @@ namespace Integrated_Presenter
         private void to_top_right()
         {
             var h = calc_centers();
+            var s = compensate_slew_centers();
 
-            pipxoff = xrange / 2 - h.x;
-            pipyoff = yrange / 2 - h.y;
+            pipxoff = xrange / 2 - h.x + s.cx;
+            pipyoff = yrange / 2 - h.y + s.cy;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -756,9 +1139,10 @@ namespace Integrated_Presenter
         private void to_bottom_left()
         {
             var h = calc_centers();
+            var s = compensate_slew_centers();
 
-            pipxoff = -xrange / 2 + h.x;
-            pipyoff = -yrange / 2 + h.y;
+            pipxoff = -xrange / 2 + h.x + s.cx;
+            pipyoff = -yrange / 2 + h.y + s.cy;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -768,9 +1152,10 @@ namespace Integrated_Presenter
         private void to_bottom_right()
         {
             var h = calc_centers();
+            var s = compensate_slew_centers();
 
-            pipxoff = xrange / 2 - h.x;
-            pipyoff = -yrange / 2 + h.y;
+            pipxoff = xrange / 2 - h.x + s.cx;
+            pipyoff = -yrange / 2 + h.y + s.cy;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -780,9 +1165,10 @@ namespace Integrated_Presenter
         private void to_top_mid()
         {
             var h = calc_centers();
+            var s = compensate_slew_centers();
 
-            pipxoff = 0;
-            pipyoff = yrange / 2 - h.y;
+            pipxoff = 0 + s.cx;
+            pipyoff = yrange / 2 - h.y + s.cy;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -793,9 +1179,10 @@ namespace Integrated_Presenter
         private void to_bottom_mid()
         {
             var h = calc_centers();
+            var s = compensate_slew_centers();
 
-            pipxoff = 0;
-            pipyoff = -yrange / 2 + h.y;
+            pipxoff = 0 + s.cx;
+            pipyoff = -yrange / 2 + h.y + s.cy;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -806,9 +1193,10 @@ namespace Integrated_Presenter
         private void to_left_mid()
         {
             var h = calc_centers();
+            var s = compensate_slew_centers();
 
-            pipxoff = -xrange / 2 + h.x;
-            pipyoff = 0;
+            pipxoff = -xrange / 2 + h.x + s.cx;
+            pipyoff = 0 + s.cy;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -819,9 +1207,10 @@ namespace Integrated_Presenter
         private void to_right_mid()
         {
             var h = calc_centers();
+            var s = compensate_slew_centers();
 
-            pipxoff = xrange / 2 - h.x;
-            pipyoff = 0;
+            pipxoff = xrange / 2 - h.x + s.cx;
+            pipyoff = 0 + s.cy;
 
             SendCmd = true;
             SwitcherPIPUpdate();
@@ -831,11 +1220,19 @@ namespace Integrated_Presenter
 
         private void to_center()
         {
-            pipxoff = 0;
-            pipyoff = 0;
+            var s = compensate_slew_centers();
+            pipxoff = 0 + s.cx;
+            pipyoff = 0 + s.cy;
 
             SendCmd = true;
             SwitcherPIPUpdate();
+            UpdateUI();
+        }
+
+
+        private void toggle_slewdrive()
+        {
+            mode_SlewDrive = !mode_SlewDrive;
             UpdateUI();
         }
 

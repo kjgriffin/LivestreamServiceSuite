@@ -408,7 +408,7 @@ namespace Integrated_Presenter
             _lastState = switcherState.Copy();
 
             // update pip ui
-            pipctrl?.PIPSettingsUpdated(switcherState.DVESettings);
+            pipctrl?.PIPSettingsUpdated(switcherState.DVESettings, switcherState.USK1FillSource);
 
             // update viewmodels
 
@@ -4009,11 +4009,11 @@ namespace Integrated_Presenter
         {
             if (pipctrl == null)
             {
-                pipctrl = new PIPControl(this, SetPIPPosition, SetKeyFrameAOnSwitcher, SetKeyFrameBOnSwitcher, switcherState?.DVESettings ?? _config.USKSettings.PIPSettings);
+                pipctrl = new PIPControl(this, SetPIPPosition, SetKeyFrameAOnSwitcher, SetKeyFrameBOnSwitcher, switcherState?.DVESettings ?? _config.USKSettings.PIPSettings, switcherState?.USK1FillSource, ConvertButtonToSourceID);
             }
             if (pipctrl.HasClosed)
             {
-                pipctrl = new PIPControl(this, SetPIPPosition, SetKeyFrameAOnSwitcher, SetKeyFrameBOnSwitcher, switcherState?.DVESettings ?? _config.USKSettings.PIPSettings);
+                pipctrl = new PIPControl(this, SetPIPPosition, SetKeyFrameAOnSwitcher, SetKeyFrameBOnSwitcher, switcherState?.DVESettings ?? _config.USKSettings.PIPSettings, switcherState?.USK1FillSource, ConvertButtonToSourceID);
             }
             pipctrl.Show();
             pipctrl.Focus();

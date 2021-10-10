@@ -13,6 +13,7 @@
     <IsPortable>True</IsPortable>
     <RuntimeIdentifier>win-x64-aot</RuntimeIdentifier>
     <RuntimeIdentifiers>win-x64-aot</RuntimeIdentifiers>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
