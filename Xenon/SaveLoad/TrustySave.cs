@@ -20,7 +20,7 @@ namespace Xenon.SaveLoad
         {
             return Task.Run(async () =>
             {
-                progress.Report(0);
+                progress?.Report(0);
 
                 using FileStream ziptoopen = new FileStream(path, FileMode.Create);
                 using ZipArchive archive = new ZipArchive(ziptoopen, ZipArchiveMode.Update);
@@ -33,14 +33,14 @@ namespace Xenon.SaveLoad
                     await writer.WriteLineAsync($"Created with version {versioninfo}");
                 }
 
-                progress.Report(1);
+                progress?.Report(1);
 
 
                 // handle assets
                 string assetsfolderpath = $"assets{Path.DirectorySeparatorChar}";
                 var assetsfolder = archive.CreateEntry(assetsfolderpath);
 
-                progress.Report(5);
+                progress?.Report(5);
                 int assetcount = proj.Assets.Count;
                 int completed = 0;
 
@@ -88,7 +88,7 @@ namespace Xenon.SaveLoad
                         assetextensions.TryAdd(asset.Name, asset.Extension);
                         ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, name));
                         double savepercent = (completed / (double)assetcount) * 100;
-                        progress.Report(5 + 1 + (int)(savepercent) * (100 - 5 - 1 - 10));
+                        progress?.Report(5 + 1 + (int)(savepercent) * (100 - 5 - 1 - 10));
                     }
                     else
                     {
@@ -96,7 +96,7 @@ namespace Xenon.SaveLoad
                     }
                 }
 
-                progress.Report(90);
+                progress?.Report(90);
 
                 // save assets json
 
@@ -123,7 +123,7 @@ namespace Xenon.SaveLoad
 
 
 
-                progress.Report(95);
+                progress?.Report(95);
 
 
                 // handle source code
@@ -133,7 +133,7 @@ namespace Xenon.SaveLoad
                     await writer.WriteAsync(proj.SourceCode);
                 }
 
-                progress.Report(100);
+                progress?.Report(100);
 
             });
         }

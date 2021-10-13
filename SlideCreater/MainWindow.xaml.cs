@@ -215,6 +215,7 @@ namespace SlideCreater
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
             TryAutoSave();
+            await TryFullAutoSave();
             string text = TbInput.GetAllText();
             _proj.SourceCode = text;
 
@@ -430,6 +431,10 @@ namespace SlideCreater
             {
                 // copy to tmp folder
                 string tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, "assets", System.IO.Path.GetFileName(file));
+                if (File.Exists(tmpassetpath))
+                {
+                    tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, "assets", $"{System.IO.Path.GetFileNameWithoutExtension(file)}_{_proj.Assets.Count + 1}_{System.IO.Path.GetExtension(file)}");
+                }
                 try
                 {
                     File.Copy(file, tmpassetpath, true);
@@ -437,6 +442,7 @@ namespace SlideCreater
                 catch (Exception)
                 {
                     MessageBox.Show($"Unable to load {file}", "Load Asset Failed");
+                    continue;
                 }
 
                 ProjectAsset asset = new ProjectAsset();
@@ -910,9 +916,9 @@ namespace SlideCreater
             foreach (var asset in Assets)
             {
                 save.SourceAssets.Add(asset.OriginalPath);
-                save.AssetMap.Add(asset.Name, asset.OriginalPath);
-                save.AssetRenames.Add(asset.Name, asset.DisplayName);
-                save.AssetExtensions.Add(asset.Name, asset.Extension);
+                save.AssetMap.TryAdd(asset.Name, asset.OriginalPath);
+                save.AssetRenames.TryAdd(asset.Name, asset.DisplayName);
+                save.AssetExtensions.TryAdd(asset.Name, asset.Extension);
             }
             save.SourceCode = TbInput.GetAllText();
             try
@@ -934,6 +940,11 @@ namespace SlideCreater
             }
         }
 
+        private async Task TryFullAutoSave()
+        {
+            await Xenon.SaveLoad.TrustySave.SaveTrustily(_proj, System.IO.Path.Combine(System.IO.Path.Join(System.IO.Path.GetTempPath(), "slidecreaterautosaves", $"{DateTime.Now:yyy-MM-dd_HH-mm-ss}.autosave.trusty.zip")), null, VersionInfo.ToString());
+        }
+
         private async void RecoverAutoSave(object sender, RoutedEventArgs e)
         {
             // open tmp files folder and let 'em select an autosave
@@ -941,7 +952,7 @@ namespace SlideCreater
             // check if we have a slidecreaterautosaves folder
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Recover Autosave";
-            ofd.Filter = "Autosaves (*.json)|*.json";
+            ofd.Filter = "Autosaves (*.json;*.trusty.zip)|*.json;*.trusty.zip";
             ofd.Multiselect = false;
             if (Directory.Exists(System.IO.Path.Join(tmppath, "slidecreaterautosaves")))
             {
@@ -949,19 +960,26 @@ namespace SlideCreater
             }
             if (ofd.ShowDialog() == true)
             {
-                // then load it in
-                try
+                if (System.IO.Path.GetExtension(ofd.FileName) == ".json")
                 {
-                    using (TextReader reader = new StreamReader(ofd.FileName))
+                    // then load it in
+                    try
                     {
-                        string json = reader.ReadToEnd();
-                        AutoSave save = JsonSerializer.Deserialize<AutoSave>(json);
-                        await OverwriteWithAutoSave(save);
+                        using (TextReader reader = new StreamReader(ofd.FileName))
+                        {
+                            string json = reader.ReadToEnd();
+                            AutoSave save = JsonSerializer.Deserialize<AutoSave>(json);
+                            await OverwriteWithAutoSave(save);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Failed to recover autosave: {ex}", "Recovery Failed");
                     }
                 }
-                catch (Exception ex)
+                else if (Regex.Match(ofd.FileName, @".*?\.trusty\.zip$").Success)
                 {
-                    MessageBox.Show($"Failed to recover autosave: {ex}", "Recovery Failed");
+                    await TrustyOpen(ofd.FileName);
                 }
             }
         }
