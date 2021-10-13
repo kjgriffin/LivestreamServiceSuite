@@ -1,0 +1,36 @@
+﻿<Window x:Class="SlideCreater.ViewControls.RenameDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SlideCreater.ViewControls"
+        mc:Ignorable="d"
+        Title="Rename Asset" Height="200" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalContentAlignment="Right">Old Name:</Label>
+            <TextBlock Grid.Row="0" Grid.Column="1" Name="tbOldName" VerticalAlignment="Center" Height="30" Margin="10"></TextBlock>
+            <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalContentAlignment="Right">New Name:</Label>
+            <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Height="30" Margin="10">
+                <TextBlock Name="tbHintText" Panel.ZIndex="1" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" IsHitTestVisible="False">New Asset Name</TextBlock>
+                <TextBox x:Name="tbNewName" VerticalAlignment="Center" HorizontalAlignment="Left" TextChanged="OnTextChanged" MinWidth="250"></TextBox>
+            </Grid>
+        </Grid>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Margin="10,0,10,0" Width="100" Height="30" Click="OnClickCancel">Cancel</Button>
+            <Button Margin="10,0,10,0" Width="100" Height="30" Click="OnClickRename">Rename</Button>
+        </StackPanel>
+    </Grid>
+</Window>

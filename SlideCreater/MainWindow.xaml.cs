@@ -26,6 +26,7 @@ using System.Diagnostics;
 using SlideCreater.ViewControls;
 using Xenon.SaveLoad;
 using System.IO.Compression;
+using System.Net;
 
 namespace SlideCreater
 {
@@ -441,15 +442,15 @@ namespace SlideCreater
                 ProjectAsset asset = new ProjectAsset();
                 if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
                 {
-                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio };
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio, Extension = System.IO.Path.GetExtension(file) };
                 }
                 else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
                 {
-                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image, Extension = System.IO.Path.GetExtension(file) };
                 }
                 else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
                 {
-                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, Extension = System.IO.Path.GetExtension(file) };
                 }
 
 
@@ -480,15 +481,15 @@ namespace SlideCreater
                 ProjectAsset asset = new ProjectAsset();
                 if (Regex.IsMatch(System.IO.Path.GetExtension(path).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
                 {
-                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Audio };
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Audio, Extension = System.IO.Path.GetExtension(path) };
                 }
                 else if (Regex.IsMatch(System.IO.Path.GetExtension(path).ToLower(), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
                 {
-                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Image, Extension = System.IO.Path.GetExtension(path) };
                 }
                 else if (Regex.IsMatch(System.IO.Path.GetExtension(path).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
                 {
-                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
+                    asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Video, Extension = System.IO.Path.GetExtension(path) };
                 }
 
 
@@ -517,6 +518,7 @@ namespace SlideCreater
                     assetItemCtrl.OnAutoFitInsertRequest += AssetItemCtrl_OnAutoFitInsertRequest;
                     assetItemCtrl.OnInsertBellsRequest += AssetItemCtrl_OnInsertBellsRequest;
                     assetItemCtrl.OnLiturgyInsertRequest += AssetItemCtrl_OnLiturgyInsertRequest;
+                    assetItemCtrl.OnRenameAssetRequest += AssetItemCtrl_OnRenameAssetRequest;
                     AssetList.Children.Add(assetItemCtrl);
                 }
                 catch (FileNotFoundException ex)
@@ -530,6 +532,15 @@ namespace SlideCreater
             {
                 throw new Exception($"Missing ({missingassets.Count}) asset(s): {missingassets.Aggregate((agg, item) => agg + ", '" + item + "'")}");
             }
+        }
+
+        private void AssetItemCtrl_OnRenameAssetRequest(object sender, ProjectAsset asset, string newname)
+        {
+            AssetsChanged();
+            asset.Name = newname;
+
+            ShowProjectAssets();
+            TryAutoSave();
         }
 
         private void AssetItemCtrl_OnInsertBellsRequest(object sender, ProjectAsset asset)
@@ -899,6 +910,9 @@ namespace SlideCreater
             foreach (var asset in Assets)
             {
                 save.SourceAssets.Add(asset.OriginalPath);
+                save.AssetMap.Add(asset.Name, asset.OriginalPath);
+                save.AssetRenames.Add(asset.Name, asset.DisplayName);
+                save.AssetExtensions.Add(asset.Name, asset.Extension);
             }
             save.SourceCode = TbInput.GetAllText();
             try
@@ -956,7 +970,69 @@ namespace SlideCreater
         {
             await NewProject();
             // load assets
-            AddAssetsFromPaths(save.SourceAssets);
+            if (save.AssetMap == null)
+            {
+                AddAssetsFromPaths(save.SourceAssets);
+            }
+            else
+            {
+
+                ActionState = ActionState.Downloading;
+                double percent = 0;
+                int total = save.AssetMap.Count;
+                int progress = 1;
+                foreach (var assetkey in save.AssetMap.Keys)
+                {
+                    percent = ((double)progress++ / (double)total) * 100.0d;
+                    tbSubActionStatus.Text = $"Recovering resources [{assetkey}]: {percent:00.0}%";
+                    pbActionStatus.Visibility = Visibility.Visible;
+                    pbActionStatus.Value = (int)percent;
+                    var file = save.AssetMap[assetkey];
+                    var tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, assetkey);
+                    ProjectAsset asset = new ProjectAsset();
+
+                    if (!File.Exists(file))
+                    {
+                        Uri uriResult;
+                        bool result = Uri.TryCreate(file, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                        if (result)
+                        {
+                            // try downloading it
+                            WebClient client = new WebClient();
+                            await client.DownloadFileTaskAsync(uriResult, System.IO.Path.Combine(_proj.LoadTmpPath, assetkey));
+                        }
+                        else
+                        {
+                            // hmmmm... file doesn't exist and we can't fall back to download
+                            UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorName = "Auto Recover Asset Failed", ErrorMessage = $"Tried to recover asset with name '{assetkey}' from original source '{file}'. File does not exist on disk, and could not be found online.", Generator = "Recover Auto Save: Overwrite Project()", Inner = "", Level = XenonCompilerMessageType.Error, Token = "" });
+                        }
+
+                    }
+                    else
+                    {
+                        // copy file
+                        System.IO.File.Copy(file, System.IO.Path.Combine(_proj.LoadTmpPath, assetkey));
+                    }
+
+                    if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
+                    {
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio, InternalDisplayName = save.AssetRenames.GetOrDefault(assetkey, assetkey), Extension = save.AssetExtensions[assetkey] };
+                    }
+                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
+                    {
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image, InternalDisplayName = save.AssetRenames.GetOrDefault(assetkey, assetkey), Extension = save.AssetExtensions[assetkey] };
+                    }
+                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
+                    {
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, InternalDisplayName = save.AssetRenames.GetOrDefault(assetkey, assetkey), Extension = save.AssetExtensions[assetkey] };
+                    }
+                    Assets.Add(asset);
+                    _proj.Assets.Add(asset);
+                    ShowProjectAssets();
+                }
+                pbActionStatus.Value = 0;
+                pbActionStatus.Visibility = Visibility.Hidden;
+            }
             TbInput.SetText(save.SourceCode);
         }
 
@@ -1097,6 +1173,10 @@ namespace SlideCreater
         private async Task TrustyOpen(string filename)
         {
             string sourcecode = "";
+            Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
+            Dictionary<string, string> assetdisplaynames = new Dictionary<string, string>();
+            Dictionary<string, string> assetextensions = new Dictionary<string, string>();
+
             using (ZipArchive archive = ZipFile.OpenRead(filename))
             {
                 // dump source code
@@ -1108,8 +1188,10 @@ namespace SlideCreater
                         sourcecode = await sr.ReadToEndAsync();
                     }
                 }
-                TbInput.SetText(sourcecode);
-                Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
+                Dispatcher.Invoke(() =>
+                {
+                    TbInput.SetText(sourcecode);
+                });
                 var assetfilemapfile = archive.GetEntry("assets.json");
                 if (assetfilemapfile != null)
                 {
@@ -1120,33 +1202,90 @@ namespace SlideCreater
                     }
                 }
 
-                archive.ExtractToDirectory(_proj.LoadTmpPath);
+                var assetdisplaynamefile = archive.GetEntry("assets_displaynames.json");
+                if (assetdisplaynamefile != null)
+                {
+                    using (StreamReader sr = new StreamReader(assetdisplaynamefile.Open()))
+                    {
+                        string json = await sr.ReadToEndAsync();
+                        assetdisplaynames = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    }
+                }
 
+                var assetextensionsfile = archive.GetEntry("assets_extensions.json");
+                if (assetextensionsfile != null)
+                {
+                    using (StreamReader sr = new StreamReader(assetextensionsfile.Open()))
+                    {
+                        string json = await sr.ReadToEndAsync();
+                        assetextensions = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    }
+                }
+
+
+
+                archive.ExtractToDirectory(_proj.LoadTmpPath);
+            }
+
+            // add assets
+            Dispatcher.Invoke(() =>
+            {
                 AssetsChanged();
-                // add assets
-                foreach (var assetkey in assetfilemap.Keys)
+                ActionState = ActionState.Downloading;
+            });
+            double percent = 0;
+            int total = assetfilemap.Count;
+            int progress = 1;
+
+            foreach (var assetkey in assetfilemap.Keys)
+            {
+                percent = ((double)progress++ / (double)total) * 100.0d;
+                Dispatcher.Invoke(() =>
+                {
+                    tbSubActionStatus.Text = $"Importing resources [{assetkey}]: {percent:00.0}%";
+                    pbActionStatus.Visibility = Visibility.Visible;
+                    pbActionStatus.Value = (int)percent;
+                });
+
+
+                await Task.Run(() =>
                 {
                     var file = assetfilemap[assetkey];
                     var tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, file);
                     ProjectAsset asset = new ProjectAsset();
                     if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio, InternalDisplayName = assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = assetextensions[assetkey] };
                     }
                     else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image, InternalDisplayName = assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = assetextensions[assetkey] };
                     }
                     else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, InternalDisplayName = assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = assetextensions[assetkey] };
                     }
                     Assets.Add(asset);
                     _proj.Assets.Add(asset);
-                    ShowProjectAssets();
-                }
-            }
+                });
 
+            }
+            Dispatcher.Invoke(() =>
+            {
+                pbActionStatus.Value = 100;
+                ActionState = ActionState.Ready;
+                ShowProjectAssets();
+                pbActionStatus.Visibility = Visibility.Hidden;
+                pbActionStatus.Value = 0;
+            });
+        }
+
+        private void OpenTempFolder(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Project Temp Folder";
+            ofd.InitialDirectory = _proj.LoadTmpPath;
+            ofd.ShowDialog();
         }
     }
 }

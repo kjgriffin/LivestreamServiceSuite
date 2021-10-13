@@ -76,12 +76,16 @@ namespace Xenon.SaveLoad
 
                 int nameid = 0;
                 Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
+                Dictionary<string, string> assetdisplaynamemap = new Dictionary<string, string>();
+                Dictionary<string, string> assetextensions = new Dictionary<string, string>();
                 foreach (var asset in proj.Assets)
                 {
-                    string name = $"asset_{Interlocked.Increment(ref nameid)}{Path.GetExtension(asset.OriginalFilename)}";
+                    string name = $"asset_{Interlocked.Increment(ref nameid)}{asset.Extension}";
                     if (File.Exists(asset.CurrentPath))
                     {
                         assetfilemap.TryAdd(asset.Name, Path.Combine(assetsfolderpath, name));
+                        assetdisplaynamemap.TryAdd(asset.Name, asset.DisplayName);
+                        assetextensions.TryAdd(asset.Name, asset.Extension);
                         ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, name));
                         double savepercent = (completed / (double)assetcount) * 100;
                         progress.Report(5 + 1 + (int)(savepercent) * (100 - 5 - 1 - 10));
@@ -102,6 +106,22 @@ namespace Xenon.SaveLoad
                 {
                     await writer.WriteAsync(assetsjsonstr);
                 }
+
+                string assetsdisplaynamejsonstr = JsonSerializer.Serialize(assetdisplaynamemap);
+                ZipArchiveEntry assetsdisplaynamejson = archive.CreateEntry("assets_displaynames.json");
+                using (StreamWriter writer = new StreamWriter(assetsdisplaynamejson.Open()))
+                {
+                    await writer.WriteAsync(assetsdisplaynamejsonstr);
+                }
+
+                string assetsextensionsjsonstr = JsonSerializer.Serialize(assetextensions);
+                ZipArchiveEntry assetsextensionsjson = archive.CreateEntry("assets_extensions.json");
+                using (StreamWriter writer = new StreamWriter(assetsextensionsjson.Open()))
+                {
+                    await writer.WriteAsync(assetsextensionsjsonstr);
+                }
+
+
 
                 progress.Report(95);
 

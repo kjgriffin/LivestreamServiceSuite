@@ -30,6 +30,8 @@
             <MenuItem Header="View">
                 <MenuItem Name="mipreviewslide" Click="ClickTogglePreviewSlide" Header="Preview Slides" IsChecked="true" IsCheckable="true"></MenuItem>
                 <MenuItem Name="mipreviewkey" Click="ClickTogglePreviewKey" Header="Preview Keys" IsCheckable="true"></MenuItem>
+                <Separator></Separator>
+                <MenuItem Name="openTmpFolder" Click="OpenTempFolder" Header="View Temp Folder"></MenuItem>
             </MenuItem>
             <MenuItem Header="Import">
                 <MenuItem Name="miimport" Click="ClickImportService" Header="Import from LSB Service"></MenuItem>

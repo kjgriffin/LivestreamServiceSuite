@@ -233,7 +233,7 @@ namespace Xenon.SlideAssembly
             try
             {
                 b.Save(tmpassetpath);
-                ProjectAsset asset = new ProjectAsset() { Id = Guid.NewGuid(), LoadedTempPath = tmpassetpath, Name = name, OriginalPath = sourceurl, Type = AssetType.Image };
+                ProjectAsset asset = new ProjectAsset() { Id = Guid.NewGuid(), LoadedTempPath = tmpassetpath, Name = name, OriginalPath = sourceurl, Type = AssetType.Image, Extension = System.IO.Path.GetExtension(sourceurl) };
                 Assets.Add(asset);
             }
             catch (Exception)

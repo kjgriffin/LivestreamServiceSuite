@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlideCreater.ViewControls;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -18,6 +19,7 @@ namespace SlideCreater
 {
     public delegate void InsertAssetEvent(object sender, ProjectAsset asset);
     public delegate void DeleteAssetEvent(object sender, ProjectAsset asset);
+    public delegate void RenameAssetEvent(object sender, ProjectAsset asset, string newname);
     /// <summary>
     /// Interaction logic for AssetItemControl.xaml
     /// </summary>
@@ -30,6 +32,7 @@ namespace SlideCreater
         public event InsertAssetEvent OnLiturgyInsertRequest;
         public event InsertAssetEvent OnInsertBellsRequest;
         public event DeleteAssetEvent OnDeleteAssetRequest;
+        public event RenameAssetEvent OnRenameAssetRequest;
 
         ProjectAsset Asset;
 
@@ -43,8 +46,8 @@ namespace SlideCreater
         public void UpdateDisplay()
         {
             // display name
-            AssetName.Text = Asset.Name;
-            ttName.Content = Asset.Name;
+            AssetName.Text = Asset.DisplayName;
+            ttName.Content = Asset.DisplayName;
             // load image/video
             ImgAsset.Source = null;
             VideoAsset.Source = null;
@@ -108,6 +111,16 @@ namespace SlideCreater
         private void ClickAddAsBells(object sender, RoutedEventArgs e)
         {
             Dispatcher.Invoke(() => OnInsertBellsRequest?.Invoke(this, Asset));
+        }
+
+        private void ClickRenameAsset(object sender, RoutedEventArgs e)
+        {
+            RenameDialog renameDialog = new RenameDialog(Asset.Name);
+            renameDialog.ShowDialog();
+            if (renameDialog.Result)
+            {
+                Dispatcher.Invoke(() => OnRenameAssetRequest(this, Asset, renameDialog.NewName));
+            }
         }
     }
 }

@@ -31,13 +31,18 @@
                         </Grid.RowDefinitions>
                         <!--<Viewbox Grid.Row="0" Stretch="Uniform">-->
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Name="AssetName" Margin="5,5,0,5" MaxWidth="70">Asset name
+                            <TextBlock Name="AssetName" Margin="5,5,0,5" MaxWidth="65">Asset name
                                 <TextBlock.ToolTip>
                                     <ToolTip>
                                         <Label Name="ttName">Asset name</Label>
                                     </ToolTip>
                                 </TextBlock.ToolTip>
                             </TextBlock>
+                            <Label FontSize="10">
+                                <Hyperlink Click="ClickRenameAsset">
+                                    R
+                                </Hyperlink>
+                            </Label>
                             <Label FontSize="10">
                                 <Hyperlink Click="ClickDeleteAsset">
                                     X
