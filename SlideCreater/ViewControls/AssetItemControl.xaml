@@ -38,16 +38,12 @@
                                     </ToolTip>
                                 </TextBlock.ToolTip>
                             </TextBlock>
-                            <Label FontSize="10">
-                                <Hyperlink Click="ClickRenameAsset">
-                                    R
-                                </Hyperlink>
-                            </Label>
-                            <Label FontSize="10">
-                                <Hyperlink Click="ClickDeleteAsset">
-                                    X
-                                </Hyperlink>
-                            </Label>
+                            <Button Click="ClickRenameAsset" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image Source="/ViewControls/Images/Pencil.png" Width="10" Height="10"></Image>
+                            </Button>
+                            <Button Click="ClickDeleteAsset" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image Source="/ViewControls/Images/Trash.png" Width="10" Height="10"></Image>
+                            </Button>
                         </StackPanel>
                         <!--</Viewbox>-->
                         <Viewbox Grid.Row="1" Stretch="Uniform">

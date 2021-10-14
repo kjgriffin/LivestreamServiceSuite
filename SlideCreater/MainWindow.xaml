@@ -18,36 +18,87 @@
 
         <Menu Grid.Row="0">
             <MenuItem Header="File">
-                <MenuItem Click="ClickNew" Header="New"></MenuItem>
-                <MenuItem Click="ClickOpen" Header="Open"></MenuItem>
-                <MenuItem Click="ClickOpenJSON" Header="Open from JSON"></MenuItem>
-                <MenuItem Click="ClickSave" Header="Save"></MenuItem>
-                <MenuItem Click="ClickSaveJSON" Header="Save JSON"></MenuItem>
+                <MenuItem Click="ClickNew" Header="New">
+                    <MenuItem.Icon>
+                        <Image Source="/ViewControls/Images/File.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator></Separator>
-                <MenuItem Click="ClickTrustyOpen" Header="Trusty Open"></MenuItem>
-                <MenuItem Click="ClickTrustySave" Header="Trusty Save"></MenuItem>
+                <MenuItem Click="ClickTrustyOpen" Header="Trusty Open">
+                    <MenuItem.Icon>
+                        <Image Source="/ViewControls/Images/Folder.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Click="ClickTrustySave" Header="Trusty Save">
+                    <MenuItem.Icon>
+                        <Image Source="/ViewControls/Images/Save.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator></Separator>
+                <MenuItem Click="ClickOpen" Header="Open (Legacy)">
+                    <MenuItem.Icon>
+                        <Image Source="/ViewControls/Images/Folder_light.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <!--<MenuItem IsEnabled="false" Click="ClickOpenJSON" Header="Open from JSON"></MenuItem>-->
+                <!--<MenuItem IsEnabled="false" Click="ClickSave" Header="Save"></MenuItem>-->
+                <!--<MenuItem IsEnabled="false" Click="ClickSaveJSON" Header="Save JSON"></MenuItem>-->
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem Name="mipreviewslide" Click="ClickTogglePreviewSlide" Header="Preview Slides" IsChecked="true" IsCheckable="true"></MenuItem>
+                <MenuItem Name="mipreviewslide" Click="ClickTogglePreviewSlide" Header="Preview Slides" IsChecked="true" IsCheckable="true">
+                </MenuItem>
                 <MenuItem Name="mipreviewkey" Click="ClickTogglePreviewKey" Header="Preview Keys" IsCheckable="true"></MenuItem>
                 <Separator></Separator>
                 <MenuItem Name="openTmpFolder" Click="OpenTempFolder" Header="View Temp Folder"></MenuItem>
             </MenuItem>
             <MenuItem Header="Import">
-                <MenuItem Name="miimport" Click="ClickImportService" Header="Import from LSB Service"></MenuItem>
+                <MenuItem Name="miimport" Click="ClickImportService" Header="Import from LSB Service">
+                    <MenuItem.Icon>
+                        <Image Source="/ViewControls/Images/CloudDL.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Name="miimport_adv" Click="ClickImportServiceAdv" Header="Import Wizard"></MenuItem>
             </MenuItem>
             <MenuItem Header="Recovery">
-                <MenuItem Click="RecoverAutoSave" Header="Recover Auto Save"></MenuItem> 
+                <MenuItem Click="RecoverAutoSave" Header="Recover Auto Save">
+                    <MenuItem.Icon>
+                        <Image Source="/ViewControls/Images/Cardio.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="Commands" Click="ClickHelpCommands"></MenuItem>
+                <MenuItem Header="Commands" Click="ClickHelpCommands">
+                    <MenuItem.Icon>
+                        <Image Source="/ViewControls/Images/Question.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
         </Menu>
 
-        <ToolBar Grid.Row="1" Background="#fafafa">
-            <Button Click="RenderSlides">Render</Button>
-            <Button Click="ExportSlides">Export</Button>
+        <ToolBar Grid.Row="1" Background="#dedede">
+            <Button Click="RenderSlides" Padding="10,0,10,0">
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/ViewControls/Images/RenderPaintCan.png" Width="30" Height="30"></Image>
+                        <TextBlock VerticalAlignment="Center">Render</TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Button>
+            <Button Click="ExportSlides" Padding="10,0,10,0">
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/ViewControls/Images/Export2.png" Width="30" Height="30"></Image>
+                        <TextBlock VerticalAlignment="Center">Export</TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Button>
+            <Separator></Separator>
+            <Border Width="20" Height="20" VerticalAlignment="Center">
+                <CheckBox Name="cbAgressiveSave" IsChecked="true" Click="ClickCBAutoSave" VerticalAlignment="center"></CheckBox>
+            </Border>
+            <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">
+                <Label.ToolTip>Performs a full trusty save including assets before any 'risky' operation. (May increase disk usage.)</Label.ToolTip> Aggressively Auto Save
+            </Label>
         </ToolBar>
 
         <Grid Grid.Row="2">
@@ -108,47 +159,47 @@
                             </StackPanel>
                         </Grid>
                         <!--<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">-->
-                            <!--<TextBlock Name="tbConsole"></TextBlock>-->
-                            <!--<FlowDocument Name="error_report"></FlowDocument>-->
-                            <!--<StackPanel Name="error_report" Orientation="Vertical"></StackPanel>-->
-                            <ListView Grid.Row="1" Name="error_report_view">
-                                <ListView.Resources>
-                                    <Style TargetType="{x:Type ListViewItem}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Level}" Value="0">
-                                                <Setter Property="Background" Value="LightGray"></Setter>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Level}" Value="1">
-                                                <Setter Property="Background" Value="DeepSkyBlue"></Setter>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Level}" Value="2">
-                                                <Setter Property="Background" Value="WhiteSmoke"></Setter>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Level}" Value="3">
-                                                <Setter Property="Background" Value="Orange"></Setter>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Level}" Value="4">
-                                                <Setter Property="Background" Value="MediumPurple"></Setter>
-                                                <Setter Property="Foreground" Value="White"></Setter>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Level}" Value="5">
-                                                <Setter Property="Background" Value="Red"></Setter>
-                                                <Setter Property="Foreground" Value="White"></Setter>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ListView.Resources>
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="Level" DisplayMemberBinding="{Binding Level}"></GridViewColumn>
-                                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding ErrorName}"></GridViewColumn>
-                                        <GridViewColumn Header="Info" DisplayMemberBinding="{Binding ErrorMessage}"></GridViewColumn>
-                                        <GridViewColumn Header="Token" DisplayMemberBinding="{Binding Token}"></GridViewColumn>
-                                        <GridViewColumn Header="Inner" DisplayMemberBinding="{Binding Inner}"></GridViewColumn>
-                                        <GridViewColumn Header="Generator" DisplayMemberBinding="{Binding Generator}"></GridViewColumn>
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
+                        <!--<TextBlock Name="tbConsole"></TextBlock>-->
+                        <!--<FlowDocument Name="error_report"></FlowDocument>-->
+                        <!--<StackPanel Name="error_report" Orientation="Vertical"></StackPanel>-->
+                        <ListView Grid.Row="1" Name="error_report_view">
+                            <ListView.Resources>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Level}" Value="0">
+                                            <Setter Property="Background" Value="LightGray"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="1">
+                                            <Setter Property="Background" Value="DeepSkyBlue"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="2">
+                                            <Setter Property="Background" Value="WhiteSmoke"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="3">
+                                            <Setter Property="Background" Value="Orange"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="4">
+                                            <Setter Property="Background" Value="MediumPurple"></Setter>
+                                            <Setter Property="Foreground" Value="White"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="5">
+                                            <Setter Property="Background" Value="Red"></Setter>
+                                            <Setter Property="Foreground" Value="White"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.Resources>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Level" DisplayMemberBinding="{Binding Level}"></GridViewColumn>
+                                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding ErrorName}"></GridViewColumn>
+                                    <GridViewColumn Header="Info" DisplayMemberBinding="{Binding ErrorMessage}"></GridViewColumn>
+                                    <GridViewColumn Header="Token" DisplayMemberBinding="{Binding Token}"></GridViewColumn>
+                                    <GridViewColumn Header="Inner" DisplayMemberBinding="{Binding Inner}"></GridViewColumn>
+                                    <GridViewColumn Header="Generator" DisplayMemberBinding="{Binding Generator}"></GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                         <!--</ScrollViewer>-->
                     </Grid>
                 </Grid>

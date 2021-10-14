@@ -209,13 +209,30 @@ namespace SlideCreater
             }
             // Set title
             Title = $"Slide Creater - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
+
+            // enable optional features
+            EnableDisableOptionalFeatures();
+
+        }
+
+        private void EnableDisableOptionalFeatures()
+        {
+            if (VersionInfo.Mode != "Debug")
+            {
+                miimport_adv.Visibility = Visibility.Collapsed;
+                miimport_adv.IsEnabled = false;
+            }
         }
 
 
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
             TryAutoSave();
-            await TryFullAutoSave();
+            if (!m_agressive_autosave_enabled)
+            {
+                // always do it pre-render just to be safe
+                await TryFullAutoSave();
+            }
             string text = TbInput.GetAllText();
             _proj.SourceCode = text;
 
@@ -909,6 +926,17 @@ namespace SlideCreater
 
         private void TryAutoSave()
         {
+            // might even trust agressive auto saves more
+            if (m_agressive_autosave_enabled)
+            {
+                Task.Run(async () =>
+                {
+                    await TryFullAutoSave();
+                });
+                return;
+            }
+
+
             // create a simple json and store it in temp files
             string tmppath = System.IO.Path.Join(System.IO.Path.GetTempPath(), "slidecreaterautosaves");
             string filename = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.autosave.json";
@@ -1305,6 +1333,15 @@ namespace SlideCreater
             ofd.Title = "Project Temp Folder";
             ofd.InitialDirectory = _proj.LoadTmpPath;
             ofd.ShowDialog();
+        }
+
+
+        private bool m_agressive_autosave_enabled = true;
+
+        private void ClickCBAutoSave(object sender, RoutedEventArgs e)
+        {
+            m_agressive_autosave_enabled = !m_agressive_autosave_enabled;
+            cbAgressiveSave.IsChecked = m_agressive_autosave_enabled;
         }
     }
 }

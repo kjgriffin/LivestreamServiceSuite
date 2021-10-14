@@ -10,7 +10,20 @@
 
   <ItemGroup>
     <None Remove="version.json" />
+    <None Remove="ViewControls\Images\Cardio.png" />
+    <None Remove="ViewControls\Images\CloudDL.png" />
+    <None Remove="ViewControls\Images\Delete.png" />
+    <None Remove="ViewControls\Images\Export.png" />
+    <None Remove="ViewControls\Images\Export2.png" />
+    <None Remove="ViewControls\Images\File.png" />
+    <None Remove="ViewControls\Images\Folder.png" />
+    <None Remove="ViewControls\Images\Folder_light.png" />
     <None Remove="ViewControls\Images\musicnote.png" />
+    <None Remove="ViewControls\Images\Pencil.png" />
+    <None Remove="ViewControls\Images\Question.png" />
+    <None Remove="ViewControls\Images\RenderPaintCan.png" />
+    <None Remove="ViewControls\Images\Save.png" />
+    <None Remove="ViewControls\Images\Trash.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,7 +44,46 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="ViewControls\Images\Cardio.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\CloudDL.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\Delete.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\Export.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\Export2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\File.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\Folder.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\Folder_light.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="ViewControls\Images\musicnote.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\Pencil.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\Question.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\RenderPaintCan.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\Save.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\Trash.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
