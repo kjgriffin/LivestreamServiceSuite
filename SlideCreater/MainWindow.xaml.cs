@@ -462,7 +462,7 @@ namespace SlideCreater
 
 
                 Assets.Add(asset);
-                _proj.Assets.Add(asset);
+                _proj.Assets = Assets;
                 ShowProjectAssets();
             }
         }
@@ -789,6 +789,7 @@ namespace SlideCreater
             TbInput.SetText(string.Empty);
             _proj.CleanupResources();
             _proj = new Project(true);
+            _proj.Assets = Assets;
 
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
