@@ -435,6 +435,12 @@ namespace LutheRun
                                 // pretty sure it's not one thing, but lots of sung liturgy
                                 return false;
                             }
+                            // in the case of some Kyrie, we have more than 2 lines, which are all the same width...
+                            // so we need to check for something at this point we'll check if there's a bunch of lsb-responsorial tags
+                            if (content.Children.Any(c => c.ClassList.Contains("lsb-responsorial")))
+                            {
+                                return false;
+                            }
                         }
 
                         ServiceElements.Add(hymn);
