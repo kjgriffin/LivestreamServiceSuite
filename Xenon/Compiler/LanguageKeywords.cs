@@ -74,6 +74,7 @@ namespace Xenon.Compiler
 
     enum LanguageKeywordCommand
     {
+        INVALIDUNKNOWN,
         SetVar,
         Break,
         Video,

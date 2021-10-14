@@ -1,0 +1,71 @@
+﻿<SyntaxDefinition name="XENON"
+        xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Comment" foreground="Green" />
+  <Color name="String" foreground="Red" />
+
+  <!-- This is the main ruleset. -->
+  <RuleSet>
+
+
+    <Span foreground="#ff8f8f8f">
+      <Begin>///\u0020&lt;/</Begin>
+      <End>$</End>
+      <RuleSet>
+        <Span foreground="Green">
+          <Begin>(?&lt;=&gt;).</Begin>
+          <End>$</End>
+        </Span>
+      </RuleSet>
+    </Span>
+
+    <Span foreground="Orange">
+      <Begin>//&gt;</Begin>
+      <End>$</End>
+    </Span>
+
+    <Span color="Comment" begin="//" />
+    <Span color="Comment" multiline="true"
+       begin="/\*" end="\*/" />
+
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+    </Span>
+
+    <Span foreground="Purple" multiline="true">
+      <Begin>::postset</Begin>
+      <End>\)</End>
+    </Span>
+
+    <Keywords fontWeight="bold" foreground="Blue">
+      <Word>#liturgyoff</Word>
+      <Word>#organintro</Word>
+      <Word>#set</Word>
+      <Word>#break</Word>
+      <Word>#video</Word>
+      <Word>#filterimage</Word>
+      <Word>#fullimage</Word>
+      <Word>#fitimage</Word>
+      <Word>#autofitimage</Word>
+      <Word>#stitchedimage</Word>
+      <Word>#litimage</Word>
+      <Word>#liturgy</Word>
+      <Word>#tlverse</Word>
+      <Word>#reading</Word>
+      <Word>#sermon</Word>
+      <Word>#anthemtitle</Word>
+      <Word>#2title</Word>
+      <Word>#texthymn</Word>
+      <Word>#verse</Word>
+      <Word>#copyright</Word>
+      <Word>#viewservices</Word>
+      <Word>#viewseries</Word>
+      <Word>#apostlescreed</Word>
+      <Word>#nicenecreed</Word>
+      <Word>#lordsprayer</Word>
+      <Word>#resource</Word>
+      <Word>#script</Word>
+      <!-- ... -->
+    </Keywords>
+  </RuleSet>
+</SyntaxDefinition>

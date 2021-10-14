@@ -20,6 +20,7 @@
     <None Remove="ViewControls\Images\Folder_light.png" />
     <None Remove="ViewControls\Images\musicnote.png" />
     <None Remove="ViewControls\Images\Pencil.png" />
+    <None Remove="ViewControls\Images\Plus.png" />
     <None Remove="ViewControls\Images\Question.png" />
     <None Remove="ViewControls\Images\RenderPaintCan.png" />
     <None Remove="ViewControls\Images\Save.png" />
@@ -27,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.1.2.30" />
     <PackageReference Include="CefSharp.Wpf.NETCore" Version="92.0.251" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
@@ -72,6 +74,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="ViewControls\Images\Pencil.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\Plus.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="ViewControls\Images\Question.png">

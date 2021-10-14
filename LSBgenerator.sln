@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UIControls", "UIControls\UI
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwitcherControl", "SwitcherControl\SwitcherControl.csproj", "{651BCC46-4FC7-4512-886C-DF26EBD814CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configurations", "Configurations\Configurations.csproj", "{FAC5902F-9781-403F-8F98-3538AF059AFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configurations", "Configurations\Configurations.csproj", "{FAC5902F-9781-403F-8F98-3538AF059AFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UITextboxTestbed", "UITextboxTestbed\UITextboxTestbed.csproj", "{E498EE79-C819-46B4-ACF9-230F76584D1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{FAC5902F-9781-403F-8F98-3538AF059AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAC5902F-9781-403F-8F98-3538AF059AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAC5902F-9781-403F-8F98-3538AF059AFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E498EE79-C819-46B4-ACF9-230F76584D1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E498EE79-C819-46B4-ACF9-230F76584D1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E498EE79-C819-46B4-ACF9-230F76584D1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E498EE79-C819-46B4-ACF9-230F76584D1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

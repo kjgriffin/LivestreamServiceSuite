@@ -27,6 +27,8 @@ using SlideCreater.ViewControls;
 using Xenon.SaveLoad;
 using System.IO.Compression;
 using System.Net;
+using UIControls;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 
 namespace SlideCreater
 {
@@ -197,6 +199,12 @@ namespace SlideCreater
         public CreaterEditorWindow()
         {
             InitializeComponent();
+
+            TbInput.LoadLanguage_XENON();
+            TbInput.TextArea.TextEntered += TextArea_TextEntered;
+            TbInput.TextArea.TextEntering += TextArea_TextEntering;
+            TbInput.TextArea.PreviewTextInput += TextArea_PreviewTextInput;
+
             dirty = false;
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
@@ -214,6 +222,7 @@ namespace SlideCreater
             EnableDisableOptionalFeatures();
 
         }
+
 
         private void EnableDisableOptionalFeatures()
         {
@@ -233,7 +242,7 @@ namespace SlideCreater
                 // always do it pre-render just to be safe
                 await TryFullAutoSave();
             }
-            string text = TbInput.GetAllText();
+            string text = TbInput.Text;
             _proj.SourceCode = text;
 
             //tbConsole.Text = string.Empty;
@@ -586,7 +595,11 @@ namespace SlideCreater
 
         private void InsertTextCommand(string InsertCommand)
         {
-            TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
+            foreach (var line in InsertCommand.Split(Environment.NewLine))
+            {
+                TbInput.Document.Insert(TbInput.CaretOffset, line);
+            }
+            //TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
             //TbInput.InsertTextAtCursor(InsertCommand);
             //int newindex = TbInput.CaretIndex + InsertCommand.Length;
             //TbInput.Text = TbInput.Text.Insert(TbInput.CaretIndex, InsertCommand);
@@ -659,7 +672,7 @@ namespace SlideCreater
                 });
             });
 
-            _proj.SourceCode = TbInput.GetAllText();
+            _proj.SourceCode = TbInput.Text;
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
             //sfd.DefaultExt = "json";
@@ -681,7 +694,7 @@ namespace SlideCreater
         private void SaveAsJSON()
         {
             TryAutoSave();
-            _proj.SourceCode = TbInput.GetAllText();
+            _proj.SourceCode = TbInput.Text;
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
             sfd.DefaultExt = "json";
@@ -719,7 +732,7 @@ namespace SlideCreater
                 //slidepreviews.Clear();
                 previews.Clear();
                 _proj = Project.Load(ofd.FileName);
-                TbInput.SetText(_proj.SourceCode);
+                TbInput.Text = _proj.SourceCode;
                 Assets = _proj.Assets;
                 try
                 {
@@ -763,7 +776,7 @@ namespace SlideCreater
                 FocusSlide.Clear();
                 _proj.CleanupResources();
                 _proj = await Project.LoadProject(ofd.FileName);
-                TbInput.SetText(_proj.SourceCode);
+                TbInput.Text = _proj.SourceCode;
                 Assets = _proj.Assets;
                 try
                 {
@@ -803,7 +816,7 @@ namespace SlideCreater
             Assets.Clear();
             AssetList.Children.Clear();
             FocusSlide.Clear();
-            TbInput.SetText(string.Empty);
+            TbInput.Text = string.Empty;
             _proj.CleanupResources();
             _proj = new Project(true);
             _proj.Assets = Assets;
@@ -846,9 +859,6 @@ namespace SlideCreater
         }
 
         private bool dirty = false;
-        //private void SourceTextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //}
 
         private void AssetsChanged()
         {
@@ -949,7 +959,7 @@ namespace SlideCreater
                 save.AssetRenames.TryAdd(asset.Name, asset.DisplayName);
                 save.AssetExtensions.TryAdd(asset.Name, asset.Extension);
             }
-            save.SourceCode = TbInput.GetAllText();
+            save.SourceCode = TbInput.Text;
             try
             {
                 string json = JsonSerializer.Serialize(save);
@@ -1080,7 +1090,7 @@ namespace SlideCreater
                 pbActionStatus.Value = 0;
                 pbActionStatus.Visibility = Visibility.Hidden;
             }
-            TbInput.SetText(save.SourceCode);
+            TbInput.Text = save.SourceCode;
         }
 
         private async void ClickImportService(object sender, RoutedEventArgs e)
@@ -1102,15 +1112,8 @@ namespace SlideCreater
                 ShowProjectAssets();
                 ActionState = ActionState.Ready;
                 //TbInput.SetText("/*\r\n" + parser.XenonDebug() + "*/\r\n" + parser.XenonText);
-                TbInput.SetText(parser.XenonText);
+                TbInput.Text = parser.XenonText;
             }
-        }
-
-        private void SourceTextChanged(object sender, TextChangedEventArgs e)
-        {
-            dirty = true;
-            ProjectState = ProjectState.Dirty;
-            ActionState = ActionState.Ready;
         }
 
         private void cb_message_view_debug_Click(object sender, RoutedEventArgs e)
@@ -1141,7 +1144,7 @@ namespace SlideCreater
         {
             await NewProject();
             _proj.SourceCode = text;
-            TbInput.SetText(text);
+            TbInput.Text = text;
 
             // add all assets
             AddNamedAssetsFromPaths(assets);
@@ -1237,7 +1240,7 @@ namespace SlideCreater
                 }
                 Dispatcher.Invoke(() =>
                 {
-                    TbInput.SetText(sourcecode);
+                    TbInput.Text = sourcecode;
                 });
                 var assetfilemapfile = archive.GetEntry("assets.json");
                 if (assetfilemapfile != null)
@@ -1343,5 +1346,92 @@ namespace SlideCreater
             m_agressive_autosave_enabled = !m_agressive_autosave_enabled;
             cbAgressiveSave.IsChecked = m_agressive_autosave_enabled;
         }
+
+        private void SourceTextChanged(object sender, EventArgs e)
+        {
+            dirty = true;
+            ProjectState = ProjectState.Dirty;
+            ActionState = ActionState.Ready;
+        }
+
+
+        CompletionWindow completionWindow;
+        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text.Length > 0 && completionWindow != null)
+            {
+                if (!char.IsLetterOrDigit(e.Text[0]))
+                {
+                    // Whenever a non-letter is typed while the completion window is open,
+                    // insert the currently selected element.
+                    completionWindow.CompletionList.RequestInsertion(e);
+                }
+            }
+        }
+
+        private void TextArea_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            //const string LITURGY = "liturgy";
+            if (e.Text == " " && Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                //if (TbInput.CaretOffset >= LITURGY.Length && TbInput.CaretOffset - LITURGY.Length >= 0)
+                //{
+                //    string test = TbInput.Text.Substring(TbInput.CaretOffset - LITURGY.Length, LITURGY.Length);
+                //    if (test == LITURGY)
+                //    {
+                //        // Open code completion after the user has pressed dot:
+                //        completionWindow = new CompletionWindow(TbInput.TextArea);
+                //        IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+                //        data.Add(new CommonCompletion("(", "parameters"));
+                //        completionWindow.Show();
+                //        completionWindow.Closed += delegate
+                //        {
+                //            completionWindow = null;
+                //        };
+                //    }
+                //}
+                var suggestions = XenonSuggestionService.GetSuggestions(TbInput.Text, TbInput.CaretOffset);
+                if (suggestions.Any())
+                {
+                    completionWindow = new CompletionWindow(TbInput.TextArea);
+                    IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+                    foreach (var suggestion in suggestions)
+                    {
+                        data.Add(new CommonCompletion(suggestion.item, suggestion.description));
+                    }
+                    completionWindow.Show();
+                    completionWindow.Closed += delegate
+                    {
+                        completionWindow = null;
+                    };
+                }
+
+
+                e.Handled = true;
+            }
+        }
+
+        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        {
+            //if (e.Text == ".")
+            //{
+            //    // Open code completion after the user has pressed dot:
+            //    completionWindow = new CompletionWindow(TbInput.TextArea);
+            //    IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+            //    data.Add(new CommonCompletion("Item1", "this is a great choice", 10));
+            //    data.Add(new CommonCompletion("Item2"));
+            //    data.Add(new CommonCompletion("Thing4"));
+            //    data.Add(new CommonCompletion("Stuff"));
+            //    data.Add(new CommonCompletion("Sorted", "things too", 4));
+            //    data.Add(new CommonCompletion("Item3"));
+            //    completionWindow.Show();
+            //    completionWindow.Closed += delegate
+            //    {
+            //        completionWindow = null;
+            //    };
+            //}
+        }
+
+
     }
 }

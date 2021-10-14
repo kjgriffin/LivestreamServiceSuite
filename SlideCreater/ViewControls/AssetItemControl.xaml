@@ -40,9 +40,11 @@
                             </TextBlock>
                             <Button Click="ClickRenameAsset" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Image Source="/ViewControls/Images/Pencil.png" Width="10" Height="10"></Image>
+                                <Button.ToolTip>Rename Asset</Button.ToolTip>
                             </Button>
                             <Button Click="ClickDeleteAsset" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Image Source="/ViewControls/Images/Trash.png" Width="10" Height="10"></Image>
+                                <Button.ToolTip>Delete Asset</Button.ToolTip>
                             </Button>
                         </StackPanel>
                         <!--</Viewbox>-->

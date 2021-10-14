@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SlideCreater" xmlns:uicontrols="clr-namespace:UIControls;assembly=UIControls"
+        xmlns:local="clr-namespace:SlideCreater" xmlns:uicontrols="clr-namespace:UIControls;assembly=UIControls" xmlns:AvalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         mc:Ignorable="d"
         Closing="OnWindowClosing"
         Title="Slide Creater" Height="800" Width="1000">
@@ -103,7 +103,7 @@
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.5*"></ColumnDefinition>
+                <ColumnDefinition Width="1.8*"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
@@ -113,23 +113,42 @@
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"></GridSplitter>
             <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch"></GridSplitter>
 
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
-                        <Button Margin="5" Click="ClickAddAssets" Width="80" Height="30">Add Assets</Button>
-                        <Button Margin="5" Click="ClickClearAssets" Width="80" Height="30">ClearAssets</Button>
-                    </StackPanel>
-                </Grid>
-                <ScrollViewer Grid.Row="1">
-                    <StackPanel Name="AssetList">
+            <Border Grid.Column="0" Background="Gray">
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <StackPanel Orientation="Horizontal" Margin="2,5,5,5" HorizontalAlignment="left">
+                            <Button Margin="5" Click="ClickAddAssets" Width="100" Height="30">
+                                <Grid>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="/ViewControls/Images/Plus.png"></Image>
+                                        <Label>Add Assets</Label>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+                            <Button Margin="5" Click="ClickClearAssets" Width="100" Height="30">
+                                <Grid>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="/ViewControls/Images/Delete.png"></Image>
+                                        <Label>Remove All</Label>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                    <Border Grid.Row="1" Background="#dfdfdf" CornerRadius="10" Padding="5" Margin="5,0,5,10">
+                        <!--<ScrollViewer Grid.Row="1">-->
+                        <ScrollViewer Grid.Row="1">
+                            <StackPanel Name="AssetList">
 
-                    </StackPanel>
-                </ScrollViewer>
-            </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Border>
 
             <Grid Grid.Column="2">
                 <Grid>
@@ -138,9 +157,10 @@
                         <RowDefinition Height="5"></RowDefinition>
                         <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
-                    <ScrollViewer Grid.Row="0">
-                        <uicontrols:BetterTextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged"></uicontrols:BetterTextBox>
-                    </ScrollViewer>
+                    <!--<ScrollViewer Grid.Row="0">-->
+                    <!--<uicontrols:BetterTextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged"></uicontrols:BetterTextBox>-->
+                    <AvalonEdit:TextEditor Name="TbInput" FontFamily="inconsolata" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
+                    <!--</ScrollViewer>-->
                     <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"></GridSplitter>
                     <Grid Grid.Row="2">
                         <Grid.RowDefinitions>
@@ -148,7 +168,7 @@
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0" Background="LightGray">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,0,0">
                                 <TextBlock>
                                 Error List:
                                 </TextBlock>
