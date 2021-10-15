@@ -88,7 +88,7 @@ namespace Xenon.Compiler
                     //return AllCommandKeywords();
                 //}
                 //return new List<(string item, string description)>() { ("command already found", LanguageKeywords.Commands[toplevelcmd.cmd]) };
-                return GetCommandContextualSuggestions(toplevelcmd.cmd, sourcetext.Substring(toplevelcmd.index));
+                return GetCommandContextualSuggestions(toplevelcmd.cmd, sourcetext.Substring(toplevelcmd.index, caretpos - toplevelcmd.index));
             }
 
         }
@@ -128,7 +128,7 @@ namespace Xenon.Compiler
                             LanguageKeywordCommand cmd = LanguageKeywords.Commands.First(k => k.Value == match.Groups["command"].Value).Key;
                             if (cmd != LanguageKeywordCommand.Break)
                             {
-                                if (!IsCommandComplete(cmd, sourcetext.Substring(index)))
+                                if (!IsCommandComplete(cmd, sourcetext.Substring(index, caretpos-index)))
                                 {
                                     return (false, cmd, index);
                                 }
