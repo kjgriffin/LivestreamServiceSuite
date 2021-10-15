@@ -4,10 +4,42 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Xenon.Compiler.AST;
+
 namespace Xenon.Compiler
 {
     public class XenonSuggestionService
     {
+
+
+        public static (bool completed, List<(string suggestion, string description)> suggestions) GetDescriptionsForRegexMatchedSequence(List<(string regex, List<(string, string)> suggestions)> sequentialoptions, string sourcecode)
+        {
+            /*
+            1. start matching regexes in sequence
+            2. provide the suggestions for the first failed match
+             */
+
+            StringBuilder strbuffer = new StringBuilder();
+            strbuffer.Append(sourcecode);
+
+            foreach (var option in sequentialoptions)
+            {
+                // try matching regex against source code
+                // upon success remove the matched part and continue on
+                var match = Regex.Match(strbuffer.ToString(), option.regex);
+                if (match.Success)
+                {
+                    strbuffer.Remove(0, match.Length);
+                }
+                else
+                {
+                    return (false, option.suggestions);
+                }
+            }
+
+            return (true, new List<(string suggestion, string description)>());
+
+        }
 
 
         public static List<(string item, string description)> GetSuggestions(string sourcetext, int caretpos)
@@ -34,12 +66,9 @@ namespace Xenon.Compiler
             if (toplevelcmd.cmd == LanguageKeywordCommand.INVALIDUNKNOWN)
             {
                 List<(string, string)> res = new List<(string, string)>();
-                if (toplevelcmd.index == -1)
+                if (toplevelcmd.index == -1 || toplevelcmd.index + LanguageKeywords.Commands.GetValueOrDefault(toplevelcmd.cmd, "#").Length == caretpos)
                 {
-                    foreach (var kwd in LanguageKeywords.Commands.Values)
-                    {
-                        res.Add(("#" + kwd, ""));
-                    }
+                    return AllCommandKeywords();
                 }
                 else
                 {
@@ -50,12 +79,33 @@ namespace Xenon.Compiler
             }
             else
             {
-                return new List<(string item, string description)>() { ("command already found", LanguageKeywords.Commands[toplevelcmd.cmd]) };
+                if (toplevelcmd.completed)
+                {
+                    return AllCommandKeywords();
+                }
+                //if (toplevelcmd.index + LanguageKeywords.Commands[toplevelcmd.cmd].Length <= caretpos)
+                //{
+                    //return AllCommandKeywords();
+                //}
+                //return new List<(string item, string description)>() { ("command already found", LanguageKeywords.Commands[toplevelcmd.cmd]) };
+                return GetCommandContextualSuggestions(toplevelcmd.cmd, sourcetext.Substring(toplevelcmd.index));
             }
 
         }
 
-        private static (LanguageKeywordCommand cmd, int index) WalkBackToTopLevelCommand(string sourcetext, int caretpos)
+        private static List<(string, string)> AllCommandKeywords()
+        {
+            List<(string, string)> res = new List<(string, string)>();
+            foreach (var kwd in LanguageKeywords.Commands.Values)
+            {
+                res.Add(("#" + kwd, ""));
+            }
+            return res;
+        }
+
+
+
+        private static (bool completed, LanguageKeywordCommand cmd, int index) WalkBackToTopLevelCommand(string sourcetext, int caretpos)
         {
 
             int index = caretpos - 1;
@@ -80,19 +130,23 @@ namespace Xenon.Compiler
                             {
                                 if (!IsCommandComplete(cmd, sourcetext.Substring(index)))
                                 {
-                                    return (cmd, index);
+                                    return (false, cmd, index);
                                 }
                                 else
                                 {
-                                    return (LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
+                                    return (true, cmd, firstcmdindex);
                                 }
                             }
+                        }
+                        else
+                        {
+                            return (false, LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
                         }
                     }
                 }
                 index--;
             }
-            return (LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
+            return (false, LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
         }
 
         private static List<(LanguageKeywordCommand cmd, string cmdstr)> GetPartialMatchedCommands(string partialstr)
@@ -100,14 +154,23 @@ namespace Xenon.Compiler
             return LanguageKeywords.Commands.Where(cmd => cmd.Value.StartsWith(partialstr)).Select(kvp => (kvp.Key, kvp.Value)).ToList();
         }
 
-        private static bool IsCommandComplete(LanguageKeywordCommand cmd, string sourcecode)
+        private static List<(string suggestion, string description)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode)
         {
-            return CheckCommandComplete_DispatchTable.GetValueOrDefault(cmd, (_) => true).Invoke(sourcecode);
+            //CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => new List<(string, string)>())
+            return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string)>())).Invoke(sourcecode).suggestions;
         }
 
-        private static Dictionary<LanguageKeywordCommand, Func<string, bool>> CheckCommandComplete_DispatchTable = new Dictionary<LanguageKeywordCommand, Func<string, bool>>()
+        private static bool IsCommandComplete(LanguageKeywordCommand cmd, string sourcecode)
         {
-            [LanguageKeywordCommand.LordsPrayer] = (_) => true,
+            return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string)>())).Invoke(sourcecode).completed;
+        }
+
+        private static Dictionary<LanguageKeywordCommand, Func<string, (bool completed, List<(string suggestion, string description)> suggestions)>> CommandContextutalSuggestionDispatcher = new Dictionary<LanguageKeywordCommand, Func<string, (bool, List<(string, string)>)>>()
+        {
+            [LanguageKeywordCommand.SetVar] = (str) => (IXenonASTCommand.GetInstance<XenonASTSetVariable>() as IXenonASTCommand).GetContextualSuggestions(str),
+            [LanguageKeywordCommand.Liturgy] = (str) => (IXenonASTCommand.GetInstance<XenonASTLiturgy>() as IXenonASTCommand).GetContextualSuggestions(str),
+
+            [LanguageKeywordCommand.LordsPrayer] = (_) => (true, new List<(string, string)>()),
         };
 
 

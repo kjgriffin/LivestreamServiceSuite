@@ -1360,11 +1360,12 @@ namespace SlideCreater
         {
             if (e.Text.Length > 0 && completionWindow != null)
             {
-                if (!char.IsLetterOrDigit(e.Text[0]))
+                if ((e.Text[0]) == 9 || e.Text.StartsWith(System.Environment.NewLine))
                 {
                     // Whenever a non-letter is typed while the completion window is open,
                     // insert the currently selected element.
                     completionWindow.CompletionList.RequestInsertion(e);
+                    ShowSuggestions();
                 }
             }
         }
@@ -1374,62 +1375,35 @@ namespace SlideCreater
             //const string LITURGY = "liturgy";
             if (e.Text == " " && Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                //if (TbInput.CaretOffset >= LITURGY.Length && TbInput.CaretOffset - LITURGY.Length >= 0)
-                //{
-                //    string test = TbInput.Text.Substring(TbInput.CaretOffset - LITURGY.Length, LITURGY.Length);
-                //    if (test == LITURGY)
-                //    {
-                //        // Open code completion after the user has pressed dot:
-                //        completionWindow = new CompletionWindow(TbInput.TextArea);
-                //        IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-                //        data.Add(new CommonCompletion("(", "parameters"));
-                //        completionWindow.Show();
-                //        completionWindow.Closed += delegate
-                //        {
-                //            completionWindow = null;
-                //        };
-                //    }
-                //}
-                var suggestions = XenonSuggestionService.GetSuggestions(TbInput.Text, TbInput.CaretOffset);
-                if (suggestions.Any())
-                {
-                    completionWindow = new CompletionWindow(TbInput.TextArea);
-                    IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-                    foreach (var suggestion in suggestions)
-                    {
-                        data.Add(new CommonCompletion(suggestion.item, suggestion.description));
-                    }
-                    completionWindow.Show();
-                    completionWindow.Closed += delegate
-                    {
-                        completionWindow = null;
-                    };
-                }
-
+                ShowSuggestions();
 
                 e.Handled = true;
             }
         }
 
+        private void ShowSuggestions()
+        {
+            var suggestions = XenonSuggestionService.GetSuggestions(TbInput.Text, TbInput.CaretOffset);
+            if (suggestions.Any())
+            {
+                completionWindow = new CompletionWindow(TbInput.TextArea);
+                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+                foreach (var suggestion in suggestions)
+                {
+                    data.Add(new CommonCompletion(suggestion.item, suggestion.description));
+                }
+                completionWindow.Show();
+                completionWindow.CompletionList.SelectedItem = data.First(d => d.Text == suggestions.First().item);
+                completionWindow.Closed += delegate
+                {
+                    completionWindow = null;
+                };
+            }
+        }
+
         private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
         {
-            //if (e.Text == ".")
-            //{
-            //    // Open code completion after the user has pressed dot:
-            //    completionWindow = new CompletionWindow(TbInput.TextArea);
-            //    IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-            //    data.Add(new CommonCompletion("Item1", "this is a great choice", 10));
-            //    data.Add(new CommonCompletion("Item2"));
-            //    data.Add(new CommonCompletion("Thing4"));
-            //    data.Add(new CommonCompletion("Stuff"));
-            //    data.Add(new CommonCompletion("Sorted", "things too", 4));
-            //    data.Add(new CommonCompletion("Item3"));
-            //    completionWindow.Show();
-            //    completionWindow.Closed += delegate
-            //    {
-            //        completionWindow = null;
-            //    };
-            //}
+            ShowSuggestions();
         }
 
 

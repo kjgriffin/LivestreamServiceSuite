@@ -1,6 +1,7 @@
 ﻿using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,7 +26,19 @@ namespace UIControls
 
         public object Content => Text;
 
-        public object Description { get; private set; } = "";
+        private string description = "";
+        public object Description
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(description))
+                {
+                    return $"Insert '{Text}'";
+                }
+                return description;
+            }
+            private set => description = (string)value;
+        }
 
         public double Priority { get; private set; } = 0;
 
@@ -36,11 +49,11 @@ namespace UIControls
                 // try walking back and doing a greedy replacemen
                 int index = completionSegment.EndOffset - 1;
 
-                int newstart = index;
+                int newstart = completionSegment.EndOffset;
 
                 int matchsize = completionSegment.EndOffset - index;
 
-                while (index >= 0 && matchsize < Text.Length && newstart >= 0)
+                while (index >= 0 && matchsize <= Text.Length && newstart >= 0)
                 {
                     // try and match a bigger substring
                     if (Text.StartsWith(textArea.Document.Text.Substring(index, matchsize)))
@@ -56,7 +69,7 @@ namespace UIControls
             }
             else
             {
-                textArea.Document.Replace(completionSegment, this.Text);
+                //textArea.Document.Replace(completionSegment, this.Text);
             }
         }
     }
