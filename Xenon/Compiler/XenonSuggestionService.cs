@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using Xenon.Compiler.AST;
+using Xenon.Helpers;
 
 namespace Xenon.Compiler
 {
@@ -12,7 +13,7 @@ namespace Xenon.Compiler
     {
 
 
-        public static (bool completed, List<(string suggestion, string description)> suggestions) GetDescriptionsForRegexMatchedSequence(List<(string regex, List<(string, string)> suggestions)> sequentialoptions, string sourcecode)
+        public static (bool completed, List<(string suggestion, string description)> suggestions) GetDescriptionsForRegexMatchedSequence(List<(string regex, string captureas, List<(string, string)> suggestions, string externalfunctionname)> sequentialoptions, string sourcecode, IXenonCommandSuggestionCallback root)
         {
             /*
             1. start matching regexes in sequence
@@ -22,6 +23,8 @@ namespace Xenon.Compiler
             StringBuilder strbuffer = new StringBuilder();
             strbuffer.Append(sourcecode);
 
+            Dictionary<string, string> priormatches = new Dictionary<string, string>();
+
             foreach (var option in sequentialoptions)
             {
                 // try matching regex against source code
@@ -29,11 +32,30 @@ namespace Xenon.Compiler
                 var match = Regex.Match(strbuffer.ToString(), option.regex);
                 if (match.Success)
                 {
+                    if (!string.IsNullOrEmpty(option.captureas))
+                    {
+                        priormatches[option.captureas] = match.Value;
+                    }
                     strbuffer.Remove(0, match.Length);
                 }
                 else
                 {
-                    return (false, option.suggestions);
+                    if (!string.IsNullOrEmpty(option.externalfunctionname))
+                    {
+                        // call back to base type and have them use a contextual suggestion based on current option
+                        var extfunc = root.GetType().GetField(option.externalfunctionname, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+                        if (extfunc.FieldType == typeof(IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand))
+                        {
+                            IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand dfunc = (IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand)extfunc.GetValue(root);
+                            return (false, dfunc.Invoke(priormatches, sourcecode, strbuffer.ToString()));
+                        }
+                    }
+
+                    // order suggestions by partial completion, then alphabetically
+                    string remainder = strbuffer.ToString();
+
+                    return (false, option.suggestions.OrderByClosestMatch(remainder).ToList());
                 }
             }
 
@@ -85,7 +107,7 @@ namespace Xenon.Compiler
                 }
                 //if (toplevelcmd.index + LanguageKeywords.Commands[toplevelcmd.cmd].Length <= caretpos)
                 //{
-                    //return AllCommandKeywords();
+                //return AllCommandKeywords();
                 //}
                 //return new List<(string item, string description)>() { ("command already found", LanguageKeywords.Commands[toplevelcmd.cmd]) };
                 return GetCommandContextualSuggestions(toplevelcmd.cmd, sourcetext.Substring(toplevelcmd.index, caretpos - toplevelcmd.index));
@@ -128,7 +150,7 @@ namespace Xenon.Compiler
                             LanguageKeywordCommand cmd = LanguageKeywords.Commands.First(k => k.Value == match.Groups["command"].Value).Key;
                             if (cmd != LanguageKeywordCommand.Break)
                             {
-                                if (!IsCommandComplete(cmd, sourcetext.Substring(index, caretpos-index)))
+                                if (!IsCommandComplete(cmd, sourcetext.Substring(index, caretpos - index)))
                                 {
                                     return (false, cmd, index);
                                 }
@@ -151,7 +173,7 @@ namespace Xenon.Compiler
 
         private static List<(LanguageKeywordCommand cmd, string cmdstr)> GetPartialMatchedCommands(string partialstr)
         {
-            return LanguageKeywords.Commands.Where(cmd => cmd.Value.StartsWith(partialstr)).Select(kvp => (kvp.Key, kvp.Value)).ToList();
+            return LanguageKeywords.Commands.Where(cmd => cmd.Value.StartsWith(partialstr)).Select(cmd => (cmd.Value, cmd)).OrderByClosestMatch(partialstr).Select(x => (x.Item2.Key, x.Item2.Value)).ToList();
         }
 
         private static List<(string suggestion, string description)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode)

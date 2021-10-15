@@ -8,7 +8,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
-    class XenonASTSetVariable : IXenonASTCommand
+    class XenonASTSetVariable : IXenonASTCommand, IXenonCommandSuggestionCallback
     {
 
         public string VariableName;
@@ -44,35 +44,33 @@ namespace Xenon.Compiler.AST
         }
 
 
-        static List<(string, List<(string, string)>)> contextualsuggestions = new List<(string, List<(string, string)>)>()
+        static List<(string, string, List<(string, string)>, string externalfunctionname)> contextualsuggestions = new List<(string, string, List<(string, string)>, string)>()
         {
-            ("#set", new List<(string, string)>() { ("#set", "")}),
-            ("\\(\"", new List<(string, string)>() { ("(\"", "insert variable name")}),
-            ("[^\"]+", new List<(string, string)>() { ("otherspeakers", ""), ("global.rendermode.alpha", "")}),
-            ("\"", new List<(string, string)>() { ("\"", "")}),
-            (",", new List<(string, string)>() { (",", "")}),
-            ("\"", new List<(string, string)>() { ("\"", "")}),
-            (".+\"", new List<(string, string)>() { ("\"", "enclose variable value")}),
-            ("\\)", new List<(string, string)>(){(")", "")}),
+            ("#set", "", new List<(string, string)>() { ("#set", "")}, null),
+            ("\\(\"", "", new List<(string, string)>() { ("(\"", "insert variable name")}, null),
+            ("[^\"]+(?=\")", "varname", new List<(string, string)>() { ("otherspeakers", ""), ("global.rendermode.alpha", ""), ("\"", "")}, null),
+            ("\"", "", new List<(string, string)>() { ("\"", "")}, null),
+            (",", "", new List<(string, string)>() { (",", "")}, null),
+            ("\"", "", new List<(string, string)>() { ("\"", "")}, null),
+            ("[^\"]+(?=\")", "", null, nameof(GetContextualSuggestionsForVariableValue)),
+            ("\"", "", new List<(string, string)>() { ("\"", "enclose variable value")}, null),
+            ("\\)", "", new List<(string, string)>(){(")", "")}, null),
+        };
+
+        IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableValue = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet) =>
+        {
+            if (priorcaptures.GetOrDefault("varname", "") == "global.rendermode.alpha")
+            {
+                return new List<(string suggestion, string description)>() { ("premultiplied", "Renders images premultiplied against keys."), ("\"", "") };
+            }
+            return new List<(string suggestion, string description)>();
         };
 
         public (bool complete, List<(string suggestion, string description)> suggestions) GetContextualSuggestions(string sourcecode)
         {
-            return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode);
-
-            if (sourcecode.StartsWith("#set"))
-            {
-                if (sourcecode.TrySubstring("#set".Length, 1) == "(")
-                {
-
-                }
-                return (true, new List<(string, string)>());
-            }
-            else
-            {
-                return (false, new List<(string suggestion, string description)>() { ("#set", "") });
-            }
+            return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode, this);
         }
 
     }
+
 }
