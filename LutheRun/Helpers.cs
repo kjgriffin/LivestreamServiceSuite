@@ -252,7 +252,7 @@ namespace LutheRun
                 sb.Clear();
             }
 
-            return lines;
+            return lines.Where(l => !string.IsNullOrEmpty(l.speaker) && !string.IsNullOrEmpty(l.value)).ToList();
         }
 
         private static void AddNodeText(StringBuilder sb, IElement node)
