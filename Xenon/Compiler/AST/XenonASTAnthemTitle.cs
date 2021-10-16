@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+
+using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
-    class XenonASTAnthemTitle : IXenonASTCommand
+    class XenonASTAnthemTitle : IXenonASTCommand, IXenonCommandSuggestionCallback
     {
 
         public string AnthemTitle { get; set; }
@@ -83,5 +85,28 @@ namespace Xenon.Compiler.AST
         {
             throw new NotImplementedException();
         }
+
+        static List<RegexMatchedContextualSuggestions> contextualsuggestions = new List<RegexMatchedContextualSuggestions>()
+        {
+            ("#anthemtitle", false, "", new List<(string, string)> { ("#anthemtitle", "")}, null),
+            ("\\(\"", false, "", new List<(string, string)> { ("(\"", "insert anthem name")}, null),
+            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end anthem name")}, null ),
+            (",", false, "", new List<(string, string)> {(",", "") }, null),
+            ("\"", false, "", new List<(string, string)> { ("\"", "insert muscian name")}, null),
+            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end musician name")}, null ),
+            (",", false, "", new List<(string, string)> {(",", "") }, null),
+            ("\"", false, "", new List<(string, string)> { ("\"", "insert accompanist")}, null),
+            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end accompanist")}, null ),
+            (",", false, "", new List<(string, string)> {(",", "") }, null),
+            ("\"", false, "", new List<(string, string)> { ("\"", "insert credits")}, null),
+            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end credits")}, null ),
+            ("\\)", false, "", new List<(string, string)> {(")", "") }, null),
+        };
+
+        public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
+        {
+            return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode, this);
+        }
+
     }
 }

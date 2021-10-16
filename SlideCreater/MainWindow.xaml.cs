@@ -29,6 +29,7 @@ using System.IO.Compression;
 using System.Net;
 using UIControls;
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using Xenon.Compiler.Suggestions;
 
 namespace SlideCreater
 {
@@ -1355,17 +1356,23 @@ namespace SlideCreater
         }
 
 
+        bool always_show_suggestions = false;
+        bool entersuggestionwithenter = false;
+
         CompletionWindow completionWindow;
         private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
         {
             if (e.Text.Length > 0 && completionWindow != null)
             {
-                if ((e.Text[0]) == 9 || e.Text.StartsWith(System.Environment.NewLine))
+                if ((e.Text[0]) == 9 || e.Text.StartsWith("\t") || (entersuggestionwithenter && e.Text.StartsWith(System.Environment.NewLine)))
                 {
                     // Whenever a non-letter is typed while the completion window is open,
                     // insert the currently selected element.
                     completionWindow.CompletionList.RequestInsertion(e);
-                    ShowSuggestions();
+                    if (always_show_suggestions)
+                    {
+                        ShowSuggestions();
+                    }
                 }
             }
         }
@@ -1403,7 +1410,14 @@ namespace SlideCreater
 
         private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
         {
-            ShowSuggestions();
+            if (always_show_suggestions)
+            {
+                ShowSuggestions();
+            }
+            else if (!string.IsNullOrWhiteSpace(e.Text))
+            {
+                ShowSuggestions();
+            }
         }
 
 

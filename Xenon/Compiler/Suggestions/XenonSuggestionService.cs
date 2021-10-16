@@ -7,13 +7,13 @@ using System.Text.RegularExpressions;
 using Xenon.Compiler.AST;
 using Xenon.Helpers;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.Suggestions
 {
     public class XenonSuggestionService
     {
 
 
-        public static (bool completed, List<(string suggestion, string description)> suggestions) GetDescriptionsForRegexMatchedSequence(List<(string regex, bool optional, string captureas, List<(string, string)> suggestions, string externalfunctionname)> sequentialoptions, string sourcecode, IXenonCommandSuggestionCallback root)
+        public static TopLevelCommandContextualSuggestions GetDescriptionsForRegexMatchedSequence(List<RegexMatchedContextualSuggestions> sequentialoptions, string sourcecode, IXenonCommandSuggestionCallback root)
         {
             /*
             1. start matching regexes in sequence
@@ -31,26 +31,26 @@ namespace Xenon.Compiler
             {
                 // try matching regex against source code
                 // upon success remove the matched part and continue on
-                var match = Regex.Match(strbuffer.ToString(), option.regex);
+                var match = Regex.Match(strbuffer.ToString(), option.Regex);
                 if (match.Success)
                 {
-                    if (!string.IsNullOrEmpty(option.captureas))
+                    if (!string.IsNullOrEmpty(option.Captureas))
                     {
-                        priormatches[option.captureas] = match.Value;
+                        priormatches[option.Captureas] = match.Value;
                     }
                     strbuffer.Remove(0, match.Length + match.Index);
                     lastsuggestions.Clear();
                 }
-                else if (option.optional)
+                else if (option.Optional)
                 {
-                    lastsuggestions.AddRange(option.suggestions);
+                    lastsuggestions.AddRange(option.Suggestions);
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(option.externalfunctionname))
+                    if (!string.IsNullOrEmpty(option.ExternalFunctionName))
                     {
                         // call back to base type and have them use a contextual suggestion based on current option
-                        var extfunc = root.GetType().GetField(option.externalfunctionname, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        var extfunc = root.GetType().GetField(option.ExternalFunctionName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
                         if (extfunc.FieldType == typeof(IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand))
                         {
@@ -63,7 +63,7 @@ namespace Xenon.Compiler
                     // order suggestions by partial completion, then alphabetically
                     string remainder = strbuffer.ToString();
 
-                    return (false, option.suggestions.Concat(lastsuggestions).OrderByClosestMatch(remainder).ToList());
+                    return (false, option.Suggestions.Concat(lastsuggestions).OrderByClosestMatch(remainder).ToList());
                 }
             }
 
@@ -203,20 +203,19 @@ namespace Xenon.Compiler
         private static List<(string suggestion, string description)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode)
         {
             //CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => new List<(string, string)>())
-            return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string)>())).Invoke(sourcecode).suggestions;
+            return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string)>())).Invoke(sourcecode).Suggestions;
         }
 
         private static bool IsCommandComplete(LanguageKeywordCommand cmd, string sourcecode)
         {
-            return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string)>())).Invoke(sourcecode).completed;
+            return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string)>())).Invoke(sourcecode).Complete;
         }
 
-        private static Dictionary<LanguageKeywordCommand, Func<string, (bool completed, List<(string suggestion, string description)> suggestions)>> CommandContextutalSuggestionDispatcher = new Dictionary<LanguageKeywordCommand, Func<string, (bool, List<(string, string)>)>>()
+        private static Dictionary<LanguageKeywordCommand, Func<string, TopLevelCommandContextualSuggestions>> CommandContextutalSuggestionDispatcher = new Dictionary<LanguageKeywordCommand, Func<string, TopLevelCommandContextualSuggestions>>()
         {
             [LanguageKeywordCommand.SetVar] = (str) => (IXenonASTCommand.GetInstance<XenonASTSetVariable>() as IXenonASTCommand).GetContextualSuggestions(str),
             [LanguageKeywordCommand.Liturgy] = (str) => (IXenonASTCommand.GetInstance<XenonASTLiturgy>() as IXenonASTCommand).GetContextualSuggestions(str),
-
-            [LanguageKeywordCommand.LordsPrayer] = (_) => (true, new List<(string, string)>()),
+            [LanguageKeywordCommand.AnthemTitle] = (str) => (IXenonASTCommand.GetInstance<XenonASTAnthemTitle>() as IXenonASTCommand).GetContextualSuggestions(str),
         };
 
 

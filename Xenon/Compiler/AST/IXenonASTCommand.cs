@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Xenon.Compiler.Suggestions;
+
 namespace Xenon.Compiler
 {
     internal interface IXenonASTCommand : IXenonASTElement
     {
-        public (bool complete, List<(string suggestion, string description)> suggestions) GetContextualSuggestions(string sourcecode)
+        public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
         {
             return (false, new List<(string suggestion, string description)>());
         }

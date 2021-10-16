@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
@@ -44,7 +45,7 @@ namespace Xenon.Compiler.AST
         }
 
 
-        static List<(string, bool, string, List<(string, string)>, string externalfunctionname)> contextualsuggestions = new List<(string, bool, string, List<(string, string)>, string)>()
+        static List<RegexMatchedContextualSuggestions> contextualsuggestions = new List<RegexMatchedContextualSuggestions>()
         {
             ("#set", false, "", new List<(string, string)>() { ("#set", "")}, null),
             ("\\(\"", false, "", new List<(string, string)>() { ("(\"", "insert variable name")}, null),
@@ -66,11 +67,10 @@ namespace Xenon.Compiler.AST
             return new List<(string suggestion, string description)>();
         };
 
-        public (bool complete, List<(string suggestion, string description)> suggestions) GetContextualSuggestions(string sourcecode)
+        public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
         {
             return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode, this);
         }
 
     }
-
 }
