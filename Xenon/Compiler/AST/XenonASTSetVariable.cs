@@ -44,17 +44,17 @@ namespace Xenon.Compiler.AST
         }
 
 
-        static List<(string, string, List<(string, string)>, string externalfunctionname)> contextualsuggestions = new List<(string, string, List<(string, string)>, string)>()
+        static List<(string, bool, string, List<(string, string)>, string externalfunctionname)> contextualsuggestions = new List<(string, bool, string, List<(string, string)>, string)>()
         {
-            ("#set", "", new List<(string, string)>() { ("#set", "")}, null),
-            ("\\(\"", "", new List<(string, string)>() { ("(\"", "insert variable name")}, null),
-            ("[^\"]+(?=\")", "varname", new List<(string, string)>() { ("otherspeakers", ""), ("global.rendermode.alpha", ""), ("\"", "")}, null),
-            ("\"", "", new List<(string, string)>() { ("\"", "")}, null),
-            (",", "", new List<(string, string)>() { (",", "")}, null),
-            ("\"", "", new List<(string, string)>() { ("\"", "")}, null),
-            ("[^\"]+(?=\")", "", null, nameof(GetContextualSuggestionsForVariableValue)),
-            ("\"", "", new List<(string, string)>() { ("\"", "enclose variable value")}, null),
-            ("\\)", "", new List<(string, string)>(){(")", "")}, null),
+            ("#set", false, "", new List<(string, string)>() { ("#set", "")}, null),
+            ("\\(\"", false, "", new List<(string, string)>() { ("(\"", "insert variable name")}, null),
+            ("[^\"]+(?=\")", false, "varname", new List<(string, string)>() { ("otherspeakers", ""), ("global.rendermode.alpha", ""), ("\"", "")}, null),
+            ("\"", false, "", new List<(string, string)>() { ("\"", "")}, null),
+            (",", false, "", new List<(string, string)>() { (",", "")}, null),
+            ("\"", false, "", new List<(string, string)>() { ("\"", "")}, null),
+            ("[^\"]+(?=\")",  false,"", null, nameof(GetContextualSuggestionsForVariableValue)),
+            ("\"", false, "", new List<(string, string)>() { ("\"", "enclose variable value")}, null),
+            ("\\)", false, "", new List<(string, string)>(){(")", "")}, null),
         };
 
         IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableValue = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet) =>

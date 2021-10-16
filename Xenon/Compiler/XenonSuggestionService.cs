@@ -13,7 +13,7 @@ namespace Xenon.Compiler
     {
 
 
-        public static (bool completed, List<(string suggestion, string description)> suggestions) GetDescriptionsForRegexMatchedSequence(List<(string regex, string captureas, List<(string, string)> suggestions, string externalfunctionname)> sequentialoptions, string sourcecode, IXenonCommandSuggestionCallback root)
+        public static (bool completed, List<(string suggestion, string description)> suggestions) GetDescriptionsForRegexMatchedSequence(List<(string regex, bool optional, string captureas, List<(string, string)> suggestions, string externalfunctionname)> sequentialoptions, string sourcecode, IXenonCommandSuggestionCallback root)
         {
             /*
             1. start matching regexes in sequence
@@ -24,6 +24,8 @@ namespace Xenon.Compiler
             strbuffer.Append(sourcecode);
 
             Dictionary<string, string> priormatches = new Dictionary<string, string>();
+
+            List<(string, string)> lastsuggestions = new List<(string, string)>();
 
             foreach (var option in sequentialoptions)
             {
@@ -36,7 +38,12 @@ namespace Xenon.Compiler
                     {
                         priormatches[option.captureas] = match.Value;
                     }
-                    strbuffer.Remove(0, match.Length);
+                    strbuffer.Remove(0, match.Length + match.Index);
+                    lastsuggestions.Clear();
+                }
+                else if (option.optional)
+                {
+                    lastsuggestions.AddRange(option.suggestions);
                 }
                 else
                 {
@@ -48,18 +55,19 @@ namespace Xenon.Compiler
                         if (extfunc.FieldType == typeof(IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand))
                         {
                             IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand dfunc = (IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand)extfunc.GetValue(root);
-                            return (false, dfunc.Invoke(priormatches, sourcecode, strbuffer.ToString()));
+                            var suggestions = dfunc.Invoke(priormatches, sourcecode, strbuffer.ToString()).Concat(lastsuggestions);
+                            return (false, suggestions.ToList());
                         }
                     }
 
                     // order suggestions by partial completion, then alphabetically
                     string remainder = strbuffer.ToString();
 
-                    return (false, option.suggestions.OrderByClosestMatch(remainder).ToList());
+                    return (false, option.suggestions.Concat(lastsuggestions).OrderByClosestMatch(remainder).ToList());
                 }
             }
 
-            return (true, new List<(string suggestion, string description)>());
+            return (true, lastsuggestions);
 
         }
 
@@ -95,9 +103,13 @@ namespace Xenon.Compiler
                 else
                 {
                     var partialmatch = Regex.Match(sourcetext.Substring(toplevelcmd.index), @"#(?<partial>\w*)").Groups["partial"].Value;
-                    res.AddRange(GetPartialMatchedCommands(partialmatch).Select(m => ("#" + m.cmdstr, "")));
+                    var partialsuggestions = GetPartialMatchedTopLevelCommands(partialmatch).Select(m => ("#" + m.cmdstr, ""));
+                    if (partialsuggestions.Any())
+                    {
+                        return partialsuggestions.ToList();
+                    }
+                    return AllCommandKeywords();
                 }
-                return res;
             }
             else
             {
@@ -117,12 +129,18 @@ namespace Xenon.Compiler
 
         private static List<(string, string)> AllCommandKeywords()
         {
+            /*
             List<(string, string)> res = new List<(string, string)>();
             foreach (var kwd in LanguageKeywords.Commands.Values)
             {
                 res.Add(("#" + kwd, ""));
             }
             return res;
+            */
+            return LanguageKeywords.Commands
+                .Where(cmd => LanguageKeywords.LanguageKeywordMetadata[cmd.Key].toplevel == true)
+                .Select(cmd => ($"#{cmd.Value}", ""))
+                .ToList();
         }
 
 
@@ -146,9 +164,10 @@ namespace Xenon.Compiler
                     {
                         if (LanguageKeywords.Commands.Values.Contains(match.Groups["command"].Value))
                         {
-                            // for now don't count #break as top-level command
+                            // if we end up having significant nesting of commands may need to revisit idea of walking back to toplevel
+                            // but for now we'll ignore non-toplevel commands (eg. #break, #verse)
                             LanguageKeywordCommand cmd = LanguageKeywords.Commands.First(k => k.Value == match.Groups["command"].Value).Key;
-                            if (cmd != LanguageKeywordCommand.Break)
+                            if (LanguageKeywords.LanguageKeywordMetadata[cmd].toplevel)
                             {
                                 if (!IsCommandComplete(cmd, sourcetext.Substring(index, caretpos - index)))
                                 {
@@ -171,9 +190,14 @@ namespace Xenon.Compiler
             return (false, LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
         }
 
-        private static List<(LanguageKeywordCommand cmd, string cmdstr)> GetPartialMatchedCommands(string partialstr)
+        private static List<(LanguageKeywordCommand cmd, string cmdstr)> GetPartialMatchedTopLevelCommands(string partialstr)
         {
-            return LanguageKeywords.Commands.Where(cmd => cmd.Value.StartsWith(partialstr)).Select(cmd => (cmd.Value, cmd)).OrderByClosestMatch(partialstr).Select(x => (x.Item2.Key, x.Item2.Value)).ToList();
+            return LanguageKeywords.Commands
+                .Where(cmd => LanguageKeywords.LanguageKeywordMetadata[cmd.Key].toplevel == true && cmd.Value.StartsWith(partialstr))
+                .Select(cmd => (cmd.Value, cmd))
+                .OrderByClosestMatch(partialstr)
+                .Select(x => (x.Item2.Key, x.Item2.Value))
+                .ToList();
         }
 
         private static List<(string suggestion, string description)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode)

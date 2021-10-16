@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+
 using Xenon.Compiler.AST;
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
@@ -10,7 +11,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler
 {
-    class XenonASTLiturgy : IXenonASTCommand
+    class XenonASTLiturgy : IXenonASTCommand, IXenonCommandSuggestionCallback
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
 
@@ -267,5 +268,41 @@ namespace Xenon.Compiler
         {
             throw new NotImplementedException();
         }
+
+        static List<(string, bool, string, List<(string, string)>, string externalfunctionname)> contextualsuggestions = new List<(string, bool, string, List<(string, string)>, string)>()
+        {
+            ("#liturgy", false, "", new List<(string, string)> {("#liturgy", "")}, null),
+            ("\\(True\\)", true, "", new List<(string, string)> { ("(True)", "Option to only detect speakers at start of line")}, null),
+            ("{", false, "", new List<(string, string)> { ("{", "")}, null),
+            ("[^}]*(?=})", false, "", new List<(string, string)> {("}", "") }, null),
+            /*
+            ("#liturgy", "", new List<(string, string)>() { ("#liturgy", "")}, null),
+            ("\\(\"", "", new List<(string, string)>() { ("(\"", "insert variable name")}, null),
+            ("[^\"]+(?=\")", "varname", new List<(string, string)>() { ("otherspeakers", ""), ("global.rendermode.alpha", ""), ("\"", "")}, null),
+            ("\"", "", new List<(string, string)>() { ("\"", "")}, null),
+            (",", "", new List<(string, string)>() { (",", "")}, null),
+            ("\"", "", new List<(string, string)>() { ("\"", "")}, null),
+            ("[^\"]+(?=\")", "", null, nameof(GetContextualSuggestionsForVariableValue)),
+            ("\"", "", new List<(string, string)>() { ("\"", "enclose variable value")}, null),
+            ("\\)", "", new List<(string, string)>(){(")", "")}, null),
+            */
+        };
+
+        IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableValue = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet) =>
+        {
+            if (priorcaptures.GetOrDefault("varname", "") == "global.rendermode.alpha")
+            {
+                return new List<(string suggestion, string description)>() { ("premultiplied", "Renders images premultiplied against keys."), ("\"", "") };
+            }
+            return new List<(string suggestion, string description)>();
+        };
+
+
+        public (bool complete, List<(string suggestion, string description)> suggestions) GetContextualSuggestions(string sourcecode)
+        {
+            return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode, this);
+        }
+
+
     }
 }

@@ -9,6 +9,6 @@ namespace Xenon.Compiler
     {
         public delegate List<(string suggestion, string description)> GetContextualSuggestionsForCommand(Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet);
 
-        //List<(string suggestion, string description)> GetContextualSuggestionsFromOption((string regex, List<(string, string)> suggestions, string externalfunctionname) option, string sourcesnippet);
+        //public (bool complete, List<(string suggestion, string description)> suggestinos) GetContextualSuggestionsFromOption(string sourcecode);
     }
 }
