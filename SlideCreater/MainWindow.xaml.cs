@@ -599,6 +599,7 @@ namespace SlideCreater
             foreach (var line in InsertCommand.Split(Environment.NewLine))
             {
                 TbInput.Document.Insert(TbInput.CaretOffset, line);
+                TbInput.Document.Insert(TbInput.CaretOffset, System.Environment.NewLine);
             }
             //TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
             //TbInput.InsertTextAtCursor(InsertCommand);
