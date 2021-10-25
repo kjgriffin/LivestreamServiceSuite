@@ -263,15 +263,21 @@ namespace Xenon.Helpers
              */
             Bitmap res = new Bitmap(source);
 
+            SpeedyBitmapManipulator resManipulator = new SpeedyBitmapManipulator();
+            resManipulator.Initialize(res);
+
             for (int y = 0; y < res.Height; y++)
             {
                 for (int x = 0; x < res.Width; x++)
                 {
-                    Color inv = res.GetPixel(x, y);
+                    //Color inv = res.GetPixel(x, y);
+                    Color inv = resManipulator.GetPixel(x, y);
                     inv = Color.FromArgb(255, 255 - inv.R, 255 - inv.G, 255 - inv.B);
-                    res.SetPixel(x, y, inv);
+                    //res.SetPixel(x, y, inv);
+                    resManipulator.SetPixel(x, y, inv);
                 }
             }
+            resManipulator.Finialize();
             return res;
         }
 

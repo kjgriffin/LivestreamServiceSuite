@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Text;
+
 using Xenon.Helpers;
 
 namespace Xenon.Renderer.ImageFilters
@@ -24,13 +25,17 @@ namespace Xenon.Renderer.ImageFilters
         /// <returns>The X and Y coordinates of the matched pixel</returns>
         private static (int x, int y) SearchBitmapForColorWithTolerance(this Bitmap source, int direction, Color match, int rtolerance, int gtolerance, int btolerance, bool isexclude)
         {
+            SpeedyBitmapManipulator sourceManipulator = new SpeedyBitmapManipulator();
+            sourceManipulator.Initialize(source);
+
             if (direction == 1)
             {
                 for (int y = 0; y < source.Height; y++)
                 {
                     for (int x = 0; x < source.Width; x++)
                     {
-                        Color pix = source.GetPixel(x, y);
+                        //Color pix = source.GetPixel(x, y);
+                        Color pix = sourceManipulator.GetPixel(x, y);
                         if (Math.Abs(pix.R - match.R) <= rtolerance && Math.Abs(pix.G - match.G) <= gtolerance && Math.Abs(pix.B - match.B) <= btolerance)
                         {
                             if (!isexclude)
@@ -51,7 +56,8 @@ namespace Xenon.Renderer.ImageFilters
                 {
                     for (int x = source.Width - 1; x >= 0; x--)
                     {
-                        Color pix = source.GetPixel(x, y);
+                        //Color pix = source.GetPixel(x, y);
+                        Color pix = sourceManipulator.GetPixel(x, y);
                         if (Math.Abs(pix.R - match.R) <= rtolerance && Math.Abs(pix.G - match.G) <= gtolerance && Math.Abs(pix.B - match.B) <= btolerance)
                         {
                             if (!isexclude)
@@ -73,7 +79,8 @@ namespace Xenon.Renderer.ImageFilters
                 {
                     for (int y = 0; y < source.Height; y++)
                     {
-                        Color pix = source.GetPixel(x, y);
+                        //Color pix = source.GetPixel(x, y);
+                        Color pix = sourceManipulator.GetPixel(x, y);
                         if (Math.Abs(pix.R - match.R) <= rtolerance && Math.Abs(pix.G - match.G) <= gtolerance && Math.Abs(pix.B - match.B) <= btolerance)
                         {
                             if (!isexclude)
@@ -95,7 +102,8 @@ namespace Xenon.Renderer.ImageFilters
                 {
                     for (int y = source.Height - 1; y >= 0; y--)
                     {
-                        Color pix = source.GetPixel(x, y);
+                        //Color pix = source.GetPixel(x, y);
+                        Color pix = sourceManipulator.GetPixel(x, y);
                         if (Math.Abs(pix.R - match.R) <= rtolerance && Math.Abs(pix.G - match.G) <= gtolerance && Math.Abs(pix.B - match.B) <= btolerance)
                         {
                             if (!isexclude)
@@ -111,6 +119,7 @@ namespace Xenon.Renderer.ImageFilters
                     }
                 }
             }
+            sourceManipulator.Finialize();
             return (0, 0);
         }
 
@@ -185,24 +194,32 @@ namespace Xenon.Renderer.ImageFilters
                 source = _k;
             }
 
+            SpeedyBitmapManipulator sourceManipulator = new SpeedyBitmapManipulator();
+            sourceManipulator.Initialize(source);
+
             for (int y = 0; y < _b.Height; y++)
             {
                 for (int x = 0; x < _b.Width; x++)
                 {
-                    Color pix = source.GetPixel(x, y);
+                    //Color pix = source.GetPixel(x, y);
+                    Color pix = sourceManipulator.GetPixel(x, y);
                     if (Math.Abs(pix.R - fparams.Identifier.R) <= fparams.RTolerance && Math.Abs(pix.G - fparams.Identifier.G) <= fparams.GTolerance && Math.Abs(pix.B - fparams.Identifier.B) <= fparams.BTolerance && ((Math.Abs(pix.A - fparams.Identifier.A) <= fparams.ATolerance && fparams.CheckAlpha) || !fparams.CheckAlpha))
                     {
                         if (!fparams.IsExcludeMatch)
                         {
-                            source.SetPixel(x, y, fparams.Replace);
+                            //source.SetPixel(x, y, fparams.Replace);
+                            sourceManipulator.SetPixel(x, y, fparams.Replace);
                         }
                     }
                     else if (fparams.IsExcludeMatch)
                     {
-                        source.SetPixel(x, y, fparams.Replace);
+                        //source.SetPixel(x, y, fparams.Replace);
+                        sourceManipulator.SetPixel(x, y, fparams.Replace);
                     }
                 }
             }
+
+            sourceManipulator.Finialize();
 
             return (_b, _k);
         }
