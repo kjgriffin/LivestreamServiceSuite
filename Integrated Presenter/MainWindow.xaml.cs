@@ -178,7 +178,14 @@ namespace Integrated_Presenter
         {
             TbGPTimer1.Dispatcher.Invoke(() =>
             {
-                TbGPTimer1.Text = timer1span.ToString("mm\\:ss");
+                if (timer1span.Hours > 0)
+                {
+                    TbGPTimer1.Text = timer1span.ToString("%h\\:mm\\:ss");
+                }
+                else
+                {
+                    TbGPTimer1.Text = timer1span.ToString("mm\\:ss");
+                }
             });
         }
 
@@ -186,7 +193,14 @@ namespace Integrated_Presenter
         {
             TbGPTimer2.Dispatcher.Invoke(() =>
             {
-                TbGPTimer2.Text = timer2span.ToString("mm\\:ss");
+                if (timer2span.Hours > 0)
+                {
+                    TbGPTimer2.Text = timer2span.ToString("%h\\:mm\\:ss");
+                }
+                else
+                {
+                    TbGPTimer2.Text = timer2span.ToString("mm\\:ss");
+                }
             });
         }
 
@@ -201,19 +215,29 @@ namespace Integrated_Presenter
 
         private void UpdateShotClock()
         {
-            if (timeonshot > warnShottime)
+            TbShotClock.Dispatcher.Invoke(() =>
             {
-                TbShotClock.Foreground = Brushes.Red;
-            }
-            else if (timeonshot > prewarnShottime)
-            {
-                TbShotClock.Foreground = Brushes.Yellow;
-            }
-            else
-            {
-                TbShotClock.Foreground = Brushes.Orange;
-            }
-            TbShotClock.Text = timeonshot.ToString("mm\\:ss");
+                if (timeonshot > warnShottime)
+                {
+                    TbShotClock.Foreground = Brushes.Red;
+                }
+                else if (timeonshot > prewarnShottime)
+                {
+                    TbShotClock.Foreground = Brushes.Yellow;
+                }
+                else
+                {
+                    TbShotClock.Foreground = Brushes.Orange;
+                }
+                if (timeonshot.Hours > 0)
+                {
+                    TbShotClock.Text = timeonshot.ToString("%h\\:mm\\:ss");
+                }
+                else
+                {
+                    TbShotClock.Text = timeonshot.ToString("mm\\:ss");
+                }
+            });
         }
 
         private void System_second_timer_Elapsed(object sender, ElapsedEventArgs e)

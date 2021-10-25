@@ -354,46 +354,46 @@
                                                 </StackPanel>
                                             </Border>
                                             <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="120">
-                                                <StackPanel>
-                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME ON SHOT</TextBlock>
-                                                    <Viewbox>
+                                                <Grid>
+                                                    <TextBlock VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME ON SHOT</TextBlock>
+                                                    <Viewbox VerticalAlignment="Center">
                                                         <TextBlock Name="TbShotClock" Foreground="Orange">00:00</TextBlock>
                                                     </Viewbox>
-                                                    <Viewbox Width="100" Height="20" Margin="0,-10,0,0" Cursor="Hand" MouseDown="ClickResetTotalShotCount">
+                                                    <Viewbox VerticalAlignment="Bottom" Width="100" Height="20" Margin="0,-10,0,0" Cursor="Hand" MouseDown="ClickResetTotalShotCount">
                                                         <StackPanel Orientation="Horizontal">
                                                             <TextBlock Style="{StaticResource GrayText}">Total Shots:</TextBlock>
                                                             <TextBlock Name="tb_tos_TotalShots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
                                                         </StackPanel>
                                                     </Viewbox>
-                                                </StackPanel>
+                                                </Grid>
                                             </Border>
                                             <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="120">
-                                                <StackPanel>
-                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 1</TextBlock>
-                                                    <Viewbox>
+                                                <Grid>
+                                                    <TextBlock VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 1</TextBlock>
+                                                    <Viewbox VerticalAlignment="Center">
                                                         <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer1" Name="TbGPTimer1" Foreground="Orange">00:00</TextBlock>
                                                     </Viewbox>
-                                                    <Viewbox Width="100" Height="20" Margin="0,-10,0,0">
+                                                    <Viewbox VerticalAlignment="Bottom" Width="100" Height="20" Margin="0,-10,0,0">
                                                         <StackPanel Orientation="Horizontal">
                                                             <TextBlock Style="{StaticResource GrayText}">Shots:</TextBlock>
                                                             <TextBlock Name="tb_t1_shots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
                                                         </StackPanel>
                                                     </Viewbox>
-                                                </StackPanel>
+                                                </Grid>
                                             </Border>
                                             <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="120">
-                                                <StackPanel>
-                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 2</TextBlock>
-                                                    <Viewbox>
+                                                <Grid>
+                                                    <TextBlock VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 2</TextBlock>
+                                                    <Viewbox VerticalAlignment="Center">
                                                         <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer2" Name="TbGPTimer2" Foreground="Orange">00:00</TextBlock>
                                                     </Viewbox>
-                                                    <Viewbox Width="100" Height="20" Margin="0,-10,0,0">
+                                                    <Viewbox VerticalAlignment="Bottom" Width="100" Height="20" Margin="0,-10,0,0">
                                                         <StackPanel Orientation="Horizontal">
                                                             <TextBlock Style="{StaticResource GrayText}">Shots:</TextBlock>
                                                             <TextBlock Name="tb_t2_shots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
                                                         </StackPanel>
                                                     </Viewbox>
-                                                </StackPanel>
+                                                </Grid>
                                             </Border>
                                             <Border x:Name="borderBtnRecording" Visibility="Collapsed" Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="100">
                                                 <StackPanel>
