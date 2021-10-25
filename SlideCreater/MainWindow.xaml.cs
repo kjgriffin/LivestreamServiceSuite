@@ -596,6 +596,7 @@ namespace SlideCreater
 
         private void InsertTextCommand(string InsertCommand)
         {
+            TbInput.Document.Insert(TbInput.CaretOffset, System.Environment.NewLine);
             foreach (var line in InsertCommand.Split(Environment.NewLine))
             {
                 TbInput.Document.Insert(TbInput.CaretOffset, line);
@@ -1406,6 +1407,10 @@ namespace SlideCreater
                 {
                     completionWindow = null;
                 };
+            }
+            else
+            {
+                completionWindow?.Close();
             }
         }
 

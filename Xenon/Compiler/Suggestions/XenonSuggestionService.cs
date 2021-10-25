@@ -76,11 +76,29 @@ namespace Xenon.Compiler.Suggestions
         {
             List<(string, string)> suggestions = new List<(string, string)>();
 
-            // perform a lookbehind and dispatch based on that
-            suggestions.AddRange(GetSuggestionsByLookBehind(sourcetext, caretpos));
-
+            if (!IsOnCommentLine(sourcetext.Substring(0, caretpos)))
+            {
+                // perform a lookbehind and dispatch based on that
+                suggestions.AddRange(GetSuggestionsByLookBehind(sourcetext, caretpos));
+            }
 
             return suggestions;
+        }
+
+        private static bool IsOnCommentLine(string searchtext)
+        {
+            string line = searchtext.Split(System.Environment.NewLine, StringSplitOptions.None).Last();
+            if (line.Contains("//"))
+            {
+                return true;
+            }
+            var open = Regex.Matches(searchtext, "\\/\\*").Count;
+            var closed = Regex.Matches(searchtext, "\\*\\/").Count;
+            if (open > closed)
+            {
+                return true;
+            }
+            return false;
         }
 
 
@@ -181,7 +199,13 @@ namespace Xenon.Compiler.Suggestions
                         }
                         else
                         {
-                            return (false, LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
+                            // check if there's a prior unfinished command
+                            var priorcmd = WalkBackToTopLevelCommand(sourcetext, index);
+                            if (priorcmd.completed || priorcmd.index == -1)
+                            {
+                                return (false, LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
+                            }
+                            else return priorcmd;
                         }
                     }
                 }
@@ -216,6 +240,7 @@ namespace Xenon.Compiler.Suggestions
             [LanguageKeywordCommand.SetVar] = (str) => (IXenonASTCommand.GetInstance<XenonASTSetVariable>() as IXenonASTCommand).GetContextualSuggestions(str),
             [LanguageKeywordCommand.Liturgy] = (str) => (IXenonASTCommand.GetInstance<XenonASTLiturgy>() as IXenonASTCommand).GetContextualSuggestions(str),
             [LanguageKeywordCommand.AnthemTitle] = (str) => (IXenonASTCommand.GetInstance<XenonASTAnthemTitle>() as IXenonASTCommand).GetContextualSuggestions(str),
+            [LanguageKeywordCommand.Script] = (str) => (IXenonASTCommand.GetInstance<XenonASTScript>() as IXenonASTCommand).GetContextualSuggestions(str),
         };
 
 
