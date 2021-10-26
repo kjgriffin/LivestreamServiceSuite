@@ -71,6 +71,12 @@ namespace LutheRun
             return s.Split(Environment.NewLine).ToList();
         }
 
+        public static List<string> ParagraphText3(this IElement paragraph)
+        {
+            string s = paragraph.OuterHtml;
+            return null;
+        }
+
         public static List<(bool hasspeaker, string speaker, string value)> ExtractTextAsLiturgy(this IElement element)
         {
             List<(bool hasspeaker, string speaker, string value)> lines = new List<(bool hasspeaker, string speaker, string value)>();

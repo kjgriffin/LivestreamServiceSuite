@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Dom;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 using Xenon.Helpers;
 
 namespace LutheRun
@@ -162,6 +164,42 @@ namespace LutheRun
                 {
                     res.Copyright = res.Copyright + child.StrippedText();
                 }
+                else if (child.ClassList.Contains("body"))
+                {
+                    res.HasText = true;
+
+                    var unnumberedlines = child.ParagraphText2();
+
+                    List<HymnTextVerse> verses = new List<HymnTextVerse>();
+
+                    HymnTextVerse verse = new HymnTextVerse();
+                    int vnum = 1;
+                    verse.Number = vnum.ToString();
+                    verse.Lines = new List<string>();
+
+                    foreach (var line in unnumberedlines)
+                    {
+                        if (string.IsNullOrWhiteSpace(line))
+                        {
+                            verses.Add(verse);
+                            vnum += 1;
+                            verse = new HymnTextVerse();
+                            verse.Lines = new List<string>();
+                            verse.Number = vnum.ToString();
+                            continue;
+                        }
+                        else
+                        {
+                            verse.Lines.Add(line);
+                        }
+                    }
+                    if (verse.Lines.Any())
+                    {
+                        verses.Add(verse);
+                    }
+                    res.TextVerses.AddRange(verses);
+
+                }
             }
 
             return res;
@@ -209,7 +247,7 @@ namespace LutheRun
                 var match = Regex.Match(Caption, @"(?<number>\d+)?(?<name>.*)");
                 string title = "Hymn";
                 string name = match.Groups["name"]?.Value.Trim() ?? "";
-                string number = "LSB " + match.Groups["number"]?.Value.Trim() ?? "";
+                string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
                 string tune = "";
                 string copyright = Copyright;
                 sb.Append($"#texthymn(\"{title}\", \"{name}\", \"{tune}\", \"{number}\", \"{copyright}\") {{\r\n");
@@ -237,7 +275,7 @@ namespace LutheRun
                 var match = Regex.Match(Caption, @"(?<number>\d+)?(?<name>.*)");
                 string title = "Hymn";
                 string name = match.Groups["name"]?.Value.Trim() ?? "";
-                string number = "LSB " + match.Groups["number"]?.Value.Trim() ?? "";
+                string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
                 string tune = "";
                 string copyright = Copyright;
 

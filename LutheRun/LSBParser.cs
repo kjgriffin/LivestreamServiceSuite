@@ -282,8 +282,21 @@ namespace LutheRun
             {
                 return _ParseLSBGroupElement(element);
             }
+            else if (element.ClassList.Contains("rite-like-group"))
+            {
+                return _ParseLSBRiteLikeGroupElement(element);
+            }
             ServiceElements.Add(LSBElementUnknown.Parse(element));
             return false;
+        }
+
+        private bool _ParseLSBRiteLikeGroupElement(IElement element)
+        {
+            foreach (var subelement in element.Children.Where(c => c.ClassList.Contains("static")))
+            {
+                _ParseLSBServiceElement(subelement);
+            }
+            return true;
         }
 
         private bool _ParseLSBPrayerElement(IElement element)
