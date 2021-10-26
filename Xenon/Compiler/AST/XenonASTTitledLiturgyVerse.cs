@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
@@ -76,6 +77,18 @@ namespace Xenon.Compiler.AST
             if (project.GetAttribute("alphatranscol").Count > 0)
             {
                 slide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(project.GetAttribute("global.tlverse.layout").FirstOrDefault()))
+            {
+                try
+                {
+                    slide.Data["layoutoverride"] = TitledLiturgyVerseLayout.FromJSON(project.GetAttribute("global.tlverse.layout").FirstOrDefault());
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Error Parsing Layout for #tlverse. Threw exception parsing json. Layout Override will not be used. Using default instead.", ErrorName = "Error Parsing Layout", Generator = "XenonASTTitledLiturgyVerse::Generate", Inner = ex.ToString(), Level = XenonCompilerMessageType.Warning });
+                }
             }
 
             slide.AddPostset(_Parent, true, true);
