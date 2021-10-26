@@ -1426,6 +1426,37 @@ namespace SlideCreater
             }
         }
 
+        private void error_report_view_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ScrollToErrorMessage();
+        }
 
+        private void ScrollToErrorMessage()
+        {
+            // try and scroll textbox to line from error if possible
+            var i = error_report_view?.SelectedIndex ?? 0;
+            if (i >= 0 && i < logs.Count)
+            {
+                var selection = logs[i];
+                if (selection.Token.linenum <= TbInput.LineCount)
+                {
+                    TbInput.ScrollToLine(selection.Token.linenum);
+                    TbInput.TextArea.Caret.Line = selection.Token.linenum + 1;
+                    TbInput.TextArea.Caret.Column = 0;
+                    TbInput.TextArea.Focus();
+                    TbInput.Select(TbInput.CaretOffset, TbInput.Document.Lines[selection.Token.linenum].Length);
+                }
+                else
+                {
+                    TbInput.Focus();
+                    TbInput.TextArea.ClearSelection();
+                }
+            }
+        }
+
+        private void error_report_view_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ScrollToErrorMessage();
+        }
     }
 }

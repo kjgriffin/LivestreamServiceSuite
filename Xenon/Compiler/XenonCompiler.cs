@@ -55,7 +55,7 @@ namespace Xenon.Compiler
 
             progress?.Report(0);
 
-            string preproc = Lexer.StripComments(proj.SourceCode);
+            var preproc = Lexer.StripComments(proj.SourceCode);
             Lexer.Tokenize(preproc);
 
             progress?.Report(10);
@@ -109,7 +109,7 @@ namespace Xenon.Compiler
 
             progress.Report(0);
 
-            string preproc = Lexer.StripComments(input);
+            var preproc = Lexer.StripComments(input);
             Lexer.Tokenize(preproc);
 
             progress.Report(10);

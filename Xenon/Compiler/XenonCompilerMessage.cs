@@ -37,7 +37,7 @@ namespace Xenon.Compiler
     {
         public string ErrorName { get; set; }
         public string ErrorMessage { get; set; }
-        public string Token { get; set; }
+        public Token Token { get; set; }
         public string Generator { get; set; }
         public string Inner { get; set; }
         public XenonCompilerMessageType Level { get; set; }

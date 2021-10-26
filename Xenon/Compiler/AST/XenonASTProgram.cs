@@ -17,7 +17,7 @@ namespace Xenon.Compiler
             int total = Expressions.Count;
             foreach (var item in Expressions)
             {
-                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression {item.Command.GetType()}", ErrorName = "Project Generation Debug", Generator = "XenonASTProgram:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression {item.Command.GetType()}", ErrorName = "Project Generation Debug", Generator = "XenonASTProgram:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = ("", int.MaxValue) });
                 item.Generate(project, this, Logger);
                 prog++;
                 progress?.Report(cprog + (((prog * 100) / total) * ((100 - cprog) / 100)));

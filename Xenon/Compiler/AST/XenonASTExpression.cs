@@ -96,7 +96,7 @@ namespace Xenon.Compiler
                 // let it compile still
                 expr.Postset = false;
                 // log error
-                logger.Log(new XenonCompilerMessage() { ErrorName = "Missing 'postset' parameters", ErrorMessage = $"Expression marked to have 'postset' but no parameters were provided. Use any of 'all', 'first', 'last'.", Generator = "XenonASTExpression.CompilePostset", Inner = "Will ignore postset.", Token = "", Level = XenonCompilerMessageType.Error });
+                logger.Log(new XenonCompilerMessage() { ErrorName = "Missing 'postset' parameters", ErrorMessage = $"Expression marked to have 'postset' but no parameters were provided. Use any of 'all', 'first', 'last'.", Generator = "XenonASTExpression.CompilePostset", Inner = "Will ignore postset.", Level = XenonCompilerMessageType.Error });
             }
 
         }

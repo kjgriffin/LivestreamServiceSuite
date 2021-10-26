@@ -182,7 +182,7 @@
                         <!--<TextBlock Name="tbConsole"></TextBlock>-->
                         <!--<FlowDocument Name="error_report"></FlowDocument>-->
                         <!--<StackPanel Name="error_report" Orientation="Vertical"></StackPanel>-->
-                        <ListView Grid.Row="1" Name="error_report_view">
+                        <ListView Grid.Row="1" Name="error_report_view" SelectionChanged="error_report_view_SelectionChanged" PreviewMouseDown="error_report_view_PreviewMouseDown">
                             <ListView.Resources>
                                 <Style TargetType="{x:Type ListViewItem}">
                                     <Style.Triggers>

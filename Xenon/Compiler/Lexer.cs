@@ -11,7 +11,7 @@ namespace Xenon.Compiler
     class Lexer
     {
 
-        public static readonly string EOFText = "$EOF$";
+        public static readonly Token EOFText = ("$EOF$", int.MaxValue);
 
         public string SingleLineComment { get; } = "//";
         public string BeginBlockComment { get; } = "/*";
@@ -22,11 +22,11 @@ namespace Xenon.Compiler
         public List<string> SplitWords { get; private set; }
 
 
-        private List<string> _tokens;
+        private List<(string tvalue, int sourcelinenum)> _tokens;
 
         private int _tokenpos = 0;
 
-        public string CurrentToken
+        public Token CurrentToken
         {
             get
             {
@@ -39,6 +39,8 @@ namespace Xenon.Compiler
         }
 
         public int MaxChecks { get; private set; }
+
+        private bool nextTokenIsEscaped = false;
 
         private int peeks = 0;
         private int peeknexts = 0;
@@ -102,25 +104,27 @@ namespace Xenon.Compiler
             SplitWords = SplitWords.OrderByDescending(s => s.Length).ToList();
         }
 
-        private List<string> SplitAndKeep(string text, List<string> splitwords)
+        private List<(string tvalue, int lnum)> SplitAndKeep(string text, List<string> splitwords, int startline = 0)
         {
             //_tokens = new List<string>();
 
-            List<string> tokens = new List<string>();
+            List<(string tval, int lnum)> tokens = new List<(string, int)>();
+
+            int lnum = startline;
 
             for (int textindex = 0; textindex < text.Length;)
             {
-                textindex = InnerCheck(ref text, splitwords, textindex, tokens);
+                textindex = InnerCheck(ref text, splitwords, textindex, tokens, ref lnum);
             }
 
 
             // add the rest
             //_tokens.Add(text);
-            tokens.Add(text);
+            tokens.Add((text, lnum));
 
             // remove empty tokens
             //_tokens.RemoveAll(p => p == string.Empty);
-            tokens.RemoveAll(p => p == string.Empty);
+            tokens.RemoveAll(p => p.tval == string.Empty);
 
 
             // debug
@@ -129,7 +133,7 @@ namespace Xenon.Compiler
 
         }
 
-        private int InnerCheck(ref string text, List<string> splitwords, int textindex, List<string> tokens)
+        private int InnerCheck(ref string text, List<string> splitwords, int textindex, List<(string tval, int lnum)> tokens, ref int clnum)
         {
             for (int splitwordindex = 0; splitwordindex < splitwords.Count; splitwordindex++)
             {
@@ -143,8 +147,13 @@ namespace Xenon.Compiler
                         string word = splitwords[splitwordindex];
                         text = text.Substring(textindex + word.Length);
 
-                        tokens.Add(before);
-                        tokens.Add(word);
+                        tokens.Add((before, clnum));
+                        tokens.Add((word, clnum));
+
+                        if (s == System.Environment.NewLine)
+                        {
+                            clnum++;
+                        }
 
                         // advance to check against next char starting from start of split list
                         return 0;
@@ -160,7 +169,7 @@ namespace Xenon.Compiler
         /// </summary>
         /// <param name="input">Text</param>
         /// <returns>Source input without comments.</returns>
-        public string StripComments(string input)
+        public List<(string blocktext, int blockstart)> StripComments(string input)
         {
             List<string> seperators = new List<string>()
             {
@@ -173,16 +182,21 @@ namespace Xenon.Compiler
                 SingleLineComment,
             };
 
-            List<string> parts = SplitAndKeep(input, seperators);
+            var parts = SplitAndKeep(input, seperators);
 
-            List<string> noblocks = new List<string>();
-            List<string> nocomments = new List<string>();
+            List<(string, int)> noblocks = new List<(string, int)>();
+            List<(string, int)> nocomments = new List<(string, int)>();
             // remove all block comments
 
+            int lnum = 0;
             bool inblock = false;
             foreach (var p in parts)
             {
-                if (p == BeginBlockComment)
+                if (p.tvalue == System.Environment.NewLine)
+                {
+                    lnum++;
+                }
+                if (p.tvalue == BeginBlockComment)
                 {
                     inblock = true;
                 }
@@ -192,7 +206,7 @@ namespace Xenon.Compiler
                     noblocks.Add(p);
                 }
 
-                if (p == EndBlockComment)
+                if (p.tvalue == EndBlockComment)
                 {
                     inblock = false;
                 }
@@ -202,7 +216,7 @@ namespace Xenon.Compiler
             bool iscomment = false;
             foreach (var b in noblocks)
             {
-                if (b == SingleLineComment)
+                if (b.Item1 == SingleLineComment)
                 {
                     iscomment = true;
                 }
@@ -212,27 +226,39 @@ namespace Xenon.Compiler
                     nocomments.Add(b);
                 }
 
-                if (b == System.Environment.NewLine)
+                if (b.Item1 == System.Environment.NewLine)
                 {
                     iscomment = false;
                 }
             }
 
+            /*
             StringBuilder sb = new StringBuilder();
             foreach (var w in nocomments)
             {
                 sb.Append(w);
             }
-
             return sb.ToString();
+            */
 
+            return nocomments;
         }
 
-        public void Tokenize(string input)
+        public void Tokenize(List<(string inputblock, int startline)> input)
         {
-            Text = input;
+            //Text = input;
             // split based on split words
-            _tokens = SplitAndKeep(Text, SplitWords);
+            if (_tokens == null)
+            {
+                _tokens = new List<(string tvalue, int sourcelinenum)>();
+            }
+            _tokens?.Clear();
+            foreach (var ib in input)
+            {
+                _tokens.AddRange(SplitAndKeep(ib.inputblock, SplitWords, ib.startline));
+            }
+
+            //_tokens = SplitAndKeep(Text, SplitWords);
             _tokenpos = 0;
         }
 
@@ -271,7 +297,7 @@ namespace Xenon.Compiler
             {
                 pattern = $"^{Regex.Escape(test)}$";
             }
-            var m = Regex.Match(_tokens[_tokenpos], pattern);
+            var m = Regex.Match(_tokens[_tokenpos].tvalue, pattern);
 
             inspections++;
             return m.Success;
@@ -282,7 +308,7 @@ namespace Xenon.Compiler
         /// View the current token without consuming it
         /// </summary>
         /// <returns>The current token</returns>
-        public string Peek()
+        public Token Peek()
         {
             if (peeks > MaxInspections)
             {
@@ -305,7 +331,7 @@ namespace Xenon.Compiler
             peeknexts++;
             if (_tokenpos + 1 < _tokens.Count)
             {
-                return _tokens[_tokenpos + 1];
+                return _tokens[_tokenpos + 1].tvalue;
             }
             return "";
         }
@@ -321,7 +347,7 @@ namespace Xenon.Compiler
                 Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Lexer expecting token: '{text}'", ErrorName = "Unexpected eof", Generator = "Lexer.Gobble", Inner = "", Level = XenonCompilerMessageType.Error, Token = EOFText });
                 throw new Exception();
             }
-            if (_tokens[_tokenpos] == text)
+            if (_tokens[_tokenpos].tvalue == text)
             {
                 ClearInspectionState();
                 _tokenpos++;
@@ -334,7 +360,7 @@ namespace Xenon.Compiler
         /// Returns current token, advances to next token.
         /// </summary>
         /// <returns></returns>
-        public string Consume()
+        public Token Consume()
         {
             ClearInspectionState();
             return _tokens[_tokenpos++];
@@ -346,14 +372,28 @@ namespace Xenon.Compiler
         /// <param name="test">A regex test pattern</param>
         /// <param name="errormessage">Additional error message if until token not found</param>
         /// <returns></returns>
-        public string ConsumeUntil(string test, string errormessage = "")
+        public Token ConsumeUntil(string test, string errormessage = "", bool escapewithbackslash = false)
         {
+            bool escapenext = false;
             StringBuilder sb = new StringBuilder();
+
+            List<Token> capture = new List<Token>();
+
             try
             {
-                while (!Inspect(test))
+                while (!(Inspect(test) && (!escapenext || !escapewithbackslash)))
                 {
-                    sb.Append(Consume());
+                    if (escapewithbackslash)
+                    {
+                        if (Inspect(@"\"))
+                        {
+                            escapenext = true;
+                            Consume();
+                            continue;
+                        }
+                    }
+                    capture.Add(Consume());
+                    escapenext = false;
                 }
             }
             catch (Exception ex)
@@ -362,7 +402,12 @@ namespace Xenon.Compiler
                 throw ex;
             }
 
-            return sb.ToString();
+            //return sb.ToString();
+            foreach (var t in capture)
+            {
+                sb.Append(t.tvalue);
+            }
+            return (sb.ToString(), capture.Any() ? capture.First().linenum : CurrentToken.linenum);
         }
 
 
@@ -371,7 +416,7 @@ namespace Xenon.Compiler
             StringBuilder sb = new StringBuilder();
             try
             {
-                while(!tests.Contains(Peek()))
+                while (!tests.Contains(Peek().tvalue))
                 {
                     sb.Append(Consume());
                 }
@@ -381,7 +426,12 @@ namespace Xenon.Compiler
                 Logger.Log(new XenonCompilerMessage()
                 {
                     ErrorName = "Expecting missing token",
-                    ErrorMessage = $"Expecting tokens <'{tests.Aggregate((acc, v) => acc + "," + v)}'>.\r\nAdditional Info: {errormessage}", Generator = "Lexer.ConsumeUntil", Inner = ex.Message, Level = XenonCompilerMessageType.Error, Token = CurrentToken });
+                    ErrorMessage = $"Expecting tokens <'{tests.Aggregate((acc, v) => acc + "," + v)}'>.\r\nAdditional Info: {errormessage}",
+                    Generator = "Lexer.ConsumeUntil",
+                    Inner = ex.Message,
+                    Level = XenonCompilerMessageType.Error,
+                    Token = CurrentToken
+                });
                 throw ex;
             }
             return sb.ToString();
@@ -394,7 +444,7 @@ namespace Xenon.Compiler
         {
             while (_tokenpos < _tokens.Count)
             {
-                if (Regex.Match(_tokens[_tokenpos], "\\s").Success)
+                if (Regex.Match(_tokens[_tokenpos].tvalue, "\\s").Success)
                 {
                     ClearInspectionState();
                     _tokenpos += 1;
@@ -437,7 +487,7 @@ namespace Xenon.Compiler
                 string paramendseq = areenclosed ? ConsumeArgList_EncSeq : pnum < paramnames.Length - 1 ? ConsumeArgList_SepSeq : ConsumeArgList_EndSeq;
                 try
                 {
-                    res[p] = ConsumeUntil(paramendseq);
+                    res[p] = ConsumeUntil(paramendseq, escapewithbackslash: areenclosed);
                 }
                 catch (Exception ex)
                 {
@@ -468,9 +518,9 @@ namespace Xenon.Compiler
         }
 
 
-        public Dictionary<string, string> ConsumeOptionalNamedArgsUnenclosed(params string[] paramnames)
+        public Dictionary<string, Token> ConsumeOptionalNamedArgsUnenclosed(params string[] paramnames)
         {
-            Dictionary<string, string> res = new Dictionary<string, string>();
+            Dictionary<string, Token> res = new Dictionary<string, Token>();
             GobbleandLog(ConsumeArgList_StartSeq, $"Expected opening {ConsumeArgList_StartSeq} to begin parameter list.");
 
             int found = 0;
@@ -486,7 +536,7 @@ namespace Xenon.Compiler
                 }
                 // try a parameter
                 var name = Peek();
-                if (paramnames.Contains(name))
+                if (paramnames.Contains(name.tvalue))
                 {
                     // eat it
                     found += 1;
@@ -497,7 +547,7 @@ namespace Xenon.Compiler
                     string val = ConsumeUntil(endtokens, $"Expecting {endtokens} after value for parameter {name}.");
                     GobbleWhitespace();
                     Gobble(ConsumeArgList_SepSeq);
-                    res.Add(name, val);
+                    res.Add(name.tvalue, val);
                     GobbleWhitespace();
                 }
             }
@@ -527,5 +577,60 @@ namespace Xenon.Compiler
             return base.ToString() + $" At Token: {CurrentToken}";
         }
 
+    }
+
+    public struct Token
+    {
+        public string tvalue;
+        public int linenum;
+
+        public Token(string tvalue, int linenum)
+        {
+            this.tvalue = tvalue;
+            this.linenum = linenum;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Token other &&
+                   tvalue == other.tvalue &&
+                   linenum == other.linenum;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(tvalue, linenum);
+        }
+
+        public void Deconstruct(out string tvalue, out int linenum)
+        {
+            tvalue = this.tvalue;
+            linenum = this.linenum;
+        }
+
+        public static implicit operator (string tvalue, int linenum)(Token value)
+        {
+            return (value.tvalue, value.linenum);
+        }
+
+        public static implicit operator Token((string tvalue, int linenum) value)
+        {
+            return new Token(value.tvalue, value.linenum);
+        }
+
+        public override string ToString()
+        {
+            return $"Value: {{{tvalue}}}, Source Line: {linenum + 1}";
+        }
+
+        public static implicit operator string(Token input)
+        {
+            return input.tvalue;
+        }
+
+        public static implicit operator Token(string value)
+        {
+            return (value, int.MaxValue);
+        }
     }
 }

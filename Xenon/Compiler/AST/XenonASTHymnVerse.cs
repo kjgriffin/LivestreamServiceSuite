@@ -23,7 +23,7 @@ namespace Xenon.Compiler
             if (Lexer.Inspect("("))
             {
                 Lexer.Consume();
-                verse.SubName = Lexer.ConsumeUntil(")").Trim();
+                verse.SubName = Lexer.ConsumeUntil(")").tvalue.Trim();
                 Lexer.Consume();
                 Lexer.GobbleWhitespace();
             }

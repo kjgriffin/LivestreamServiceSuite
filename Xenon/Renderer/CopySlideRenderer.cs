@@ -26,7 +26,7 @@ namespace Xenon.Renderer
             else
             {
                 res.Name = Path.GetFileNameWithoutExtension(slide.Asset);
-                messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = $"Resource name was not specified. Will use original file name {res.Name}, but this may not produce the expected result.", ErrorName = "Resource Name Mismatch", Generator = "CopySlideRenderer", Inner = "", Level = Compiler.XenonCompilerMessageType.Warning, Token = "" });
+                messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = $"Resource name was not specified. Will use original file name {res.Name}, but this may not produce the expected result.", ErrorName = "Resource Name Mismatch", Generator = "CopySlideRenderer", Inner = "", Level = Compiler.XenonCompilerMessageType.Warning, Token = ("", int.MaxValue) });
             }
             res.CopyExtension = Path.GetExtension(slide.Asset);
             res.AssetPath = slide.Asset;
