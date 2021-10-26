@@ -64,6 +64,7 @@ namespace Integrated_Presenter
             truepipmt = state.IsMasked == 1 ? state.MaskTop : 0;
             truepipmb = state.IsMasked == 1 ? state.MaskBottom : 0;
 
+            /*
             keyapipscale = Math.Max(state.KeyFrameA.SizeX, state.KeyFrameA.SizeY);
             keyapipx = state.KeyFrameA.PositionX;
             keyapipy = state.KeyFrameA.PositionY;
@@ -71,6 +72,7 @@ namespace Integrated_Presenter
             keybpipscale = Math.Max(state.KeyFrameB.SizeX, state.KeyFrameB.SizeY);
             keybpipx = state.KeyFrameB.PositionX;
             keybpipy = state.KeyFrameB.PositionY;
+            */
 
             currentfillsource = (int)USK1FillSource;
 
@@ -182,6 +184,9 @@ namespace Integrated_Presenter
             tbSlewDrive.Text = mode_SlewDrive ? "ON" : "OFF";
             tbSlewDrive.Foreground = mode_SlewDrive ? Brushes.Yellow : Brushes.LightSlateGray;
 
+            tbPresetFillEnabled.Text = featurePresetEnabled ? "ACTIVE" : "DISABLED";
+            tbPresetFillEnabled.Foreground = featurePresetEnabled ? Brushes.Yellow : Brushes.LightSlateGray;
+
 
             for (int i = 0; i < 8; i++)
             {
@@ -264,6 +269,7 @@ namespace Integrated_Presenter
 
 
         bool mode_SlewDrive = true;
+        bool featurePresetEnabled = false;
 
         bool mode_FineControl
         {
@@ -420,6 +426,11 @@ namespace Integrated_Presenter
             if (e.Key == Key.U)
             {
                 toggle_slewdrive();
+            }
+
+            if (e.Key == Key.P)
+            {
+                toggle_presetFeature();
             }
 
 
@@ -706,7 +717,7 @@ namespace Integrated_Presenter
 
                 SetPIPOnSwitcher?.Invoke(config);
 
-                if (currentfillsource != presetfillsource)
+                if (featurePresetEnabled && currentfillsource != presetfillsource)
                 {
                     _parent.Dispatcher.Invoke(() =>
                     {
@@ -1233,6 +1244,12 @@ namespace Integrated_Presenter
         private void toggle_slewdrive()
         {
             mode_SlewDrive = !mode_SlewDrive;
+            UpdateUI();
+        }
+
+        private void toggle_presetFeature()
+        {
+            featurePresetEnabled = !featurePresetEnabled;
             UpdateUI();
         }
 

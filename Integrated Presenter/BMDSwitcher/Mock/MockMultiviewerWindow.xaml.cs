@@ -137,6 +137,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             {
                 UpdateSourceFromAux(ImgProgramSplit, slide);
             }
+
         }
 
         private void UpdateSourceFromKey(Image control, Slide slide)
@@ -192,7 +193,12 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         }
 
-        public double dskliturgyopacity = 0.63;
+        internal void SetPIPFillSource(int sourceID)
+        {
+            ImgProgram_uskPIP.Source = InputSourceToImage(sourceID);
+        }
+
+        public double dskliturgyopacity = 1.0;
 
         public void ShowProgramDSK1()
         {
@@ -452,7 +458,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         }
 
-        public async void SetUSK1PreviewOn()
+        public void SetUSK1PreviewOn()
         {
             USK1PreviewOn = true;
             if (USK1KeyType == 2)
@@ -461,28 +467,35 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             }
         }
 
-        public async void SetUSK1PreviewOff()
+        public void SetUSK1PreviewOff()
         {
             USK1PreviewOn = false;
             PreviewChromaKey.Visibility = Visibility.Hidden;
         }
 
-        public async void SetUSK1ProgramOn()
+        public void SetUSK1ProgramOn()
         {
             USK1ProgramOn = true;
             if (USK1KeyType == 2)
             {
                 ProgramChromaKey.Visibility = Visibility.Visible;
             }
+            else if (USK1KeyType == 1)
+            {
+                ProgramChromaKey.Visibility = Visibility.Hidden;
+
+                ImgProgram_uskPIP.Visibility = Visibility.Visible;
+            }
         }
 
-        public async void SetUSK1ProgramOff()
+        public void SetUSK1ProgramOff()
         {
             USK1ProgramOn = false;
             ProgramChromaKey.Visibility = Visibility.Hidden;
+            ImgProgram_uskPIP.Visibility = Visibility.Hidden;
         }
 
-        public async void SetUSK1Type(int type)
+        public void SetUSK1Type(int type)
         {
             USK1KeyType = type;
             if (USK1KeyType == 2)
@@ -500,6 +513,21 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             }
             ProgramChromaKey.Visibility = Visibility.Hidden;
             PreviewChromaKey.Visibility = Visibility.Hidden;
+
+        }
+
+        const double ATEM_TO_WPF_X = ((1280 / 2) / 16);
+        const double ATEM_TO_WPF_Y = ((720 / 2) / 9);
+
+        public void SetPIPPosition(BMDSwitcher.Config.BMDUSKDVESettings state)
+        {
+            imgprog_uskpipscale.ScaleX = state.Current.SizeX;
+            imgprog_uskpipscale.ScaleY = state.Current.SizeY;
+
+            imgprog_uskpipposition.X = state.Current.PositionX * ATEM_TO_WPF_X;
+            imgprog_uskpipposition.Y = state.Current.PositionY * -ATEM_TO_WPF_Y;
+
+            imgprog_uskpipclip.Rect = new Rect(ATEM_TO_WPF_X * (state.MaskRight - state.MaskLeft), state.MaskTop, 1280 - ((state.MaskRight + state.MaskLeft) * ATEM_TO_WPF_X), 720 - ((state.MaskBottom + state.MaskTop) * ATEM_TO_WPF_Y));
 
         }
 

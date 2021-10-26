@@ -49,18 +49,32 @@
                     </Grid>
                 </Border>
                 <Border Background="Black" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" BorderBrush="WhiteSmoke" BorderThickness="5">
-                    <Grid>
+                    <Grid Width="1280" Height="720">
                         <Image Name="ImgProgram" Grid.RowSpan="2" Panel.ZIndex="2"></Image>
                         <Image Name="ImgProgram_presetbgnd" Grid.RowSpan="2" Panel.ZIndex="1"></Image>
                         <Rectangle Name="ProgramChromaKey" Opacity="0.2" Fill="#00FF00" Panel.ZIndex="3"></Rectangle>
+                        <Image x:Name="ImgProgram_uskPIP" Opacity="1" Source="/BMDSwitcher/Mock/Images/cbars.png" Panel.ZIndex="3">
+                            <Image.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform x:Name="imgprog_uskpipscale" ScaleX="0.5" ScaleY="0.5"></ScaleTransform>
+                                    <TranslateTransform x:Name="imgprog_uskpipposition" X="0" Y="0"></TranslateTransform>
+                                </TransformGroup>
+                            </Image.RenderTransform>
+                            <Image.RenderTransformOrigin>
+                                <Point X="0.5" Y="0.5"></Point>
+                            </Image.RenderTransformOrigin>
+                            <Image.Clip>
+                                <RectangleGeometry x:Name="imgprog_uskpipclip" Rect="0, 0, 1280, 720"></RectangleGeometry>
+                            </Image.Clip>
+                        </Image>
                         <Viewbox Panel.ZIndex="4">
-                            <Image Name="ImgProgramLowerThird" Stretch="None" Opacity="0.63">
-                                <Image.RenderTransform>
-                                    <TranslateTransform X="0" Y="0"></TranslateTransform>
-                                </Image.RenderTransform>
-                                <Image.Clip>
-                                    <RectangleGeometry Rect="0 864 1920 1296"></RectangleGeometry>
-                                </Image.Clip>
+                            <Image Name="ImgProgramLowerThird" Stretch="None" Opacity="1">
+                                <!--<Image.RenderTransform>-->
+                                    <!--<TranslateTransform X="0" Y="0"></TranslateTransform>-->
+                                <!--</Image.RenderTransform>-->
+                                <!--<Image.Clip>-->
+                                    <!--<RectangleGeometry Rect="0 864 1920 1296"></RectangleGeometry>-->
+                                <!--</Image.Clip>-->
                             </Image>
                         </Viewbox>
                         <Viewbox Panel.ZIndex="5">

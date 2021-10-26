@@ -216,5 +216,15 @@ namespace Integrated_Presenter.BMDSwitcher
             multiviewerWindow?.SetUSK1ProgramOn();
         }
 
+
+        internal void SetPIPPosition(BMDUSKDVESettings state)
+        {
+            multiviewerWindow.SetPIPPosition(state);
+        }
+
+        internal void SetUSK1FillSource(int sourceID)
+        {
+            multiviewerWindow.SetPIPFillSource(sourceID);
+        }
     }
 }

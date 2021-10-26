@@ -18,11 +18,12 @@
             <ColumnDefinition Width="93*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="110"></RowDefinition>
+            <RowDefinition Height="120"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
@@ -53,7 +54,11 @@
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">[RShift] FINE CONTROL</TextBlock>
             <TextBlock Name="tbFineMode" Foreground="Yellow" Margin="0,0,10,0" HorizontalAlignment="Left" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">FINE</TextBlock>
 
-            <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">[P] PRESET FILL FEATURE</TextBlock>
+            <TextBlock Name="tbPresetFillEnabled" Foreground="LightGray" Margin="0,0,10,0" HorizontalAlignment="Left" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">DISABLED</TextBlock>
+
+            <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
                 <Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Border Name="preset_PIP_1" Margin="5,0,5,0" BorderBrush="Transparent" BorderThickness="3" Background="Gray" Width="15" Height="15"></Border>
@@ -69,9 +74,9 @@
             </Grid>
 
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Center" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource GrayText}">[NumPad 1-9] SNAP TO POSITION</TextBlock>
-            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Center" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource GrayText}">[Ctrl+ 1-8] PIP FILL SOURCE</TextBlock>
-            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Center" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource GrayText}">[LShift + 1-8] PRESET NEXT PIP FILL SOURCE</TextBlock>
-            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Center" Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource GrayText}">[1-8] PREVIEW BUS SOURCE / [Enter] AUTO TRANS</TextBlock>
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Center" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource GrayText}">[Ctrl+ 1-8] PIP FILL SOURCE</TextBlock>
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Center" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource GrayText}">[LShift + 1-8] PRESET NEXT PIP FILL SOURCE</TextBlock>
+            <TextBlock Margin="0,0,10,0" HorizontalAlignment="Center" Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource GrayText}">[1-8] PREVIEW BUS SOURCE / [Enter] AUTO TRANS</TextBlock>
             <StackPanel Margin="10,2,10,2" Orientation="Horizontal" Grid.Row="0" Grid.Column="4">
                 <Rectangle Name="ctrllight" Width="40" Fill="WhiteSmoke"></Rectangle>
                 <Rectangle Name="cmdlight" Width="20" Fill="Gray"></Rectangle>

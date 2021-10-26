@@ -324,6 +324,7 @@ namespace Integrated_Presenter.BMDSwitcher
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1FillSource = sourceID;
+            mockMultiviewer.SetUSK1FillSource(sourceID);
             SwitcherStateChanged?.Invoke(_state);
         }
 
@@ -371,12 +372,17 @@ namespace Integrated_Presenter.BMDSwitcher
         public void SetPIPPosition(BMDUSKDVESettings settings)
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-            _state.DVESettings.Current = settings.Current;
-            _state.DVESettings.MaskTop = settings.MaskTop;
-            _state.DVESettings.MaskBottom = settings.MaskBottom;
-            _state.DVESettings.MaskLeft = settings.MaskLeft;
-            _state.DVESettings.MaskRight = settings.MaskRight;
-            _state.DVESettings.IsMasked = settings.IsMasked;
+            //_state.DVESettings.Current = settings.Current;
+            //_state.DVESettings.MaskTop = settings.MaskTop;
+            //_state.DVESettings.MaskBottom = settings.MaskBottom;
+            //_state.DVESettings.MaskLeft = settings.MaskLeft;
+            //_state.DVESettings.MaskRight = settings.MaskRight;
+            //_state.DVESettings.IsMasked = settings.IsMasked;
+
+            _state.DVESettings = settings?.Copy();
+            mockMultiviewer.SetPIPPosition(settings);
+
+
 
             SwitcherStateChanged?.Invoke(_state);
         }

@@ -28,9 +28,9 @@ namespace Integrated_Presenter.BMDSwitcher.Config
                 MaskBottom = this.MaskBottom,
                 MaskLeft = this.MaskLeft,
                 MaskRight = this.MaskRight,
-                Current = this.Current.Copy(),
-                KeyFrameA = this.KeyFrameA.Copy(),
-                KeyFrameB = this.KeyFrameB.Copy(),
+                Current = this.Current?.Copy(),
+                KeyFrameA = this.KeyFrameA?.Copy(),
+                KeyFrameB = this.KeyFrameB?.Copy(),
             };
         }
 
