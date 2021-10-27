@@ -13,8 +13,9 @@ namespace Xenon.Compiler
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
         public string SubName { get; set; }
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTHymnVerse verse = new XenonASTHymnVerse();
             Lexer.GobbleWhitespace();
@@ -38,6 +39,7 @@ namespace Xenon.Compiler
 
             Lexer.GobbleandLog("}", "Missing closing brace for verse.");
 
+            verse.Parent = Parent;
             return verse;
 
         }

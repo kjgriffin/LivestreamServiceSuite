@@ -20,8 +20,9 @@ namespace Xenon.Compiler.AST
         public string Reference { get; set; }
         public string DrawSpeaker { get; set; }
         public List<string> Text { get; set; } = new List<string>();
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             lexer.GobbleWhitespace();
             var args = lexer.ConsumeArgList(true, "title", "reference", "drawspeaker");
@@ -39,6 +40,7 @@ namespace Xenon.Compiler.AST
             }
             lexer.GobbleandLog("}", "Missing closing brace for liturgy.");
 
+            this.Parent = Parent;
             return this;
         }
 

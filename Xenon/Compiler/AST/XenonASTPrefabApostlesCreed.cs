@@ -8,8 +8,11 @@ namespace Xenon.Compiler.AST
 {
     class XenonASTPrefabApostlesCreed : IXenonASTCommand
     {
-        IXenonASTElement IXenonASTElement.Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Parent { get; private set; }
+
+        IXenonASTElement IXenonASTElement.Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
+            this.Parent = Parent;
             return this;
         }
 

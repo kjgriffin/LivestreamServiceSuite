@@ -10,9 +10,11 @@ namespace Xenon.Compiler.AST
     {
 
         public List<IXenonASTElement> Elements { get; set; } = new List<IXenonASTElement>();
+        public IXenonASTElement Parent { get; private set; }
 
-        IXenonASTElement IXenonASTElement.Compile(Lexer Lexer, XenonErrorLogger Logger)
+        IXenonASTElement IXenonASTElement.Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
+            this.Parent = Parent;
             throw new NotImplementedException();
         }
 
@@ -38,6 +40,11 @@ namespace Xenon.Compiler.AST
         XenonCompilerSyntaxReport IXenonASTElement.Recognize(Lexer Lexer)
         {
             throw new NotImplementedException();
+        }
+
+        public XenonASTElementCollection(IXenonASTElement Parent)
+        {
+            this.Parent = Parent;
         }
     }
 }

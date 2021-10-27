@@ -16,6 +16,7 @@ namespace Xenon.Compiler
         public int Postset_All { get; set; } = -1;
         public int Postset_First { get; set; } = -1;
         public int Postset_Last { get; set; } = -1;
+        public IXenonASTElement Parent { get; private set; }
 
         public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
@@ -29,13 +30,13 @@ namespace Xenon.Compiler
             Debug.WriteLine("</XenonASTExperession>");
         }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTExpression expr;
             // parse expressions command
             if (Lexer.GobbleandLog("#"))
             {
-                expr = CompileCommand(Lexer, Logger);
+                expr = CompileCommand(Lexer, Logger, Parent);
             }
             else
             {
@@ -53,6 +54,7 @@ namespace Xenon.Compiler
                 }
             }
 
+            expr.Parent = Parent;
             return expr;
         }
 
@@ -101,7 +103,7 @@ namespace Xenon.Compiler
 
         }
 
-        private XenonASTExpression CompileCommand(Lexer Lexer, XenonErrorLogger Logger)
+        private XenonASTExpression CompileCommand(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement parent)
         {
             XenonASTExpression expr = new XenonASTExpression();
 
@@ -109,14 +111,14 @@ namespace Xenon.Compiler
             {
                 XenonASTResource resource = new XenonASTResource();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Resource]);
-                expr.Command = (IXenonASTCommand)resource.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)resource.Compile(Lexer, Logger, parent);
                 return expr;
             }
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Script]))
             {
                 XenonASTScript script = new XenonASTScript();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Script]);
-                expr.Command = (IXenonASTCommand)script.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)script.Compile(Lexer, Logger, parent);
                 return expr;
             }
 
@@ -125,119 +127,119 @@ namespace Xenon.Compiler
             {
                 XenonASTSetVariable xenonASTSetVariable = new XenonASTSetVariable();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.SetVar]);
-                expr.Command = (IXenonASTCommand)xenonASTSetVariable.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)xenonASTSetVariable.Compile(Lexer, Logger, parent);
                 return expr;
             }
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Video]))
             {
                 XenonASTVideo video = new XenonASTVideo();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Video]);
-                expr.Command = (IXenonASTCommand)video.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)video.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.FilterImage]))
             {
                 XenonASTFilterImage fimage = new XenonASTFilterImage();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.FilterImage]);
-                expr.Command = (IXenonASTCommand)fimage.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)fimage.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.FullImage]))
             {
                 XenonASTFullImage fullimage = new XenonASTFullImage();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.FullImage]);
-                expr.Command = (IXenonASTCommand)fullimage.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)fullimage.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.FitImage]))
             {
                 XenonASTFitImage fitimage = new XenonASTFitImage();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.FitImage]);
-                expr.Command = (IXenonASTCommand)fitimage.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)fitimage.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.AutoFitImage]))
             {
                 XenonASTAutoFitImage autofit = new XenonASTAutoFitImage();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.AutoFitImage]);
-                expr.Command = (IXenonASTCommand)autofit.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)autofit.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.StitchedImage]))
             {
                 XenonASTStitchedHymn hymn = new XenonASTStitchedHymn();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.StitchedImage]);
-                expr.Command = (IXenonASTCommand)hymn.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)hymn.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]))
             {
                 XenonASTLiturgyImage liturgyimage = new XenonASTLiturgyImage();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]);
-                expr.Command = (IXenonASTCommand)liturgyimage.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)liturgyimage.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Break]))
             {
                 XenonASTSlideBreak slidebreak = new XenonASTSlideBreak();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Break]);
-                expr.Command = (IXenonASTCommand)slidebreak.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)slidebreak.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Liturgy]))
             {
                 XenonASTLiturgy liturgy = new XenonASTLiturgy();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Liturgy]);
-                expr.Command = (IXenonASTCommand)liturgy.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)liturgy.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyVerse]))
             {
                 XenonASTLiturgyVerse litverse = new XenonASTLiturgyVerse();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyVerse]);
-                expr.Command = (IXenonASTCommand)litverse.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)litverse.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TitledLiturgyVerse]))
             {
                 XenonASTTitledLiturgyVerse tlverse = new XenonASTTitledLiturgyVerse();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.TitledLiturgyVerse]);
-                expr.Command = (IXenonASTCommand)tlverse.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)tlverse.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Reading]))
             {
                 XenonASTReading reading = new XenonASTReading();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Reading]);
-                expr.Command = (IXenonASTCommand)reading.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)reading.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Sermon]))
             {
                 XenonASTSermon sermon = new XenonASTSermon();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Sermon]);
-                expr.Command = (IXenonASTCommand)sermon.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)sermon.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.AnthemTitle]))
             {
                 XenonASTAnthemTitle anthem = new XenonASTAnthemTitle();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.AnthemTitle]);
-                expr.Command = (IXenonASTCommand)anthem.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)anthem.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle]))
             {
                 XenonAST2PartTitle title = new XenonAST2PartTitle();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle]);
-                expr.Command = (IXenonASTCommand)title.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)title.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]))
             {
                 XenonASTTextHymn texthymn = new XenonASTTextHymn();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]);
-                expr.Command = (IXenonASTCommand)texthymn.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)texthymn.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Copyright]))
@@ -280,13 +282,27 @@ namespace Xenon.Compiler
             {
                 var command = new XenonASTPrefabScriptLiturgyOff();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Script_LiturgyOff]);
-                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger);
+                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Script_OrganIntro]))
             {
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Script_OrganIntro]);
                 expr.Command = new XenonASTPrefabScriptOrganIntro();
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.VariableScope]))
+            {
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.VariableScope]);
+                var command = new XenonASTVariableScope();
+                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.ScopedVariable]))
+            {
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.ScopedVariable]);
+                var command = new XenonASTScopedVariable();
+                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
                 return expr;
             }
             else

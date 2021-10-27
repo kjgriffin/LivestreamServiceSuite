@@ -67,6 +67,8 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.Resource] = "resource",
             [LanguageKeywordCommand.Script] = "script",
             [LanguageKeywordCommand.Postset] = "postset",
+            [LanguageKeywordCommand.VariableScope] = "scope",
+            [LanguageKeywordCommand.ScopedVariable] = "var",
         };
 
         public static Dictionary<LanguageKeywordCommand, LanguageKeywordInfo> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordInfo>()
@@ -100,6 +102,8 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.Resource] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
             [LanguageKeywordCommand.Script] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
             [LanguageKeywordCommand.Postset] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
+            [LanguageKeywordCommand.ScopedVariable] = (false, LanguageKeywordCommand.VariableScope),
+            [LanguageKeywordCommand.VariableScope] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
         };
 
         public static Dictionary<AutomationActions, AutomationActionMetadata> ScriptActionsMetadata = new Dictionary<AutomationActions, AutomationActionMetadata>()
@@ -226,6 +230,8 @@ namespace Xenon.Compiler
         Script_LiturgyOff,
         Script_OrganIntro,
         Postset, // Doesn't translate into a true AST command, but is of same priority so we'd better add it here
+        ScopedVariable,
+        VariableScope,
     }
 
     public enum AutomationActionArgType

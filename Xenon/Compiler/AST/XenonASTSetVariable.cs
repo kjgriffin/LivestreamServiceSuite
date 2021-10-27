@@ -15,7 +15,7 @@ namespace Xenon.Compiler.AST
         public string VariableName;
         public string Value;
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             Lexer.GobbleWhitespace();
             var args = Lexer.ConsumeArgList(true, "name", "value");
@@ -23,6 +23,7 @@ namespace Xenon.Compiler.AST
             VariableName = args["name"];
             Value = args["value"];
 
+            this.Parent = Parent;
             return this;
         }
 
@@ -66,6 +67,8 @@ namespace Xenon.Compiler.AST
             }
             return new List<(string suggestion, string description)>();
         };
+
+        public IXenonASTElement Parent { get; private set; }
 
         public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
         {

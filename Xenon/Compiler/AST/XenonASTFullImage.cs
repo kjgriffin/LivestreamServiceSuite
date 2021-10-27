@@ -12,8 +12,9 @@ namespace Xenon.Compiler
 
         public string AssetName { get; set; }
         public string KeyType { get; set; }
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTFullImage fullimage = new XenonASTFullImage();
             Lexer.GobbleWhitespace();
@@ -30,6 +31,7 @@ namespace Xenon.Compiler
                 }
             }
 
+            fullimage.Parent = Parent;
             return fullimage;
         }
 

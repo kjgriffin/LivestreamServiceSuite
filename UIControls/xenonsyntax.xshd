@@ -30,6 +30,23 @@
     <Span color="String">
       <Begin>"</Begin>
       <End>"</End>
+      <RuleSet>
+        <Span foreground="#ffaa0044" begin="\\" end="."></Span>
+      </RuleSet>
+    </Span>
+
+    <Span foreground="#ff7ba832" multiline="true">
+      <Begin>```</Begin>
+      <End>```</End>
+      <RuleSet>
+        <Span foreground="#ff8f3f11">
+          <Begin>"</Begin>
+          <End>"</End>
+          <RuleSet>
+            <Span foreground="#ffaa0044" begin="\\" end="."></Span>
+          </RuleSet>
+        </Span>
+      </RuleSet>
     </Span>
 
     <Span foreground="Purple" multiline="true">

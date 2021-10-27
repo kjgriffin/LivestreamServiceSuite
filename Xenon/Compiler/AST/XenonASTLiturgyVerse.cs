@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
 using Xenon.Compiler.AST;
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
@@ -15,10 +16,11 @@ namespace Xenon.Compiler
 
         public string Title { get; set; }
         public string Reference { get; set; }
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
-            XenonASTElementCollection litverses = new XenonASTElementCollection();
+            XenonASTElementCollection litverses = new XenonASTElementCollection(Parent);
             // assume all tokens inside braces are litrugy commands
             // only excpetions are we will gobble all leading whitespace in braces, and will remove the last 
             // character of whitespace before last brace
@@ -32,6 +34,7 @@ namespace Xenon.Compiler
             Lexer.GobbleandLog("{", "Expected opening brace at start of litverse.");
             Lexer.GobbleWhitespace();
             XenonASTLiturgyVerse litverse = CompileSubContent(Lexer, Logger);
+            litverse.Parent = this;
             litverses.Elements.Add(litverse);
             while (!Lexer.Inspect("}"))
             {
@@ -46,6 +49,7 @@ namespace Xenon.Compiler
                     Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Expected Command 'break'", ErrorName = "Unrecognized Command", Generator = "Compiler - XenonASTLitVerse", Inner = "", Level = XenonCompilerMessageType.Error, Token = Lexer.CurrentToken });
                 }
                 litverse = CompileSubContent(Lexer, Logger);
+                litverse.Parent = this;
                 litverses.Elements.Add(litverse);
             }
             Lexer.GobbleandLog("}", "Missing closing brace for litverse.");

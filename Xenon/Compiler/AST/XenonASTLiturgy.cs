@@ -15,12 +15,13 @@ namespace Xenon.Compiler
     class XenonASTLiturgy : IXenonASTCommand, IXenonCommandSuggestionCallback
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
+        public IXenonASTElement Parent { get; private set; }
 
         public bool ForceSpeakerStartOnNewline = false;
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
-            XenonASTElementCollection liturgys = new XenonASTElementCollection();
+            XenonASTElementCollection liturgys = new XenonASTElementCollection(Parent);
             // assume all tokens inside braces are litrugy commands
             // only excpetions are we will gobble all leading whitespace in braces, and will remove the last 
             // character of whitespace before last brace
@@ -42,6 +43,7 @@ namespace Xenon.Compiler
             Lexer.GobbleandLog("{", "Expected opening brace at start of liturgy.");
             Lexer.GobbleWhitespace();
             XenonASTLiturgy liturgy = CompileSubContent(Lexer, Logger);
+            liturgy.Parent = this;
             liturgys.Elements.Add(liturgy);
             while (!Lexer.Inspect("}"))
             {
@@ -56,9 +58,11 @@ namespace Xenon.Compiler
                     Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Expected Command 'break'", ErrorName = "Unrecognized Command", Generator = "Compiler - XenonASTLiturgy", Inner = "", Level = XenonCompilerMessageType.Error, Token = Lexer.CurrentToken });
                 }
                 liturgy = CompileSubContent(Lexer, Logger);
+                liturgy.Parent = this;
                 liturgys.Elements.Add(liturgy);
             }
             Lexer.GobbleandLog("}", "Missing closing brace for liturgy.");
+
             return liturgys;
         }
 

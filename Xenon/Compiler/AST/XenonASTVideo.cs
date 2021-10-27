@@ -13,8 +13,9 @@ namespace Xenon.Compiler
 
         public string AssetName { get; set; }
         public string KeyType { get; set; }
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTVideo video = new XenonASTVideo();
             Lexer.GobbleWhitespace();
@@ -31,6 +32,7 @@ namespace Xenon.Compiler
                     Lexer.GobbleWhitespace();
                 }
             }
+            video.Parent = Parent;
             return video;
 
         }

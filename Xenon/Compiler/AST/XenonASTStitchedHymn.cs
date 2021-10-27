@@ -18,6 +18,7 @@ namespace Xenon.Compiler.AST
         public string Number { get; set; }
         public string CopyrightInfo { get; set; }
         public bool StitchAll { get; set; }
+        public IXenonASTElement Parent { get; private set; }
 
         private string CopyrightTune
         {
@@ -53,7 +54,7 @@ namespace Xenon.Compiler.AST
 
 
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTStitchedHymn hymn = new XenonASTStitchedHymn();
 
@@ -89,6 +90,7 @@ namespace Xenon.Compiler.AST
             }
             Lexer.GobbleandLog("}", "Expected closing '}'");
 
+            hymn.Parent = Parent;
             return hymn;
         }
 

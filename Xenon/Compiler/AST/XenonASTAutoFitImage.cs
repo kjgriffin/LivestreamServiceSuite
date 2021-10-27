@@ -14,8 +14,9 @@ namespace Xenon.Compiler
         public bool InvertColor { get; set; }
         public string KeyType { get; set; }
         public string Options { get; set; } = "";
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTAutoFitImage fullimage = new XenonASTAutoFitImage();
             Lexer.GobbleWhitespace();
@@ -60,7 +61,7 @@ namespace Xenon.Compiler
                     }
                 }
             }
-           
+            fullimage.Parent = Parent; 
             return fullimage;
 
         }

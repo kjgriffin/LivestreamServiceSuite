@@ -15,8 +15,9 @@ namespace Xenon.Compiler
         public string Title { get; set; }
         public string Reference { get; set; }
         public string Preacher { get; set; }
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTSermon sermon = new XenonASTSermon();
             Lexer.GobbleWhitespace();
@@ -25,6 +26,7 @@ namespace Xenon.Compiler
             sermon.Title = args["title"];
             sermon.Reference = args["reference"];
             sermon.Preacher = args["preacher"];
+            sermon.Parent = Parent;
             return sermon;
 
         }

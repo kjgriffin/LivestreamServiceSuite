@@ -13,11 +13,12 @@ namespace Xenon.Compiler
     class XenonASTFilterImage : IXenonASTCommand
     {
         public List<(ImageFilter Type, ImageFilterParams FParams)> Filters { get; set; } = new List<(ImageFilter Type, ImageFilterParams)>();
+        public IXenonASTElement Parent { get; private set; }
 
         private Dictionary<int, string> assetstoresolve = new Dictionary<int, string>();
         private int assetids = 0;
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTFilterImage filterimage = new XenonASTFilterImage();
             Lexer.GobbleWhitespace();
@@ -67,6 +68,8 @@ namespace Xenon.Compiler
             Lexer.GobbleWhitespace();
 
             Lexer.GobbleandLog("}", "Expecting closing '}' after filter chain.");
+
+            this.Parent = Parent;
 
             return this;
         }

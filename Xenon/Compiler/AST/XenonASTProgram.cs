@@ -10,6 +10,7 @@ namespace Xenon.Compiler
     {
 
         public List<XenonASTExpression> Expressions { get; set; } = new List<XenonASTExpression>();
+        public IXenonASTElement Parent { get; private set; }
 
         public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger, IProgress<int> progress = null, int cprog = 0)
         {
@@ -40,7 +41,7 @@ namespace Xenon.Compiler
             Debug.WriteLine("</XenonASTProgram>");
         }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTProgram p = new XenonASTProgram();
             // gaurd against empty file
@@ -53,7 +54,7 @@ namespace Xenon.Compiler
             {
                 XenonASTExpression expr = new XenonASTExpression();
                 Lexer.GobbleWhitespace();
-                expr = (XenonASTExpression)expr.Compile(Lexer, Logger);
+                expr = (XenonASTExpression)expr.Compile(Lexer, Logger, this);
                 if (expr != null)
                 {
                     p.Expressions.Add(expr);
@@ -61,6 +62,7 @@ namespace Xenon.Compiler
                 Lexer.GobbleWhitespace();
             } while (!Lexer.InspectEOF());
 
+            p.Parent = Parent;
             return p;
         }
 

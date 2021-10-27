@@ -16,6 +16,7 @@ namespace Xenon.Compiler
         public string Number { get; set; }
         public string CopyrightInfo { get; set; }
         public bool IsOverlay { get; set; } = false;
+        public IXenonASTElement Parent { get; private set; }
 
         public IXenonASTElement _localParent;
         public int _localVNum;
@@ -49,7 +50,7 @@ namespace Xenon.Compiler
             Debug.WriteLine("</XenonASTTextHymn>");
         }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTTextHymn textHymn = new XenonASTTextHymn();
             Lexer.GobbleWhitespace();
@@ -84,7 +85,7 @@ namespace Xenon.Compiler
                 {
                     Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Verse], "Only verse command is valid here");
                     XenonASTHymnVerse verse = new XenonASTHymnVerse();
-                    textHymn.Verses.Add((XenonASTHymnVerse)verse.Compile(Lexer, Logger));
+                    textHymn.Verses.Add((XenonASTHymnVerse)verse.Compile(Lexer, Logger, this));
                 }
                 Lexer.GobbleWhitespace();
             }
@@ -92,7 +93,7 @@ namespace Xenon.Compiler
             Lexer.GobbleWhitespace();
             Lexer.GobbleandLog("}", "Missing closing brace on hymn command.");
 
-
+            textHymn.Parent = Parent;
             return textHymn;
 
         }

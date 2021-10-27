@@ -79,6 +79,7 @@ namespace Xenon.Compiler
             SplitWords.AddRange(LanguageKeywords.Commands.Values.OrderByDescending(p => p));
             SplitWords.AddRange(LanguageKeywords.WholeWords);
             List<string> Seperators = new List<string>() {
+                "```",
                 "\r\n",
                 "//",
                 "::",

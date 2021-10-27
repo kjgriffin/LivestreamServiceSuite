@@ -49,9 +49,11 @@ namespace Xenon.Compiler
     class XenonASTPrefabSlide : IXenonASTCommand
     {
         public PrefabSlides PrefabSlide { get; set; }
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
+            this.Parent = Parent;
             return this;
         }
 

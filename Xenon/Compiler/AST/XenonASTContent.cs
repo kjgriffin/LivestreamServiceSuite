@@ -9,8 +9,9 @@ namespace Xenon.Compiler
     class XenonASTContent : IXenonASTElement
     {
         public string TextContent { get; set; }
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             throw new NotImplementedException();
         }

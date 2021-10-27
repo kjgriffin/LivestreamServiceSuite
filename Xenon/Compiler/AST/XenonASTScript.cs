@@ -14,8 +14,9 @@ namespace Xenon.Compiler
     {
 
         public string Source { get; set; } = "";
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTScript script = new XenonASTScript();
             Lexer.GobbleWhitespace();
@@ -32,6 +33,7 @@ namespace Xenon.Compiler
                     break;
                 }
             }
+            script.Parent = Parent;
             return script;
 
         }

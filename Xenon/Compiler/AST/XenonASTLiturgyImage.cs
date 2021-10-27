@@ -12,8 +12,9 @@ namespace Xenon.Compiler
     class XenonASTLiturgyImage : IXenonASTCommand
     {
         public string AssetName { get; set; }
+        public IXenonASTElement Parent { get; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTLiturgyImage litimage = new XenonASTLiturgyImage();
             Lexer.GobbleWhitespace();

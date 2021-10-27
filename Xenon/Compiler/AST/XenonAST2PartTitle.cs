@@ -14,8 +14,9 @@ namespace Xenon.Compiler.AST
         public string Part1 { get; set; }
         public string Part2 { get; set; }
         public string Orientation { get; set; }
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             Lexer.GobbleWhitespace();
 
@@ -24,6 +25,7 @@ namespace Xenon.Compiler.AST
             Part2 = args["part2"];
             Orientation = args["orientation"];
 
+            this.Parent = Parent;
             return this;
 
         }

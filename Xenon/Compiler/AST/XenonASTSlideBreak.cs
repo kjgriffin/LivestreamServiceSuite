@@ -8,10 +8,13 @@ namespace Xenon.Compiler
 {
     class XenonASTSlideBreak : IXenonASTCommand
     {
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Parent { get; private set; }
+
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTSlideBreak slidebreak = new XenonASTSlideBreak();
             Lexer.GobbleWhitespace();
+            slidebreak.Parent = Parent;
             return slidebreak;
 
         }

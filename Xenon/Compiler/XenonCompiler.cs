@@ -65,7 +65,7 @@ namespace Xenon.Compiler
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Started", ErrorMessage = "Starting to compile", Generator = "Compiler", Level = XenonCompilerMessageType.Debug });
                 XMLMessageGenerator.AddXMLNotes(proj.SourceCode, Logger);
-                p = (XenonASTProgram)p.Compile(Lexer, Logger);
+                p = (XenonASTProgram)p.Compile(Lexer, Logger, null);
             }
             catch (Exception ex)
             {
@@ -119,7 +119,7 @@ namespace Xenon.Compiler
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Started", ErrorMessage = "Starting to compile", Generator = "Compiler", Level = XenonCompilerMessageType.Debug });
                 XMLMessageGenerator.AddXMLNotes(input, Logger);
-                p = (XenonASTProgram)p.Compile(Lexer, Logger);
+                p = (XenonASTProgram)p.Compile(Lexer, Logger, null);
             }
             catch (Exception ex)
             {

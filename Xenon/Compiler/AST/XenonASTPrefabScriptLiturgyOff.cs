@@ -10,8 +10,9 @@ namespace Xenon.Compiler.AST
     {
 
         public string SlideTitleMessage { get; set; } = "Litury Off";
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             // allow optional title parameter
             Lexer.GobbleWhitespace();
@@ -21,6 +22,7 @@ namespace Xenon.Compiler.AST
                 SlideTitleMessage = Lexer.ConsumeUntil(")");
                 Lexer.GobbleandLog(")", "Expecting closing ')'");
             }
+            this.Parent = Parent;
             return this;
         }
 

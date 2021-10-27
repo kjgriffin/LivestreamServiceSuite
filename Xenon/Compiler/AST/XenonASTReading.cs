@@ -15,14 +15,16 @@ namespace Xenon.Compiler
     {
         public string Name { get; set; }
         public string Reference { get; set; }
+        public IXenonASTElement Parent { get; private set; }
 
-        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger)
+        public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTReading reading = new XenonASTReading();
             Lexer.GobbleWhitespace();
             var args = Lexer.ConsumeArgList(true, "name", "reference");
             reading.Name = args["name"];
             reading.Reference = args["reference"];
+            reading.Parent = Parent;
             return reading;
 
         }
