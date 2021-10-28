@@ -219,9 +219,9 @@ namespace Xenon.Renderer.ImageFilters
                 }
             }
 
-            sourceManipulator.Finialize();
+            var r = sourceManipulator.Finialize();
 
-            return (_b, _k);
+            return (fparams.ForKey ? _b : r, fparams.ForKey ? r : _k);
         }
 
         public static (Bitmap b, Bitmap k) CenterOnBackground(Bitmap inb, Bitmap inkb, CenterOnBackgroundFilterParams fparams)

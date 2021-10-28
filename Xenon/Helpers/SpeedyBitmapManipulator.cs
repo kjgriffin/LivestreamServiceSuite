@@ -18,12 +18,18 @@ namespace Xenon.Helpers
         int bheightinpixels;
         int bwidthinpixels;
 
+        Bitmap nb;
+        BitmapData nbdata;
+        int nbbyptesperpixel;
+        byte[] nbpixels;
+        IntPtr ptrFirstnbPixel;
+
         bool isinitialized = false;
 
         public void Initialize(Bitmap source)
         {
             b = source;
-            bdata = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), ImageLockMode.ReadWrite, b.PixelFormat);
+            bdata = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), ImageLockMode.ReadOnly, b.PixelFormat);
             bbytesperpixel = Bitmap.GetPixelFormatSize(b.PixelFormat) / 8;
             bpixels = new byte[bdata.Stride * b.Height];
             ptrFirstbPixel = bdata.Scan0;
@@ -31,16 +37,28 @@ namespace Xenon.Helpers
             bwidthinpixels = bdata.Width * bbytesperpixel;
 
             Marshal.Copy(ptrFirstbPixel, bpixels, 0, bpixels.Length);
+
+
+            nb = new Bitmap(source.Width, source.Height);
+            nbdata = nb.LockBits(new Rectangle(0, 0, source.Width, source.Height), ImageLockMode.WriteOnly, source.PixelFormat);
+            nbbyptesperpixel = Bitmap.GetPixelFormatSize(nb.PixelFormat) / 8;
+            nbpixels = new byte[nbdata.Stride * nb.Height];
+            ptrFirstnbPixel = nbdata.Scan0;
+
             isinitialized = true;
         }
 
-        public void Finialize()
+        public Bitmap Finialize()
         {
             checkinit();
+
+            Marshal.Copy(nbpixels, 0, ptrFirstnbPixel, nbpixels.Length);
+
+            nb.UnlockBits(nbdata);
             b.UnlockBits(bdata);
             isinitialized = false;
 
-            b.Dispose();
+            return nb;
         }
 
         private void checkinit()
@@ -69,13 +87,13 @@ namespace Xenon.Helpers
         public void SetPixelRGBA(int x, int y, int R, int G, int B, int A)
         {
             checkinit();
-            int yoff = y * bdata.Stride;
-            int xoff = x * bbytesperpixel;
+            int yoff = y * nbdata.Stride;
+            int xoff = x * nbbyptesperpixel;
 
-            bpixels[yoff + xoff + 0] = (byte)B;
-            bpixels[yoff + xoff + 1] = (byte)G;
-            bpixels[yoff + xoff + 2] = (byte)R;
-            bpixels[yoff + xoff + 3] = (byte)A;
+            nbpixels[yoff + xoff + 0] = (byte)B;
+            nbpixels[yoff + xoff + 1] = (byte)G;
+            nbpixels[yoff + xoff + 2] = (byte)R;
+            nbpixels[yoff + xoff + 3] = (byte)A;
         }
 
         public void SetPixel(int x, int y, Color c)

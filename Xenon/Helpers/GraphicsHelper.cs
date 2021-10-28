@@ -277,7 +277,7 @@ namespace Xenon.Helpers
                     resManipulator.SetPixel(x, y, inv);
                 }
             }
-            resManipulator.Finialize();
+            res = resManipulator.Finialize();
             return res;
         }
 
