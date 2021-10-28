@@ -303,7 +303,7 @@ namespace SlideCreater
             //{
             //slides = await builder.RenderProject(_proj, rendererprogress);
             UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Render Starting", ErrorName = "Render Starting", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
-            slides = (await builder.RenderProjectAsync(build.project, rendererprogress)).OrderBy(s => s.Number).ToList();
+            slides = (await builder.RenderProjectAsync(build.project, rendererprogress, renderinparallel)).OrderBy(s => s.Number).ToList();
 
 
             alllogs.AddRange(builder.Messages);
@@ -1457,6 +1457,16 @@ namespace SlideCreater
         private void error_report_view_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             ScrollToErrorMessage();
+        }
+
+        bool renderinparallel = false;
+        private void ClickCBRenderParallel(object sender, RoutedEventArgs e)
+        {
+            renderinparallel = !renderinparallel;
+            if (renderinparallel)
+            {
+                cbRenderParallel.IsChecked = renderinparallel;
+            }
         }
     }
 }

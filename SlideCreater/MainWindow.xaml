@@ -99,6 +99,13 @@
             <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">
                 <Label.ToolTip>Performs a full trusty save including assets before any 'risky' operation. (May increase disk usage.)</Label.ToolTip> Aggressively Auto Save
             </Label>
+
+            <Border Width="20" Height="20" VerticalAlignment="Center">
+                <CheckBox Name="cbRenderParallel" IsChecked="false" Click="ClickCBRenderParallel" VerticalAlignment="center"></CheckBox>
+            </Border>
+            <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">
+                <Label.ToolTip>Legacy behaviour. Theoretically more performant. If disabled should be able to catch GDI+ errors that periodically crash Slide Creater.</Label.ToolTip>Parallelized Rendering
+            </Label>
         </ToolBar>
 
         <Grid Grid.Row="2">

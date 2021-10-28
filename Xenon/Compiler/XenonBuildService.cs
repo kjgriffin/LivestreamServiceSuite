@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+
 using Xenon.AssetManagment;
 using Xenon.Helpers;
 using Xenon.Renderer;
@@ -63,7 +64,67 @@ namespace Xenon.Compiler
             }
         }
 
-        public async Task<List<RenderedSlide>> RenderProjectAsync(Project proj, IProgress<int> progress = null)
+        public async Task<List<RenderedSlide>> RenderProjectAsync(Project proj, IProgress<int> progress = null, bool doparallel = false)
+        {
+            if (doparallel)
+            {
+                return await RenderProjectAsync_Parallel(proj, progress);
+            }
+            return await RenderProjectAsync_Synchronous(proj, progress);
+        }
+
+        private async Task<List<RenderedSlide>> RenderProjectAsync_Synchronous(Project proj, IProgress<int> progress = null)
+        {
+            int failedslides = 0;
+            try
+            {
+                if (progress != null)
+                {
+                    progress.Report(0);
+                }
+
+                SlideRenderer sr = new SlideRenderer(proj);
+                List<RenderedSlide> slides = new List<RenderedSlide>();
+                int completedslidecount = 0;
+
+                foreach (var slide in proj.Slides)
+                {
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            slides.Add(sr.RenderSlide(slide, Messages));
+                            Messages.Add(new XenonCompilerMessage() { ErrorMessage = $"Slide number ({slide.Number}) of type [{slide.Name}] was rendered.", ErrorName = "Render Slide Debug", Generator = $"renderer for slide number ({slide.Number})", Level = XenonCompilerMessageType.Debug });
+                        }
+                        catch (Exception ex)
+                        {
+                            Messages.Add(new XenonCompilerMessage() { ErrorMessage = ex.ToString(), ErrorName = "Error Rendering Slide", Generator = $"renderer for slide number ({slide.Number})", Level = XenonCompilerMessageType.Error });
+                            failedslides++;
+                        }
+                    });
+                    if (progress != null)
+                    {
+                        Interlocked.Increment(ref completedslidecount);
+                        int prog = (int)(completedslidecount / (double)proj.Slides.Count * 100);
+                        progress.Report(prog);
+                    }
+                }
+
+                if (failedslides > 0)
+                {
+                    Messages.Add(new XenonCompilerMessage() { ErrorMessage = $"Rendering failed to render {failedslides} slides.", ErrorName = "Failed to Render Slides", Level = XenonCompilerMessageType.Error });
+                }
+                return slides;
+            }
+            catch (Exception ex)
+            {
+                Messages.Add(new XenonCompilerMessage() { ErrorMessage = ex.ToString(), ErrorName = "Error Rendering Project", Level = XenonCompilerMessageType.Error });
+                return new List<RenderedSlide>();
+            }
+        }
+
+
+        private async Task<List<RenderedSlide>> RenderProjectAsync_Parallel(Project proj, IProgress<int> progress = null)
         {
             int failedslides = 0;
             try
@@ -116,6 +177,7 @@ namespace Xenon.Compiler
                 Messages.Add(new XenonCompilerMessage() { ErrorMessage = $"Rendering failed to render {failedslides} slides.", ErrorName = "Failed to Render Slides", Level = XenonCompilerMessageType.Error });
             }
         }
+
 
         public async Task<List<RenderedSlide>> RenderProject(Project project, IProgress<int> progress)
         {
