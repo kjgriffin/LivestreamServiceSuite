@@ -2089,8 +2089,12 @@ namespace IntegratedPresenter.Main
                             // There really shouldn't be any need.
                             // We also cant run a script's setup actions immediatley afterward.
                             // again it shouldn't be nessecary, since in both cases you can add it to the fullauto slide's setup actions
-                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- AutoOnly so advancing to NextSlide() from Slide ({Presentation.CurrentSlide}) <next {Presentation.Next.Title}>");
+                            //_logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- AutoOnly so advancing to NextSlide() from Slide ({Presentation.CurrentSlide}) <next {Presentation.Next.Title}>");
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- AutoOnly so advancing to NextSlide() from Slide ({Presentation.CurrentSlide}) <next {Presentation.Next.Title}>. Will re-run automation on next slide.");
                             Presentation.NextSlide();
+                            await SlideDriveVideo_Next(Tied);
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- completed AutoOnly. Skipping rest of actions.");
+                            return;
                         }
                         // Perform slide actions
                         _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Taking NextSlide() from Slide ({Presentation.CurrentSlide}) of type ACTION");
