@@ -26,7 +26,7 @@ namespace Xenon.Compiler
         {
             _localVNum = 0;
             _localParent = _Parent;
-            _localVerses = Verses.Count;
+            _localVerses = Verses.Count - 1;
             foreach (var verse in Verses)
             {
                 verse.Generate(project, this, Logger);
@@ -56,7 +56,7 @@ namespace Xenon.Compiler
             Lexer.GobbleWhitespace();
 
             var args = Lexer.ConsumeArgList(true, "title", "name", "tune", "number", "copyright");
-            
+
             textHymn.HymnTitle = args["title"];
             textHymn.HymnName = args["name"];
             textHymn.Tune = args["tune"];
@@ -67,7 +67,7 @@ namespace Xenon.Compiler
             {
                 Lexer.Consume();
                 string sisoverlay = Lexer.ConsumeUntil(")");
-                bool isoverlay; 
+                bool isoverlay;
                 bool.TryParse(sisoverlay, out isoverlay);
                 textHymn.IsOverlay = isoverlay;
                 Lexer.Consume();
