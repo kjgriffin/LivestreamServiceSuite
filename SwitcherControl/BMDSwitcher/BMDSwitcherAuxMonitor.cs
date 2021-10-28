@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using BMDSwitcherAPI;
 
-namespace Integrated_Presenter.BMDSwitcher
+namespace IntegratedPresenter.BMDSwitcher
 {
     class BMDSwitcherAuxMonitor : IBMDSwitcherInputAuxCallback
     {

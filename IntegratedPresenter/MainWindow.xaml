@@ -1,0 +1,2011 @@
+﻿<Window xmlns:Presenter="clr-namespace:IntegratedPresenter.Main"  x:Class="IntegratedPresenter.Main.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IntegratedPresenter.Main" xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        mc:Ignorable="d"
+        Closing="OnClosing"
+        PreviewKeyDown="WindowKeyDown"
+        PreviewKeyUp="WindowKeyUp"
+        Background="#3f3f3f"
+        Title="Integrated Presenter" Height="600" Width="1200">
+    <Window.Resources>
+
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Menu IsTabStop="False">
+                <MenuItem Header="Connections" IsTabStop="False">
+                    <MenuItem Click="ClickConnect" Header="Switcher" IsTabStop="False"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Click="ClickConnectMock" Header="Mock Switcher" IsTabStop="False"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Click="ClickDisconnectSwitcher" Header="Disconnect" IsTabStop="False"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Presentation" IsTabStop="False">
+                    <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Name="miMute" Header="Mute [M]" Click="ToggleMutePres" IsTabStop="False" IsCheckable="True" IsChecked="False"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="View" IsTabStop="False">
+                    <MenuItem Name="cbPrevAfter" Header="Prev/After [O]" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
+                    <MenuItem Name="cbShowEffectiveCurrent" Header="Preview Effective Current" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowEffectiveCurrentPreview"></MenuItem>
+                    <MenuItem Name="cbShowCurrentVideoCountdownTimer" Header="Video Countdown Timer (Current)" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowCurrentVideoCountdownTimer"></MenuItem>
+                    <MenuItem Name="cbAdvancedPresentation" Header="Advanced Presentation [Q]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
+                    <MenuItem Header="Audio Player [A]" IsTabStop="False" Click="ClickViewAudioPlayer"></MenuItem>
+                    <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP [P]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
+                    <MenuItem Name="cbAdvancedPIPMovement" Header="Advanced PIP Location [L]" IsTabStop="False" Click="ClickViewAdvancedPIPLocation"></MenuItem>
+                    <MenuItem Header="Aux Output [X]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAuxOutput"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Settings" IsTabStop="False">
+                    <MenuItem Header="Export Switcher Settings" Click="SaveSettings" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load Switcher Settings" Click="LoadSettings" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load Switcher Default" Click="LoadDefault" IsTabStop="False"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Header="Export User Settings" Click="SaveUserSettings" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load User Settings" Click="LoadUserSettings" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Load User Default" Click="LoadUserDefault" IsTabStop="False"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Automation" IsTabStop="False">
+                    <MenuItem Name="miTimer1Restart" Header="Timer1 Restart" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationTimer1"></MenuItem>
+                    <MenuItem Header="Set Video Preroll Delay" IsTabStop="False" Click="ClickSetVideoPrerollDelay"></MenuItem>
+                    <MenuItem Header="Set Drive Mode Preset Selection Delay" IsTabStop="False" Click="ClickSetDrivePresetSelectDelay"></MenuItem>
+                    <MenuItem Name="miDriveAutoTransGuard" Header="Enable Drive Mode Auto Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleDriveAutoTransGuard"></MenuItem>
+                    <MenuItem Name="miCutTransitionGuard" Header="Enable Cut Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleCutTransGuard"></MenuItem>
+                    <MenuItem Name="miPostset" Header="Enable Postset" IsCheckable="True" IsChecked="True" Click="ClickTogglePostsetFeature"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Help" IsTabStop="False">
+                    <MenuItem Name="miShowShortcuts" Header="Show Keyboard Shortcuts [S]" IsCheckable="True" IsChecked="False" Click="ClickShowKeyboardShortcuts"></MenuItem>
+                    <MenuItem Header="Online Help" IsTabStop="False" Click="ClickShowOnlineHelp"></MenuItem>
+                </MenuItem>
+            </Menu>
+        </Grid>
+
+        <Grid Grid.Row="1" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="*" Name="gcAdvancedPresentation"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <!--<ColumnDefinition></ColumnDefinition>-->
+                    </Grid.ColumnDefinitions>
+
+                    <Viewbox Stretch="Uniform">
+                        <Grid Name="gridbtns" Width="760">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Name="gcAdvancedProjector" Width="1.2*"></ColumnDefinition>
+                                <ColumnDefinition Width="8*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="480"></RowDefinition>
+                                <RowDefinition Height="280"></RowDefinition>
+                                <RowDefinition Name="grAdvancedPIP" Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="3">
+                                <Border VerticalAlignment="Center" Style="{StaticResource GroupBorder}">
+                                    <StackPanel>
+                                        <TextBlock TextAlignment="Center" Margin="0,10,0,00" Style="{StaticResource GrayText}">PROJECTOR</TextBlock>
+                                        <StackPanel Orientation="Vertical">
+
+                                            <Grid>
+                                                <Viewbox Name="ksc_ap" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                    <Grid>
+                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Border Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">~</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                            <Border  Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">Z</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Viewbox>
+                                                <Button Name="BtnAuxPgm" Click="ClickAuxPgm" Style="{StaticResource SwitcherButton_Disabled}">PGM</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox x:Name="ksc_a1" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                    <Grid>
+                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Border  Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                            <Border  Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">Z</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Viewbox>
+                                                <Button Name="BtnAux1" Click="ClickAux1" Style="{StaticResource SwitcherButton_Disabled}">1</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_a2" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                    <Grid>
+                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Border  Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                            <Border  Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">Z</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Viewbox>
+                                                <Button Name="BtnAux2" Click="ClickAux2" Style="{StaticResource SwitcherButton_Disabled}">2</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_a3" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                    <Grid>
+                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Border  Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                            <Border Padding="60,0"  Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">Z</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Viewbox>
+                                                <Button Name="BtnAux3" Click="ClickAux3" Style="{StaticResource SwitcherButton_Disabled}">3</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox x:Name="ksc_a4" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                    <Grid>
+                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Border Padding="60,0"  Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                            <Border Padding="60,0"  Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">Z</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Viewbox>
+                                                <Button Name="BtnAux4" Click="ClickAux4" Style="{StaticResource SwitcherButton_Disabled}">4</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox x:Name="ksc_a5" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                    <Grid>
+                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Border  Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                            <Border Padding="60,0"  Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">Z</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Viewbox>
+                                                <Button Name="BtnAux5" Click="ClickAux5" Style="{StaticResource SwitcherButton_Disabled}">5</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_a6" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                    <Grid>
+                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Border Padding="60,0"  Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                            <Border Padding="60,0"  Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">Z</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Viewbox>
+                                                <Button Name="BtnAux6" Click="ClickAux6" Style="{StaticResource SwitcherButton_Disabled}">6</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_a7" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                    <Grid>
+                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Border  Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">7</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                            <Border  Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">Z</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Viewbox>
+                                                <Button Name="BtnAux7" Click="ClickAux7" Style="{StaticResource SwitcherButton_Disabled}">7</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_a8" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                    <Grid>
+                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Border  Padding="60,0" Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                            <Border Padding="60,0"  Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <TextBlock Style="{StaticResource UIShortcut}">Z</TextBlock>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Viewbox>
+                                                <Button Name="BtnAux8" Click="ClickAux8" Style="{StaticResource SwitcherButton_Disabled}">8</Button>
+                                            </Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                            </Grid>
+
+                            <Grid Grid.Row="0" Grid.Column="1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="10,0,10,0">
+                                            <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="180">
+                                                <StackPanel>
+                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME</TextBlock>
+                                                    <Viewbox>
+                                                        <TextBlock Name="TbTime" Foreground="Orange">00:00:00</TextBlock>
+                                                    </Viewbox>
+                                                    <Viewbox Width="140" Height="20" Margin="0,-10,0,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource GrayText}">Switcher:</TextBlock>
+                                                            <TextBlock Name="tb_switcherConnection" Margin="5,0,0,0" Foreground="Red">Disconnected</TextBlock>
+                                                        </StackPanel>
+                                                    </Viewbox>
+                                                </StackPanel>
+                                            </Border>
+                                            <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="120">
+                                                <Grid>
+                                                    <TextBlock VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME ON SHOT</TextBlock>
+                                                    <Viewbox VerticalAlignment="Center">
+                                                        <TextBlock Name="TbShotClock" Foreground="Orange">00:00</TextBlock>
+                                                    </Viewbox>
+                                                    <Viewbox VerticalAlignment="Bottom" Width="100" Height="20" Margin="0,-10,0,0" Cursor="Hand" MouseDown="ClickResetTotalShotCount">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource GrayText}">Total Shots:</TextBlock>
+                                                            <TextBlock Name="tb_tos_TotalShots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
+                                                        </StackPanel>
+                                                    </Viewbox>
+                                                </Grid>
+                                            </Border>
+                                            <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="120">
+                                                <Grid>
+                                                    <TextBlock VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 1</TextBlock>
+                                                    <Viewbox VerticalAlignment="Center">
+                                                        <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer1" Name="TbGPTimer1" Foreground="Orange">00:00</TextBlock>
+                                                    </Viewbox>
+                                                    <Viewbox VerticalAlignment="Bottom" Width="100" Height="20" Margin="0,-10,0,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource GrayText}">Shots:</TextBlock>
+                                                            <TextBlock Name="tb_t1_shots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
+                                                        </StackPanel>
+                                                    </Viewbox>
+                                                </Grid>
+                                            </Border>
+                                            <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="120">
+                                                <Grid>
+                                                    <TextBlock VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 2</TextBlock>
+                                                    <Viewbox VerticalAlignment="Center">
+                                                        <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer2" Name="TbGPTimer2" Foreground="Orange">00:00</TextBlock>
+                                                    </Viewbox>
+                                                    <Viewbox VerticalAlignment="Bottom" Width="100" Height="20" Margin="0,-10,0,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource GrayText}">Shots:</TextBlock>
+                                                            <TextBlock Name="tb_t2_shots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
+                                                        </StackPanel>
+                                                    </Viewbox>
+                                                </Grid>
+                                            </Border>
+                                            <Border x:Name="borderBtnRecording" Visibility="Collapsed" Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="100">
+                                                <StackPanel>
+                                                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">RECORDING</TextBlock>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_r" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">F5</TextBlock>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                                <TextBlock Foreground="White" FontWeight="Bold" FontSize="30" Style="{StaticResource UIShortcut}" Margin="5">/</TextBlock>
+                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">F6</TextBlock>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Focusable="False" Name="btnRecording" IsTabStop="false" Background="Gray">
+                                                            <Button.Template>
+                                                                <ControlTemplate>
+                                                                    <Ellipse Cursor="Hand" Margin="5" Width="60" Height="60" Fill="{TemplateBinding Property=Background}"></Ellipse>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+
+                                    </Grid>
+                                    <Grid Grid.Row="1">
+                                        <Border Style="{StaticResource GroupBorder}">
+                                            <StackPanel>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PRESET</TextBlock>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_s1" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_s2" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_s3" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_s4" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_s5" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox x:Name="ksc_s6" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_s7" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">7</TextBlock>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_s8" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                    <Grid Grid.Row="2">
+                                        <Border Style="{StaticResource GroupBorder}">
+                                            <StackPanel>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.ColumnSpan="2" TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PROGRAM</TextBlock>
+                                                    <Grid Grid.Column="1">
+                                                        <Button Name="btnProgramLock" Click="ClickBtnProgramLock" Width="100" HorizontalAlignment="Right" Focusable="False" IsTabStop="False" Background="#2a2a2a" Foreground="Orange">
+                                                            <Button.Content>LOCKED</Button.Content>
+                                                            <Button.Template>
+                                                                <ControlTemplate>
+                                                                    <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                        <ContentControl Name="btnProgramLockName" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                            <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </Grid>
+                                                </Grid>
+
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_ps1" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Shift</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button Name="BtnProgram1" Click="ClickProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_ps2" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Shift</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button Name="BtnProgram2" Click="ClickProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_ps3" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Shift</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button Name="BtnProgram3" Click="ClickProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_ps4" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Shift</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button Name="BtnProgram4" Click="ClickProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_ps5" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Shift</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button Name="BtnProgram5" Click="ClickProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_ps6" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Shift</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button Name="BtnProgram6" Click="ClickProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_ps7" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">7</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Shift</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button Name="BtnProgram7" Click="ClickProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_ps8"  IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Shift</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button Name="BtnProgram8" Click="ClickProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                                                    </Grid>
+
+
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                    <Grid Grid.Row="3">
+                                        <Grid>
+                                            <Border Style="{StaticResource GroupBorder}" Width="160" HorizontalAlignment="Right">
+                                                <StackPanel>
+                                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">AUX SOURCES</TextBlock>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_ftb" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Padding="20,0" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">B</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Name="BtnFTB" Click="ClickFTB" Style="{StaticResource SwitcherButton_Disabled}">FTB</Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_stest" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Padding="20,0" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">C</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Name="BtnCBars" Click="ClickCBars" Style="{StaticResource SwitcherButton_Disabled}">TEST</Button>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                            <Border Style="{StaticResource GroupBorder}" Width="300" HorizontalAlignment="Left">
+                                                <StackPanel>
+                                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">TRANSITION</TextBlock>
+                                                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_auto" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                                                                    <Border Padding="18,0" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x21B5;</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Name="BtnAutoTrans" Click="ClickAutoTrans" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_cut" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                                                                    <Border Padding="13,0" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x2423;</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Name="BtnCutTrans" Click="ClickCutTrans" Style="{StaticResource SwitcherButton_Disabled}">CUT</Button>
+                                                        </Grid>
+                                                        <Grid Margin="60,0,0,0">
+                                                            <Viewbox Name="ksc_bkgd" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">0</TextBlock>
+                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Name="BtnBackgroundTrans" Click="ClickTransBkgd" Style="{StaticResource SwitcherButton_Disabled}">BKGD</Button>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="1" Grid.Column="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"></ColumnDefinition>
+                                        <ColumnDefinition Width="200"></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <Border Style="{StaticResource GroupBorder}">
+                                            <StackPanel>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">USK 1</TextBlock>
+
+                                                <Grid>
+                                                    <Viewbox Name="ksc_usk1t" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <StackPanel>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">.</TextBlock>
+                                                                        <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Viewbox>
+
+                                                    <Button Name="BtnTransKey1" Click="ClickTransKey1" Style="{StaticResource SwitcherButton_Disabled}">KEY 1</Button>
+                                                </Grid>
+
+                                                <Grid>
+                                                    <Viewbox Name="ksc_usk1" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <StackPanel>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                                                        <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Viewbox>
+
+                                                    <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">ON AIR</Button>
+                                                </Grid>
+
+                                                <Grid>
+
+                                                    <Viewbox Name="ksc_usk1m" Panel.ZIndex="1" Height="50" Width="50">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <StackPanel>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                                                        <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Viewbox>
+
+
+                                                    <StackPanel>
+                                                        <Button Name="BtnDVE" Click="ClickDVEMode" Foreground="White" Background="Red" Cursor="Hand">
+                                                            <Button.Content>DVE (PIP)</Button.Content>
+                                                            <Button.Template>
+                                                                <ControlTemplate>
+                                                                    <Border Width="70" Height="30" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                        <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Cursor" Value="{Binding Path=Cursor, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                                                            <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+
+                                                        <Button Name="BtnChroma" Click="ClickChromaMode" Foreground="White" Background="red" Cursor="Hand">
+                                                            <Button.Content>CHROMA</Button.Content>
+                                                            <Button.Template>
+                                                                <ControlTemplate>
+                                                                    <Border Width="70" Height="30" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                        <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Cursor" Value="{Binding Path=Cursor, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                                                            <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </StackPanel>
+
+                                                </Grid>
+
+
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                    <Border Grid.Column="1" Style="{StaticResource GroupBorder}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid Grid.Column="0">
+                                                <StackPanel>
+                                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">LITURGY</TextBlock>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_dsk1t" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <StackPanel>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                        </StackPanel>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnDSK1Tie" Click="ClickDSK1Tie" Style="{StaticResource SwitcherButton_Disabled}">TIE</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_dsk1" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <StackPanel>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                        </StackPanel>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnDSK1OnOffAir" Click="ClickDSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">LITURGY</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_dsk1a" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <StackPanel>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                        </StackPanel>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnDSK1Auto" Click="ClickDSK1Auto" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </Grid>
+                                            <Grid Grid.Column="1">
+                                                <StackPanel>
+                                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">SPLIT</TextBlock>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_dsk2t" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <StackPanel>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">9</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                        </StackPanel>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnDSK2Tie" Click="ClickDSK2Tie" Style="{StaticResource SwitcherButton_Disabled}">TIE</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_dsk2" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <StackPanel>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                        </StackPanel>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnDSK2OnOffAir" Click="ClickDSK2Toggle" Style="{StaticResource SwitcherButton_Disabled}">SPLIT</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_dsk2a" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <StackPanel>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                        </StackPanel>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+                                                        <Button Name="BtnDSK2Auto" Click="ClickDSK2Auto" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                    <Grid Grid.Column="3">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Row="0">
+                                                <Border Style="{StaticResource GroupBorder}">
+                                                    <StackPanel>
+                                                        <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">SLIDE CONTROLS</TextBlock>
+                                                        <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
+
+                                                            <Grid>
+                                                                <Viewbox x:Name="ksc_st" Panel.ZIndex="1" Height="50" Width="50">
+                                                                    <StackPanel Orientation="Vertical">
+                                                                        <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">T</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                                <Button Name="BtnTake" Click="ClickTakeSlide" Style="{StaticResource SwitcherButton_Disabled}">TAKE</Button>
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Viewbox Name="ksc_sn" Panel.ZIndex="1" Height="50" Width="50">
+                                                                    <StackPanel Orientation="Vertical">
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">&#x1F846;</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                                <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton_Disabled}">NEXT</Button>
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Viewbox Name="ksc_sp" Panel.ZIndex="1" Height="50" Width="50">
+                                                                    <StackPanel Orientation="Vertical">
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">&#x1F844;</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                                <Button Name="BtnPrev" Click="ClickPrevSlide" Style="{StaticResource SwitcherButton_Disabled}">PREV</Button>
+                                                            </Grid>
+
+                                                            <Grid>
+                                                                <Viewbox Name="ksc_sdm" Panel.ZIndex="1" Height="50" Width="50">
+                                                                    <Viewbox.RenderTransform>
+                                                                        <TranslateTransform Y="12.5"></TranslateTransform>
+                                                                    </Viewbox.RenderTransform>
+                                                                    <StackPanel Orientation="Vertical">
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">RCtrl</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">RShift</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+
+                                                                <StackPanel VerticalAlignment="Center">
+                                                                    <Button Name="BtnNoDrive" Click="ClickSlideNoDriveVideo" Foreground="White">
+                                                                        <Button.Content>NONE</Button.Content>
+                                                                        <Button.Template>
+                                                                            <ControlTemplate>
+                                                                                <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                                </Border>
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                        <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                    </Trigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Button.Template>
+
+                                                                    </Button>
+                                                                    <Button Name="BtnDrive" Click="ClickSlideDriveVideo" Foreground="White">
+                                                                        <Button.Content>DRIVE</Button.Content>
+                                                                        <Button.Template>
+                                                                            <ControlTemplate>
+                                                                                <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                                </Border>
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                        <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                    </Trigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Button.Template>
+
+                                                                    </Button>
+                                                                    <Button Name="BtnJump" Click="ClickSlideSkipMode" Foreground="White">
+                                                                        <Button.Content>SKIP</Button.Content>
+                                                                        <Button.Template>
+                                                                            <ControlTemplate>
+                                                                                <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                                </Border>
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                        <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                    </Trigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Button.Template>
+
+                                                                    </Button>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                            <Grid Margin="0,0,10,0">
+                                                                <Viewbox Name="ksc_slidereset" Panel.ZIndex="1" Height="18" Width="50">
+                                                                    <StackPanel Orientation="Vertical">
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">Home</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                                <TextBlock>
+                                                                    <Hyperlink Name="ResetSlideshow" Click="ResetSlideshow_Click">Reset</Hyperlink>
+                                                                </TextBlock>
+                                                            </Grid>
+                                                            <TextBlock Name="TbCurrSlide" Foreground="Orange">0</TextBlock>
+                                                            <TextBlock Foreground="Orange">/</TextBlock>
+                                                            <TextBlock Name="TbSlideCount" Foreground="Orange">0</TextBlock>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                            <Grid Grid.Row="1">
+                                                <Border Style="{StaticResource GroupBorder}">
+                                                    <StackPanel>
+                                                        <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">MEDIA PLAYBACK CONTROLS</TextBlock>
+                                                        <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
+                                                            <Grid>
+                                                                <Viewbox x:Name="ksc_mrestart" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                                    <Grid>
+                                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                            +
+                                                                            <TextBlock.Effect>
+                                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                            </TextBlock.Effect>
+                                                                        </TextBlock>
+                                                                        <StackPanel Orientation="Vertical">
+                                                                            <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                                <Viewbox>
+                                                                                    <TextBlock Style="{StaticResource UIShortcut}">&#x1F845;</TextBlock>
+                                                                                </Viewbox>
+                                                                            </Border>
+                                                                            <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                                <Viewbox>
+                                                                                    <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                                </Viewbox>
+                                                                            </Border>
+                                                                        </StackPanel>
+                                                                    </Grid>
+                                                                </Viewbox>
+                                                                <Button Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Viewbox x:Name="ksc_mstop" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                                    <Grid>
+                                                                        <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                            +
+                                                                            <TextBlock.Effect>
+                                                                                <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                            </TextBlock.Effect>
+                                                                        </TextBlock>
+                                                                        <StackPanel Orientation="Vertical">
+                                                                            <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                                <Viewbox>
+                                                                                    <TextBlock Style="{StaticResource UIShortcut}">&#x1F847;</TextBlock>
+                                                                                </Viewbox>
+                                                                            </Border>
+                                                                            <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                                <Viewbox>
+                                                                                    <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                                </Viewbox>
+                                                                            </Border>
+                                                                        </StackPanel>
+                                                                    </Grid>
+                                                                </Viewbox>
+                                                                <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource SwitcherButton_Disabled}">STOP</Button>
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Viewbox Name="ksc_mpause" Panel.ZIndex="1" Height="50" Width="50">
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">&#x1F847;</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                                <Button Name="BtnPauseMedia" Click="ClickPauseMedia" Style="{StaticResource SwitcherButton_Disabled}">PAUSE</Button>
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Viewbox Name="ksc_mplay" Panel.ZIndex="1" Height="50" Width="50">
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">&#x1F845;</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                                <Button Name="BtnPlayMedia" Click="ClickPlayMedia" Style="{StaticResource SwitcherButton_Disabled}">PLAY</Button>
+                                                            </Grid>
+                                                        </StackPanel>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                            </Grid.ColumnDefinitions>
+                                                            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0">
+                                                                <TextBlock Foreground="Orange">T-</TextBlock>
+                                                                <TextBlock Name="TbMediaTimeRemaining" Foreground="Orange">0:00</TextBlock>
+                                                            </StackPanel>
+                                                            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,0">
+                                                                <TextBlock Foreground="Orange">T+</TextBlock>
+                                                                <TextBlock Name="TbMediaTimeCurrent" Foreground="Orange">0:00</TextBlock>
+                                                                <TextBlock Foreground="Orange">/</TextBlock>
+                                                                <TextBlock Name="TbMediaTimeDurration" Foreground="Orange">0:00</TextBlock>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Row="2" Grid.Column="1">
+                                <Border Name="PIPControls" Style="{StaticResource GroupBorder}" >
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <StackPanel>
+                                                <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="5">PICTURE IN PICTURE CONTROLS</TextBlock>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_pkfa" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">/</TextBlock>
+                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoA" Click="ClickPIPRunToA" Foreground="White" Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                            <ContentControl FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}">A</ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_pkfb" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">*</TextBlock>
+                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoB" Click="ClickPIPRunToB" Foreground="WhiteSmoke" Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                            <ContentControl FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}">B</ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_pkff" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">-</TextBlock>
+                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoFull" Click="ClickPIPRunToFull" Foreground="WhiteSmoke"  Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                            <ContentControl FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}">FULL</ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_pl" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel>
+                                                                                <TextBlock Padding="20, 5" Style="{StaticResource UIShortcut}">L</TextBlock>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Click="ClickViewAdvancedPIPLocation" IsTabStop="False" x:Name="btnViewAdvancedPIPLocation" Grid.Row="0" Grid.Column="2">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">
+                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke">Open Advanced Control</ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid Grid.Row="1">
+                                            <StackPanel>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">FILL SOURCE</TextBlock>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_pf1" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_pf2" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox x:Name="ksc_pf3" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_pf4" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_pf5" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_pf6" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_pf7" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">7</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickPIP7" Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_pf8" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickPIP8" Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                                <Border Name="ChromaControls" Style="{StaticResource GroupBorder}" >
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <StackPanel>
+                                                <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="5">CHROMA KEYER CONTROLS</TextBlock>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                        <ColumnDefinition></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                                <ColumnDefinition></ColumnDefinition>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition></RowDefinition>
+                                                                <RowDefinition></RowDefinition>
+                                                                <RowDefinition></RowDefinition>
+                                                                <RowDefinition></RowDefinition>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Style="{StaticResource GrayText}">HUE</TextBlock>
+                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" Style="{StaticResource darkTextbox}" AcceptsReturn="False" IsTabStop="False" Grid.Row="0" Grid.Column="1" Name="tbChromaHue"></TextBox>
+                                                            <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Style="{StaticResource GrayText}">GAIN</TextBlock>
+                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False"  IsTabStop="False"  Grid.Row="1" Grid.Column="1" Name="tbChromaGain" Style="{StaticResource darkTextbox}"></TextBox>
+                                                            <TextBlock  Grid.Row="1" Grid.Column="2" Margin="5" Style="{StaticResource GrayText}">YSUPPRESS</TextBlock>
+                                                            <TextBox IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False" IsTabStop="False"  Grid.Row="1" Grid.Column="3" Name="tbChromaYSuppress" Style="{StaticResource darkTextbox}" ></TextBox>
+                                                            <TextBlock  Grid.Row="2" Grid.Column="0"  Margin="5" Style="{StaticResource GrayText}">LIFT</TextBlock>
+                                                            <TextBox Name="tbChromaLift" IsKeyboardFocusedChanged="TextEntryMode"  AcceptsReturn="False" IsTabStop="False"  Grid.Row="2" Grid.Column="1" Style="{StaticResource darkTextbox}"></TextBox>
+                                                            <TextBlock  Grid.Row="2" Grid.Column="2" Margin="5" Style="{StaticResource GrayText}">NARROW</TextBlock>
+                                                            <TextBox Name="tbChromaNarrow" IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False"  IsTabStop="False"  Grid.Row="2" Grid.Column="3" Style="{StaticResource darkTextbox}"></TextBox>
+                                                            <Button Click="ClickApplyChromaSettings" IsTabStop="False" x:Name="btnApplyChroma" Grid.Row="0" Grid.Column="3" Margin="10, 0, 10, 0">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="1">
+                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Orange">APPLY</ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid Grid.Row="1">
+                                            <StackPanel>
+                                                <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">KEY FILL SOURCE</TextBlock>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Grid>
+                                                        <Viewbox x:Name="ksc_cf1" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickChroma1" Name="BtnChromaFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_cf2" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickChroma2" Name="BtnChromaFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_cf3" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickChroma3" Name="BtnChromaFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_cf4" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickChroma4" Name="BtnChromaFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_cf5" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickChroma5" Name="BtnChromaFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_cf6" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickChroma6" Name="BtnChromaFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_cf7" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">7</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickChroma7" Name="BtnChromaFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Viewbox x:Name="ksc_cf8" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                            <Grid>
+                                                                <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                                <StackPanel Orientation="Vertical">
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                    <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                        <Button IsTabStop="False" Focusable="False" Click="ClickChroma8" Name="BtnChromaFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Viewbox>
+                </Grid>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+                            <Border BorderBrush="Red" BorderThickness="2,2,2,2">
+                                <Grid>
+                                    <local:MediaPlayer2  x:Name="CurrentPreview" Height="270" Width="480"></local:MediaPlayer2>
+                                    <Border Name="PrevPreviewDisplay" BorderBrush="Orange" Height="108" Width="192" BorderThickness="2,2,2,2">
+                                        <Border.RenderTransform>
+                                            <TranslateTransform X="144" Y="-81"></TranslateTransform>
+                                        </Border.RenderTransform>
+                                        <Grid>
+                                            <local:MediaPlayer2 Opacity="0.5" x:Name="PrevPreview"></local:MediaPlayer2>
+                                            <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">00:00:00</TextBlock>
+                                        </Grid>
+                                    </Border>
+                                    <TextBlock Name="tbPreviewCurrentVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100">00:00:00</TextBlock>
+                                </Grid>
+                            </Border>
+                        </Viewbox>
+                    </Grid>
+                    <Grid Grid.Row="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Top">
+                            <Border BorderBrush="Green" BorderThickness="2,2,2,2">
+                                <Grid>
+                                    <local:MediaPlayer2 x:Name="NextPreview" Height="270" Width="480"></local:MediaPlayer2>
+                                    <Border Name="AfterPreviewDisplay" BorderBrush="Blue" Height="108" Width="192" BorderThickness="2,2,2,2">
+                                        <Border.RenderTransform>
+                                            <TranslateTransform X="144" Y="81"></TranslateTransform>
+                                        </Border.RenderTransform>
+                                        <Grid>
+                                            <local:MediaPlayer2 Opacity="0.5" x:Name="AfterPreview" ></local:MediaPlayer2>
+                                            <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">00:00:00</TextBlock>
+                                        </Grid>
+                                    </Border>
+                                    <TextBlock Name="tbPreviewNextVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100">00:00:00</TextBlock>
+                                </Grid>
+                            </Border>
+                        </Viewbox>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid Grid.Column="2">
+                <Viewbox Stretch="Uniform">
+                    <StackPanel>
+                        <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource0" TakeSlidePoolSource="ClickTakeSP0" SourceIDNum="1" Grid.Row="0"></local:SlidePoolSource>
+                        <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource1" TakeSlidePoolSource="ClickTakeSP1" SourceIDNum="2" Grid.Row="1"></local:SlidePoolSource>
+                        <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource2" TakeSlidePoolSource="ClickTakeSP2" SourceIDNum="3"  Grid.Row="2"></local:SlidePoolSource>
+                        <local:SlidePoolSource IsTabStop="False" x:Name="SlidePoolSource3" TakeSlidePoolSource="ClickTakeSP3" SourceIDNum="4" Grid.Row="3"></local:SlidePoolSource>
+                    </StackPanel>
+                </Viewbox>
+            </Grid>
+        </Grid>
+
+    </Grid>
+</Window>

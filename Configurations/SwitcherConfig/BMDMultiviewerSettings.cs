@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Integrated_Presenter.BMDSwitcher.Config
+namespace IntegratedPresenter.BMDSwitcher.Config
 {
     public class BMDMultiviewerSettings
     {

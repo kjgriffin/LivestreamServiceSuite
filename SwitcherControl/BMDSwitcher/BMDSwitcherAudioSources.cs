@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Integrated_Presenter.BMDSwitcher
+namespace IntegratedPresenter.BMDSwitcher
 {
 
     /* acording to: https://www.skaarhoj.com/fileadmin/BMDPROTOCOL.html

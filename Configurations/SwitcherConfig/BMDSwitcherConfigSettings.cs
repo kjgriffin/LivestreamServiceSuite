@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 
-namespace Integrated_Presenter.BMDSwitcher.Config
+namespace IntegratedPresenter.BMDSwitcher.Config
 {
     public class BMDSwitcherConfigSettings
     {

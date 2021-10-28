@@ -1,6 +1,6 @@
 ﻿using BMDSwitcherAPI;
-using Integrated_Presenter.BMDSwitcher;
-using Integrated_Presenter.BMDSwitcher.Config;
+using IntegratedPresenter.BMDSwitcher;
+using IntegratedPresenter.BMDSwitcher.Config;
 using System;
 using System.Collections.Generic;
 using System.Text;

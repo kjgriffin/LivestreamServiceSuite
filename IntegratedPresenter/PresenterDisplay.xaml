@@ -1,0 +1,27 @@
+﻿<Window x:Class="IntegratedPresenter.Main.PresenterDisplay"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IntegratedPresenter.Main"
+        mc:Ignorable="d"
+        KeyDown="Window_KeyDown"
+        Loaded="Window_Loaded"
+        Closed="window_Closed"
+        Title="PresenterDisplay" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="149*"/>
+            <ColumnDefinition Width="651*"/>
+        </Grid.ColumnDefinitions>
+        <Viewbox Grid.ColumnSpan="2">
+            <Rectangle Fill="Black"></Rectangle>
+        </Viewbox>
+        <local:MediaPlayer2 x:Name="mediaPlayerA" Grid.ColumnSpan="2"></local:MediaPlayer2>
+        <local:MediaPlayer2 x:Name="mediaPlayerB" Grid.ColumnSpan="2"></local:MediaPlayer2>
+        <local:MediaPlayer2 x:Name="mediaPlayerC" Grid.ColumnSpan="2"></local:MediaPlayer2>
+        <Viewbox Name="blackcover" Panel.ZIndex="10" Grid.ColumnSpan="2">
+            <Rectangle Fill="Black"></Rectangle>
+        </Viewbox>
+    </Grid>
+</Window>

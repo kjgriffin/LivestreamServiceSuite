@@ -51,7 +51,7 @@ def main():
         json.dump(version, f)
 
 
-    with open('./Integrated Presenter/version.json') as f:
+    with open('./IntegratedPresenter/version.json') as f:
         version = json.load(f)
     # get build numbers
     majorversion = version['MajorVersion']
@@ -61,7 +61,7 @@ def main():
 
     # change to release build
     version['Mode'] = args.mode
-    with open('./Integrated Presenter/version.json', "w") as f:
+    with open('./IntegratedPresenter/version.json', "w") as f:
         json.dump(version, f)
 
     print(version)
@@ -75,20 +75,20 @@ def main():
 
 
     # build Integrated Presenter
-    buildcmd_integratedpresenter = 'msbuild "Integrated Presenter" -r /t:publish /p:PublishDir=".\..\publish\{0}\IntegratedPresenter" /p:Configuration=Release /p:SelfContained=true /p:RuntimeIdentifier=win-x64-aot /p:PublishSingleFile=true'.format(bnumstr)
+    buildcmd_integratedpresenter = 'msbuild "IntegratedPresenter" -r /t:publish /p:PublishDir=".\..\publish\{0}\IntegratedPresenter" /p:Configuration=Release /p:SelfContained=true /p:RuntimeIdentifier=win-x64-aot /p:PublishSingleFile=true'.format(bnumstr)
     os.system(buildcmd_integratedpresenter) 
     # rename with build number
     cwd = os.getcwd()
     scpath = os.path.join(cwd, "publish", bnumstr, "IntegratedPresenter")
     print(scpath)
-    os.rename("{0}\Integrated Presenter.exe".format(scpath), "{0}\IntegratedPresenter_{1}_win_x64.exe".format(scpath, bnumstr))
+    os.rename("{0}\IntegratedPresenter.exe".format(scpath), "{0}\IntegratedPresenter_{1}_win_x64.exe".format(scpath, bnumstr))
 
     # increment build number
     build += 1
     version["Build"] = build
     version['Mode'] = "Debug"
     # save new build number
-    with open('./Integrated Presenter/version.json', "w") as f:
+    with open('./IntegratedPresenter/version.json', "w") as f:
         json.dump(version, f)
 
 

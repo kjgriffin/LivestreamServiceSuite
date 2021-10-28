@@ -1,7 +1,7 @@
-﻿using Integrated_Presenter.BMDSwitcher;
-using Integrated_Presenter.BMDSwitcher.Config;
+﻿using IntegratedPresenter.BMDSwitcher;
+using IntegratedPresenter.BMDSwitcher.Config;
 
-namespace Integrated_Presenter
+namespace IntegratedPresenter
 {
 
     public delegate void SwitcherDisconnectedEvent();
