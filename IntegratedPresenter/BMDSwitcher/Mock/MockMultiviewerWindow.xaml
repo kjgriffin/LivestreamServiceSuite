@@ -53,7 +53,7 @@
                         <Image Name="ImgProgram" Grid.RowSpan="2" Panel.ZIndex="2"></Image>
                         <Image Name="ImgProgram_presetbgnd" Grid.RowSpan="2" Panel.ZIndex="1"></Image>
                         <Rectangle Name="ProgramChromaKey" Opacity="0.2" Fill="#00FF00" Panel.ZIndex="3"></Rectangle>
-                        <Image x:Name="ImgProgram_uskPIP" Opacity="1" Source="/BMDSwitcher/Mock/Images/cbars.png" Panel.ZIndex="3">
+                        <Image x:Name="ImgProgram_uskPIP" Opacity="1" Source="/BMDSwitcher/Mock/Images/cbars.png" Panel.ZIndex="3" Visibility="Hidden">
                             <Image.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform x:Name="imgprog_uskpipscale" ScaleX="0.5" ScaleY="0.5"></ScaleTransform>
