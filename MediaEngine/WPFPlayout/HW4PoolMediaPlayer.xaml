@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="MediaEngine.WPFPlayout.HW4PoolMediaPlayer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MediaEngine.WPFPlayout"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Viewbox Panel.ZIndex="10" Stretch="Uniform">
+            <Grid Width="1920" Height="1080">
+                <Border Name="display_a" Panel.ZIndex="1" Visibility="Hidden"></Border>
+                <Border Name="display_b" Panel.ZIndex="1" Visibility="Visible"></Border>
+                <Rectangle Fill="Magenta"></Rectangle>
+            </Grid>
+        </Viewbox>
+        <Grid Panel.ZIndex="0" Visibility="Hidden">
+            <MediaElement Name="clip_a"></MediaElement>
+            <MediaElement Name="clip_b"></MediaElement>
+            <MediaElement Name="clip_c"></MediaElement>
+            <MediaElement Name="clip_d"></MediaElement>
+            <Image Name="still_a"></Image>
+            <Image Name="still_b"></Image>
+            <Image Name="still_c"></Image>
+            <Image Name="still_d"></Image>
+            <Rectangle Fill="Black" Panel.ZIndex="-10"></Rectangle>
+        </Grid>
+    </Grid>
+</UserControl>
