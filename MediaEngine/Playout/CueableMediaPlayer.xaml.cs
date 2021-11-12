@@ -130,7 +130,7 @@ namespace MediaEngine.Playout
             var cuingreq = req.UpdateCueState(ICueableMediaPlayer.MediaCueState.Cueing);
             m_allocatedCueRequestTracker[cuingreq.AllocatedClipSource] = cuingreq;
             m_cueRequests[req.SourcePath] = cuingreq;
-            await Dispatcher.Invoke(() => m_players[req.AllocatedClipSource].Open(req.Source));
+            await Dispatcher.BeginInvoke(() => m_players[req.AllocatedClipSource].Open(req.Source));
             var cuedreq = cuingreq.UpdateCueState(ICueableMediaPlayer.MediaCueState.Cued);
             m_cueRequests[cuedreq.SourcePath] = cuedreq;
             m_allocatedCueRequestTracker[cuedreq.AllocatedClipSource] = cuedreq;
@@ -139,9 +139,18 @@ namespace MediaEngine.Playout
 
 
 
-        public Task HotLoadMediOnAir(Uri source)
+        public async Task HotLoadMediOnAir(Uri source, Guid houseID)
         {
-            throw new NotImplementedException();
+            // just replace the on-air media with what's provided.
+            // update cue-tracking as necessary
+            var replacereq = m_allocatedCueRequestTracker[m_OnAirIndex];
+            var overwritereq = new CueRequest(m_GetNextCueRequestIndex, replacereq.AllocatedClipSource, source, houseID);
+            m_houseIdTracker[houseID] = source;
+            // remove old cue-request
+            m_cueRequests.Remove(replacereq.SourcePath);
+            m_houseIdTracker.Remove(replacereq.HouseID);
+            await ProcessCueRequestInternal(overwritereq);
+            PutMediaOnAir(houseID);
         }
 
         public bool PutMediaOnAir(Guid houseID, bool UnCueLastOnAir = true)
@@ -165,7 +174,8 @@ namespace MediaEngine.Playout
                     // NOTE: super important this is called with BeginInvoke. This seems to make all the difference for it not to crash unexpectedly
                     Dispatcher.BeginInvoke(() =>
                     {
-                        rect_display.Fill = m_brushSources[m_OnAirIndex];
+                        //rect_display.Fill = m_brushSources[m_OnAirIndex];
+                        rect_display.Fill = new VisualBrush(m_players[m_OnAirIndex]);
                     });
 
                     // TODO: this was envisioned to handle the case where we'd want the last 'slide' to remain cued so we could go backwards in slides
@@ -182,10 +192,7 @@ namespace MediaEngine.Playout
                         if (UnCueLastOnAir)
                         {
                             m_houseIdTracker.Remove(lastonairreq.HouseID);
-                            if (!m_houseIdTracker.ContainsValue(lastonairreq.Source))
-                            {
-                                m_cueRequests.Remove(lastonairreq.SourcePath);
-                            }
+                            RemoveCueRequestBySource(lastonairreq.Source);
                             m_allocatedCueRequestTracker.Remove(lastonairreq.AllocatedClipSource);
                             m_availablePlayers.Enqueue(lastonairreq.AllocatedClipSource);
                         }
@@ -200,6 +207,14 @@ namespace MediaEngine.Playout
 
             }
             return false;
+        }
+
+        private void RemoveCueRequestBySource(Uri source)
+        {
+            if (!m_houseIdTracker.ContainsValue(source))
+            {
+                m_cueRequests.Remove(source.AbsolutePath);
+            }
         }
 
 
