@@ -3,11 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MediaEngine" xmlns:playout="clr-namespace:MediaEngine.Playout"
+        xmlns:local="clr-namespace:MediaEngine" xmlns:playout="clr-namespace:MediaEngine.Playout" xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win" xmlns:wpfplayout="clr-namespace:MediaEngine.WPFPlayout"
         mc:Ignorable="d"
         PreviewKeyDown="Window_PreviewKeyDown"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <playout:CueableMediaPlayer x:Name="player"></playout:CueableMediaPlayer>
+        <!--<playout:CueableMediaPlayer x:Name="player"></playout:CueableMediaPlayer>-->
+        <!--<ffme:MediaElement Name="ffplayer"></ffme:MediaElement>-->
+        <wpfplayout:HW4PoolMediaPlayer x:Name="player"></wpfplayout:HW4PoolMediaPlayer>
     </Grid>
 </Window>

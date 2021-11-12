@@ -46,8 +46,9 @@ namespace MediaEngine.Playout
         /// Puts the requested media directly on air without first cueing it. This may take a non-deterministic amount of time and result in unintended playout behaviour.
         /// </summary>
         /// <param name="source">The source of the media to load on air.</param>
+        /// <param name="houseID">The <see cref="Guid"/> serving as an external houseID for tracking purposes.</param>
         /// <returns>A task the completes when the media is loaded and on air.</returns>
-        public Task HotLoadMediOnAir(Uri source);
+        public Task HotLoadMediOnAir(Uri source, Guid houseID);
 
         
 

@@ -1,0 +1,26 @@
+﻿<Window x:Class="MediaEngine.WPFPlayout.Test.TestHostWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MediaEngine.WPFPlayout.Test"
+        mc:Ignorable="d"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        Title="TestHostWindow" Height="450" Width="800">
+    <Grid>
+        <Viewbox>
+            <Grid Width="192" Height="432">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Rectangle Grid.Row="0" Name="display1" Fill="Blue"></Rectangle>
+                <Rectangle Grid.Row="1" Name="display2" Fill="Blue"></Rectangle>
+                <Rectangle Grid.Row="2" Name="display3" Fill="Blue"></Rectangle>
+                <Rectangle Grid.Row="3" Name="display4" Fill="Blue"></Rectangle>
+            </Grid>
+        </Viewbox>
+    </Grid>
+</Window>

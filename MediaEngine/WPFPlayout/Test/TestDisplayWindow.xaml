@@ -1,0 +1,12 @@
+﻿<Window x:Class="MediaEngine.WPFPlayout.Test.TestDisplayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MediaEngine.WPFPlayout.Test" xmlns:wpfplayout="clr-namespace:MediaEngine.WPFPlayout"
+        mc:Ignorable="d"
+        Title="TestDisplayWindow" Height="450" Width="800">
+    <Grid>
+        <wpfplayout:HW4PoolMediaPlayer x:Name="player"></wpfplayout:HW4PoolMediaPlayer> 
+    </Grid>
+</Window>
