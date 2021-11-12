@@ -13,7 +13,7 @@ namespace MediaEngine.WPFPlayout
         public Guid MediaID { get; set; }
         public Uri? MediaSource { get; set; }
         public int CuePriorityOrder { get; set; }
-        public UIElement Player { get; set; } 
+        public UIElement? Player { get; set; } 
 
 
     }

@@ -77,7 +77,7 @@ namespace MediaEngine.WPFPlayout
         private int _reqNum = 0;
 
 
-        private UIElement ActivePlayer = null;
+        private UIElement? ActivePlayer = null;
         private int GetNextReqNum()
         {
             return _reqNum++;
@@ -85,21 +85,21 @@ namespace MediaEngine.WPFPlayout
 
         public Brush? GetOnAirVisual()
         {
-            VisualBrush b = null;
+            VisualBrush? b = null;
             if (OnAirCueRequest != null)
             {
-                OnAirCueRequest.Player.Dispatcher.Invoke(() => b = new VisualBrush(OnAirCueRequest.Player));
+                OnAirCueRequest.Player?.Dispatcher.Invoke(() => b = new VisualBrush(OnAirCueRequest.Player));
             }
             return b;
         }
 
         public Brush? GetVisualForCueRequest(Guid mediaID)
         {
-            VisualBrush b = null;
+            VisualBrush? b = null;
             var req = ActiveMediaCueRequests.FirstOrDefault(x => x.MediaID == mediaID);
             if (req != null)
             {
-                req?.Player.Dispatcher.Invoke(() => b = new VisualBrush(req.Player));
+                req?.Player?.Dispatcher.Invoke(() => b = new VisualBrush(req.Player));
             }
             return b;
         }

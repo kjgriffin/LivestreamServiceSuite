@@ -57,7 +57,7 @@ namespace MediaEngine
         List<(Uri uri, Guid id)> files = new List<(Uri, Guid)>();
         private int index = 0;
 
-        private async void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Right)
             {
