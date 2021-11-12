@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace MediaEngine.WPFPlayout
 {
@@ -38,8 +39,34 @@ namespace MediaEngine.WPFPlayout
             AvailableVideoPlayers.Enqueue(clip_c);
             AvailableVideoPlayers.Enqueue(clip_d);
 
+            clip_a.MediaOpened += ClipPlayerMediaOpened;
+            clip_b.MediaOpened += ClipPlayerMediaOpened;
+            clip_c.MediaOpened += ClipPlayerMediaOpened;
+            clip_d.MediaOpened += ClipPlayerMediaOpened;
+
         }
 
+        private void ClipPlayerMediaOpened(object sender, RoutedEventArgs e)
+        {
+            /* By leaving the media as auto-play on load we can force the media to begin loading immediately after setting the source
+             * Once that's forced it to actually begin loading, we'll catch it here and stop it from playing to far
+             * 
+             * So we now the the media opened, we'll set it back to the first frame
+             * At this point we can get a preview of a cued source, and putting this on air should happen immediately.
+             */
+            MediaElement media = (MediaElement)sender;
+
+            media.Dispatcher.Invoke(() => media.LoadedBehavior = MediaState.Manual);
+            media.Dispatcher.Invoke(() => media.Pause());
+            media.Dispatcher.Invoke(() => media.Position = TimeSpan.FromMilliseconds(1));
+            media.Dispatcher.Invoke(() => media.Volume = 1);
+
+        }
+
+
+        // Playback Timers
+        DispatcherTimer lowResTimer = new DispatcherTimer();
+        DispatcherTimer highRestTimer = new DispatcherTimer();
 
         // Track available media playout control resources
         Queue<Image> AvailableImagePlayers = new Queue<Image>();
@@ -56,6 +83,26 @@ namespace MediaEngine.WPFPlayout
             return _reqNum++;
         }
 
+        public Brush? GetOnAirVisual()
+        {
+            VisualBrush b = null;
+            if (OnAirCueRequest != null)
+            {
+                OnAirCueRequest.Player.Dispatcher.Invoke(() => b = new VisualBrush(OnAirCueRequest.Player));
+            }
+            return b;
+        }
+
+        public Brush? GetVisualForCueRequest(Guid mediaID)
+        {
+            VisualBrush b = null;
+            var req = ActiveMediaCueRequests.FirstOrDefault(x => x.MediaID == mediaID);
+            if (req != null)
+            {
+                req?.Player.Dispatcher.Invoke(() => b = new VisualBrush(req.Player));
+            }
+            return b;
+        }
 
         private void ManiuplateActiveVideoPlayer(Action<MediaElement> a)
         {
@@ -164,8 +211,19 @@ namespace MediaEngine.WPFPlayout
                     req.Player = player;
                 });
                 ActiveMediaCueRequests.Add(req);
-                player.Dispatcher.Invoke(() => player.LoadedBehavior = MediaState.Manual);
+
+
+                /*
+                 *  Bit of a hack here: we can force the media player to begin loading now (even though it shouldn't be 'on-air'
+                 *  we make sure we don't get unintended audio playout
+                 *  then (here's the magic!) we set the player to play as the loaded behaviour. this will force it to begin loading the media when we set it
+                 *  we'll set the media and we (elsewhere) catch the loaded event and stop playout and hold it ready on the first frame
+                 */
+                player.Dispatcher.Invoke(() => player.Volume = 0);
+                player.Dispatcher.Invoke(() => player.LoadedBehavior = MediaState.Play);
                 player.Dispatcher.Invoke(() => player.Source = req.MediaSource);
+
+
                 return CueRequestResult.CueRequestSubmitted;
             }
             return CueRequestResult.CueRejected_NoAvailablePlayer;
