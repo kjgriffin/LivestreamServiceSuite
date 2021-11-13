@@ -39,6 +39,7 @@ namespace MediaEngine.WPFPlayout
         CueRequestSubmitted,
         CueRejected_NoAvailablePlayer,
         CueRejected_MediaUnsupported,
+        CueRequest_AlreadySubmitted,
     }
 
     public enum ShowCuedResult

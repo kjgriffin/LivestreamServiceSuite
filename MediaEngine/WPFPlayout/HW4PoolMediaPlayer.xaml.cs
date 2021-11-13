@@ -248,6 +248,12 @@ namespace MediaEngine.WPFPlayout
             // if no playout control available we'll reject the request return false
             // check the source and see what type it is
 
+            // check if it's already been cued
+            if (ActiveMediaCueRequests.Any(x => x.MediaID == mediaID))
+            {
+                return CueRequestResult.CueRequest_AlreadySubmitted;
+            }
+
             var mtype = InspectMediaForType(mediaSource);
             // cue on available player
             if (mtype == MediaType.Image)
