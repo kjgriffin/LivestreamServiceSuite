@@ -8,12 +8,15 @@ using System.Windows.Media;
 
 namespace MediaEngine.WPFPlayout
 {
+    public delegate void MediaPlaybackPositionArgs(TimeSpan currentPos, TimeSpan duration);
     internal class MediaCueRequest
     {
         public Guid MediaID { get; set; }
         public Uri? MediaSource { get; set; }
         public int CuePriorityOrder { get; set; }
-        public UIElement? Player { get; set; } 
+        public UIElement? Player { get; set; }
+        public CueState CueState { get; set; }
+        public MediaType MediaType { get; set; }
 
 
     }
@@ -24,11 +27,26 @@ namespace MediaEngine.WPFPlayout
         Unsupported,
     }
 
+    internal enum CueState
+    {
+        Uncued,
+        Cueing,
+        Ready,
+    }
+
     public enum CueRequestResult
     {
         CueRequestSubmitted,
         CueRejected_NoAvailablePlayer,
         CueRejected_MediaUnsupported,
     }
+
+    public enum ShowCuedResult
+    {
+        Success_OnAir,
+        Failed_NotCued,
+        Failed_StillCueing,
+    }
+
 
 }

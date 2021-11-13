@@ -44,7 +44,13 @@ namespace MediaEngine.WPFPlayout
             clip_c.MediaOpened += ClipPlayerMediaOpened;
             clip_d.MediaOpened += ClipPlayerMediaOpened;
 
+            lowResTimer.Interval = TimeSpan.FromMilliseconds(500);
+            highRestTimer.Interval = TimeSpan.FromMilliseconds(16);
+
+            lowResTimer.Tick += CheckMediaPlaybackPosition;
+            highRestTimer.Tick += CheckMediaPlaybackPosition;
         }
+
 
         private void ClipPlayerMediaOpened(object sender, RoutedEventArgs e)
         {
@@ -61,12 +67,16 @@ namespace MediaEngine.WPFPlayout
             media.Dispatcher.Invoke(() => media.Position = TimeSpan.FromMilliseconds(1));
             media.Dispatcher.Invoke(() => media.Volume = 1);
 
+            // mark the request as having been cued and now ready for playback 
+            var originatingreq = ActiveMediaCueRequests.FirstOrDefault(r => r.Player == media);
+            if (originatingreq != null)
+            {
+                originatingreq.CueState = CueState.Ready;
+            }
+
         }
 
 
-        // Playback Timers
-        DispatcherTimer lowResTimer = new DispatcherTimer();
-        DispatcherTimer highRestTimer = new DispatcherTimer();
 
         // Track available media playout control resources
         Queue<Image> AvailableImagePlayers = new Queue<Image>();
@@ -75,6 +85,51 @@ namespace MediaEngine.WPFPlayout
         List<MediaCueRequest> ActiveMediaCueRequests = new List<MediaCueRequest>();
         MediaCueRequest? OnAirCueRequest = null;
         private int _reqNum = 0;
+
+
+        // Playback Timers
+        public enum TimerMode
+        {
+            HighRes,
+            LowRes,
+        }
+        DispatcherTimer lowResTimer = new DispatcherTimer();
+        DispatcherTimer highRestTimer = new DispatcherTimer();
+        public TimerMode PlaybackPositionTimerResolution { get; private set; } = TimerMode.LowRes;
+        public void SetPlaybackPositionTimerResolution(TimerMode res)
+        {
+            if (res == TimerMode.HighRes)
+            {
+                if (lowResTimer.IsEnabled)
+                {
+                    lowResTimer.Stop();
+                    highRestTimer.Start();
+                }
+            }
+            else if (res == TimerMode.LowRes)
+            {
+                if (highRestTimer.IsEnabled)
+                {
+                    highRestTimer.Stop();
+                    lowResTimer.Start();
+                }
+            }
+        }
+        private void CheckMediaPlaybackPosition(object? sender, EventArgs e)
+        {
+            var player = ActivePlayer as MediaElement;
+            if (player != null)
+            {
+                TimeSpan currentpos = TimeSpan.Zero;
+                TimeSpan duration = TimeSpan.Zero;
+                player.Dispatcher.Invoke(() => currentpos = player.Position);
+                player.Dispatcher.Invoke(() => duration = player.NaturalDuration.HasTimeSpan ? player.NaturalDuration.TimeSpan : TimeSpan.Zero);
+
+                OnMediaPlaybackPositionChanged?.Invoke(currentpos, duration);
+            }
+        }
+
+        public event MediaPlaybackPositionArgs? OnMediaPlaybackPositionChanged;
 
 
         private UIElement? ActivePlayer = null;
@@ -119,23 +174,35 @@ namespace MediaEngine.WPFPlayout
             return true;
         }
 
-        public bool StopCurrent()
+        public bool PauseCurrent()
         {
             ManiuplateActiveVideoPlayer((MediaElement e) => e.Pause());
             return true;
         }
+        public bool StopCurrent()
+        {
+            ManiuplateActiveVideoPlayer((MediaElement e) => e.Stop());
+            return true;
+        }
 
-        public bool ShowCuedMedia(Guid mediaID)
+        public ShowCuedResult ShowCuedMedia(Guid mediaID)
         {
             var cuereq = ActiveMediaCueRequests.FirstOrDefault(r => r.MediaID == mediaID);
             if (cuereq != null)
             {
                 var lastonair = OnAirCueRequest;
 
-                // TODO: check that it is ready to go, else report not read
+                if (cuereq.CueState != CueState.Ready)
+                {
+                    return ShowCuedResult.Failed_StillCueing;
+                }
 
                 // stop current if needed
-                StopCurrent();
+                PauseCurrent();
+
+                // Stop playback timers
+                highRestTimer.Stop();
+                lowResTimer.Stop();
 
                 // show it
                 if (display_a.Visibility == Visibility.Hidden)
@@ -150,6 +217,19 @@ namespace MediaEngine.WPFPlayout
                     display_b.Dispatcher.Invoke(() => display_b.Visibility = Visibility.Visible);
                     display_a.Dispatcher.Invoke(() => display_a.Visibility = Visibility.Hidden);
                 }
+                // Re-enable timers if video
+                if (cuereq.MediaType == MediaType.Video)
+                {
+                    if (PlaybackPositionTimerResolution == TimerMode.HighRes)
+                    {
+                        highRestTimer.Start();
+                    }
+                    else if (PlaybackPositionTimerResolution == TimerMode.LowRes)
+                    {
+                        lowResTimer.Start();
+                    }
+                }
+
                 ActivePlayer = cuereq.Player;
                 OnAirCueRequest = cuereq;
 
@@ -157,9 +237,9 @@ namespace MediaEngine.WPFPlayout
                 ActiveMediaCueRequests.Remove(OnAirCueRequest);
                 ReleaseCuePlayer(lastonair);
 
+                return ShowCuedResult.Success_OnAir;
             }
-            // TODO: should change to report that it isn't cued
-            return false;
+            return ShowCuedResult.Failed_NotCued;
         }
 
         public CueRequestResult TryCueMedia(Uri mediaSource, Guid mediaID)
@@ -187,13 +267,15 @@ namespace MediaEngine.WPFPlayout
             if (AvailableImagePlayers.Any())
             {
                 var player = AvailableImagePlayers.Dequeue();
-                MediaCueRequest req = new MediaCueRequest() { CuePriorityOrder = GetNextReqNum(), MediaID = mediaId, MediaSource = imageSource };
+                // TODO: I think images do cue-immediately, but should probably check
+                MediaCueRequest req = new MediaCueRequest() { CuePriorityOrder = GetNextReqNum(), MediaID = mediaId, MediaSource = imageSource, CueState = CueState.Uncued, MediaType = MediaType.Image };
                 player.Dispatcher.Invoke(() =>
                 {
                     req.Player = player;
                 });
                 ActiveMediaCueRequests.Add(req);
                 player.Dispatcher.Invoke(() => player.Source = new BitmapImage(req.MediaSource));
+                req.CueState = CueState.Ready;
                 return CueRequestResult.CueRequestSubmitted;
             }
             return CueRequestResult.CueRejected_NoAvailablePlayer;
@@ -205,7 +287,7 @@ namespace MediaEngine.WPFPlayout
             if (AvailableVideoPlayers.Any())
             {
                 var player = AvailableVideoPlayers.Dequeue();
-                MediaCueRequest req = new MediaCueRequest() { CuePriorityOrder = GetNextReqNum(), MediaID = mediaId, MediaSource = videoSource };
+                MediaCueRequest req = new MediaCueRequest() { CuePriorityOrder = GetNextReqNum(), MediaID = mediaId, MediaSource = videoSource, CueState = CueState.Uncued, MediaType = MediaType.Video };
                 player.Dispatcher.Invoke(() =>
                 {
                     req.Player = player;
@@ -222,6 +304,8 @@ namespace MediaEngine.WPFPlayout
                 player.Dispatcher.Invoke(() => player.Volume = 0);
                 player.Dispatcher.Invoke(() => player.LoadedBehavior = MediaState.Play);
                 player.Dispatcher.Invoke(() => player.Source = req.MediaSource);
+
+                req.CueState = CueState.Cueing;
 
 
                 return CueRequestResult.CueRequestSubmitted;

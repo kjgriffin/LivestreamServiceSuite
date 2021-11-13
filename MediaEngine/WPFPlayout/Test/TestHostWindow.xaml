@@ -16,7 +16,10 @@
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
-                <Rectangle Grid.Row="0" Name="display1" Fill="Blue"></Rectangle>
+                <Grid Grid.Row="0">
+                    <Rectangle Name="display1" Fill="Blue"></Rectangle>
+                    <TextBlock Name="tbtimer" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" Foreground="Orange">00:00:00.000</TextBlock>
+                </Grid>
                 <Rectangle Grid.Row="1" Name="display2" Fill="Blue"></Rectangle>
                 <Rectangle Grid.Row="2" Name="display3" Fill="Blue"></Rectangle>
                 <Rectangle Grid.Row="3" Name="display4" Fill="Blue"></Rectangle>

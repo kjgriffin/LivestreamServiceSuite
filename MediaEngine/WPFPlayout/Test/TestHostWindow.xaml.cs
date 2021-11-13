@@ -42,7 +42,14 @@ namespace MediaEngine.WPFPlayout.Test
                 .ToList();
             displayWindow.Show();
 
+            displayWindow.player.OnMediaPlaybackPositionChanged += Player_OnMediaPlaybackPositionChanged;
+
             Task.Run(() => Prepare());
+        }
+
+        private void Player_OnMediaPlaybackPositionChanged(TimeSpan currentPos, TimeSpan duration)
+        {
+            tbtimer.Dispatcher.Invoke(() => tbtimer.Text = (duration - currentPos).ToString("hh\\:mm\\:ss\\.ff"));
         }
 
         private async Task Prepare()
@@ -85,6 +92,22 @@ namespace MediaEngine.WPFPlayout.Test
                     Debugger.Break();
                 }
 
+            }
+            if (e.Key == Key.Up)
+            {
+                displayWindow.player.PlayCurrent();
+            }
+            if (e.Key == Key.Down)
+            {
+                displayWindow.player.PauseCurrent();
+            }
+            if (e.Key == Key.H)
+            {
+                displayWindow.player.SetPlaybackPositionTimerResolution(HW4PoolMediaPlayer.TimerMode.HighRes);
+            }
+            if (e.Key == Key.L)
+            {
+                displayWindow.player.SetPlaybackPositionTimerResolution(HW4PoolMediaPlayer.TimerMode.LowRes);
             }
         }
     }
