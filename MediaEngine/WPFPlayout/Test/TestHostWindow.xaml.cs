@@ -84,8 +84,13 @@ namespace MediaEngine.WPFPlayout.Test
                 display1.Dispatcher.Invoke(() => display1.Fill = displayWindow.player.GetOnAirVisual());
                 index++;
                 var f = files.Skip(index).First();
+                var f1 = files.Skip(index + 1).First();
                 var s1 = displayWindow.player.TryCueMedia(f.uri, f.id);
+                var s2 = displayWindow.player.TryCueMedia(f1.uri, f1.id);
+                var s3 = displayWindow.player.TryCueMedia(displayWindow.player.BlackSource.source, displayWindow.player.BlackSource.id);    
                 display2.Dispatcher.Invoke(() => display2.Fill = displayWindow.player.GetVisualForCueRequest(files[index].id));
+                display3.Dispatcher.Invoke(() => display3.Fill = displayWindow.player.GetVisualForCueRequest(files[index + 1].id));
+                display4.Dispatcher.Invoke(() => display4.Fill = displayWindow.player.GetVisualForCueRequest(displayWindow.player.BlackSource.id));
 
                 if (s1 == WPFPlayout.CueRequestResult.CueRejected_NoAvailablePlayer)
                 {

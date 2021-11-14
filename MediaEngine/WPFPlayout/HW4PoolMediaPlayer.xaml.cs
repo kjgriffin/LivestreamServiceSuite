@@ -77,6 +77,15 @@ namespace MediaEngine.WPFPlayout
         }
 
 
+        private readonly Guid m_blackSourceId = Guid.NewGuid();
+
+        public (Guid id, Uri source) BlackSource
+        {
+            get
+            {
+                return (m_blackSourceId, new Uri("pack://application:,,,/WPFPlayout/Resources/Black.png"));
+            }
+        }
 
         // Track available media playout control resources
         Queue<Image> AvailableImagePlayers = new Queue<Image>();
@@ -185,7 +194,7 @@ namespace MediaEngine.WPFPlayout
             return true;
         }
 
-        public ShowCuedResult ShowCuedMedia(Guid mediaID)
+        public ShowCuedResult ShowCuedMedia(Guid mediaID, bool keepCurrentOnAirCued = false)
         {
             var cuereq = ActiveMediaCueRequests.FirstOrDefault(r => r.MediaID == mediaID);
             if (cuereq != null)
@@ -231,15 +240,34 @@ namespace MediaEngine.WPFPlayout
                 }
 
                 ActivePlayer = cuereq.Player;
+                cuereq.CueState = CueState.OnAir;
                 OnAirCueRequest = cuereq;
-
-                // un-cue last played
-                ActiveMediaCueRequests.Remove(OnAirCueRequest);
-                ReleaseCuePlayer(lastonair);
+                if (lastonair != null)
+                {
+                    lastonair.CueState = CueState.Ready;
+                    // un-cue last played
+                    if (!keepCurrentOnAirCued)
+                    {
+                        UnCueMedia(lastonair.MediaID);
+                    }
+                }
 
                 return ShowCuedResult.Success_OnAir;
             }
             return ShowCuedResult.Failed_NotCued;
+        }
+
+        public void UnCueMedia(Guid mediaID)
+        {
+            var cuereq = ActiveMediaCueRequests.FirstOrDefault(x => x.MediaID == mediaID);
+            if (cuereq != null)
+            {
+                if (cuereq.CueState != CueState.OnAir)
+                {
+                    ActiveMediaCueRequests.Remove(cuereq);
+                    ReleaseCuePlayer(cuereq);
+                }
+            }
         }
 
         public CueRequestResult TryCueMedia(Uri mediaSource, Guid mediaID)
@@ -255,6 +283,13 @@ namespace MediaEngine.WPFPlayout
             }
 
             var mtype = InspectMediaForType(mediaSource);
+
+            // override special case for black source
+            if (mediaID == m_blackSourceId)
+            {
+                mtype = MediaType.Image;
+            }
+
             // cue on available player
             if (mtype == MediaType.Image)
             {

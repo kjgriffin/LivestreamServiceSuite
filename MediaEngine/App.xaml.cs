@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MediaEngine.WPFPlayout.Test;
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -16,11 +18,11 @@ namespace MediaEngine
         void AppStartup(object sender, StartupEventArgs e)
         {
             // load ffmpeg libraries...
-            Unosquare.FFME.Library.FFmpegDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"lib\ffmpeg");
-            Unosquare.FFME.Library.LoadFFmpeg();
+            //Unosquare.FFME.Library.FFmpegDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"lib\ffmpeg");
+            //Unosquare.FFME.Library.LoadFFmpeg();
 
             // start mainwindow
-            MainWindow window = new MainWindow();
+            TestHostWindow window = new TestHostWindow();
             window.Show();
         }
 

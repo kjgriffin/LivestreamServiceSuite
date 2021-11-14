@@ -9,7 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="WPFPlayout\Resources\Black.png" />
+    <None Remove="WPFPlayout\Resources\White.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FFME.Windows" Version="4.4.350" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="WPFPlayout\Resources\Black.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="WPFPlayout\Resources\White.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

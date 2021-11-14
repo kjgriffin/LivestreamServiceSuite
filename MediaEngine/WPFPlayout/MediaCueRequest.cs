@@ -32,6 +32,7 @@ namespace MediaEngine.WPFPlayout
         Uncued,
         Cueing,
         Ready,
+        OnAir,
     }
 
     public enum CueRequestResult
