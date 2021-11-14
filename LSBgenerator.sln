@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configurations", "Configura
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UITextboxTestbed", "UITextboxTestbed\UITextboxTestbed.csproj", "{E498EE79-C819-46B4-ACF9-230F76584D1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaEngine", "MediaEngine\MediaEngine.csproj", "{79C7EBE2-6C92-46C9-994E-7F12930768E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaEngine", "MediaEngine\MediaEngine.csproj", "{79C7EBE2-6C92-46C9-994E-7F12930768E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedPlayoutControl", "AdvancedPlayoutControl\AdvancedPlayoutControl.csproj", "{8420AFA5-D961-4AB2-9C41-09A50B33D702}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,6 +109,14 @@ Global
 		{79C7EBE2-6C92-46C9-994E-7F12930768E1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79C7EBE2-6C92-46C9-994E-7F12930768E1}.Release|x64.ActiveCfg = Release|x64
 		{79C7EBE2-6C92-46C9-994E-7F12930768E1}.Release|x64.Build.0 = Release|x64
+		{8420AFA5-D961-4AB2-9C41-09A50B33D702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8420AFA5-D961-4AB2-9C41-09A50B33D702}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8420AFA5-D961-4AB2-9C41-09A50B33D702}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8420AFA5-D961-4AB2-9C41-09A50B33D702}.Debug|x64.Build.0 = Debug|Any CPU
+		{8420AFA5-D961-4AB2-9C41-09A50B33D702}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8420AFA5-D961-4AB2-9C41-09A50B33D702}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8420AFA5-D961-4AB2-9C41-09A50B33D702}.Release|x64.ActiveCfg = Release|Any CPU
+		{8420AFA5-D961-4AB2-9C41-09A50B33D702}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
