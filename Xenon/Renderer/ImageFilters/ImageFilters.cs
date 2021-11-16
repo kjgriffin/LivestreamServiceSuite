@@ -40,11 +40,13 @@ namespace Xenon.Renderer.ImageFilters
                         {
                             if (!isexclude)
                             {
+                                sourceManipulator.Finialize();
                                 return (x, y);
                             }
                         }
                         else if (isexclude)
                         {
+                            sourceManipulator.Finialize();
                             return (x, y);
                         }
                     }
@@ -62,11 +64,13 @@ namespace Xenon.Renderer.ImageFilters
                         {
                             if (!isexclude)
                             {
+                                sourceManipulator.Finialize();
                                 return (x, y);
                             }
                         }
                         else if (isexclude)
                         {
+                            sourceManipulator.Finialize();
                             return (x, y);
                         }
 
@@ -85,11 +89,13 @@ namespace Xenon.Renderer.ImageFilters
                         {
                             if (!isexclude)
                             {
+                                sourceManipulator.Finialize();
                                 return (x, y);
                             }
                         }
                         else if (isexclude)
                         {
+                            sourceManipulator.Finialize();
                             return (x, y);
                         }
 
@@ -108,11 +114,13 @@ namespace Xenon.Renderer.ImageFilters
                         {
                             if (!isexclude)
                             {
+                                sourceManipulator.Finialize();
                                 return (x, y);
                             }
                         }
                         else if (isexclude)
                         {
+                            sourceManipulator.Finialize();
                             return (x, y);
                         }
 
