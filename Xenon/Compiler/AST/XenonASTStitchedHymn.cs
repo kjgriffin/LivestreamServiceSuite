@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+
 using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
 
@@ -96,7 +97,7 @@ namespace Xenon.Compiler.AST
 
         public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating StitchedHymn {HymnName}", ErrorName = "Generation Debug Log", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = ("", int.MaxValue) });
+            Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating StitchedHymn {HymnName}", ErrorName = "Generation Debug Log", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
             // main steps
             // 1. Figure out how many lines/stanzas and how many stanzas there are
             // 2. Figure out if we can squish everything on one slide, or if we need to go stanza by stanza
@@ -122,13 +123,13 @@ namespace Xenon.Compiler.AST
                     }
                     else
                     {
-                        Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Generating StitchedHymn", ErrorName = "Failed to load image asset", Generator = "XenonASTStitchedHymn:Generate()", Inner = $"{item}", Level = XenonCompilerMessageType.Warning, Token = ("", int.MaxValue) });
+                        Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Generating StitchedHymn", ErrorName = "Failed to load image asset", Generator = "XenonASTStitchedHymn:Generate()", Inner = $"{item}", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
                         Debug.WriteLine($"Error opening image to check size: {item}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Generating StitchedHymn", ErrorName = "Failed to load image asset", Generator = "XenonASTStitchedHymn:Generate()", Inner = $"{ex}", Level = XenonCompilerMessageType.Warning, Token = ("", int.MaxValue) });
+                    Logger.Log(new XenonCompilerMessage() { ErrorMessage = "Generating StitchedHymn", ErrorName = "Failed to load image asset", Generator = "XenonASTStitchedHymn:Generate()", Inner = $"{ex}", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
                     Debug.WriteLine($"Error opening image to check size: {ex}");
                     // hmmm....
                 }
@@ -176,13 +177,7 @@ namespace Xenon.Compiler.AST
                 slide.AddPostset(_Parent, true, true);
 
                 project.Slides.Add(slide);
-
-
-                var heightaprox = 200 + ImageSizes.Select(i => i.Value.Height).Aggregate((item, sum) => sum + item);
-                if (heightaprox > 1200)
-                {
-                    Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Hymn over height: {HymnName}. Hymn requested with 'stichall' flag, but hymn is expected to have {heightaprox} height.", ErrorName = "StitchAll Overheight", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", int.MaxValue) });
-                }
+                WarnVerseOverheightStitchAll(Logger, ImageSizes);
 
                 return;
 
@@ -229,7 +224,7 @@ namespace Xenon.Compiler.AST
 
             if (unconfidentaboutlinetype)
             {
-                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Unconfident about linetype for hymn {HymnName}", ErrorName = "Autogen Unconfident", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", int.MaxValue) });
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Unconfident about linetype for hymn {HymnName}", ErrorName = "Autogen Unconfident", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
             }
             //if (unconfidentaboutlinetype)
             //{
@@ -281,13 +276,7 @@ namespace Xenon.Compiler.AST
                 slide.AddPostset(_Parent, true, true);
 
                 project.Slides.Add(slide);
-
-                var heightaprox = 200 + ImageAssets.Select(i => ImageSizes[i].Height).Aggregate((item, sum) => sum + item);
-                if (heightaprox > 1200)
-                {
-                    Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Hymn over height: {HymnName}. Hymn interpreted to have only one verse,w with all lines on the same slide. Expected to have {heightaprox} height.", ErrorName = "Verse Overheight", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", int.MaxValue) });
-                }
-
+                WarnVerseOverheight(Logger, ImageSizes);
 
                 return;
             }
@@ -320,8 +309,15 @@ namespace Xenon.Compiler.AST
                 List<LSBPairedHymnLine> verselines = new List<LSBPairedHymnLine>();
                 for (int j = 0; j < VerseCollatedLines.Count; j++)
                 {
-                    LSBPairedHymnLine line = new LSBPairedHymnLine(VerseCollatedLines[j].music, VerseCollatedLines[j].words[i]);
-                    verselines.Add(line);
+                    if (VerseCollatedLines[j].words.Count > i)
+                    {
+                        LSBPairedHymnLine line = new LSBPairedHymnLine(VerseCollatedLines[j].music, VerseCollatedLines[j].words[i]);
+                        verselines.Add(line);
+                    }
+                    else
+                    {
+                        Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Unconfident generating verses for {HymnName}", ErrorName = "Autogen Unconfident", Generator = "XenonASTStitchedHymn:Generate()", Inner = $"Found unpaired line. Expected to find matching words for music line {j}.", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
+                    }
                 }
                 StitchedImageHymnStanza stanza = new StitchedImageHymnStanza(verselines);
                 stanzas.Add(stanza);
@@ -340,7 +336,7 @@ namespace Xenon.Compiler.AST
             // if not- then we probably split it into verses/refrains incorrectly
             if (!hymn.PerformSanityCheck(ImageAssets.Count()))
             {
-                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Unconfident splitting verses/refrains for {HymnName}", ErrorName = "Autogen Unconfident", Generator = "XenonASTStitchedHymn:Generate()", Inner = $"Provided {ImageAssets.Count()} source images. Generated Hymn only uses {hymn.ComputeSourceLinesUsed()}", Level = XenonCompilerMessageType.Warning, Token = ("", int.MaxValue) });
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Unconfident splitting verses/refrains for {HymnName}", ErrorName = "Autogen Unconfident", Generator = "XenonASTStitchedHymn:Generate()", Inner = $"Provided {ImageAssets.Count()} source images. Generated Hymn only uses {hymn.ComputeSourceLinesUsed()}", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
             }
 
             // 2. add the height of all the images. if height > 1200??? then we'll do it by stanza
@@ -438,6 +434,37 @@ namespace Xenon.Compiler.AST
                     }
                 }
 
+            }
+        }
+
+        private void WarnVerseOverheight(XenonErrorLogger Logger, Dictionary<string, Size> ImageSizes)
+        {
+            var heightaprox = 200 + ImageAssets.Select(i => ImageSizes[i].Height).Aggregate((item, sum) => sum + item);
+            var mwidth = ImageAssets.Select(i => ImageSizes[i].Width).Max();
+            if (heightaprox > 1200)
+            {
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Hymn over height: {HymnName}. Hymn interpreted to have only one verse,w with all lines on the same slide. Expected to have {heightaprox} height.", ErrorName = "Verse Overheight", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
+            }
+            WarnAspectRatio(mwidth, heightaprox, Logger);
+        }
+
+        private void WarnVerseOverheightStitchAll(XenonErrorLogger Logger, Dictionary<string, Size> ImageSizes)
+        {
+            var heightaprox = 200 + ImageSizes.Select(i => i.Value.Height).Aggregate((item, sum) => sum + item);
+            var mwidth = ImageSizes.Values.Select(s => s.Width).Max();
+            if (heightaprox > 1200)
+            {
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Hymn over height: {HymnName}. Hymn requested with 'stichall' flag, but hymn is expected to have {heightaprox} height.", ErrorName = "StitchAll Overheight", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
+            }
+            WarnAspectRatio(mwidth, heightaprox, Logger);
+        }
+
+        private void WarnAspectRatio(int maxwidth, int height, XenonErrorLogger Logger)
+        {
+            double ratio = (double)maxwidth / (double)height;
+            if (ratio < 0.6) // maybe this is ok??
+            {
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Hymn Incorrect Aspect Ratio: {HymnName}. Hymn is expected to have an aspect ratio of {maxwidth}:{height}={ratio:0.00}.", ErrorName = "Verse Incorrect Aspect Ratio", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
             }
         }
 

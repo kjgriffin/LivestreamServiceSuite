@@ -7,6 +7,12 @@ namespace Xenon.Compiler
     static class LanguageKeywords
     {
 
+        public const string LAYOUTVARNAME = "Layout";
+        public static string LayoutVarName(LanguageKeywordCommand cmd)
+        {
+            return $"{Commands[cmd]}.{LAYOUTVARNAME}";
+        }
+
         public static List<string> WholeWords = new List<string>()
         {
             "solidcolorcanvas",
@@ -34,6 +40,7 @@ namespace Xenon.Compiler
             "centeronbackground",
             "coloredit",
             "forkey",
+            LAYOUTVARNAME,
         };
 
         public static Dictionary<LanguageKeywordCommand, string> Commands = new Dictionary<LanguageKeywordCommand, string>()

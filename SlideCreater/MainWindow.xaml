@@ -240,7 +240,7 @@
 
                 <Viewbox Grid.Row="0">
                     <Grid>
-                        <Border VerticalAlignment="Top">
+                        <Border VerticalAlignment="Top" BorderThickness="10" BorderBrush="DarkMagenta" Margin="10">
                             <local:SlideContentPresenter x:Name="FocusSlide"></local:SlideContentPresenter>
                         </Border>
                     </Grid>

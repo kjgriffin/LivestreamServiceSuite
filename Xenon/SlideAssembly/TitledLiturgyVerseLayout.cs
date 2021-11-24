@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Xenon.Layouts;
 
 namespace Xenon.SlideAssembly
 {
@@ -45,39 +46,6 @@ namespace Xenon.SlideAssembly
 
     }
 
-    class LWJPoint
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-    }
-
-    class LWJSize
-    {
-        public int Width { get; set; }
-        public int Height { get; set; }
-    }
-
-    class LWJRect
-    {
-        public LWJPoint Origin { get; set; }
-        public LWJSize Size { get; set; }
-    }
-
-    class LWJFont
-    {
-        public string Name { get; set; }
-        public int Size { get; set; }
-        public int Style { get; set; }
-    }
-
-    class LWJTLVerseLayout
-    {
-        public LWJSize Size { get; set; }
-        public LWJRect Key { get; set; }
-        public LWJRect Textbox { get; set; }
-        public LWJRect TitleLine { get; set; }
-        public LWJFont Font { get; set; }
-    }
-
+   
 
 }

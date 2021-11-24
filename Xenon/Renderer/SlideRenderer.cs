@@ -6,10 +6,12 @@ using System.Text;
 using Xenon.Compiler;
 using Xenon.Renderer.ImageFilters;
 using System.Linq;
+using Xenon.LayoutInfo;
+using Xenon.AssetManagment;
 
 namespace Xenon.Renderer
 {
-    class SlideRenderer
+    class SlideRenderer : IAssetResolver
     {
         Project _project { get; set; }
 
@@ -29,7 +31,19 @@ namespace Xenon.Renderer
         CopySlideRenderer csr = new CopySlideRenderer();
         ScriptRenderer sr = new ScriptRenderer();
         ImageFilterRenderer ifr = new ImageFilterRenderer();
-        StitchedImageRenderer sir = new StitchedImageRenderer();
+        //StitchedImageRenderer sir = new StitchedImageRenderer();
+
+        private List<ISlideRenderer> Renderers = new List<ISlideRenderer>
+        {
+            new StitchedImageRenderer(),
+            new TwoPartTitleSlideRenderer(),
+        };
+
+        public ProjectAsset GetProjectAssetByName(string assetName)
+        {
+            return _project.Assets.FirstOrDefault(a => a.Name == assetName);
+        }
+
 
         public SlideRenderer(Project proj)
         {
@@ -42,13 +56,14 @@ namespace Xenon.Renderer
             psr.Layouts = proj.Layouts;
             lvsr.Layouts = proj.Layouts;
             atsr.Layouts = proj.Layouts;
-            tpsr.Layouts = proj.Layouts;
+            //tpsr.Layouts = proj.Layouts;
             tlvsr.Layouts = proj.Layouts;
         }
 
         public RenderedSlide RenderSlide(Slide s, List<XenonCompilerMessage> Messages)
         {
-            var res = _RenderSlide(s, Messages);
+            //var res = _RenderSlide(s, Messages);
+            var res = _ApplyRenderers(s, Messages);
             res.Number = s.Number;
 
             // attach Postset
@@ -68,6 +83,25 @@ namespace Xenon.Renderer
             }
 
             return res;
+        }
+
+        private RenderedSlide _ApplyRenderers(Slide slide, List<XenonCompilerMessage> Messages)
+        {
+            RenderedSlide result = null;
+            foreach (var render in Renderers)
+            {
+                // Will let every renderer visit the slide
+                // this will enable future features
+                // in addition to what we have now 'full slide renderers' we may want to add 'post renderers' that modify exisitng slides
+                // this would allow that... though we'd need to ensure a pass order
+                render.VisitSlideForRendering(slide, this, Messages, ref result);
+            }
+            // TODO: remove once we switch everything over to the new way
+            if (result == null)
+            {
+                return _RenderSlide(slide, Messages);
+            }
+            return result ?? RenderedSlide.Default();
         }
 
         private RenderedSlide _RenderSlide(Slide slide, List<XenonCompilerMessage> Messages)
@@ -94,7 +128,7 @@ namespace Xenon.Renderer
                 case SlideFormat.LiturgyImage:
                     return isr.RenderImageSlide(slide, Messages);
                 case SlideFormat.StichedImage:
-                    return sir.RenderSlide(slide, Messages, _project.Assets);
+                //return sir.RenderSlide(slide, Messages, _project.Assets);
                 case SlideFormat.Reading:
                     return rsr.RenderSlide(_project.Layouts.ReadingLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.SermonTitle:
@@ -102,7 +136,7 @@ namespace Xenon.Renderer
                 case SlideFormat.AnthemTitle:
                     return atsr.RenderSlide(slide, Messages);
                 case SlideFormat.TwoPartTitle:
-                    return tpsr.RenderSlide(slide, Messages);
+                    //return tpsr.RenderSlide(slide, Messages);
                 case SlideFormat.HymnTextVerse:
                     return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.Prefab:
@@ -115,7 +149,6 @@ namespace Xenon.Renderer
                     return RenderedSlide.Default();
             }
         }
-
 
     }
 }

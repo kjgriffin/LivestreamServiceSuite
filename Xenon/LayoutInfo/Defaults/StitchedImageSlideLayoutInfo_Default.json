@@ -1,0 +1,141 @@
+{
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "BackgroundColor": {
+    "Hex": "#ffffffff"
+  },
+  "KeyColor": {
+    "Hex": "#ffffffff"
+  },
+  "TitleBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 0,
+        "Y": 0
+      },
+      "Size": {
+        "Width": 1920,
+        "Height": 120
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 36,
+      "Style": 0
+    },
+    "FColor": {
+      "Hex": "#ff000000"
+    },
+    "BColor": {
+      "Hex": "#00ffffff"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    },
+    "HorizontalAlignment": "Left",
+    "VerticalAlignment": "Center"
+  },
+  "NameBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 480,
+        "Y": 0
+      },
+      "Size": {
+        "Width": 960,
+        "Height": 120
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 34,
+      "Style": 1
+    },
+    "FColor": {
+      "Hex": "#ff000000"
+    },
+    "BColor": {
+      "Hex": "#00ffffff"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    },
+    "HorizontalAlignment": "Center",
+    "VerticalAlignment": "Center"
+  },
+  "NumberBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 0,
+        "Y": 0
+      },
+      "Size": {
+        "Width": 1920,
+        "Height": 120
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 28,
+      "Style": 2
+    },
+    "FColor": {
+      "Hex": "#ff000000"
+    },
+    "BColor": {
+      "Hex": "#00ffffff"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    },
+    "HorizontalAlignment": "Right",
+    "VerticalAlignment": "Center"
+  },
+  "CopyrightBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 0,
+        "Y": 1050
+      },
+      "Size": {
+        "Width": 1920,
+        "Height": 30
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 8,
+      "Style": 0
+    },
+    "FColor": {
+      "Hex": "#ff808080"
+    },
+    "BColor": {
+      "Hex": "#ffffffff"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    }
+
+  },
+  "MusicBox": {
+    "Box": {
+      "Origin": {
+        "X": 0,
+        "Y": 120
+      },
+      "Size": {
+        "Width": 1920,
+        "Height": 930
+      }
+    },
+    "FillColor": {
+      "Hex": "#ffffffff"
+    },
+    "KeyColor": {
+      "Hex": "#ffffffff"
+    }
+  }
+}

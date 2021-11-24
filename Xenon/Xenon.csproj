@@ -7,7 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="LayoutInfo\Defaults\StitchedImageSlideLayoutInfo_Default.json" />
+    <None Remove="LayoutInfo\Defaults\_2TitleSlideLayoutInfo_Default.json" />
     <None Remove="Resources\LSBSymbol.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="LayoutInfo\Defaults\StitchedImageSlideLayoutInfo_Default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LayoutInfo\Defaults\_2TitleSlideLayoutInfo_Default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

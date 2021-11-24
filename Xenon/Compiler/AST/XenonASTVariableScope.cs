@@ -93,12 +93,12 @@ namespace Xenon.Compiler.AST
 
         public bool SetScopedVariableValue(string vname, string value)
         {
+            Variables[vname] = value;
             if (Variables.ContainsKey(vname) || (this as IXenonASTElement).CheckAnsestorScopeFornameConflict(vname).found)
             {
-                return false;
+                return true;
             }
-            Variables[vname] = value;
-            return true;
+            return false;
         }
 
     }

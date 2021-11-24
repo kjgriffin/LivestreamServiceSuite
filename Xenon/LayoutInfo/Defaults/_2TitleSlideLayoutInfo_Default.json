@@ -1,0 +1,86 @@
+{
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "Color": {
+    "Hex": "#ff808080"
+  },
+  "KeyColor": {
+    "Hex": "#ff000000"
+  },
+  "MainText": {
+    "Textbox": {
+      "Origin": {
+        "X": 80,
+        "Y": 864
+      },
+      "Size": {
+        "Width": 1760,
+        "Height": 216
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 36,
+      "Style": 1
+    },
+    "FColor": {
+      "Hex": "#ffffffff"
+    },
+    "BColor": {
+      "Hex": "#00000000"
+    },
+    "KColor": {
+      "Hex": "#00000000"
+    },
+    "HorizontalAlignment": "Left",
+    "VerticalAlignment": "Center"
+  },
+  "SubText": {
+    "Textbox": {
+      "Origin": {
+        "X": 80,
+        "Y": 864
+      },
+      "Size": {
+        "Width": 1760,
+        "Height": 216
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 36,
+      "Style": 0
+    },
+    "FColor": {
+      "Hex": "#ffffffff"
+    },
+    "BColor": {
+      "Hex": "#00000000"
+    },
+    "KColor": {
+      "Hex": "#00000000"
+    },
+    "HorizontalAlignment": "Right",
+    "VerticalAlignment": "Center"
+  },
+  "Banner": {
+    "Box": {
+      "Origin": {
+        "X": 0,
+        "Y": 864
+      },
+      "Size": {
+        "Width": 1920,
+        "Height": 216
+      }
+    },
+    "FillColor": {
+      "Hex": "#ff000000"
+    },
+    "KeyColor": {
+      "Hex": "#ff808080"
+    }
+  }
+}

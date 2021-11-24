@@ -42,22 +42,22 @@ namespace Xenon.Compiler.AST
                 MediaType = MediaType.Image
             };
 
-            SlideLineContent slcpart1 = new SlideLineContent() { Data = Part1 };
-            SlideLineContent slcpart2 = new SlideLineContent() { Data = Part2 };
-
-            SlideLine slpart1 = new SlideLine() { Content = new List<SlideLineContent>() { slcpart1 } };
-            SlideLine slpart2 = new SlideLine() { Content = new List<SlideLineContent>() { slcpart2 } };
-
-            titleslide.Lines.Add(slpart1);
-            titleslide.Lines.Add(slpart2);
 
             titleslide.Data["orientation"] = Orientation;
+            titleslide.Data["maintext"] = Part1;
+            titleslide.Data["subtext"] = Part2;
 
-            if (project.GetAttribute("alphatranscol").Count > 0)
+            // TODO: implement correctly
+            var variable = (this as IXenonASTElement).TryGetScopedVariable(LanguageKeywords.LayoutVarName(LanguageKeywordCommand.TwoPartTitle), out string layoutoverride);
+
+            // use the layoutoverride var to lookup on where-ever we'll put layouts for the project
+
+            if (variable.found)
             {
-                titleslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
+                titleslide.Data[Slide.LAYOUT_INFO_KEY] = "something";
             }
 
+            
             titleslide.AddPostset(_Parent, true, true);
 
             project.Slides.Add(titleslide);

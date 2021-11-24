@@ -8,6 +8,7 @@ namespace Xenon.Compiler
 {
     class XenonASTExpression : IXenonASTElement
     {
+        public int _SourceLine { get; private set; }
         public IXenonASTCommand Command { get; set; }
         public bool Postset { get; set; } = false;
         public bool Postset_forAll { get => Postset_All >= 0; }
@@ -36,7 +37,9 @@ namespace Xenon.Compiler
             // parse expressions command
             if (Lexer.GobbleandLog("#"))
             {
-                expr = CompileCommand(Lexer, Logger, Parent);
+                int sline = Lexer.Peek().linenum;
+                expr = CompileCommand(Lexer, Logger);
+                expr._SourceLine = sline;
             }
             else
             {
@@ -103,9 +106,10 @@ namespace Xenon.Compiler
 
         }
 
-        private XenonASTExpression CompileCommand(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement parent)
+        private XenonASTExpression CompileCommand(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTExpression expr = new XenonASTExpression();
+            IXenonASTElement parent = expr;
 
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Resource]))
             {

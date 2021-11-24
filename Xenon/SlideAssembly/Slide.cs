@@ -9,6 +9,7 @@ namespace Xenon.SlideAssembly
     public class Slide
     {
 
+        public const string LAYOUT_INFO_KEY = "slide.layout.info";
 
         public Dictionary<string, Color> Colors { get; set; } = new Dictionary<string, Color>();
 

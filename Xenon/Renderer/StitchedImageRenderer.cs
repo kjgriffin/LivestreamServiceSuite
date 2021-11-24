@@ -7,75 +7,61 @@ using System.Linq;
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
 using Xenon.AssetManagment;
+using Xenon.Compiler;
+using Xenon.LayoutInfo;
+using Xenon.Renderer.Helpers;
 
 namespace Xenon.Renderer
 {
-    class StitchedImageRenderer
+    class StitchedImageRenderer : ISlideRenderer<StitchedImageSlideLayoutInfo>, ISlideRenderer
     {
 
-        public RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, List<ProjectAsset> projassets)
+        public RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, IAssetResolver projassets, StitchedImageSlideLayoutInfo layout)
         {
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = "";
             res.RenderedAs = "Full";
 
-            Bitmap bmp = new Bitmap(1920, 1080);
-            Bitmap kbmp = new Bitmap(1920, 1080);
+            Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+            Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
             Graphics gfx = Graphics.FromImage(bmp);
             Graphics kgfx = Graphics.FromImage(kbmp);
 
-            gfx.Clear(Color.Gray);
-            kgfx.Clear(Color.White);
+            gfx.Clear(layout.BackgroundColor.GetColor());
+            kgfx.Clear(layout.KeyColor.GetColor());
 
             List<LSBImageResource> imageresources = (List<LSBImageResource>)slide.Data.GetOrDefault("ordered-images", new List<LSBImageResource>());
             string title = (string)slide.Data.GetOrDefault("title", "");
             string hymnname = (string)slide.Data.GetOrDefault("hymnname", "");
             string number = (string)slide.Data.GetOrDefault("number", "");
 
+
             // create new bitmap for the image for now...
             // compute max bounds of new bitmap
             // 1920x100 box for title info
             // find max width of images and compare
-            int twidth = (int)gfx.MeasureString(hymnname, new Font("Arial", 36, FontStyle.Bold)).Width;
+            int twidth = (int)gfx.MeasureString(hymnname, layout.NameBox.Font.GetFont()).Width;
             int width = Math.Max(twidth, imageresources.Select(i => i.Size.Width).Max());
-            int height = 120 + imageresources.Select(i => i.Size.Height).Aggregate((a, b) => a + b) + 30;
+            int height = imageresources.Select(i => i.Size.Height).Aggregate((a, b) => a + b); // + 30?
             Bitmap sbmp = new Bitmap(width, height);
             Graphics g = Graphics.FromImage(sbmp);
 
-            g.Clear(Color.White);
+            g.Clear(layout.MusicBox.FillColor.GetColor());
 
-            // draw text
-            g.DrawString(hymnname, new Font("Arial", 34, FontStyle.Bold), Brushes.Black, new Rectangle(width/4, 0, width/2, 150), GraphicsHelper.CenterAlign);
-            //g.DrawRectangle(Pens.Red, new Rectangle(width/4, 0, width/2, 150));
-            g.DrawString(title, new Font("Arial", 28, FontStyle.Regular), Brushes.Black, new Rectangle(0, 0, 500, 150), GraphicsHelper.LeftVerticalCenterAlign);
-            //g.DrawRectangle(Pens.Blue, new Rectangle(0, 0, 500, 150));
-            g.DrawString(number, new Font("Arial", 28, FontStyle.Italic), Brushes.Black, new Rectangle(0, 0, width, 100), GraphicsHelper.RightVerticalCenterAlign);
-            // draw copyright
-            if (slide.Data.ContainsKey("copyright-text"))
-            {
-                string copyrighttune = (string)slide.Data.GetOrDefault("copyright-tune", "");
-                string copyrighttext = (string)slide.Data.GetOrDefault("copyright-text", "");
-                g.DrawString(copyrighttune, new Font("Arial", 8, FontStyle.Regular), Brushes.Gray, new Rectangle(0, height - 30, width, 15), GraphicsHelper.LeftVerticalCenterAlign);
-                //g.DrawRectangle(Pens.Orange, 0, height - 30, width, 15);
-                //g.DrawRectangle(Pens.Orange, 0, height - 15, width, 15);
-                g.DrawString(copyrighttext, new Font("Arial", 8, FontStyle.Regular), Brushes.Gray, new Rectangle(0, height - 15, width, 15), GraphicsHelper.LeftVerticalCenterAlign);
-            }
-            else
-            {
-                string copyright = (string)slide.Data.GetOrDefault("copyright", "");
-                g.DrawString(copyright, new Font("Arial", 8, FontStyle.Regular), Brushes.Gray, new Rectangle(0, height - 20, width, 20), GraphicsHelper.LeftVerticalCenterAlign);
-                //g.DrawRectangle(Pens.Blue, 0, height - 20, width, 20);
-            }
+
+            //int tboxheight = 120;
+            //int cboxheight = 30;
+
 
             // draw all images
-            int hoff = 120;
+            int hoff = 0;
             foreach (var image in imageresources)
             {
                 // load image
                 try
                 {
-                    Bitmap b = new Bitmap(projassets.Find(a => a.Name == image.AssetRef).CurrentPath);
+                    Bitmap b = new Bitmap(projassets.GetProjectAssetByName(image.AssetRef).CurrentPath);
                     int x = (width - b.Width) / 2;
                     g.DrawImage(b, x, hoff, b.Width, b.Height);
                     //g.DrawRectangle(Pens.Red, x, hoff, b.Width, b.Height);
@@ -88,15 +74,64 @@ namespace Xenon.Renderer
                 }
             }
 
+            var hdrawn = ImageFilters.ImageFilters.UniformStretch(sbmp, sbmp, new ImageFilters.UniformStretchFilterParams() { Fill = layout.MusicBox.FillColor.GetColor(), KFill = layout.MusicBox.KeyColor.GetColor(), Height = layout.MusicBox.Box.Size.Height, Width = layout.MusicBox.Box.Size.Width });
 
-            var resized = ImageFilters.ImageFilters.UniformStretch(sbmp, sbmp, new ImageFilters.UniformStretchFilterParams() { Fill = Color.White, KFill = Color.White, Height = (int)(1080 * .97), Width = (int)(1920 *.97) });
 
-            var bordered = ImageFilters.ImageFilters.CenterOnBackground(resized.b, resized.k, new ImageFilters.CenterOnBackgroundFilterParams() { Fill = Color.White, KFill = Color.White, Width = 1920, Height = 1080 });
+            gfx.Clear(layout.BackgroundColor.GetColor());
 
-            res.Bitmap = bordered.b;
+
+            gfx.DrawImage(hdrawn.b, layout.MusicBox.Box.Origin.X, layout.MusicBox.Box.Origin.Y);
+
+            // draw titles
+
+            TextBoxRenderer.Render(gfx, kgfx, hymnname, layout.NameBox);
+            TextBoxRenderer.Render(gfx, kgfx, title, layout.TitleBox);
+            TextBoxRenderer.Render(gfx, kgfx, number, layout.NumberBox);
+            
+            //gfx.DrawString(hymnname, layout.NameBox.Font.GetFont(), new SolidBrush(layout.NameBox.FColor.GetColor()), layout.NameBox.Textbox.GetRectangle(), GraphicsHelper.CenterAlign);
+            //gfx.DrawString(title, layout.TitleBox.Font.GetFont(), new SolidBrush(layout.TitleBox.FColor.GetColor()), layout.TitleBox.Textbox.GetRectangle(), GraphicsHelper.LeftVerticalCenterAlign);
+            //gfx.DrawString(number, layout.NumberBox.Font.GetFont(), new SolidBrush(layout.NumberBox.FColor.GetColor()), layout.NumberBox.Textbox.GetRectangle(), GraphicsHelper.RightVerticalCenterAlign);
+
+            // draw copyright
+            if (slide.Data.ContainsKey("copyright-text"))
+            {
+                string copyrighttune = (string)slide.Data.GetOrDefault("copyright-tune", "");
+                string copyrighttext = (string)slide.Data.GetOrDefault("copyright-text", "");
+                gfx.DrawString(copyrighttune, layout.CopyrightBox.Font.GetFont(), new SolidBrush(layout.CopyrightBox.FColor.GetColor()), new Rectangle(layout.CopyrightBox.Textbox.Origin.X, layout.CopyrightBox.Textbox.Origin.Y, layout.CopyrightBox.Textbox.Size.Width, layout.CopyrightBox.Textbox.Size.Height / 2), GraphicsHelper.LeftVerticalCenterAlign);
+                //g.DrawRectangle(Pens.Orange, 0, height - 30, width, 15);
+                //g.DrawRectangle(Pens.Orange, 0, height - 15, width, 15);
+                gfx.DrawString(copyrighttext, layout.CopyrightBox.Font.GetFont(), new SolidBrush(layout.CopyrightBox.FColor.GetColor()), new Rectangle(layout.CopyrightBox.Textbox.Origin.X, layout.CopyrightBox.Textbox.Origin.Y + layout.CopyrightBox.Textbox.Size.Height / 2, layout.CopyrightBox.Textbox.Size.Width, layout.CopyrightBox.Textbox.Size.Height / 2), GraphicsHelper.LeftVerticalCenterAlign);
+            }
+            else
+            {
+                string copyright = (string)slide.Data.GetOrDefault("copyright", "");
+                //gfx.DrawString(copyright, layout.CopyrightBox.Font.GetFont(), new SolidBrush(layout.CopyrightBox.FColor.GetColor()), layout.CopyrightBox.Textbox.GetRectangle(), GraphicsHelper.LeftVerticalCenterAlign);
+                //g.DrawRectangle(Pens.Blue, 0, height - 20, width, 20);
+                TextBoxRenderer.Render(gfx, kgfx, copyright, layout.CopyrightBox);
+            }
+
+
+
+
+            //var resized = (b: bmp, k: bmp) ;// ImageFilters.ImageFilters.UniformStretch(bmp, kbmp, new ImageFilters.UniformStretchFilterParams() { Fill = Color.White, KFill = Color.White, Height = (int)(1080 * .97), Width = (int)(1920 * .97) });
+
+            //var bordered = ImageFilters.ImageFilters.CenterOnBackground(resized.b, resized.k, new ImageFilters.CenterOnBackgroundFilterParams() { Fill = Color.White, KFill = Color.White, Width = 1920, Height = 1080 });
+
+            //res.Bitmap = bordered.b;
+            res.Bitmap = bmp;
             res.KeyBitmap = kbmp;
             return res;
         }
 
+        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        {
+            if (slide.Format == SlideFormat.StichedImage)
+            {
+                StitchedImageSlideLayoutInfo layout = (this as ISlideRenderer<StitchedImageSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
+                result = RenderSlide(slide, Messages, assetResolver, layout);
+            }
+        }
+
+        ILayoutInfoResolver<StitchedImageSlideLayoutInfo> ISlideRenderer<StitchedImageSlideLayoutInfo>.LayoutResolver { get => new StitchedImageSlideLayoutInfo(); }
     }
 }

@@ -2,56 +2,99 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+
+using Xenon.Compiler;
 using Xenon.Helpers;
+using Xenon.LayoutInfo;
+using Xenon.Renderer.Helpers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    class TwoPartTitleSlideRenderer
+    class TwoPartTitleSlideRenderer : ISlideRenderer, ISlideRenderer<_2TitleSlideLayoutInfo>
     {
-        public SlideLayout Layouts { get; set; }
+        public ILayoutInfoResolver<_2TitleSlideLayoutInfo> LayoutResolver { get => new _2TitleSlideLayoutInfo(); }
 
-        public RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages)
+        public RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, IAssetResolver assetResolver, _2TitleSlideLayoutInfo layout)
         {
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = "";
             res.RenderedAs = "Liturgy";
 
-            Bitmap bmp = new Bitmap(Layouts.TwoPartTitleLayout.Size.Width, Layouts.TwoPartTitleLayout.Size.Height);
-            Bitmap kbmp = new Bitmap(Layouts.TwoPartTitleLayout.Size.Width, Layouts.TwoPartTitleLayout.Size.Height);
+            Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+            Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
             Graphics gfx = Graphics.FromImage(bmp);
             Graphics kgfx = Graphics.FromImage(kbmp);
 
-            gfx.Clear(Color.Gray);
-            kgfx.Clear(Color.Black);
-            gfx.FillRectangle(Brushes.Black, Layouts.TwoPartTitleLayout.Key);
-            kgfx.FillRectangle(new SolidBrush(slide.Colors["keytrans"]), Layouts.TwoPartTitleLayout.Key);
+            gfx.Clear(layout.Color.GetColor());
+            kgfx.Clear(layout.KeyColor.GetColor());
 
-            Font bf = new Font(Layouts.TwoPartTitleLayout.Font, FontStyle.Bold);
+            //gfx.FillRectangle(Brushes.Black, layout.Key);
+            //kgfx.FillRectangle(new SolidBrush(slide.Colors["keytrans"]), layout.Key);
+
+            DrawingBoxRenderer.Render(gfx, kgfx, layout.Banner);
+
+
+            string orientation = (string)slide.Data.GetOrDefault("orientation", "horizontal");
+            string maintext = (string)slide.Data.GetOrDefault("maintext", "");
+            string subtext = (string)slide.Data.GetOrDefault("subtext", "");
+
+            if (orientation == "horizontal")
+            {
+                TextBoxRenderer.Render(gfx, kgfx, maintext, layout._LegacyHorizontalAlignment_MainText);
+                TextBoxRenderer.Render(gfx, kgfx, subtext, layout._LegacyHorizontalAlignment_SubText);
+            }
+            else if (orientation == "vertical")
+            {
+                TextBoxRenderer.Render(gfx, kgfx, maintext, layout._LegacyVerticalAlignment_MainText);
+                TextBoxRenderer.Render(gfx, kgfx, subtext, layout._LegacyVerticalAlignment_SubText);
+            }
+            else // use the active layout
+            {
+                TextBoxRenderer.Render(gfx, kgfx, maintext, layout.MainText);
+                TextBoxRenderer.Render(gfx, kgfx, subtext, layout.SubText);
+            }
+
+
+            /*
+
+            //Font bf = new Font("Arial", 36, FontStyle.Bold);
 
             var lineheight = gfx.MeasureStringCharacters(slide.Lines[0].Content[0].Data, ref bf, Layouts.AnthemTitleLayout.Key);
 
             if ((string)slide.Data["orientation"] == "vertical")
             {
-                gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, Layouts.TwoPartTitleLayout.Line1.Move(Layouts.TwoPartTitleLayout.Key.Location), GraphicsHelper.CenterAlign);
-                kgfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, Layouts.TwoPartTitleLayout.Line1.Move(Layouts.TwoPartTitleLayout.Key.Location), GraphicsHelper.CenterAlign);
-                gfx.DrawString(slide.Lines[1].Content[0].Data, Layouts.TwoPartTitleLayout.Font, Brushes.White, Layouts.TwoPartTitleLayout.Line2.Move(Layouts.TwoPartTitleLayout.Key.Location), GraphicsHelper.CenterAlign);
-                kgfx.DrawString(slide.Lines[1].Content[0].Data, Layouts.TwoPartTitleLayout.Font, Brushes.White, Layouts.TwoPartTitleLayout.Line2.Move(Layouts.TwoPartTitleLayout.Key.Location), GraphicsHelper.CenterAlign);
+                gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, layout.Line1.Move(layout.Key.Location), GraphicsHelper.CenterAlign);
+                kgfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, layout.Line1.Move(layout.Key.Location), GraphicsHelper.CenterAlign);
+                gfx.DrawString(slide.Lines[1].Content[0].Data, layout.Font, Brushes.White, layout.Line2.Move(layout.Key.Location), GraphicsHelper.CenterAlign);
+                kgfx.DrawString(slide.Lines[1].Content[0].Data, layout.Font, Brushes.White, layout.Line2.Move(layout.Key.Location), GraphicsHelper.CenterAlign);
             }
             else
             {
-                int ycord = (int)((Layouts.TwoPartTitleLayout.Key.Height / 2) - (lineheight.Height / 2));
-                gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, Layouts.TwoPartTitleLayout.MainLine.Move(Layouts.TwoPartTitleLayout.Key.Location).Move(0, ycord), GraphicsHelper.LeftVerticalCenterAlign);
-                kgfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, Layouts.TwoPartTitleLayout.MainLine.Move(Layouts.TwoPartTitleLayout.Key.Location).Move(0, ycord), GraphicsHelper.LeftVerticalCenterAlign);
-                gfx.DrawString(slide.Lines[1].Content[0].Data, Layouts.TwoPartTitleLayout.Font, Brushes.White, Layouts.TwoPartTitleLayout.MainLine.Move(Layouts.TwoPartTitleLayout.Key.Location).Move(0, ycord), GraphicsHelper.RightVerticalCenterAlign);
-                kgfx.DrawString(slide.Lines[1].Content[0].Data, Layouts.TwoPartTitleLayout.Font, Brushes.White, Layouts.TwoPartTitleLayout.MainLine.Move(Layouts.TwoPartTitleLayout.Key.Location).Move(0, ycord), GraphicsHelper.RightVerticalCenterAlign);
+                int ycord = (int)((layout.Key.Height / 2) - (lineheight.Height / 2));
+                gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, layout.MainLine.Move(layout.Key.Location).Move(0, ycord), GraphicsHelper.LeftVerticalCenterAlign);
+                kgfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, layout.MainLine.Move(layout.Key.Location).Move(0, ycord), GraphicsHelper.LeftVerticalCenterAlign);
+                gfx.DrawString(slide.Lines[1].Content[0].Data, layout.Font, Brushes.White, layout.MainLine.Move(layout.Key.Location).Move(0, ycord), GraphicsHelper.RightVerticalCenterAlign);
+                kgfx.DrawString(slide.Lines[1].Content[0].Data, layout.Font, Brushes.White, layout.MainLine.Move(layout.Key.Location).Move(0, ycord), GraphicsHelper.RightVerticalCenterAlign);
             }
+            */
+
+
 
 
             res.Bitmap = bmp;
             res.KeyBitmap = kbmp;
             return res;
+        }
+
+        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        {
+            if (slide.Format == SlideFormat.TwoPartTitle)
+            {
+                _2TitleSlideLayoutInfo layout = (this as ISlideRenderer<_2TitleSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
+                result = RenderSlide(slide, Messages, assetResolver, layout);
+            }
         }
     }
 }
