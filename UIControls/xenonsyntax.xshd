@@ -82,6 +82,8 @@
       <Word>#lordsprayer</Word>
       <Word>#resource</Word>
       <Word>#script</Word>
+      <Word>#scope</Word>
+      <Word>#var</Word>
       <!-- ... -->
     </Keywords>
   </RuleSet>

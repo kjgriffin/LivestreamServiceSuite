@@ -1,0 +1,52 @@
+﻿<Window x:Class="UIControls.LayoutDesigner"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UIControls" xmlns:AvalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        mc:Ignorable="d"
+        Title="LayoutDesigner" Height="450" Width="800">
+    <Grid>
+        <Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Background="#202020">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <Button Height="40" Width="80" Margin="10,0,0,0" Background="Orange">Overwrite</Button>
+                            <TextBlock VerticalAlignment="Center" Foreground="White" Margin="5,0,0,0">existing [</TextBlock>
+                            <TextBlock Name="tbnameorig1" VerticalAlignment="Center" Foreground="White">Layout Name</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="White">]</TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="30,0,0,0">
+                            <Button Height="40" Width="80" Margin="10,0,0,0" Background="LimeGreen">Save As</Button>
+                            <TextBlock VerticalAlignment="Center" Foreground="White" Margin="5,0,5,0">(New Name)</TextBlock>
+                            <TextBox Name="tbName" Width="400" Height="24" TextAlignment="Left" VerticalContentAlignment="Center"></TextBox>
+                            <TextBlock VerticalAlignment="Center" Foreground="White" Margin="5,0,0,0">from [</TextBlock>
+                            <TextBlock Name="tbnameorig" VerticalAlignment="Center" Foreground="White">Layout Name</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="White">]</TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Row="1" Background="LightGray">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <AvalonEdit:TextEditor Name="TbJson" FontFamily="inconsolata" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript" Margin="10"></AvalonEdit:TextEditor>
+                    <StackPanel Grid.Column="1">
+                        <Border BorderBrush="Purple" BorderThickness="5" Margin="10">
+                            <Image Name="ImgMain"></Image>
+                        </Border>
+                        <Border BorderBrush="Purple" BorderThickness="5" Margin="10">
+                            <Image Name="ImgKey"></Image>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

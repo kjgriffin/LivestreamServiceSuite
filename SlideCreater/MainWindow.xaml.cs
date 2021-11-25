@@ -222,6 +222,7 @@ namespace SlideCreater
             // enable optional features
             EnableDisableOptionalFeatures();
 
+            TEST_SetupLayoutsTreeVew();
         }
 
 
@@ -823,6 +824,8 @@ namespace SlideCreater
             _proj.CleanupResources();
             _proj = new Project(true);
             _proj.Assets = Assets;
+
+            TEST_SetupLayoutsTreeVew();
 
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
@@ -1468,5 +1471,34 @@ namespace SlideCreater
                 cbRenderParallel.IsChecked = renderinparallel;
             }
         }
+
+
+
+
+
+
+
+
+        private void TEST_SetupLayoutsTreeVew()
+        {
+            LayoutsTreeView.Items.Clear();
+
+            foreach (var layoutgroup in _proj.ProjectLayouts.GetGroupedLayouts())
+            {
+                TreeViewItem treegroup = new TreeViewItem();
+                treegroup.Header = $"#{layoutgroup.group}";
+                foreach (var layout in layoutgroup.layouts)
+                {
+                    LayoutTreeItem treelayoutleaf = new LayoutTreeItem(layout.Key, layout.Value, layoutgroup.group);
+                    treegroup.Items.Add(treelayoutleaf);
+                }
+                LayoutsTreeView.Items.Add(treegroup);
+            }
+
+        }
+
+
+
+
     }
 }

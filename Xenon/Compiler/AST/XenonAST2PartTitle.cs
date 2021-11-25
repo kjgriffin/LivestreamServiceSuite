@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+
 using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
@@ -47,17 +48,31 @@ namespace Xenon.Compiler.AST
             titleslide.Data["maintext"] = Part1;
             titleslide.Data["subtext"] = Part2;
 
-            // TODO: implement correctly
-            var variable = (this as IXenonASTElement).TryGetScopedVariable(LanguageKeywords.LayoutVarName(LanguageKeywordCommand.TwoPartTitle), out string layoutoverride);
+            var layoutfromproj = (this as IXenonASTElement).TryGetScopedVariable(LanguageKeywords.LayoutVarName(LanguageKeywordCommand.TwoPartTitle), out string layoutoverridefromproj);
+            var layoutfromcode = (this as IXenonASTElement).TryGetScopedVariable(LanguageKeywords.LayoutJsonVarName(LanguageKeywordCommand.TwoPartTitle), out string layoutoverridefromcode);
 
-            // use the layoutoverride var to lookup on where-ever we'll put layouts for the project
-
-            if (variable.found)
+            if (layoutfromproj.found && layoutfromcode.found)
             {
-                titleslide.Data[Slide.LAYOUT_INFO_KEY] = "something";
+                Logger.Log(new XenonCompilerMessage { ErrorName = "Conflicting Layouts", ErrorMessage = $"A layout for #2Title was defined on the scope:{{{layoutfromproj.scopename}}} as well as on the project with the name{{{layoutoverridefromproj}}}", Generator = "XenonAST2PartTitle::Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
             }
 
-            
+            // TODO: warn if we don't actualy find it on the project
+            if (layoutfromproj.found)
+            {
+                if (project.ProjectLayouts.AllLayouts.TryGetValue(LanguageKeywordCommand.TwoPartTitle, out var layouts))
+                {
+                    if (layouts.TryGetValue(layoutoverridefromproj, out var layoutjson))
+                    {
+                        titleslide.Data[Slide.LAYOUT_INFO_KEY] = layoutjson;
+                    }
+                }
+            }
+            if (layoutfromcode.found)
+            {
+                titleslide.Data[Slide.LAYOUT_INFO_KEY] = layoutoverridefromcode;
+            }
+
+
             titleslide.AddPostset(_Parent, true, true);
 
             project.Slides.Add(titleslide);

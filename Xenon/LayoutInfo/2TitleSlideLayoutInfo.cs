@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using Xenon.LayoutInfo.BaseTypes;
@@ -82,12 +83,20 @@ namespace Xenon.LayoutInfo
             };
         }
 
-
+        public override string GetDefaultJson()
+        {
+            return JsonSerializer.Serialize(_Internal_GetDefaultInfo(), new JsonSerializerOptions() { WriteIndented = true });
+        }
 
 
         public _2TitleSlideLayoutInfo GetLayoutInfo(Slide slide)
         {
             return ILayoutInfoResolver<_2TitleSlideLayoutInfo>._InternalDefault_GetLayoutInfo(slide);
+        }
+
+        public _2TitleSlideLayoutInfo _Internal_GetDefaultInfo()
+        {
+            return ILayoutInfoResolver<_2TitleSlideLayoutInfo>.GetDefaultInfo();
         }
     }
 }

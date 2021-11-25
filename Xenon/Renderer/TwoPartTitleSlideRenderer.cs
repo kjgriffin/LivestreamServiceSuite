@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Text.Json;
 
 using Xenon.Compiler;
 using Xenon.Helpers;
@@ -11,9 +12,30 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    class TwoPartTitleSlideRenderer : ISlideRenderer, ISlideRenderer<_2TitleSlideLayoutInfo>
+    class TwoPartTitleSlideRenderer : ISlideRenderer, ISlideRenderer<_2TitleSlideLayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>
     {
         public ILayoutInfoResolver<_2TitleSlideLayoutInfo> LayoutResolver { get => new _2TitleSlideLayoutInfo(); }
+
+        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
+        {
+            _2TitleSlideLayoutInfo layout = JsonSerializer.Deserialize<_2TitleSlideLayoutInfo>(layoutInfo);
+
+            Bitmap b = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+            Bitmap k = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+
+            Graphics gfx = Graphics.FromImage(b);
+            Graphics kgfx = Graphics.FromImage(k);
+
+            gfx.Clear(layout.Color.GetColor());
+            kgfx.Clear(layout.KeyColor.GetColor());
+
+            DrawingBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.Banner);
+
+            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.MainText);
+            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.SubText);
+
+            return (b, k);
+        }
 
         public RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, IAssetResolver assetResolver, _2TitleSlideLayoutInfo layout)
         {

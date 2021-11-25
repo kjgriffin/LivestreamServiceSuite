@@ -20,4 +20,8 @@
     <PackageReference Include="AvalonEdit" Version="6.1.2.30" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Xenon\Xenon.csproj" />
+  </ItemGroup>
+
 </Project>

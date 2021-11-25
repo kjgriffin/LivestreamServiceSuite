@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -20,6 +21,11 @@ namespace Xenon.Renderer
         public ILayoutInfoResolver<LayoutInfoType> LayoutResolver { get; }
     }
 
+    public interface ISlideLayoutPrototypePreviewer<LayoutInfoType> where LayoutInfoType : ALayoutInfo
+    {
+        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo);
+    }
+
     public interface IAssetResolver
     {
         ProjectAsset GetProjectAssetByName(string assetName);
@@ -31,9 +37,13 @@ namespace Xenon.Renderer
         {
             if (slide.Data.TryGetValue(Slide.LAYOUT_INFO_KEY, out object info))
             {
-                if (info is LayoutType)
+                try
                 {
-                    return info as LayoutType;
+                    return JsonSerializer.Deserialize<LayoutType>((string)info);
+                }
+                catch (Exception ex)
+                {
+                    return GetDefaultInfo();
                 }
             }
             return GetDefaultInfo();
@@ -54,7 +64,8 @@ namespace Xenon.Renderer
             }
 
         }
-        Type GetType => typeof(LayoutType);
+        LayoutType _Internal_GetDefaultInfo();
+        System.Type GetType => typeof(LayoutType);
     }
 
 

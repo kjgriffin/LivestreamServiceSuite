@@ -14,6 +14,12 @@ namespace Xenon.Renderer.Helpers
             gfx.FillRectangle(new SolidBrush(layout.FillColor.GetColor()), layout.Box.GetRectangle());
             kgfx.FillRectangle(new SolidBrush(layout.KeyColor.GetColor()), layout.Box.GetRectangle());
         }
+        public static void RenderLayoutPreview(Graphics gfx, Graphics kgfx, DrawingBoxLayout layout)
+        {
+            gfx.FillRectangle(new SolidBrush(layout.FillColor.GetColor()), layout.Box.GetRectangle());
+            kgfx.FillRectangle(new SolidBrush(layout.KeyColor.GetColor()), layout.Box.GetRectangle());
+        }
+
 
     }
 }

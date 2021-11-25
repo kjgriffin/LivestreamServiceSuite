@@ -104,7 +104,7 @@
                 <CheckBox Name="cbRenderParallel" IsChecked="false" Click="ClickCBRenderParallel" VerticalAlignment="center"></CheckBox>
             </Border>
             <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">
-                <Label.ToolTip>Legacy behaviour. Theoretically more performant. If disabled should be able to catch GDI+ errors that periodically crash Slide Creater.</Label.ToolTip>Parallelized Rendering
+                <Label.ToolTip>Legacy behaviour. Theoretically more performant. If disabled should be able to catch GDI+ errors that periodically crash Slide Creater.</Label.ToolTip> Parallelized Rendering
             </Label>
         </ToolBar>
 
@@ -121,40 +121,50 @@
             <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch"></GridSplitter>
 
             <Border Grid.Column="0" Background="Gray">
-                <Grid Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="50"></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        <StackPanel Orientation="Horizontal" Margin="2,5,5,5" HorizontalAlignment="left">
-                            <Button Margin="5" Click="ClickAddAssets" Width="100" Height="30">
-                                <Grid>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="/ViewControls/Images/Plus.png"></Image>
-                                        <Label>Add Assets</Label>
-                                    </StackPanel>
-                                </Grid>
-                            </Button>
-                            <Button Margin="5" Click="ClickClearAssets" Width="100" Height="30">
-                                <Grid>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="/ViewControls/Images/Delete.png"></Image>
-                                        <Label>Remove All</Label>
-                                    </StackPanel>
-                                </Grid>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-                    <Border Grid.Row="1" Background="#dfdfdf" CornerRadius="10" Padding="5" Margin="5,0,5,10">
-                        <!--<ScrollViewer Grid.Row="1">-->
-                        <ScrollViewer Grid.Row="1">
-                            <StackPanel Name="AssetList">
+                <TabControl Grid.Column="0">
+                    <TabItem Header="Assets">
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <StackPanel Orientation="Horizontal" Margin="2,5,5,5" HorizontalAlignment="left">
+                                    <Button Margin="5" Click="ClickAddAssets" Width="100" Height="30">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="/ViewControls/Images/Plus.png"></Image>
+                                                <Label>Add Assets</Label>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button>
+                                    <Button Margin="5" Click="ClickClearAssets" Width="100" Height="30">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="/ViewControls/Images/Delete.png"></Image>
+                                                <Label>Remove All</Label>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                            <Border Grid.Row="1" Background="#dfdfdf" CornerRadius="10" Padding="5" Margin="5,0,5,10">
+                                <ScrollViewer Grid.Row="1">
+                                    <StackPanel Name="AssetList">
 
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Border>
-                </Grid>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Layouts">
+                        <TreeView Name="LayoutsTreeView">
+                            <TreeViewItem Header="Test">
+                                <TreeViewItem Header="Val1"></TreeViewItem>
+                            </TreeViewItem>
+                        </TreeView>
+                    </TabItem>
+                </TabControl>
             </Border>
 
             <Grid Grid.Column="2">

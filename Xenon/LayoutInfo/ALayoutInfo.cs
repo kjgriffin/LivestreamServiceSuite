@@ -6,5 +6,9 @@ namespace Xenon.LayoutInfo
 {
     public abstract class ALayoutInfo
     {
+        virtual public string GetDefaultJson()
+        {
+            return "";
+        }
     }
 }

@@ -2,16 +2,31 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Xenon.Compiler.AST;
+using Xenon.LayoutInfo;
+using Xenon.Renderer;
+
 namespace Xenon.Compiler
 {
     static class LanguageKeywords
     {
 
-        public const string LAYOUTVARNAME = "Layout";
+        const string LAYOUTVARNAME = "Layout";
+        const string LAYOUTJSONVARNAME = "Layout.JSON";
         public static string LayoutVarName(LanguageKeywordCommand cmd)
         {
             return $"{Commands[cmd]}.{LAYOUTVARNAME}";
         }
+        public static string LayoutJsonVarName(LanguageKeywordCommand cmd)
+        {
+            return $"{Commands[cmd]}.{LAYOUTJSONVARNAME}";
+        }
+
+        public static Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo> layoutResolver, ISlideLayoutPrototypePreviewer<ALayoutInfo> prototypicalLayoutPreviewer)> LayoutForType = new Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>)>
+        {
+            [LanguageKeywordCommand.TwoPartTitle] = (new _2TitleSlideLayoutInfo(), new TwoPartTitleSlideRenderer()),
+            //[LanguageKeywordCommand.StitchedImage] = (new StitchedImageSlideLayoutInfo(), new StitchedImageRenderer()),
+        };
 
         public static List<string> WholeWords = new List<string>()
         {
@@ -41,6 +56,7 @@ namespace Xenon.Compiler
             "coloredit",
             "forkey",
             LAYOUTVARNAME,
+            LAYOUTJSONVARNAME,
         };
 
         public static Dictionary<LanguageKeywordCommand, string> Commands = new Dictionary<LanguageKeywordCommand, string>()
@@ -78,39 +94,39 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.ScopedVariable] = "var",
         };
 
-        public static Dictionary<LanguageKeywordCommand, LanguageKeywordInfo> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordInfo>()
+        public static Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata>()
         {
-            [LanguageKeywordCommand.Script_LiturgyOff] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.Script_OrganIntro] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.SetVar] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.Break] = (false, LanguageKeywordCommand.Liturgy),
-            [LanguageKeywordCommand.Video] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.FilterImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.FullImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.FitImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.AutoFitImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.StitchedImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.LiturgyImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.Liturgy] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.LiturgyVerse] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.TitledLiturgyVerse] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.Reading] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.Sermon] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.AnthemTitle] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.TwoPartTitle] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.TextHymn] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.Verse] = (false, LanguageKeywordCommand.TextHymn),
-            [LanguageKeywordCommand.Copyright] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.ViewServices] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.ViewSeries] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.ApostlesCreed] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.NiceneCreed] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.LordsPrayer] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.Resource] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.Script] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.Postset] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
-            [LanguageKeywordCommand.ScopedVariable] = (false, LanguageKeywordCommand.VariableScope),
-            [LanguageKeywordCommand.VariableScope] = (true, LanguageKeywordCommand.INVALIDUNKNOWN),
+            [LanguageKeywordCommand.Script_LiturgyOff] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTPrefabScriptLiturgyOff()),
+            [LanguageKeywordCommand.Script_OrganIntro] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTPrefabScriptOrganIntro()),
+            [LanguageKeywordCommand.SetVar] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTSetVariable()),
+            [LanguageKeywordCommand.Break] = (false, LanguageKeywordCommand.Liturgy, false, new XenonASTSlideBreak()),
+            [LanguageKeywordCommand.Video] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTVideo()),
+            [LanguageKeywordCommand.FilterImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTFilterImage()),
+            [LanguageKeywordCommand.FullImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTFullImage()),
+            [LanguageKeywordCommand.FitImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTFitImage()),
+            [LanguageKeywordCommand.AutoFitImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTAutoFitImage()),
+            [LanguageKeywordCommand.StitchedImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTStitchedHymn()),
+            [LanguageKeywordCommand.LiturgyImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgyImage()),
+            [LanguageKeywordCommand.Liturgy] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgy()),
+            [LanguageKeywordCommand.LiturgyVerse] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgyVerse()),
+            [LanguageKeywordCommand.TitledLiturgyVerse] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTTitledLiturgyVerse()),
+            [LanguageKeywordCommand.Reading] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTReading()),
+            [LanguageKeywordCommand.Sermon] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTSermon()),
+            [LanguageKeywordCommand.AnthemTitle] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTAnthemTitle()),
+            [LanguageKeywordCommand.TwoPartTitle] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, new XenonAST2PartTitle()),
+            [LanguageKeywordCommand.TextHymn] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTTextHymn()),
+            [LanguageKeywordCommand.Verse] = (false, LanguageKeywordCommand.TextHymn, false, new XenonASTHymnVerse()),
+            [LanguageKeywordCommand.Copyright] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTPrefabCopyright()),
+            [LanguageKeywordCommand.ViewServices] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTPrefabViewServices()),
+            [LanguageKeywordCommand.ViewSeries] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTPrefabViewSeries()),
+            [LanguageKeywordCommand.ApostlesCreed] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTPrefabApostlesCreed()),
+            [LanguageKeywordCommand.NiceneCreed] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTPrefabNiceneCreed()),
+            [LanguageKeywordCommand.LordsPrayer] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTPrefabLordsPrayer()),
+            [LanguageKeywordCommand.Resource] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTResource()),
+            [LanguageKeywordCommand.Script] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTScript()),
+            [LanguageKeywordCommand.Postset] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTExpression()),
+            [LanguageKeywordCommand.ScopedVariable] = (false, LanguageKeywordCommand.VariableScope, false, new XenonASTScopedVariable()),
+            [LanguageKeywordCommand.VariableScope] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTVariableScope()),
         };
 
         public static Dictionary<AutomationActions, AutomationActionMetadata> ScriptActionsMetadata = new Dictionary<AutomationActions, AutomationActionMetadata>()
@@ -165,20 +181,24 @@ namespace Xenon.Compiler
 
     }
 
-    internal struct LanguageKeywordInfo
+    internal struct LanguageKeywordMetadata
     {
         internal bool toplevel;
         internal LanguageKeywordCommand parent;
+        internal bool hasLayoutInfo;
+        internal IXenonASTElement implementation;
 
-        public LanguageKeywordInfo((bool istoplevel, LanguageKeywordCommand parentcmd) stuff)
+        public LanguageKeywordMetadata((bool istoplevel, LanguageKeywordCommand parentcmd, bool hasLayout, IXenonASTElement impl) stuff)
         {
             toplevel = stuff.istoplevel;
             parent = stuff.parentcmd;
+            hasLayoutInfo = stuff.hasLayout;
+            implementation = stuff.impl;
         }
 
-        public static implicit operator LanguageKeywordInfo((bool, LanguageKeywordCommand INVALIDUNKNOWN) v)
+        public static implicit operator LanguageKeywordMetadata((bool, LanguageKeywordCommand INVALIDUNKNOWN, bool layoutinfo, IXenonASTElement impl) v)
         {
-            return new LanguageKeywordInfo(v);
+            return new LanguageKeywordMetadata(v);
         }
     }
 
@@ -205,7 +225,7 @@ namespace Xenon.Compiler
 
 
 
-    enum LanguageKeywordCommand
+    internal enum LanguageKeywordCommand
     {
         INVALIDUNKNOWN,
         SetVar,

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using Xenon.LayoutInfo.BaseTypes;
@@ -24,9 +25,20 @@ namespace Xenon.LayoutInfo
         public TextboxLayout CopyrightBox { get; set; }
         public DrawingBoxLayout MusicBox { get; set; }
 
+
+        public override string GetDefaultJson()
+        {
+            return JsonSerializer.Serialize(_Internal_GetDefaultInfo(), new JsonSerializerOptions() { WriteIndented = true});
+        }
+
         public StitchedImageSlideLayoutInfo GetLayoutInfo(Slide slide)
         {
             return ILayoutInfoResolver<StitchedImageSlideLayoutInfo>._InternalDefault_GetLayoutInfo(slide);
+        }
+
+        public StitchedImageSlideLayoutInfo _Internal_GetDefaultInfo()
+        {
+            return ILayoutInfoResolver<StitchedImageSlideLayoutInfo>.GetDefaultInfo();
         }
     }
 }
