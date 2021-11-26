@@ -11,6 +11,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Xenon.SlideAssembly;
+
 namespace UIControls
 {
     /// <summary>
@@ -23,18 +25,24 @@ namespace UIControls
         string name;
         string group;
 
-        public LayoutTreeItem(string layoutname, string layoutjson, string group)
+        SaveLayoutToLibrary SaveLayout;
+
+        Action updateCallback;
+
+        public LayoutTreeItem(string layoutname, string layoutjson, string group, SaveLayoutToLibrary save, Action updatecallback)
         {
             InitializeComponent();
             name = layoutname;
             json = layoutjson;
             this.group = group;
+            SaveLayout = save;
             tbDisplayName.Text = layoutname;
+            updateCallback = updatecallback;
         }
 
         private void Click_EditLayout(object sender, RoutedEventArgs e)
         {
-            LayoutDesigner designer = new LayoutDesigner(name, json, group);
+            LayoutDesigner designer = new LayoutDesigner(name, json, group, SaveLayout, updateCallback);
             designer.Show();
         }
     }

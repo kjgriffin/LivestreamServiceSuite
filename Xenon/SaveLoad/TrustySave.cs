@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Xenon.SlideAssembly;
 
 namespace Xenon.SaveLoad
@@ -133,14 +134,56 @@ namespace Xenon.SaveLoad
                     await writer.WriteAsync(proj.SourceCode);
                 }
 
+                // handle layouts
+
+                progress?.Report(97);
+
+                string layoutsfolderpath = $"layouts{Path.DirectorySeparatorChar}";
+                var layoutsfolder = archive.CreateEntry(layoutsfolderpath);
+                var libraries = proj.ProjectLayouts.GetAllLibraryLayoutsByGroup();
+                Dictionary<string, string> layoutsmapdict = new Dictionary<string, string>();
+                foreach (var lib in libraries)
+                {
+                    ZipArchiveEntry layoutlib_entry = archive.CreateEntry(Path.Combine(layoutsfolderpath, lib.LibraryName + ".json"));
+                    var metadata = new { XenonVersion = versioninfo, Date = DateTime.Now.ToString("dd/MM/yyyy") };
+                    using (StreamWriter writer = new StreamWriter(layoutlib_entry.Open()))
+                    {
+                        var obj = new
+                        {
+                            Lib = lib,
+                            Metadata = metadata,
+                        };
+                        await writer.WriteAsync(JsonSerializer.Serialize(obj, new JsonSerializerOptions() { IncludeFields = true }));
+                    }
+                    layoutsmapdict[lib.LibraryName] = Path.Combine(layoutsfolderpath, lib.LibraryName + ".json");
+                }
+
+                string layoutsmapjsonstr = JsonSerializer.Serialize(layoutsmapdict);
+                ZipArchiveEntry layoutsjson = archive.CreateEntry("layouts.json");
+                using (StreamWriter writer = new StreamWriter(layoutsjson.Open()))
+                {
+                    await writer.WriteAsync(layoutsmapjsonstr);
+                }
+
+
+
                 progress?.Report(100);
 
             });
         }
-
-
-
-
-
     }
+
+    public struct LayoutLibEntry
+    {
+        public LayoutLibrary Lib { get; set; }
+        public LibraryMetadata Metadata { get; set; }
+    }
+
+    public struct LibraryMetadata
+    {
+        public string XenonVersion { get; set; }
+        public string Date { get; set; }
+    }
+
+
 }

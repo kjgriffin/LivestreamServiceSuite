@@ -59,14 +59,13 @@ namespace Xenon.Compiler.AST
             // TODO: warn if we don't actualy find it on the project
             if (layoutfromproj.found)
             {
-                if (project.ProjectLayouts.AllLayouts.TryGetValue(LanguageKeywordCommand.TwoPartTitle, out var layouts))
+                var l = project.ProjectLayouts.GetLayoutByFullyQualifiedName(LanguageKeywordCommand.TwoPartTitle, layoutoverridefromproj);
+                if (l.found)
                 {
-                    if (layouts.TryGetValue(layoutoverridefromproj, out var layoutjson))
-                    {
-                        titleslide.Data[Slide.LAYOUT_INFO_KEY] = layoutjson;
-                    }
+                    titleslide.Data[Slide.LAYOUT_INFO_KEY] = l.json;
                 }
             }
+            // TODO: warn about overwrite from code
             if (layoutfromcode.found)
             {
                 titleslide.Data[Slide.LAYOUT_INFO_KEY] = layoutoverridefromcode;

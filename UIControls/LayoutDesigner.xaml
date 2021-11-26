@@ -22,7 +22,7 @@
                             <TextBlock VerticalAlignment="Center" Foreground="White">]</TextBlock>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="30,0,0,0">
-                            <Button Height="40" Width="80" Margin="10,0,0,0" Background="LimeGreen">Save As</Button>
+                            <Button Click="Click_SaveAs" Height="40" Width="80" Margin="10,0,0,0" Background="LimeGreen">Save As</Button>
                             <TextBlock VerticalAlignment="Center" Foreground="White" Margin="5,0,5,0">(New Name)</TextBlock>
                             <TextBox Name="tbName" Width="400" Height="24" TextAlignment="Left" VerticalContentAlignment="Center"></TextBox>
                             <TextBlock VerticalAlignment="Center" Foreground="White" Margin="5,0,0,0">from [</TextBlock>

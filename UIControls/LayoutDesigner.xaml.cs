@@ -28,14 +28,18 @@ namespace UIControls
 
         readonly string Group;
 
+        SaveLayoutToLibrary Save;
+
         DispatcherTimer textChangeTimeoutTimer = new DispatcherTimer();
         bool stillChanging = false;
 
-        public LayoutDesigner(string layoutname, string layoutjson, string group)
+        Action UpdateCallback;
+
+        public LayoutDesigner(string layoutname, string layoutjson, string group, SaveLayoutToLibrary save, Action updateCallback)
         {
             InitializeComponent();
             textChangeTimeoutTimer.Interval = TimeSpan.FromSeconds(1);
-            LayoutName = layoutjson;
+            LayoutName = layoutname;
             LayoutJson = layoutjson;
             Group = group;
             TbJson.Text = LayoutJson;
@@ -43,12 +47,15 @@ namespace UIControls
             tbnameorig1.Text = LayoutName;
             tbName.Text = $"{LayoutName}-Copy";
 
+            Save = save;
+            UpdateCallback = updateCallback;
+
             ShowPreviews(layoutjson);
         }
 
         private void ShowPreviews(string layoutjson)
         {
-            var r = ProjectLayouts.GetLayoutPreview(Group, layoutjson);
+            var r = ProjectLayoutLibraryManager.GetLayoutPreview(Group, layoutjson);
             ImgMain.Source = r.main.ConvertToBitmapImage();
             ImgKey.Source = r.key.ConvertToBitmapImage();
         }
@@ -80,5 +87,10 @@ namespace UIControls
             }
         }
 
+        private void Click_SaveAs(object sender, RoutedEventArgs e)
+        {
+            Save?.Invoke("User.Library", tbName.Text, Group, TbJson.Text);
+            UpdateCallback?.Invoke();
+        }
     }
 }

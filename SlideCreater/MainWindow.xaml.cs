@@ -1184,8 +1184,11 @@ namespace SlideCreater
                         case var expression when percent >= 90 && percent < 95:
                             tbSubActionStatus.Text = $"Saving Project [creating assets map]: {percent}%";
                             break;
-                        case var expression when percent >= 95:
+                        case var expression when percent >= 95 && percent < 97:
                             tbSubActionStatus.Text = $"Saving Project [copying source code]: {percent}%";
+                            break;
+                        case var expression when percent >= 97:
+                            tbSubActionStatus.Text = $"Saving Project [copying layout libraries]: {percent}%";
                             break;
                         default:
                             tbSubActionStatus.Text = $"Saving Project: {percent}%";
@@ -1228,6 +1231,8 @@ namespace SlideCreater
 
         private async Task TrustyOpen(string filename)
         {
+            _proj = new Project(true);
+
             string sourcecode = "";
             Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
             Dictionary<string, string> assetdisplaynames = new Dictionary<string, string>();
@@ -1275,6 +1280,32 @@ namespace SlideCreater
                     {
                         string json = await sr.ReadToEndAsync();
                         assetextensions = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    }
+                }
+
+                // Handle old projects without layout info. The default project constructor will supply enough to make it work.
+                if (VersionInfo.ExceedsMinimumVersion(1, 7, 1, 21))
+                {
+                    var layoutsmapfile = archive.GetEntry("layouts.json");
+                    Dictionary<string, string> layoutsmap = new Dictionary<string, string>();
+                    using (StreamReader sr = new StreamReader(layoutsmapfile.Open()))
+                    {
+                        string json = await sr.ReadToEndAsync();
+                        layoutsmap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    }
+
+                    foreach (var layoutlib in layoutsmap)
+                    {
+                        var entry = archive.GetEntry(layoutlib.Value);
+                        using (StreamReader sr = new StreamReader(entry.Open()))
+                        {
+                            string json = await sr.ReadToEndAsync();
+                            // Project has layouts defined
+                            // we can replace the defaults created by new Project()
+                            var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true});
+                            _proj.ProjectLayouts.LoadLibrary(lib);
+
+                        }
                     }
                 }
 
@@ -1333,6 +1364,7 @@ namespace SlideCreater
                 ShowProjectAssets();
                 pbActionStatus.Visibility = Visibility.Hidden;
                 pbActionStatus.Value = 0;
+                TEST_SetupLayoutsTreeVew();
             });
         }
 
@@ -1483,16 +1515,25 @@ namespace SlideCreater
         {
             LayoutsTreeView.Items.Clear();
 
-            foreach (var layoutgroup in _proj.ProjectLayouts.GetGroupedLayouts())
+            foreach (var library in _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup())
             {
-                TreeViewItem treegroup = new TreeViewItem();
-                treegroup.Header = $"#{layoutgroup.group}";
-                foreach (var layout in layoutgroup.layouts)
+                TreeViewItem treelibrary = new TreeViewItem();
+                treelibrary.Header = $"{library.LibraryName}";
+
+                foreach (var group in library.Library)
                 {
-                    LayoutTreeItem treelayoutleaf = new LayoutTreeItem(layout.Key, layout.Value, layoutgroup.group);
-                    treegroup.Items.Add(treelayoutleaf);
+                    TreeViewItem treegroup = new TreeViewItem();
+                    treegroup.Header = $"{group.group}";
+                    foreach (var layout in group.layouts)
+                    {
+                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(layout.Key, layout.Value, group.group, _proj.ProjectLayouts.SaveLayoutToLibrary, () => Dispatcher.Invoke(TEST_SetupLayoutsTreeVew));
+                        treegroup.Items.Add(treelayoutleaf);
+                    }
+                    treelibrary.Items.Add(treegroup);
                 }
-                LayoutsTreeView.Items.Add(treegroup);
+
+
+                LayoutsTreeView.Items.Add(treelibrary);
             }
 
         }

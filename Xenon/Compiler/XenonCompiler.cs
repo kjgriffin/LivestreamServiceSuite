@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Xenon.Compiler
 {
@@ -93,7 +94,7 @@ namespace Xenon.Compiler
 
 
 
-            string jsonproj = JsonSerializer.Serialize<Project>(proj);
+            string jsonproj = JsonSerializer.Serialize<Project>(proj, new JsonSerializerOptions() { MaxDepth = 256, ReferenceHandler = ReferenceHandler.Preserve});
             Debug.WriteLine(jsonproj);
 
             progress?.Report(100);

@@ -18,7 +18,7 @@ namespace Xenon.SlideAssembly
     public class Project
     {
         public SlideLayout Layouts { get; set; } = new SlideLayout();
-        public ProjectLayouts ProjectLayouts { get; set; } = new ProjectLayouts();
+        public ProjectLayoutLibraryManager ProjectLayouts { get; set; } = new ProjectLayoutLibraryManager();
         public List<Slide> Slides { get; set; } = new List<Slide>();
 
         public Dictionary<string, List<string>> ProjectVariables = new Dictionary<string, List<string>>();
@@ -145,11 +145,13 @@ namespace Xenon.SlideAssembly
                 Directory.CreateDirectory(Path.Combine(_loadTmpPath, "assets"));
             }
             ProjectLayouts.LoadDefaults();
+            ProjectLayouts.InitializeNewLibrary("User.Library");
         }
 
         public Project()
         {
             ProjectLayouts.LoadDefaults();
+            ProjectLayouts.InitializeNewLibrary("User.Library");
         }
 
         public static Task<Project> LoadProject(string filename)
