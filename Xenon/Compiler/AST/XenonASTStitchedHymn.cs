@@ -176,6 +176,7 @@ namespace Xenon.Compiler.AST
 
                 slide.AddPostset(_Parent, true, true);
 
+                (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
                 project.Slides.Add(slide);
                 WarnVerseOverheightStitchAll(Logger, ImageSizes);
 
@@ -275,6 +276,7 @@ namespace Xenon.Compiler.AST
 
                 slide.AddPostset(_Parent, true, true);
 
+                (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
                 project.Slides.Add(slide);
                 WarnVerseOverheight(Logger, ImageSizes);
 
@@ -370,6 +372,7 @@ namespace Xenon.Compiler.AST
 
                 slide.Data["ordered-images"] = hymn.OrderAllAsOne();
                 slide.AddPostset(_Parent, true, true);
+                (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
                 project.Slides.Add(slide);
             }
             else
@@ -403,6 +406,7 @@ namespace Xenon.Compiler.AST
                     slide.Data["ordered-images"] = hymn.OrderVerse(versenum++);
 
                     slide.AddPostset(_Parent, versenum == 0, hymn.Verses.Count == versenum && !hymn.RepeatingPostRefrain);
+                    (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
                     project.Slides.Add(slide);
 
                     if (hymn.RepeatingPostRefrain)
@@ -430,6 +434,7 @@ namespace Xenon.Compiler.AST
 
                         refrainslide.AddPostset(_Parent, false, hymn.Verses.Count == versenum);
 
+                        (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
                         project.Slides.Add(refrainslide);
                     }
                 }

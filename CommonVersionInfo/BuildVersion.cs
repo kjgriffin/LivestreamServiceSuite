@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SlideCreater
+namespace CommonVersionInfo
 {
 
     delegate bool VersionComparer(int actual, int expected);
 
-    class BuildVersion
+    public class BuildVersion
     {
         public int MajorVersion { get; set; }
         public int MinorVersion { get; set; }

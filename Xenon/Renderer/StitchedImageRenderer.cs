@@ -10,10 +10,11 @@ using Xenon.AssetManagment;
 using Xenon.Compiler;
 using Xenon.LayoutInfo;
 using Xenon.Renderer.Helpers;
+using System.Text.Json;
 
 namespace Xenon.Renderer
 {
-    class StitchedImageRenderer : ISlideRenderer<StitchedImageSlideLayoutInfo>, ISlideRenderer
+    class StitchedImageRenderer : ISlideRenderer<StitchedImageSlideLayoutInfo>, ISlideRenderer, ISlideLayoutPrototypePreviewer<ALayoutInfo>
     {
 
         public RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, IAssetResolver projassets, StitchedImageSlideLayoutInfo layout)
@@ -80,6 +81,8 @@ namespace Xenon.Renderer
             gfx.Clear(layout.BackgroundColor.GetColor());
 
 
+            DrawingBoxRenderer.Render(gfx, kgfx, layout.MusicBox);
+
             gfx.DrawImage(hdrawn.b, layout.MusicBox.Box.Origin.X, layout.MusicBox.Box.Origin.Y);
 
             // draw titles
@@ -130,6 +133,29 @@ namespace Xenon.Renderer
                 StitchedImageSlideLayoutInfo layout = (this as ISlideRenderer<StitchedImageSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
                 result = RenderSlide(slide, Messages, assetResolver, layout);
             }
+        }
+
+        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
+        {
+            StitchedImageSlideLayoutInfo layout = JsonSerializer.Deserialize<StitchedImageSlideLayoutInfo>(layoutInfo);
+
+            Bitmap b = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+            Bitmap k = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+
+            Graphics gfx = Graphics.FromImage(b);
+            Graphics kgfx = Graphics.FromImage(k);
+
+            gfx.Clear(layout.BackgroundColor.GetColor());
+            kgfx.Clear(layout.KeyColor.GetColor());
+
+            DrawingBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.MusicBox);
+
+            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.TitleBox);
+            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.NameBox);
+            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.NumberBox);
+            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.CopyrightBox);
+
+            return (b, k);
         }
 
         ILayoutInfoResolver<StitchedImageSlideLayoutInfo> ISlideRenderer<StitchedImageSlideLayoutInfo>.LayoutResolver { get => new StitchedImageSlideLayoutInfo(); }

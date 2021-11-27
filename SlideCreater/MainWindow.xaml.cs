@@ -30,6 +30,7 @@ using System.Net;
 using UIControls;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using Xenon.Compiler.Suggestions;
+using CommonVersionInfo;
 
 namespace SlideCreater
 {
@@ -222,7 +223,7 @@ namespace SlideCreater
             // enable optional features
             EnableDisableOptionalFeatures();
 
-            TEST_SetupLayoutsTreeVew();
+            SetupLayoutsTreeVew();
         }
 
 
@@ -825,7 +826,7 @@ namespace SlideCreater
             _proj = new Project(true);
             _proj.Assets = Assets;
 
-            TEST_SetupLayoutsTreeVew();
+            SetupLayoutsTreeVew();
 
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
@@ -1302,7 +1303,7 @@ namespace SlideCreater
                             string json = await sr.ReadToEndAsync();
                             // Project has layouts defined
                             // we can replace the defaults created by new Project()
-                            var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true});
+                            var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
                             _proj.ProjectLayouts.LoadLibrary(lib);
 
                         }
@@ -1364,7 +1365,7 @@ namespace SlideCreater
                 ShowProjectAssets();
                 pbActionStatus.Visibility = Visibility.Hidden;
                 pbActionStatus.Value = 0;
-                TEST_SetupLayoutsTreeVew();
+                SetupLayoutsTreeVew();
             });
         }
 
@@ -1511,7 +1512,7 @@ namespace SlideCreater
 
 
 
-        private void TEST_SetupLayoutsTreeVew()
+        private void SetupLayoutsTreeVew()
         {
             LayoutsTreeView.Items.Clear();
 
@@ -1519,14 +1520,16 @@ namespace SlideCreater
             {
                 TreeViewItem treelibrary = new TreeViewItem();
                 treelibrary.Header = $"{library.LibraryName}";
+                treelibrary.Selected += Treelibrary_Selected;
 
                 foreach (var group in library.Library)
                 {
                     TreeViewItem treegroup = new TreeViewItem();
                     treegroup.Header = $"{group.group}";
+                    treegroup.Selected += Treegroup_Selected;
                     foreach (var layout in group.layouts)
                     {
-                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(layout.Key, layout.Value, group.group, _proj.ProjectLayouts.SaveLayoutToLibrary, () => Dispatcher.Invoke(TEST_SetupLayoutsTreeVew));
+                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibraryName, layout.Key, layout.Value, group.group, _proj.ProjectLayouts.SaveLayoutToLibrary, () => Dispatcher.Invoke(SetupLayoutsTreeVew));
                         treegroup.Items.Add(treelayoutleaf);
                     }
                     treelibrary.Items.Add(treegroup);
@@ -1538,8 +1541,49 @@ namespace SlideCreater
 
         }
 
+        private string selectedLib = "";
+        private string selectedGroup = "";
+        private void Treegroup_Selected(object sender, RoutedEventArgs e)
+        {
+            var item = sender as TreeViewItem;
+            selectedGroup = item.Header.ToString();
+        }
 
+        private void Treelibrary_Selected(object sender, RoutedEventArgs e)
+        {
+            var item = sender as TreeViewItem;
+            selectedLib = item.Header.ToString();
+        }
 
+        private void Click_ExporLayoutLibrary(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(selectedLib))
+            {
+                // export 'er real good
+            }
+        }
 
+        private void Click_ImportLayoutLibrary(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Click_RemoveLayoutLibrary(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(selectedLib))
+            {
+                _proj.ProjectLayouts.RemoveLib(selectedLib);
+                SetupLayoutsTreeVew();
+            }
+        }
+        private void Click_NewLayoutLibrary(object sender, RoutedEventArgs e)
+        {
+            TbPromptDialog prompt = new TbPromptDialog("New Library", "Library Name", "User.Library");
+            if (prompt.ShowDialog() == true)
+            {
+                _proj.ProjectLayouts.InitializeNewLibrary(prompt.ResultValue);
+                SetupLayoutsTreeVew();
+            }
+        }
     }
 }

@@ -47,30 +47,7 @@ namespace Xenon.Compiler.AST
             titleslide.Data["orientation"] = Orientation;
             titleslide.Data["maintext"] = Part1;
             titleslide.Data["subtext"] = Part2;
-
-            var layoutfromproj = (this as IXenonASTElement).TryGetScopedVariable(LanguageKeywords.LayoutVarName(LanguageKeywordCommand.TwoPartTitle), out string layoutoverridefromproj);
-            var layoutfromcode = (this as IXenonASTElement).TryGetScopedVariable(LanguageKeywords.LayoutJsonVarName(LanguageKeywordCommand.TwoPartTitle), out string layoutoverridefromcode);
-
-            if (layoutfromproj.found && layoutfromcode.found)
-            {
-                Logger.Log(new XenonCompilerMessage { ErrorName = "Conflicting Layouts", ErrorMessage = $"A layout for #2Title was defined on the scope:{{{layoutfromproj.scopename}}} as well as on the project with the name{{{layoutoverridefromproj}}}", Generator = "XenonAST2PartTitle::Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
-            }
-
-            // TODO: warn if we don't actualy find it on the project
-            if (layoutfromproj.found)
-            {
-                var l = project.ProjectLayouts.GetLayoutByFullyQualifiedName(LanguageKeywordCommand.TwoPartTitle, layoutoverridefromproj);
-                if (l.found)
-                {
-                    titleslide.Data[Slide.LAYOUT_INFO_KEY] = l.json;
-                }
-            }
-            // TODO: warn about overwrite from code
-            if (layoutfromcode.found)
-            {
-                titleslide.Data[Slide.LAYOUT_INFO_KEY] = layoutoverridefromcode;
-            }
-
+            (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, titleslide, LanguageKeywordCommand.TwoPartTitle);
 
             titleslide.AddPostset(_Parent, true, true);
 

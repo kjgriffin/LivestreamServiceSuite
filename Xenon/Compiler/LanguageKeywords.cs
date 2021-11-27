@@ -25,7 +25,7 @@ namespace Xenon.Compiler
         public static Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo> layoutResolver, ISlideLayoutPrototypePreviewer<ALayoutInfo> prototypicalLayoutPreviewer)> LayoutForType = new Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>)>
         {
             [LanguageKeywordCommand.TwoPartTitle] = (new _2TitleSlideLayoutInfo(), new TwoPartTitleSlideRenderer()),
-            //[LanguageKeywordCommand.StitchedImage] = (new StitchedImageSlideLayoutInfo(), new StitchedImageRenderer()),
+            [LanguageKeywordCommand.StitchedImage] = (new StitchedImageSlideLayoutInfo(), new StitchedImageRenderer()),
         };
 
         public static List<string> WholeWords = new List<string>()
@@ -105,7 +105,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.FullImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTFullImage()),
             [LanguageKeywordCommand.FitImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTFitImage()),
             [LanguageKeywordCommand.AutoFitImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTAutoFitImage()),
-            [LanguageKeywordCommand.StitchedImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTStitchedHymn()),
+            [LanguageKeywordCommand.StitchedImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, new XenonASTStitchedHymn()),
             [LanguageKeywordCommand.LiturgyImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgyImage()),
             [LanguageKeywordCommand.Liturgy] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgy()),
             [LanguageKeywordCommand.LiturgyVerse] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgyVerse()),

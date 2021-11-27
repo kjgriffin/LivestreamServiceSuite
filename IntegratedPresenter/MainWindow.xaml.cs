@@ -3,7 +3,6 @@ using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.ViewModels;
 using Microsoft.Win32;
-using SlideCreater;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,6 +21,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using log4net;
 using IntegratedPresenter.BMDSwitcher.Mock;
+using CommonVersionInfo;
 
 namespace IntegratedPresenter.Main
 {

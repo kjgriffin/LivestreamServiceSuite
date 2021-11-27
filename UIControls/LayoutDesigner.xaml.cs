@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,11 +23,11 @@ namespace UIControls
     /// </summary>
     public partial class LayoutDesigner : Window
     {
-
         private string LayoutName { get; set; }
         private string LayoutJson { get; set; }
 
         readonly string Group;
+        private string LibName { get; set; }
 
         SaveLayoutToLibrary Save;
 
@@ -35,16 +36,17 @@ namespace UIControls
 
         Action UpdateCallback;
 
-        public LayoutDesigner(string layoutname, string layoutjson, string group, SaveLayoutToLibrary save, Action updateCallback)
+        public LayoutDesigner(string libname, string layoutname, string layoutjson, string group, SaveLayoutToLibrary save, Action updateCallback)
         {
             InitializeComponent();
             textChangeTimeoutTimer.Interval = TimeSpan.FromSeconds(1);
-            LayoutName = layoutname;
+            LayoutName = $"{libname}::{layoutname}";
             LayoutJson = layoutjson;
+            LibName = libname;
             Group = group;
             TbJson.Text = LayoutJson;
             tbnameorig.Text = LayoutName;
-            tbnameorig1.Text = LayoutName;
+            //tbnameorig1.Text = LayoutName;
             tbName.Text = $"{LayoutName}-Copy";
 
             Save = save;
@@ -89,8 +91,28 @@ namespace UIControls
 
         private void Click_SaveAs(object sender, RoutedEventArgs e)
         {
-            Save?.Invoke("User.Library", tbName.Text, Group, TbJson.Text);
-            UpdateCallback?.Invoke();
+            if (GetNames())
+            {
+                Save?.Invoke(LibName, LayoutName, Group, TbJson.Text);
+                UpdateCallback?.Invoke();
+            }
         }
+
+        private bool GetNames()
+        {
+            var match = Regex.Match(tbName.Text, @"(?<lib>.*)::(?<name>.*)");
+            if (match.Success)
+            {
+                LayoutName = match.Groups["name"].Value ?? "UnNamed";
+                LibName = match.Groups["lib"].Value ?? "User.Library";
+                if (LibName == ProjectLayoutLibraryManager.DEFAULTLIBNAME)
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
     }
 }

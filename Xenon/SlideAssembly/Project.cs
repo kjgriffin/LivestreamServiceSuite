@@ -145,13 +145,13 @@ namespace Xenon.SlideAssembly
                 Directory.CreateDirectory(Path.Combine(_loadTmpPath, "assets"));
             }
             ProjectLayouts.LoadDefaults();
-            ProjectLayouts.InitializeNewLibrary("User.Library");
+            //ProjectLayouts.InitializeNewLibrary("User.Library");
         }
 
         public Project()
         {
             ProjectLayouts.LoadDefaults();
-            ProjectLayouts.InitializeNewLibrary("User.Library");
+            //ProjectLayouts.InitializeNewLibrary("User.Library");
         }
 
         public static Task<Project> LoadProject(string filename)

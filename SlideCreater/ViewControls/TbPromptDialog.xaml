@@ -1,0 +1,23 @@
+﻿<Window x:Class="SlideCreater.ViewControls.TbPromptDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SlideCreater.ViewControls"
+        mc:Ignorable="d"
+        Title="Prompt" Height="200" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"></RowDefinition>
+            <RowDefinition Height="100"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBox x:Name="tbDescription" MinWidth="80" MaxHeight="20"></TextBox>
+            <TextBox Name="tbInput" MinWidth="200" Margin="10" MaxHeight="20"></TextBox>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20">
+            <Button Click="Click_Cancel" Width="100" Height="30" Margin="10">Cancel</Button>
+            <Button Click="Click_Ok" Width="100" Height="30" Margin="10">Ok</Button>
+        </StackPanel>
+    </Grid>
+</Window>

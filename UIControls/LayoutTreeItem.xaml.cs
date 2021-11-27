@@ -24,16 +24,18 @@ namespace UIControls
         string json;
         string name;
         string group;
+        string lib;
 
         SaveLayoutToLibrary SaveLayout;
 
         Action updateCallback;
 
-        public LayoutTreeItem(string layoutname, string layoutjson, string group, SaveLayoutToLibrary save, Action updatecallback)
+        public LayoutTreeItem(string libname, string layoutname, string layoutjson, string group, SaveLayoutToLibrary save, Action updatecallback)
         {
             InitializeComponent();
             name = layoutname;
             json = layoutjson;
+            lib = libname;
             this.group = group;
             SaveLayout = save;
             tbDisplayName.Text = layoutname;
@@ -42,7 +44,7 @@ namespace UIControls
 
         private void Click_EditLayout(object sender, RoutedEventArgs e)
         {
-            LayoutDesigner designer = new LayoutDesigner(name, json, group, SaveLayout, updateCallback);
+            LayoutDesigner designer = new LayoutDesigner(lib, name, json, group, SaveLayout, updateCallback);
             designer.Show();
         }
     }

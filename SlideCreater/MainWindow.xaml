@@ -110,7 +110,7 @@
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.8*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
@@ -158,11 +158,59 @@
                         </Grid>
                     </TabItem>
                     <TabItem Header="Layouts">
-                        <TreeView Name="LayoutsTreeView">
-                            <TreeViewItem Header="Test">
-                                <TreeViewItem Header="Val1"></TreeViewItem>
-                            </TreeViewItem>
-                        </TreeView>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="80"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                    <Button Click="Click_ImportLayoutLibrary" BorderBrush="Transparent" Background="Transparent">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="/ViewControls/Images/CloudDL.png" Width="30" Height="20"></Image>
+                                                <Label>Import Library</Label>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button>
+                                    <Button Click="Click_ExporLayoutLibrary" BorderBrush="Transparent" Background="Transparent">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="/ViewControls/Images/Export2.png" Width="30" Height="20"></Image>
+                                                <Label>Export Library</Label>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <Button Click="Click_NewLayoutLibrary" BorderBrush="Transparent" Background="Transparent">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="/ViewControls/Images/Plus.png" Width="30" Height="20"></Image>
+                                                <Label>New Library</Label>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button>
+                                    <Button Click="Click_RemoveLayoutLibrary" BorderBrush="Transparent" Background="Transparent">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="/ViewControls/Images/Delete.png" Width="30" Height="20"></Image>
+                                                <Label>Delete Library</Label>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                            <TreeView Grid.Row="1" Name="LayoutsTreeView">
+                                <TreeViewItem Header="Test">
+                                    <TreeViewItem Header="Val1"></TreeViewItem>
+                                </TreeViewItem>
+                            </TreeView>
+                        </Grid>
                     </TabItem>
                 </TabControl>
             </Border>

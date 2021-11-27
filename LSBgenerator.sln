@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29926.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegratedPresenter", "IntegratedPresenter\IntegratedPresenter.csproj", "{26233450-08E7-49D9-8A16-47FA6B367DB5}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configurations", "Configurations\Configurations.csproj", "{FAC5902F-9781-403F-8F98-3538AF059AFB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UITextboxTestbed", "UITextboxTestbed\UITextboxTestbed.csproj", "{E498EE79-C819-46B4-ACF9-230F76584D1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonVersionInfo", "CommonVersionInfo\CommonVersionInfo.csproj", "{7E58838B-F13C-402F-B3CB-105EB6E05FAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{E498EE79-C819-46B4-ACF9-230F76584D1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E498EE79-C819-46B4-ACF9-230F76584D1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E498EE79-C819-46B4-ACF9-230F76584D1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E58838B-F13C-402F-B3CB-105EB6E05FAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E58838B-F13C-402F-B3CB-105EB6E05FAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E58838B-F13C-402F-B3CB-105EB6E05FAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E58838B-F13C-402F-B3CB-105EB6E05FAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

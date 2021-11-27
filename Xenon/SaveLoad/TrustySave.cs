@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommonVersionInfo;
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,6 +17,96 @@ namespace Xenon.SaveLoad
 {
     public static class TrustySave
     {
+
+
+        public static async Task<Project> OpenTrustily(BuildVersion VersionInfo, string filename, Action<string> preloadcode)
+        {
+            var proj = new Project(true);
+
+            string sourcecode = "";
+            Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
+            Dictionary<string, string> assetdisplaynames = new Dictionary<string, string>();
+            Dictionary<string, string> assetextensions = new Dictionary<string, string>();
+
+            using (ZipArchive archive = ZipFile.OpenRead(filename))
+            {
+                // dump source code
+                var sourcecodefile = archive.GetEntry("sourcecode.txt");
+                if (sourcecodefile != null)
+                {
+                    using (StreamReader sr = new StreamReader(sourcecodefile.Open()))
+                    {
+                        sourcecode = await sr.ReadToEndAsync();
+                    }
+                }
+
+                // in case a UI want's to be responsive and show text before we finish extracting/copying all assets out to the project directory
+                preloadcode?.Invoke(sourcecode);
+
+                var assetfilemapfile = archive.GetEntry("assets.json");
+                if (assetfilemapfile != null)
+                {
+                    using (StreamReader sr = new StreamReader(assetfilemapfile.Open()))
+                    {
+                        string json = await sr.ReadToEndAsync();
+                        assetfilemap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    }
+                }
+
+                var assetdisplaynamefile = archive.GetEntry("assets_displaynames.json");
+                if (assetdisplaynamefile != null)
+                {
+                    using (StreamReader sr = new StreamReader(assetdisplaynamefile.Open()))
+                    {
+                        string json = await sr.ReadToEndAsync();
+                        assetdisplaynames = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    }
+                }
+
+                var assetextensionsfile = archive.GetEntry("assets_extensions.json");
+                if (assetextensionsfile != null)
+                {
+                    using (StreamReader sr = new StreamReader(assetextensionsfile.Open()))
+                    {
+                        string json = await sr.ReadToEndAsync();
+                        assetextensions = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    }
+                }
+
+                // Handle old projects without layout info. The default project constructor will supply enough to make it work.
+                if (VersionInfo.ExceedsMinimumVersion(1, 7, 1, 21))
+                {
+                    var layoutsmapfile = archive.GetEntry("layouts.json");
+                    Dictionary<string, string> layoutsmap = new Dictionary<string, string>();
+                    using (StreamReader sr = new StreamReader(layoutsmapfile.Open()))
+                    {
+                        string json = await sr.ReadToEndAsync();
+                        layoutsmap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    }
+
+                    foreach (var layoutlib in layoutsmap)
+                    {
+                        var entry = archive.GetEntry(layoutlib.Value);
+                        using (StreamReader sr = new StreamReader(entry.Open()))
+                        {
+                            string json = await sr.ReadToEndAsync();
+                            // Project has layouts defined
+                            // we can replace the defaults created by new Project()
+                            var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
+                            proj.ProjectLayouts.LoadLibrary(lib);
+
+                        }
+                    }
+                }
+
+
+
+                archive.ExtractToDirectory(proj.LoadTmpPath);
+            }
+
+            return proj;
+
+        }
 
 
         public static Task SaveTrustily(Project proj, string path, IProgress<int> progress, string versioninfo)
@@ -44,36 +136,6 @@ namespace Xenon.SaveLoad
                 progress?.Report(5);
                 int assetcount = proj.Assets.Count;
                 int completed = 0;
-
-                /*
-                // create a bunch of tasks
-                var AssetSaveTasks = new List<Task>();
-
-                ConcurrentDictionary<string, string> assetfilemap = new ConcurrentDictionary<string, string>();
-                int nameid = 0;
-                foreach (var asset in proj.Assets)
-                {
-                    AssetSaveTasks.Add(Task.Run(() =>
-                    {
-                        string name = $"asset_{Interlocked.Increment(ref nameid)}{Path.GetExtension(asset.OriginalFilename)}";
-                        if (File.Exists(asset.CurrentPath))
-                        {
-                            assetfilemap.TryAdd(asset.Name, Path.Combine(assetsfolderpath, name));
-                            ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, name));
-                            double savepercent = (completed / (double)assetcount) * 100;
-                            progress.Report(5 + 1 + (int)(savepercent) * (100 - 5 - 1 - 10));
-                        }
-                        else
-                        {
-                            Debugger.Break();
-                        }
-                    }));
-                }
-
-                await Task.WhenAll(AssetSaveTasks);
-                */
-
-                // Perhaps we'll just have to sacrifice performance on save to make sure that all assets do get written...
 
                 int nameid = 0;
                 Dictionary<string, string> assetfilemap = new Dictionary<string, string>();

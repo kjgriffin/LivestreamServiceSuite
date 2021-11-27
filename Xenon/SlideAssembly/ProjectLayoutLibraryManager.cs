@@ -17,7 +17,7 @@ namespace Xenon.SlideAssembly
 
     public class ProjectLayoutLibraryManager
     {
-        const string DEFAULTLIBNAME = "Xenon.Core";
+        public const string DEFAULTLIBNAME = "Xenon.Core";
 
         internal Dictionary<string, Dictionary<LanguageKeywordCommand, Dictionary<string, string>>> AllLibraries { get; set; } = new Dictionary<string, Dictionary<LanguageKeywordCommand, Dictionary<string, string>>>();
 
@@ -61,7 +61,7 @@ namespace Xenon.SlideAssembly
             return (false, "");
         }
 
-        internal bool InitializeNewLibrary(string libname)
+        public bool InitializeNewLibrary(string libname)
         {
             if (AllLibraries.ContainsKey(libname))
             {
@@ -151,6 +151,14 @@ namespace Xenon.SlideAssembly
         public void LoadLibrary(LayoutLibEntry lib)
         {
             AllLibraries[lib.Lib.LibraryName] = lib.Lib.ToTypedLayouts();
+        }
+
+        public void RemoveLib(string libname)
+        {
+            if (libname != DEFAULTLIBNAME)
+            {
+                AllLibraries.Remove(libname);
+            }
         }
     }
 
