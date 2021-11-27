@@ -1232,6 +1232,7 @@ namespace SlideCreater
 
         private async Task TrustyOpen(string filename)
         {
+            /*
             _proj = new Project(true);
 
             string sourcecode = "";
@@ -1314,6 +1315,22 @@ namespace SlideCreater
 
                 archive.ExtractToDirectory(_proj.LoadTmpPath);
             }
+            */
+
+
+            CodePreviewUpdateFunc updatecode = (string val) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    TbInput.Text = val;
+                });
+            };
+
+
+            var opened = await Xenon.SaveLoad.TrustySave.OpenTrustily(VersionInfo, filename, updatecode);
+            _proj = opened.project;
+
+
 
             // add assets
             Dispatcher.Invoke(() =>
@@ -1322,10 +1339,10 @@ namespace SlideCreater
                 ActionState = ActionState.Downloading;
             });
             double percent = 0;
-            int total = assetfilemap.Count;
+            int total = opened.assetfilemap.Count;
             int progress = 1;
 
-            foreach (var assetkey in assetfilemap.Keys)
+            foreach (var assetkey in opened.assetfilemap.Keys)
             {
                 percent = ((double)progress++ / (double)total) * 100.0d;
                 Dispatcher.Invoke(() =>
@@ -1338,20 +1355,20 @@ namespace SlideCreater
 
                 await Task.Run(() =>
                 {
-                    var file = assetfilemap[assetkey];
+                    var file = opened.assetfilemap[assetkey];
                     var tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, file);
                     ProjectAsset asset = new ProjectAsset();
                     if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio, InternalDisplayName = assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = assetextensions[assetkey] };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Audio, InternalDisplayName = opened.assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = opened.assetextensions[assetkey] };
                     }
                     else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.png)|(\.jpg)|(\.bmp)", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image, InternalDisplayName = assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = assetextensions[assetkey] };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image, InternalDisplayName = opened.assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = opened.assetextensions[assetkey] };
                     }
                     else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
                     {
-                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, InternalDisplayName = assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = assetextensions[assetkey] };
+                        asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, InternalDisplayName = opened.assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = opened.assetextensions[assetkey] };
                     }
                     Assets.Add(asset);
                     _proj.Assets.Add(asset);

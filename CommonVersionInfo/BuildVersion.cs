@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CommonVersionInfo
 {
@@ -20,6 +21,19 @@ namespace CommonVersionInfo
             return $"{MajorVersion}.{MinorVersion}.{Revision}.{Build}-{Mode}";
         }
 
+        public static BuildVersion Parse(string version)
+        {
+            var match = Regex.Match(version, @"(?<mj>\d+)\.(?<mn>\d+)\.(?<rv>\d+)\.(?<bd>\d+)-(?<md>.*)");
+            return new BuildVersion()
+            {
+                MajorVersion = int.Parse(match.Groups["mj"].Value ?? "0"),
+                MinorVersion = int.Parse(match.Groups["mn"].Value ?? "0"),
+                Revision = int.Parse(match.Groups["rv"].Value ?? "0"),
+                Build = int.Parse(match.Groups["bd"].Value ?? "0"),
+                Mode = match.Groups["md"].Value ?? ""
+            };
+        }
+
         /// <summary>
         /// Greater than or equal to version.
         /// </summary>
@@ -32,7 +46,26 @@ namespace CommonVersionInfo
         /// <returns></returns>
         public bool MeetsMinimumVersion(int minMajor, int minMinor, int minRevions, int minBuild, bool matchMode = false, string mode = "Release")
         {
-            return CompareVersion((a, e) => a >= e, minMajor, minMinor, minRevions, minBuild, matchMode, mode);
+            bool modematch = matchMode ? Mode == mode : true;
+
+            if (MajorVersion > minMajor) return true && modematch;
+            else if (MajorVersion == minMajor)
+            {
+                if (MinorVersion > minMinor) return true && modematch;
+                else if (MinorVersion == minMinor)
+                {
+                    if (Revision > minRevions) return true && modematch;
+                    else if (Revision == minRevions)
+                    {
+                        if (Build > minBuild) return true && modematch;
+                        else if (Build == minBuild)
+                        {
+                            return modematch;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         private bool CompareVersion(VersionComparer comparer, int minMajor, int minMinor, int minRevions, int minBuild, bool matchMode, string mode)

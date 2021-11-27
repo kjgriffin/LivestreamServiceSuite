@@ -8,6 +8,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,11 +16,14 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.SaveLoad
 {
+
+    public delegate void CodePreviewUpdateFunc(string code);
+
     public static class TrustySave
     {
 
 
-        public static async Task<Project> OpenTrustily(BuildVersion VersionInfo, string filename, Action<string> preloadcode)
+        public static async Task<(Project project, Dictionary<string, string> assetfilemap, Dictionary<string, string> assetdisplaynames, Dictionary<string, string> assetextensions)> OpenTrustily(BuildVersion currentVersion, string filename, CodePreviewUpdateFunc preloadcode)
         {
             var proj = new Project(true);
 
@@ -28,8 +32,23 @@ namespace Xenon.SaveLoad
             Dictionary<string, string> assetdisplaynames = new Dictionary<string, string>();
             Dictionary<string, string> assetextensions = new Dictionary<string, string>();
 
+            BuildVersion originalVersion = new BuildVersion();
+
             using (ZipArchive archive = ZipFile.OpenRead(filename))
             {
+                // get version
+
+                var readmetext = archive.GetEntry("Readme.txt");
+                if (readmetext != null)
+                {
+                    using (StreamReader sr = new StreamReader(readmetext.Open()))
+                    {
+                        var readmetextcontent = await sr.ReadToEndAsync();
+                        var buildstring = Regex.Match(readmetextcontent, @"Created with version (?<version>[^\s]+)");
+                        originalVersion = BuildVersion.Parse(buildstring.Groups["version"].Value);
+                    }
+                }
+
                 // dump source code
                 var sourcecodefile = archive.GetEntry("sourcecode.txt");
                 if (sourcecodefile != null)
@@ -37,6 +56,7 @@ namespace Xenon.SaveLoad
                     using (StreamReader sr = new StreamReader(sourcecodefile.Open()))
                     {
                         sourcecode = await sr.ReadToEndAsync();
+                        proj.SourceCode = sourcecode;
                     }
                 }
 
@@ -73,8 +93,8 @@ namespace Xenon.SaveLoad
                     }
                 }
 
-                // Handle old projects without layout info. The default project constructor will supply enough to make it work.
-                if (VersionInfo.ExceedsMinimumVersion(1, 7, 1, 21))
+                // Project's will auto upgrade old projects, since default project constructor will have initialized the default layout library
+                if (originalVersion.ExceedsMinimumVersion(1, 7, 1, 21))
                 {
                     var layoutsmapfile = archive.GetEntry("layouts.json");
                     Dictionary<string, string> layoutsmap = new Dictionary<string, string>();
@@ -99,12 +119,36 @@ namespace Xenon.SaveLoad
                     }
                 }
 
+                await TrustilyUpgradeOldVersion(archive, proj, originalVersion, currentVersion);
 
+                preloadcode?.Invoke(proj.SourceCode);
 
                 archive.ExtractToDirectory(proj.LoadTmpPath);
             }
 
-            return proj;
+            return (proj, assetfilemap, assetdisplaynames, assetextensions);
+
+        }
+
+        private async static Task TrustilyUpgradeOldVersion(ZipArchive archive, Project proj, BuildVersion originalVersion, BuildVersion targetVersion)
+        {
+            // rendering behaviour post 1.7.1.21 will be to assume premultiply alpha instead of only using it it explicitly set
+            // to retain legacy render behaviour, for an old project we will add a #set command to mark global.rendermode.alpha = legacy
+
+            // this isn't truly perfect: but to do that we'd need to haul in the entire compiler and view the project's variables. So hopefully this is close enough
+            // we'll add an xml comment too
+            if (!originalVersion.MeetsMinimumVersion(1, 7, 2, 0))
+            {
+                const string xmlwarn = @"/// </MANUAL_UPDATE name='compatibility upgrade'>";
+                string commentexplain = $"// Project was upgraded from version {originalVersion}{Environment.NewLine}// where the default render behaviour didn't premultiply slides with their key.{Environment.NewLine}// Xenon Compatibility layer has added the following command to match that behaviour.{Environment.NewLine}// Remove the following line if the old default behaviour is unwanted.";
+                string setvar = @"#set(""global.rendermode.alpha"", ""legacy"")";
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(xmlwarn);
+                sb.AppendLine(commentexplain);
+                sb.AppendLine(setvar);
+                sb.AppendLine(proj.SourceCode);
+                proj.SourceCode = sb.ToString();
+            }
 
         }
 

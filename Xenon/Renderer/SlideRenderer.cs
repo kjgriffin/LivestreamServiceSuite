@@ -74,13 +74,24 @@ namespace Xenon.Renderer
             }
 
             // we can premultiple here if nessecary
+            bool renderpremultiplied = true;
             if (_project.ProjectVariables.TryGetValue("global.rendermode.alpha", out List<string> rendermode))
             {
+                // this should handle precedence of auto-compatibility upgrades
+                if (rendermode.Any(s => s == "legacy"))
+                {
+                    renderpremultiplied = false;
+                }
                 if (rendermode.Any(s => s == "premultiplied"))
                 {
-                    res.Bitmap = res.Bitmap?.PreMultiplyWithAlphaFast(res.KeyBitmap);
+                    renderpremultiplied = true;
                 }
             }
+            if (renderpremultiplied)
+            {
+                res.Bitmap = res.Bitmap?.PreMultiplyWithAlphaFast(res.KeyBitmap);
+            }
+
 
             return res;
         }
@@ -136,7 +147,7 @@ namespace Xenon.Renderer
                 case SlideFormat.AnthemTitle:
                     return atsr.RenderSlide(slide, Messages);
                 case SlideFormat.TwoPartTitle:
-                    //return tpsr.RenderSlide(slide, Messages);
+                //return tpsr.RenderSlide(slide, Messages);
                 case SlideFormat.HymnTextVerse:
                     return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.Prefab:
