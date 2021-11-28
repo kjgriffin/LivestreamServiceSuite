@@ -118,14 +118,19 @@ namespace Xenon.Renderer
 
                 xoffset += 30;
 
+                float localmaxh = 0;
                 foreach (var word in line.Words)
                 {
+                    var f = layout.ContentTextbox.Font.GetFont();
+                    SizeF wsize = gfx.MeasureStringCharacters(word.Value, ref f, layout.ContentTextbox.Textbox.GetRectangle());
+
                     gfx.DrawString(word.Value, layout.ContentTextbox.Font.GetFont(), Brushes.White, layout.ContentTextbox.Textbox.GetRectangle().Move((int)xoffset, (int)(vspace + interspace * linenum)).Location, GraphicsHelper.DefaultStringFormat());
                     kgfx.DrawString(word.Value, layout.ContentTextbox.Font.GetFont(), Brushes.White, layout.ContentTextbox.Textbox.GetRectangle().Move((int)xoffset, (int)(vspace + interspace * linenum)).Location, GraphicsHelper.DefaultStringFormat());
-                    xoffset += word.Size.Width;
+                    xoffset += wsize.Width;
+                    localmaxh = Math.Max(localmaxh, wsize.Height);
                 }
                 linenum++;
-                vspace += line.Height;
+                vspace += localmaxh;
             }
 
             res.Bitmap = bmp;
