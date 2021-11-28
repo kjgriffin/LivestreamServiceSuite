@@ -76,22 +76,29 @@ namespace Xenon.Compiler.AST
             slide.Data["reference"] = Reference;
             slide.Data["drawspeaker"] = DrawSpeaker;
 
+            // This is no-longer relevatn
+            /*
             if (project.GetAttribute("alphatranscol").Count > 0)
             {
                 slide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
             }
+            */
 
+            /* this was technically an un-released feature, so we won't make it be backwards compatible. Old projects depending on this wil ljust have to be dissapointed
             if (!string.IsNullOrWhiteSpace(project.GetAttribute("global.tlverse.layout").FirstOrDefault()))
             {
                 try
                 {
-                    slide.Data["layoutoverride"] = TitledLiturgyVerseLayout.FromJSON(project.GetAttribute("global.tlverse.layout").FirstOrDefault());
+                    slide.Data[Slide.LAYOUT_INFO_KEY] = TitledLiturgyVerseLayout.FromJSON(project.GetAttribute("global.tlverse.layout").FirstOrDefault());
                 }
                 catch (Exception ex)
                 {
                     Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Error Parsing Layout for #tlverse. Threw exception parsing json. Layout Override will not be used. Using default instead.", ErrorName = "Error Parsing Layout", Generator = "XenonASTTitledLiturgyVerse::Generate", Inner = ex.ToString(), Level = XenonCompilerMessageType.Warning });
                 }
             }
+            */
+
+            (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.TitledLiturgyVerse);
 
             slide.AddPostset(_Parent, true, true);
 

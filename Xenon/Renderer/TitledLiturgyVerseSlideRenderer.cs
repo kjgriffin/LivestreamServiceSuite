@@ -2,59 +2,73 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Text.Json;
+
 using Xenon.Compiler;
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
+using Xenon.LayoutInfo;
+using Xenon.Renderer.Helpers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    class TitledLiturgyVerseSlideRenderer
+    class TitledLiturgyVerseSlideRenderer : ISlideRenderer<TitledLiturgyVerseSlideLayoutInfo>, ISlideRenderer, ISlideLayoutPrototypePreviewer<ALayoutInfo>
     {
+        public ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo> LayoutResolver { get => new TitledLiturgyVerseSlideLayoutInfo(); }
 
-        public SlideLayout Layouts { get; set; }
+        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
+        {
+            TitledLiturgyVerseSlideLayoutInfo layout = JsonSerializer.Deserialize<TitledLiturgyVerseSlideLayoutInfo>(layoutInfo);
 
+            Bitmap b = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+            Bitmap k = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
 
-        static Font fregular = new Font("Arial", 36, FontStyle.Regular);
-        static Font fbold = new Font("Arial", 36, FontStyle.Bold);
-        static Font fitalic = new Font("Arial", 36, FontStyle.Italic);
+            Graphics gfx = Graphics.FromImage(b);
+            Graphics kgfx = Graphics.FromImage(k);
 
-        static Font flsbregular = new Font("LSBSymbol", 36, FontStyle.Regular);
-        static Font flsbbold = new Font("LSBSymbol", 36, FontStyle.Bold);
-        static Font flsbitalic = new Font("LSBSymbol", 36, FontStyle.Italic);
+            gfx.Clear(layout.BackgroundColor.GetColor());
+            kgfx.Clear(layout.KeyColor.GetColor());
 
+            DrawingBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.Banner);
 
-        public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages)
+            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.TitleBox);
+            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.RefBox);
+            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.ContentTextbox);
+
+            return (b, k);
+        }
+
+        public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages, TitledLiturgyVerseSlideLayoutInfo layout)
         {
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = "";
             res.RenderedAs = "Liturgy";
 
-            TitledLiturgyVerseLayout layout = Layouts.TitleLiturgyVerseLayout;
-
-            if (slide.Data.ContainsKey("layoutoverride"))
-            {
-                layout = (TitledLiturgyVerseLayout)slide.Data["layoutoverride"];
-            }
 
             // draw it
 
             // for now just draw the layout
-            Bitmap bmp = new Bitmap(layout.Size.Width, layout.Size.Height);
-            Bitmap kbmp = new Bitmap(layout.Size.Width, layout.Size.Height);
+            Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+            Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
 
             Graphics gfx = Graphics.FromImage(bmp);
             Graphics kgfx = Graphics.FromImage(kbmp);
 
-            gfx.Clear(Color.Gray);
-            kgfx.Clear(Color.Black);
+            gfx.Clear(layout.BackgroundColor.GetColor());
+            kgfx.Clear(layout.KeyColor.GetColor());
 
-            gfx.FillRectangle(Brushes.Black, layout.Key);
-            kgfx.FillRectangle(new SolidBrush(slide.Colors["keytrans"]), layout.Key);
 
-            List<LiturgyTextLine> Lines = (List<LiturgyTextLine>)slide.Data["lines"];
+            DrawingBoxRenderer.Render(gfx, kgfx, layout.Banner);
 
+
+            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data["title"], layout.TitleBox);
+            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data["reference"], layout.RefBox);
+
+
+
+            /*
             Font bf = new Font(layout.Font, FontStyle.Bold);
             Font itf = new Font(layout.Font, FontStyle.Italic);
 
@@ -62,6 +76,10 @@ namespace Xenon.Renderer
             kgfx.DrawString((string)slide.Data["title"], bf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
             gfx.DrawString((string)slide.Data["reference"], itf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
             kgfx.DrawString((string)slide.Data["reference"], itf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
+            */
+
+
+            List<LiturgyTextLine> Lines = (List<LiturgyTextLine>)slide.Data["lines"];
 
             float alltextheight = 0;
             foreach (var line in Lines)
@@ -69,29 +87,30 @@ namespace Xenon.Renderer
                 alltextheight += line.Height;
             }
 
-            float interspace = (layout.Textbox.Height - alltextheight) / (Lines.Count + 1);
+            float interspace = (layout.ContentTextbox.Textbox.Size.Height - alltextheight) / (Lines.Count + 1);
 
             float vspace = interspace;
             int linenum = 0;
 
             string lastspeaker = "";
 
+            Font flsbregular = new Font("LSBSymbol", layout.ContentTextbox.Font.Size, (FontStyle)layout.ContentTextbox.Font.Style);
 
 
             foreach (var line in Lines)
             {
                 float xoffset = 0;
                 // center the text
-                xoffset = (layout.Textbox.Width / 2) - (line.Width / 2);
+                xoffset = (layout.ContentTextbox.Textbox.Size.Width / 2) - (line.Width / 2);
 
                 // draw speaker
                 if ((string)slide.Data["drawspeaker"] == "true" && lastspeaker != line.Speaker)
                 {
                     SizeF speakersize = gfx.MeasureStringCharacters(line.Speaker, ref flsbregular, new RectangleF(0, 0, 100, 100));
                     float jog = 0.07f * (gfx.DpiY * speakersize.Height / 72);
-                    xoffset = (layout.Textbox.Width / 2) - ((line.Width) + speakersize.Width) / 2;
-                    gfx.DrawString(line.Speaker, flsbregular, Brushes.Teal, layout.Textbox.Move(layout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Move(0, (int)-jog).Location, GraphicsHelper.DefaultStringFormat());
-                    kgfx.DrawString(line.Speaker, flsbregular, Brushes.White, layout.Textbox.Move(layout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Move(0, (int)-jog).Location, GraphicsHelper.DefaultStringFormat());
+                    xoffset = (layout.ContentTextbox.Textbox.Size.Width / 2) - ((line.Width) + speakersize.Width) / 2;
+                    gfx.DrawString(line.Speaker, flsbregular, Brushes.Teal, layout.ContentTextbox.Textbox.GetRectangle().Move((int)xoffset, (int)(vspace + interspace * linenum)).Move(0, (int)-jog).Location, GraphicsHelper.DefaultStringFormat());
+                    kgfx.DrawString(line.Speaker, flsbregular, Brushes.White, layout.ContentTextbox.Textbox.GetRectangle().Move((int)xoffset, (int)(vspace + interspace * linenum)).Move(0, (int)-jog).Location, GraphicsHelper.DefaultStringFormat());
                     xoffset += speakersize.Width;
                 }
 
@@ -101,9 +120,8 @@ namespace Xenon.Renderer
 
                 foreach (var word in line.Words)
                 {
-                    Font f = word.IsLSBSymbol ? (word.IsBold ? flsbbold : flsbregular) : (word.IsBold ? fbold : fregular);
-                    gfx.DrawString(word.Value, f, Brushes.White, layout.Textbox.Move(layout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Location, GraphicsHelper.DefaultStringFormat());
-                    kgfx.DrawString(word.Value, f, Brushes.White, layout.Textbox.Move(layout.Key.Location).Move((int)xoffset, (int)(vspace + interspace * linenum)).Location, GraphicsHelper.DefaultStringFormat());
+                    gfx.DrawString(word.Value, layout.ContentTextbox.Font.GetFont(), Brushes.White, layout.ContentTextbox.Textbox.GetRectangle().Move((int)xoffset, (int)(vspace + interspace * linenum)).Location, GraphicsHelper.DefaultStringFormat());
+                    kgfx.DrawString(word.Value, layout.ContentTextbox.Font.GetFont(), Brushes.White, layout.ContentTextbox.Textbox.GetRectangle().Move((int)xoffset, (int)(vspace + interspace * linenum)).Location, GraphicsHelper.DefaultStringFormat());
                     xoffset += word.Size.Width;
                 }
                 linenum++;
@@ -115,5 +133,13 @@ namespace Xenon.Renderer
             return res;
         }
 
+        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        {
+            if (slide.Format == SlideFormat.LiturgyTitledVerse)
+            {
+                TitledLiturgyVerseSlideLayoutInfo layout = (this as ISlideRenderer<TitledLiturgyVerseSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
+                result = RenderSlide(slide, Messages, layout);
+            }
+        }
     }
 }

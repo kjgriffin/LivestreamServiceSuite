@@ -37,6 +37,7 @@ namespace Xenon.Renderer
         {
             new StitchedImageRenderer(),
             new TwoPartTitleSlideRenderer(),
+            new TitledLiturgyVerseSlideRenderer(),
         };
 
         public ProjectAsset GetProjectAssetByName(string assetName)
@@ -57,7 +58,7 @@ namespace Xenon.Renderer
             lvsr.Layouts = proj.Layouts;
             atsr.Layouts = proj.Layouts;
             //tpsr.Layouts = proj.Layouts;
-            tlvsr.Layouts = proj.Layouts;
+            //tlvsr.Layouts = proj.Layouts;
         }
 
         public RenderedSlide RenderSlide(Slide s, List<XenonCompilerMessage> Messages)
@@ -125,7 +126,8 @@ namespace Xenon.Renderer
                 case SlideFormat.LiturgyVerse:
                     return lvsr.RenderSlide(_project.Layouts.LiturgyLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.LiturgyTitledVerse:
-                    return tlvsr.RenderSlide(slide, Messages);
+                    //return tlvsr.RenderSlide(slide, Messages);
+                    return null;
                 case SlideFormat.Video:
                     return vsr.RenderSlide(slide, Messages);
                 case SlideFormat.UnscaledImage:
@@ -139,7 +141,8 @@ namespace Xenon.Renderer
                 case SlideFormat.LiturgyImage:
                     return isr.RenderImageSlide(slide, Messages);
                 case SlideFormat.StichedImage:
-                //return sir.RenderSlide(slide, Messages, _project.Assets);
+                    //return sir.RenderSlide(slide, Messages, _project.Assets);
+                    return null;
                 case SlideFormat.Reading:
                     return rsr.RenderSlide(_project.Layouts.ReadingLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.SermonTitle:
@@ -147,7 +150,8 @@ namespace Xenon.Renderer
                 case SlideFormat.AnthemTitle:
                     return atsr.RenderSlide(slide, Messages);
                 case SlideFormat.TwoPartTitle:
-                //return tpsr.RenderSlide(slide, Messages);
+                    //return tpsr.RenderSlide(slide, Messages);
+                    return null;
                 case SlideFormat.HymnTextVerse:
                     return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.Prefab:
