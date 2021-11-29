@@ -12,11 +12,11 @@
   "TitleBox": {
     "Textbox": {
       "Origin": {
-        "X": 0,
+        "X": 40,
         "Y": 0
       },
       "Size": {
-        "Width": 1920,
+        "Width": 920,
         "Height": 120
       }
     },
@@ -68,11 +68,11 @@
   "NumberBox": {
     "Textbox": {
       "Origin": {
-        "X": 0,
+        "X": 960,
         "Y": 0
       },
       "Size": {
-        "Width": 1920,
+        "Width": 920,
         "Height": 120
       }
     },
@@ -96,11 +96,11 @@
   "CopyrightBox": {
     "Textbox": {
       "Origin": {
-        "X": 0,
+        "X": 40,
         "Y": 1050
       },
       "Size": {
-        "Width": 1920,
+        "Width": 1880,
         "Height": 30
       }
     },
@@ -123,11 +123,11 @@
   "MusicBox": {
     "Box": {
       "Origin": {
-        "X": 0,
+        "X": 27,
         "Y": 120
       },
       "Size": {
-        "Width": 1920,
+        "Width": 1862,
         "Height": 930
       }
     },
