@@ -38,6 +38,15 @@ namespace Xenon.SlideAssembly
             return res;
         }
 
+        public LayoutLibrary? GetLibraryByName(string libname)
+        {
+            if (AllLibraries.ContainsKey(libname))
+            {
+                return new LayoutLibrary(libname, AllLibraries[libname].Select(x => new LayoutGroup(LanguageKeywords.Commands[x.Key], x.Value)).ToList());
+            }
+            return null;
+        }
+
         internal (bool found, string json) GetLayoutByFullyQualifiedName(LanguageKeywordCommand type, string fullname, string defaultLibrary = DEFAULTLIBNAME)
         {
             // parse the library, or fallback to default it none specified

@@ -1572,17 +1572,40 @@ namespace SlideCreater
             selectedLib = item.Header.ToString();
         }
 
-        private void Click_ExporLayoutLibrary(object sender, RoutedEventArgs e)
+        private async void Click_ExporLayoutLibrary(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(selectedLib))
             {
-                // export 'er real good
+                var lib = _proj.ProjectLayouts.GetLibraryByName(selectedLib);
+                if (lib.HasValue)
+                {
+                    // export 'er real good
+                    SaveFileDialog dialog = new SaveFileDialog();
+                    dialog.Title = "Export Layout Library";
+                    dialog.Filter = "Xenon Layout Library (*.lib.json)|*.lib.json";
+                    dialog.AddExtension = true;
+                    dialog.DefaultExt = ".lib.json";
+                    dialog.FileName = selectedLib;
+                    if (dialog.ShowDialog() == true)
+                    {
+                        await Xenon.SaveLoad.TrustySave.ExportLibrary(VersionInfo.ToString(), lib.Value, new StreamWriter(File.Open(dialog.FileName, FileMode.OpenOrCreate)));
+                    }
+                }
             }
         }
 
-        private void Click_ImportLayoutLibrary(object sender, RoutedEventArgs e)
+        private async void Click_ImportLayoutLibrary(object sender, RoutedEventArgs e)
         {
-
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Title = "Import Layout Library";
+            dialog.Filter = "Xenon Layout Library (*.lib.json)|*.lib.json";
+            if (dialog.ShowDialog() == true)
+            {
+                await Xenon.SaveLoad.TrustySave.ImportLibrary(_proj, dialog.FileName);
+                dirty = true;
+                ProjectState = ProjectState.Dirty;
+                SetupLayoutsTreeVew();
+            }
         }
 
         private void Click_RemoveLayoutLibrary(object sender, RoutedEventArgs e)

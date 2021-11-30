@@ -251,16 +251,7 @@ namespace Xenon.SaveLoad
                 foreach (var lib in libraries)
                 {
                     ZipArchiveEntry layoutlib_entry = archive.CreateEntry(Path.Combine(layoutsfolderpath, lib.LibraryName + ".json"));
-                    var metadata = new { XenonVersion = versioninfo, Date = DateTime.Now.ToString("dd/MM/yyyy") };
-                    using (StreamWriter writer = new StreamWriter(layoutlib_entry.Open()))
-                    {
-                        var obj = new
-                        {
-                            Lib = lib,
-                            Metadata = metadata,
-                        };
-                        await writer.WriteAsync(JsonSerializer.Serialize(obj, new JsonSerializerOptions() { IncludeFields = true }));
-                    }
+                    await ExportLibrary(versioninfo, lib, new StreamWriter(layoutlib_entry.Open()));
                     layoutsmapdict[lib.LibraryName] = Path.Combine(layoutsfolderpath, lib.LibraryName + ".json");
                 }
 
@@ -277,6 +268,32 @@ namespace Xenon.SaveLoad
 
             });
         }
+
+        public static async Task ExportLibrary(string versioninfo, LayoutLibrary lib, StreamWriter writer)
+        {
+            var metadata = new { XenonVersion = versioninfo, Date = DateTime.Now.ToString("dd/MM/yyyy") };
+            using (writer)
+            {
+                var obj = new
+                {
+                    Lib = lib,
+                    Metadata = metadata,
+                };
+                await writer.WriteAsync(JsonSerializer.Serialize(obj, new JsonSerializerOptions() { IncludeFields = true }));
+            }
+        }
+
+        public static async Task ImportLibrary(Project proj, string filename)
+        {
+            using (StreamReader sr = new StreamReader(File.Open(filename, FileMode.Open)))
+            {
+                string json = await sr.ReadToEndAsync();
+                var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
+                proj?.ProjectLayouts?.LoadLibrary(lib);
+
+            }
+        }
+
     }
 
     public struct LayoutLibEntry

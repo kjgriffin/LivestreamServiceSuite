@@ -26,10 +26,20 @@ namespace Xenon.Compiler.AST
             Lexer.GobbleWhitespace();
             Lexer.GobbleandLog(",", "Expected , before variable value");
             Lexer.GobbleWhitespace();
-            Lexer.GobbleandLog("```", "Expected ``` before variable value");
-            variable.VValue = Lexer.ConsumeUntil("```", errormessage: "Expected closing ``` at end of variable value");
-            Lexer.GobbleandLog("```", "Expected closing ``` at end of variable value");
-            Lexer.GobbleWhitespace();
+            if (Lexer.Peek() == "```")
+            {
+                Lexer.GobbleandLog("```", "Expected ``` before variable value");
+                variable.VValue = Lexer.ConsumeUntil("```", errormessage: "Expected closing ``` at end of variable value");
+                Lexer.GobbleandLog("```", "Expected closing ``` at end of variable value");
+                Lexer.GobbleWhitespace();
+            }
+            else if (Lexer.Peek() == "\"")
+            {
+                Lexer.GobbleandLog("\"", "Expected \" before variable value");
+                variable.VValue = Lexer.ConsumeUntil("\"", errormessage: "Expected closing \" at end of variable value");
+                Lexer.GobbleandLog("\"", "Expected closing \" at end of variable value");
+                Lexer.GobbleWhitespace();
+            }
             Lexer.GobbleandLog(")", "Expected closing ) at end of params");
             Lexer.GobbleWhitespace();
             return variable;

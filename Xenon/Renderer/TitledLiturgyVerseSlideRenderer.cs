@@ -97,6 +97,7 @@ namespace Xenon.Renderer
             Font flsbregular = new Font("LSBSymbol", layout.ContentTextbox.Font.Size, (FontStyle)layout.ContentTextbox.Font.Style);
 
 
+            /*
             foreach (var line in Lines)
             {
                 float xoffset = 0;
@@ -132,6 +133,14 @@ namespace Xenon.Renderer
                 linenum++;
                 vspace += localmaxh;
             }
+            */
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var line in Lines)
+            {
+                sb.AppendLine(string.Concat(line.Words));
+            }
+            TextBoxRenderer.Render(gfx, kgfx, sb.ToString(), layout.ContentTextbox);
 
             res.Bitmap = bmp;
             res.KeyBitmap = kbmp;
