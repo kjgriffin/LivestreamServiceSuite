@@ -1,0 +1,18 @@
+﻿<TreeViewItem x:Class="UIControls.LayoutGroupTreeItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UIControls"
+             mc:Ignorable="d">
+    <TreeViewItem.Header>
+        <Grid>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Name="tbHeader" MinWidth="30" Background="Transparent" Foreground="Black" VerticalAlignment="Center">Text</TextBlock>
+                <Button Name="btn_new" Click="Click_NewLayout" Width="20" Height="20" Background="Transparent" BorderBrush="Transparent" ToolTip="New Layout" Margin="10, 0, 0, 0" VerticalAlignment="Center">
+                    <Image Source="../ViewControls/Images/RoundAdd.png"></Image>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </TreeViewItem.Header>
+</TreeViewItem>

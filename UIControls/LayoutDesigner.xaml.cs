@@ -24,10 +24,15 @@ namespace UIControls
     public partial class LayoutDesigner : Window
     {
         private string LayoutName { get; set; }
+
+        private string SaveToLayoutName;
+        private string SaveToLayoutLibrary;
         private string LayoutJson { get; set; }
 
         readonly string Group;
         private string LibName { get; set; }
+
+        private bool Editable { get; set; }
 
         SaveLayoutToLibrary Save;
 
@@ -36,18 +41,34 @@ namespace UIControls
 
         Action UpdateCallback;
 
-        public LayoutDesigner(string libname, string layoutname, string layoutjson, string group, SaveLayoutToLibrary save, Action updateCallback)
+        public LayoutDesigner(string libname, List<string> alllibs, string layoutname, string layoutjson, string group, bool editable, SaveLayoutToLibrary save, Action updateCallback)
         {
             InitializeComponent();
             textChangeTimeoutTimer.Interval = TimeSpan.FromSeconds(1);
-            LayoutName = $"{libname}::{layoutname}";
+            LayoutName = $"{layoutname}";
             LayoutJson = layoutjson;
             LibName = libname;
             Group = group;
             TbJson.Text = LayoutJson;
             tbnameorig.Text = LayoutName;
             //tbnameorig1.Text = LayoutName;
-            tbName.Text = $"{LayoutName}-Copy";
+            tbName.Text = $"{LayoutName}";
+            Editable = editable;
+
+            cbLibs.Items.Clear();
+            alllibs.ForEach((x) => cbLibs.Items.Add(x));
+            cbLibs.SelectedItem = libname;
+
+
+
+            if (!editable)
+            {
+                tbName.IsEnabled = false;
+                cbLibs.IsEnabled = false;
+                btn_save.IsEnabled = false;
+                Title = Title + " [Read Only]";
+                TbJson.IsReadOnly = true;
+            }
 
             Save = save;
             UpdateCallback = updateCallback;
@@ -58,12 +79,24 @@ namespace UIControls
         private void ShowPreviews(string layoutjson)
         {
             var r = ProjectLayoutLibraryManager.GetLayoutPreview(Group, layoutjson);
-            ImgMain.Source = r.main.ConvertToBitmapImage();
-            ImgKey.Source = r.key.ConvertToBitmapImage();
+            if (r.isvalid)
+            {
+                ImgMain.Source = r.main.ConvertToBitmapImage();
+                ImgKey.Source = r.key.ConvertToBitmapImage();
+            }
+            else
+            {
+                ImgMain.Source = null;
+                ImgKey.Source = null;
+            }
         }
 
         private async void SourceTextChanged(object sender, EventArgs e)
         {
+            if (!Editable)
+            {
+                return;
+            }
             stillChanging = true;
             if (!textChangeTimeoutTimer.IsEnabled)
             {
@@ -93,26 +126,38 @@ namespace UIControls
         {
             if (GetNames())
             {
-                Save?.Invoke(LibName, LayoutName, Group, TbJson.Text);
+                Save?.Invoke(SaveToLayoutLibrary, SaveToLayoutName, Group, TbJson.Text);
                 UpdateCallback?.Invoke();
             }
         }
 
         private bool GetNames()
         {
-            var match = Regex.Match(tbName.Text, @"(?<lib>.*)::(?<name>.*)");
-            if (match.Success)
+            if (string.IsNullOrWhiteSpace(tbName.Text))
             {
-                LayoutName = match.Groups["name"].Value ?? "UnNamed";
-                LibName = match.Groups["lib"].Value ?? "User.Library";
-                if (LibName == ProjectLayoutLibraryManager.DEFAULTLIBNAME)
-                {
-                    return false;
-                }
-                return true;
+                return false;
             }
-            return false;
+            if ((string)cbLibs.SelectedItem == ProjectLayoutLibraryManager.DEFAULTLIBNAME)
+            {
+                return false;
+            }
+            SaveToLayoutName = tbName.Text;
+            SaveToLayoutLibrary = (string)cbLibs.SelectedItem;
+            return true;
         }
 
+        private void tbNameChanged(object sender, TextChangedEventArgs e)
+        {
+            if (tbName.Text != LayoutName)
+            {
+                btn_save.Content = "Save As";
+                btn_save.Background = Brushes.LimeGreen;
+            }
+            else
+            {
+                btn_save.Content = "Overwrite";
+                btn_save.Background = Brushes.Orange;
+            }
+        }
     }
 }

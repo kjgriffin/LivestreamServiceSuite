@@ -1526,7 +1526,18 @@ namespace SlideCreater
 
 
 
-
+        private void CreateNewLayoutOnLibrary(string libname, string group)
+        {
+            if (!string.IsNullOrWhiteSpace(libname))
+            {
+                TbPromptDialog namedialg = new TbPromptDialog("Create New Layout", "Layout Name", $"{group}.NewLayout");
+                if (namedialg.ShowDialog() == true)
+                {
+                    _proj.ProjectLayouts.CreateNewLayoutFromDefaults(libname, group, namedialg.ResultValue);
+                    SetupLayoutsTreeVew();
+                }
+            }
+        }
 
 
         private void SetupLayoutsTreeVew()
@@ -1539,14 +1550,15 @@ namespace SlideCreater
                 treelibrary.Header = $"{library.LibraryName}";
                 treelibrary.Selected += Treelibrary_Selected;
 
+                bool editable = library.LibraryName != ProjectLayoutLibraryManager.DEFAULTLIBNAME;
+
                 foreach (var group in library.Library)
                 {
-                    TreeViewItem treegroup = new TreeViewItem();
-                    treegroup.Header = $"{group.group}";
+                    LayoutGroupTreeItem treegroup = new LayoutGroupTreeItem(group.group, group.group, editable, (g) => CreateNewLayoutOnLibrary(library.LibraryName, g));
                     treegroup.Selected += Treegroup_Selected;
                     foreach (var layout in group.layouts)
                     {
-                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibraryName, layout.Key, layout.Value, group.group, _proj.ProjectLayouts.SaveLayoutToLibrary, () => Dispatcher.Invoke(SetupLayoutsTreeVew));
+                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibraryName, _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup().Select(x => x.LibraryName).ToList(), layout.Key, layout.Value, group.group, editable, _proj.ProjectLayouts.SaveLayoutToLibrary, () => Dispatcher.Invoke(SetupLayoutsTreeVew));
                         treegroup.Items.Add(treelayoutleaf);
                     }
                     treelibrary.Items.Add(treegroup);

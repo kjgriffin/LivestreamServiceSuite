@@ -14,22 +14,26 @@
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Background="#202020">
-                    <StackPanel Orientation="Horizontal">
-                        <!--<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <!--<StackPanel Orientation="Horizontal">-->
+                    <!--<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <Button Height="40" Width="80" Margin="10,0,0,0" Background="Orange">Overwrite</Button>
                             <TextBlock VerticalAlignment="Center" Foreground="White" Margin="5,0,0,0">existing [</TextBlock>
                             <TextBlock Name="tbnameorig1" VerticalAlignment="Center" Foreground="White">Layout Name</TextBlock>
                             <TextBlock VerticalAlignment="Center" Foreground="White">]</TextBlock>
                         </StackPanel>-->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
-                            <Button Click="Click_SaveAs" Height="40" Width="80" Margin="10,0,0,0" Background="LimeGreen">Save As</Button>
-                            <TextBlock VerticalAlignment="Center" Foreground="White" Margin="5,0,5,0">(New Name)</TextBlock>
-                            <TextBox Name="tbName" Width="400" Height="24" TextAlignment="Left" VerticalContentAlignment="Center"></TextBox>
-                            <TextBlock VerticalAlignment="Center" Foreground="White" Margin="5,0,0,0">from [</TextBlock>
-                            <TextBlock Name="tbnameorig" VerticalAlignment="Center" Foreground="White">Layout Name</TextBlock>
-                            <TextBlock VerticalAlignment="Center" Foreground="White">]</TextBlock>
-                        </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                        <Button Name="btn_save"  Click="Click_SaveAs" Height="40" Width="80" Margin="10,0,0,0" Background="Orange">Overwrite</Button>
+                        <TextBlock VerticalAlignment="Center" Foreground="White" Margin="10,0,5,0">Name</TextBlock>
+                        <TextBox Name="tbName" MinWidth="200" Height="24" TextAlignment="Left" VerticalContentAlignment="Center" TextChanged="tbNameChanged"></TextBox>
+                        <TextBlock VerticalAlignment="Center" Foreground="White" Margin="20,0,5,0">Library</TextBlock>
+                        <ComboBox Name="cbLibs" Height="30" Margin="10" MinWidth="200" VerticalContentAlignment="Center"></ComboBox>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0">
+                        <TextBlock VerticalAlignment="Center" Foreground="White" Margin="0,0,0,0">[</TextBlock>
+                        <TextBlock Name="tbnameorig" VerticalAlignment="Center" Foreground="White">Layout Name</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Foreground="White">]</TextBlock>
+                    </StackPanel>
+                    <!--</StackPanel>-->
                 </Grid>
                 <Grid Grid.Row="1" Background="LightGray">
                     <Grid.ColumnDefinitions>
@@ -38,12 +42,18 @@
                     </Grid.ColumnDefinitions>
                     <AvalonEdit:TextEditor Name="TbJson" FontFamily="inconsolata" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript" Margin="10"></AvalonEdit:TextEditor>
                     <StackPanel Grid.Column="1">
-                        <Border BorderBrush="Purple" BorderThickness="5" Margin="10">
-                            <Image Name="ImgMain"></Image>
-                        </Border>
-                        <Border BorderBrush="Purple" BorderThickness="5" Margin="10">
-                            <Image Name="ImgKey"></Image>
-                        </Border>
+                        <Grid>
+                            <Border BorderBrush="Purple" BorderThickness="5" Margin="10" Panel.ZIndex="1">
+                                <Image Name="ImgMain"></Image>
+                            </Border>
+                            <TextBlock Panel.ZIndex="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" FontWeight="Bold" Foreground="Red" Margin="10">INVALID JSON</TextBlock>
+                        </Grid>
+                        <Grid>
+                            <Border BorderBrush="Purple" BorderThickness="5" Margin="10" Panel.ZIndex="1">
+                                <Image Name="ImgKey"></Image>
+                            </Border>
+                            <TextBlock Panel.ZIndex="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" FontWeight="Bold" Foreground="Red" Margin="10">INVALID JSON</TextBlock>
+                        </Grid>
                     </StackPanel>
                 </Grid>
             </Grid>

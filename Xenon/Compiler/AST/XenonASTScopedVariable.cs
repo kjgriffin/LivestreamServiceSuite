@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Xenon.Compiler.Suggestions;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
-    class XenonASTScopedVariable : IXenonASTCommand
+    class XenonASTScopedVariable : IXenonASTCommand, IXenonCommandSuggestionCallback
     {
         public IXenonASTElement Parent { get; private set; }
 
@@ -85,5 +86,30 @@ namespace Xenon.Compiler.AST
         {
             throw new NotImplementedException();
         }
+
+        static List<RegexMatchedContextualSuggestions> contextualsuggestions = new List<RegexMatchedContextualSuggestions>()
+        {
+            ("#set", false, "", new List<(string, string)> { ("#set", "")}, null),
+            ("\\(\"", false, "", new List<(string, string)> { ("(\"", "insert variable name")}, null),
+            /*
+            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end variable name")},  ),
+            (",", false, "", new List<(string, string)> {(",", "") }, null),
+            ("\"", false, "", new List<(string, string)> { ("\"", "insert muscian name")}, null),
+            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end musician name")}, null ),
+            (",", false, "", new List<(string, string)> {(",", "") }, null),
+            ("\"", false, "", new List<(string, string)> { ("\"", "insert accompanist")}, null),
+            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end accompanist")}, null ),
+            (",", false, "", new List<(string, string)> {(",", "") }, null),
+            ("\"", false, "", new List<(string, string)> { ("\"", "insert credits")}, null),
+            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end credits")}, null ),
+            ("\\)", false, "", new List<(string, string)> {(")", "") }, null),
+            */
+        };
+
+        public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
+        {
+            return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode, this);
+        }
+
     }
 }

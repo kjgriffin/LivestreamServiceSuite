@@ -26,26 +26,43 @@ namespace UIControls
         string group;
         string lib;
 
+        List<string> libs;
+
+        bool canedit;
+
         SaveLayoutToLibrary SaveLayout;
 
         Action updateCallback;
 
-        public LayoutTreeItem(string libname, string layoutname, string layoutjson, string group, SaveLayoutToLibrary save, Action updatecallback)
+        public LayoutTreeItem(string libname, List<string> libs, string layoutname, string layoutjson, string group, bool canedit, SaveLayoutToLibrary save, Action updatecallback)
         {
             InitializeComponent();
             name = layoutname;
             json = layoutjson;
             lib = libname;
+            this.libs = libs;
+            this.canedit = canedit;
             this.group = group;
             SaveLayout = save;
             tbDisplayName.Text = layoutname;
             updateCallback = updatecallback;
+
+            if (!canedit)
+            {
+                btn_delete.IsEnabled = false;
+                btn_delete.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void Click_EditLayout(object sender, RoutedEventArgs e)
         {
-            LayoutDesigner designer = new LayoutDesigner(lib, name, json, group, SaveLayout, updateCallback);
+            LayoutDesigner designer = new LayoutDesigner(lib, libs, name, json, group, canedit, SaveLayout, updateCallback);
             designer.Show();
+        }
+
+        private void Click_Delete(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

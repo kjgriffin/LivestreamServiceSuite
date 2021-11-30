@@ -158,6 +158,11 @@ namespace Xenon.Renderer
             return (b, k);
         }
 
+        public bool IsValidLayoutJson(string json)
+        {
+            return ISlideLayoutPrototypePreviewer<StitchedImageSlideLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
+        }
+
         ILayoutInfoResolver<StitchedImageSlideLayoutInfo> ISlideRenderer<StitchedImageSlideLayoutInfo>.LayoutResolver { get => new StitchedImageSlideLayoutInfo(); }
     }
 }

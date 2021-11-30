@@ -90,6 +90,17 @@ namespace Xenon.SlideAssembly
             return true;
         }
 
+        public void CreateNewLayoutFromDefaults(string libname, string group, string layoutname)
+        {
+            InitializeNewLibrary(libname);
+            var cmd = LanguageKeywords.Commands.First(x => x.Value == group).Key;
+            var libgroup = AllLibraries[libname][cmd];
+
+            var d = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultInfo();
+            string json = d.GetDefaultJson();
+            libgroup[layoutname] = json;
+        }
+
         internal bool _Internal_SaveLayoutToLibrary(string libname, string layoutname, string group, string json)
         {
             InitializeNewLibrary(libname); // we're ok if it already exists
@@ -111,7 +122,7 @@ namespace Xenon.SlideAssembly
             get => _Internal_SaveLayoutToLibrary;
         }
 
-        public static (Bitmap main, Bitmap key) GetLayoutPreview(string layoutname, string layoutjson)
+        public static (bool isvalid, Bitmap main, Bitmap key) GetLayoutPreview(string layoutname, string layoutjson)
         {
 
             if (LanguageKeywords.Commands.ContainsValue(layoutname))
@@ -119,11 +130,15 @@ namespace Xenon.SlideAssembly
                 LanguageKeywordCommand cmd = LanguageKeywords.Commands.FirstOrDefault(x => x.Value == layoutname).Key;
                 if (LanguageKeywords.LayoutForType.TryGetValue(cmd, out var proto))
                 {
-                    return proto.prototypicalLayoutPreviewer.GetPreviewForLayout(layoutjson);
+                    if (proto.prototypicalLayoutPreviewer.IsValidLayoutJson(layoutjson))
+                    {
+                        var r = proto.prototypicalLayoutPreviewer.GetPreviewForLayout(layoutjson);
+                        return (true, r.main, r.key);
+                    }
                 }
             }
 
-            return (new Bitmap(1920, 1080), new Bitmap(1920, 1080));
+            return (false, new Bitmap(1920, 1080), new Bitmap(1920, 1080));
         }
 
         public void LoadDefaults()

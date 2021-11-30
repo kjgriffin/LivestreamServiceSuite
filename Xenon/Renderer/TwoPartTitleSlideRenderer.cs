@@ -37,6 +37,11 @@ namespace Xenon.Renderer
             return (b, k);
         }
 
+        public bool IsValidLayoutJson(string json)
+        {
+            return ISlideLayoutPrototypePreviewer<_2TitleSlideLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
+        }
+
         public RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, IAssetResolver assetResolver, _2TitleSlideLayoutInfo layout)
         {
             RenderedSlide res = new RenderedSlide();

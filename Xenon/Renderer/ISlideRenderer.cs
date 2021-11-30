@@ -21,9 +21,25 @@ namespace Xenon.Renderer
         public ILayoutInfoResolver<LayoutInfoType> LayoutResolver { get; }
     }
 
-    public interface ISlideLayoutPrototypePreviewer<LayoutInfoType> where LayoutInfoType : ALayoutInfo
+    public interface ISlideLayoutPrototypePreviewer<out LayoutInfoType> where LayoutInfoType : ALayoutInfo
     {
         public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo);
+
+        public bool IsValidLayoutJson(string json);
+
+        public static bool _InternalDefaultIsValidLayoutJson(string json)
+        {
+            try
+            {
+                JsonSerializer.Deserialize<LayoutInfoType>(json);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+       
     }
 
     public interface IAssetResolver

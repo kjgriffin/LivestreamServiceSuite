@@ -39,6 +39,11 @@ namespace Xenon.Renderer
             return (b, k);
         }
 
+        public bool IsValidLayoutJson(string json)
+        {
+            return ISlideLayoutPrototypePreviewer<TitledLiturgyVerseSlideLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
+        }
+
         public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages, TitledLiturgyVerseSlideLayoutInfo layout)
         {
             RenderedSlide res = new RenderedSlide();
