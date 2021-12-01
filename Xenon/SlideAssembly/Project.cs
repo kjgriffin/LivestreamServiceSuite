@@ -12,6 +12,7 @@ using System.Threading;
 using System.Drawing;
 using System.Linq;
 using System.Diagnostics;
+using Xenon.Compiler.Suggestions;
 
 namespace Xenon.SlideAssembly
 {
@@ -29,6 +30,8 @@ namespace Xenon.SlideAssembly
 
         private int slidenum = 0;
         public int NewSlideNumber => slidenum++;
+
+        public XenonSuggestionService XenonSuggestionService { get; set; } = new XenonSuggestionService();
 
 
         public void AddAttribute(string key, string value)

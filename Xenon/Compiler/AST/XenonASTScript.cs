@@ -67,15 +67,15 @@ namespace Xenon.Compiler
             throw new NotImplementedException();
         }
 
-        static List<RegexMatchedContextualSuggestions> contextualsuggestions = new List<RegexMatchedContextualSuggestions>()
+        List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
         {
             ("#script", false, "", new List<(string, string)>() { ("#script", "")}, null),
             ("\\{", false, "", new List<(string, string)>() { ("{", "begin script")}, null),
-            ("[^\\}]+(?=\\})",  false,"", null, nameof(GetContextualSuggestionsForScriptCommands)),
+            ("[^\\}]+(?=\\})",  false,"", null, GetContextualSuggestionsForScriptCommands),
             ("\\}", false, "", new List<(string, string)>() { ("\"", "end script")}, null),
         };
 
-        IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForScriptCommands = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet) =>
+        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForScriptCommands = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet) =>
         {
             // its' not validation we're doing, so just get the start of the line and work from there.
 
@@ -242,11 +242,6 @@ namespace Xenon.Compiler
             }
 
             return suggestions;
-        }
-
-        public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
-        {
-            return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode, this);
         }
 
     }

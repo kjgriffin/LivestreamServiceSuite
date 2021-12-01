@@ -18,7 +18,6 @@ namespace Xenon.Compiler.AST
         public string Accompanianst { get; set; }
         public string Credits { get; set; }
         public IXenonASTElement Parent { get; private set; }
-
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTAnthemTitle title = new XenonASTAnthemTitle();
@@ -88,7 +87,7 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
-        static List<RegexMatchedContextualSuggestions> contextualsuggestions = new List<RegexMatchedContextualSuggestions>()
+        List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
         {
             ("#anthemtitle", false, "", new List<(string, string)> { ("#anthemtitle", "")}, null),
             ("\\(\"", false, "", new List<(string, string)> { ("(\"", "insert anthem name")}, null),
@@ -104,11 +103,6 @@ namespace Xenon.Compiler.AST
             ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end credits")}, null ),
             ("\\)", false, "", new List<(string, string)> {(")", "") }, null),
         };
-
-        public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
-        {
-            return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode, this);
-        }
 
     }
 }

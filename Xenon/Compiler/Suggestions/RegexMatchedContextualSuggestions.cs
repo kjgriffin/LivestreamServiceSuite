@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using static Xenon.Compiler.IXenonCommandSuggestionCallback;
+
 namespace Xenon.Compiler.Suggestions
 {
     public struct RegexMatchedContextualSuggestions
@@ -9,15 +11,15 @@ namespace Xenon.Compiler.Suggestions
         public bool Optional;
         public string Captureas;
         public List<(string, string)> Suggestions;
-        public string ExternalFunctionName;
+        public GetContextualSuggestionsForCommand ExternalFunc;
 
-        public RegexMatchedContextualSuggestions(string regex, bool optional, string captureas, List<(string, string)> suggestions, string externalfunctionname)
+        public RegexMatchedContextualSuggestions(string regex, bool optional, string captureas, List<(string, string)> suggestions, GetContextualSuggestionsForCommand externalfunctionname)
         {
             Regex = regex;
             Optional = optional;
             Captureas = captureas;
             Suggestions = suggestions;
-            this.ExternalFunctionName = externalfunctionname;
+            this.ExternalFunc = externalfunctionname;
         }
 
         public override bool Equals(object obj)
@@ -27,29 +29,29 @@ namespace Xenon.Compiler.Suggestions
                    Optional == other.Optional &&
                    Captureas == other.Captureas &&
                    EqualityComparer<List<(string, string)>>.Default.Equals(Suggestions, other.Suggestions) &&
-                   ExternalFunctionName == other.ExternalFunctionName;
+                   ExternalFunc == other.ExternalFunc;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Regex, Optional, Captureas, Suggestions, ExternalFunctionName);
+            return HashCode.Combine(Regex, Optional, Captureas, Suggestions, ExternalFunc);
         }
 
-        public void Deconstruct(out string regex, out bool optional, out string captureas, out List<(string, string)> suggestions, out string externalfunctionname)
+        public void Deconstruct(out string regex, out bool optional, out string captureas, out List<(string, string)> suggestions, out GetContextualSuggestionsForCommand externalfunctionname)
         {
             regex = Regex;
             optional = Optional;
             captureas = Captureas;
             suggestions = Suggestions;
-            externalfunctionname = this.ExternalFunctionName;
+            externalfunctionname = this.ExternalFunc;
         }
 
-        public static implicit operator (string, bool, string, List<(string, string)>, string externalfunctionname)(RegexMatchedContextualSuggestions value)
+        public static implicit operator (string, bool, string, List<(string, string)>, GetContextualSuggestionsForCommand externalfunctionname)(RegexMatchedContextualSuggestions value)
         {
-            return (value.Regex, value.Optional, value.Captureas, value.Suggestions, value.ExternalFunctionName);
+            return (value.Regex, value.Optional, value.Captureas, value.Suggestions, value.ExternalFunc);
         }
 
-        public static implicit operator RegexMatchedContextualSuggestions((string regex, bool optional, string captureas, List<(string, string)> suggestions, string externalfunctionname) value)
+        public static implicit operator RegexMatchedContextualSuggestions((string regex, bool optional, string captureas, List<(string, string)> suggestions, GetContextualSuggestionsForCommand externalfunctionname) value)
         {
             return new RegexMatchedContextualSuggestions(value.regex, value.optional, value.captureas, value.suggestions, value.externalfunctionname);
         }

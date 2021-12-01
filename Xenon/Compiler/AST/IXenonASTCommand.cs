@@ -8,7 +8,7 @@ namespace Xenon.Compiler
 {
     internal interface IXenonASTCommand : IXenonASTElement
     {
-        public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
+        public TopLevelCommandContextualSuggestions GetContextualSuggestions(XenonSuggestionService service, string sourcecode)
         {
             return (false, new List<(string suggestion, string description)>());
         }

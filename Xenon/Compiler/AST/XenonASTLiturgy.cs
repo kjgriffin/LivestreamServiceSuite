@@ -274,19 +274,13 @@ namespace Xenon.Compiler
             throw new NotImplementedException();
         }
 
-        static List<RegexMatchedContextualSuggestions> contextualsuggestions = new List<RegexMatchedContextualSuggestions>()
+        List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
         {
             ("#liturgy", false, "", new List<(string, string)> {("#liturgy", "")}, null),
             ("\\(True\\)", true, "", new List<(string, string)> { ("(True)", "Option to only detect speakers at start of line")}, null),
             ("{", false, "", new List<(string, string)> { ("{", "")}, null),
             ("[^}]*(?=})", false, "", new List<(string, string)> {("}", "") }, null),
         };
-
-        public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
-        {
-            return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode, this);
-        }
-
 
     }
 }

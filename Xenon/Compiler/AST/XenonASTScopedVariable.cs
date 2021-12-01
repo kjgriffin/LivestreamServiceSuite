@@ -87,7 +87,7 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
-        static List<RegexMatchedContextualSuggestions> contextualsuggestions = new List<RegexMatchedContextualSuggestions>()
+        List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
         {
             ("#set", false, "", new List<(string, string)> { ("#set", "")}, null),
             ("\\(\"", false, "", new List<(string, string)> { ("(\"", "insert variable name")}, null),
@@ -106,10 +106,5 @@ namespace Xenon.Compiler.AST
             */
         };
 
-        public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
-        {
-            return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode, this);
-        }
-
-    }
+      }
 }

@@ -13,7 +13,7 @@ namespace Xenon.Compiler.Suggestions
     {
 
 
-        public static TopLevelCommandContextualSuggestions GetDescriptionsForRegexMatchedSequence(List<RegexMatchedContextualSuggestions> sequentialoptions, string sourcecode, IXenonCommandSuggestionCallback root)
+        public TopLevelCommandContextualSuggestions GetSuggestionsByRegexMatchedSequence(List<RegexMatchedContextualSuggestions> sequentialoptions, string sourcecode, IXenonCommandSuggestionCallback root)
         {
             /*
             1. start matching regexes in sequence
@@ -47,17 +47,19 @@ namespace Xenon.Compiler.Suggestions
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(option.ExternalFunctionName))
+                    if (option.ExternalFunc != null)
                     {
                         // call back to base type and have them use a contextual suggestion based on current option
-                        var extfunc = root.GetType().GetField(option.ExternalFunctionName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        //var extfunc = root.GetType().GetField(option.ExternalFunc, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-                        if (extfunc.FieldType == typeof(IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand))
-                        {
-                            IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand dfunc = (IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand)extfunc.GetValue(root);
-                            var suggestions = dfunc.Invoke(priormatches, sourcecode, strbuffer.ToString()).Concat(lastsuggestions);
-                            return (false, suggestions.ToList());
-                        }
+                        //if (extfunc.FieldType == typeof(IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand))
+                        //{
+                        //IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand dfunc = (IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand)extfunc.GetValue(root);
+                        //var suggestions = dfunc.Invoke(priormatches, sourcecode, strbuffer.ToString()).Concat(lastsuggestions);
+                        //return (false, suggestions.ToList());
+                        //}
+                        var suggestions = option.ExternalFunc?.Invoke(priormatches, sourcecode, strbuffer.ToString()).Concat(lastsuggestions);
+                        return (false, suggestions.ToList());
                     }
 
                     // order suggestions by partial completion, then alphabetically
@@ -72,7 +74,7 @@ namespace Xenon.Compiler.Suggestions
         }
 
 
-        public static List<(string item, string description)> GetSuggestions(string sourcetext, int caretpos)
+        public List<(string item, string description)> GetSuggestions(string sourcetext, int caretpos)
         {
             List<(string, string)> suggestions = new List<(string, string)>();
 
@@ -85,7 +87,7 @@ namespace Xenon.Compiler.Suggestions
             return suggestions;
         }
 
-        private static bool IsOnCommentLine(string searchtext)
+        private bool IsOnCommentLine(string searchtext)
         {
             string line = searchtext.Split(System.Environment.NewLine, StringSplitOptions.None).Last();
             if (line.Contains("//"))
@@ -102,7 +104,7 @@ namespace Xenon.Compiler.Suggestions
         }
 
 
-        private static List<(string item, string description)> GetSuggestionsByLookBehind(string sourcetext, int caretpos)
+        private List<(string item, string description)> GetSuggestionsByLookBehind(string sourcetext, int caretpos)
         {
             /*
             1. compute current context (if preformance allows) -> scan backwards and try to build an infered stack of where in the AST we are. Only need to go to the most curent top level element
@@ -145,7 +147,7 @@ namespace Xenon.Compiler.Suggestions
 
         }
 
-        private static List<(string, string)> AllCommandKeywords()
+        private List<(string, string)> AllCommandKeywords()
         {
             /*
             List<(string, string)> res = new List<(string, string)>();
@@ -163,7 +165,7 @@ namespace Xenon.Compiler.Suggestions
 
 
 
-        private static (bool completed, LanguageKeywordCommand cmd, int index) WalkBackToTopLevelCommand(string sourcetext, int caretpos)
+        private (bool completed, LanguageKeywordCommand cmd, int index) WalkBackToTopLevelCommand(string sourcetext, int caretpos)
         {
 
             int index = caretpos - 1;
@@ -214,7 +216,7 @@ namespace Xenon.Compiler.Suggestions
             return (false, LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
         }
 
-        private static List<(LanguageKeywordCommand cmd, string cmdstr)> GetPartialMatchedTopLevelCommands(string partialstr)
+        private List<(LanguageKeywordCommand cmd, string cmdstr)> GetPartialMatchedTopLevelCommands(string partialstr)
         {
             return LanguageKeywords.Commands
                 .Where(cmd => LanguageKeywords.LanguageKeywordMetadata[cmd.Key].toplevel == true && cmd.Value.StartsWith(partialstr))
@@ -224,25 +226,31 @@ namespace Xenon.Compiler.Suggestions
                 .ToList();
         }
 
-        private static List<(string suggestion, string description)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode)
+        private List<(string suggestion, string description)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode)
         {
             //CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => new List<(string, string)>())
             return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string)>())).Invoke(sourcecode).Suggestions;
         }
 
-        private static bool IsCommandComplete(LanguageKeywordCommand cmd, string sourcecode)
+        private bool IsCommandComplete(LanguageKeywordCommand cmd, string sourcecode)
         {
             return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string)>())).Invoke(sourcecode).Complete;
         }
 
-        private static Dictionary<LanguageKeywordCommand, Func<string, TopLevelCommandContextualSuggestions>> CommandContextutalSuggestionDispatcher = new Dictionary<LanguageKeywordCommand, Func<string, TopLevelCommandContextualSuggestions>>()
-        {
-            [LanguageKeywordCommand.SetVar] = (str) => (IXenonASTCommand.GetInstance<XenonASTSetVariable>() as IXenonASTCommand).GetContextualSuggestions(str),
-            [LanguageKeywordCommand.Liturgy] = (str) => (IXenonASTCommand.GetInstance<XenonASTLiturgy>() as IXenonASTCommand).GetContextualSuggestions(str),
-            [LanguageKeywordCommand.AnthemTitle] = (str) => (IXenonASTCommand.GetInstance<XenonASTAnthemTitle>() as IXenonASTCommand).GetContextualSuggestions(str),
-            [LanguageKeywordCommand.Script] = (str) => (IXenonASTCommand.GetInstance<XenonASTScript>() as IXenonASTCommand).GetContextualSuggestions(str),
-        };
+        private Dictionary<LanguageKeywordCommand, Func<string, TopLevelCommandContextualSuggestions>> CommandContextutalSuggestionDispatcher = new Dictionary<LanguageKeywordCommand, Func<string, TopLevelCommandContextualSuggestions>>();
 
+        public void Initialize()
+        {
+            CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.SetVar] = (str) => (IXenonASTCommand.GetInstance<XenonASTSetVariable>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTSetVariable>());
+            CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.Liturgy] = (str) => (IXenonASTCommand.GetInstance<XenonASTLiturgy>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTLiturgy>());
+            CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.AnthemTitle] = (str) => (IXenonASTCommand.GetInstance<XenonASTAnthemTitle>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTAnthemTitle>());
+            CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.Script] = (str) => (IXenonASTCommand.GetInstance<XenonASTScript>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTScript>());
+        }
+
+        public XenonSuggestionService()
+        {
+            Initialize();
+        }
 
 
     }

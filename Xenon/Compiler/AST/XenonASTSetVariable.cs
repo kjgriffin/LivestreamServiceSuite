@@ -46,7 +46,7 @@ namespace Xenon.Compiler.AST
         }
 
 
-        static List<RegexMatchedContextualSuggestions> contextualsuggestions = new List<RegexMatchedContextualSuggestions>()
+        List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
         {
             ("#set", false, "", new List<(string, string)>() { ("#set", "")}, null),
             ("\\(\"", false, "", new List<(string, string)>() { ("(\"", "insert variable name")}, null),
@@ -54,12 +54,12 @@ namespace Xenon.Compiler.AST
             ("\"", false, "", new List<(string, string)>() { ("\"", "")}, null),
             (",", false, "", new List<(string, string)>() { (",", "")}, null),
             ("\"", false, "", new List<(string, string)>() { ("\"", "")}, null),
-            ("[^\"]+(?=\")",  false,"", null, nameof(GetContextualSuggestionsForVariableValue)),
+            ("[^\"]+(?=\")",  false,"", null, GetContextualSuggestionsForVariableValue),
             ("\"", false, "", new List<(string, string)>() { ("\"", "enclose variable value")}, null),
             ("\\)", false, "", new List<(string, string)>(){(")", "")}, null),
         };
 
-        IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableValue = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet) =>
+        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableValue = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet) =>
         {
             if (priorcaptures.GetOrDefault("varname", "") == "global.rendermode.alpha")
             {
@@ -69,11 +69,6 @@ namespace Xenon.Compiler.AST
         };
 
         public IXenonASTElement Parent { get; private set; }
-
-        public TopLevelCommandContextualSuggestions GetContextualSuggestions(string sourcecode)
-        {
-            return XenonSuggestionService.GetDescriptionsForRegexMatchedSequence(contextualsuggestions, sourcecode, this);
-        }
 
     }
 }

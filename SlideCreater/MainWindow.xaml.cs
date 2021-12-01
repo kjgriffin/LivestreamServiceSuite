@@ -1445,7 +1445,7 @@ namespace SlideCreater
 
         private void ShowSuggestions()
         {
-            var suggestions = XenonSuggestionService.GetSuggestions(TbInput.Text, TbInput.CaretOffset);
+            var suggestions = _proj.XenonSuggestionService.GetSuggestions(TbInput.Text, TbInput.CaretOffset);
             if (suggestions.Any())
             {
                 completionWindow = new CompletionWindow(TbInput.TextArea);
