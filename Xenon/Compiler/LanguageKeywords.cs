@@ -126,7 +126,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.Resource] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTResource()),
             [LanguageKeywordCommand.Script] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTScript()),
             [LanguageKeywordCommand.Postset] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTExpression()),
-            [LanguageKeywordCommand.ScopedVariable] = (false, LanguageKeywordCommand.VariableScope, false, new XenonASTScopedVariable()),
+            [LanguageKeywordCommand.ScopedVariable] = (true, LanguageKeywordCommand.VariableScope, false, new XenonASTScopedVariable()),
             [LanguageKeywordCommand.VariableScope] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTVariableScope()),
         };
 
@@ -226,7 +226,7 @@ namespace Xenon.Compiler
 
 
 
-    internal enum LanguageKeywordCommand
+    public enum LanguageKeywordCommand
     {
         INVALIDUNKNOWN,
         SetVar,

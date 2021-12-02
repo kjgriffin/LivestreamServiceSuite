@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
+using Xenon.Compiler.Suggestions;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
-    class XenonASTVariableScope : IXenonASTCommand, IXenonASTScope
+    class XenonASTVariableScope : IXenonASTCommand, IXenonASTScope, IXenonCommandSuggestionCallback
     {
         public IXenonASTElement Parent { get; private set; }
 
@@ -15,6 +18,48 @@ namespace Xenon.Compiler.AST
 
         public Dictionary<string, string> Variables { get; set; } = new Dictionary<string, string>();
         public string ScopeName { get; private set; }
+        public List<RegexMatchedContextualSuggestions> contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
+        {
+            new RegexMatchedContextualSuggestions("#var", false, "", new List<(string, string)>{ ("#var", "") }, null),
+            new RegexMatchedContextualSuggestions("\\(", false, "", new List<(string, string)>{ ("(", "Begin Parameters") }, null),
+            new RegexMatchedContextualSuggestions("\"", false, "", new List<(string, string)>{ ("\"", "Begin Variable Name") }, null),
+            new RegexMatchedContextualSuggestions("[^\"]+", false, "varname", null, GetContextualSuggestionsForVariableName),
+            new RegexMatchedContextualSuggestions("\"", false, "", new List<(string, string)>{("\"", "End Variable Name")}, null),
+            new RegexMatchedContextualSuggestions(",", false, "", new List<(string, string)>{ (",", "") }, null),
+            new RegexMatchedContextualSuggestions("(```)|(\")", false, "septype", new List<(string, string)>{ ("```", "Enclose Value"), ("\"", "Enclose Value") }, null),
+            new RegexMatchedContextualSuggestions(".+", false, "", null, GetContextualSuggestsionForEndOfCommand),
+        };
+
+        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableName = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts) =>
+        {
+            return (false, new List<(string, string)>() { ("\"", "End Variable Name") }.Concat(LanguageKeywords.LayoutForType.Select(x => ($"{LanguageKeywords.Commands[x.Key]}.Layout", $"Set layout override for layout type: {LanguageKeywords.Commands[x.Key]}"))).ToList());
+        };
+
+        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestsionForEndOfCommand = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts) =>
+        {
+            if (Regex.Match(remainingsnippet, $"${priorcaptures["septype"]}").Success)
+            {
+                if (Regex.Match(remainingsnippet, "$\\)").Success)
+                {
+                    return (true, new List<(string, string)>());
+                }
+                return (false, new List<(string suggestion, string description)> { (")", "End Parameters") });
+            }
+            else
+            {
+                return (false, new List<(string suggestion, string description)> { (priorcaptures["septype"], "Enclose Value") }.Concat(GetContextualSuggestionsForValueOfVariableName(priorcaptures["varname"], knownlayouts)).ToList());
+            }
+        };
+
+        static List<(string, string)> GetContextualSuggestionsForValueOfVariableName(string varname, List<(string lib, LanguageKeywordCommand grp, string lname)> knownlayouts)
+        {
+            var vname = Regex.Match(varname, "(?<name>.*)\\.Layout");
+            if (vname.Success)
+            {
+                return knownlayouts.Where(x => x.grp == LanguageKeywords.Commands.First(c => c.Value == vname.Groups["name"].Value).Key).Select(x => ($"{x.lib}::{x.lname}", $"Use Layout {{{x.lname}}} from Library {{{x.lib}}}")).ToList();
+            }
+            return new List<(string, string)>();
+        }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {

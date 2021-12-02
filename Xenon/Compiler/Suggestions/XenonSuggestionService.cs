@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Xenon.AssetManagment;
 using Xenon.Compiler.AST;
 using Xenon.Helpers;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.Suggestions
 {
@@ -58,8 +60,9 @@ namespace Xenon.Compiler.Suggestions
                         //var suggestions = dfunc.Invoke(priormatches, sourcecode, strbuffer.ToString()).Concat(lastsuggestions);
                         //return (false, suggestions.ToList());
                         //}
-                        var suggestions = option.ExternalFunc?.Invoke(priormatches, sourcecode, strbuffer.ToString()).Concat(lastsuggestions);
-                        return (false, suggestions.ToList());
+                        var suggestions = option.ExternalFunc?.Invoke(priormatches, sourcecode, strbuffer.ToString(), GetKnownAssets(), GetKnownLayouts());
+                        suggestions?.suggestions.Concat(lastsuggestions);
+                        return suggestions ?? (false, lastsuggestions); // really shouldn't ever return the default here
                     }
 
                     // order suggestions by partial completion, then alphabetically
@@ -216,6 +219,56 @@ namespace Xenon.Compiler.Suggestions
             return (false, LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
         }
 
+        private (bool completed, LanguageKeywordCommand cmd, int index) WalkBackToNearestValidCommand(string sourcetext, int caretpos, LanguageKeywordCommand toplevelcmd)
+        {
+            int index = caretpos - 1;
+            int firstcmdindex = -1;
+            while (index >= 0)
+            {
+                if (sourcetext[index] == '#')
+                {
+                    if (firstcmdindex == -1)
+                    {
+                        firstcmdindex = index;
+                    }
+                    // perform a relative (to index) lookahead to match the largest command string
+                    var match = Regex.Match(sourcetext.Substring(index), @"#(?<command>\w*)");
+                    if (match.Groups.ContainsKey("command"))
+                    {
+                        if (LanguageKeywords.Commands.Values.Contains(match.Groups["command"].Value))
+                        {
+                            // here we will return the command, but need to validate that it belongs as nested under the 
+                            LanguageKeywordCommand cmd = LanguageKeywords.Commands.First(k => k.Value == match.Groups["command"].Value).Key;
+                            if (LanguageKeywords.LanguageKeywordMetadata[cmd].toplevel)
+                            {
+                                if (!IsCommandComplete(cmd, sourcetext.Substring(index, caretpos - index)))
+                                {
+                                    return (false, cmd, index);
+                                }
+                                else
+                                {
+                                    return (true, cmd, firstcmdindex);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // check if there's a prior unfinished command
+                            var priorcmd = WalkBackToTopLevelCommand(sourcetext, index);
+                            if (priorcmd.completed || priorcmd.index == -1)
+                            {
+                                return (false, LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
+                            }
+                            else return priorcmd;
+                        }
+                    }
+                }
+                index--;
+            }
+            return (false, LanguageKeywordCommand.INVALIDUNKNOWN, firstcmdindex);
+
+        }
+
         private List<(LanguageKeywordCommand cmd, string cmdstr)> GetPartialMatchedTopLevelCommands(string partialstr)
         {
             return LanguageKeywords.Commands
@@ -245,11 +298,36 @@ namespace Xenon.Compiler.Suggestions
             CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.Liturgy] = (str) => (IXenonASTCommand.GetInstance<XenonASTLiturgy>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTLiturgy>());
             CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.AnthemTitle] = (str) => (IXenonASTCommand.GetInstance<XenonASTAnthemTitle>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTAnthemTitle>());
             CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.Script] = (str) => (IXenonASTCommand.GetInstance<XenonASTScript>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTScript>());
+            CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.ScopedVariable] = (str) => (IXenonASTCommand.GetInstance<XenonASTVariableScope>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTVariableScope>());
         }
 
-        public XenonSuggestionService()
+        private Project proj;
+
+        public XenonSuggestionService(Project proj)
         {
             Initialize();
+            this.proj = proj;
+        }
+
+        private List<(string, LanguageKeywordCommand, string)> GetKnownLayouts()
+        {
+            List<(string, LanguageKeywordCommand, string)> knownLayouts = new List<(string, LanguageKeywordCommand, string)>();
+            foreach (var lib in proj?.ProjectLayouts?.GetAllLibraryLayoutsByGroup())
+            {
+                foreach (var grp in lib.Library)
+                {
+                    foreach (var layout in grp.layouts)
+                    {
+                        knownLayouts.Add((lib.LibraryName, LanguageKeywords.Commands.First(x => x.Value == grp.group).Key, layout.Key));
+                    }
+                }
+            }
+            return knownLayouts;
+        }
+
+        private List<(string, AssetType)> GetKnownAssets()
+        {
+            return proj?.Assets?.Select(a => (a.Name, a.Type)).ToList();
         }
 
 

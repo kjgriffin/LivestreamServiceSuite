@@ -7,6 +7,7 @@ using System.Text;
 using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
 using System.Linq;
+using Xenon.AssetManagment;
 
 namespace Xenon.Compiler
 {
@@ -75,7 +76,8 @@ namespace Xenon.Compiler
             ("\\}", false, "", new List<(string, string)>() { ("\"", "end script")}, null),
         };
 
-        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForScriptCommands = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet) =>
+        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForScriptCommands = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet, List<(string, AssetType
+            )> knownAssets, List<(string, LanguageKeywordCommand, string)> knownLayouts) =>
         {
             // its' not validation we're doing, so just get the start of the line and work from there.
 
@@ -120,7 +122,7 @@ namespace Xenon.Compiler
                 //suggestions.AddRange(LanguageKeywords.ScriptActionsMetadata.Select(c => (c.Value.ActionName, "")));
             }
 
-            return suggestions;
+            return (false, suggestions);
         };
 
         private static List<(string, string)> GetContextualSuggestionsForAction(string action)

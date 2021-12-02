@@ -31,7 +31,7 @@ namespace Xenon.SlideAssembly
         private int slidenum = 0;
         public int NewSlideNumber => slidenum++;
 
-        public XenonSuggestionService XenonSuggestionService { get; set; } = new XenonSuggestionService();
+        public XenonSuggestionService XenonSuggestionService { get; set; }
 
 
         public void AddAttribute(string key, string value)
@@ -149,12 +149,14 @@ namespace Xenon.SlideAssembly
             }
             ProjectLayouts.LoadDefaults();
             //ProjectLayouts.InitializeNewLibrary("User.Library");
+            XenonSuggestionService = new XenonSuggestionService(this);
         }
 
         public Project()
         {
             ProjectLayouts.LoadDefaults();
             //ProjectLayouts.InitializeNewLibrary("User.Library");
+            XenonSuggestionService = new XenonSuggestionService(this);
         }
 
         public static Task<Project> LoadProject(string filename)

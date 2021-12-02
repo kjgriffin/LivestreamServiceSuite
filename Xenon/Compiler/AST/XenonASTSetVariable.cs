@@ -59,13 +59,13 @@ namespace Xenon.Compiler.AST
             ("\\)", false, "", new List<(string, string)>(){(")", "")}, null),
         };
 
-        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableValue = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet) =>
+        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableValue = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet, List<(string, AssetManagment.AssetType)> knownAssets, List<(string, LanguageKeywordCommand, string)> knownLayouts) =>
         {
             if (priorcaptures.GetOrDefault("varname", "") == "global.rendermode.alpha")
             {
-                return new List<(string suggestion, string description)>() { ("premultiplied", "Renders images premultiplied against keys."), ("\"", "") };
+                return (false, new List<(string suggestion, string description)>() { ("premultiplied", "Renders images premultiplied against keys."), ("\"", "") });
             }
-            return new List<(string suggestion, string description)>();
+            return (false, new List<(string suggestion, string description)>());
         };
 
         public IXenonASTElement Parent { get; private set; }
