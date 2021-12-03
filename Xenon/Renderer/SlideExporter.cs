@@ -65,18 +65,17 @@ namespace Xenon.Renderer
             }
 
             // generate non-standard config file to load BMD switcher for DSK1 to use pre-multipled key if rendered for premultipled alpha
-            if (proj.ProjectVariables.TryGetValue("global.rendermode.alpha", out List<string> rendermode))
+            proj.ProjectVariables.TryGetValue("global.rendermode.alpha", out List<string> rendermode);
+            // we'd always want this now unless legacy is supplied
+            if (rendermode == null || !rendermode.Any(s => s == "legacy"))
             {
-                if (rendermode.Any(s => s == "premultiplied"))
+                var config = Configurations.SwitcherConfig.DefaultConfig.GetDefaultConfig();
+                config.DownstreamKey1Config.IsPremultipled = 1;
+                string json = JsonSerializer.Serialize(config);
+                string filename = Path.Join(directory, $"BMDSwitcherConfig.json");
+                using (StreamWriter sw = new StreamWriter(filename, false))
                 {
-                    var config = Configurations.SwitcherConfig.DefaultConfig.GetDefaultConfig();
-                    config.DownstreamKey1Config.IsPremultipled = 1;
-                    string json = JsonSerializer.Serialize(config);
-                    string filename = Path.Join(directory, $"BMDSwitcherConfig.json");
-                    using (StreamWriter sw = new StreamWriter(filename, false))
-                    {
-                        sw.Write(json);
-                    }
+                    sw.Write(json);
                 }
             }
 
