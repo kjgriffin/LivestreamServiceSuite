@@ -137,7 +137,7 @@ namespace Xenon.SaveLoad
 
             // this isn't truly perfect: but to do that we'd need to haul in the entire compiler and view the project's variables. So hopefully this is close enough
             // we'll add an xml comment too
-            if (!originalVersion.MeetsMinimumVersion(1, 7, 2, 0))
+            if (!originalVersion.MeetsMinimumVersion(1, 7, 1, 22))
             {
                 const string xmlwarn = @"/// </MANUAL_UPDATE name='compatibility upgrade'>";
                 string commentexplain = $"// Project was upgraded from version {originalVersion}{Environment.NewLine}// where the default render behaviour didn't premultiply slides with their key.{Environment.NewLine}// Xenon Compatibility layer has added the following command to match that behaviour.{Environment.NewLine}// Remove the following line if the old default behaviour is unwanted.";
