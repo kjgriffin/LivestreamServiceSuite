@@ -191,7 +191,7 @@ namespace Xenon.Renderer.ImageFilters
             return (_b, _k);
         }
 
-        public static (Bitmap b, Bitmap k) ColorEdit(Bitmap inb, Bitmap inkb, ColorEditFilterParams fparams)
+        public static (Bitmap b, Bitmap k) ColorEditRGB(Bitmap inb, Bitmap inkb, ColorEditFilterParams fparams)
         {
             Bitmap _b = new Bitmap(inb);
             Bitmap _k = new Bitmap(inkb);
@@ -224,6 +224,7 @@ namespace Xenon.Renderer.ImageFilters
                         //source.SetPixel(x, y, fparams.Replace);
                         sourceManipulator.SetPixel(x, y, fparams.Replace);
                     }
+                    else sourceManipulator.SetPixel(x, y, pix);
                 }
             }
 
@@ -231,6 +232,197 @@ namespace Xenon.Renderer.ImageFilters
 
             return (fparams.ForKey ? _b : r, fparams.ForKey ? r : _k);
         }
+
+        public static (Bitmap b, Bitmap k) ColorEditHSV(Bitmap inb, Bitmap inkb, ColorEditFilterParams fparams)
+        {
+            Bitmap _b = new Bitmap(inb);
+            Bitmap _k = new Bitmap(inkb);
+
+            Bitmap source = _b;
+            if (fparams.ForKey)
+            {
+                source = _k;
+            }
+
+            SpeedyBitmapManipulator sourceManipulator = new SpeedyBitmapManipulator();
+            sourceManipulator.Initialize(source);
+
+            for (int y = 0; y < _b.Height; y++)
+            {
+                for (int x = 0; x < _b.Width; x++)
+                {
+                    //Color pix = source.GetPixel(x, y);
+                    Color pix = sourceManipulator.GetPixel(x, y);
+                    var h = Math.Round(pix.GetHue() / (360.0d / 240));
+                    var s = Math.Round(pix.GetSaturation() * 240);
+                    var b = Math.Round(pix.GetBrightness() * 240);
+                    if (Math.Abs(h - fparams.Identifier.R) <= fparams.RTolerance && Math.Abs(s - fparams.Identifier.G) <= fparams.GTolerance && Math.Abs(b - fparams.Identifier.B) <= fparams.BTolerance && ((Math.Abs(pix.A - fparams.Identifier.A) <= fparams.ATolerance && fparams.CheckAlpha) || !fparams.CheckAlpha))
+                    {
+                        if (!fparams.IsExcludeMatch)
+                        {
+                            //source.SetPixel(x, y, fparams.Replace);
+                            sourceManipulator.SetPixel(x, y, fparams.Replace);
+                        }
+                    }
+                    else if (fparams.IsExcludeMatch)
+                    {
+                        //source.SetPixel(x, y, fparams.Replace);
+                        sourceManipulator.SetPixel(x, y, fparams.Replace);
+                    }
+                    else sourceManipulator.SetPixel(x, y, pix);
+                }
+            }
+
+            var r = sourceManipulator.Finialize();
+
+            return (fparams.ForKey ? _b : r, fparams.ForKey ? r : _k);
+        }
+
+        public static (Bitmap b, Bitmap k) ColorTint(Bitmap inb, Bitmap inkb, ColorTintFilterParams fparams)
+        {
+            Bitmap _b = new Bitmap(inb);
+            Bitmap _k = new Bitmap(inkb);
+
+            Bitmap source = _b;
+
+            SpeedyBitmapManipulator sourceManipulator = new SpeedyBitmapManipulator();
+            sourceManipulator.Initialize(source);
+
+            for (int y = 0; y < _b.Height; y++)
+            {
+                for (int x = 0; x < _b.Width; x++)
+                {
+                    Color pix = sourceManipulator.GetPixel(x, y);
+                    int rr = Tint(pix.R, fparams.Red, fparams.Mix, fparams.Gammma);
+                    int g = Tint(pix.G, fparams.Green, fparams.Mix, fparams.Gammma);
+                    int b = Tint(pix.B, fparams.Blue, fparams.Mix, fparams.Gammma);
+
+                    sourceManipulator.SetPixel(x, y, Color.FromArgb(255, rr, g, b));
+                }
+            }
+
+            var r = sourceManipulator.Finialize();
+
+            return (r, _k);
+        }
+
+        public static (Bitmap b, Bitmap k) ColorUnTint(Bitmap inb, Bitmap inkb, ColorUnTintFilterParams fparams)
+        {
+            Bitmap _b = new Bitmap(inb);
+            Bitmap _k = new Bitmap(inkb);
+
+            Bitmap source = _b;
+
+            SpeedyBitmapManipulator sourceManipulator = new SpeedyBitmapManipulator();
+            sourceManipulator.Initialize(source);
+
+            for (int y = 0; y < _b.Height; y++)
+            {
+                for (int x = 0; x < _b.Width; x++)
+                {
+                    Color pix = sourceManipulator.GetPixel(x, y);
+                    int h = (int)Math.Round(pix.GetHue() / (360.0d / 240));
+                    int s = (int)Math.Round(pix.GetSaturation() * 240);
+                    int bb = (int)Math.Round(pix.GetBrightness() * 240);
+                    if (h >= fparams.HueMin && h <= fparams.HueMax && bb >= fparams.LumMin && bb <= fparams.LumMax)
+                    {
+                        int rr = UnTint(pix.R, fparams.Red, fparams.Mix, fparams.Gammma);
+                        int g = UnTint(pix.G, fparams.Green, fparams.Mix, fparams.Gammma);
+                        int b = UnTint(pix.B, fparams.Blue, fparams.Mix, fparams.Gammma);
+                        sourceManipulator.SetPixel(x, y, Color.FromArgb(255, rr, g, b));
+                    }
+                    else
+                    {
+                        sourceManipulator.SetPixel(x, y, pix);
+                    }
+                }
+            }
+
+            var r = sourceManipulator.Finialize();
+
+            return (r, _k);
+        }
+
+
+
+
+        public static int Tint(int s, int x, double mix, double gamma)
+        {
+            return (int)Math.Pow((Math.Pow(s, gamma) * (1 - mix) + Math.Pow(x, gamma) * mix), (1d / gamma));
+        }
+
+        public static int UnTint(int tval, int X, double mix, double gamma)
+        {
+            return Math.Clamp((int)Math.Exp(((gamma * Math.Log(tval)) - (Math.Log((1 - mix) * Math.Pow(X, gamma))) - (Math.Log(mix))) / mix), 0, 255);
+            //var y = (int)Math.Exp(((gamma * Math.Log(tval)) - (Math.Log((1 - mix) * Math.Pow(X, gamma))) - (Math.Log(mix)))) % 240;
+            //return y < 0 ? -1 * y : y;
+        }
+
+        public static (Bitmap b, Bitmap k) ColorShiftHSV(Bitmap inb, Bitmap inkb, ColorShiftFilterParams fparams)
+        {
+            Bitmap _b = new Bitmap(inb);
+            Bitmap _k = new Bitmap(inkb);
+
+            Bitmap source = _b;
+
+            SpeedyBitmapManipulator sourceManipulator = new SpeedyBitmapManipulator();
+            sourceManipulator.Initialize(source);
+
+            for (int y = 0; y < _b.Height; y++)
+            {
+                for (int x = 0; x < _b.Width; x++)
+                {
+                    //Color pix = source.GetPixel(x, y);
+                    Color pix = sourceManipulator.GetPixel(x, y);
+                    int h = (int)Math.Round(pix.GetHue() / (360.0d / 240));
+                    int s = (int)Math.Round(pix.GetSaturation() * 240);
+                    int b = (int)Math.Round(pix.GetBrightness() * 240);
+
+                    sourceManipulator.SetPixel(x, y, ColorFromHSV(h - fparams.Hue, s - fparams.Saturation, b - fparams.Luminance));
+
+
+                }
+            }
+
+            var r = sourceManipulator.Finialize();
+
+            return (r, _k);
+        }
+
+
+        public static Color ColorFromHSV(int H, int S, int V)
+        {
+            // scale hue from 0-360 -> 0-240
+            // scale saturation 0-240 -> 0-1
+            // scale value 0-240 -> 0-1
+            double hue = Math.Clamp(H * 360d / 240, 0, 360);
+            double saturation = Math.Clamp(S / 240d, 0, 1);
+            double value = Math.Clamp(V / 240d, 0, 1);
+
+
+            int hi = Convert.ToInt32(Math.Floor(hue / 60d)) % 6;
+            double f = hue / 60 - Math.Floor(hue / 60d);
+
+            value = value * 255;
+            int v = Convert.ToInt32(value);
+            int p = Convert.ToInt32(value * (1 - saturation));
+            int q = Convert.ToInt32(value * (1 - f * saturation));
+            int t = Convert.ToInt32(value * (1 - (1 - f) * saturation));
+
+            if (hi == 0)
+                return Color.FromArgb(255, v, t, p);
+            else if (hi == 1)
+                return Color.FromArgb(255, q, v, p);
+            else if (hi == 2)
+                return Color.FromArgb(255, p, v, t);
+            else if (hi == 3)
+                return Color.FromArgb(255, p, q, v);
+            else if (hi == 4)
+                return Color.FromArgb(255, t, p, v);
+            else
+                return Color.FromArgb(255, v, p, q);
+        }
+
 
         public static (Bitmap b, Bitmap k) CenterOnBackground(Bitmap inb, Bitmap inkb, CenterOnBackgroundFilterParams fparams)
         {

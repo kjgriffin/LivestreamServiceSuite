@@ -63,8 +63,16 @@ namespace Xenon.Renderer.ImageFilters
                     return ImageFilters.UniformStretch(inb, inkb, ifparams as UniformStretchFilterParams);
                 case ImageFilter.CenterOnBackground:
                     return ImageFilters.CenterOnBackground(inb, inkb, ifparams as CenterOnBackgroundFilterParams);
-                case ImageFilter.ColorEdit:
-                    return ImageFilters.ColorEdit(inb, inkb, ifparams as ColorEditFilterParams);
+                case ImageFilter.ColorEditRGB:
+                    return ImageFilters.ColorEditRGB(inb, inkb, ifparams as ColorEditFilterParams);
+                case ImageFilter.ColorEditHSV:
+                    return ImageFilters.ColorEditHSV(inb, inkb, ifparams as ColorEditFilterParams);
+                case ImageFilter.ColorShiftHSV:
+                    return ImageFilters.ColorShiftHSV(inb, inkb, ifparams as ColorShiftFilterParams);
+                case ImageFilter.ColorTint:
+                    return ImageFilters.ColorTint(inb, inkb, ifparams as ColorTintFilterParams);
+                case ImageFilter.ColorUnTint:
+                    return ImageFilters.ColorUnTint(inb, inkb, ifparams as ColorUnTintFilterParams);
             }
             return (inb, inkb);
         }

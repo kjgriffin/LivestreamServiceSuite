@@ -11,6 +11,10 @@ namespace Xenon.Renderer.ImageFilters
         Crop,
         UniformStretch,
         CenterOnBackground,
-        ColorEdit,
+        ColorEditRGB,
+        ColorEditHSV,
+        ColorShiftHSV,
+        ColorTint,
+        ColorUnTint,
     }
 }

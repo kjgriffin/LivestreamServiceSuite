@@ -74,6 +74,36 @@ namespace Xenon.Renderer.ImageFilters
         public int BTolerance { get; set; }
     }
 
+    public class ColorShiftFilterParams : ImageFilterParams
+    {
+        public int Hue { get; set; }
+        public int Saturation { get; set; }
+        public int Luminance { get; set; }
+
+    }
+
+    public class ColorTintFilterParams : ImageFilterParams
+    {
+        public int Red { get; set; }
+        public int Green { get; set; }
+        public int Blue { get; set; }
+        public double Mix { get; set; }
+        public double Gammma { get; set; }
+    }
+    public class ColorUnTintFilterParams : ImageFilterParams
+    {
+        public int Red { get; set; }
+        public int Green { get; set; }
+        public int Blue { get; set; }
+        public double Mix { get; set; }
+        public double Gammma { get; set; }
+        public int HueMin { get; set; }
+        public int HueMax { get; set; }
+        public int LumMin { get; set; }
+        public int LumMax { get; set; }
+    }
+
+
     public class ColorEditFilterParams : ImageFilterParams
     {
         /// <summary>
@@ -114,7 +144,7 @@ namespace Xenon.Renderer.ImageFilters
         public bool CheckAlpha { get; set; } = false;
 
     }
-        
+
     public class UniformStretchFilterParams : ImageFilterParams
     {
         /// <summary>

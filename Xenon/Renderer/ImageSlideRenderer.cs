@@ -258,7 +258,7 @@ namespace Xenon.Renderer
 
             double fillsize = 0.93;
 
-            Bitmap alpharemoved = ImageFilters.ImageFilters.ColorEdit(sourceimage, sourceimage, new ColorEditFilterParams()
+            Bitmap alpharemoved = ImageFilters.ImageFilters.ColorEditRGB(sourceimage, sourceimage, new ColorEditFilterParams()
             {
                 ForKey = false,
                 IsExcludeMatch = false,
