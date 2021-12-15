@@ -140,7 +140,7 @@ namespace Xenon.Renderer
                     return ifr.RenderImageSlide(slide, Messages);
                 case SlideFormat.LiturgyImage:
                     return isr.RenderImageSlide(slide, Messages);
-                case SlideFormat.StichedImage:
+                case SlideFormat.StitchedImage:
                     //return sir.RenderSlide(slide, Messages, _project.Assets);
                     return null;
                 case SlideFormat.Reading:

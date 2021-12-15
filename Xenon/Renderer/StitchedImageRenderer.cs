@@ -128,7 +128,7 @@ namespace Xenon.Renderer
 
         public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
         {
-            if (slide.Format == SlideFormat.StichedImage)
+            if (slide.Format == SlideFormat.StitchedImage)
             {
                 StitchedImageSlideLayoutInfo layout = (this as ISlideRenderer<StitchedImageSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
                 result = RenderSlide(slide, Messages, assetResolver, layout);

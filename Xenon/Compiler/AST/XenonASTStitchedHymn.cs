@@ -159,7 +159,7 @@ namespace Xenon.Compiler.AST
                 slide.Number = project.NewSlideNumber;
                 slide.Asset = "";
                 slide.Lines = new List<SlideLine>();
-                slide.Format = SlideFormat.StichedImage;
+                slide.Format = SlideFormat.StitchedImage;
                 slide.MediaType = MediaType.Image;
 
                 slide.Data["title"] = Title;
@@ -259,7 +259,7 @@ namespace Xenon.Compiler.AST
                 slide.Number = project.NewSlideNumber;
                 slide.Asset = "";
                 slide.Lines = new List<SlideLine>();
-                slide.Format = SlideFormat.StichedImage;
+                slide.Format = SlideFormat.StitchedImage;
                 slide.MediaType = MediaType.Image;
 
                 slide.Data["title"] = Title;
@@ -357,7 +357,7 @@ namespace Xenon.Compiler.AST
                 slide.Number = project.NewSlideNumber;
                 slide.Asset = "";
                 slide.Lines = new List<SlideLine>();
-                slide.Format = SlideFormat.StichedImage;
+                slide.Format = SlideFormat.StitchedImage;
                 slide.MediaType = MediaType.Image;
 
                 slide.Data["title"] = Title;
@@ -390,7 +390,7 @@ namespace Xenon.Compiler.AST
                     slide.Number = project.NewSlideNumber;
                     slide.Asset = "";
                     slide.Lines = new List<SlideLine>();
-                    slide.Format = SlideFormat.StichedImage;
+                    slide.Format = SlideFormat.StitchedImage;
                     slide.MediaType = MediaType.Image;
 
                     slide.Data["title"] = Title;
@@ -416,7 +416,7 @@ namespace Xenon.Compiler.AST
                         refrainslide.Number = project.NewSlideNumber;
                         refrainslide.Asset = "";
                         refrainslide.Lines = new List<SlideLine>();
-                        refrainslide.Format = SlideFormat.StichedImage;
+                        refrainslide.Format = SlideFormat.StitchedImage;
                         refrainslide.MediaType = MediaType.Image;
 
                         refrainslide.Data["title"] = Title;
