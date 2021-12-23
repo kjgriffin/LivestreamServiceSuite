@@ -9,7 +9,7 @@ namespace Xenon.Compiler.AST
     class XenonASTPrefabScriptLiturgyOff : IXenonASTCommand
     {
 
-        public string SlideTitleMessage { get; set; } = "Litury Off";
+        public string SlideTitleMessage { get; set; } = "Liturgy Off";
         public IXenonASTElement Parent { get; private set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
