@@ -41,7 +41,17 @@ namespace SlideCreater
             background.Visibility = Visibility.Hidden;
             if (showkey)
             {
-                if (Slide.KeyBitmap != null)
+                if (Slide?.MediaType == MediaType.Video_KeyedVideo)
+                {
+                    ImgDisplay.Visibility = Visibility.Hidden;
+                    textDisplay.Visibility = Visibility.Hidden;
+                    VideoDisplay.Visibility = Visibility.Visible;
+                    VideoDisplay.Source = new Uri(Slide.KeyAssetPath);
+                    VideoDisplay.MediaEnded += VideoDisplay_MediaEnded;
+                    VideoDisplay.Volume = 0;
+                    VideoDisplay.Play();
+                }
+                else if (Slide.KeyBitmap != null)
                 {
                     VideoDisplay.Visibility = Visibility.Hidden;
                     textDisplay.Visibility = Visibility.Hidden;
@@ -74,7 +84,7 @@ namespace SlideCreater
                     ImgDisplay.Visibility = Visibility.Visible;
                     ImgDisplay.Source = Slide.Bitmap.ConvertToBitmapImage();
                 }
-                if (Slide?.MediaType == MediaType.Video)
+                if (Slide?.MediaType == MediaType.Video || Slide?.MediaType == MediaType.Video_KeyedVideo)
                 {
                     ImgDisplay.Visibility = Visibility.Hidden;
                     textDisplay.Visibility = Visibility.Hidden;

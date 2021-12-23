@@ -97,6 +97,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.Postset] = "postset",
             [LanguageKeywordCommand.VariableScope] = "scope",
             [LanguageKeywordCommand.ScopedVariable] = "var",
+            [LanguageKeywordCommand.PostFilter] = "postfilter",
         };
 
         public static Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata>()
@@ -132,6 +133,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.Postset] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTExpression()),
             [LanguageKeywordCommand.ScopedVariable] = (true, LanguageKeywordCommand.VariableScope, false, new XenonASTScopedVariable()),
             [LanguageKeywordCommand.VariableScope] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTVariableScope()),
+            [LanguageKeywordCommand.PostFilter] = (true, LanguageKeywordCommand.VariableScope, false, new XenonASTPostFilter()),
         };
 
         public static Dictionary<AutomationActions, AutomationActionMetadata> ScriptActionsMetadata = new Dictionary<AutomationActions, AutomationActionMetadata>()
@@ -264,6 +266,7 @@ namespace Xenon.Compiler
         Postset, // Doesn't translate into a true AST command, but is of same priority so we'd better add it here
         ScopedVariable,
         VariableScope,
+        PostFilter,
     }
 
     public enum AutomationActionArgType

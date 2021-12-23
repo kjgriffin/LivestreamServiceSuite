@@ -7,5 +7,6 @@
         Empty,
         Text,
         Audio,
+        Video_KeyedVideo,
     }
 }

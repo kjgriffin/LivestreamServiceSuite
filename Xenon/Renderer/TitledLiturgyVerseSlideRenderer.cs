@@ -46,6 +46,19 @@ namespace Xenon.Renderer
 
         public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages, TitledLiturgyVerseSlideLayoutInfo layout)
         {
+            if (slide.Data.TryGetValue("mode", out object mode))
+            {
+                if ((string)mode == "legacy")
+                {
+                    return Internal_RenderSlide_Legacy(slide, messages, layout);
+                }
+            }
+            return Internal_RenderSlide(slide, messages, layout);
+        }
+
+
+        public RenderedSlide Internal_RenderSlide_Legacy(Slide slide, List<XenonCompilerMessage> messages, TitledLiturgyVerseSlideLayoutInfo layout)
+        {
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = "";
@@ -73,15 +86,13 @@ namespace Xenon.Renderer
 
 
 
-            /*
-            Font bf = new Font(layout.Font, FontStyle.Bold);
-            Font itf = new Font(layout.Font, FontStyle.Italic);
+            Font bf = new Font(layout.ContentTextbox.Font.GetFont(), FontStyle.Bold);
+            Font itf = new Font(layout.ContentTextbox.Font.GetFont(), FontStyle.Italic);
 
-            gfx.DrawString((string)slide.Data["title"], bf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
-            kgfx.DrawString((string)slide.Data["title"], bf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
-            gfx.DrawString((string)slide.Data["reference"], itf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
-            kgfx.DrawString((string)slide.Data["reference"], itf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
-            */
+            //gfx.DrawString((string)slide.Data["title"], bf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
+            //kgfx.DrawString((string)slide.Data["title"], bf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.LeftVerticalCenterAlign);
+            //gfx.DrawString((string)slide.Data["reference"], itf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
+            //kgfx.DrawString((string)slide.Data["reference"], itf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
 
 
             List<LiturgyTextLine> Lines = (List<LiturgyTextLine>)slide.Data["lines"];
@@ -102,7 +113,6 @@ namespace Xenon.Renderer
             Font flsbregular = new Font("LSBSymbol", layout.ContentTextbox.Font.Size, (FontStyle)layout.ContentTextbox.Font.Style);
 
 
-            /*
             foreach (var line in Lines)
             {
                 float xoffset = 0;
@@ -138,7 +148,58 @@ namespace Xenon.Renderer
                 linenum++;
                 vspace += localmaxh;
             }
-            */
+
+
+            res.Bitmap = bmp;
+            res.KeyBitmap = kbmp;
+            return res;
+        }
+
+
+        public RenderedSlide Internal_RenderSlide(Slide slide, List<XenonCompilerMessage> messages, TitledLiturgyVerseSlideLayoutInfo layout)
+        {
+            RenderedSlide res = new RenderedSlide();
+            res.MediaType = MediaType.Image;
+            res.AssetPath = "";
+            res.RenderedAs = "Liturgy";
+
+
+            // draw it
+
+            // for now just draw the layout
+            Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+            Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+
+            Graphics gfx = Graphics.FromImage(bmp);
+            Graphics kgfx = Graphics.FromImage(kbmp);
+
+            gfx.Clear(layout.BackgroundColor.GetColor());
+            kgfx.Clear(layout.KeyColor.GetColor());
+
+
+            DrawingBoxRenderer.Render(gfx, kgfx, layout.Banner);
+
+
+            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data["title"], layout.TitleBox);
+            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data["reference"], layout.RefBox);
+
+
+            List<LiturgyTextLine> Lines = (List<LiturgyTextLine>)slide.Data["lines"];
+
+            float alltextheight = 0;
+            foreach (var line in Lines)
+            {
+                alltextheight += line.Height;
+            }
+
+            float interspace = (layout.ContentTextbox.Textbox.Size.Height - alltextheight) / (Lines.Count + 1);
+
+            float vspace = interspace;
+            int linenum = 0;
+
+            string lastspeaker = "";
+
+            Font flsbregular = new Font("LSBSymbol", layout.ContentTextbox.Font.Size, (FontStyle)layout.ContentTextbox.Font.Style);
 
             StringBuilder sb = new StringBuilder();
             foreach (var line in Lines)

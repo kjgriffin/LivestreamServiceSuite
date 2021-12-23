@@ -99,6 +99,16 @@ namespace IntegratedPresenter.Main
             videoPlayer.Volume = 1;
         }
 
+        bool requestedMute = false;
+        public void MuteAudioPlayback()
+        {
+            
+        }
+        public void UnMuteAudioPlayback()
+        {
+
+        }
+
         private void VideoPlayer_MediaEnded(object sender, RoutedEventArgs e)
         {
             if (AutoSilentReplay)
@@ -442,6 +452,7 @@ namespace IntegratedPresenter.Main
             videoPlayer.Visibility = Visibility.Visible;
             try
             {
+                
                 videoPlayer.Source = _source;
             }
             catch (Exception)

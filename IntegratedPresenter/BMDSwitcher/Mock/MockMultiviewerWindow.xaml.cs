@@ -154,7 +154,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             }
             else
             {
-                if (slide.KeySource != null && slide.KeySource != "")
+                if (slide.KeySource != null && slide.KeySource != "" && !slide.KeySource.EndsWith(".mp4"))
                 {
                     control.Source = new BitmapImage(new Uri(slide.KeySource));
                 }

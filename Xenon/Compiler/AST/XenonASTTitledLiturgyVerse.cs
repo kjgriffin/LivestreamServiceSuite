@@ -19,6 +19,7 @@ namespace Xenon.Compiler.AST
         public string Title { get; set; }
         public string Reference { get; set; }
         public string DrawSpeaker { get; set; }
+        public string Mode { get; set; }
         public List<string> Text { get; set; } = new List<string>();
         public IXenonASTElement Parent { get; private set; }
 
@@ -29,6 +30,14 @@ namespace Xenon.Compiler.AST
             Title = args["title"];
             Reference = args["reference"];
             DrawSpeaker = args["drawspeaker"];
+            lexer.GobbleWhitespace();
+            if (lexer.Inspect("<"))
+            {
+                lexer.Consume();
+                lexer.GobbleWhitespace();
+                Mode = lexer.ConsumeUntil(">");
+                lexer.GobbleandLog(">", "Expected closing '>' for mode (e.g. '<legacy>')");
+            }
 
 
             lexer.GobbleWhitespace();
@@ -75,6 +84,10 @@ namespace Xenon.Compiler.AST
             slide.Data["title"] = Title;
             slide.Data["reference"] = Reference;
             slide.Data["drawspeaker"] = DrawSpeaker;
+            if (!string.IsNullOrWhiteSpace(Mode))
+            {
+                slide.Data["mode"] = Mode;
+            }
 
             // This is no-longer relevatn
             /*

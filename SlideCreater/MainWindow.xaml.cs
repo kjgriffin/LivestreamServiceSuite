@@ -1201,7 +1201,7 @@ namespace SlideCreater
 
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save Project";
-            sfd.DefaultExt = "zip";
+            sfd.DefaultExt = "trusty.zip";
             sfd.AddExtension = false;
             sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}.trusty";
             if (sfd.ShowDialog() == true)

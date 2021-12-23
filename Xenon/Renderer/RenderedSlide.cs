@@ -10,6 +10,7 @@ namespace Xenon.Renderer
     {
         public MediaType MediaType { get; set; }
         public string AssetPath { get; set; }
+        public string KeyAssetPath { get; set; }
         public string RenderedAs { get; set; }
         public string Name { get; set; }
         public string CopyExtension { get; set; }
@@ -23,7 +24,7 @@ namespace Xenon.Renderer
 
         public static RenderedSlide Default()
         {
-            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", CopyExtension = "", Text = "", Name = "", RenderedAs = "Default", Number = 0, IsPostset = false, Postset = -1 };
+            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", KeyAssetPath = "", CopyExtension = "", Text = "", Name = "", RenderedAs = "Default", Number = 0, IsPostset = false, Postset = -1 };
         }
     }
 }

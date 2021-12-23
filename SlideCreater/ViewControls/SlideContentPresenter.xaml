@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Border Name="SelectionBorder" Margin="5,5,5,5">
+        <Border Panel.ZIndex="1" Name="SelectionBorder" Margin="5,5,5,5">
             <Viewbox Stretch="Uniform">
                 <Border>
                     <Grid Height="1080" Width="1920">
@@ -16,10 +16,30 @@
                         </Viewbox>
                         <Image Name="ImgDisplay"></Image>
                         <MediaElement Name="VideoDisplay" LoadedBehavior="Manual"></MediaElement>
-                        <Rectangle Name="background"></Rectangle>
+                        <Rectangle Name="background">
+                        </Rectangle>
                     </Grid>
                 </Border>
             </Viewbox>
         </Border>
+        <Rectangle Panel.ZIndex="0">
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill">
+                        <Setter.Value>
+                            <DrawingBrush TileMode="Tile" Viewport="0,0,32,32" ViewportUnits="Absolute">
+                                <DrawingBrush.Drawing>
+                                    <GeometryDrawing Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0z" Brush="LightGray"/>
+                                </DrawingBrush.Drawing>
+                            </DrawingBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Opacity">
+                        <Setter.Value>0.1</Setter.Value>
+                    </Setter>
+                </Style>
+            </Rectangle.Style>
+
+        </Rectangle>
     </Grid>
 </UserControl>

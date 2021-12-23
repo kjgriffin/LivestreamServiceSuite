@@ -12,6 +12,7 @@ namespace Xenon.Compiler
     {
 
         public string AssetName { get; set; }
+        public string KeyAssetName { get; set; }
         public string KeyType { get; set; }
         public IXenonASTElement Parent { get; private set; }
 
@@ -28,6 +29,14 @@ namespace Xenon.Compiler
                 {
                     Lexer.Consume();
                     video.KeyType = Lexer.ConsumeUntil("]");
+                    Lexer.Consume();
+                    Lexer.GobbleWhitespace();
+                }
+                else if (Lexer.Inspect("<"))
+                {
+                    Lexer.Consume();
+                    Lexer.GobbleWhitespace();
+                    video.KeyAssetName = Lexer.ConsumeUntil(">", "Expected closing '>' for key file.");
                     Lexer.Consume();
                     Lexer.GobbleWhitespace();
                 }
@@ -52,6 +61,15 @@ namespace Xenon.Compiler
             {
                 assetpath = asset.CurrentPath;
             }
+            if (!string.IsNullOrWhiteSpace(KeyAssetName))
+            {
+                var keyasset = project.Assets.Find(p => p.Name == KeyAssetName);
+                if (keyasset != null)
+                {
+                    videoslide.Data["key-file"] = keyasset.CurrentPath;
+                }
+            }
+
             SlideLineContent slc = new SlideLineContent() { Data = assetpath };
             SlideLine sl = new SlideLine() { Content = new List<SlideLineContent>() { slc } };
             videoslide.Lines.Add(sl);

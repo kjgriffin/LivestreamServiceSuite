@@ -31,6 +31,19 @@ namespace Xenon.Renderer
                 messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = $"Could not find file {res.AssetPath}", ErrorName = "Missing Video File", Level = Compiler.XenonCompilerMessageType.Error });
                 throw new FileNotFoundException();
             }
+            if (slide.Data.TryGetValue("key-file", out object keyfile))
+            {
+                if (!System.IO.File.Exists((string)keyfile))
+                {
+                    messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = $"Could not find file {res.AssetPath}", ErrorName = "Missing Video File", Level = Compiler.XenonCompilerMessageType.Error });
+                    throw new FileNotFoundException();
+                }
+                else
+                {
+                    res.KeyAssetPath = (string)keyfile;
+                    res.MediaType = SlideAssembly.MediaType.Video_KeyedVideo;
+                }
+            }
 
             res.KeyBitmap = new Bitmap(1920, 1080);
             Graphics gfx = Graphics.FromImage(res.KeyBitmap);

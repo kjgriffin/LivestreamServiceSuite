@@ -95,6 +95,8 @@ namespace Xenon.Compiler
                 "}",
                 "[",
                 "]",
+                "<",
+                ">",
                 "#",
                 "\\",
                 "$",

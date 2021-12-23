@@ -42,6 +42,13 @@ namespace Xenon.Renderer
                     File.Copy(rs.AssetPath, filename);
                     rs.KeyBitmap.Save(kfilename, ImageFormat.Png);
                 }
+                else if (rs.MediaType == MediaType.Video_KeyedVideo)
+                {
+                    string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.mp4");
+                    string kfilename = Path.Join(directory, $"Key_{slide.Number}.mp4");
+                    File.Copy(rs.AssetPath, filename);
+                    File.Copy(rs.KeyAssetPath, kfilename);
+                }
                 else if (rs.MediaType == MediaType.Text)
                 {
                     // output text file

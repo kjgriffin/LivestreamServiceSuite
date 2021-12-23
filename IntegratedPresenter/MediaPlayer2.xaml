@@ -52,7 +52,7 @@
         </Rectangle>
         <Rectangle Name="blackbase" Grid.RowSpan="2" Panel.ZIndex="-2">
             <Rectangle.Fill>
-                <SolidColorBrush Color="Black"></SolidColorBrush>
+                <SolidColorBrush Color="Red"></SolidColorBrush>
             </Rectangle.Fill>
         </Rectangle>
     </Grid>

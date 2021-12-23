@@ -6,13 +6,13 @@
     <RootNamespace>Integrated_Presenter</RootNamespace>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>icon4.ico</ApplicationIcon>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <PublishSingleFile>True</PublishSingleFile>
-    <PublishReadyToRun>True</PublishReadyToRun>
-    <SelfContained>True</SelfContained>
-    <IsPortable>True</IsPortable>
-    <RuntimeIdentifier>win-x64-aot</RuntimeIdentifier>
-    <RuntimeIdentifiers>win-x64-aot</RuntimeIdentifiers>
+    <!--<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>-->
+    <!--<PublishSingleFile>True</PublishSingleFile>-->
+    <!--<PublishReadyToRun>True</PublishReadyToRun>-->
+    <!--<SelfContained>True</SelfContained>-->
+    <!--<IsPortable>True</IsPortable>-->
+    <!--<RuntimeIdentifier>win-x64-aot</RuntimeIdentifier>-->
+    <!--<RuntimeIdentifiers>win-x64-aot</RuntimeIdentifiers>-->
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
