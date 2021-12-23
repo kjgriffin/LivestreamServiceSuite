@@ -48,6 +48,8 @@ namespace IntegratedPresenter.Main
 
         BMDSwitcherConfigSettings _config;
 
+        System.Threading.ManualResetEvent autoTransMRE = new System.Threading.ManualResetEvent(true);
+
 
         List<SlidePoolSource> SlidePoolButtons;
 
@@ -301,7 +303,7 @@ namespace IntegratedPresenter.Main
             if (res == true)
             {
                 SwitcherConnectedUiUpdate(true);
-                switcherManager = new BMDSwitcherManager(this);
+                switcherManager = new BMDSwitcherManager(this, autoTransMRE);
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
                 switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
                 SwitcherConnectedUiUpdate(false, true);
@@ -2157,7 +2159,19 @@ namespace IntegratedPresenter.Main
                             if (waitfortrans)
                             {
                                 _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for autotrans to complete. For LITURGY type slide ({Presentation.CurrentSlide}).");
-                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                                //await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                                await Task.Run(() =>
+                                {
+                                    _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for signal that autotrans has completed. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                    if (autoTransMRE.WaitOne(TimeSpan.FromMilliseconds(1500)))
+                                    {
+                                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans signaled complete. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                    }
+                                    else
+                                    {
+                                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans not signaled- timed out after 1500ms. Continuing anyways. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                    }
+                                });
                             }
                             _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command preset select for postset shot. For LITURGY type slide ({Presentation.CurrentSlide}).");
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
@@ -2667,12 +2681,14 @@ namespace IntegratedPresenter.Main
                 // if guarded, check if transition is already in progress
                 if (!switcherState.InTransition)
                 {
+                    autoTransMRE.Reset();
                     switcherManager?.PerformAutoTransition();
                 }
             }
             else
             {
                 switcherManager?.PerformAutoTransition();
+                autoTransMRE.Reset();
             }
         }
 

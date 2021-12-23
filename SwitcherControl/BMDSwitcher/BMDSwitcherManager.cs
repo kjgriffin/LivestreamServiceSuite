@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using log4net;
 using System.IO;
+using System.Threading;
 
 namespace IntegratedPresenter
 {
@@ -66,8 +67,10 @@ namespace IntegratedPresenter
 
         private ILog _logger;
 
-        public BMDSwitcherManager(Window parent)
+        ManualResetEvent _autoTransMRE;
+        public BMDSwitcherManager(Window parent, ManualResetEvent autoTransMRE)
         {
+            _autoTransMRE = autoTransMRE;
             // initialize logger
             // enable logging
             using (Stream cstream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Integrated_Presenter.Log4Net_switcher.config"))
@@ -134,6 +137,10 @@ namespace IntegratedPresenter
             {
                 ForceStateUpdate_TransitionPosition();
                 SwitcherStateChanged?.Invoke(_state);
+                if (_state.InTransition == false)
+                {
+                    _autoTransMRE.Set();
+                }
             });
         }
 
