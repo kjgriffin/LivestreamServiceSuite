@@ -34,9 +34,9 @@ namespace Xenon.Compiler
                     {
                         Project = await compiler.Compile(proj, inputtext, Assets, progress);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        throw ex;
+                        throw;
                     }
                 });
             }
@@ -165,6 +165,12 @@ namespace Xenon.Compiler
                 }
 
                 await Task.WhenAll(slidetasks);
+                
+                if (failedslides > 0)
+                {
+                    Messages.Add(new XenonCompilerMessage() { ErrorMessage = $"Rendering failed to render {failedslides} slides.", ErrorName = "Failed to Render Slides", Level = XenonCompilerMessageType.Error });
+                }
+                
                 return slides.ToList();
             }
             catch (Exception ex)
@@ -172,10 +178,7 @@ namespace Xenon.Compiler
                 Messages.Add(new XenonCompilerMessage() { ErrorMessage = ex.ToString(), ErrorName = "Error Rendering Project", Level = XenonCompilerMessageType.Error });
                 return new List<RenderedSlide>();
             }
-            if (failedslides > 0)
-            {
-                Messages.Add(new XenonCompilerMessage() { ErrorMessage = $"Rendering failed to render {failedslides} slides.", ErrorName = "Failed to Render Slides", Level = XenonCompilerMessageType.Error });
-            }
+
         }
 
 

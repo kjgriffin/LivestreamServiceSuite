@@ -556,7 +556,7 @@ namespace SlideCreater
                     assetItemCtrl.OnRenameAssetRequest += AssetItemCtrl_OnRenameAssetRequest;
                     AssetList.Children.Add(assetItemCtrl);
                 }
-                catch (FileNotFoundException ex)
+                catch (FileNotFoundException)
                 {
                     loaderrors = true;
                     missingassets.Add(asset.Name);
@@ -743,7 +743,7 @@ namespace SlideCreater
                 {
                     ShowProjectAssets();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     MessageBox.Show("Failed to load project assets");
                     Assets.Clear();

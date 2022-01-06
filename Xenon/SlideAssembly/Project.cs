@@ -134,7 +134,6 @@ namespace Xenon.SlideAssembly
         }
 
         private string _loadTmpPath = "";
-        private bool disposedValue;
 
         public string LoadTmpPath { get => _loadTmpPath; }
 

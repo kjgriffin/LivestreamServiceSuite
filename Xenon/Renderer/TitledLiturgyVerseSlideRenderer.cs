@@ -195,9 +195,6 @@ namespace Xenon.Renderer
             float interspace = (layout.ContentTextbox.Textbox.Size.Height - alltextheight) / (Lines.Count + 1);
 
             float vspace = interspace;
-            int linenum = 0;
-
-            string lastspeaker = "";
 
             Font flsbregular = new Font("LSBSymbol", layout.ContentTextbox.Font.Size, (FontStyle)layout.ContentTextbox.Font.Style);
 

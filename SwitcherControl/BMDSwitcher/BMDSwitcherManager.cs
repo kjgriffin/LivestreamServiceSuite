@@ -35,7 +35,6 @@ namespace IntegratedPresenter
         private IBMDSwitcherMediaPlayer _BMDSwitcherMediaPlayer1;
         private IBMDSwitcherMediaPlayer _BMDSwitcherMediaPlayer2;
         private IBMDSwitcherMediaPool _BMDSwitcherMediaPool;
-        private IBMDSwitcherKeyDVEParameters _BMDSwitcherDVEParameters;
         private IBMDSwitcherKeyFlyParameters _BMDSwitcherFlyKeyParamters;
         private IBMDSwitcherTransitionParameters _BMDSwitcherTransitionParameters;
 
@@ -48,7 +47,7 @@ namespace IntegratedPresenter
         private List<InputMonitor> _inputMonitors = new List<InputMonitor>();
         private SwitcherFlyKeyMonitor _flykeyMonitor;
         private SwitcherTransitionMonitor _transitionMontitor;
-        // prehaps don't need to monitor multiviewer
+        // perhaps don't need to monitor multiviewer
         // for now won't have mediaplayer monitors
 
         private BMDSwitcherState _state;

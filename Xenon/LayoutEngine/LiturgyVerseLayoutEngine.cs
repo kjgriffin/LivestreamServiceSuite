@@ -62,13 +62,10 @@ namespace Xenon.LayoutEngine
 
             List<string> line = new List<string>();
 
-            bool skipnext = false;
-
             foreach (var word in words)
             {
                 if (Escape.Contains(word))
                 {
-                    skipnext = true;
                     continue;
                 }
                 // ignore newlines
@@ -85,7 +82,6 @@ namespace Xenon.LayoutEngine
                     // use space instead
                     line.Add(" ");
                 }
-                skipnext = false;
             }
             Lines.Add(finalizeline(line));
 

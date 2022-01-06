@@ -40,8 +40,6 @@ namespace Xenon.Compiler
 
         public int MaxChecks { get; private set; }
 
-        private bool nextTokenIsEscaped = false;
-
         private int peeks = 0;
         private int peeknexts = 0;
         private int inspections = 0;
@@ -402,7 +400,7 @@ namespace Xenon.Compiler
             catch (Exception ex)
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorName = "Expecting missing token", ErrorMessage = $"Expecting token <'{test}'>.\r\nAdditional Info: {errormessage}", Generator = "Lexer.ConsumeUntil", Inner = ex.Message, Level = XenonCompilerMessageType.Error, Token = CurrentToken });
-                throw ex;
+                throw;
             }
 
             //return sb.ToString();
@@ -435,7 +433,7 @@ namespace Xenon.Compiler
                     Level = XenonCompilerMessageType.Error,
                     Token = CurrentToken
                 });
-                throw ex;
+                throw;
             }
             return sb.ToString();
         }
@@ -495,7 +493,7 @@ namespace Xenon.Compiler
                 catch (Exception ex)
                 {
                     Logger.Log(new XenonCompilerMessage() { ErrorName = "Bad parameter", ErrorMessage = $"Mal-formed parameter {helpmsg}.", Generator = "Lexer.ConsumeArgList", Inner = ex.Message, Level = XenonCompilerMessageType.Error, Token = CurrentToken });
-                    throw ex;
+                    throw;
                 }
 
 

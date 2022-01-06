@@ -16,6 +16,13 @@ namespace CommonVersionInfo
         public int Build { get; set; }
         public string Mode { get; set; }
 
+
+        public BuildVersion()
+        {
+            Mode = string.Empty;
+        }
+ 
+
         public override string ToString()
         {
             return $"{MajorVersion}.{MinorVersion}.{Revision}.{Build}-{Mode}";
