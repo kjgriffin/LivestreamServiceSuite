@@ -130,7 +130,7 @@ namespace Xenon.SaveLoad
 
         }
 
-        private async static Task TrustilyUpgradeOldVersion(ZipArchive archive, Project proj, BuildVersion originalVersion, BuildVersion targetVersion)
+        private static Task TrustilyUpgradeOldVersion(ZipArchive archive, Project proj, BuildVersion originalVersion, BuildVersion targetVersion)
         {
             // rendering behaviour post 1.7.1.21 will be to assume premultiply alpha instead of only using it it explicitly set
             // to retain legacy render behaviour, for an old project we will add a #set command to mark global.rendermode.alpha = legacy
@@ -150,6 +150,7 @@ namespace Xenon.SaveLoad
                 proj.SourceCode = sb.ToString();
             }
 
+            return Task.CompletedTask;
         }
 
 

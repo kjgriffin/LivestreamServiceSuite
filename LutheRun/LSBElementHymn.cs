@@ -388,10 +388,11 @@ namespace LutheRun
                                    try
                                    {
                                        System.Diagnostics.Debug.WriteLine($"Fetching image {ScreenURL} from web.");
-                                       System.Net.WebRequest request = System.Net.WebRequest.Create(ScreenURL);
-                                       System.Net.WebResponse response = await request.GetResponseAsync();
-                                       System.IO.Stream responsestream = response.GetResponseStream();
-                                       b = new Bitmap(responsestream);
+
+                                       using (Stream rstream = await WebHelpers.httpClient.GetStreamAsync(ScreenURL))
+                                       {
+                                           b = new Bitmap(rstream);
+                                       }
                                    }
                                    catch (Exception ex)
                                    {

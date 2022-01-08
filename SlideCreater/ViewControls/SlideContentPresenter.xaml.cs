@@ -26,7 +26,6 @@ namespace SlideCreater
     public partial class SlideContentPresenter : UserControl
     {
 
-        public event SlideClickedEvent OnSlideClicked;
         public RenderedSlide Slide { get; set; }
 
         public SlideContentPresenter()

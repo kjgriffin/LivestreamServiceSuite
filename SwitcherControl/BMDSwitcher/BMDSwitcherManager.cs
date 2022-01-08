@@ -373,7 +373,9 @@ namespace IntegratedPresenter
             IntPtr inputIteratorPtr;
             Guid inputIteratorIID = typeof(IBMDSwitcherInputIterator).GUID;
             _BMDSwitcher.CreateIterator(ref inputIteratorIID, out inputIteratorPtr);
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (inputIteratorPtr != null)
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             {
                 inputIterator = (IBMDSwitcherInputIterator)Marshal.GetObjectForIUnknown(inputIteratorPtr);
             }
@@ -414,7 +416,9 @@ namespace IntegratedPresenter
             IntPtr inputIteratorPtr;
             Guid inputIteratorIID = typeof(IBMDSwitcherInputIterator).GUID;
             _BMDSwitcher.CreateIterator(ref inputIteratorIID, out inputIteratorPtr);
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (inputIteratorPtr != null)
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             {
                 inputIterator = (IBMDSwitcherInputIterator)Marshal.GetObjectForIUnknown(inputIteratorPtr);
             }
@@ -442,7 +446,9 @@ namespace IntegratedPresenter
             IntPtr multiViewPtr;
             Guid multiViewIID = typeof(IBMDSwitcherMultiViewIterator).GUID;
             _BMDSwitcher.CreateIterator(ref multiViewIID, out multiViewPtr);
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (multiViewPtr == null)
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             {
                 return false;
             }
@@ -467,7 +473,9 @@ namespace IntegratedPresenter
             IntPtr meIteratorPtr;
             Guid meIteratorIID = typeof(IBMDSwitcherMixEffectBlockIterator).GUID;
             _BMDSwitcher.CreateIterator(ref meIteratorIID, out meIteratorPtr);
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (meIteratorPtr != null)
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             {
                 meIterator = (IBMDSwitcherMixEffectBlockIterator)Marshal.GetObjectForIUnknown(meIteratorPtr);
             }
@@ -526,7 +534,9 @@ namespace IntegratedPresenter
             IntPtr dskIteratorPtr;
             Guid dskIteratorIID = typeof(IBMDSwitcherDownstreamKeyIterator).GUID;
             _BMDSwitcher.CreateIterator(ref dskIteratorIID, out dskIteratorPtr);
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (dskIteratorPtr != null)
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             {
                 dskIterator = (IBMDSwitcherDownstreamKeyIterator)Marshal.GetObjectForIUnknown(dskIteratorPtr);
             }
@@ -576,7 +586,9 @@ namespace IntegratedPresenter
             IntPtr mediaPlayerPtr;
             Guid mediaPlayerIID = typeof(IBMDSwitcherMediaPlayerIterator).GUID;
             _BMDSwitcher.CreateIterator(ref mediaPlayerIID, out mediaPlayerPtr);
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (mediaPlayerPtr == null)
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             {
                 _logger.Error($"[BMD HW] media player iterator null");
                 return false;
@@ -1166,7 +1178,9 @@ namespace IntegratedPresenter
             IntPtr audioPtr;
             Guid audioInputIID = typeof(IBMDSwitcherAudioInputIterator).GUID;
             mixer.CreateIterator(ref audioInputIID, out audioPtr);
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (audioPtr != null)
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             {
                 audioIterator = (IBMDSwitcherAudioInputIterator)Marshal.GetObjectForIUnknown(audioPtr);
 

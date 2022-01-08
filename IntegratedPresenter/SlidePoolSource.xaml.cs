@@ -224,7 +224,7 @@ namespace IntegratedPresenter.Main
             mediapreview.ReplayMedia();
         }
 
-        private async void ClickLoadMedia(object sender, RoutedEventArgs e)
+        private void ClickLoadMedia(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Select Media File";

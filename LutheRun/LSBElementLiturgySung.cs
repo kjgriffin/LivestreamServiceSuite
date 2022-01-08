@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Dom;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using static LutheRun.LSBElementHymn;
 
 namespace LutheRun
@@ -73,40 +75,38 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_SUNG_LITUGY.";
         }
 
-        public Task GetResourcesFromLocalOrWeb(string localpath = "")
+        public async Task GetResourcesFromLocalOrWeb(string localpath = "")
         {
-            return Task.Run(async () =>
+            // try loading locally
+            string path = Path.Combine(localpath, Image.LocalPath);
+            string file = Path.GetFullPath(path);
+            if (File.Exists(file))
             {
-                // try loading locally
-                string path = Path.Combine(localpath, Image.LocalPath);
-                string file = Path.GetFullPath(path);
-                if (File.Exists(file))
-                {
-                    try
-                    {
-                        Debug.WriteLine($"Loading image from local file {path}.");
-                        Image.Bitmap = new Bitmap(file);
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"Failed to load local file {path} because {ex}. Falling back to web.");
-                    }
-                }
-                // use screenurls
                 try
                 {
-                    Debug.WriteLine($"Fetching image {Image.ScreenURL} from web.");
-                    System.Net.WebRequest request = System.Net.WebRequest.Create(Image.ScreenURL);
-                    System.Net.WebResponse response = await request.GetResponseAsync();
-                    System.IO.Stream responsestream = response.GetResponseStream();
-                    Image.Bitmap = new Bitmap(responsestream);
+                    Debug.WriteLine($"Loading image from local file {path}.");
+                    Image.Bitmap = new Bitmap(file);
+                    return;
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Failed trying to download: {Image.ScreenURL}\r\n{ex}");
+                    Debug.WriteLine($"Failed to load local file {path} because {ex}. Falling back to web.");
                 }
-            });
+            }
+            // use screenurls
+            try
+            {
+                Debug.WriteLine($"Fetching image {Image.ScreenURL} from web.");
+
+                using (Stream rstream = await Xenon.Helpers.WebHelpers.httpClient.GetStreamAsync(Image.ScreenURL))
+                {
+                    Image.Bitmap = new Bitmap(rstream);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed trying to download: {Image.ScreenURL}\r\n{ex}");
+            }
         }
 
         public string XenonAutoGen()

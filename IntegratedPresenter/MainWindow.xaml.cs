@@ -1699,7 +1699,6 @@ namespace IntegratedPresenter.Main
 
         #region SlideDriveVideo
 
-        private bool _FeatureFlag_PresetShot = false;
         private bool _FeatureFlag_PostsetShot = true;
 
         private bool SetupActionsCompleted = false;

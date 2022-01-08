@@ -31,6 +31,7 @@ using UIControls;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using Xenon.Compiler.Suggestions;
 using CommonVersionInfo;
+using System.Net.Http;
 
 namespace SlideCreater
 {
@@ -1057,20 +1058,29 @@ namespace SlideCreater
 
                     if (!File.Exists(file))
                     {
+                        UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorName = "Asset Recovery: File not found", ErrorMessage = $"Tried to recover asset with name '{assetkey}' from original source '{file}'. File does not exist on disk. Checking if it can be recovered from an original source online.", Generator = "Recover Auto Save: Overwrite Project()", Inner = "", Level = XenonCompilerMessageType.Info, Token = "" });
                         Uri uriResult;
                         bool result = Uri.TryCreate(file, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
                         if (result)
                         {
-                            // try downloading it
-                            WebClient client = new WebClient();
-                            await client.DownloadFileTaskAsync(uriResult, System.IO.Path.Combine(_proj.LoadTmpPath, assetkey));
-                        }
-                        else
-                        {
-                            // hmmmm... file doesn't exist and we can't fall back to download
-                            UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorName = "Auto Recover Asset Failed", ErrorMessage = $"Tried to recover asset with name '{assetkey}' from original source '{file}'. File does not exist on disk, and could not be found online.", Generator = "Recover Auto Save: Overwrite Project()", Inner = "", Level = XenonCompilerMessageType.Error, Token = "" });
-                        }
+                            try
+                            {
+                                // try downloading it
+                                using (Stream rstream = await Xenon.Helpers.WebHelpers.httpClient.GetStreamAsync(uriResult))
+                                {
+                                    using (Stream fstream = File.Open(System.IO.Path.Combine(_proj.LoadTmpPath, assetkey), FileMode.OpenOrCreate, FileAccess.Write))
+                                    {
+                                        rstream.Seek(0, SeekOrigin.Begin);
+                                        rstream.CopyTo(fstream);
+                                    }
+                                }
 
+                            }
+                            catch (Exception ex)
+                            {
+                                UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorName = "Asset Recovery: File not found", ErrorMessage = $"Tried to recover asset with name '{assetkey}' from online source '{uriResult}'.", Generator = "Recover Auto Save: Overwrite Project()", Inner = $"{ex}", Level = XenonCompilerMessageType.Error, Token = "" });
+                            }
+                        }
                     }
                     else
                     {

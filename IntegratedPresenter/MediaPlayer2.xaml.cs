@@ -49,7 +49,6 @@ namespace IntegratedPresenter.Main
             MuteIcon.Visibility = Visibility.Hidden;
         }
 
-        private bool showingmute = false;
 
         public void ShowHideShortcuts(bool show)
         {
@@ -70,7 +69,6 @@ namespace IntegratedPresenter.Main
 
         public void MarkMuted()
         {
-            showingmute = true;
             if (ShowIfMute)
             {
                 Dispatcher.Invoke(() =>
@@ -82,7 +80,6 @@ namespace IntegratedPresenter.Main
 
         public void MarkUnMuted()
         {
-            showingmute = false;
             Dispatcher.Invoke(() =>
             {
                 MuteIcon.Visibility = Visibility.Hidden;
@@ -99,7 +96,6 @@ namespace IntegratedPresenter.Main
             videoPlayer.Volume = 1;
         }
 
-        bool requestedMute = false;
         public void MuteAudioPlayback()
         {
             
@@ -195,7 +191,9 @@ namespace IntegratedPresenter.Main
         {
             get
             {
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
                 if (videoPlayer.NaturalDuration != null)
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
                 {
                     if (videoPlayer.NaturalDuration.HasTimeSpan)
                     {
@@ -210,11 +208,15 @@ namespace IntegratedPresenter.Main
         {
             get
             {
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
                 if (videoPlayer.NaturalDuration != null)
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
                 {
                     if (videoPlayer.NaturalDuration.HasTimeSpan)
                     {
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
                         if (videoPlayer.Position != null)
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
                         {
                             TimeSpan length = videoPlayer.NaturalDuration.TimeSpan;
                             TimeSpan pos = videoPlayer.Position;
