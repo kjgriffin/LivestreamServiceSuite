@@ -184,9 +184,7 @@ namespace Xenon.Compiler.AST
 
             }
 
-            bool unconfidentaboutrefrain = false;
             bool unconfidentaboutlinetype = false;
-            const int refrainheight = 136;
             LSBImageResource linemusic = null;
             List<LSBImageResource> linetexts = new List<LSBImageResource>();
             List<(LSBImageResource music, List<LSBImageResource> words)> CollatedLines = new List<(LSBImageResource music, List<LSBImageResource> words)>();

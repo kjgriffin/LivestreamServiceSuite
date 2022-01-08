@@ -95,7 +95,7 @@ namespace Xenon.Renderer
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 res.Bitmap = bmp;
                 string tmp = "KEY ERROR on data attribute";
@@ -106,7 +106,7 @@ namespace Xenon.Renderer
                     tmp = ((PrefabSlides)a).Convert();
                 }
                 messages.Add(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Error, ErrorMessage = $"Requested prefab image not loaded. While rendering slide {slide.Number}", ErrorName = "Prefab not found", Token = tmp });
-                throw ex;
+                throw;
             }
 
             if (src != null)

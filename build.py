@@ -7,7 +7,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate Official Builds")
     parser.add_argument("mode", type=str, default="Release", help="build mode: Experimental/Release etc.")
 
-    args = parser.parse_args();
+    args = parser.parse_args()
     print(args.mode)
 
     print("starting builds...")

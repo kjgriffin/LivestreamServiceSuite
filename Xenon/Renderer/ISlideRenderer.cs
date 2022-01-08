@@ -57,7 +57,7 @@ namespace Xenon.Renderer
                 {
                     return JsonSerializer.Deserialize<LayoutType>((string)info);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return GetDefaultInfo();
                 }

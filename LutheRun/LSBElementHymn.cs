@@ -276,7 +276,6 @@ namespace LutheRun
                 string title = "Hymn";
                 string name = match.Groups["name"]?.Value.Trim() ?? "";
                 string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
-                string tune = "";
                 string copyright = Copyright;
 
                 //sb.AppendLine($"/// \"{title}\", \"{name}\", \"{tune}\", \"{number}\", \"{copyright}\"");
