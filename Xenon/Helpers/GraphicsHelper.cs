@@ -256,7 +256,14 @@ namespace Xenon.Helpers
             return dest;
         }
 
-        public static Bitmap InvertImage(this Bitmap source)
+        public enum AlphaMode
+        {
+            Preserve,
+            Invert,
+            Remove,
+        }
+
+        public static Bitmap InvertImage(this Bitmap source, AlphaMode alphaMode = AlphaMode.Remove)
         {
             /*
                 https://stackoverflow.com/questions/33024881/invert-image-faster-in-c-sharp
@@ -272,7 +279,8 @@ namespace Xenon.Helpers
                 {
                     //Color inv = res.GetPixel(x, y);
                     Color inv = resManipulator.GetPixel(x, y);
-                    inv = Color.FromArgb(255, 255 - inv.R, 255 - inv.G, 255 - inv.B);
+                    int alpha = alphaMode == AlphaMode.Remove ? 255 : alphaMode == AlphaMode.Invert ? 255 - inv.A : inv.A;
+                    inv = Color.FromArgb(alpha, 255 - inv.R, 255 - inv.G, 255 - inv.B);
                     //res.SetPixel(x, y, inv);
                     resManipulator.SetPixel(x, y, inv);
                 }

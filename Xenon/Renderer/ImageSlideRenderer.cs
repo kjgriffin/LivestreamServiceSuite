@@ -238,7 +238,7 @@ namespace Xenon.Renderer
 
             gfx.Clear(System.Drawing.Color.Gray);
             gfx.FillRectangle(System.Drawing.Brushes.Black, Layout.LiturgyLayout.Key);
-            gfx.DrawImage(trimmed.InvertImage(), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
+            gfx.DrawImage(trimmed.InvertImage(GraphicsHelper.AlphaMode.Preserve), new Rectangle(p, s), new Rectangle(new Point(0, 0), trimmed.Size), GraphicsUnit.Pixel);
             return bmp;
 
         }
