@@ -28,6 +28,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.StitchedImage] = (new StitchedImageSlideLayoutInfo(), new StitchedImageRenderer(), ""),
             [LanguageKeywordCommand.TitledLiturgyVerse] = (new TitledLiturgyVerseSlideLayoutInfo(), new TitledLiturgyVerseSlideRenderer(), ""),
             [LanguageKeywordCommand.UpNext] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "UpNextLayoutInfo_Default.json"),
+            [LanguageKeywordCommand.CustomText] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), ""),
         };
 
         public static List<string> WholeWords = new List<string>()
@@ -101,6 +102,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.ScopedVariable] = "var",
             [LanguageKeywordCommand.PostFilter] = "postfilter",
             [LanguageKeywordCommand.UpNext] = "upnext",
+            [LanguageKeywordCommand.CustomText] = "customtext",
         };
 
         public static Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata>()
@@ -139,6 +141,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.VariableScope] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTVariableScope()),
             [LanguageKeywordCommand.PostFilter] = (true, LanguageKeywordCommand.VariableScope, false, new XenonASTPostFilter()),
             [LanguageKeywordCommand.UpNext] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, new XenonASTUpNext()),
+            [LanguageKeywordCommand.CustomText] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, new XenonASTShapesAndText()),
         };
 
         public static Dictionary<AutomationActions, AutomationActionMetadata> ScriptActionsMetadata = new Dictionary<AutomationActions, AutomationActionMetadata>()
@@ -274,6 +277,7 @@ namespace Xenon.Compiler
         PostFilter,
         Liturgy2,
         UpNext,
+        CustomText,
     }
 
     public enum AutomationActionArgType
