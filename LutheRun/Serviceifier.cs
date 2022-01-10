@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace LutheRun
 {
@@ -91,11 +92,12 @@ namespace LutheRun
 
             bool inliturgy = false;
 
+            ILSBElement element = service.First();
+            ILSBElement prevelement = null;
+            ILSBElement nextelement = null;
             for (int i = 0; i < service.Count; i++)
             {
-                ILSBElement element = service[i];
-                ILSBElement prevelement = null;
-                ILSBElement nextelement = null;
+                element = service[i];
                 if (i + 1 < service.Count)
                 {
                     nextelement = service[i + 1];
@@ -200,15 +202,31 @@ namespace LutheRun
                 {
                     if (inliturgy)
                     {
+                        // don't add this one if we've infered bells should be prior
+                        bool skip = false;
+                        var caption = prevelement as LSBElementCaption;
+                        if (caption != null)
+                        {
+                            if (caption.Caption.ToLower().Contains("bells"))
+                            {
+                                skip = true;
+                            }
+                        }
+
                         // get rid of liturgy
-                        newservice.Add(new ExternalPrefab("#liturgyoff"));
+                        if (!skip)
+                        {
+                            newservice.Add(new ExternalPrefab("#liturgyoff"));
+                        }
+                        // we'll assume the bell's script turns it off
                         inliturgy = false;
                     }
                 }
 
                 if (element is LSBElementHymn)
                 {
-                    newservice.Add(new ExternalPrefab("#organintro"));
+                    // we can use the new up-next tabs if we have a hymn #
+                    newservice.Add(PrefabBuilder.BuildHymnIntroSlides(element as LSBElementHymn));
                 }
 
                 newservice.Add(element);
