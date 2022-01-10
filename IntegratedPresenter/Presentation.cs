@@ -78,7 +78,7 @@ namespace IntegratedPresenter.Main
                 }
                 if (s.Type == SlideType.Action)
                 {
-                    s.LoadActions();
+                    s.LoadActions(folder);
                 }
                 Slides.Add(s);
             }
@@ -270,6 +270,11 @@ namespace IntegratedPresenter.Main
         public bool AutomationEnabled { get; set; } = true;
         public string Source { get; set; }
         public string KeySource { get; set; }
+
+        public bool AltSources { get; set; } = false;
+        public string AltSource { get; set; }
+        public string AltKeySource { get; set; }
+
         public string PreAction { get; set; }
         public Guid Guid { get; set; } = Guid.NewGuid();
         public List<AutomationAction> SetupActions { get; set; } = new List<AutomationAction>();
@@ -281,7 +286,7 @@ namespace IntegratedPresenter.Main
         public bool PostsetEnabled { get; set; } = false;
         public int PostsetId { get; set; }
 
-        public void LoadActions()
+        public void LoadActions(string folder)
         {
             if (Type == SlideType.Action)
             {
@@ -304,9 +309,33 @@ namespace IntegratedPresenter.Main
                         }
                         else if (part.StartsWith("!"))
                         {
-                            if (part == ("!fullauto;"))
+                            if (part == "!fullauto;")
                             {
                                 AutoOnly = true;
+                            }
+                            else if (part.StartsWith("!displaysrc="))
+                            {
+                                var m = Regex.Match(part, "!displaysrc='(?<fname>.*)';");
+                                if (m.Success)
+                                {
+                                    if (File.Exists(Path.Combine(folder, m.Groups["fname"].Value)))
+                                    {
+                                        AltSources = true;
+                                        AltSource = Path.Combine(folder, m.Groups["fname"].Value);
+                                    }
+                                }
+                            }
+                            else if (part.StartsWith("!keysrc="))
+                            {
+                                var m = Regex.Match(part, "!keysrc='(?<fname>.*)';");
+                                if (m.Success)
+                                {
+                                    if (File.Exists(Path.Combine(folder, m.Groups["fname"].Value)))
+                                    {
+                                        AltSources = true;
+                                        AltKeySource = Path.Combine(folder, m.Groups["fname"].Value);
+                                    }
+                                }
                             }
                         }
                         else if (part.StartsWith("@"))

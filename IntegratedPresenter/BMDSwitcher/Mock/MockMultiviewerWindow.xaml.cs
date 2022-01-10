@@ -150,7 +150,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             }
             else if (slide.Type == SlideType.Action)
             {
-                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                if (slide.AltSources)
+                {
+                    control.Source = new BitmapImage(new Uri(slide.AltKeySource));
+                }
+                else
+                {
+                    control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                }
             }
             else
             {
@@ -185,7 +192,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             }
             else if (slide.Type == SlideType.Action)
             {
-                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                if (slide.AltSources)
+                {
+                    control.Source = new BitmapImage(new Uri(slide.AltSource));
+                }
+                else
+                {
+                    control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+                }
             }
             else
             {

@@ -1,6 +1,8 @@
 ﻿using IntegratedPresenter.BMDSwitcher.Config;
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Timers;
@@ -98,7 +100,7 @@ namespace IntegratedPresenter.Main
 
         public void MuteAudioPlayback()
         {
-            
+
         }
         public void UnMuteAudioPlayback()
         {
@@ -323,7 +325,7 @@ namespace IntegratedPresenter.Main
         {
             if (slide.Type == SlideType.Action)
             {
-                ShowActionCommands(slide);
+                ShowActionCommands(slide, asKey);
             }
             else if (slide.Source != string.Empty)
             {
@@ -373,9 +375,44 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        private void ShowActionCommands(Slide slide)
+        private void ShowActionCommands(Slide slide, bool asKey)
         {
-            ShowBlackSource();
+            // check action slide listed an alternate display/key source (other than black)
+            bool validaltsource = false;
+            if (slide.AltSources)
+            {
+                // load them
+                if (File.Exists(slide.AltSource) && File.Exists(slide.AltKeySource))
+                {
+                    if (asKey)
+                    {
+                        if (slide.AltKeySource.EndsWith(".png"))
+                        {
+                            SetMedia(new Uri(slide.AltKeySource), SlideType.Full);
+                        }
+                        else if (slide.AltKeySource.EndsWith(".mp4"))
+                        {
+                            SetMedia(new Uri(slide.AltKeySource), SlideType.Video);
+                        }
+                    }
+                    else
+                    {
+                        if (slide.AltSource.EndsWith(".png"))
+                        {
+                            SetMedia(new Uri(slide.AltSource), SlideType.Full);
+                        }
+                        else if (slide.AltKeySource.EndsWith(".mp4"))
+                        {
+                            SetMedia(new Uri(slide.AltSource), SlideType.Video);
+                        }
+                    }
+                    validaltsource = true;
+                }
+            }
+            if (!validaltsource)
+            {
+                ShowBlackSource();
+            }
 
             if (!ShowBlackForActions)
             {
@@ -454,7 +491,7 @@ namespace IntegratedPresenter.Main
             videoPlayer.Visibility = Visibility.Visible;
             try
             {
-                
+
                 videoPlayer.Source = _source;
             }
             catch (Exception)
