@@ -26,5 +26,6 @@ namespace Xenon.SlideAssembly
         Script,
         ResourceCopy,
         StitchedImage,
+        ShapesAndTexts,
     }
 }

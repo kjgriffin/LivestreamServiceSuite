@@ -36,7 +36,7 @@ namespace Xenon.LayoutInfo
             return ILayoutInfoResolver<StitchedImageSlideLayoutInfo>._InternalDefault_GetLayoutInfo(slide);
         }
 
-        public StitchedImageSlideLayoutInfo _Internal_GetDefaultInfo()
+        public StitchedImageSlideLayoutInfo _Internal_GetDefaultInfo(string overrideDefault = "")
         {
             return ILayoutInfoResolver<StitchedImageSlideLayoutInfo>.GetDefaultInfo();
         }

@@ -19,10 +19,8 @@ namespace Xenon.Renderer.Helpers
             Color grayalpha = Color.FromArgb(255, layout.FColor.Alpha, layout.FColor.Alpha, layout.FColor.Alpha);
             kgfx.DrawString(text, layout.Font.GetFont(), new SolidBrush(grayalpha), layout.Textbox.GetRectangle(), layout.GetTextAlignment());
         }
-        public static void RenderLayoutPreview(Graphics gfx, Graphics kgfx, TextboxLayout layout)
+        public static void RenderLayoutPreview(Graphics gfx, Graphics kgfx, TextboxLayout layout, string text = "Example Text")
         {
-            string text = "Example Text";
-
             gfx.FillRectangle(new SolidBrush(layout.BColor.GetColor()), layout.Textbox.GetRectangle());
             kgfx.FillRectangle(new SolidBrush(layout.KColor.GetColor()), layout.Textbox.GetRectangle());
 

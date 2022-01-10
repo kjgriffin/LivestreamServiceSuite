@@ -22,11 +22,12 @@ namespace Xenon.Compiler
             return $"{Commands[cmd]}.{LAYOUTJSONVARNAME}";
         }
 
-        public static Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo> layoutResolver, ISlideLayoutPrototypePreviewer<ALayoutInfo> prototypicalLayoutPreviewer)> LayoutForType = new Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>)>
+        public static Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo> layoutResolver, ISlideLayoutPrototypePreviewer<ALayoutInfo> prototypicalLayoutPreviewer, string defaultJsonFile)> LayoutForType = new Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>, string)>
         {
-            [LanguageKeywordCommand.TwoPartTitle] = (new _2TitleSlideLayoutInfo(), new TwoPartTitleSlideRenderer()),
-            [LanguageKeywordCommand.StitchedImage] = (new StitchedImageSlideLayoutInfo(), new StitchedImageRenderer()),
-            [LanguageKeywordCommand.TitledLiturgyVerse] = (new TitledLiturgyVerseSlideLayoutInfo(), new TitledLiturgyVerseSlideRenderer()),
+            [LanguageKeywordCommand.TwoPartTitle] = (new _2TitleSlideLayoutInfo(), new TwoPartTitleSlideRenderer(), ""),
+            [LanguageKeywordCommand.StitchedImage] = (new StitchedImageSlideLayoutInfo(), new StitchedImageRenderer(), ""),
+            [LanguageKeywordCommand.TitledLiturgyVerse] = (new TitledLiturgyVerseSlideLayoutInfo(), new TitledLiturgyVerseSlideRenderer(), ""),
+            [LanguageKeywordCommand.UpNext] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "UpNextLayoutInfo_Default.json"),
         };
 
         public static List<string> WholeWords = new List<string>()
@@ -78,6 +79,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.StitchedImage] = "stitchedimage",
             [LanguageKeywordCommand.LiturgyImage] = "litimage",
             [LanguageKeywordCommand.Liturgy] = "liturgy",
+            [LanguageKeywordCommand.Liturgy2] = "liturgyresponsive",
             [LanguageKeywordCommand.LiturgyVerse] = "litverse",
             [LanguageKeywordCommand.TitledLiturgyVerse] = "tlverse",
             [LanguageKeywordCommand.Reading] = "reading",
@@ -98,6 +100,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.VariableScope] = "scope",
             [LanguageKeywordCommand.ScopedVariable] = "var",
             [LanguageKeywordCommand.PostFilter] = "postfilter",
+            [LanguageKeywordCommand.UpNext] = "upnext",
         };
 
         public static Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata>()
@@ -114,6 +117,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.StitchedImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, new XenonASTStitchedHymn()),
             [LanguageKeywordCommand.LiturgyImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgyImage()),
             [LanguageKeywordCommand.Liturgy] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgy()),
+            [LanguageKeywordCommand.Liturgy2] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgy2()),
             [LanguageKeywordCommand.LiturgyVerse] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgyVerse()),
             [LanguageKeywordCommand.TitledLiturgyVerse] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, new XenonASTTitledLiturgyVerse()),
             [LanguageKeywordCommand.Reading] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTReading()),
@@ -134,6 +138,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.ScopedVariable] = (true, LanguageKeywordCommand.VariableScope, false, new XenonASTScopedVariable()),
             [LanguageKeywordCommand.VariableScope] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTVariableScope()),
             [LanguageKeywordCommand.PostFilter] = (true, LanguageKeywordCommand.VariableScope, false, new XenonASTPostFilter()),
+            [LanguageKeywordCommand.UpNext] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, new XenonASTUpNext()),
         };
 
         public static Dictionary<AutomationActions, AutomationActionMetadata> ScriptActionsMetadata = new Dictionary<AutomationActions, AutomationActionMetadata>()
@@ -267,6 +272,8 @@ namespace Xenon.Compiler
         ScopedVariable,
         VariableScope,
         PostFilter,
+        Liturgy2,
+        UpNext,
     }
 
     public enum AutomationActionArgType

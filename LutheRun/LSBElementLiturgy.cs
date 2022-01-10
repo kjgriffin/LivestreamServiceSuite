@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Dom;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,7 +45,7 @@ namespace LutheRun
 
         public static ILSBElement Create(string liturgyText, IElement source)
         {
-            return new LSBElementLiturgy() { LiturgyText = liturgyText, SourceHTML = source};
+            return new LSBElementLiturgy() { LiturgyText = liturgyText, SourceHTML = source };
         }
 
         public string DebugString()
@@ -54,10 +55,15 @@ namespace LutheRun
 
         public string XenonAutoGen()
         {
+
+            string litconent = LSBResponsorialExtractor.ExtractResponsiveLiturgy(SourceHTML);
+
             if (LiturgyText.Trim() != String.Empty)
             {
                 //return "/// <XENON_AUTO_GEN>\r\n#liturgy{\r\n" + LiturgyText + "\r\n}\r\n/// </XENON_AUTO_GEN>";
-                return "#liturgy{\r\n" + LiturgyText + "\r\n}" + PostsetCmd;
+                //return "#liturgy{\r\n" + LiturgyText + "\r\n}" + PostsetCmd;
+
+                return $"#liturgyresponsive{Environment.NewLine}{{{Environment.NewLine}{litconent}{Environment.NewLine}}}{Environment.NewLine}";
             }
             return "";
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+
 using Xenon.Compiler.AST;
 using Xenon.SlideAssembly;
 
@@ -197,6 +198,13 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)liturgy.Compile(Lexer, Logger, parent);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Liturgy2]))
+            {
+                XenonASTLiturgy2 liturgy = new XenonASTLiturgy2();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Liturgy2]);
+                expr.Command = (IXenonASTCommand)liturgy.Compile(Lexer, Logger, parent);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyVerse]))
             {
                 XenonASTLiturgyVerse litverse = new XenonASTLiturgyVerse();
@@ -306,6 +314,13 @@ namespace Xenon.Compiler
             {
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.ScopedVariable]);
                 var command = new XenonASTScopedVariable();
+                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.UpNext]))
+            {
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.UpNext]);
+                var command = new XenonASTUpNext();
                 expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
                 return expr;
             }

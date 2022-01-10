@@ -38,6 +38,7 @@ namespace Xenon.Renderer
             new StitchedImageRenderer(),
             new TwoPartTitleSlideRenderer(),
             new TitledLiturgyVerseSlideRenderer(),
+            new ShapeAndTextRenderer(),
         };
 
         public ProjectAsset GetProjectAssetByName(string assetName)

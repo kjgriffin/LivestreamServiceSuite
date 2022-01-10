@@ -8,6 +8,16 @@ namespace Xenon.Helpers
     public static class StringHelpers
     {
 
+        public static string SubstringToEnd(this string s, int index)
+        {
+            return s.Substring(index, s.End() - index);
+        }
+
+        public static int End(this string s)
+        {
+            return s.Length - 1;
+        }
+
         public static string TrySubstring(this string s, int startIndex, int length)
         {
             if (s.Length >= startIndex + length)

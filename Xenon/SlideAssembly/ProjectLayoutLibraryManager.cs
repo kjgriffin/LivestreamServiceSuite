@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
@@ -96,8 +97,9 @@ namespace Xenon.SlideAssembly
             var cmd = LanguageKeywords.Commands.First(x => x.Value == group).Key;
             var libgroup = AllLibraries[libname][cmd];
 
-            var d = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultInfo();
-            string json = d.GetDefaultJson();
+            var d = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultInfo(LanguageKeywords.LayoutForType[cmd].defaultJsonFile);
+            //string json = d.GetDefaultJson();
+            string json = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultJson(LanguageKeywords.LayoutForType[cmd].defaultJsonFile);
             libgroup[layoutname] = json;
         }
 
@@ -156,8 +158,10 @@ namespace Xenon.SlideAssembly
                     //var name = cmdmeta.implementation.GetType().Name;
                     var name = "Default";
 
-                    var d = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultInfo();
-                    string json = d.GetDefaultJson();
+                    //var d = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultInfo();
+                    //string json = d.GetDefaultJson();
+                    var d = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultInfo(LanguageKeywords.LayoutForType[cmd].defaultJsonFile);
+                    string json = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultJson(LanguageKeywords.LayoutForType[cmd].defaultJsonFile);
 
                     defaultlib.TryGetValue(cmd, out var dict);
 

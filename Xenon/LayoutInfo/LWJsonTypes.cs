@@ -1,6 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Text.Json.Serialization;
+
+using Xenon.Helpers;
 
 namespace Xenon.Layouts
 {
@@ -51,6 +56,17 @@ namespace Xenon.Layouts
         {
             return new Rectangle(Origin.GetPoint(), Size.GetSize());
         }
+    }
+
+    class LWJPolygon
+    {
+        public List<LWJPoint> Verticies { get; set; } = new List<LWJPoint>();
+        public int BorderWidth { get; set; }
+        public LWJColor FillColor { get; set; }
+        public LWJColor KeyFillColor { get; set; }
+        public LWJColor BorderColor { get; set; }
+        public LWJColor KeyBorderColor { get; set; }
+
     }
 
     class LWJFont

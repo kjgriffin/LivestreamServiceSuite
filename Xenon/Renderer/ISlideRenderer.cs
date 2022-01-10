@@ -39,7 +39,7 @@ namespace Xenon.Renderer
             }
             return true;
         }
-       
+
     }
 
     public interface IAssetResolver
@@ -51,6 +51,12 @@ namespace Xenon.Renderer
     {
         static LayoutType _InternalDefault_GetLayoutInfo(Slide slide)
         {
+            string v = "";
+            if (slide.Data.TryGetValue("fallback-layout", out object value))
+            {
+                // try using this one
+                v = value as string ?? "";
+            }
             if (slide.Data.TryGetValue(Slide.LAYOUT_INFO_KEY, out object info))
             {
                 try
@@ -59,16 +65,16 @@ namespace Xenon.Renderer
                 }
                 catch (Exception)
                 {
-                    return GetDefaultInfo();
+                    return GetDefaultInfo(v);
                 }
             }
-            return GetDefaultInfo();
+            return GetDefaultInfo(v);
         }
         LayoutType GetLayoutInfo(Slide slide);
-        static LayoutType GetDefaultInfo()
+        static LayoutType GetDefaultInfo(string overrideDefault = "")
         {
             var typeinfo = typeof(LayoutType);
-            var name = $"{typeinfo.Namespace}.Defaults.{typeinfo.Name}_Default.json";
+            var name = string.IsNullOrEmpty(overrideDefault) ? $"{typeinfo.Namespace}.Defaults.{typeinfo.Name}_Default.json" : $"{typeinfo.Namespace}.Defaults.{overrideDefault}";
 
             //var assembly = System.Reflection.Assembly.GetAssembly(typeof(ALayoutInfo)).GetManifestResourceNames();
             var stream = System.Reflection.Assembly.GetAssembly(typeof(ALayoutInfo)).GetManifestResourceStream(name);
@@ -80,7 +86,12 @@ namespace Xenon.Renderer
             }
 
         }
-        LayoutType _Internal_GetDefaultInfo();
+        LayoutType _Internal_GetDefaultInfo(string overrideDefault = "");
+        string _Internal_GetDefaultJson(string overrideDefault = "")
+        {
+            LayoutType layout = _Internal_GetDefaultInfo(overrideDefault);
+            return JsonSerializer.Serialize<LayoutType>(layout, new JsonSerializerOptions() { WriteIndented = true });
+        }
         System.Type GetType => typeof(LayoutType);
     }
 

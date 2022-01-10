@@ -256,6 +256,11 @@ namespace Xenon.Helpers
             return dest;
         }
 
+        public static Point ToPoint(this PointF point)
+        {
+            return new Point((int)point.X, (int)point.Y);
+        }
+
         public enum AlphaMode
         {
             Preserve,

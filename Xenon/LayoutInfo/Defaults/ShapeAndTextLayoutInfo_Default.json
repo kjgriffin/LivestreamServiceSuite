@@ -1,0 +1,73 @@
+{
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "Color": {
+    "Hex": "#ff000000"
+  },
+  "KeyColor": {
+    "Hex": "#ff000000"
+  },
+  "Textboxes": [
+    {
+      "Textbox": {
+        "Origin": {
+          "X": 80,
+          "Y": 864
+        },
+        "Size": {
+          "Width": 1760,
+          "Height": 216
+        }
+      },
+      "Font": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 1
+      },
+      "FColor": {
+        "Hex": "#ffffffff"
+      },
+      "BColor": {
+        "Hex": "#00000000"
+      },
+      "KColor": {
+        "Hex": "#00000000"
+      },
+      "HorizontalAlignment": "Left",
+      "VerticalAlignment": "Center"
+    }
+  ],
+  "Shapes": [
+    {
+      "Verticies": [
+        {
+          "X": 0,
+          "Y": 0
+        },
+        {
+          "X": 100,
+          "Y": 1000
+        },
+        {
+          "X": 0,
+          "Y": 100
+        }
+      ],
+      "BorderWidth": 1,
+      "FillColor": {
+        "Hex": "#ff000000"
+      },
+      "KeyFillColor": {
+        "Hex": "#ffffffff"
+      },
+      "BorderColor": {
+        "Hex": "#ff00ff00"
+      },
+      "KeyBorderColor": {
+        "Hex": "#ffffffff"
+      }
+    }
+  ]
+}

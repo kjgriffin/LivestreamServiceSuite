@@ -33,7 +33,7 @@ namespace Xenon.LayoutInfo
             return ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo>._InternalDefault_GetLayoutInfo(slide);
         }
 
-        public TitledLiturgyVerseSlideLayoutInfo _Internal_GetDefaultInfo()
+        public TitledLiturgyVerseSlideLayoutInfo _Internal_GetDefaultInfo(string overrideDefault = "")
         {
             return ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo>.GetDefaultInfo();
         }

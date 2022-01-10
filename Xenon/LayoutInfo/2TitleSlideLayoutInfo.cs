@@ -94,7 +94,7 @@ namespace Xenon.LayoutInfo
             return ILayoutInfoResolver<_2TitleSlideLayoutInfo>._InternalDefault_GetLayoutInfo(slide);
         }
 
-        public _2TitleSlideLayoutInfo _Internal_GetDefaultInfo()
+        public _2TitleSlideLayoutInfo _Internal_GetDefaultInfo(string overrideDefault = "")
         {
             return ILayoutInfoResolver<_2TitleSlideLayoutInfo>.GetDefaultInfo();
         }

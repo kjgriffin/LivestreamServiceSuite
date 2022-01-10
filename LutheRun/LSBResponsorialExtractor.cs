@@ -1,0 +1,126 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LutheRun
+{
+    internal static class LSBResponsorialExtractor
+    {
+
+        internal class LiturgicalStatement
+        {
+            public string Speaker { get; set; }
+            public List<TextBlock> TextSegments { get; set; } = new List<TextBlock>();
+
+            public void Write(StringBuilder sb)
+            {
+                sb.Append($"<line:speaker={Speaker}>");
+                foreach (var word in TextSegments)
+                {
+                    word.Write(sb);
+                }
+                sb.Append("</line>");
+            }
+        }
+
+        internal struct TextBlock
+        {
+            public string Text { get; private set; }
+            public bool Bold { get; private set; } = false;
+            public bool SpecialSymbol { get; private set; } = false;
+            public TextBlock(string text, bool isbold = false, bool issymbol = false)
+            {
+                Text = text;
+                Bold = isbold;
+                SpecialSymbol = issymbol;
+            }
+
+            public void Write(StringBuilder sb)
+            {
+                if (SpecialSymbol)
+                {
+                    sb.Append("<font:LSBSymbol>");
+                }
+                if (Bold)
+                {
+                    sb.Append("<b>");
+                }
+                sb.Append(Text);
+                if (Bold)
+                {
+                    sb.Append("</b>");
+                }
+                if (SpecialSymbol)
+                {
+                    sb.Append("</font>");
+                }
+            }
+        }
+
+        public static string GenerateSource(List<LiturgicalStatement> lines)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var line in lines)
+            {
+                line.Write(sb);
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+
+        public static string ExtractResponsiveLiturgy(AngleSharp.Dom.IElement sourceHTML)
+        {
+
+            List<LiturgicalStatement> Lines = new List<LiturgicalStatement>();
+            /* Expected Structure: 
+             * - each spoken line wraped in a paragraph
+             * - first span identifies the speaker
+             * - next span for break
+             * - subsequent spans for content (optional br identifes good places to chunk large segments)
+             */
+
+            // 1. Iterate over childern (expect all to be <p> tags)
+            foreach (var child_p_tag in sourceHTML.Children.Where(c => c.LocalName == "p"))
+            {
+                // build a Liturgy-Response
+                // go through all childern
+
+                LiturgicalStatement line = new LiturgicalStatement();
+
+                int snum = 0;
+                foreach (var line_item in child_p_tag.Children)
+                {
+                    // Expect the speaker
+                    if (snum == 0)
+                    {
+                        line.Speaker = line_item.TextContent;
+                    }
+                    else if (snum > 0 && line_item.ClassList.Contains("Apple-tab-span"))
+                    {
+                        // ignore it
+                    }
+                    else if (line_item.LocalName == "span") // for now ignore <br> tags entierly
+                    {
+                        // is text content of some sort
+
+                        bool specialChar = line_item.ClassList.Contains("lsb-symbol");
+                        bool boldFont = line_item.Attributes.Any(x => x.LocalName == "font-weight" && x.Value == "bold");
+
+                        line.TextSegments.Add(new TextBlock(line_item.TextContent, boldFont, specialChar));
+                    }
+                    snum++;
+                }
+
+                if (!(string.IsNullOrEmpty(line.Speaker) && line.TextSegments.All(x => string.IsNullOrWhiteSpace(x.Text))))
+                {
+                    Lines.Add(line);
+                }
+            }
+            return GenerateSource(Lines);
+        }
+
+    }
+}

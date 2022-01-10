@@ -7,8 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="LayoutInfo\Defaults\ShapeAndTextLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\StitchedImageSlideLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\TitledLiturgyVerseSlideLayoutInfo_Default.json" />
+    <None Remove="LayoutInfo\Defaults\UpNextLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\_2TitleSlideLayoutInfo_Default.json" />
     <None Remove="Resources\LSBSymbol.ttf" />
   </ItemGroup>
@@ -18,6 +20,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\TitledLiturgyVerseSlideLayoutInfo_Default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LayoutInfo\Defaults\ShapeAndTextLayoutInfo_Default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LayoutInfo\Defaults\UpNextLayoutInfo_Default.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\_2TitleSlideLayoutInfo_Default.json">
