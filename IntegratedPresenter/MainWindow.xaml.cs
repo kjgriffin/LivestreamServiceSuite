@@ -2127,7 +2127,20 @@ namespace IntegratedPresenter.Main
                             //switcherManager?.PerformAutoTransition();
                             _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding AutoTrans (gaurded) since current source is 'slide'. For LITUGY type slide ({Presentation.CurrentSlide}).");
                             PerformGuardedAutoTransition();
-                            await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            //await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            await Task.Run(() =>
+                                                           {
+                                                               _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for signal that autotrans has completed. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                                               if (autoTransMRE.WaitOne(TimeSpan.FromMilliseconds(1500)))
+                                                               {
+                                                                   _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans signaled complete. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                                               }
+                                                               else
+                                                               {
+                                                                   _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans not signaled- timed out after 1500ms. Continuing anyways. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                                               }
+                                                           });
+
                         }
                         _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Taking NextSlide() from ({Presentation.CurrentSlide}) of type LITURGY");
                         Presentation.NextSlide();
@@ -2139,6 +2152,9 @@ namespace IntegratedPresenter.Main
                             slidesUpdated();
                             PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
                         }
+                        // wait for slides to change
+                        await Task.Delay((int)(16.6 * 3)); // 3 frames enough?
+
                         _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding DSK1 FADE ON. For LITUGY type slide ({Presentation.CurrentSlide}).");
                         switcherManager?.PerformAutoOnAirDSK1();
                         // request auto transition if tied and slides aren't preset source
