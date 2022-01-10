@@ -67,6 +67,7 @@
       <Word>#stitchedimage</Word>
       <Word>#litimage</Word>
       <Word>#liturgy</Word>
+      <Word>#liturgyresponsive</Word>
       <Word>#tlverse</Word>
       <Word>#reading</Word>
       <Word>#sermon</Word>
@@ -84,6 +85,9 @@
       <Word>#script</Word>
       <Word>#scope</Word>
       <Word>#var</Word>
+      <!--<Word>#postfilter</Word>-->
+      <Word>#upnext</Word>
+      <Word>#customtext</Word>
       <!-- ... -->
     </Keywords>
   </RuleSet>
