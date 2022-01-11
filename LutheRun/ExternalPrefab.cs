@@ -16,10 +16,10 @@ namespace LutheRun
             PrefabCommand = command;
         }
 
-        public ExternalPrefab(string command, int postset)
+        public ExternalPrefab(string command, int postset, bool usePostset)
         {
             PrefabCommand = command;
-            isPostset = true;
+            isPostset = usePostset;
             Postset = postset;
         }
 

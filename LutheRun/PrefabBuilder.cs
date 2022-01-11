@@ -10,13 +10,13 @@ namespace LutheRun
     internal static class PrefabBuilder
     {
 
-        public static ExternalPrefab BuildHymnIntroSlides(LSBElementHymn hymn)
+        public static ExternalPrefab BuildHymnIntroSlides(LSBElementHymn hymn, bool useUpNextForHymns)
         {
             // we can use the new up-next tabs if we have a hymn #
             var match = Regex.Match(hymn.Caption, @"(?<number>\d+)?(?<name>.*)");
             string name = match.Groups["name"]?.Value.Trim() ?? "";
             string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
-            if (!string.IsNullOrWhiteSpace(number))
+            if (!string.IsNullOrWhiteSpace(number) && useUpNextForHymns)
             {
                 string upnextcmd = $"#upnext(\"Next Hymn\", \"{name}\", \"{number}\")";
                 var nl = Environment.NewLine;

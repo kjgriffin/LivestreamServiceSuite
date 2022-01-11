@@ -57,6 +57,11 @@
                         <Image Source="/ViewControls/Images/CloudDL.png"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
+                <Separator></Separator>
+                <MenuItem Name="mi_importoption_inferpostset" Header="Add Postset To Slides" IsCheckable="True" IsChecked="True"></MenuItem>
+                <MenuItem Name="mi_importoption_useupnextforhymns" Header="Use UpNext for Hymns" IsCheckable="True" IsChecked="True"></MenuItem>
+                <MenuItem Name="mi_importoption_notonlyknowncaptions" Header="Add Unknown Captions" IsCheckable="True" IsChecked="False"></MenuItem>
+                <Separator></Separator>
                 <MenuItem Name="miimport_adv" Click="ClickImportServiceAdv" Header="Import Wizard"></MenuItem>
             </MenuItem>
             <MenuItem Header="Recovery">

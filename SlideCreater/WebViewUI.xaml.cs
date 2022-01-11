@@ -75,7 +75,7 @@ namespace SlideCreater
             LutheRun.LSBParser parser = new LutheRun.LSBParser();
             await parser.ParseHTML(documentpath);
 
-            parser.Serviceify();
+            parser.Serviceify(new LutheRun.LSBImportOptions());
 
             foreach (var serviceelement in parser.ServiceElements)
             {

@@ -29,10 +29,12 @@ namespace LutheRun
         private static int m_elementID = 0;
         public static int elementID { get =>  m_elementID++; }
 
+        public LSBImportOptions LSBImportOptions { get; set; }
 
-        public void Serviceify()
+   
+        public void Serviceify(LSBImportOptions options)
         {
-            ServiceElements = Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(ServiceElements));
+            ServiceElements = Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(ServiceElements, options), options);
         }
 
 

@@ -1118,9 +1118,15 @@ namespace SlideCreater
             if (ofd.ShowDialog() == true)
             {
                 ActionState = ActionState.Building;
+                LutheRun.LSBImportOptions options = new LutheRun.LSBImportOptions
+                {
+                    InferPostset = mi_importoption_inferpostset.IsChecked,
+                    UseUpNextForHymns = mi_importoption_useupnextforhymns.IsChecked,
+                    OnlyKnownCaptions = !mi_importoption_notonlyknowncaptions.IsChecked,
+                };
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
                 await parser.ParseHTML(ofd.FileName);
-                parser.Serviceify();
+                parser.Serviceify(options);
                 parser.CompileToXenon();
                 ActionState = ActionState.Downloading;
                 await parser.LoadWebAssets(_proj.CreateImageAsset);

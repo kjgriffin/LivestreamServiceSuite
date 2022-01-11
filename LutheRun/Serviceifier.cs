@@ -44,7 +44,7 @@ namespace LutheRun
         };
 
 
-        public static List<ILSBElement> RemoveUnusedElement(List<ILSBElement> service)
+        public static List<ILSBElement> RemoveUnusedElement(List<ILSBElement> service, LSBImportOptions options)
         {
             // for now just remove: headdings, captions that don't match keys and any unknown
             List<ILSBElement> trimmed = new List<ILSBElement>();
@@ -55,6 +55,10 @@ namespace LutheRun
                 if (caption != null)
                 {
                     if (new[] { "bells", "prelude", "postlude", "anthem", "sermon" }.Any(c => caption.Caption.ToLower().Contains(c)))
+                    {
+                        trimmed.Add(element);
+                    }
+                    else if (!options.OnlyKnownCaptions)
                     {
                         trimmed.Add(element);
                     }
@@ -72,7 +76,7 @@ namespace LutheRun
             return trimmed;
         }
 
-        public static List<ILSBElement> AddAdditionalInferedElements(List<ILSBElement> service)
+        public static List<ILSBElement> AddAdditionalInferedElements(List<ILSBElement> service, LSBImportOptions options)
         {
             List<ILSBElement> newservice = new List<ILSBElement>();
 
@@ -81,7 +85,7 @@ namespace LutheRun
             // always start with copyright
             // default to preset center after copyright (though bells would handle this...)
             // may want to be smart too-> if there's a prelude we could do soemthing else
-            newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Organ));
+            newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Organ, options.InferPostset));
 
             // warn abouth prelude? (if not present??)
 
@@ -169,27 +173,34 @@ namespace LutheRun
                 }
 
                 // Create Postset command
-                StringBuilder sb = new StringBuilder();
-                if ((setfirst && firstseelection != Camera.Unset) || (setlast && lastselection != Camera.Unset))
+                if (options.InferPostset)
                 {
-                    sb.Append("::postset(");
-                    if (setfirst)
+                    StringBuilder sb = new StringBuilder();
+                    if ((setfirst && firstseelection != Camera.Unset) || (setlast && lastselection != Camera.Unset))
                     {
-                        sb.Append("first=");
-                        sb.Append((int)firstseelection);
+                        sb.Append("::postset(");
+                        if (setfirst)
+                        {
+                            sb.Append("first=");
+                            sb.Append((int)firstseelection);
+                            if (setlast)
+                            {
+                                sb.Append(", ");
+                            }
+                        }
                         if (setlast)
                         {
-                            sb.Append(", ");
+                            sb.Append("last=");
+                            sb.Append((int)lastselection);
                         }
+                        sb.Append(")");
                     }
-                    if (setlast)
-                    {
-                        sb.Append("last=");
-                        sb.Append((int)lastselection);
-                    }
-                    sb.Append(")");
+                    element.PostsetCmd = sb.ToString();
                 }
-                element.PostsetCmd = sb.ToString();
+                else
+                {
+                    element.PostsetCmd = "";
+                }
 
 
 
@@ -226,7 +237,7 @@ namespace LutheRun
                 if (element is LSBElementHymn)
                 {
                     // we can use the new up-next tabs if we have a hymn #
-                    newservice.Add(PrefabBuilder.BuildHymnIntroSlides(element as LSBElementHymn));
+                    newservice.Add(PrefabBuilder.BuildHymnIntroSlides(element as LSBElementHymn, options.UseUpNextForHymns));
                 }
 
                 newservice.Add(element);
