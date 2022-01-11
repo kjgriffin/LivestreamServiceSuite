@@ -10,11 +10,18 @@ namespace Xenon.Compiler.AST
 {
     internal class XenonASTPostFilter : IXenonASTCommand
     {
-        public IXenonASTElement Parent { get; }
+        public IXenonASTElement Parent { get; private set; }
+        public List<IXenonASTElement> Children { get; set; } = new List<IXenonASTElement>(); 
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
-            throw new NotImplementedException();
+            XenonASTPostFilter filter = new XenonASTPostFilter();
+
+
+
+
+            filter.Parent = Parent;
+            return filter;
         }
 
         public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
