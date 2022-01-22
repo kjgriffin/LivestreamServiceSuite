@@ -1127,6 +1127,7 @@ namespace SlideCreater
                 };
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
                 await parser.ParseHTML(ofd.FileName);
+                parser.LSBImportOptions = options;
                 parser.Serviceify(options);
                 parser.CompileToXenon();
                 ActionState = ActionState.Downloading;

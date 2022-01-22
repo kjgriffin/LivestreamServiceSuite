@@ -169,7 +169,7 @@ namespace LutheRun
                     // this often is a bit 'over eager' to find anything that looks like text...
                     // so lets make it check that there's actually something that looks vaugley like words beforew we start going after it
                     var unnumberedlines = child.ParagraphText2();
-                    if (unnumberedlines.FirstOrDefault()?.StartsWith('<') == true) // yeah... probably not anything we'd need to worry about
+                    if (unnumberedlines.All(x => string.IsNullOrWhiteSpace(x)) || unnumberedlines.FirstOrDefault()?.StartsWith('<') == true) // yeah... probably not anything we'd need to worry about
                     {
                         continue;
                     }
