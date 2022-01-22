@@ -62,7 +62,7 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_READING. Title: {ReadingTitle} Reference: {ReadingReference} PreLiturgy: {PreLiturgy} PostLiturgy: {PostLiturgy}";
         }
 
-        public string XenonAutoGen()
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
 
             var postset = PostsetCmd.ExtractPostsetValues();

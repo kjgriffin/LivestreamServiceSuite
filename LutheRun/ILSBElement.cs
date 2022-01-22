@@ -10,7 +10,7 @@ namespace LutheRun
 
         public string PostsetCmd { get; set; }
         public string DebugString();
-        public string XenonAutoGen();
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions);
 
 
         public IElement SourceHTML { get; }

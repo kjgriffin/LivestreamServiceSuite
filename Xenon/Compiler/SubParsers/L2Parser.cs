@@ -4,7 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Text.Unicode;
 using System.Threading.Tasks;
+using System.Xml;
 
 using Xenon.Helpers;
 
@@ -15,21 +17,49 @@ namespace Xenon.Compiler.SubParsers
     class ResponsiveStatement
     {
         public string Speaker { get; set; }
-        public List<Word> Content { get; set; }
+        public List<TextRun> Content { get; set; }
     }
 
-    struct Word
+    class TextRun
     {
         public string Text { get; private set; }
         public string AltFont { get; private set; }
         public FontStyle FStyle { get; private set; }
 
-        public Word (string text, string fname, FontStyle fstyle)
+        public TextRun(string text, string fname = "", FontStyle fstyle = FontStyle.Regular)
         {
             Text = text;
             AltFont = fname;
             FStyle = fstyle;
         }
+
+        public static TextRun Create(XmlNode node)
+        {
+            if (node.LocalName != "text")
+            {
+                return null;
+            }
+            // text should be a leaf node, so just fill its content and parse its attributes
+            var font = node.Attributes.GetNamedItem("altfont");
+            var style = node.Attributes.GetNamedItem("style");
+
+            FontStyle fstyle = FontStyle.Regular;
+            if (!string.IsNullOrEmpty(style?.Value))
+            {
+                var styles = style.Value.Split(';');
+                if (styles.Contains("bold"))
+                {
+                    fstyle |= FontStyle.Bold;
+                }
+                if (styles.Contains("italic"))
+                {
+                    fstyle |= FontStyle.Italic;
+                }
+            }
+
+            return new TextRun(node.InnerText, font?.Value ?? "", fstyle);
+        }
+
     }
 
 
@@ -41,40 +71,32 @@ namespace Xenon.Compiler.SubParsers
         public static List<ResponsiveStatement> ParseLiturgyStatements(string input)
         {
             List<ResponsiveStatement> liturgy = new List<ResponsiveStatement>();
+            var doc = ToXML(input);
 
-            var rawlines = SplitIntoLines(input);
-
+            foreach (XmlNode line in doc.GetElementsByTagName("line"))
+            {
+                ResponsiveStatement part = new ResponsiveStatement();
+                part.Speaker = line.Attributes.GetNamedItem("speaker").Value;
+                List<TextRun> content = new List<TextRun>();
+                foreach (XmlNode run in line.ChildNodes)
+                {
+                    content.Add(TextRun.Create(run));
+                }
+                part.Content = content;
+                liturgy.Add(part);
+            }
 
             return liturgy;
         }
 
-        private static List<string> SplitIntoLines(string input)
+        private static XmlDocument ToXML(string input)
         {
-            List<string> lines = new List<string>();
+            XmlDocument doc = new XmlDocument();
+            var doctext = $"<content>{input}</content>";
 
-            char[] all = input.ToCharArray();
+            doc.LoadXml(doctext);
 
-            int index = 0;
-            int sindex = 0;
-            int eindex = 0;
-            while (index < input.End())
-            {
-                // look for a <line> tag
-                var match = Regex.Match(input.SubstringToEnd(index), @"$<line");
-
-                if (match.Success) {
-                    sindex = index;
-                }
-
-
-            }
-
-            return lines;
-        }
-
-        private static void ParseIntoTags(string input)
-        {
-
+            return doc;
         }
 
 

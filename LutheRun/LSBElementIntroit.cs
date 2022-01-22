@@ -35,7 +35,7 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_INTROIT'";
         }
 
-        public string XenonAutoGen()
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
             // for now we'll have to assume that a 2 line cadence will work
             // this may not at all be correct

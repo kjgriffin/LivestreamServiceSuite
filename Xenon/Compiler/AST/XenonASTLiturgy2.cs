@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Xenon.Compiler.SubParsers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -62,6 +63,9 @@ namespace Xenon.Compiler.AST
 
         public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+
+            L2Parser.ParseLiturgyStatements(RawContent);
+
         }
 
         public void GenerateDebug(Project project)

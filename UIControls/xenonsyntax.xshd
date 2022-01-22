@@ -1,94 +1,134 @@
 ﻿<SyntaxDefinition name="XENON"
         xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-  <Color name="Comment" foreground="Green" />
-  <Color name="String" foreground="Red" />
+	<Color name="Comment" foreground="Green" />
+	<Color name="String" foreground="Red" />
 
-  <!-- This is the main ruleset. -->
-  <RuleSet>
+	<Color foreground="#ff3293a8" name="XmlTag" exampleText='&lt;tag attribute="value" /&gt;' />
+	<Color foreground="#ff325aa8" name="AttributeName" exampleText='&lt;tag attribute="value" /&gt;' />
+	<Color foreground="#a89332" name="AttributeValue" exampleText='&lt;tag attribute="value" /&gt;' />
+	<Color foreground="Teal" name="Entity" exampleText="index.aspx?a=1&amp;amp;b=2" />
+	<Color foreground="Olive" name="BrokenEntity" exampleText="index.aspx?a=1&amp;b=2" />
+
+	<!-- This is the main ruleset. -->
+	<RuleSet>
 
 
-    <Span foreground="#ff8f8f8f">
-      <Begin>///\u0020&lt;/</Begin>
-      <End>$</End>
-      <RuleSet>
-        <Span foreground="Green">
-          <Begin>(?&lt;=&gt;).</Begin>
-          <End>$</End>
-        </Span>
-      </RuleSet>
-    </Span>
+		<Span foreground="#ff8f8f8f">
+			<Begin>///\u0020&lt;/</Begin>
+			<End>$</End>
+			<RuleSet>
+				<Span foreground="Green">
+					<Begin>(?&lt;=&gt;).</Begin>
+					<End>$</End>
+				</Span>
+			</RuleSet>
+		</Span>
 
-    <Span foreground="Orange">
-      <Begin>//&gt;</Begin>
-      <End>$</End>
-    </Span>
+		<Span foreground="Orange">
+			<Begin>//&gt;</Begin>
+			<End>$</End>
+		</Span>
 
-    <Span color="Comment" begin="//" />
-    <Span color="Comment" multiline="true"
-       begin="/\*" end="\*/" />
+		<Span color="Comment" begin="//" />
+		<Span color="Comment" multiline="true"
+		   begin="/\*" end="\*/" />
 
-    <Span color="String">
-      <Begin>"</Begin>
-      <End>"</End>
-      <RuleSet>
-        <Span foreground="#ffaa0044" begin="\\" end="."></Span>
-      </RuleSet>
-    </Span>
+		<Span color="String">
+			<Begin>"</Begin>
+			<End>"</End>
+			<RuleSet>
+				<Span foreground="#ffaa0044" begin="\\" end="."></Span>
+			</RuleSet>
+		</Span>
 
-    <Span foreground="#ff7ba832" multiline="true">
-      <Begin>```</Begin>
-      <End>```</End>
-      <RuleSet>
-        <Span foreground="#ff8f3f11">
-          <Begin>"</Begin>
-          <End>"</End>
-          <RuleSet>
-            <Span foreground="#ffaa0044" begin="\\" end="."></Span>
-          </RuleSet>
-        </Span>
-      </RuleSet>
-    </Span>
+		<Span foreground="#ff7ba832" multiline="true">
+			<Begin>```</Begin>
+			<End>```</End>
+			<RuleSet>
+				<Span foreground="#ff8f3f11">
+					<Begin>"</Begin>
+					<End>"</End>
+					<RuleSet>
+						<Span foreground="#ffaa0044" begin="\\" end="."></Span>
+					</RuleSet>
+				</Span>
+			</RuleSet>
+		</Span>
 
-    <Span foreground="Purple" multiline="true">
-      <Begin>::postset</Begin>
-      <End>\)</End>
-    </Span>
+		<Span foreground="Purple" multiline="true">
+			<Begin>::postset</Begin>
+			<End>\)</End>
+		</Span>
 
-    <Keywords fontWeight="bold" foreground="Blue">
-      <Word>#liturgyoff</Word>
-      <Word>#organintro</Word>
-      <Word>#set</Word>
-      <Word>#break</Word>
-      <Word>#video</Word>
-      <Word>#filterimage</Word>
-      <Word>#fullimage</Word>
-      <Word>#fitimage</Word>
-      <Word>#autofitimage</Word>
-      <Word>#stitchedimage</Word>
-      <Word>#litimage</Word>
-      <Word>#liturgy</Word>
-      <Word>#liturgyresponsive</Word>
-      <Word>#tlverse</Word>
-      <Word>#reading</Word>
-      <Word>#sermon</Word>
-      <Word>#anthemtitle</Word>
-      <Word>#2title</Word>
-      <Word>#texthymn</Word>
-      <Word>#verse</Word>
-      <Word>#copyright</Word>
-      <Word>#viewservices</Word>
-      <Word>#viewseries</Word>
-      <Word>#apostlescreed</Word>
-      <Word>#nicenecreed</Word>
-      <Word>#lordsprayer</Word>
-      <Word>#resource</Word>
-      <Word>#script</Word>
-      <Word>#scope</Word>
-      <Word>#var</Word>
-      <!--<Word>#postfilter</Word>-->
-      <Word>#upnext</Word>
-      <Word>#customtext</Word>
-      <!-- ... -->
-    </Keywords>
-  </RuleSet>
+		<Span color="XmlTag" multiline="true">
+			<Begin>&lt;</Begin>
+			<End>&gt;</End>
+			<RuleSet>
+				<!-- Treat the position before '<' as end, as that's not a valid character
+				     in attribute names and indicates the user forgot a closing quote. -->
+				<Span color="AttributeValue" multiline="true" ruleSet="EntitySet">
+					<Begin>"</Begin>
+					<End>"|(?=&lt;)</End>
+				</Span>
+				<Span color="AttributeValue" multiline="true" ruleSet="EntitySet">
+					<Begin>'</Begin>
+					<End>'|(?=&lt;)</End>
+				</Span>
+				<Rule color="AttributeName">[\d\w_\-\.]+(?=(\s*=))</Rule>
+				<Rule color="AttributeValue">=</Rule>
+			</RuleSet>
+		</Span>
+
+		<Keywords fontWeight="bold" foreground="Blue">
+			<Word>#liturgyoff</Word>
+			<Word>#organintro</Word>
+			<Word>#set</Word>
+			<Word>#break</Word>
+			<Word>#video</Word>
+			<Word>#filterimage</Word>
+			<Word>#fullimage</Word>
+			<Word>#fitimage</Word>
+			<Word>#autofitimage</Word>
+			<Word>#stitchedimage</Word>
+			<Word>#litimage</Word>
+			<Word>#liturgy</Word>
+			<Word>#liturgyresponsive</Word>
+			<Word>#tlverse</Word>
+			<Word>#reading</Word>
+			<Word>#sermon</Word>
+			<Word>#anthemtitle</Word>
+			<Word>#2title</Word>
+			<Word>#texthymn</Word>
+			<Word>#verse</Word>
+			<Word>#copyright</Word>
+			<Word>#viewservices</Word>
+			<Word>#viewseries</Word>
+			<Word>#apostlescreed</Word>
+			<Word>#nicenecreed</Word>
+			<Word>#lordsprayer</Word>
+			<Word>#resource</Word>
+			<Word>#script</Word>
+			<Word>#scope</Word>
+			<Word>#var</Word>
+			<!--<Word>#postfilter</Word>-->
+			<Word>#upnext</Word>
+			<Word>#customtext</Word>
+			<!-- ... -->
+		</Keywords>
+	</RuleSet>
+
+	<RuleSet name="EntitySet">
+		<Rule color="Entity">
+			&amp;
+			[\w\d\#]+
+			;
+		</Rule>
+
+		<Rule color="BrokenEntity">
+			&amp;
+			[\w\d\#]*
+			#missing ;
+		</Rule>
+	</RuleSet>
+	
 </SyntaxDefinition>

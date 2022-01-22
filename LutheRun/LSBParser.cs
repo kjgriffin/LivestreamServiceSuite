@@ -495,7 +495,7 @@ namespace LutheRun
             stringBuilder.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{System.IO.Path.GetFileName(ServiceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
             foreach (var se in ServiceElements)
             {
-                stringBuilder.AppendLine(se.XenonAutoGen());
+                stringBuilder.AppendLine(se.XenonAutoGen(LSBImportOptions));
             }
         }
 

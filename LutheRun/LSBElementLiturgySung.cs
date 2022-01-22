@@ -109,7 +109,7 @@ namespace LutheRun
             }
         }
 
-        public string XenonAutoGen()
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
             StringBuilder sb = new StringBuilder();
 

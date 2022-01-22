@@ -222,7 +222,7 @@ namespace LutheRun
             return "";
         }
 
-        public string XenonAutoGen()
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
             // Assumes that any text verses will always be at the end.
             StringBuilder sb = new StringBuilder();

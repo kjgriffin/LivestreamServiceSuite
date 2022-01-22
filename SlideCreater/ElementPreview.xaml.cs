@@ -45,7 +45,7 @@ namespace SlideCreater
             element = lsbelement;
             this.parser = parser;
             // get the xenon command for the element
-            string xenon_text = lsbelement.XenonAutoGen();
+            string xenon_text = lsbelement.XenonAutoGen(new LutheRun.LSBImportOptions());
             // add text to textbox
             textbox.SetText(xenon_text);
 

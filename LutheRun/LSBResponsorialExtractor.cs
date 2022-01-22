@@ -16,11 +16,12 @@ namespace LutheRun
 
             public void Write(StringBuilder sb)
             {
-                sb.Append($"<line:speaker={Speaker}>");
-                foreach (var word in TextSegments)
+                sb.Append($"<line speaker='{Speaker}'>");
+                foreach (var run in TextSegments)
                 {
-                    word.Write(sb);
+                    run.Write(sb);
                 }
+                sb.AppendLine();
                 sb.Append("</line>");
             }
         }
@@ -39,23 +40,14 @@ namespace LutheRun
 
             public void Write(StringBuilder sb)
             {
-                if (SpecialSymbol)
-                {
-                    sb.Append("<font:LSBSymbol>");
-                }
-                if (Bold)
-                {
-                    sb.Append("<b>");
-                }
+                string font = SpecialSymbol ? "altfont='LSBSymbol'" : "";
+                string bold = Bold ? "style='bold'" : "";
+                string prefix = SpecialSymbol || Bold ? " " : "";
+                sb.AppendLine();
+                sb.Append("  ");
+                sb.Append($"<text{prefix}{font}{(Bold ? " " : "")}{bold}>");
                 sb.Append(Text);
-                if (Bold)
-                {
-                    sb.Append("</b>");
-                }
-                if (SpecialSymbol)
-                {
-                    sb.Append("</font>");
-                }
+                sb.Append("</text>");
             }
         }
 
@@ -66,7 +58,10 @@ namespace LutheRun
             foreach (var line in lines)
             {
                 line.Write(sb);
-                sb.AppendLine();
+                if (lines.IndexOf(line) < lines.Count - 1)
+                {
+                    sb.AppendLine();
+                }
             }
             return sb.ToString();
         }

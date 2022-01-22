@@ -1123,6 +1123,7 @@ namespace SlideCreater
                     InferPostset = mi_importoption_inferpostset.IsChecked,
                     UseUpNextForHymns = mi_importoption_useupnextforhymns.IsChecked,
                     OnlyKnownCaptions = !mi_importoption_notonlyknowncaptions.IsChecked,
+                    UseResponsiveLiturgy = mi_importoption_useresponsiveliturgy.IsChecked,
                 };
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
                 await parser.ParseHTML(ofd.FileName);

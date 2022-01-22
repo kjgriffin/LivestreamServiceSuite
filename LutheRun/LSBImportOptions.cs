@@ -11,5 +11,6 @@ namespace LutheRun
         public bool InferPostset { get; set; } = true;
         public bool UseUpNextForHymns { get; set; } = true;
         public bool OnlyKnownCaptions { get; set; } = true;
+        public bool UseResponsiveLiturgy { get; set; } = true;
     }
 }

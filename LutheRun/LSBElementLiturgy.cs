@@ -53,7 +53,7 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_LITURGY. LiturgyText:'{LiturgyText}'";
         }
 
-        public string XenonAutoGen()
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
 
             string litconent = LSBResponsorialExtractor.ExtractResponsiveLiturgy(SourceHTML);
@@ -61,9 +61,14 @@ namespace LutheRun
             if (LiturgyText.Trim() != String.Empty)
             {
                 //return "/// <XENON_AUTO_GEN>\r\n#liturgy{\r\n" + LiturgyText + "\r\n}\r\n/// </XENON_AUTO_GEN>";
-                //return "#liturgy{\r\n" + LiturgyText + "\r\n}" + PostsetCmd;
-
-                return $"#liturgyresponsive{Environment.NewLine}{{{Environment.NewLine}{litconent}{Environment.NewLine}}}{Environment.NewLine}";
+                if (lSBImportOptions.UseResponsiveLiturgy)
+                {
+                    return $"#liturgyresponsive{Environment.NewLine}{{{Environment.NewLine}{litconent}{Environment.NewLine}}}{PostsetCmd}{Environment.NewLine}";
+                }
+                else
+                {
+                    return "#liturgy{\r\n" + LiturgyText + "\r\n}" + PostsetCmd;
+                }
             }
             return "";
         }

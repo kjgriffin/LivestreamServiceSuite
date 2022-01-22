@@ -23,7 +23,7 @@ namespace LutheRun
             Postset = postset;
         }
 
-        public override string XenonAutoGen()
+        public override string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
             string postset = isPostset ? $"::postset(last={Postset})" : "";
             return $"{PrefabCommand}{postset}";

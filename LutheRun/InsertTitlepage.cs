@@ -7,7 +7,7 @@ namespace LutheRun
     class InsertTitlepage : ExternalElement
     {
 
-        public override string XenonAutoGen()
+        public override string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("/// </MANUAL_UPDATE name='titlepage'>");
