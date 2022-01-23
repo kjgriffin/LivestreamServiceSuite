@@ -27,6 +27,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.TwoPartTitle] = (new _2TitleSlideLayoutInfo(), new TwoPartTitleSlideRenderer(), ""),
             [LanguageKeywordCommand.StitchedImage] = (new StitchedImageSlideLayoutInfo(), new StitchedImageRenderer(), ""),
             [LanguageKeywordCommand.TitledLiturgyVerse] = (new TitledLiturgyVerseSlideLayoutInfo(), new TitledLiturgyVerseSlideRenderer(), ""),
+            [LanguageKeywordCommand.Liturgy2] = (new ResponsiveLiturgySlideLayoutInfo(), new ResponsiveLiturgyRenderer(), ""),
             [LanguageKeywordCommand.UpNext] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "UpNextLayoutInfo_Default.json"),
             [LanguageKeywordCommand.CustomText] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), ""),
         };
@@ -119,7 +120,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.StitchedImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, new XenonASTStitchedHymn()),
             [LanguageKeywordCommand.LiturgyImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgyImage()),
             [LanguageKeywordCommand.Liturgy] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgy()),
-            [LanguageKeywordCommand.Liturgy2] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgy2()),
+            [LanguageKeywordCommand.Liturgy2] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, new XenonASTLiturgy2()),
             [LanguageKeywordCommand.LiturgyVerse] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTLiturgyVerse()),
             [LanguageKeywordCommand.TitledLiturgyVerse] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, new XenonASTTitledLiturgyVerse()),
             [LanguageKeywordCommand.Reading] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, new XenonASTReading()),

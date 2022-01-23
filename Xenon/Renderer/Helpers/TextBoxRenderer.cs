@@ -29,5 +29,13 @@ namespace Xenon.Renderer.Helpers
             Color grayalpha = Color.FromArgb(255, layout.FColor.Alpha, layout.FColor.Alpha, layout.FColor.Alpha);
             kgfx.DrawString(text, layout.Font.GetFont(), new SolidBrush(grayalpha), layout.Textbox.GetRectangle(), layout.GetTextAlignment());
         }
+        public static void RenderLayoutGhostPreview(Graphics gfx, Graphics kgfx, TextboxLayout layout)
+        {
+            gfx.FillRectangle(new SolidBrush(layout.BColor.GetColor()), layout.Textbox.GetRectangle());
+            gfx.DrawRectangle(new Pen(layout.BColor.GetColor(), 1) { DashPattern = new float[] { 15, 25 } }, layout.Textbox.GetRectangle());
+
+            kgfx.FillRectangle(new SolidBrush(layout.KColor.GetColor()), layout.Textbox.GetRectangle());
+        }
+
     }
 }

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="LayoutInfo\Defaults\ResponsiveLiturgySlideLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\ShapeAndTextLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\StitchedImageSlideLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\TitledLiturgyVerseSlideLayoutInfo_Default.json" />
@@ -16,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="LayoutInfo\Defaults\ResponsiveLiturgySlideLayoutInfo_Default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\StitchedImageSlideLayoutInfo_Default.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

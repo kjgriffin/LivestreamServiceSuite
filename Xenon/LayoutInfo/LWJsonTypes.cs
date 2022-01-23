@@ -97,9 +97,9 @@ namespace Xenon.Layouts
     {
         Top,
         Center,
-        Bottom
+        Bottom,
+        Equidistant
     }
-
 
 
     class LWJColor

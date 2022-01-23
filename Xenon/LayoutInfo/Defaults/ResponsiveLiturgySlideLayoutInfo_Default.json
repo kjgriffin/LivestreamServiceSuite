@@ -1,0 +1,97 @@
+{
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "BackgroundColor": {
+    "Hex": "#ff000000"
+  },
+  "KeyColor": {
+    "Hex": "#ff000000"
+  },
+  "LiturgyLineProto": {
+    "FontOverride": {
+      "Name": "Arial",
+      "Size": 36,
+      "Style": 1
+    },
+    "ColorOverride": {
+      "Hex": "#ffffffff"
+    },
+    "ShowSpeaker": true,
+    "SpeakerFont": {
+      "Name": "LSBSymbol",
+      "Size": 36,
+      "Style": 1
+    },
+    "SpeakerColor": {
+      "Hex": "#ff0000ff"
+    },
+    "SpeakerMargin": 50
+  },
+  "Textboxes": [
+    {
+      "Textbox": {
+        "Origin": {
+          "X": 80,
+          "Y": 864
+        },
+        "Size": {
+          "Width": 1760,
+          "Height": 216
+        }
+      },
+      "Font": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 1
+      },
+      "FColor": {
+        "Hex": "#ffffffff"
+      },
+      "BColor": {
+        "Hex": "#00000000"
+      },
+      "KColor": {
+        "Hex": "#00000000"
+      },
+      "HorizontalAlignment": "Left",
+      "VerticalAlignment": "Center"
+    }
+  ],
+  "Shapes": [
+    {
+      "Verticies": [
+        {
+          "X": 0,
+          "Y": 864
+        },
+        {
+          "X": 1920,
+          "Y": 864
+        },
+        {
+          "X": 1920,
+          "Y": 1080
+        },
+        {
+          "X": 0,
+          "Y": 1080
+        }
+      ],
+      "BorderWidth": 2,
+      "FillColor": {
+        "Hex": "#ff800000"
+      },
+      "KeyFillColor": {
+        "Hex": "#ffffffff"
+      },
+      "BorderColor": {
+        "Hex": "#ffff0000"
+      },
+      "KeyBorderColor": {
+        "Hex": "#ffffffff"
+      }
+    }
+  ]
+}
