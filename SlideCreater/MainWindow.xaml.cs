@@ -240,14 +240,16 @@ namespace SlideCreater
 
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
+            string text = TbInput.Text;
+            _proj.SourceCode = text;
+
             TryAutoSave();
+
             if (!m_agressive_autosave_enabled)
             {
                 // always do it pre-render just to be safe
                 await TryFullAutoSave();
             }
-            string text = TbInput.Text;
-            _proj.SourceCode = text;
 
             //tbConsole.Text = string.Empty;
 
@@ -1224,6 +1226,8 @@ namespace SlideCreater
             sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}.trusty";
             if (sfd.ShowDialog() == true)
             {
+                // perhaps we should forcibly take the latest changes to the source
+                _proj.SourceCode = TbInput.Text;
                 await Xenon.SaveLoad.TrustySave.SaveTrustily(_proj, sfd.FileName, saveprogress, VersionInfo.ToString());
                 Dispatcher.Invoke(() =>
                 {
