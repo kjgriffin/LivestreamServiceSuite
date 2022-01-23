@@ -1701,6 +1701,8 @@ namespace IntegratedPresenter.Main
 
         private bool _FeatureFlag_PostsetShot = true;
 
+        private bool _FeatureFlag_MRETransition = false;
+
         private bool SetupActionsCompleted = false;
         private bool ActionsCompleted = false;
 
@@ -2127,19 +2129,27 @@ namespace IntegratedPresenter.Main
                             //switcherManager?.PerformAutoTransition();
                             _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Commanding AutoTrans (gaurded) since current source is 'slide'. For LITUGY type slide ({Presentation.CurrentSlide}).");
                             PerformGuardedAutoTransition();
-                            //await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
-                            await Task.Run(() =>
-                                                           {
-                                                               _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for signal that autotrans has completed. For LITURGY type slide ({Presentation.CurrentSlide}).");
-                                                               if (autoTransMRE.WaitOne(TimeSpan.FromMilliseconds(1500)))
+
+                            if (!_FeatureFlag_MRETransition)
+                            {
+                                _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for delay so that autotrans has completed. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                            }
+                            else
+                            {
+                                await Task.Run(() =>
                                                                {
-                                                                   _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans signaled complete. For LITURGY type slide ({Presentation.CurrentSlide}).");
-                                                               }
-                                                               else
-                                                               {
-                                                                   _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans not signaled- timed out after 1500ms. Continuing anyways. For LITURGY type slide ({Presentation.CurrentSlide}).");
-                                                               }
-                                                           });
+                                                                   _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for signal that autotrans has completed. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                                                   if (autoTransMRE.WaitOne(TimeSpan.FromMilliseconds(1500)))
+                                                                   {
+                                                                       _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans signaled complete. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                                                   }
+                                                                   else
+                                                                   {
+                                                                       _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans not signaled- timed out after 1500ms. Continuing anyways. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                                                   }
+                                                               });
+                            }
 
                         }
                         _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Taking NextSlide() from ({Presentation.CurrentSlide}) of type LITURGY");
@@ -2174,19 +2184,27 @@ namespace IntegratedPresenter.Main
                             if (waitfortrans)
                             {
                                 _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for autotrans to complete. For LITURGY type slide ({Presentation.CurrentSlide}).");
-                                //await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
-                                await Task.Run(() =>
+
+                                if (!_FeatureFlag_MRETransition)
                                 {
-                                    _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for signal that autotrans has completed. For LITURGY type slide ({Presentation.CurrentSlide}).");
-                                    if (autoTransMRE.WaitOne(TimeSpan.FromMilliseconds(1500)))
+                                    _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for delay that autotrans has completed. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                    await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                                }
+                                else
+                                {
+                                    await Task.Run(() =>
                                     {
-                                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans signaled complete. For LITURGY type slide ({Presentation.CurrentSlide}).");
-                                    }
-                                    else
-                                    {
-                                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans not signaled- timed out after 1500ms. Continuing anyways. For LITURGY type slide ({Presentation.CurrentSlide}).");
-                                    }
-                                });
+                                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for signal that autotrans has completed. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                        if (autoTransMRE.WaitOne(TimeSpan.FromMilliseconds(1500)))
+                                        {
+                                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans signaled complete. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                        }
+                                        else
+                                        {
+                                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans not signaled- timed out after 1500ms. Continuing anyways. For LITURGY type slide ({Presentation.CurrentSlide}).");
+                                        }
+                                    });
+                                }
                             }
                             _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command preset select for postset shot. For LITURGY type slide ({Presentation.CurrentSlide}).");
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
@@ -2696,14 +2714,20 @@ namespace IntegratedPresenter.Main
                 // if guarded, check if transition is already in progress
                 if (!switcherState.InTransition)
                 {
-                    autoTransMRE.Reset();
+                    if (_FeatureFlag_MRETransition)
+                    {
+                        autoTransMRE.Reset();
+                    }
                     switcherManager?.PerformAutoTransition();
                 }
             }
             else
             {
                 switcherManager?.PerformAutoTransition();
-                autoTransMRE.Reset();
+                if (_FeatureFlag_MRETransition)
+                {
+                    autoTransMRE.Reset();
+                }
             }
         }
 
@@ -4530,6 +4554,21 @@ namespace IntegratedPresenter.Main
             if (switcherManager != null)
             {
                 switcherManager.Disconnect();
+            }
+        }
+
+        private void ClickToggleMRETransitionFeature(object sender, RoutedEventArgs e)
+        {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
+            ToggleMRETransitionFeature();
+        }
+        private void ToggleMRETransitionFeature()
+        {
+            _FeatureFlag_MRETransition = !_FeatureFlag_MRETransition;
+            miMRETransitions.IsChecked = _FeatureFlag_MRETransition;
+            if (_FeatureFlag_MRETransition)
+            {
+                autoTransMRE.Reset();
             }
         }
     }

@@ -59,6 +59,7 @@
                     <MenuItem Name="miDriveAutoTransGuard" Header="Enable Drive Mode Auto Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleDriveAutoTransGuard"></MenuItem>
                     <MenuItem Name="miCutTransitionGuard" Header="Enable Cut Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleCutTransGuard"></MenuItem>
                     <MenuItem Name="miPostset" Header="Enable Postset" IsCheckable="True" IsChecked="True" Click="ClickTogglePostsetFeature"></MenuItem>
+                    <MenuItem Name="miMRETransitions" Header="MRE Transitions [UNQUALIFIED]" IsCheckable="True" IsChecked="False" Click="ClickToggleMRETransitionFeature"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Help" IsTabStop="False">
                     <MenuItem Name="miShowShortcuts" Header="Show Keyboard Shortcuts [S]" IsCheckable="True" IsChecked="False" Click="ClickShowKeyboardShortcuts"></MenuItem>
