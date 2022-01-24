@@ -1198,8 +1198,8 @@
                                                                         </Border>
                                                                     </StackPanel>
                                                                 </Viewbox>
-                                                                <TextBlock>
-                                                                    <Hyperlink Name="ResetSlideshow" Click="ResetSlideshow_Click">Reset</Hyperlink>
+                                                                <TextBlock Focusable="False">
+                                                                    <Hyperlink Focusable="false" Name="ResetSlideshow" Click="ResetSlideshow_Click">Reset</Hyperlink>
                                                                 </TextBlock>
                                                             </Grid>
                                                             <TextBlock Name="TbCurrSlide" Foreground="Orange">0</TextBlock>
