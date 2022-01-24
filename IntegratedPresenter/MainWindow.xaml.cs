@@ -2785,7 +2785,7 @@ namespace IntegratedPresenter.Main
                     _display.Show();
                 }
 
-                if (_keydisplay == null && !(_keydisplay?.IsWindowVisilbe ?? false))
+                if (_keydisplay == null || _keydisplay?.IsWindowVisilbe == false)
                 {
                     _logger.Info($"Graphics Engine has no active key window. Creating window now.");
                     _keydisplay = new PresenterDisplay(this, true);
