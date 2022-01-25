@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:IntegratedPresenter.Main" xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         mc:Ignorable="d"
         Closing="OnClosing"
-        PreviewKeyDown="WindowKeyDown"
+        PreviewKeyDown="WindowPreviewKeyDown"
         PreviewKeyUp="WindowKeyUp"
         Background="#3f3f3f"
         Title="Integrated Presenter" Height="600" Width="1200">
@@ -21,49 +21,53 @@
 
         <Grid Grid.Row="0">
             <Menu IsTabStop="False">
-                <MenuItem Header="Connections" IsTabStop="False">
-                    <MenuItem Click="ClickConnect" Header="Switcher" IsTabStop="False"></MenuItem>
+                <MenuItem Header="Connections" IsTabStop="False" Focusable="False">
+                    <MenuItem Click="ClickConnect" Header="Switcher" Focusable="False" IsTabStop="False"></MenuItem>
                     <Separator></Separator>
-                    <MenuItem Click="ClickConnectMock" Header="Mock Switcher" IsTabStop="False"></MenuItem>
+                    <MenuItem Click="ClickConnectMock" Header="Mock Switcher" Focusable="False" IsTabStop="False"></MenuItem>
                     <Separator></Separator>
-                    <MenuItem Click="ClickDisconnectSwitcher" Header="Disconnect" IsTabStop="False"></MenuItem>
+                    <MenuItem Click="ClickDisconnectSwitcher" Header="Disconnect" Focusable="False" IsTabStop="False"></MenuItem>
                 </MenuItem>
-                <MenuItem Header="Presentation" IsTabStop="False">
-                    <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False"></MenuItem>
+                <MenuItem Header="Presentation" IsTabStop="False" Focusable="False">
+                    <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False" Focusable="False" ></MenuItem>
                     <Separator></Separator>
-                    <MenuItem Name="miMute" Header="Mute [M]" Click="ToggleMutePres" IsTabStop="False" IsCheckable="True" IsChecked="False"></MenuItem>
+                    <MenuItem Name="miMute" Header="Mute [M]" Click="ToggleMutePres" IsTabStop="False" IsCheckable="True" IsChecked="False" Focusable="False"></MenuItem>
                 </MenuItem>
-                <MenuItem Header="View" IsTabStop="False">
-                    <MenuItem Name="cbPrevAfter" Header="Prev/After [O]" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter"></MenuItem>
-                    <MenuItem Name="cbShowEffectiveCurrent" Header="Preview Effective Current" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowEffectiveCurrentPreview"></MenuItem>
-                    <MenuItem Name="cbShowCurrentVideoCountdownTimer" Header="Video Countdown Timer (Current)" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowCurrentVideoCountdownTimer"></MenuItem>
-                    <MenuItem Name="cbAdvancedPresentation" Header="Advanced Presentation [Q]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation"></MenuItem>
-                    <MenuItem Header="Audio Player [A]" IsTabStop="False" Click="ClickViewAudioPlayer"></MenuItem>
-                    <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP [P]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP"></MenuItem>
-                    <MenuItem Name="cbAdvancedPIPMovement" Header="Advanced PIP Location [L]" IsTabStop="False" Click="ClickViewAdvancedPIPLocation"></MenuItem>
-                    <MenuItem Header="Aux Output [X]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAuxOutput"></MenuItem>
+                <MenuItem Header="View" IsTabStop="False" Focusable="False">
+                    <MenuItem Name="cbPrevAfter" Header="Prev/After [O]" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter" Focusable="False"></MenuItem>
+                    <MenuItem Name="cbShowEffectiveCurrent" Header="Preview Effective Current" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowEffectiveCurrentPreview" Focusable="False"></MenuItem>
+                    <MenuItem Name="cbShowCurrentVideoCountdownTimer" Header="Video Countdown Timer (Current)" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowCurrentVideoCountdownTimer" Focusable="False"></MenuItem>
+                    <MenuItem Name="cbAdvancedPresentation" Header="Advanced Presentation [Q]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation" Focusable="False"></MenuItem>
+                    <MenuItem Header="Audio Player [A]" IsTabStop="False" Click="ClickViewAudioPlayer" Focusable="False"></MenuItem>
+                    <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP [P]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP" Focusable="False"></MenuItem>
+                    <MenuItem Name="cbAdvancedPIPMovement" Header="Advanced PIP Location [L]" IsTabStop="False" Click="ClickViewAdvancedPIPLocation" Focusable="False"></MenuItem>
+                    <MenuItem Header="Aux Output [X]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAuxOutput" Focusable="False"></MenuItem>
                 </MenuItem>
-                <MenuItem Header="Settings" IsTabStop="False">
-                    <MenuItem Header="Export Switcher Settings" Click="SaveSettings" IsTabStop="False"></MenuItem>
-                    <MenuItem Header="Load Switcher Settings" Click="LoadSettings" IsTabStop="False"></MenuItem>
-                    <MenuItem Header="Load Switcher Default" Click="LoadDefault" IsTabStop="False"></MenuItem>
+                <MenuItem Header="Interaction" IsTabStop="False" Focusable="False">
+                    <MenuItem Click="clickENTEROnlyForTrans" Name="miEnterButtonClickGuard" Header="ENTER Only For Auto Trans" IsCheckable="True" IsChecked="True" IsTabStop="False" Focusable="False"></MenuItem>
+                    <MenuItem Click="clickSPACEOnlyForTrans" Name="miSpaceButtonClickGuard" Header="SPACE Only For Cut Trans" IsCheckable="True" IsChecked="True" IsTabStop="False" Focusable="False"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Settings" IsTabStop="False" Focusable="False">
+                    <MenuItem Header="Export Switcher Settings" Click="SaveSettings" IsTabStop="False" Focusable="False"></MenuItem>
+                    <MenuItem Header="Load Switcher Settings" Click="LoadSettings" IsTabStop="False" Focusable="False"></MenuItem>
+                    <MenuItem Header="Load Switcher Default" Click="LoadDefault" IsTabStop="False" Focusable="False"></MenuItem>
                     <Separator></Separator>
-                    <MenuItem Header="Export User Settings" Click="SaveUserSettings" IsTabStop="False"></MenuItem>
-                    <MenuItem Header="Load User Settings" Click="LoadUserSettings" IsTabStop="False"></MenuItem>
-                    <MenuItem Header="Load User Default" Click="LoadUserDefault" IsTabStop="False"></MenuItem>
+                    <MenuItem Header="Export User Settings" Click="SaveUserSettings" IsTabStop="False" Focusable="False"></MenuItem>
+                    <MenuItem Header="Load User Settings" Click="LoadUserSettings" IsTabStop="False" Focusable="False"></MenuItem>
+                    <MenuItem Header="Load User Default" Click="LoadUserDefault" IsTabStop="False" Focusable="False"></MenuItem>
                 </MenuItem>
-                <MenuItem Header="Automation" IsTabStop="False">
-                    <MenuItem Name="miTimer1Restart" Header="Timer1 Restart" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationTimer1"></MenuItem>
-                    <MenuItem Header="Set Video Preroll Delay" IsTabStop="False" Click="ClickSetVideoPrerollDelay"></MenuItem>
-                    <MenuItem Header="Set Drive Mode Preset Selection Delay" IsTabStop="False" Click="ClickSetDrivePresetSelectDelay"></MenuItem>
-                    <MenuItem Name="miDriveAutoTransGuard" Header="Enable Drive Mode Auto Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleDriveAutoTransGuard"></MenuItem>
-                    <MenuItem Name="miCutTransitionGuard" Header="Enable Cut Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleCutTransGuard"></MenuItem>
-                    <MenuItem Name="miPostset" Header="Enable Postset" IsCheckable="True" IsChecked="True" Click="ClickTogglePostsetFeature"></MenuItem>
-                    <MenuItem Name="miMRETransitions" Header="MRE Transitions [UNQUALIFIED]" IsCheckable="True" IsChecked="False" Click="ClickToggleMRETransitionFeature"></MenuItem>
+                <MenuItem Header="Automation" IsTabStop="False" Focusable="False">
+                    <MenuItem Name="miTimer1Restart" Header="Timer1 Restart" IsCheckable="True" IsChecked="True" Click="ClickToggleAutomationTimer1" Focusable="False"></MenuItem>
+                    <MenuItem Header="Set Video Preroll Delay" IsTabStop="False" Click="ClickSetVideoPrerollDelay" Focusable="False"></MenuItem>
+                    <MenuItem Header="Set Drive Mode Preset Selection Delay" IsTabStop="False" Click="ClickSetDrivePresetSelectDelay" Focusable="False"></MenuItem>
+                    <MenuItem Name="miDriveAutoTransGuard" Header="Enable Drive Mode Auto Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleDriveAutoTransGuard" Focusable="False"></MenuItem>
+                    <MenuItem Name="miCutTransitionGuard" Header="Enable Cut Transition Guard" IsCheckable="True" IsChecked="True" Click="ClickToggleCutTransGuard" Focusable="False"></MenuItem>
+                    <MenuItem Name="miPostset" Header="Enable Postset" IsCheckable="True" IsChecked="True" Click="ClickTogglePostsetFeature" Focusable="False"></MenuItem>
+                    <MenuItem Name="miMRETransitions" Header="MRE Transitions [UNQUALIFIED]" IsCheckable="True" IsChecked="False" Click="ClickToggleMRETransitionFeature" Focusable="False"></MenuItem>
                 </MenuItem>
-                <MenuItem Header="Help" IsTabStop="False">
-                    <MenuItem Name="miShowShortcuts" Header="Show Keyboard Shortcuts [S]" IsCheckable="True" IsChecked="False" Click="ClickShowKeyboardShortcuts"></MenuItem>
-                    <MenuItem Header="Online Help" IsTabStop="False" Click="ClickShowOnlineHelp"></MenuItem>
+                <MenuItem Header="Help" IsTabStop="False" Focusable="False">
+                    <MenuItem Name="miShowShortcuts" Header="Show Keyboard Shortcuts [S]" IsCheckable="True" IsChecked="False" Click="ClickShowKeyboardShortcuts" Focusable="False"></MenuItem>
+                    <MenuItem Header="Online Help" IsTabStop="False" Click="ClickShowOnlineHelp" Focusable="False"></MenuItem>
                 </MenuItem>
             </Menu>
         </Grid>
@@ -915,7 +919,7 @@
 
 
                                                     <StackPanel>
-                                                        <Button Name="BtnDVE" Click="ClickDVEMode" Foreground="White" Background="Red" Cursor="Hand">
+                                                        <Button Focusable="false" Name="BtnDVE" Click="ClickDVEMode" Foreground="White" Background="Red" Cursor="Hand">
                                                             <Button.Content>DVE (PIP)</Button.Content>
                                                             <Button.Template>
                                                                 <ControlTemplate>
@@ -932,7 +936,7 @@
                                                             </Button.Template>
                                                         </Button>
 
-                                                        <Button Name="BtnChroma" Click="ClickChromaMode" Foreground="White" Background="red" Cursor="Hand">
+                                                        <Button Focusable="False" Name="BtnChroma" Click="ClickChromaMode" Foreground="White" Background="red" Cursor="Hand">
                                                             <Button.Content>CHROMA</Button.Content>
                                                             <Button.Template>
                                                                 <ControlTemplate>
@@ -1133,7 +1137,7 @@
                                                                 </Viewbox>
 
                                                                 <StackPanel VerticalAlignment="Center">
-                                                                    <Button Name="BtnNoDrive" Click="ClickSlideNoDriveVideo" Foreground="White">
+                                                                    <Button Focusable="false" Name="BtnNoDrive" Click="ClickSlideNoDriveVideo" Foreground="White">
                                                                         <Button.Content>NONE</Button.Content>
                                                                         <Button.Template>
                                                                             <ControlTemplate>
@@ -1150,7 +1154,7 @@
                                                                         </Button.Template>
 
                                                                     </Button>
-                                                                    <Button Name="BtnDrive" Click="ClickSlideDriveVideo" Foreground="White">
+                                                                    <Button Focusable="False" Name="BtnDrive" Click="ClickSlideDriveVideo" Foreground="White">
                                                                         <Button.Content>DRIVE</Button.Content>
                                                                         <Button.Template>
                                                                             <ControlTemplate>
@@ -1167,7 +1171,7 @@
                                                                         </Button.Template>
 
                                                                     </Button>
-                                                                    <Button Name="BtnJump" Click="ClickSlideSkipMode" Foreground="White">
+                                                                    <Button Focusable="False" Name="BtnJump" Click="ClickSlideSkipMode" Foreground="White">
                                                                         <Button.Content>SKIP</Button.Content>
                                                                         <Button.Template>
                                                                             <ControlTemplate>
@@ -1237,7 +1241,7 @@
                                                                         </StackPanel>
                                                                     </Grid>
                                                                 </Viewbox>
-                                                                <Button Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
+                                                                <Button Focusable="False" Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
                                                             </Grid>
                                                             <Grid>
                                                                 <Viewbox x:Name="ksc_mstop" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
@@ -1433,7 +1437,7 @@
                                                                     </Border>
                                                                 </StackPanel>
                                                             </Viewbox>
-                                                            <Button Click="ClickViewAdvancedPIPLocation" IsTabStop="False" x:Name="btnViewAdvancedPIPLocation" Grid.Row="0" Grid.Column="2">
+                                                            <Button Focusable="False" Click="ClickViewAdvancedPIPLocation" IsTabStop="False" x:Name="btnViewAdvancedPIPLocation" Grid.Row="0" Grid.Column="2">
                                                                 <Button.Template>
                                                                     <ControlTemplate>
                                                                         <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">
@@ -1700,7 +1704,7 @@
                                                             <TextBox Name="tbChromaLift" IsKeyboardFocusedChanged="TextEntryMode"  AcceptsReturn="False" IsTabStop="False"  Grid.Row="2" Grid.Column="1" Style="{StaticResource darkTextbox}"></TextBox>
                                                             <TextBlock  Grid.Row="2" Grid.Column="2" Margin="5" Style="{StaticResource GrayText}">NARROW</TextBlock>
                                                             <TextBox Name="tbChromaNarrow" IsKeyboardFocusedChanged="TextEntryMode" AcceptsReturn="False"  IsTabStop="False"  Grid.Row="2" Grid.Column="3" Style="{StaticResource darkTextbox}"></TextBox>
-                                                            <Button Click="ClickApplyChromaSettings" IsTabStop="False" x:Name="btnApplyChroma" Grid.Row="0" Grid.Column="3" Margin="10, 0, 10, 0">
+                                                            <Button Focusable="False" Click="ClickApplyChromaSettings" IsTabStop="False" x:Name="btnApplyChroma" Grid.Row="0" Grid.Column="3" Margin="10, 0, 10, 0">
                                                                 <Button.Template>
                                                                     <ControlTemplate>
                                                                         <Border Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="1">

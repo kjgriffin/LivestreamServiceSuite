@@ -11,6 +11,7 @@ namespace Configurations.FeatureConfig
         public IntegratedPresentationFeatures_Automation AutomationSettings { get; set; }
         public IntegratedPresentationFeatures_Presentation PresentationSettings { get; set; }
         public IntegratedPresentationFeatures_View ViewSettings { get; set; }
+        public IntegratedPresentationFeatures_Interface InterfaceSettings { get; set; }
 
         public static IntegratedPresenterFeatures Default()
         {
@@ -19,6 +20,7 @@ namespace Configurations.FeatureConfig
                 AutomationSettings = IntegratedPresentationFeatures_Automation.Default(),
                 PresentationSettings = IntegratedPresentationFeatures_Presentation.Default(),
                 ViewSettings = IntegratedPresentationFeatures_View.Default(),
+                InterfaceSettings = IntegratedPresentationFeatures_Interface.Default(),
             };
         }
 
@@ -54,6 +56,21 @@ namespace Configurations.FeatureConfig
             catch (Exception)
             {
             }
+        }
+    }
+
+    public class IntegratedPresentationFeatures_Interface
+    {
+        public bool EnterKeyOnlyAsAutoTrans { get; set; } = true;
+        public bool SpaceKeyOnlyAsCutTrans { get; set; } = true;
+
+        public static IntegratedPresentationFeatures_Interface Default()
+        {
+            return new IntegratedPresentationFeatures_Interface
+            {
+                EnterKeyOnlyAsAutoTrans = true,
+                SpaceKeyOnlyAsCutTrans = true
+            };
         }
     }
 

@@ -22,6 +22,7 @@ using System.Windows.Media;
 using log4net;
 using IntegratedPresenter.BMDSwitcher.Mock;
 using CommonVersionInfo;
+using Configurations.FeatureConfig;
 
 namespace IntegratedPresenter.Main
 {
@@ -1124,8 +1125,9 @@ namespace IntegratedPresenter.Main
             BtnStopMedia.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
         }
 
+        
 
-        private async void WindowKeyDown(object sender, KeyEventArgs e)
+        private async void WindowPreviewKeyDown(object sender, KeyEventArgs e)
         {
 
             // dont enable shortcuts when focused on textbox
@@ -1507,6 +1509,12 @@ namespace IntegratedPresenter.Main
             {
                 _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) RequestCutTransition()");
                 RequestCutTransition();
+
+                if (_m_integratedPresenterFeatures?.InterfaceSettings?.SpaceKeyOnlyAsCutTrans == true)
+                {
+                    e.Handled = true;
+                    return;
+                }
             }
 
             if (e.Key == Key.Enter)
@@ -1514,6 +1522,12 @@ namespace IntegratedPresenter.Main
                 // TODO:: Guard with global take transition guard
                 _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) AutoTransition()");
                 TakeAutoTransition();
+
+                if (_m_integratedPresenterFeatures?.InterfaceSettings?.EnterKeyOnlyAsAutoTrans == true)
+                {
+                    e.Handled = true;
+                    return;
+                }
             }
 
             // modifier for slide mode commands
@@ -4478,6 +4492,8 @@ namespace IntegratedPresenter.Main
             SetEnableDriveAutoTransGuard(config.AutomationSettings.EnableDriveModeAutoTransGuard);
             SetPostsetEnabled(config.AutomationSettings.EnablePostset);
 
+            SetInteractionSettings(config.InterfaceSettings);
+
             if (config.PresentationSettings.StartPresentationMuted)
             {
                 muteMedia();
@@ -4487,6 +4503,12 @@ namespace IntegratedPresenter.Main
                 unmuteMedia();
             }
 
+        }
+
+        private void SetInteractionSettings(IntegratedPresentationFeatures_Interface interfaceSettings)
+        {
+            miEnterButtonClickGuard.IsChecked = interfaceSettings.EnterKeyOnlyAsAutoTrans;
+            miCutTransitionGuard.IsChecked = interfaceSettings.SpaceKeyOnlyAsCutTrans;
         }
 
         private Configurations.FeatureConfig.IntegratedPresenterFeatures GetCurrentUserSettings()
@@ -4570,6 +4592,16 @@ namespace IntegratedPresenter.Main
             {
                 autoTransMRE.Reset();
             }
+        }
+
+        private void clickENTEROnlyForTrans(object sender, RoutedEventArgs e)
+        {
+            _m_integratedPresenterFeatures.InterfaceSettings.EnterKeyOnlyAsAutoTrans = miEnterButtonClickGuard.IsChecked;
+        }
+
+        private void clickSPACEOnlyForTrans(object sender, RoutedEventArgs e)
+        {
+            _m_integratedPresenterFeatures.InterfaceSettings.SpaceKeyOnlyAsCutTrans = miSpaceButtonClickGuard.IsChecked;
         }
     }
 }
