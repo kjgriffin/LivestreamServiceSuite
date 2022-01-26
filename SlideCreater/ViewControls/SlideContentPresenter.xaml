@@ -11,35 +11,36 @@
             <Viewbox Stretch="Uniform">
                 <Border>
                     <Grid Height="1080" Width="1920">
-                        <Viewbox Panel.ZIndex="2">
+                        <Viewbox Panel.ZIndex="4">
                             <TextBlock Foreground="Gray" Name="textDisplay" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="200" Opacity="0.5">Empty Slide</TextBlock>
                         </Viewbox>
-                        <Image Name="ImgDisplay"></Image>
-                        <MediaElement Name="VideoDisplay" LoadedBehavior="Manual"></MediaElement>
-                        <Rectangle Name="background">
+                        <Image Name="ImgDisplay" Panel.ZIndex="3"></Image>
+                        <MediaElement Name="VideoDisplay" LoadedBehavior="Manual" Panel.ZIndex="3"></MediaElement>
+                        <Rectangle Name="background" Panel.ZIndex="2">
                         </Rectangle>
+                        <Rectangle Panel.ZIndex="1">
+                            <Rectangle.Style>
+                                <Style TargetType="{x:Type Rectangle}">
+                                    <Setter Property="Fill">
+                                        <Setter.Value>
+                                            <DrawingBrush TileMode="Tile" Viewport="0,0,32,32" ViewportUnits="Absolute">
+                                                <DrawingBrush.Drawing>
+                                                    <GeometryDrawing Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0z" Brush="LightGray"/>
+                                                </DrawingBrush.Drawing>
+                                            </DrawingBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Opacity">
+                                        <Setter.Value>0.1</Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Rectangle.Style>
+                        </Rectangle>
+                        <Rectangle Fill="Black" Panel.ZIndex="0"></Rectangle>
                     </Grid>
                 </Border>
             </Viewbox>
         </Border>
-        <Rectangle Panel.ZIndex="0">
-            <Rectangle.Style>
-                <Style TargetType="{x:Type Rectangle}">
-                    <Setter Property="Fill">
-                        <Setter.Value>
-                            <DrawingBrush TileMode="Tile" Viewport="0,0,32,32" ViewportUnits="Absolute">
-                                <DrawingBrush.Drawing>
-                                    <GeometryDrawing Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0z" Brush="LightGray"/>
-                                </DrawingBrush.Drawing>
-                            </DrawingBrush>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="Opacity">
-                        <Setter.Value>0.1</Setter.Value>
-                    </Setter>
-                </Style>
-            </Rectangle.Style>
 
-        </Rectangle>
     </Grid>
 </UserControl>
