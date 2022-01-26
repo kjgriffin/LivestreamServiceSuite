@@ -41,20 +41,70 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <AvalonEdit:TextEditor Name="TbJson" FontFamily="inconsolata" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript" Margin="10"></AvalonEdit:TextEditor>
-                    <StackPanel Grid.Column="1">
-                        <Grid>
-                            <Border BorderBrush="Purple" BorderThickness="5" Margin="10" Panel.ZIndex="1">
-                                <Image Name="ImgMain"></Image>
-                            </Border>
-                            <TextBlock Panel.ZIndex="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" FontWeight="Bold" Foreground="Red" Margin="10">INVALID JSON</TextBlock>
-                        </Grid>
-                        <Grid>
-                            <Border BorderBrush="Purple" BorderThickness="5" Margin="10" Panel.ZIndex="1">
-                                <Image Name="ImgKey"></Image>
-                            </Border>
-                            <TextBlock Panel.ZIndex="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" FontWeight="Bold" Foreground="Red" Margin="10">INVALID JSON</TextBlock>
-                        </Grid>
-                    </StackPanel>
+                    <ScrollViewer Grid.Column="1">
+                        <StackPanel>
+                            <Grid>
+                                <Viewbox>
+                                    <Border Margin="10">
+                                        <Grid>
+                                            <Image Name="ImgMain" Panel.ZIndex="2"></Image>
+                                            <Rectangle Panel.ZIndex="1">
+                                                <Rectangle.Style>
+                                                    <Style TargetType="{x:Type Rectangle}">
+                                                        <Setter Property="Fill">
+                                                            <Setter.Value>
+                                                                <DrawingBrush TileMode="Tile" Viewport="0,0,32,32" ViewportUnits="Absolute">
+                                                                    <DrawingBrush.Drawing>
+                                                                        <GeometryDrawing Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0z" Brush="LightGray"/>
+                                                                    </DrawingBrush.Drawing>
+                                                                </DrawingBrush>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Setter Property="Opacity">
+                                                            <Setter.Value>0.1</Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Rectangle.Style>
+                                            </Rectangle>
+                                            <Rectangle Fill="Black" Panel.ZIndex="0"></Rectangle>
+                                            <TextBlock Name="srcinvalid" Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100" FontWeight="Bold" Foreground="Red" Margin="10">INVALID JSON</TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </Viewbox>
+                            </Grid>
+
+                            <Grid>
+                                <Viewbox>
+                                    <Border Margin="10">
+                                        <Grid>
+                                            <Image Name="ImgKey" Panel.ZIndex="2"></Image>
+                                            <Rectangle Panel.ZIndex="1">
+                                                <Rectangle.Style>
+                                                    <Style TargetType="{x:Type Rectangle}">
+                                                        <Setter Property="Fill">
+                                                            <Setter.Value>
+                                                                <DrawingBrush TileMode="Tile" Viewport="0,0,32,32" ViewportUnits="Absolute">
+                                                                    <DrawingBrush.Drawing>
+                                                                        <GeometryDrawing Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0z" Brush="LightGray"/>
+                                                                    </DrawingBrush.Drawing>
+                                                                </DrawingBrush>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Setter Property="Opacity">
+                                                            <Setter.Value>0.1</Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Rectangle.Style>
+                                            </Rectangle>
+
+                                            <Rectangle Fill="Black" Panel.ZIndex="0"></Rectangle>
+                                            <TextBlock Name="keyinvalid" Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100" FontWeight="Bold" Foreground="Red" Margin="10">INVALID JSON</TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </Viewbox>
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
                 </Grid>
             </Grid>
         </Grid>

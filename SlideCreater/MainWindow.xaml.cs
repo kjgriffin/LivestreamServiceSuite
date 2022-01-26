@@ -32,6 +32,7 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using Xenon.Compiler.Suggestions;
 using CommonVersionInfo;
 using System.Net.Http;
+using LutheRun;
 
 namespace SlideCreater
 {
@@ -1151,6 +1152,8 @@ namespace SlideCreater
             TbInput.Text = save.SourceCode;
         }
 
+        LutheRun.LSBImportOptions options = new LutheRun.LSBImportOptions();
+
         private async void ClickImportService(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -1159,13 +1162,10 @@ namespace SlideCreater
             if (ofd.ShowDialog() == true)
             {
                 ActionState = ActionState.Building;
-                LutheRun.LSBImportOptions options = new LutheRun.LSBImportOptions
-                {
-                    InferPostset = mi_importoption_inferpostset.IsChecked,
-                    UseUpNextForHymns = mi_importoption_useupnextforhymns.IsChecked,
-                    OnlyKnownCaptions = !mi_importoption_notonlyknowncaptions.IsChecked,
-                    UseResponsiveLiturgy = mi_importoption_useresponsiveliturgy.IsChecked,
-                };
+                options.InferPostset = mi_importoption_inferpostset.IsChecked;
+                options.UseUpNextForHymns = mi_importoption_useupnextforhymns.IsChecked;
+                options.OnlyKnownCaptions = !mi_importoption_notonlyknowncaptions.IsChecked;
+                options.UseResponsiveLiturgy = mi_importoption_useresponsiveliturgy.IsChecked;
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
                 await parser.ParseHTML(ofd.FileName);
                 parser.LSBImportOptions = options;
@@ -1697,6 +1697,29 @@ namespace SlideCreater
                 _proj.ProjectLayouts.InitializeNewLibrary(prompt.ResultValue);
                 SetupLayoutsTreeVew();
             }
+        }
+
+        private void mi_importoptions_chooseelements_Click(object sender, RoutedEventArgs e)
+        {
+            // get list of options to filter
+            var props = options.Filter.GetType().GetProperties().Where(x => Attribute.IsDefined(x, typeof(BoolSettingAttribute)));
+
+            List<(string name, bool value)> fields = new List<(string name, bool value)>();
+            foreach (var prop in props)
+            {
+                fields.Add((prop.Name, (bool)prop.GetValue(options.Filter)));
+            }
+
+            // get user to select them
+            CheckboxSelection dialog = new CheckboxSelection("Filter Import Elements", fields.ToArray());
+            dialog.ShowDialog();
+
+            int i = 0;
+            foreach (var prop in props)
+            {
+                prop.SetValue(options.Filter, dialog.Fields[i++].value);
+            }
+
         }
     }
 }

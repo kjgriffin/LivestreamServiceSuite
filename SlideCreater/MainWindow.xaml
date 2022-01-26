@@ -62,6 +62,7 @@
                 <MenuItem Name="mi_importoption_useupnextforhymns" Header="Use UpNext for Hymns" IsCheckable="True" IsChecked="False"></MenuItem>
                 <MenuItem Name="mi_importoption_notonlyknowncaptions" Header="Add Unknown Captions" IsCheckable="True" IsChecked="False"></MenuItem>
                 <MenuItem Name="mi_importoption_useresponsiveliturgy" Header="Use Responsive Liturgy" IsCheckable="True" IsChecked="False"></MenuItem>
+                <MenuItem Name="mi_importoptions_chooseelements" Header="Filter Elements" Click="mi_importoptions_chooseelements_Click"></MenuItem>
                 <Separator></Separator>
                 <MenuItem Name="miimport_adv" Click="ClickImportServiceAdv" Header="Import Wizard"></MenuItem>
             </MenuItem>

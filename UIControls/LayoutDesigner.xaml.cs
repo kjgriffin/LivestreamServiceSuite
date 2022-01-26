@@ -81,6 +81,8 @@ namespace UIControls
             var r = ProjectLayoutLibraryManager.GetLayoutPreview(Group, layoutjson);
             if (r.isvalid)
             {
+                srcinvalid.Visibility = Visibility.Hidden;
+                keyinvalid.Visibility = Visibility.Hidden;
                 ImgMain.Source = r.main.ConvertToBitmapImage();
                 ImgKey.Source = r.key.ConvertToBitmapImage();
             }
@@ -88,6 +90,8 @@ namespace UIControls
             {
                 ImgMain.Source = null;
                 ImgKey.Source = null;
+                srcinvalid.Visibility = Visibility.Visible;
+                keyinvalid.Visibility = Visibility.Visible;
             }
         }
 

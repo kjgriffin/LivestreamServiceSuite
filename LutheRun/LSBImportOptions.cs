@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,15 +17,28 @@ namespace LutheRun
         public LSBElementFilter Filter { get; set; } = new LSBElementFilter();
     }
 
+    public class BoolSettingAttribute : Attribute
+    {
+
+    }
+
     public class LSBElementFilter
     {
+        [BoolSetting]
         public bool Liturgy { get; set; } = true;
+        [BoolSetting]
         public bool SungLiturgy { get; set; } = false;
+        [BoolSetting]
         public bool Reading { get; set; } = false;
+        [BoolSetting]
         public bool Caption { get; set; } = false;
+        [BoolSetting]
         public bool Introit { get; set; } = false;
+        [BoolSetting]
         public bool Hymn { get; set; } = false;
+        [BoolSetting]
         public bool Prefab { get; set; } = false;
+        [BoolSetting]
         public bool Unknown { get; set; } = false;
 
         public List<Type> FilteredTypes
