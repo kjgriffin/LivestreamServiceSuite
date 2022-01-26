@@ -27,7 +27,7 @@ namespace LutheRun
                     "!keysrc='Key_#.png';",
                     "@arg1:PresetSelect(5)[Preset Organ];", 
                     "@arg1:DelayMs(100);",
-                    "@arg1:AutoTrans[Take Organ];",
+                    "@arg0:AutoTrans[Take Organ];",
                     "}");
                 return new ExternalPrefab($"{upnextcmd.Trim()}{nl}{postcmd.Trim()}");
             }
