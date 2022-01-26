@@ -44,6 +44,11 @@ namespace LutheRun
         };
 
 
+        public static List<ILSBElement> Filter(List<ILSBElement> service, LSBImportOptions options)
+        {
+            return service.Where(x => options.Filter.FilteredTypes.Contains(x.GetType())).ToList();
+        }
+
         public static List<ILSBElement> RemoveUnusedElement(List<ILSBElement> service, LSBImportOptions options)
         {
             // for now just remove: headdings, captions that don't match keys and any unknown

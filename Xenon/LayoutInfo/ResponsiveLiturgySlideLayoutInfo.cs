@@ -19,8 +19,7 @@ namespace Xenon.LayoutInfo
         public LWJColor BackgroundColor { get; set; }
         public LWJColor KeyColor { get; set; }
         public List<LWJPolygon> Shapes { get; set; } = new List<LWJPolygon>();
-        public List<TextboxLayout> Textboxes { get; set; } = new List<TextboxLayout>();
-        public LiturgyLinePrototype LiturgyLineProto { get; set; }
+        public List<LiturgyTextboxLayout> Textboxes { get; set; } = new List<LiturgyTextboxLayout>();
 
         public override string GetDefaultJson()
         {

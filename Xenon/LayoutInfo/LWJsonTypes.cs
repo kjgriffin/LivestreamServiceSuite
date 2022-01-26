@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -56,6 +57,11 @@ namespace Xenon.Layouts
         {
             return new Rectangle(Origin.GetPoint(), Size.GetSize());
         }
+
+        internal RectangleF GetRectangleF()
+        {
+            return new RectangleF(Origin.GetPoint(), Size.GetSize());
+        }
     }
 
     class LWJPolygon
@@ -85,13 +91,19 @@ namespace Xenon.Layouts
         {
             return new Font(Name, Size, (FontStyle)Style);
         }
+
+        public FontStyle GetStyle()
+        {
+            return (FontStyle)Style;
+        }
     }
 
     enum LWJHAlign
     {
         Left,
         Center,
-        Right
+        Right,
+        Justified
     }
     enum LWJVAlign
     {

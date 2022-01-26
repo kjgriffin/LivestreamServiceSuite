@@ -9,6 +9,12 @@ namespace Xenon.Renderer.Helpers
 {
     internal static class TextBoxRenderer
     {
+        public static void RenderUnFilled(Graphics gfx, Graphics kgfx, TextboxLayout layout)
+        {
+            gfx.FillRectangle(new SolidBrush(layout.BColor.GetColor()), layout.Textbox.GetRectangle());
+            kgfx.FillRectangle(new SolidBrush(layout.KColor.GetColor()), layout.Textbox.GetRectangle());
+        }
+
         public static void Render(Graphics gfx, Graphics kgfx, string text, TextboxLayout layout)
         {
             gfx.FillRectangle(new SolidBrush(layout.BColor.GetColor()), layout.Textbox.GetRectangle());

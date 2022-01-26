@@ -34,7 +34,7 @@ namespace LutheRun
    
         public void Serviceify(LSBImportOptions options)
         {
-            ServiceElements = Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(ServiceElements, options), options);
+            ServiceElements = Serviceifier.Filter(Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(ServiceElements, options), options), options);
         }
 
 

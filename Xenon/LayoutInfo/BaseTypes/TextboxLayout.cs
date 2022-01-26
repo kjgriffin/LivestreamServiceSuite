@@ -9,6 +9,7 @@ using Xenon.Layouts;
 
 namespace Xenon.LayoutInfo.BaseTypes
 {
+
     internal class TextboxLayout
     {
         public LWJRect Textbox { get; set; }
@@ -38,6 +39,7 @@ namespace Xenon.LayoutInfo.BaseTypes
                     f.Alignment = StringAlignment.Far;
                     break;
                 default:
+                    f.Alignment = StringAlignment.Near;
                     break;
             }
             switch (VerticalAlignment)

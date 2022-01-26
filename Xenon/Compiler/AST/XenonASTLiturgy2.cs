@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Xenon.Compiler.SubParsers;
+using Xenon.LayoutEngine.L2;
+using Xenon.LayoutInfo;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -80,23 +84,47 @@ namespace Xenon.Compiler.AST
             // that ways we won't have to do graphics stuff here, and can re-use it later (if we ever do other fancy stuff with liturgy-like things)
 
 
-            int slidenum = project.NewSlideNumber;
-
-            Slide slide = new Slide
+            var linfo = (this as IXenonASTCommand).GetLayoutOverrideFromProj(project, Logger, LanguageKeywordCommand.Liturgy2);
+            ResponsiveLiturgySlideLayoutInfo layout = (ResponsiveLiturgySlideLayoutInfo)LanguageKeywords.LayoutForType[LanguageKeywordCommand.Liturgy2].layoutResolver._Internal_GetDefaultInfo();
+            if (linfo.found)
             {
-                Name = "UNNAMED_liturgy2",
-                Number = slidenum,
-                Lines = new List<SlideLine>(),
-                Asset = "",
-                Format = SlideFormat.ResponsiveLiturgy,
-                MediaType = MediaType.Image,
-            };
+                layout = JsonSerializer.Deserialize<ResponsiveLiturgySlideLayoutInfo>(linfo.json);
+            }
 
-            slide.Data["fallback-layout"] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.UpNext].defaultJsonFile;
-            (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.UpNext);
+            ResponsiveLiturgyLayoutEngine engine = new ResponsiveLiturgyLayoutEngine();
+            var slideblocks = engine.GenerateSlides(statements, layout);
 
-            slide.AddPostset(_Parent, true, true);
-            project.Slides.Add(slide);
+            List<Slide> slides = new List<Slide>();
+            foreach (var sblock in slideblocks)
+            {
+                // attach to a slide
+                int slidenum = project.NewSlideNumber;
+
+                Slide slide = new Slide
+                {
+                    Name = "UNNAMED_liturgy2",
+                    Number = slidenum,
+                    Lines = new List<SlideLine>(),
+                    Asset = "",
+                    Format = SlideFormat.ResponsiveLiturgy,
+                    MediaType = MediaType.Image,
+                };
+
+                slide.Data[ResponsiveLiturgyRenderer.DATAKEY] = sblock;
+
+                slide.Data["fallback-layout"] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.Liturgy2].defaultJsonFile;
+                (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.Liturgy2);
+
+                slides.Add(slide);
+            }
+
+            int i = 0;
+            foreach (var slide in slides)
+            {
+                slide.AddPostset(_Parent, i == 0, i == slides.Count - 1);
+            }
+
+            project.Slides.AddRange(slides);
         }
 
         public void GenerateDebug(Project project)

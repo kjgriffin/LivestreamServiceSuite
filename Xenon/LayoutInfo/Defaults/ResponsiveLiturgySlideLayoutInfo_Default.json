@@ -9,26 +9,6 @@
   "KeyColor": {
     "Hex": "#ff000000"
   },
-  "LiturgyLineProto": {
-    "FontOverride": {
-      "Name": "Arial",
-      "Size": 36,
-      "Style": 1
-    },
-    "ColorOverride": {
-      "Hex": "#ffffffff"
-    },
-    "ShowSpeaker": true,
-    "SpeakerFont": {
-      "Name": "LSBSymbol",
-      "Size": 36,
-      "Style": 1
-    },
-    "SpeakerColor": {
-      "Hex": "#ff0000ff"
-    },
-    "SpeakerMargin": 50
-  },
   "Textboxes": [
     {
       "Textbox": {
@@ -56,7 +36,22 @@
         "Hex": "#00000000"
       },
       "HorizontalAlignment": "Left",
-      "VerticalAlignment": "Center"
+      "VerticalAlignment": "Center",
+
+      "MaxSpeakers": 2,
+      "EnforceCallResponse": true,
+      "ShowSpeaker": true,
+      "SpeakerFont": {
+        "Name": "LSBSymbol",
+        "Size": 36,
+        "Style": 1
+      },
+      "SpeakerColor": {
+        "Hex": "#ff0000ff"
+      },
+      "SpeakerColumnWidth": 100,
+      "VPaddingEnabled": true,
+      "MinInterLineSpace": 10
     }
   ],
   "Shapes": [

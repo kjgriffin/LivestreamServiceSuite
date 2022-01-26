@@ -10,27 +10,52 @@ using Xenon.Helpers;
 
 namespace Xenon.LayoutEngine.L2
 {
+
+    class SizedTextBlurb : TextBlurb
+    {
+        public SizeF Size { get; private set; }
+
+        public static SizedTextBlurb CreateMeasured(TextBlurb blurb, Graphics gfx, string defaultFont, float defaultFontSize, FontStyle defaultStyle, RectangleF rect)
+        {
+            SizedTextBlurb sblurb = new SizedTextBlurb(blurb);
+            sblurb.Size = sblurb.Measure(gfx, defaultFont, defaultFontSize, defaultStyle, rect);
+            return sblurb;
+        }
+
+        public SizedTextBlurb(TextBlurb blurb) : base(blurb.Pos, blurb.Text, blurb.AltFont, blurb.FontStyle, blurb.FontSize, blurb.Space, blurb.IsWhitespace)
+        {
+            Size = SizeF.Empty;
+        }
+    }
+
     internal class TextBlurb
     {
-        public Point Pos { get; set; }
-        public string Text { get; set; }
-        public string AltFont { get; set; }
-        public FontStyle FontStyle { get; set; }
-        public int FontSize { get; set; }
+        public Point Pos { get; private set; }
+        public string Text { get; private set; }
+        public string AltFont { get; private set; }
+        public FontStyle FontStyle { get; private set; }
+        public float FontSize { get; private set; }
 
-        public TextBlurb(Point pos, string text, string altfont = "", FontStyle style = FontStyle.Regular, int size = -1)
+        public bool IsWhitespace { get => Space || NewLine; }
+        public bool Space { get; private set; }
+        public bool NewLine { get; private set; }
+
+
+        public TextBlurb(Point pos, string text, string altfont = "", FontStyle style = FontStyle.Regular, float size = -1, bool space = false, bool newline = false)
         {
             Pos = pos;
             Text = text;
             AltFont = altfont;
             FontStyle = style;
             FontSize = size;
+            Space = space;
+            NewLine = newline;
         }
 
-        public SizeF Measure(Graphics gfx, string defaultFont, int defaultFontSize, FontStyle defaultStyle, RectangleF rect)
+        public SizeF Measure(Graphics gfx, string defaultFont, float defaultFontSize, FontStyle defaultStyle, RectangleF rect)
         {
             FontStyle style = defaultStyle | FontStyle;
-            int fsize = FontSize > 0 ? FontSize : defaultFontSize;
+            float fsize = FontSize > 0 ? FontSize : defaultFontSize;
             string fname = defaultFont;
             if (!string.IsNullOrEmpty(AltFont))
             {
@@ -47,10 +72,15 @@ namespace Xenon.LayoutEngine.L2
             return size;
         }
 
+        public void Place(Point p)
+        {
+            Pos = p;
+        }
+
         public void Render(Graphics gfx, Graphics kgfx, Color fcolor, Color kcolor, string defaultFont, int defaultFontSize, FontStyle defaultStyle)
         {
             FontStyle style = defaultStyle | FontStyle;
-            int fsize = FontSize > 0 ? FontSize : defaultFontSize;
+            float fsize = FontSize > 0 ? FontSize : defaultFontSize;
             string fname = defaultFont;
             if (!string.IsNullOrEmpty(AltFont))
             {

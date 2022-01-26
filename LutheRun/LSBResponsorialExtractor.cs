@@ -77,15 +77,29 @@ namespace LutheRun
              * - subsequent spans for content (optional br identifes good places to chunk large segments)
              */
 
+            LiturgicalStatement lastline = null;
             // 1. Iterate over childern (expect all to be <p> tags)
             foreach (var child_p_tag in sourceHTML.Children.Where(c => c.LocalName == "p"))
             {
+                LiturgicalStatement line = new LiturgicalStatement();
+                int snum = 0;
                 // build a Liturgy-Response
                 // go through all childern
+                if (child_p_tag.ClassList.Contains("lsb-responsorial-continued"))
+                {
+                    // keep adding to the same 'logical line'
+                    snum = 1;
+                    line = lastline;
+                }
+                else if (child_p_tag.ClassList.Contains("lsb-responsorial"))
+                {
+                }
+                else
+                {
+                    // ignore it
+                    continue;
+                }
 
-                LiturgicalStatement line = new LiturgicalStatement();
-
-                int snum = 0;
                 foreach (var line_item in child_p_tag.Children)
                 {
                     // Expect the speaker
@@ -109,10 +123,11 @@ namespace LutheRun
                     snum++;
                 }
 
-                if (!(string.IsNullOrEmpty(line.Speaker) && line.TextSegments.All(x => string.IsNullOrWhiteSpace(x.Text))))
+                if (!(string.IsNullOrEmpty(line.Speaker) && line.TextSegments.All(x => string.IsNullOrWhiteSpace(x.Text))) && line != lastline)
                 {
                     Lines.Add(line);
                 }
+                lastline = line;
             }
             return GenerateSource(Lines);
         }
