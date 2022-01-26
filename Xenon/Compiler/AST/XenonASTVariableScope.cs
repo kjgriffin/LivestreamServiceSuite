@@ -96,9 +96,9 @@ namespace Xenon.Compiler.AST
             return scope;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            (children as IXenonASTElement).Generate(project, _Parent, Logger);
+            return (children as IXenonASTElement).Generate(project, _Parent, Logger);
         }
 
         public void GenerateDebug(Project project)

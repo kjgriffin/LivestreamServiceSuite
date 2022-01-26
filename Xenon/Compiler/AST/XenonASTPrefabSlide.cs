@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Xenon.Helpers;
 
 namespace Xenon.Compiler
 {
@@ -57,7 +58,7 @@ namespace Xenon.Compiler
             return this;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide slide = new Slide();
             slide.Name = "UNNAMED_prefab";
@@ -68,7 +69,7 @@ namespace Xenon.Compiler
             slide.MediaType = MediaType.Image;
             slide.Format = SlideFormat.Prefab;
 
-            project.Slides.Add(slide);
+            return slide.ToList();
         }
 
         public void GenerateDebug(Project project)

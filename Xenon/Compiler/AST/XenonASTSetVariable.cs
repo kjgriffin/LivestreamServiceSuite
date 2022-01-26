@@ -27,9 +27,10 @@ namespace Xenon.Compiler.AST
             return this;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             project.AddAttribute(VariableName, Value);
+            return new List<Slide>();
         }
 
         public void GenerateDebug(Project project)

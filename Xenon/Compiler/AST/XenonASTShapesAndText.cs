@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -31,7 +32,7 @@ namespace Xenon.Compiler.AST
             return shapeAndTexts;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide slide = new Slide
             {
@@ -49,8 +50,7 @@ namespace Xenon.Compiler.AST
 
             slide.AddPostset(_Parent, true, true);
 
-            project.Slides.Add(slide);
-
+            return slide.ToList();
         }
 
         public void GenerateDebug(Project project)

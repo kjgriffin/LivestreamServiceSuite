@@ -22,7 +22,7 @@ namespace Xenon.Compiler
         public int _localVNum;
         public int _localVerses;
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             _localVNum = 0;
             _localParent = _Parent;
@@ -32,6 +32,7 @@ namespace Xenon.Compiler
                 verse.Generate(project, this, Logger);
                 _localVNum += 1;
             }
+            return new List<Slide>();
         }
 
         public void GenerateDebug(Project project)

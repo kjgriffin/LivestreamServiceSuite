@@ -13,22 +13,28 @@ namespace Xenon.Compiler
         public List<XenonASTExpression> Expressions { get; set; } = new List<XenonASTExpression>();
         public IXenonASTElement Parent { get; private set; }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger, IProgress<int> progress = null, int cprog = 0)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger, IProgress<int> progress = null, int cprog = 0)
         {
+            List<Slide> slides = new List<Slide>();
             int prog = 0;
             int total = Expressions.Count;
             foreach (var item in Expressions)
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression {item.Command.GetType()}", ErrorName = "Project Generation Debug", Generator = "XenonASTProgram:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = ("", int.MaxValue) });
-                item.Generate(project, this, Logger);
+                slides.AddRange(item.Generate(project, this, Logger));
                 prog++;
                 progress?.Report(cprog + (((prog * 100) / total) * ((100 - cprog) / 100)));
             }
+
+            // at this point here we'll allow slides to be put onto the project
+            project.Slides.AddRange(slides);
+
+            return slides;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            Generate(project, _Parent, Logger, null);
+            return Generate(project, _Parent, Logger, null);
         }
 
 

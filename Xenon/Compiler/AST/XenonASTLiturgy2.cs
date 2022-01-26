@@ -65,7 +65,7 @@ namespace Xenon.Compiler.AST
             return liturgy;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             var statements = L2Parser.ParseLiturgyStatements(RawContent);
 
@@ -124,7 +124,7 @@ namespace Xenon.Compiler.AST
                 slide.AddPostset(_Parent, i == 0, i == slides.Count - 1);
             }
 
-            project.Slides.AddRange(slides);
+            return slides;
         }
 
         public void GenerateDebug(Project project)

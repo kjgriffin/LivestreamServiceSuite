@@ -18,13 +18,15 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
-        void IXenonASTElement.Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        List<Slide> IXenonASTElement.Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+            List<Slide> slides = new List<Slide>();
             foreach (var elem in Elements)
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression {elem.GetType()}", ErrorName = "Generation Debug Log", Generator = "XenonASTExlementCollection:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, });
-                elem.Generate(project, _Parent, Logger);
+                slides.AddRange(elem.Generate(project, _Parent, Logger));
             }
+            return slides;
         }
 
         void IXenonASTElement.GenerateDebug(Project project)

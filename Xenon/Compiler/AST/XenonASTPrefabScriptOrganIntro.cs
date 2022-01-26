@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+
+using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -16,7 +18,7 @@ namespace Xenon.Compiler.AST
             return this;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide slide = new Slide();
             slide.Name = "UNNAMED_prefab_script";
@@ -32,8 +34,7 @@ namespace Xenon.Compiler.AST
             slide.MediaType = MediaType.Empty;
             slide.Format = SlideFormat.Prefab;
             slide.AddPostset(_Parent, true, true);
-            project.Slides.Add(slide);
-
+            return slide.ToList();
         }
 
         public void GenerateDebug(Project project)

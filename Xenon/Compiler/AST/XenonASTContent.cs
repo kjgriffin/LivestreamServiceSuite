@@ -16,7 +16,7 @@ namespace Xenon.Compiler
             throw new NotImplementedException();
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             throw new NotImplementedException();
         }

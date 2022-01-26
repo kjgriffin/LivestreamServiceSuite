@@ -69,8 +69,10 @@ namespace Xenon.Compiler
             return liturgy;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+
+            List<Slide> slides = new List<Slide>();
 
 
             LiturgyVerseLayoutEngine layoutEngine = new LiturgyVerseLayoutEngine();
@@ -103,7 +105,8 @@ namespace Xenon.Compiler
                 if (overheight)
                 {
                     // need to start a new slide for this one
-                    project.Slides.Add(liturgyslide);
+                    //project.Slides.Add(liturgyslide);
+                    slides.Add(liturgyslide);
                     // create new slide
                     liturgyslide = new Slide
                     {
@@ -132,7 +135,9 @@ namespace Xenon.Compiler
             liturgyslide.Data["title"] = Title;
             liturgyslide.Data["reference"] = Reference;
             // add slide to project
-            project.Slides.Add(liturgyslide);
+            //project.Slides.Add(liturgyslide);
+            slides.Add(liturgyslide);
+            return slides;
         }
 
 

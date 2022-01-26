@@ -24,8 +24,9 @@ namespace Xenon.Compiler.AST
             return filter;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+            return new List<Slide>();
         }
 
         public void GenerateDebug(Project project)

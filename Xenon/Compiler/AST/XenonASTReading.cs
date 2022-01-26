@@ -29,7 +29,7 @@ namespace Xenon.Compiler
 
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide readingslide = new Slide();
             readingslide.Name = "UNNAMED_reading";
@@ -54,8 +54,8 @@ namespace Xenon.Compiler
             }
 
             readingslide.AddPostset(_Parent, true, true);
-            project.Slides.Add(readingslide);
 
+            return readingslide.ToList();
         }
 
         public void GenerateDebug(Project project)

@@ -79,8 +79,9 @@ namespace Xenon.Compiler
             return liturgy;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+            List<Slide> slides = new List<Slide>();
 
             Dictionary<string, string> otherspeakers = new Dictionary<string, string>();
             // get otherspeakers from project
@@ -202,7 +203,8 @@ namespace Xenon.Compiler
                     // need to start a new slide for this one
                     liturgyslide.AddPostset(_Parent, first, false);
                     first = false;
-                    project.Slides.Add(liturgyslide);
+                    //project.Slides.Add(liturgyslide);
+                    slides.Add(liturgyslide);
                     // create new slide
                     liturgyslide = new Slide
                     {
@@ -255,7 +257,9 @@ namespace Xenon.Compiler
             }
             // add slide to project
             liturgyslide.AddPostset(_Parent, first, true);
-            project.Slides.Add(liturgyslide);
+            //project.Slides.Add(liturgyslide);
+            slides.Add(liturgyslide);
+            return slides;
         }
 
 

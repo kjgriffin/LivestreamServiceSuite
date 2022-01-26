@@ -54,7 +54,7 @@ namespace Xenon.Compiler.AST
         }
 
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide slide = new Slide
             {
@@ -115,7 +115,7 @@ namespace Xenon.Compiler.AST
 
             slide.AddPostset(_Parent, true, true);
 
-            project.Slides.Add(slide);
+            return slide.ToList();
         }
 
         public void GenerateDebug(Project project)

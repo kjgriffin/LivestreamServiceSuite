@@ -20,9 +20,9 @@ namespace Xenon.Compiler
         public int Postset_Last { get; set; } = -1;
         public IXenonASTElement Parent { get; private set; }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            Command?.Generate(project, this, Logger);
+            return Command?.Generate(project, this, Logger) ?? new List<Slide>();
         }
 
         public void GenerateDebug(Project project)

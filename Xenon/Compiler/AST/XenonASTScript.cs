@@ -39,7 +39,7 @@ namespace Xenon.Compiler
 
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             // create a video slide
             Slide script = new Slide
@@ -53,7 +53,7 @@ namespace Xenon.Compiler
             script.MediaType = MediaType.Text;
             script.Data["source"] = Source;
 
-            project.Slides.Add(script);
+            return script.ToList();
         }
 
         public void GenerateDebug(Project project)

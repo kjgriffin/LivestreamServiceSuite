@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Xenon.Compiler.AST;
+using Xenon.Helpers;
 
 namespace Xenon.Compiler
 {
@@ -44,7 +45,7 @@ namespace Xenon.Compiler
 
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             VerseLayoutEngine vle = new VerseLayoutEngine();
             vle.BuildLines(Content.Select(p => p.TextContent).ToList());
@@ -77,8 +78,7 @@ namespace Xenon.Compiler
 
             slide.AddPostset(parent._localParent, parent._localVNum == 0, parent._localVNum == parent._localVerses);
 
-            project.Slides.Add(slide);
-
+            return slide.ToList();
         }
 
         public void GenerateDebug(Project project)

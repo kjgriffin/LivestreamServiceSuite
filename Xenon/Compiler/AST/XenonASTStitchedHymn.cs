@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
+using Xenon.Helpers;
 using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
 
@@ -95,8 +96,9 @@ namespace Xenon.Compiler.AST
             return hymn;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+            List<Slide> slides = new List<Slide>();
             Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating StitchedHymn {HymnName}", ErrorName = "Generation Debug Log", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
             // main steps
             // 1. Figure out how many lines/stanzas and how many stanzas there are
@@ -180,7 +182,7 @@ namespace Xenon.Compiler.AST
                 project.Slides.Add(slide);
                 WarnVerseOverheightStitchAll(Logger, ImageSizes);
 
-                return;
+                return slide.ToList();
 
             }
 
@@ -278,7 +280,7 @@ namespace Xenon.Compiler.AST
                 project.Slides.Add(slide);
                 WarnVerseOverheight(Logger, ImageSizes);
 
-                return;
+                return slide.ToList();
             }
 
             List<(LSBImageResource music, List<LSBImageResource> words)> VerseCollatedLines = new List<(LSBImageResource music, List<LSBImageResource> words)>();
@@ -371,7 +373,7 @@ namespace Xenon.Compiler.AST
                 slide.Data["ordered-images"] = hymn.OrderAllAsOne();
                 slide.AddPostset(_Parent, true, true);
                 (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
-                project.Slides.Add(slide);
+                slides.Add(slide);
             }
             else
             {
@@ -405,7 +407,7 @@ namespace Xenon.Compiler.AST
 
                     slide.AddPostset(_Parent, versenum == 0, hymn.Verses.Count == versenum && !hymn.RepeatingPostRefrain);
                     (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
-                    project.Slides.Add(slide);
+                    slides.Add(slide);
 
                     if (hymn.RepeatingPostRefrain)
                     {
@@ -433,11 +435,12 @@ namespace Xenon.Compiler.AST
                         refrainslide.AddPostset(_Parent, false, hymn.Verses.Count == versenum);
 
                         (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
-                        project.Slides.Add(refrainslide);
+                        slides.Add(refrainslide);
                     }
                 }
 
             }
+            return slides;
         }
 
         private void WarnVerseOverheight(XenonErrorLogger Logger, Dictionary<string, Size> ImageSizes)

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime;
 using System.Collections.Generic;
 using System.Text;
+using Xenon.Helpers;
 
 namespace Xenon.Compiler
 {
@@ -24,7 +25,7 @@ namespace Xenon.Compiler
             return resource;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide res = new Slide
             {
@@ -48,7 +49,7 @@ namespace Xenon.Compiler
                 res.MediaType = MediaType.Image;
             }
 
-            project.Slides.Add(res);
+            return res.ToList();
         }
 
         public void GenerateDebug(Project project)

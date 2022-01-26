@@ -16,8 +16,9 @@ namespace Xenon.Compiler.AST
             return this;
         }
 
-        void IXenonASTElement.Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        List<Slide> IXenonASTElement.Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+            List<Slide> slides = new List<Slide>();
             // add 1 slides for each image we have to render
             for (int i = 1; i <= 5; i++)
             {
@@ -31,10 +32,9 @@ namespace Xenon.Compiler.AST
                 slide.MediaType = MediaType.Image;
                 slide.Format = SlideFormat.Prefab;
                 slide.AddPostset(_Parent, i == 1, i == 5);
-                project.Slides.Add(slide);
+                slides.Add(slide);
             }
-
-
+            return slides;
         }
 
         void IXenonASTElement.GenerateDebug(Project project)

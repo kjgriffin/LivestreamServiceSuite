@@ -480,7 +480,7 @@ namespace Xenon.Compiler
 
 
 
-        public void Generate(Project project, IXenonASTElement _parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _parent, XenonErrorLogger Logger)
         {
             // create a full image slide
             Slide imageslide = new Slide();
@@ -512,7 +512,7 @@ namespace Xenon.Compiler
 
             imageslide.AddPostset(_parent, true, true);
 
-            project.Slides.Add(imageslide);
+            return imageslide.ToList();
         }
 
         public void GenerateDebug(Project project)

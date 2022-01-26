@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+
+using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -16,8 +18,9 @@ namespace Xenon.Compiler.AST
             return this;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+            List<Slide> slides = new List<Slide>();
             // add 1 slides for each image we have to render
             for (int i = 1; i <= 1; i++)
             {
@@ -31,8 +34,9 @@ namespace Xenon.Compiler.AST
                 slide.MediaType = MediaType.Image;
                 slide.Format = SlideFormat.Prefab;
                 slide.AddPostset(_Parent, true, true);
-                project.Slides.Add(slide);
+                slides.Add(slide);
             }
+            return slides;
         }
 
         public void GenerateDebug(Project project)

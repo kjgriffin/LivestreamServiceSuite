@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Xenon.SlideAssembly;
+
 namespace Xenon.Helpers
 {
     public static class EnumerableExtensions
@@ -29,6 +31,11 @@ namespace Xenon.Helpers
         public static IEnumerable<T> ItemAsEnumerable<T>(this T item)
         {
             yield return item;
+        }
+
+        public static List<Slide> ToList(this Slide item)
+        {
+            return new List<Slide> { item };
         }
 
     }

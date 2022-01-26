@@ -60,7 +60,7 @@ namespace Xenon.Compiler.AST
             return upnext;
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
 
             int slidenum = project.NewSlideNumber;
@@ -86,7 +86,7 @@ namespace Xenon.Compiler.AST
 
             slide.AddPostset(_Parent, true, true);
 
-            project.Slides.Add(slide);
+            List<Slide> slides = new List<Slide> { slide };
 
             if (HasPostScript)
             {
@@ -111,8 +111,9 @@ namespace Xenon.Compiler.AST
                 }
                 PostScript.Source = string.Join(Environment.NewLine, newlines);
 
-                PostScript.Generate(project, this, Logger);
+                slides.AddRange(PostScript.Generate(project, this, Logger));
             }
+            return slides;
         }
 
         public void GenerateDebug(Project project)

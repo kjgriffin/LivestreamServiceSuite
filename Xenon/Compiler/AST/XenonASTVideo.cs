@@ -5,6 +5,7 @@ using System.Runtime;
 using System.Collections.Generic;
 using System.Text;
 using Xenon.Compiler.AST;
+using Xenon.Helpers;
 
 namespace Xenon.Compiler
 {
@@ -46,7 +47,7 @@ namespace Xenon.Compiler
 
         }
 
-        public void Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             // create a video slide
             Slide videoslide = new Slide
@@ -80,7 +81,7 @@ namespace Xenon.Compiler
 
             videoslide.AddPostset(_Parent, true, true);
 
-            project.Slides.Add(videoslide);
+            return videoslide.ToList();
         }
 
         public void GenerateDebug(Project project)
