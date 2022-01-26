@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 using Xenon.Helpers;
+using System.Text.RegularExpressions;
 
 namespace SlideCreater
 {
@@ -56,9 +57,10 @@ namespace SlideCreater
                     textDisplay.Visibility = Visibility.Hidden;
                     ImgDisplay.Visibility = Visibility.Visible;
                     ImgDisplay.Source = Slide.KeyBitmap.ConvertToBitmapImage();
-                    //ImgDisplay.Source = Slide.KeyBitmap.ToBitmap();
                 }
-                else
+
+
+                if (Slide.MediaType == MediaType.Text)
                 {
                     VideoDisplay.Visibility = Visibility.Hidden;
                     textDisplay.Text = "NO KEY";
@@ -68,9 +70,19 @@ namespace SlideCreater
                         background.Fill = Brushes.Black;
                         background.Visibility = Visibility.Visible;
                         textDisplay.Text = "AUTO BLACK KEY\r\n(for action)";
+
+                        if (!Regex.Match(Slide.Text, "!keysrc='Key_\\d+\\.png';").Success)
+                        {
+                            background.Visibility = Visibility.Visible;
+                            textDisplay.Visibility = Visibility.Visible;
+                            ImgDisplay.Visibility = Visibility.Hidden;
+                        }
                     }
-                    textDisplay.Visibility = Visibility.Visible;
-                    ImgDisplay.Visibility = Visibility.Hidden;
+                    else
+                    {
+                        textDisplay.Visibility = Visibility.Visible;
+                        ImgDisplay.Visibility = Visibility.Hidden;
+                    }
                 }
             }
             else
@@ -83,7 +95,6 @@ namespace SlideCreater
                     textDisplay.Visibility = Visibility.Hidden;
                     ImgDisplay.Visibility = Visibility.Visible;
                     ImgDisplay.Source = Slide.Bitmap.ConvertToBitmapImage();
-                    //ImgDisplay.Source = Slide.Bitmap.ToBitmap();
                 }
                 if (Slide?.MediaType == MediaType.Video || Slide?.MediaType == MediaType.Video_KeyedVideo)
                 {
@@ -109,6 +120,20 @@ namespace SlideCreater
                     ImgDisplay.Visibility = Visibility.Hidden;
                     textDisplay.Visibility = Visibility.Visible;
                     textDisplay.Text = Slide.Text;
+
+                    if (Slide.RenderedAs == "Action")
+                    {
+                        background.Fill = Brushes.Black;
+                        background.Visibility = Visibility.Visible;
+
+                        if (Regex.Match(Slide.Text, "!displaysrc='\\d+_.*\\.png';").Success)
+                        {
+                            background.Visibility = Visibility.Hidden;
+                            ImgDisplay.Visibility = Visibility.Visible;
+                            ImgDisplay.Source = Slide.Bitmap.ConvertToBitmapImage();
+                        }
+                    }
+
                 }
             }
         }

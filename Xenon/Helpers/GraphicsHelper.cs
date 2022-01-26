@@ -7,13 +7,19 @@ using System.Drawing.Text;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
 namespace Xenon.Helpers
 {
+
     public static class GraphicsHelper
     {
+
+        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
+
 
         /// <summary>
         /// Returns a new bitmap that is trimmed in size to exclude borders of only the color
@@ -130,12 +136,28 @@ namespace Xenon.Helpers
         {
             BitmapImage res = new BitmapImage();
             MemoryStream ms = new MemoryStream();
-            bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+            bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
             res.BeginInit();
             ms.Seek(0, SeekOrigin.Begin);
             res.StreamSource = ms;
             res.EndInit();
             return res;
+        }
+
+        public static BitmapImage ToBitmap(this Bitmap bmp)
+        {
+            IntPtr hBitmap = bmp.GetHbitmap();
+            BitmapImage retval;
+
+            try
+            {
+                retval = (BitmapImage)Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            }
+            finally
+            {
+                DeleteObject(hBitmap);
+            }
+            return retval;
         }
 
         public static Bitmap ConvertToBitmap(this BitmapImage bitmapImage)

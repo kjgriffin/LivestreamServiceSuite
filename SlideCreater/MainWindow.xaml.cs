@@ -310,6 +310,10 @@ namespace SlideCreater
             UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Render Starting", ErrorName = "Render Starting", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
             slides = (await builder.RenderProjectAsync(build.project, rendererprogress, renderinparallel)).OrderBy(s => s.Number).ToList();
 
+            // ok- here we'll need to hack into the slides a bit to get previews to work correctly (for action slides that have alt display sources)
+            ApplyDisplayOverridesOnSlides(slides);
+
+
 
             alllogs.AddRange(builder.Messages);
             builder.Messages.Clear();
@@ -333,6 +337,41 @@ namespace SlideCreater
             });
 
             UpdatePreviews();
+
+        }
+
+        private void ApplyDisplayOverridesOnSlides(List<RenderedSlide> slides)
+        {
+            // go through the slides and if they've got scripts referencing other slides graphics we'll grab them and modifiy the rendered slide
+            // this is not really correct... but hey. Its fine??
+
+            foreach (RenderedSlide slide in slides)
+            {
+                if (slide.RenderedAs == "Action")
+                {
+                    // TODO: now this assumes they'd be taken from a slide, and not a resource... may need to change that at some point
+                    // though we currently can't really dump a slide into a resource yet
+                    var srcoverride = Regex.Match(slide.Text, "!displaysrc='(?<src>\\d+)_.*\\.png';");
+                    var keyoverride = Regex.Match(slide.Text, "!keysrc='Key_(?<src>\\d+)\\.png';");
+
+                    if (srcoverride.Success)
+                    {
+                        var sindex = Convert.ToInt32(srcoverride.Groups["src"].Value);
+                        if (sindex < slides.Count)
+                        {
+                            slide.Bitmap = slides[sindex].Bitmap;
+                        }
+                    }
+                    if (keyoverride.Success)
+                    {
+                        var sindex = Convert.ToInt32(keyoverride.Groups["src"].Value);
+                        if (sindex < slides.Count)
+                        {
+                            slide.KeyBitmap = slides[sindex].KeyBitmap;
+                        }
+                    }
+                }
+            }
 
         }
 
