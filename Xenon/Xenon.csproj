@@ -60,6 +60,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="ProjectResources\Icons.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Icons.resx</DependentUpon>
+    </Compile>
     <Compile Update="ProjectResources\PrefabSlides.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -68,6 +73,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="ProjectResources\Icons.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Icons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="ProjectResources\PrefabSlides.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>PrefabSlides.Designer.cs</LastGenOutput>

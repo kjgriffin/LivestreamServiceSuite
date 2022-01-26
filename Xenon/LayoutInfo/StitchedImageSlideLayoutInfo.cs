@@ -25,6 +25,9 @@ namespace Xenon.LayoutInfo
         public TextboxLayout CopyrightBox { get; set; }
         public DrawingBoxLayout MusicBox { get; set; }
 
+        public List<LWJPolygon> Shapes { get; set; }
+        public string ExportAs { get; set; }
+
 
         public override string GetDefaultJson()
         {

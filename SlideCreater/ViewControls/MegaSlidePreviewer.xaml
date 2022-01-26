@@ -20,8 +20,12 @@
         <Grid Grid.Row="1">
             <StackPanel Orientation="Horizontal">
                 <Label FontWeight="Bold">Postset:</Label>
-                <Label Name="postset"></Label> 
-            </StackPanel> 
+                <Label Name="postset"></Label>
+                <Label FontWeight="Bold" Margin="10,0,0,0">Number:</Label>
+                <Label Name="number"></Label>
+                <Label FontWeight="Bold" Margin="10,0,0,0">Type:</Label>
+                <Label Name="type"></Label>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

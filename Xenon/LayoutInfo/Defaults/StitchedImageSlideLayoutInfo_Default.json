@@ -9,6 +9,7 @@
   "KeyColor": {
     "Hex": "#ffffffff"
   },
+  "ExportAs": "Full",
   "TitleBox": {
     "Textbox": {
       "Origin": {
@@ -137,5 +138,6 @@
     "KeyColor": {
       "Hex": "#ffffffff"
     }
-  }
+  },
+  "Shapes": []
 }

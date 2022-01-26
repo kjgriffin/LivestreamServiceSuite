@@ -22,7 +22,7 @@ namespace Xenon.Renderer
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = "";
-            res.RenderedAs = "Full";
+            res.RenderedAs = layout?.ExportAs ?? "Full";
 
             Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
             Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
@@ -31,6 +31,15 @@ namespace Xenon.Renderer
 
             gfx.Clear(layout.BackgroundColor.GetColor());
             kgfx.Clear(layout.KeyColor.GetColor());
+
+            if (layout.Shapes != null)
+            {
+                foreach (var shape in layout.Shapes)
+                {
+                    PolygonRenderer.Render(gfx, kgfx, shape);
+                }
+            }
+
 
             List<LSBImageResource> imageresources = (List<LSBImageResource>)slide.Data.GetOrDefault("ordered-images", new List<LSBImageResource>());
             string title = (string)slide.Data.GetOrDefault("title", "");
@@ -42,8 +51,9 @@ namespace Xenon.Renderer
             // compute max bounds of new bitmap
             // 1920x100 box for title info
             // find max width of images and compare
-            int twidth = (int)gfx.MeasureString(hymnname, layout.NameBox.Font.GetFont()).Width;
-            int width = Math.Max(twidth, imageresources.Select(i => i.Size.Width).Max());
+            //int twidth = (int)gfx.MeasureString(hymnname, layout.NameBox.Font.GetFont()).Width;
+            //int width = Math.Max(twidth, imageresources.Select(i => i.Size.Width).Max());
+            int width = imageresources.Select(i => i.Size.Width).Max();
             int height = imageresources.Select(i => i.Size.Height).Aggregate((a, b) => a + b); // + 30?
             Bitmap sbmp = new Bitmap(width, height);
             Graphics g = Graphics.FromImage(sbmp);
@@ -78,11 +88,7 @@ namespace Xenon.Renderer
             var hdrawn = ImageFilters.ImageFilters.UniformStretch(sbmp, sbmp, new ImageFilters.UniformStretchFilterParams() { Fill = layout.MusicBox.FillColor.GetColor(), KFill = layout.MusicBox.KeyColor.GetColor(), Height = layout.MusicBox.Box.Size.Height, Width = layout.MusicBox.Box.Size.Width });
 
 
-            gfx.Clear(layout.BackgroundColor.GetColor());
-
-
             DrawingBoxRenderer.Render(gfx, kgfx, layout.MusicBox);
-
             gfx.DrawImage(hdrawn.b, layout.MusicBox.Box.Origin.X, layout.MusicBox.Box.Origin.Y);
 
             // draw titles
@@ -90,7 +96,7 @@ namespace Xenon.Renderer
             TextBoxRenderer.Render(gfx, kgfx, hymnname, layout.NameBox);
             TextBoxRenderer.Render(gfx, kgfx, title, layout.TitleBox);
             TextBoxRenderer.Render(gfx, kgfx, number, layout.NumberBox);
-            
+
             //gfx.DrawString(hymnname, layout.NameBox.Font.GetFont(), new SolidBrush(layout.NameBox.FColor.GetColor()), layout.NameBox.Textbox.GetRectangle(), GraphicsHelper.CenterAlign);
             //gfx.DrawString(title, layout.TitleBox.Font.GetFont(), new SolidBrush(layout.TitleBox.FColor.GetColor()), layout.TitleBox.Textbox.GetRectangle(), GraphicsHelper.LeftVerticalCenterAlign);
             //gfx.DrawString(number, layout.NumberBox.Font.GetFont(), new SolidBrush(layout.NumberBox.FColor.GetColor()), layout.NumberBox.Textbox.GetRectangle(), GraphicsHelper.RightVerticalCenterAlign);
@@ -147,6 +153,14 @@ namespace Xenon.Renderer
 
             gfx.Clear(layout.BackgroundColor.GetColor());
             kgfx.Clear(layout.KeyColor.GetColor());
+
+            if (layout.Shapes != null)
+            {
+                foreach (var shape in layout.Shapes)
+                {
+                    PolygonRenderer.Render(gfx, kgfx, shape);
+                }
+            }
 
             DrawingBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.MusicBox);
 

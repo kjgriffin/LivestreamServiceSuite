@@ -38,6 +38,8 @@ namespace SlideCreater.ViewControls
                     key.Slide = value;
                     key.ShowSlide(true);
                     postset.Content = value.IsPostset ? value.Postset.ToString() : "none";
+                    number.Content = value.Number;
+                    type.Content = value.RenderedAs;
                 });
             }
         }

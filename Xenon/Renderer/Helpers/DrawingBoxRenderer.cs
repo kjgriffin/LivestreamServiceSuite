@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Text;
 
 using Xenon.LayoutInfo.BaseTypes;
+using Xenon.Renderer.ImageFilters;
 
 namespace Xenon.Renderer.Helpers
 {
@@ -18,6 +19,11 @@ namespace Xenon.Renderer.Helpers
         {
             gfx.FillRectangle(new SolidBrush(layout.FillColor.GetColor()), layout.Box.GetRectangle());
             kgfx.FillRectangle(new SolidBrush(layout.KeyColor.GetColor()), layout.Box.GetRectangle());
+
+            // draw dashed border?
+
+            gfx.DrawImage(ProjectResources.Icons.ImageIcon, layout.Box.GetRectangle(), new Rectangle(Point.Empty, ProjectResources.Icons.ImageIcon.Size), GraphicsUnit.Pixel);
+
         }
 
 
