@@ -927,6 +927,8 @@ namespace SlideCreater
                     e.Cancel = true;
                 }
             }
+            // close everything else too
+            Application.Current.Shutdown();
         }
 
         private void ClickClearAssets(object sender, RoutedEventArgs e)
