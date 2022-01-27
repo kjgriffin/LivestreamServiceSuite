@@ -44,6 +44,12 @@ namespace IntegratedPresenter.Main
                 {
                     continue;
                 }
+                if (Regex.Match(Path.GetFileName(file), "Resource_.*").Success)
+                {
+                    // ignore all resources files.
+                    // these should be refered to by 'real' slides that need them
+                    continue;
+                }
 
                 SlideType type;
                 // look at the name to determine the type
