@@ -1605,6 +1605,7 @@ namespace SlideCreater
 
         private void SetupLayoutsTreeVew()
         {
+            Dictionary<string, bool> oldstate = RememberTreeExpansion();
             LayoutsTreeView.Items.Clear();
 
             foreach (var library in _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup())
@@ -1624,13 +1625,41 @@ namespace SlideCreater
                         LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibraryName, _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup().Select(x => x.LibraryName).ToList(), layout.Key, layout.Value, group.group, editable, _proj.ProjectLayouts.SaveLayoutToLibrary, () => Dispatcher.Invoke(SetupLayoutsTreeVew));
                         treegroup.Items.Add(treelayoutleaf);
                     }
+
+                    treegroup.IsExpanded = oldstate.GetOrDefault($"{library.LibraryName}.{group.group}", false);
+
                     treelibrary.Items.Add(treegroup);
                 }
 
+                treelibrary.IsExpanded = oldstate.GetOrDefault(library.LibraryName, false);
 
                 LayoutsTreeView.Items.Add(treelibrary);
             }
 
+        }
+
+        private Dictionary<string, bool> RememberTreeExpansion()
+        {
+            Dictionary<string, bool> NodeState = new Dictionary<string, bool>();
+
+            foreach (TreeViewItem tbLibNode in LayoutsTreeView.Items)
+            {
+                string library = tbLibNode.Header.ToString();
+                bool expanded = tbLibNode.IsExpanded;
+
+                NodeState[library] = expanded;
+
+                foreach (TreeViewItem layoutgroupnode in tbLibNode.Items)
+                {
+                    LayoutGroupTreeItem tvi = layoutgroupnode as LayoutGroupTreeItem;
+                    if (tvi != null)
+                    {
+                        NodeState[$"{library}.{tvi.GroupName}"] = tvi.IsExpanded;
+                    }
+                }
+            }
+
+            return NodeState;
         }
 
         private string selectedLib = "";
