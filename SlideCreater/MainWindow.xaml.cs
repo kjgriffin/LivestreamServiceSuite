@@ -353,22 +353,36 @@ namespace SlideCreater
                     // TODO: now this assumes they'd be taken from a slide, and not a resource... may need to change that at some point
                     // though we currently can't really dump a slide into a resource yet
                     var srcoverride = Regex.Match(slide.Text, "!displaysrc='(?<src>\\d+)_.*\\.png';");
-                    var keyoverride = Regex.Match(slide.Text, "!keysrc='Key_(?<src>\\d+)\\.png';");
-
                     if (srcoverride.Success)
                     {
                         var sindex = Convert.ToInt32(srcoverride.Groups["src"].Value);
-                        if (sindex < slides.Count)
+                        slide.Bitmap = slides.FirstOrDefault(s => s.Number == sindex)?.Bitmap;
+                    }
+                    else
+                    {
+                        srcoverride = Regex.Match(slide.Text, "!displaysrc='(?<src>Resource_.*)\\.png';");
+                        if (srcoverride.Success)
                         {
-                            slide.Bitmap = slides[sindex].Bitmap;
+                            var sname = srcoverride.Groups["src"].Value;
+                            slide.Bitmap = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportName == sname)?.Bitmap;
                         }
                     }
+
+
+
+                    var keyoverride = Regex.Match(slide.Text, "!keysrc='Key_(?<src>\\d+)\\.png';");
                     if (keyoverride.Success)
                     {
                         var sindex = Convert.ToInt32(keyoverride.Groups["src"].Value);
-                        if (sindex < slides.Count)
+                        slide.KeyBitmap = slides.FirstOrDefault(s => s.Number == sindex)?.KeyBitmap;
+                    }
+                    else
+                    {
+                        keyoverride = Regex.Match(slide.Text, "!keysrc='(?<src>Resource_.*)\\.png';");
+                        if (keyoverride.Success)
                         {
-                            slide.KeyBitmap = slides[sindex].KeyBitmap;
+                            var sname = srcoverride.Groups["src"].Value;
+                            slide.KeyBitmap = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportKeyName == sname)?.KeyBitmap;
                         }
                     }
                 }
@@ -1295,92 +1309,6 @@ namespace SlideCreater
 
         private async Task TrustyOpen(string filename)
         {
-            /*
-            _proj = new Project(true);
-
-            string sourcecode = "";
-            Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
-            Dictionary<string, string> assetdisplaynames = new Dictionary<string, string>();
-            Dictionary<string, string> assetextensions = new Dictionary<string, string>();
-
-            using (ZipArchive archive = ZipFile.OpenRead(filename))
-            {
-                // dump source code
-                var sourcecodefile = archive.GetEntry("sourcecode.txt");
-                if (sourcecodefile != null)
-                {
-                    using (StreamReader sr = new StreamReader(sourcecodefile.Open()))
-                    {
-                        sourcecode = await sr.ReadToEndAsync();
-                    }
-                }
-                Dispatcher.Invoke(() =>
-                {
-                    TbInput.Text = sourcecode;
-                });
-                var assetfilemapfile = archive.GetEntry("assets.json");
-                if (assetfilemapfile != null)
-                {
-                    using (StreamReader sr = new StreamReader(assetfilemapfile.Open()))
-                    {
-                        string json = await sr.ReadToEndAsync();
-                        assetfilemap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                    }
-                }
-
-                var assetdisplaynamefile = archive.GetEntry("assets_displaynames.json");
-                if (assetdisplaynamefile != null)
-                {
-                    using (StreamReader sr = new StreamReader(assetdisplaynamefile.Open()))
-                    {
-                        string json = await sr.ReadToEndAsync();
-                        assetdisplaynames = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                    }
-                }
-
-                var assetextensionsfile = archive.GetEntry("assets_extensions.json");
-                if (assetextensionsfile != null)
-                {
-                    using (StreamReader sr = new StreamReader(assetextensionsfile.Open()))
-                    {
-                        string json = await sr.ReadToEndAsync();
-                        assetextensions = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                    }
-                }
-
-                // Handle old projects without layout info. The default project constructor will supply enough to make it work.
-                if (VersionInfo.ExceedsMinimumVersion(1, 7, 1, 21))
-                {
-                    var layoutsmapfile = archive.GetEntry("layouts.json");
-                    Dictionary<string, string> layoutsmap = new Dictionary<string, string>();
-                    using (StreamReader sr = new StreamReader(layoutsmapfile.Open()))
-                    {
-                        string json = await sr.ReadToEndAsync();
-                        layoutsmap = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                    }
-
-                    foreach (var layoutlib in layoutsmap)
-                    {
-                        var entry = archive.GetEntry(layoutlib.Value);
-                        using (StreamReader sr = new StreamReader(entry.Open()))
-                        {
-                            string json = await sr.ReadToEndAsync();
-                            // Project has layouts defined
-                            // we can replace the defaults created by new Project()
-                            var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
-                            _proj.ProjectLayouts.LoadLibrary(lib);
-
-                        }
-                    }
-                }
-
-
-
-                archive.ExtractToDirectory(_proj.LoadTmpPath);
-            }
-            */
-
-
             CodePreviewUpdateFunc updatecode = (string val) =>
             {
                 Dispatcher.Invoke(() =>

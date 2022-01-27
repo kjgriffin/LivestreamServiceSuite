@@ -98,6 +98,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.LordsPrayer] = "lordsprayer",
             [LanguageKeywordCommand.Resource] = "resource",
             [LanguageKeywordCommand.Script] = "script",
+            [LanguageKeywordCommand.Scripted] = "scripted",
             [LanguageKeywordCommand.Postset] = "postset",
             [LanguageKeywordCommand.VariableScope] = "scope",
             [LanguageKeywordCommand.ScopedVariable] = "var",
@@ -137,6 +138,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.LordsPrayer] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTPrefabLordsPrayer()),
             [LanguageKeywordCommand.Resource] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTResource()),
             [LanguageKeywordCommand.Script] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTScript()),
+            [LanguageKeywordCommand.Scripted] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTAsScripted()),
             [LanguageKeywordCommand.Postset] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTExpression()),
             [LanguageKeywordCommand.ScopedVariable] = (true, LanguageKeywordCommand.VariableScope, false, false, new XenonASTScopedVariable()),
             [LanguageKeywordCommand.VariableScope] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTVariableScope()),
@@ -281,6 +283,7 @@ namespace Xenon.Compiler
         Liturgy2,
         UpNext,
         CustomText,
+        Scripted,
     }
 
     public enum AutomationActionArgType

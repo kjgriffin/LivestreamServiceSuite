@@ -68,6 +68,7 @@ namespace Xenon.Renderer
             //var res = _RenderSlide(s, Messages);
             var res = _ApplyRenderers(s, Messages);
             res.Number = s.Number;
+            res.OverridingBehaviour = s.OverridingBehaviour;
 
             // attach Postset
             if (s.Data.ContainsKey("postset"))

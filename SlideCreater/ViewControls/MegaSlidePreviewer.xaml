@@ -19,12 +19,14 @@
         </Viewbox>
         <Grid Grid.Row="1">
             <StackPanel Orientation="Horizontal">
-                <Label FontWeight="Bold">Postset:</Label>
-                <Label Name="postset"></Label>
-                <Label FontWeight="Bold" Margin="10,0,0,0">Number:</Label>
-                <Label Name="number"></Label>
-                <Label FontWeight="Bold" Margin="10,0,0,0">Type:</Label>
-                <Label Name="type"></Label>
+                <Label FontWeight="Bold" VerticalAlignment="Center">Postset:</Label>
+                <Label Name="postset" VerticalAlignment="Center"></Label>
+                <Label FontWeight="Bold" Margin="10,0,0,0" VerticalAlignment="Center">Number:</Label>
+                <Label Name="number" VerticalAlignment="Center"></Label>
+                <Label FontWeight="Bold" Margin="0,0,0,0" VerticalAlignment="Center">Creates:</Label>
+                <Label VerticalAlignment="Center">[</Label>
+                <TextBlock Name="creates" TextAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                <Label VerticalAlignment="Center">]</Label>
             </StackPanel>
         </Grid>
     </Grid>

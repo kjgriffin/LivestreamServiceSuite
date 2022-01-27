@@ -31,6 +31,9 @@ namespace Xenon.SlideAssembly
         private int slidenum = 0;
         public int NewSlideNumber => slidenum++;
 
+        private int resourceslide = 0;
+        public int NewResourceSlideNumber => resourceslide++;
+
         public XenonSuggestionService XenonSuggestionService { get; set; }
 
 
@@ -97,7 +100,7 @@ namespace Xenon.SlideAssembly
                 int count = Assets.Count;
 
                 int completed = 0;
-              
+
                 Parallel.ForEach(Assets, (asset) =>
                  {
                      ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
@@ -124,6 +127,7 @@ namespace Xenon.SlideAssembly
             ProjectVariables.Clear();
             SourceCode = "";
             slidenum = 0;
+            resourceslide = 0;
         }
 
         internal void ClearSlidesAndVariables()
@@ -131,6 +135,7 @@ namespace Xenon.SlideAssembly
             Slides.Clear();
             ProjectVariables.Clear();
             slidenum = 0;
+            resourceslide = 0;
         }
 
         private string _loadTmpPath = "";
@@ -222,6 +227,7 @@ namespace Xenon.SlideAssembly
         public void CleanupResources()
         {
             slidenum = 0;
+            resourceslide = 0;
             // delete temp directory if needed
             if (_loadTmpPath != null && _loadTmpPath != string.Empty)
             {

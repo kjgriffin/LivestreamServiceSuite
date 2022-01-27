@@ -22,9 +22,11 @@ namespace Xenon.Renderer
         public bool IsPostset { get; set; }
         public int Postset { get; set; }
 
+        public SlideOverridingBehaviour OverridingBehaviour { get; set; }
+
         public static RenderedSlide Default()
         {
-            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", KeyAssetPath = "", CopyExtension = "", Text = "", Name = "", RenderedAs = "Default", Number = 0, IsPostset = false, Postset = -1 };
+            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", KeyAssetPath = "", CopyExtension = "", Text = "", Name = "", RenderedAs = "Default", Number = 0, IsPostset = false, Postset = -1 , OverridingBehaviour = new SlideOverridingBehaviour()};
         }
     }
 }

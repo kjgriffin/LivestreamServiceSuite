@@ -39,7 +39,8 @@ namespace SlideCreater.ViewControls
                     key.ShowSlide(true);
                     postset.Content = value.IsPostset ? value.Postset.ToString() : "none";
                     number.Content = value.Number;
-                    type.Content = value.RenderedAs;
+                    string tmp = string.Join(", ", Xenon.Renderer.SlideExporter.WillCreate(value));
+                    creates.Text = tmp;
                 });
             }
         }

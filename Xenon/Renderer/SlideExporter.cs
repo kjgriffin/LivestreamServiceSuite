@@ -12,17 +12,71 @@ namespace Xenon.Renderer
 {
     public class SlideExporter
     {
+        public static List<string> WillCreate(RenderedSlide rs)
+        {
+            List<string> created = new List<string>();
+            if (rs.RenderedAs == "Resource")
+            {
+                created.Add($"Resource_{rs.Name}{rs.CopyExtension}");
+            }
+
+            if (rs.MediaType == MediaType.Image)
+            {
+                string filename = $"{rs.Number}_{rs.RenderedAs}.png";
+                string kfilename = $"Key_{rs.Number}.png";
+                if (rs.OverridingBehaviour?.ForceOverrideExport == true)
+                {
+                    filename = $"{rs.OverridingBehaviour.OverrideExportName}.png";
+                    kfilename = $"{rs.OverridingBehaviour.OverrideExportKeyName}.png";
+                }
+                created.Add(filename);
+                created.Add(kfilename);
+            }
+            else if (rs.MediaType == MediaType.Video)
+            {
+                string filename = $"{rs.Number}_{rs.RenderedAs}.mp4";
+                string kfilename = $"Key_{rs.Number}.png";
+                created.Add(filename);
+                created.Add(kfilename);
+            }
+            else if (rs.MediaType == MediaType.Video_KeyedVideo)
+            {
+                string filename = $"{rs.Number}_{rs.RenderedAs}.mp4";
+                string kfilename = $"Key_{rs.Number}.mp4";
+                created.Add(filename);
+                created.Add(kfilename);
+            }
+            else if (rs.MediaType == MediaType.Text)
+            {
+                // output text file
+                string filename = $"{rs.Number}_{rs.RenderedAs}.txt";
+                created.Add(filename);
+            }
+
+            // generate optional Postset
+            if (rs.IsPostset)
+            {
+                string filename = $"Postset_{rs.Number}.txt";
+            }
+
+            return created;
+        }
+
         public static void ExportSlides(string directory, Project proj, List<XenonCompilerMessage> messages)
         {
+            SlideRenderer slideRenderer = new SlideRenderer(proj);
+
             foreach (var slide in proj.Slides)
             {
-                SlideRenderer slideRenderer = new SlideRenderer(proj);
                 // render the slide
                 RenderedSlide rs = slideRenderer.RenderSlide(slide, messages);
 
                 if (rs.RenderedAs == "Resource")
                 {
                     // for now only allow audio files to be rendered as resource
+                    // ^^^^^ Not any more!
+                    // we'll let anything be a resource
+                    // for now it would be done for Image type slides, with an overriden renderedas
                     string filename = Path.Join(directory, $"Resource_{rs.Name}{rs.CopyExtension}");
                     File.Copy(rs.AssetPath, filename, true);
                     continue;
@@ -32,6 +86,13 @@ namespace Xenon.Renderer
                 {
                     string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.png");
                     string kfilename = Path.Join(directory, $"Key_{slide.Number}.png");
+
+                    if (rs.OverridingBehaviour?.ForceOverrideExport == true)
+                    {
+                        filename = Path.Join(directory, $"{slide.OverridingBehaviour.OverrideExportName}.png");
+                        kfilename = Path.Join(directory, $"{slide.OverridingBehaviour.OverrideExportKeyName}.png");
+                    }
+
                     rs.Bitmap.Save(filename, ImageFormat.Png);
                     rs.KeyBitmap.Save(kfilename, ImageFormat.Png);
                 }

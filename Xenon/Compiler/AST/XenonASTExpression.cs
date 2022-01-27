@@ -331,6 +331,13 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Scripted]))
+            {
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Scripted]);
+                var command = new XenonASTAsScripted();
+                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
+                return expr;
+            }
             else
             {
                 Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Error, ErrorName = "Unknown Command", ErrorMessage = $"{Lexer.Peek()} is not a recognized command", Token = Lexer.Peek(), Generator = "Compiler" });

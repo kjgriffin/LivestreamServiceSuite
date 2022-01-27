@@ -71,7 +71,7 @@ namespace SlideCreater
                         background.Visibility = Visibility.Visible;
                         textDisplay.Text = "AUTO BLACK KEY\r\n(for action)";
 
-                        if (!Regex.Match(Slide.Text, "!keysrc='Key_\\d+\\.png';").Success)
+                        if (!Regex.Match(Slide.Text, "!keysrc='.*\\.png';").Success)
                         {
                             background.Visibility = Visibility.Visible;
                             textDisplay.Visibility = Visibility.Visible;
@@ -126,11 +126,11 @@ namespace SlideCreater
                         background.Fill = Brushes.Black;
                         background.Visibility = Visibility.Visible;
 
-                        if (Regex.Match(Slide.Text, "!displaysrc='\\d+_.*\\.png';").Success)
+                        if (Regex.Match(Slide.Text, "!displaysrc='.*\\.png';").Success)
                         {
                             background.Visibility = Visibility.Hidden;
                             ImgDisplay.Visibility = Visibility.Visible;
-                            ImgDisplay.Source = Slide.Bitmap.ConvertToBitmapImage();
+                            ImgDisplay.Source = Slide.Bitmap?.ConvertToBitmapImage();
                         }
                     }
 

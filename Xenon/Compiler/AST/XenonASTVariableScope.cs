@@ -76,13 +76,14 @@ namespace Xenon.Compiler.AST
             Lexer.GobbleWhitespace();
             Lexer.GobbleandLog("{", "Expected opening brace { to mark start of scope");
 
-            if (Lexer.InspectEOF())
-            {
-                Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Info, ErrorName = "Scope not closed", ErrorMessage = "Incomplete Scope", Token = Lexer.EOFText, Generator = "XenonASTVariableScope::Compile" });
-                return scope;
-            }
             do
             {
+                if (Lexer.InspectEOF())
+                {
+                    Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Info, ErrorName = "Scope not closed", ErrorMessage = "Incomplete Scope", Token = Lexer.EOFText, Generator = "XenonASTVariableScope::Compile" });
+                    return scope;
+                }
+
                 XenonASTExpression expr = new XenonASTExpression();
                 Lexer.GobbleWhitespace();
                 expr = (XenonASTExpression)expr.Compile(Lexer, Logger, scope);

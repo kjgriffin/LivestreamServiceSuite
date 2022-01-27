@@ -104,6 +104,8 @@ namespace Xenon.Compiler
                 if (!currentline.EndsWith(";"))
                 {
                     suggestions.Add(("fullauto;", "mark slide as fully automated."));
+                    suggestions.Add(("displaysrc='<slide>';", "specify alt graphic for action slide"));
+                    suggestions.Add(("keysrc='<slide>';", "specify alt key graphic for action slide"));
                 }
             }
             // parse commands
