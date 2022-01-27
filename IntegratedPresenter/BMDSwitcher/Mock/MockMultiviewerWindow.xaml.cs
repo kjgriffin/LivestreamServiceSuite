@@ -543,7 +543,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             imgprog_uskpipposition.X = state.Current.PositionX * ATEM_TO_WPF_X;
             imgprog_uskpipposition.Y = state.Current.PositionY * -ATEM_TO_WPF_Y;
 
-            imgprog_uskpipclip.Rect = new Rect(ATEM_TO_WPF_X * (state.MaskRight - state.MaskLeft), state.MaskTop, 1280 - ((state.MaskRight + state.MaskLeft) * ATEM_TO_WPF_X), 720 - ((state.MaskBottom + state.MaskTop) * ATEM_TO_WPF_Y));
+            imgprog_uskpipclip.Rect = new Rect(ATEM_TO_WPF_X * state.MaskLeft, ATEM_TO_WPF_Y * state.MaskTop, 1280 - ((state.MaskRight + state.MaskLeft) * ATEM_TO_WPF_X), 720 - ((state.MaskBottom + state.MaskTop) * ATEM_TO_WPF_Y));
 
         }
 
