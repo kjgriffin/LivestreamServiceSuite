@@ -23,6 +23,7 @@ using log4net;
 using IntegratedPresenter.BMDSwitcher.Mock;
 using CommonVersionInfo;
 using Configurations.FeatureConfig;
+using IntegratedPresenterAPIInterop;
 
 namespace IntegratedPresenter.Main
 {
@@ -1125,7 +1126,7 @@ namespace IntegratedPresenter.Main
             BtnStopMedia.Style = Application.Current.FindResource("SwitcherButton_Disabled") as Style;
         }
 
-        
+
 
         private async void WindowPreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -1774,28 +1775,49 @@ namespace IntegratedPresenter.Main
             {
                 switch (task.Action)
                 {
-                    case AutomationActionType.PresetSelect:
+                    case AutomationActions.PresetSelect:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- Preset Select {task.DataI}");
                             switcherManager?.PerformPresetSelect(task.DataI);
                         });
                         break;
-                    case AutomationActionType.ProgramSelect:
+                    case AutomationActions.ProgramSelect:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- Program Select {task.DataI}");
                             switcherManager?.PerformProgramSelect(task.DataI);
                         });
                         break;
-                    case AutomationActionType.AuxSelect:
+                    case AutomationActions.AuxSelect:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- Aux Select {task.DataI}");
                             switcherManager?.PerformAuxSelect(task.DataI);
                         });
                         break;
-                    case AutomationActionType.AutoTrans:
+                    case AutomationActions.USK1Fill:
+                        Dispatcher.Invoke(() =>
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- USK1Fill {task.DataI}");
+                            switcherManager?.PerformUSK1FillSourceSelect(task.DataI);
+                        });
+                        break;
+                    case AutomationActions.PlacePIP:
+                        Dispatcher.Invoke(() =>
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- PlacePIP. read cfg");
+                            PIPPlaceSettings cfg = task?.DataO as PIPPlaceSettings;
+                            if (cfg != null)
+                            {
+                                _logger.Debug($"(PerformAutomationAction) -- PlacePIP at {cfg.ToString()}");
+                                var current = switcherManager?.GetCurrentState().DVESettings;
+                                var config = cfg.PlaceOverride(current);
+                                switcherManager?.SetPIPPosition(config);
+                            }
+                        });
+                        break;
+                    case AutomationActions.AutoTrans:
                         Dispatcher.Invoke(() =>
                         {
                             //switcherManager?.PerformAutoTransition();
@@ -1803,7 +1825,7 @@ namespace IntegratedPresenter.Main
                             PerformGuardedAutoTransition();
                         });
                         break;
-                    case AutomationActionType.CutTrans:
+                    case AutomationActions.CutTrans:
                         Dispatcher.Invoke(() =>
                         {
                             // Will always allow automation to perform cut transition.
@@ -1812,7 +1834,7 @@ namespace IntegratedPresenter.Main
                             switcherManager?.PerformCutTransition();
                         });
                         break;
-                    case AutomationActionType.AutoTakePresetIfOnSlide:
+                    case AutomationActions.AutoTakePresetIfOnSlide:
                         // Take Preset if program source is fed from slides
                         if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
                         {
@@ -1825,7 +1847,7 @@ namespace IntegratedPresenter.Main
                             await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
                         }
                         break;
-                    case AutomationActionType.DSK1On:
+                    case AutomationActions.DSK1On:
                         if (!switcherState.DSK1OnAir)
                         {
                             Dispatcher.Invoke(() =>
@@ -1835,7 +1857,7 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
-                    case AutomationActionType.DSK1Off:
+                    case AutomationActions.DSK1Off:
                         if (switcherState.DSK1OnAir)
                         {
                             Dispatcher.Invoke(() =>
@@ -1845,7 +1867,7 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
-                    case AutomationActionType.DSK1FadeOn:
+                    case AutomationActions.DSK1FadeOn:
                         if (!switcherState.DSK1OnAir)
                         {
                             Dispatcher.Invoke(() =>
@@ -1855,7 +1877,7 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
-                    case AutomationActionType.DSK1FadeOff:
+                    case AutomationActions.DSK1FadeOff:
                         if (switcherState.DSK1OnAir)
                         {
                             Dispatcher.Invoke(() =>
@@ -1865,7 +1887,7 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
-                    case AutomationActionType.DSK2On:
+                    case AutomationActions.DSK2On:
                         if (!switcherState.DSK2OnAir)
                         {
                             Dispatcher.Invoke(() =>
@@ -1875,7 +1897,7 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
-                    case AutomationActionType.DSK2Off:
+                    case AutomationActions.DSK2Off:
                         if (switcherState.DSK2OnAir)
                         {
                             Dispatcher.Invoke(() =>
@@ -1885,7 +1907,7 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
-                    case AutomationActionType.DSK2FadeOn:
+                    case AutomationActions.DSK2FadeOn:
                         if (!switcherState.DSK2OnAir)
                         {
                             Dispatcher.Invoke(() =>
@@ -1895,7 +1917,7 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
-                    case AutomationActionType.DSK2FadeOff:
+                    case AutomationActions.DSK2FadeOff:
                         if (switcherState.DSK2OnAir)
                         {
                             Dispatcher.Invoke(() =>
@@ -1905,12 +1927,12 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
-                    case AutomationActionType.RecordStart:
+                    case AutomationActions.RecordStart:
                         break;
-                    case AutomationActionType.RecordStop:
+                    case AutomationActions.RecordStop:
                         break;
 
-                    case AutomationActionType.Timer1Restart:
+                    case AutomationActions.Timer1Restart:
                         if (_FeatureFlag_automationtimer1enabled)
                         {
                             Dispatcher.Invoke(() =>
@@ -1921,7 +1943,7 @@ namespace IntegratedPresenter.Main
                         }
                         break;
 
-                    case AutomationActionType.USK1On:
+                    case AutomationActions.USK1On:
                         if (!switcherState.USK1OnAir)
                         {
                             Dispatcher.Invoke(() =>
@@ -1931,7 +1953,7 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
-                    case AutomationActionType.USK1Off:
+                    case AutomationActions.USK1Off:
                         if (switcherState.USK1OnAir)
                         {
                             Dispatcher.Invoke(() =>
@@ -1941,14 +1963,14 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
-                    case AutomationActionType.USK1SetTypeChroma:
+                    case AutomationActions.USK1SetTypeChroma:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- Configure USK1 for type chroma");
                             switcherManager?.SetUSK1TypeChroma();
                         });
                         break;
-                    case AutomationActionType.USK1SetTypeDVE:
+                    case AutomationActions.USK1SetTypeDVE:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- Configure USK1 for type DVE PIP");
@@ -1956,7 +1978,7 @@ namespace IntegratedPresenter.Main
                         });
                         break;
 
-                    case AutomationActionType.OpenAudioPlayer:
+                    case AutomationActions.OpenAudioPlayer:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- Opened Audio Player");
@@ -1964,7 +1986,7 @@ namespace IntegratedPresenter.Main
                             Focus();
                         });
                         break;
-                    case AutomationActionType.LoadAudio:
+                    case AutomationActions.LoadAudio:
                         string filename = Path.Join(Presentation.Folder, task.DataS);
                         Dispatcher.Invoke(() =>
                         {
@@ -1972,28 +1994,28 @@ namespace IntegratedPresenter.Main
                             audioPlayer.OpenAudio(filename);
                         });
                         break;
-                    case AutomationActionType.PlayAuxAudio:
+                    case AutomationActions.PlayAuxAudio:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- Aux:PlayAudio()");
                             audioPlayer.PlayAudio();
                         });
                         break;
-                    case AutomationActionType.StopAuxAudio:
+                    case AutomationActions.StopAuxAudio:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- Aux:StopAudio()");
                             audioPlayer.StopAudio();
                         });
                         break;
-                    case AutomationActionType.PauseAuxAudio:
+                    case AutomationActions.PauseAuxAudio:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- Aux:PauseAudio()");
                             audioPlayer.PauseAudio();
                         });
                         break;
-                    case AutomationActionType.ReplayAuxAudio:
+                    case AutomationActions.ReplayAuxAudio:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- Aux:RestartAudio()");
@@ -2001,42 +2023,42 @@ namespace IntegratedPresenter.Main
                         });
                         break;
 
-                    case AutomationActionType.PlayMedia:
+                    case AutomationActions.PlayMedia:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- playMedia()");
                             playMedia();
                         });
                         break;
-                    case AutomationActionType.PauseMedia:
+                    case AutomationActions.PauseMedia:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- pauseMedia()");
                             pauseMedia();
                         });
                         break;
-                    case AutomationActionType.StopMedia:
+                    case AutomationActions.StopMedia:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- stopMedia()");
                             stopMedia();
                         });
                         break;
-                    case AutomationActionType.RestartMedia:
+                    case AutomationActions.RestartMedia:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- restartMedia()");
                             restartMedia();
                         });
                         break;
-                    case AutomationActionType.MuteMedia:
+                    case AutomationActions.MuteMedia:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- muteMedia()");
                             muteMedia();
                         });
                         break;
-                    case AutomationActionType.UnMuteMedia:
+                    case AutomationActions.UnMuteMedia:
                         Dispatcher.Invoke(() =>
                         {
                             _logger.Debug($"(PerformAutomationAction) -- unmuteMedia()");
@@ -2045,11 +2067,11 @@ namespace IntegratedPresenter.Main
                         break;
 
 
-                    case AutomationActionType.DelayMs:
+                    case AutomationActions.DelayMs:
                         _logger.Debug($"(PerformAutomationAction) -- delay for {task.DataI} ms");
                         await Task.Delay(task.DataI);
                         break;
-                    case AutomationActionType.None:
+                    case AutomationActions.None:
                         break;
                     default:
                         _logger.Debug($"(PerformAutomationAction) -- UNKNOWN ACTION {task.Action}");

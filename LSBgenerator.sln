@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configurations", "Configura
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UITextboxTestbed", "UITextboxTestbed\UITextboxTestbed.csproj", "{E498EE79-C819-46B4-ACF9-230F76584D1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonVersionInfo", "CommonVersionInfo\CommonVersionInfo.csproj", "{7E58838B-F13C-402F-B3CB-105EB6E05FAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonVersionInfo", "CommonVersionInfo\CommonVersionInfo.csproj", "{7E58838B-F13C-402F-B3CB-105EB6E05FAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegratedPresenterAPIInterop", "IntegratedPresenterAPIInterop\IntegratedPresenterAPIInterop.csproj", "{D602E5D8-9BEA-492F-BF4F-F19F250DB330}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{7E58838B-F13C-402F-B3CB-105EB6E05FAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E58838B-F13C-402F-B3CB-105EB6E05FAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E58838B-F13C-402F-B3CB-105EB6E05FAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D602E5D8-9BEA-492F-BF4F-F19F250DB330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D602E5D8-9BEA-492F-BF4F-F19F250DB330}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D602E5D8-9BEA-492F-BF4F-F19F250DB330}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D602E5D8-9BEA-492F-BF4F-F19F250DB330}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

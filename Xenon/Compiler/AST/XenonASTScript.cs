@@ -143,10 +143,15 @@ namespace Xenon.Compiler
             {
                 return GetcontextualSuggestionsForArg1Action(action.Remove(0, 5));
             }
+            else if (action.StartsWith("argd8:"))
+            {
+                return GetcontextualSuggestionsForArgi8Action(action.Remove(0, 6));
+            }
             else
             {
                 suggestions.Add(("arg0:", "add an action taking 0 arguments"));
                 suggestions.Add(("arg1:", "add an action taking 1 arguments"));
+                suggestions.Add(("argd8:", "add an action taking 8 arguments"));
                 return suggestions
                     .OrderByClosestStrictMatch(action)
                     .ToList();
@@ -168,7 +173,7 @@ namespace Xenon.Compiler
             }
 
             // check if we match command, else get closeset match. if matching option end or notes.
-            suggestions.AddRange(LanguageKeywords.ScriptActionsMetadata
+            suggestions.AddRange(IntegratedPresenterAPIInterop.MetadataProvider.ScriptActionsMetadata
                 .Select(sm => (sm.Value.ActionName, sm.Value))
                 .Where(c => c.Value.NumArgs == 0)
                 .OrderByClosestStrictMatch(action)
@@ -233,7 +238,7 @@ namespace Xenon.Compiler
 
 
             // check if we match command, else get closeset match. if matching option end or notes.
-            suggestions.AddRange(LanguageKeywords.ScriptActionsMetadata
+            suggestions.AddRange(IntegratedPresenterAPIInterop.MetadataProvider.ScriptActionsMetadata
                 .Select(sm => (sm.Value.ActionName, sm.Value))
                 .Where(c => c.Value.NumArgs == 1)
                 .OrderByClosestStrictMatch(action)
@@ -247,6 +252,44 @@ namespace Xenon.Compiler
 
             return suggestions;
         }
+        private static List<(string, string)> GetcontextualSuggestionsForArgi8Action(string action)
+        {
+
+            List<(string, string)> suggestions = new List<(string, string)>();
+
+            if (IsInsideAnnotation(action))
+            {
+                return new List<(string, string)>() { ("];", "end command annotation") };
+            }
+
+            if (action.EndsWith(']'))
+            {
+                return new List<(string, string)>() { (";", "end command") };
+            }
+
+            if (IsInsideParamList(action))
+            {
+                // get command and look it up by string
+
+            }
+
+
+            // check if we match command, else get closeset match. if matching option end or notes.
+            suggestions.AddRange(IntegratedPresenterAPIInterop.MetadataProvider.ScriptActionsMetadata
+                .Select(sm => (sm.Value.ActionName, sm.Value))
+                .Where(c => c.Value.NumArgs == 8)
+                .OrderByClosestStrictMatch(action)
+                .Select(x => (x.Item1, ""))
+                .Where(x => x.Item1.Length >= action.Length));
+
+            if (suggestions.Any(s => s.Item1.Length == action.Length))
+            {
+                suggestions.Add(("(", ""));
+            }
+
+            return suggestions;
+        }
+
 
     }
 }

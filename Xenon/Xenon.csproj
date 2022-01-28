@@ -51,6 +51,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CommonVersionInfo\CommonVersionInfo.csproj" />
     <ProjectReference Include="..\Configurations\Configurations.csproj" />
+    <ProjectReference Include="..\IntegratedPresenterAPIInterop\IntegratedPresenterAPIInterop.csproj" />
   </ItemGroup>
 
   <ItemGroup>
