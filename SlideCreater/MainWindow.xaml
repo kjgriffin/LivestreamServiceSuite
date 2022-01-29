@@ -77,7 +77,7 @@
             <RowDefinition Height="20"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Foreground="White" Background="#272727">
+        <Menu Grid.Row="0" Foreground="White" Background="#171717">
             <MenuItem Header="File">
                 <MenuItem Click="ClickNew" Header="New" Foreground="Black">
                     <MenuItem.Icon>
@@ -144,12 +144,12 @@
         </Menu>
 
 
-        <Grid Grid.Row="1" Background="#272727" Height="40">
-            <StackPanel Orientation="Horizontal">
+        <Grid Grid.Row="1" Background="#171717" Height="50">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                 <Button Style="{StaticResource DarkBtn}" Click="RenderSlides" Width="100" Padding="10,0,10,0" Margin="10,5,0,0">
                     <Grid>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="/ViewControls/Images/PaintGreen.png" Width="40" Height="40" Margin="0,-4,0,0"></Image>
+                            <Image Source="/ViewControls/Images/PaintGreen.png" Width="40" Height="40" Margin="0,-1,0,0"></Image>
                             <TextBlock VerticalAlignment="Center" Foreground="White">Render</TextBlock>
                         </StackPanel>
                     </Grid>
@@ -157,7 +157,7 @@
                 <Button Style="{StaticResource DarkBtn}" Click="ExportSlides" Width="100" Padding="10,0,10,0" Margin="10,5,0,0">
                     <Grid>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="/ViewControls/Images/PublishPurple.png" Width="40" Height="40" Margin="0,-4,0,0"></Image>
+                            <Image Source="/ViewControls/Images/PublishPurple.png" Width="40" Height="40" Margin="0,-1,0,0"></Image>
                             <TextBlock VerticalAlignment="Center" Foreground="White">Publish</TextBlock>
                         </StackPanel>
                     </Grid>
@@ -303,7 +303,7 @@
                     </Grid.RowDefinitions>
                     <!--<ScrollViewer Grid.Row="0">-->
                     <!--<uicontrols:BetterTextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged"></uicontrols:BetterTextBox>-->
-                    <AvalonEdit:TextEditor Background="#171717" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
+                    <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
                     <!--</ScrollViewer>-->
                     <GridSplitter Grid.Row="1" Height="3" HorizontalAlignment="Stretch" Background="#474747"></GridSplitter>
                     <Grid Grid.Row="2">

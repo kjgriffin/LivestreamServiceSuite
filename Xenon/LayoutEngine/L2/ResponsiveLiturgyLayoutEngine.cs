@@ -66,6 +66,25 @@ namespace Xenon.LayoutEngine.L2
 
             // TODO: implement here
 
+            // OK- maybe I've decided that refining should place them as well.
+            List<SizedCandidateBlock> refinedblocks = new List<SizedCandidateBlock>();
+            foreach (var sblock in sblocks)
+            {
+                // refine it if necessary
+                if (sblock.NumLines == -1)
+                {
+                    // it needed refinement, but it only has one line
+                    slides.AddRange(PlaceBlurbsForSingleSpeaker(sblock, layout));
+                }
+
+                // for now don't mind bocks that already have a valid number of lines
+                // (it probably wasn't optimal...) TODO: add refiner that handles that case
+                // for now cheat and we'll use the greedy place for that
+                else
+                {
+                    slides.Add(PlaceCandidateBlock(sblock, layout));
+                }
+            }
 
             // Finally - Slideify
             /*
@@ -73,12 +92,30 @@ namespace Xenon.LayoutEngine.L2
                         - TODO: properly place each block
                             - for now they're just dumped in without thought to how they'll fit
              */
-            foreach (var block in sblocks)
-            {
-                // create something that can be put into the slide
-                // TODO: use alternate spacing if required (it will fit- but needs to be accounted for)
-                slides.Add(PlaceCandidateBlock(block, layout));
-            }
+            //foreach (var block in refinedblocks)
+            //{
+            //    // at this point we should be gauranteed that it fit on the slide...
+            //    // but perhaps there was a better way to do it????
+
+            //    // create something that can be put into the slide
+            //    // TODO: use alternate spacing if required (it will fit- but needs to be accounted for)
+            //    slides.Add(PlaceCandidateBlock(block, layout));
+            //}
+
+            return slides;
+        }
+
+        private List<List<SizedTextBlurb>> PlaceBlurbsForSingleSpeaker(SizedCandidateBlock block, ResponsiveLiturgySlideLayoutInfo layout)
+        {
+            List<List<SizedTextBlurb>> slides = new List<List<SizedTextBlurb>>();
+            // at this point we know:
+
+            // 1. the size of every word
+            // 2. we have only the one speaker
+            // 3. we'll need more than 1 slide to do the job
+
+
+
 
             return slides;
         }
@@ -200,10 +237,12 @@ namespace Xenon.LayoutEngine.L2
             if (minheightreq > MAXHEIGHT)
             {
                 // split block
+                // at this point we're gauranteed 1 speaker per slide
+                // so hand it off to something that can more intelligenetly handle that case
                 sblocks.AddRange(sblock.Lines.Select(x => new SizedCandidateBlock()
                 {
                     Lines = new List<SizedResponsiveStatement>() { x },
-                    NumLines = -1, // TODO: need to recalculate how many lines this actually uses
+                    NumLines = -1, // TODO: need to recalculate how many lines this actually uses (this will be done by something that actually understands how to solve that part of the problem)
                 }));
             }
             else
