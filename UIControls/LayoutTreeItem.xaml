@@ -6,15 +6,65 @@
              xmlns:local="clr-namespace:UIControls"
              mc:Ignorable="d" 
              d:DesignHeight="40" d:DesignWidth="200">
-    <Grid Height="40">
-        <Border Background="LightGray" CornerRadius="10" Margin="2">
+    <Grid Height="20">
+        <Border Background="Transparent" Margin="0">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Foreground="Black" Name="tbDisplayName" VerticalAlignment="Center" Padding="10">Item</TextBlock>
-                <Button Name="btn_edit" Click="Click_EditLayout" Width="30" Height="30" Background="Transparent" BorderBrush="LimeGreen" BorderThickness="2" Margin="0,0,10,0">
-                    <Image Source="../ViewControls/Images/Artist.png"></Image>
+                <TextBlock Foreground="White" Name="tbDisplayName" VerticalAlignment="Center" Padding="10">Item</TextBlock>
+                <Button Name="btn_edit" Click="Click_EditLayout" Width="20" Height="20" Background="Transparent" BorderThickness="0" Margin="0,0,5,0" ToolTip="Open in Designer">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Border Name="border">
+                                                <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                                            </Border>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#676767" />
+                                                <Setter Property="FontWeight" Value="Bold" />
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="False">
+                                                <Setter TargetName="border" Property="Background" Value="Transparent" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+
+                    <Image Source="../ViewControls/Images/ArtistBlue.png"></Image>
                 </Button>
-                <Button Name="btn_delete" Click="Click_Delete" Width="30" Height="30" Background="Transparent" BorderBrush="Red" BorderThickness="2" Margin="0,0,10,0">
-                    <Image Source="../ViewControls/Images/Trash.png"></Image>
+                <Button Name="btn_delete" Click="Click_Delete" Width="20" Height="20" Background="Transparent">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Border Name="border">
+                                                <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                                            </Border>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#676767" />
+                                                <Setter Property="FontWeight" Value="Bold" />
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="False">
+                                                <Setter TargetName="border" Property="Background" Value="Transparent" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+
+                    <Image Source="../ViewControls/Images/TrashRed.png"></Image>
                 </Button>
             </StackPanel>
         </Border>

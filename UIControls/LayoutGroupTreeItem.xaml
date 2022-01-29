@@ -8,9 +8,33 @@
     <TreeViewItem.Header>
         <Grid>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Name="tbHeader" MinWidth="30" Background="Transparent" Foreground="Black" VerticalAlignment="Center">Text</TextBlock>
+                <TextBlock Name="tbHeader" MinWidth="30" Background="Transparent" Foreground="#cecece" VerticalAlignment="Center">Text</TextBlock>
                 <Button Name="btn_new" Click="Click_NewLayout" Width="20" Height="20" Background="Transparent" BorderBrush="Transparent" ToolTip="New Layout" Margin="10, 0, 0, 0" VerticalAlignment="Center">
-                    <Image Source="../ViewControls/Images/RoundAdd.png"></Image>
+                    <Button.Style>
+                        <Style TargetType="Button" x:Name="DarkBtn">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Border Name="border">
+                                                <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                                            </Border>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#676767" />
+                                                <Setter Property="FontWeight" Value="Bold" />
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="False">
+                                                <Setter TargetName="border" Property="Background" Value="Transparent" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <Image Source="../ViewControls/Images/NewGreen.png"></Image>
                 </Button>
             </StackPanel>
         </Grid>

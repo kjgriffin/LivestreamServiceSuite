@@ -7,7 +7,68 @@
         mc:Ignorable="d"
         Closing="OnWindowClosing"
         Title="Slide Creater" Height="800" Width="1000">
-    <Grid>
+    <Window.Resources>
+        <Style TargetType="{x:Type TreeViewItem}">
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelectionActive" Value="True">
+                    <Setter Property="Foreground" Value="White"></Setter>
+                </Trigger>
+                <Trigger Property="IsSelectionActive" Value="False">
+                    <Setter Property="Foreground" Value="White"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TabItem" x:Name="DarkTab" x:Key="DarkTab">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border BorderThickness="1" BorderBrush="#373737">
+                            <Grid Name="TabPanel">
+                                <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="10,2"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="TabPanel" Property="Background" Value="#373737" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="TabPanel" Property="Background" Value="#171717" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Button" x:Name="DarkBtn" x:Key="DarkBtn">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Name="border" BorderBrush="#575757" BorderThickness="2">
+                                <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#676767" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#373737" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#272727">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="20"></RowDefinition>
@@ -16,27 +77,26 @@
             <RowDefinition Height="20"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <!--<Menu Grid.Row="0" Foreground="White" Background="#272727">-->
-        <Menu Grid.Row="0">
+        <Menu Grid.Row="0" Foreground="White" Background="#272727">
             <MenuItem Header="File">
-                <MenuItem Click="ClickNew" Header="New">
+                <MenuItem Click="ClickNew" Header="New" Foreground="Black">
                     <MenuItem.Icon>
                         <Image Source="/ViewControls/Images/File.png"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator></Separator>
-                <MenuItem Click="ClickTrustyOpen" Header="Trusty Open">
+                <MenuItem Click="ClickTrustyOpen" Header="Trusty Open" Foreground="Black">
                     <MenuItem.Icon>
                         <Image Source="/ViewControls/Images/Folder.png"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Click="ClickTrustySave" Header="Trusty Save">
+                <MenuItem Click="ClickTrustySave" Header="Trusty Save" Foreground="Black">
                     <MenuItem.Icon>
                         <Image Source="/ViewControls/Images/Save.png"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator></Separator>
-                <MenuItem Click="ClickOpen" Header="Open (Legacy)">
+                <MenuItem Click="ClickOpen" Header="Open (Legacy)" Foreground="Black">
                     <MenuItem.Icon>
                         <Image Source="/ViewControls/Images/Folder_light.png"></Image>
                     </MenuItem.Icon>
@@ -46,36 +106,36 @@
                 <!--<MenuItem IsEnabled="false" Click="ClickSaveJSON" Header="Save JSON"></MenuItem>-->
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem Name="mipreviewslide" Click="ClickTogglePreviewSlide" Header="Preview Slides" IsChecked="true" IsCheckable="true">
+                <MenuItem Foreground="Black" Name="mipreviewslide" Click="ClickTogglePreviewSlide" Header="Preview Slides" IsChecked="true" IsCheckable="true">
                 </MenuItem>
-                <MenuItem Name="mipreviewkey" Click="ClickTogglePreviewKey" Header="Preview Keys" IsCheckable="true"></MenuItem>
+                <MenuItem  Foreground="Black" Name="mipreviewkey" Click="ClickTogglePreviewKey" Header="Preview Keys" IsCheckable="true"></MenuItem>
                 <Separator></Separator>
-                <MenuItem Name="openTmpFolder" Click="OpenTempFolder" Header="View Temp Folder"></MenuItem>
+                <MenuItem  Foreground="Black" Name="openTmpFolder" Click="OpenTempFolder" Header="View Temp Folder"></MenuItem>
             </MenuItem>
             <MenuItem Header="Import">
-                <MenuItem Name="miimport" Click="ClickImportService" Header="Import from LSB Service">
+                <MenuItem  Foreground="Black" Name="miimport" Click="ClickImportService" Header="Import from LSB Service">
                     <MenuItem.Icon>
                         <Image Source="/ViewControls/Images/CloudDL.png"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator></Separator>
-                <MenuItem Name="mi_importoption_inferpostset" Header="Add Postset To Slides" IsCheckable="True" IsChecked="True"></MenuItem>
-                <MenuItem Name="mi_importoption_useupnextforhymns" Header="Use UpNext for Hymns" IsCheckable="True" IsChecked="False"></MenuItem>
-                <MenuItem Name="mi_importoption_notonlyknowncaptions" Header="Add Unknown Captions" IsCheckable="True" IsChecked="False"></MenuItem>
-                <MenuItem Name="mi_importoption_useresponsiveliturgy" Header="Use Responsive Liturgy" IsCheckable="True" IsChecked="False"></MenuItem>
-                <MenuItem Name="mi_importoptions_chooseelements" Header="Filter Elements" Click="mi_importoptions_chooseelements_Click"></MenuItem>
+                <MenuItem  Foreground="Black" Name="mi_importoption_inferpostset" Header="Add Postset To Slides" IsCheckable="True" IsChecked="True"></MenuItem>
+                <MenuItem  Foreground="Black" Name="mi_importoption_useupnextforhymns" Header="Use UpNext for Hymns" IsCheckable="True" IsChecked="False"></MenuItem>
+                <MenuItem  Foreground="Black" Name="mi_importoption_notonlyknowncaptions" Header="Add Unknown Captions" IsCheckable="True" IsChecked="False"></MenuItem>
+                <MenuItem  Foreground="Black" Name="mi_importoption_useresponsiveliturgy" Header="Use Responsive Liturgy" IsCheckable="True" IsChecked="False"></MenuItem>
+                <MenuItem  Foreground="Black" Name="mi_importoptions_chooseelements" Header="Filter Elements" Click="mi_importoptions_chooseelements_Click"></MenuItem>
                 <Separator></Separator>
-                <MenuItem Name="miimport_adv" Click="ClickImportServiceAdv" Header="Import Wizard"></MenuItem>
+                <MenuItem  Foreground="Black" Name="miimport_adv" Click="ClickImportServiceAdv" Header="Import Wizard"></MenuItem>
             </MenuItem>
             <MenuItem Header="Recovery">
-                <MenuItem Click="RecoverAutoSave" Header="Recover Auto Save">
+                <MenuItem  Foreground="Black" Click="RecoverAutoSave" Header="Recover Auto Save">
                     <MenuItem.Icon>
                         <Image Source="/ViewControls/Images/Cardio.png"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="Commands" Click="ClickHelpCommands">
+                <MenuItem  Foreground="Black" Header="Commands" Click="ClickHelpCommands">
                     <MenuItem.Icon>
                         <Image Source="/ViewControls/Images/Question.png"></Image>
                     </MenuItem.Icon>
@@ -83,12 +143,14 @@
             </MenuItem>
         </Menu>
 
-        <ToolBar Grid.Row="1" Background="#dedede">
+
+        <ToolBar Grid.Row="1" Background="#272727" Foreground="white" ToolBarTray.IsLocked="true">
+            <Menu ToolBar.OverflowMode="Never"></Menu>
             <Button Click="RenderSlides" Padding="10,0,10,0">
                 <Grid>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/ViewControls/Images/RenderPaintCan.png" Width="30" Height="30"></Image>
-                        <TextBlock VerticalAlignment="Center">Render</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Foreground="White">Render</TextBlock>
                     </StackPanel>
                 </Grid>
             </Button>
@@ -96,68 +158,68 @@
                 <Grid>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/ViewControls/Images/Export2.png" Width="30" Height="30"></Image>
-                        <TextBlock VerticalAlignment="Center">Export</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Foreground="White">Export</TextBlock>
                     </StackPanel>
                 </Grid>
             </Button>
-            <Separator></Separator>
+            <Separator Background="#474747" Width="2"></Separator>
             <Border Width="20" Height="20" VerticalAlignment="Center">
                 <CheckBox Name="cbAgressiveSave" IsChecked="true" Click="ClickCBAutoSave" VerticalAlignment="center"></CheckBox>
             </Border>
-            <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">
+            <Label Foreground="#efefef" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">
                 <Label.ToolTip>Performs a full trusty save including assets before any 'risky' operation. (May increase disk usage.)</Label.ToolTip> Aggressively Auto Save
             </Label>
 
             <Border Width="20" Height="20" VerticalAlignment="Center">
                 <CheckBox Name="cbRenderParallel" IsChecked="false" Click="ClickCBRenderParallel" VerticalAlignment="center"></CheckBox>
             </Border>
-            <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">
+            <Label Foreground="#efefef" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">
                 <Label.ToolTip>Legacy behaviour. Theoretically more performant. If disabled should be able to catch GDI+ errors that periodically crash Slide Creater.</Label.ToolTip> Parallelized Rendering
             </Label>
         </ToolBar>
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" Background="#272727">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
-                <ColumnDefinition Width="5"></ColumnDefinition>
+                <ColumnDefinition Width="2*" MinWidth="340"></ColumnDefinition>
+                <ColumnDefinition Width="10"></ColumnDefinition>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
-                <ColumnDefinition Width="5"></ColumnDefinition>
+                <ColumnDefinition Width="10"></ColumnDefinition>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"></GridSplitter>
-            <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch"></GridSplitter>
+            <GridSplitter Background="#474747" Width="3" Grid.Column="1" HorizontalAlignment="Stretch"></GridSplitter>
+            <GridSplitter Background="#474747" Width="3" Grid.Column="3" HorizontalAlignment="Stretch"></GridSplitter>
 
-            <Border Grid.Column="0" Background="Gray">
-                <TabControl Grid.Column="0">
-                    <TabItem Header="Assets">
-                        <Grid Grid.Column="0">
+            <Border Grid.Column="0" Background="#272727">
+                <TabControl Grid.Column="0" Background="#272727" BorderBrush="#373737" BorderThickness="3">
+                    <TabItem Header="Assets" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
+                        <Grid Grid.Column="0" Background="#202020">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="50"></RowDefinition>
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0">
                                 <StackPanel Orientation="Horizontal" Margin="2,5,5,5" HorizontalAlignment="left">
-                                    <Button Margin="5" Click="ClickAddAssets" Width="100" Height="30">
+                                    <Button Style="{StaticResource DarkBtn}" Margin="5" Click="ClickAddAssets" Width="150" Height="30">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal">
                                                 <Image Source="/ViewControls/Images/Plus.png"></Image>
-                                                <Label>Add Assets</Label>
+                                                <Label Foreground="White">Add Assets</Label>
                                             </StackPanel>
                                         </Grid>
                                     </Button>
-                                    <Button Margin="5" Click="ClickClearAssets" Width="100" Height="30">
+                                    <Button Margin="5" Style="{StaticResource DarkBtn}" Click="ClickClearAssets" Width="150" Height="30">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal">
                                                 <Image Source="/ViewControls/Images/Delete.png"></Image>
-                                                <Label>Remove All</Label>
+                                                <Label Foreground="White">Remove All</Label>
                                             </StackPanel>
                                         </Grid>
                                     </Button>
                                 </StackPanel>
                             </Grid>
-                            <Border Grid.Row="1" Background="#dfdfdf" CornerRadius="10" Padding="5" Margin="5,0,5,10">
-                                <ScrollViewer Grid.Row="1">
+                            <Border Grid.Row="1" Background="#272727" BorderBrush="#373737" BorderThickness="0" CornerRadius="10" Padding="5" Margin="5,0,5,10">
+                                <ScrollViewer Grid.Row="1" Background="#272727">
                                     <StackPanel Name="AssetList">
 
                                     </StackPanel>
@@ -165,7 +227,7 @@
                             </Border>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Layouts">
+                    <TabItem Header="Layouts" Style="{StaticResource DarkTab}" FontWeight="Regular" Foreground="White">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="80"></RowDefinition>
@@ -177,45 +239,51 @@
                                     <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                    <Button Click="Click_ImportLayoutLibrary" BorderBrush="Transparent" Background="Transparent">
+                                    <Button Click="Click_ImportLayoutLibrary" Style="{StaticResource DarkBtn}" Margin="5" Width="150">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal">
-                                                <Image Source="/ViewControls/Images/CloudDL.png" Width="30" Height="20"></Image>
-                                                <Label>Import Library</Label>
+                                                <Image Source="/ViewControls/Images/BoxOrange.png" Width="30" Height="30" Margin="0,-2,0,0"></Image>
+                                                <Label Foreground="White">Import Library</Label>
                                             </StackPanel>
                                         </Grid>
                                     </Button>
-                                    <Button Click="Click_ExporLayoutLibrary" BorderBrush="Transparent" Background="Transparent">
+                                    <Button Click="Click_ExporLayoutLibrary" Style="{StaticResource DarkBtn}" Margin="5" Width="150">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal">
-                                                <Image Source="/ViewControls/Images/Export2.png" Width="30" Height="20"></Image>
-                                                <Label>Export Library</Label>
+                                                <Image Source="/ViewControls/Images/BoxShutOrange.png" Width="30" Height="30" Margin="0,-2,0,0"></Image>
+                                                <Label Foreground="White">Export Library</Label>
                                             </StackPanel>
                                         </Grid>
                                     </Button>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                    <Button Click="Click_NewLayoutLibrary" BorderBrush="Transparent" Background="Transparent">
+                                    <Button Click="Click_NewLayoutLibrary" Style="{StaticResource DarkBtn}" Margin="5" Width="150">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal">
-                                                <Image Source="/ViewControls/Images/Plus.png" Width="30" Height="20"></Image>
-                                                <Label>New Library</Label>
+                                                <Image Source="/ViewControls/Images/NewGreen.png" Width="30" Height="30" Margin="0,-2,0,0"></Image>
+                                                <Label Foreground="White">New Library</Label>
                                             </StackPanel>
                                         </Grid>
                                     </Button>
-                                    <Button Click="Click_RemoveLayoutLibrary" BorderBrush="Transparent" Background="Transparent">
+                                    <Button Click="Click_RemoveLayoutLibrary" Style="{StaticResource DarkBtn}" Margin="5" Width="150">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal">
-                                                <Image Source="/ViewControls/Images/Delete.png" Width="30" Height="20"></Image>
-                                                <Label>Delete Library</Label>
+                                                <Image Source="/ViewControls/Images/TrashRed.png" Width="30" Height="30" Margin="0,-2,0,0"></Image>
+                                                <Label Foreground="White">Delete Library</Label>
                                             </StackPanel>
                                         </Grid>
                                     </Button>
                                 </StackPanel>
                             </Grid>
-                            <TreeView Grid.Row="1" Name="LayoutsTreeView">
-                                <TreeViewItem Header="Test">
-                                    <TreeViewItem Header="Val1"></TreeViewItem>
+                            <TreeView Grid.Row="1" Name="LayoutsTreeView" Background="#272727" Padding="0,10,0,0" BorderBrush="#373737" BorderThickness="0">
+                                <TreeView.Resources>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#676767"></SolidColorBrush>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#676767"></SolidColorBrush>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
+                                </TreeView.Resources>
+                                <TreeViewItem Header="Test" Foreground="White">
+                                    <TreeViewItem Header="Val1" Foreground="White"></TreeViewItem>
                                 </TreeViewItem>
                             </TreeView>
                         </Grid>
@@ -227,27 +295,27 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="4*"></RowDefinition>
-                        <RowDefinition Height="5"></RowDefinition>
+                        <RowDefinition Height="10"></RowDefinition>
                         <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
                     <!--<ScrollViewer Grid.Row="0">-->
                     <!--<uicontrols:BetterTextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged"></uicontrols:BetterTextBox>-->
-                    <AvalonEdit:TextEditor Name="TbInput" FontFamily="inconsolata" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
+                    <AvalonEdit:TextEditor Background="#171717" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="inconsolata" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
                     <!--</ScrollViewer>-->
-                    <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"></GridSplitter>
+                    <GridSplitter Grid.Row="1" Height="3" HorizontalAlignment="Stretch" Background="#474747"></GridSplitter>
                     <Grid Grid.Row="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="20"></RowDefinition>
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
-                        <Grid Grid.Row="0" Background="LightGray">
+                        <Grid Grid.Row="0" Background="#373737">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,0,0">
-                                <TextBlock>
+                                <TextBlock Foreground="White">
                                 Error List:
                                 </TextBlock>
                                 <StackPanel Orientation="Horizontal" Margin="50,0,0,0">
-                                    <CheckBox Margin="0,0,10,0" Name="cb_message_view_debug" Click="cb_message_view_debug_Click">Debug</CheckBox>
-                                    <CheckBox Margin="0,0,10,0" Name="cb_message_view_info" Click="cb_message_view_info_Click">Info</CheckBox>
+                                    <CheckBox Foreground="White" Margin="0,0,10,0" Name="cb_message_view_debug" Click="cb_message_view_debug_Click">Debug</CheckBox>
+                                    <CheckBox Foreground="White" Margin="0,0,10,0" Name="cb_message_view_info" Click="cb_message_view_info_Click">Info</CheckBox>
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
@@ -255,8 +323,49 @@
                         <!--<TextBlock Name="tbConsole"></TextBlock>-->
                         <!--<FlowDocument Name="error_report"></FlowDocument>-->
                         <!--<StackPanel Name="error_report" Orientation="Vertical"></StackPanel>-->
-                        <ListView Grid.Row="1" Name="error_report_view" SelectionChanged="error_report_view_SelectionChanged" PreviewMouseDown="error_report_view_PreviewMouseDown">
+                        <ListView Background="#272727" Grid.Row="1" Name="error_report_view" SelectionChanged="error_report_view_SelectionChanged" PreviewMouseDown="error_report_view_PreviewMouseDown">
                             <ListView.Resources>
+
+                                <Style x:Key="GridViewColumnHeaderGripper" TargetType="Thumb">
+                                    <Setter Property="Width" Value="10" />
+                                    <Setter Property="Background" Value="#3f3f3f"></Setter>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                                                    <Rectangle HorizontalAlignment="Center" Width="3" Fill="{TemplateBinding Background}" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="BorderBrush" Value="#3f3f3f"></Setter>
+                                    <Setter Property="BorderThickness" Value="1"></Setter>
+                                </Style>
+
+                                <Style TargetType="{x:Type GridViewColumnHeader}">
+                                    <Setter Property="Foreground" Value="White"></Setter>
+                                    <Setter Property="Background" Value="#373737"></Setter>
+                                    <Setter Property="BorderBrush" Value="#373737"></Setter>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                                                <Grid>
+                                                    <Border>
+                                                        <TextBlock Text="{TemplateBinding Content}"></TextBlock>
+                                                    </Border>
+                                                    <Thumb x:Name="PART_HeaderGripper" HorizontalAlignment="Right" Margin="0,0,0,0" Style="{StaticResource GridViewColumnHeaderGripper}"></Thumb>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="true">
+                                            <Setter Property="Background" Value="#676767"></Setter>
+                                            <Setter Property="Foreground" Value="#676767"></Setter>
+                                            <Setter Property="BorderBrush" Value="#676767"></Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
                                 <Style TargetType="{x:Type ListViewItem}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Level}" Value="0">
@@ -284,12 +393,12 @@
                             </ListView.Resources>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Level" DisplayMemberBinding="{Binding Level}"></GridViewColumn>
-                                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding ErrorName}"></GridViewColumn>
-                                    <GridViewColumn Header="Info" DisplayMemberBinding="{Binding ErrorMessage}"></GridViewColumn>
-                                    <GridViewColumn Header="Token" DisplayMemberBinding="{Binding Token}"></GridViewColumn>
-                                    <GridViewColumn Header="Inner" DisplayMemberBinding="{Binding Inner}"></GridViewColumn>
-                                    <GridViewColumn Header="Generator" DisplayMemberBinding="{Binding Generator}"></GridViewColumn>
+                                    <GridViewColumn Width="100" Header="Level" DisplayMemberBinding="{Binding Level}"></GridViewColumn>
+                                    <GridViewColumn Width="200" Header="Name" DisplayMemberBinding="{Binding ErrorName}"></GridViewColumn>
+                                    <GridViewColumn Width="100" Header="Info" DisplayMemberBinding="{Binding ErrorMessage}"></GridViewColumn>
+                                    <GridViewColumn Width="100" Header="Token" DisplayMemberBinding="{Binding Token}"></GridViewColumn>
+                                    <GridViewColumn Width="40" Header="Inner" DisplayMemberBinding="{Binding Inner}"></GridViewColumn>
+                                    <GridViewColumn Width="400" Header="Generator" DisplayMemberBinding="{Binding Generator}"></GridViewColumn>
                                 </GridView>
                             </ListView.View>
                         </ListView>
@@ -301,22 +410,26 @@
 
                 <Grid.RowDefinitions>
                     <RowDefinition></RowDefinition>
+                    <RowDefinition Height="10"></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <Viewbox Grid.Row="0">
                     <Grid>
-                        <Border VerticalAlignment="Top" BorderThickness="10" BorderBrush="DarkMagenta" Margin="10">
+                        <Border VerticalAlignment="Top" BorderThickness="10" BorderBrush="#373737" Margin="10">
                             <local:SlideContentPresenter x:Name="FocusSlide"></local:SlideContentPresenter>
                         </Border>
                     </Grid>
                 </Viewbox>
-                <Grid Grid.Row="1">
+
+                <GridSplitter Grid.Row="1" Height="3" Background="#474747" HorizontalAlignment="Stretch"></GridSplitter>
+
+                <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <!--<StackPanel Name="slidelist"></StackPanel>-->
-                    <ListBox Background="WhiteSmoke" Name="slidelist" SelectionChanged="slidelist_SelectionChanged"></ListBox>
+                    <ListBox BorderBrush="#373737" BorderThickness="3" Background="#171717" Foreground="White" Name="slidelist" SelectionChanged="slidelist_SelectionChanged"></ListBox>
                 </Grid>
 
 

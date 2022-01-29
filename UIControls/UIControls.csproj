@@ -7,10 +7,34 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Icons\ArtistWhite.png" />
+    <None Remove="Icons\DeleteWhite.png" />
+    <None Remove="Icons\ExportWhite.png" />
+    <None Remove="Icons\OpenFolderWhite.png" />
+    <None Remove="Icons\PaintWhite.png" />
+    <None Remove="Icons\PlusWhite.png" />
     <None Remove="xenonsyntax.xshd" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Icons\ArtistWhite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\DeleteWhite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\ExportWhite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\OpenFolderWhite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\PaintWhite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\PlusWhite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="xenonsyntax.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
