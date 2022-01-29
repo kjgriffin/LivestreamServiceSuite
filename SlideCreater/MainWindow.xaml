@@ -16,6 +16,7 @@
             <RowDefinition Height="20"></RowDefinition>
         </Grid.RowDefinitions>
 
+        <!--<Menu Grid.Row="0" Foreground="White" Background="#272727">-->
         <Menu Grid.Row="0">
             <MenuItem Header="File">
                 <MenuItem Click="ClickNew" Header="New">

@@ -72,6 +72,13 @@ namespace LutheRun
                 sb.AppendLine("//> INSERTION POINT: sermon");
                 sb.AppendLine($"#sermon(\"TITLE\", \"REFERENCE\", \"PREACHER\"){PostsetCmd}");
             }
+
+            else if (!lSBImportOptions.OnlyKnownCaptions)
+            {
+                sb.AppendLine("/// </MANUAL_UPDATE name='unknown caption'>");
+                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\", \"standard\")");
+            }
+
             return sb.ToString();
         }
     }

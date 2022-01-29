@@ -32,6 +32,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.Liturgy2] = (new ResponsiveLiturgySlideLayoutInfo(), new ResponsiveLiturgyRenderer(), ""),
             [LanguageKeywordCommand.UpNext] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "UpNextLayoutInfo_Default.json"),
             [LanguageKeywordCommand.CustomText] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), ""),
+            [LanguageKeywordCommand.CustomDraw] = (new ShapeImageAndTextLayoutInfo(), new ShapeImageAndTextRenderer(), ""),
         };
 
         public static List<string> WholeWords = new List<string>()
@@ -107,6 +108,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.PostFilter] = "postfilter",
             [LanguageKeywordCommand.UpNext] = "upnext",
             [LanguageKeywordCommand.CustomText] = "customtext",
+            [LanguageKeywordCommand.CustomDraw] = "customdraw",
         };
 
         public static Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata>()
@@ -147,6 +149,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.PostFilter] = (true, LanguageKeywordCommand.VariableScope, false, false, new XenonASTPostFilter()),
             [LanguageKeywordCommand.UpNext] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTUpNext()),
             [LanguageKeywordCommand.CustomText] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTShapesAndText()),
+            [LanguageKeywordCommand.CustomDraw] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTShapesImagesAndText()),
         };
 
     }
@@ -215,6 +218,7 @@ namespace Xenon.Compiler
         UpNext,
         CustomText,
         Scripted,
+        CustomDraw,
     }
 
 }

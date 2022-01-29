@@ -113,9 +113,12 @@
 			<!--<Word>#postfilter</Word>-->
 			<Word>#upnext</Word>
 			<Word>#customtext</Word>
+			<Word>#scripted</Word>
+			<Word>#customdraw</Word>
 			<!-- ... -->
 		</Keywords>
 	</RuleSet>
+
 
 	<RuleSet name="EntitySet">
 		<Rule color="Entity">

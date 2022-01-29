@@ -55,7 +55,6 @@ namespace Xenon.Compiler.AST
 
         public void GenerateDebug(Project project)
         {
-            throw new NotImplementedException();
         }
 
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer)

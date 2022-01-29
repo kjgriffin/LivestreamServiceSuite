@@ -331,6 +331,13 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.CustomDraw]))
+            {
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.CustomDraw]);
+                var command = new XenonASTShapesImagesAndText();
+                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Scripted]))
             {
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Scripted]);

@@ -28,5 +28,6 @@ namespace Xenon.SlideAssembly
         StitchedImage,
         ShapesAndTexts,
         ResponsiveLiturgy,
+        CustomDraw,
     }
 }

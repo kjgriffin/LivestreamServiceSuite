@@ -40,6 +40,8 @@ namespace LutheRun
         public bool Prefab { get; set; } = false;
         [BoolSetting]
         public bool Unknown { get; set; } = false;
+        [BoolSetting]
+        public bool Acknowledgments { get; set; } = false;
 
         public List<Type> FilteredTypes
         {
@@ -62,6 +64,8 @@ namespace LutheRun
                     elements.Add(typeof(LSBElementIsPrefab));
                 if (Unknown)
                     elements.Add(typeof(LSBElementUnknown));
+                if (Acknowledgments)
+                    elements.Add(typeof(LSBElementAcknowledments));
 
                 return elements;
             }

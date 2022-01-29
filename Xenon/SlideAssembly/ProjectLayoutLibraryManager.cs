@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -8,6 +9,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 using Xenon.Compiler;
+using Xenon.LayoutInfo;
 using Xenon.Renderer;
 using Xenon.SaveLoad;
 
@@ -174,6 +176,27 @@ namespace Xenon.SlideAssembly
                 }
             }
             AllLibraries[DEFAULTLIBNAME] = defaultlib;
+            LoadBundledLibraries();
+        }
+
+        private void LoadBundledLibraries()
+        {
+
+            // find all libaries
+            var names = System.Reflection.Assembly.GetAssembly(typeof(ALayoutInfo))
+                .GetManifestResourceNames()
+                .Where(n => n.StartsWith("Xenon.LayoutInfo.Defaults.LibBundles"));
+
+            foreach (var name in names)
+            {
+                var stream = System.Reflection.Assembly.GetAssembly(typeof(ALayoutInfo)).GetManifestResourceStream(name);
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    string json = sr.ReadToEnd();
+                    var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
+                    LoadLibrary(lib);
+                }
+            }
         }
 
         public void LoadLibrary(LayoutLibEntry lib)

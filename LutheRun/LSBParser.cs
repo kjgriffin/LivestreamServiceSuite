@@ -79,15 +79,17 @@ namespace LutheRun
             if (bulletin != null)
             {
                 TopLevelServiceElements = bulletin.Children.First().Children.First().Children.First().Children.Where(e => e.LocalName == "lsb-service-element").ToList();
-                ParseDOMElements(TopLevelServiceElements);
+                IElement acknowledgments = bulletin.Children.First().Children.First().Children.First().Children.Where(e => e.LocalName == "acknowledgments").FirstOrDefault();
+                ParseDOMElements(TopLevelServiceElements, acknowledgments);
             }
 
         }
 
-        private void ParseDOMElements(List<AngleSharp.Dom.IElement> dom)
+        private void ParseDOMElements(List<AngleSharp.Dom.IElement> dom, IElement ack)
         {
             List<ILSBElement> elements = new List<ILSBElement>();
             ServiceElements.Clear();
+            ServiceElements.Add(LSBElementAcknowledments.Parse(ack));
             foreach (var e in dom)
             {
                 _ParseLSBServiceElement(e);

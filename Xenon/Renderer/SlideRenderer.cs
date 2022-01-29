@@ -39,6 +39,7 @@ namespace Xenon.Renderer
             new TwoPartTitleSlideRenderer(),
             new TitledLiturgyVerseSlideRenderer(),
             new ShapeAndTextRenderer(),
+            new ShapeImageAndTextRenderer(),
             new ResponsiveLiturgyRenderer(),
         };
 
