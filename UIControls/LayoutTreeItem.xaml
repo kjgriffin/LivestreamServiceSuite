@@ -9,6 +9,7 @@
     <Grid Height="20">
         <Border Background="Transparent" Margin="0">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Image Source="../ViewControls/Images/LayoutGray.png"></Image>
                 <TextBlock Foreground="White" Name="tbDisplayName" VerticalAlignment="Center" Padding="10">Item</TextBlock>
                 <Button Name="btn_edit" Click="Click_EditLayout" Width="20" Height="20" Background="Transparent" BorderThickness="0" Margin="0,0,5,0" ToolTip="Open in Designer">
                     <Button.Style>

@@ -72,7 +72,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="20"></RowDefinition>
-            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition Height="20"></RowDefinition>
         </Grid.RowDefinitions>
@@ -144,39 +144,43 @@
         </Menu>
 
 
-        <ToolBar Grid.Row="1" Background="#272727" Foreground="white" ToolBarTray.IsLocked="true">
-            <Menu ToolBar.OverflowMode="Never"></Menu>
-            <Button Click="RenderSlides" Padding="10,0,10,0">
-                <Grid>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/ViewControls/Images/RenderPaintCan.png" Width="30" Height="30"></Image>
-                        <TextBlock VerticalAlignment="Center" Foreground="White">Render</TextBlock>
-                    </StackPanel>
-                </Grid>
-            </Button>
-            <Button Click="ExportSlides" Padding="10,0,10,0">
-                <Grid>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/ViewControls/Images/Export2.png" Width="30" Height="30"></Image>
-                        <TextBlock VerticalAlignment="Center" Foreground="White">Export</TextBlock>
-                    </StackPanel>
-                </Grid>
-            </Button>
-            <Separator Background="#474747" Width="2"></Separator>
-            <Border Width="20" Height="20" VerticalAlignment="Center">
-                <CheckBox Name="cbAgressiveSave" IsChecked="true" Click="ClickCBAutoSave" VerticalAlignment="center"></CheckBox>
-            </Border>
-            <Label Foreground="#efefef" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">
-                <Label.ToolTip>Performs a full trusty save including assets before any 'risky' operation. (May increase disk usage.)</Label.ToolTip> Aggressively Auto Save
-            </Label>
+        <Grid Grid.Row="1" Background="#272727" Height="40">
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource DarkBtn}" Click="RenderSlides" Width="100" Padding="10,0,10,0" Margin="10,5,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/ViewControls/Images/PaintGreen.png" Width="40" Height="40" Margin="0,-4,0,0"></Image>
+                            <TextBlock VerticalAlignment="Center" Foreground="White">Render</TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+                <Button Style="{StaticResource DarkBtn}" Click="ExportSlides" Width="100" Padding="10,0,10,0" Margin="10,5,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/ViewControls/Images/PublishPurple.png" Width="40" Height="40" Margin="0,-4,0,0"></Image>
+                            <TextBlock VerticalAlignment="Center" Foreground="White">Publish</TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Button>
 
-            <Border Width="20" Height="20" VerticalAlignment="Center">
-                <CheckBox Name="cbRenderParallel" IsChecked="false" Click="ClickCBRenderParallel" VerticalAlignment="center"></CheckBox>
-            </Border>
-            <Label Foreground="#efefef" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">
-                <Label.ToolTip>Legacy behaviour. Theoretically more performant. If disabled should be able to catch GDI+ errors that periodically crash Slide Creater.</Label.ToolTip> Parallelized Rendering
-            </Label>
-        </ToolBar>
+            </StackPanel>
+
+            <!--<Separator Background="#474747" Width="2"></Separator>-->
+
+            <!--<Border Width="20" Height="20" VerticalAlignment="Center">-->
+                <!--<CheckBox Name="cbAgressiveSave" IsChecked="true" Click="ClickCBAutoSave" VerticalAlignment="center"></CheckBox>-->
+            <!--</Border>-->
+            <!--<Label Foreground="#efefef" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">-->
+                <!--<Label.ToolTip>Performs a full trusty save including assets before any 'risky' operation. (May increase disk usage.)</Label.ToolTip> Aggressively Auto Save-->
+            <!--</Label>-->
+
+            <!--<Border Width="20" Height="20" VerticalAlignment="Center">-->
+                <!--<CheckBox Name="cbRenderParallel" IsChecked="false" Click="ClickCBRenderParallel" VerticalAlignment="center"></CheckBox>-->
+            <!--</Border>-->
+            <!--<Label Foreground="#efefef" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">-->
+                <!--<Label.ToolTip>Legacy behaviour. Theoretically more performant. If disabled should be able to catch GDI+ errors that periodically crash Slide Creater.</Label.ToolTip> Parallelized Rendering-->
+            <!--</Label>-->
+        </Grid>
 
         <Grid Grid.Row="2" Background="#272727">
             <Grid.ColumnDefinitions>
@@ -203,7 +207,7 @@
                                     <Button Style="{StaticResource DarkBtn}" Margin="5" Click="ClickAddAssets" Width="150" Height="30">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal">
-                                                <Image Source="/ViewControls/Images/Plus.png"></Image>
+                                                <Image Source="/ViewControls/Images/PlusGreen.png"></Image>
                                                 <Label Foreground="White">Add Assets</Label>
                                             </StackPanel>
                                         </Grid>
@@ -211,15 +215,15 @@
                                     <Button Margin="5" Style="{StaticResource DarkBtn}" Click="ClickClearAssets" Width="150" Height="30">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal">
-                                                <Image Source="/ViewControls/Images/Delete.png"></Image>
+                                                <Image Source="/ViewControls/Images/XRed.png"></Image>
                                                 <Label Foreground="White">Remove All</Label>
                                             </StackPanel>
                                         </Grid>
                                     </Button>
                                 </StackPanel>
                             </Grid>
-                            <Border Grid.Row="1" Background="#272727" BorderBrush="#373737" BorderThickness="0" CornerRadius="10" Padding="5" Margin="5,0,5,10">
-                                <ScrollViewer Grid.Row="1" Background="#272727">
+                            <Border Grid.Row="1" Background="Transparent" BorderBrush="#373737" BorderThickness="0" CornerRadius="10" Padding="5" Margin="5,0,5,10">
+                                <ScrollViewer Grid.Row="1" Background="Transparent">
                                     <StackPanel Name="AssetList">
 
                                     </StackPanel>
@@ -283,7 +287,6 @@
                                     <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
                                 </TreeView.Resources>
                                 <TreeViewItem Header="Test" Foreground="White">
-                                    <TreeViewItem Header="Val1" Foreground="White"></TreeViewItem>
                                 </TreeViewItem>
                             </TreeView>
                         </Grid>
@@ -300,7 +303,7 @@
                     </Grid.RowDefinitions>
                     <!--<ScrollViewer Grid.Row="0">-->
                     <!--<uicontrols:BetterTextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged"></uicontrols:BetterTextBox>-->
-                    <AvalonEdit:TextEditor Background="#171717" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="inconsolata" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
+                    <AvalonEdit:TextEditor Background="#171717" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
                     <!--</ScrollViewer>-->
                     <GridSplitter Grid.Row="1" Height="3" HorizontalAlignment="Stretch" Background="#474747"></GridSplitter>
                     <Grid Grid.Row="2">
@@ -438,7 +441,7 @@
         </Grid>
 
         <Grid Grid.Row="3">
-            <StatusBar Name="sbStatus" Background="LightGray" HorizontalAlignment="Stretch">
+            <StatusBar Name="sbStatus" Background="#373737" HorizontalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Name="tbProjectStatus" Foreground="White" Margin="10,0,10,0"></TextBlock>
                     <TextBlock Name="tbActionStatus" Foreground="White" Margin="10, 0, 10, 0"></TextBlock>

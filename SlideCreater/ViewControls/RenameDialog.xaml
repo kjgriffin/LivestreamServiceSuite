@@ -6,7 +6,31 @@
         xmlns:local="clr-namespace:SlideCreater.ViewControls"
         mc:Ignorable="d"
         Title="Rename Asset" Height="200" Width="400">
-    <Grid>
+    <Window.Resources>
+        <Style TargetType="Button" x:Name="DarkBtn" x:Key="DarkBtn">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Name="border" BorderBrush="#575757" BorderThickness="2">
+                                <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#676767" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#373737" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#272727">
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
@@ -20,17 +44,17 @@
                 <ColumnDefinition Width="100"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalContentAlignment="Right">Old Name:</Label>
-            <TextBlock Grid.Row="0" Grid.Column="1" Name="tbOldName" VerticalAlignment="Center" Height="30" Margin="10"></TextBlock>
-            <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalContentAlignment="Right">New Name:</Label>
+            <Label Foreground="#cfcfcf" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalContentAlignment="Right">Old Name:</Label>
+            <TextBlock Foreground="White" Grid.Row="0" Grid.Column="1" Name="tbOldName" VerticalAlignment="Center" Height="30" Margin="10"></TextBlock>
+            <Label Foreground="#cfcfcf" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalContentAlignment="Right">New Name:</Label>
             <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Height="30" Margin="10">
-                <TextBlock Name="tbHintText" Panel.ZIndex="1" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" IsHitTestVisible="False">New Asset Name</TextBlock>
-                <TextBox x:Name="tbNewName" VerticalAlignment="Center" HorizontalAlignment="Left" TextChanged="OnTextChanged" MinWidth="250"></TextBox>
+                <TextBlock Name="tbHintText" Panel.ZIndex="1" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#808080" IsHitTestVisible="False">New Asset Name</TextBlock>
+                <TextBox x:Name="tbNewName" VerticalAlignment="Center" HorizontalAlignment="Left" TextChanged="OnTextChanged" MinWidth="250" Background="#171717" Foreground="White"></TextBox>
             </Grid>
         </Grid>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Margin="10,0,10,0" Width="100" Height="30" Click="OnClickCancel">Cancel</Button>
-            <Button Margin="10,0,10,0" Width="100" Height="30" Click="OnClickRename">Rename</Button>
+            <Button Style="{StaticResource DarkBtn}" Margin="10,0,10,0" Width="100" Height="30" Click="OnClickCancel" Foreground="White">Cancel</Button>
+            <Button Style="{StaticResource DarkBtn}" Margin="10,0,10,0" Width="100" Height="30" Click="OnClickRename" Foreground="#00b0f0">Rename</Button>
         </StackPanel>
     </Grid>
 </Window>

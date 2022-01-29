@@ -13,6 +13,7 @@
     <None Remove="Icons\OpenFolderWhite.png" />
     <None Remove="Icons\PaintWhite.png" />
     <None Remove="Icons\PlusWhite.png" />
+    <None Remove="jsonsyntax.xshd" />
     <None Remove="xenonsyntax.xshd" />
   </ItemGroup>
 
@@ -33,6 +34,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\PlusWhite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="jsonsyntax.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="xenonsyntax.xshd">

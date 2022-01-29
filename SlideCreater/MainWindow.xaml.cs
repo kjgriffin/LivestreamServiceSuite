@@ -1388,12 +1388,6 @@ namespace SlideCreater
 
         private bool m_agressive_autosave_enabled = true;
 
-        private void ClickCBAutoSave(object sender, RoutedEventArgs e)
-        {
-            m_agressive_autosave_enabled = !m_agressive_autosave_enabled;
-            cbAgressiveSave.IsChecked = m_agressive_autosave_enabled;
-        }
-
         private void SourceTextChanged(object sender, EventArgs e)
         {
             dirty = true;
@@ -1503,19 +1497,8 @@ namespace SlideCreater
             ScrollToErrorMessage();
         }
 
+
         bool renderinparallel = false;
-        private void ClickCBRenderParallel(object sender, RoutedEventArgs e)
-        {
-            renderinparallel = !renderinparallel;
-            if (renderinparallel)
-            {
-                cbRenderParallel.IsChecked = renderinparallel;
-            }
-        }
-
-
-
-
 
         private void CreateNewLayoutOnLibrary(string libname, string group)
         {

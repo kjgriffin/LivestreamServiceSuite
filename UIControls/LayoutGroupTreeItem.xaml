@@ -8,6 +8,7 @@
     <TreeViewItem.Header>
         <Grid>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Image Source="../ViewControls/Images/LibraryWhite.png" Width="20" Height="20" Margin="0,0,5,0"></Image>
                 <TextBlock Name="tbHeader" MinWidth="30" Background="Transparent" Foreground="#cecece" VerticalAlignment="Center">Text</TextBlock>
                 <Button Name="btn_new" Click="Click_NewLayout" Width="20" Height="20" Background="Transparent" BorderBrush="Transparent" ToolTip="New Layout" Margin="10, 0, 0, 0" VerticalAlignment="Center">
                     <Button.Style>
@@ -34,7 +35,7 @@
                             </Setter>
                         </Style>
                     </Button.Style>
-                    <Image Source="../ViewControls/Images/NewGreen.png"></Image>
+                    <Image Source="../ViewControls/Images/RoundPlusGreen.png"></Image>
                 </Button>
             </StackPanel>
         </Grid>

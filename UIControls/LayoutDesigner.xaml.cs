@@ -44,6 +44,8 @@ namespace UIControls
         public LayoutDesigner(string libname, List<string> alllibs, string layoutname, string layoutjson, string group, bool editable, SaveLayoutToLibrary save, Action updateCallback)
         {
             InitializeComponent();
+            TbJson.LoadLanguage_JSON();
+
             textChangeTimeoutTimer.Interval = TimeSpan.FromSeconds(1);
             LayoutName = $"{layoutname}";
             LayoutJson = layoutjson;

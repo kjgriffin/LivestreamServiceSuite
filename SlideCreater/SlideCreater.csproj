@@ -27,21 +27,31 @@
     <None Remove="ViewControls\Images\Folder.png" />
     <None Remove="ViewControls\Images\FolderGold.png" />
     <None Remove="ViewControls\Images\Folder_light.png" />
+    <None Remove="ViewControls\Images\Layout2Blue.png" />
+    <None Remove="ViewControls\Images\LayoutBlue.png" />
+    <None Remove="ViewControls\Images\LayoutGray.png" />
+    <None Remove="ViewControls\Images\LibraryWhite.png" />
     <None Remove="ViewControls\Images\musicnote.png" />
     <None Remove="ViewControls\Images\NewGreen.png" />
     <None Remove="ViewControls\Images\OpenFolderWhite.png" />
     <None Remove="ViewControls\Images\PaintBrush.png" />
+    <None Remove="ViewControls\Images\PaintGreen.png" />
     <None Remove="ViewControls\Images\PaintWhite.png" />
     <None Remove="ViewControls\Images\Pencil.png" />
+    <None Remove="ViewControls\Images\PencilBlue.png" />
     <None Remove="ViewControls\Images\PenScribble.png" />
     <None Remove="ViewControls\Images\Plus.png" />
+    <None Remove="ViewControls\Images\PlusGreen.png" />
     <None Remove="ViewControls\Images\PlusWhite.png" />
+    <None Remove="ViewControls\Images\PublishPurple.png" />
     <None Remove="ViewControls\Images\Question.png" />
     <None Remove="ViewControls\Images\RenderPaintCan.png" />
     <None Remove="ViewControls\Images\RoundAdd.png" />
+    <None Remove="ViewControls\Images\RoundPlusGreen.png" />
     <None Remove="ViewControls\Images\Save.png" />
     <None Remove="ViewControls\Images\Trash.png" />
     <None Remove="ViewControls\Images\TrashRed.png" />
+    <None Remove="ViewControls\Images\XRed.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -74,13 +84,20 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="ViewControls\Images\FolderGold.png" />
+    <Resource Include="ViewControls\Images\Layout2Blue.png" />
+    <Resource Include="ViewControls\Images\LayoutBlue.png" />
+    <Resource Include="ViewControls\Images\LayoutGray.png" />
+    <Resource Include="ViewControls\Images\LibraryWhite.png" />
     <Resource Include="ViewControls\Images\NewGreen.png" />
     <Resource Include="ViewControls\Images\OpenFolderWhite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="ViewControls\Images\PaintGreen.png" />
     <Resource Include="ViewControls\Images\PaintWhite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="ViewControls\Images\PencilBlue.png" />
+    <Resource Include="ViewControls\Images\PlusGreen.png" />
     <Resource Include="ViewControls\Images\PlusWhite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -132,6 +149,7 @@
     <Resource Include="ViewControls\Images\Plus.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="ViewControls\Images\PublishPurple.png" />
     <Resource Include="ViewControls\Images\Question.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -141,6 +159,7 @@
     <Resource Include="ViewControls\Images\RoundAdd.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="ViewControls\Images\RoundPlusGreen.png" />
     <Resource Include="ViewControls\Images\Save.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -148,6 +167,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="ViewControls\Images\TrashRed.png" />
+    <Resource Include="ViewControls\Images\XRed.png" />
   </ItemGroup>
 
   <ItemGroup>

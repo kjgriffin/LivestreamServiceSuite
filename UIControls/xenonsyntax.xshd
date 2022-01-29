@@ -1,19 +1,19 @@
 ﻿<SyntaxDefinition name="XENON"
         xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-	<Color name="Comment" foreground="Green" />
-	<Color name="String" foreground="Red" />
+	<Color name="Comment" foreground="#ff539165" />
+	<Color name="String" foreground="#ffa84545" />
 
-	<Color foreground="#ff3293a8" name="XmlTag" exampleText='&lt;tag attribute="value" /&gt;' />
-	<Color foreground="#ff325aa8" name="AttributeName" exampleText='&lt;tag attribute="value" /&gt;' />
-	<Color foreground="#a89332" name="AttributeValue" exampleText='&lt;tag attribute="value" /&gt;' />
-	<Color foreground="Teal" name="Entity" exampleText="index.aspx?a=1&amp;amp;b=2" />
+	<Color foreground="#ffc2b782" name="XmlTag" exampleText='&lt;tag attribute="value" /&gt;' />
+	<Color foreground="#ff4fbcff" name="AttributeName" exampleText='&lt;tag attribute="value" /&gt;' />
+	<Color foreground="#ffffbd66" name="AttributeValue" exampleText='&lt;tag attribute="value" /&gt;' />
+	<Color foreground="Olive" name="Entity" exampleText="index.aspx?a=1&amp;amp;b=2" />
 	<Color foreground="Olive" name="BrokenEntity" exampleText="index.aspx?a=1&amp;b=2" />
 
 	<!-- This is the main ruleset. -->
 	<RuleSet>
 
 
-		<Span foreground="#ff8f8f8f">
+		<Span foreground="#ffbfbfbf">
 			<Begin>///\u0020&lt;/</Begin>
 			<End>$</End>
 			<RuleSet>
@@ -55,7 +55,7 @@
 			</RuleSet>
 		</Span>
 
-		<Span foreground="Purple" multiline="true">
+		<Span foreground="#ffab48a1" multiline="true">
 			<Begin>::postset</Begin>
 			<End>\)</End>
 		</Span>
@@ -79,7 +79,7 @@
 			</RuleSet>
 		</Span>
 
-		<Keywords fontWeight="bold" foreground="Blue">
+		<Keywords foreground="#ff4f92ff">
 			<Word>#liturgyoff</Word>
 			<Word>#organintro</Word>
 			<Word>#set</Word>

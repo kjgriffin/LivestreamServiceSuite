@@ -6,18 +6,42 @@
         xmlns:local="clr-namespace:SlideCreater.ViewControls"
         mc:Ignorable="d"
         Title="Prompt" Height="200" Width="400">
-    <Grid>
+    <Window.Resources>
+        <Style TargetType="Button" x:Name="DarkBtn" x:Key="DarkBtn">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Name="border" BorderBrush="#575757" BorderThickness="2">
+                                <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#676767" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#373737" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#272727">
         <Grid.RowDefinitions>
             <RowDefinition Height="80"></RowDefinition>
             <RowDefinition Height="100"></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBox x:Name="tbDescription" MinWidth="80" MaxHeight="20"></TextBox>
-            <TextBox Name="tbInput" MinWidth="200" Margin="10" MaxHeight="20"></TextBox>
+            <TextBlock Foreground="#efefef" x:Name="tbDescription" MinWidth="80" MaxHeight="20"></TextBlock>
+            <TextBox Foreground="White" Background="#171717" Name="tbInput" MinWidth="200" Margin="10" MaxHeight="20"></TextBox>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20">
-            <Button Click="Click_Cancel" Width="100" Height="30" Margin="10">Cancel</Button>
-            <Button Click="Click_Ok" Width="100" Height="30" Margin="10">Ok</Button>
+            <Button Style="{StaticResource DarkBtn}" Foreground="White" Click="Click_Cancel" Width="100" Height="30" Margin="10">Cancel</Button>
+            <Button Style="{StaticResource DarkBtn}" Foreground="White" Click="Click_Ok" Width="100" Height="30" Margin="10">Ok</Button>
         </StackPanel>
     </Grid>
 </Window>

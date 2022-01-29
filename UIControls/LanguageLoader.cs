@@ -1,5 +1,6 @@
 ﻿using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +23,17 @@ namespace UIControls
                 }
             }
         }
+        public static void LoadLanguage_JSON(this ICSharpCode.AvalonEdit.TextEditor editor)
+        {
+            using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(Assembly.GetExecutingAssembly().GetName().Name + ".jsonsyntax.xshd"))
+            {
+                using (XmlTextReader reader = new XmlTextReader(s))
+                {
+                    editor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                }
+            }
+        }
+
 
     }
 }
