@@ -33,8 +33,9 @@ namespace UIControls
         SaveLayoutToLibrary SaveLayout;
 
         Action updateCallback;
+        Action<string, string, string> deleteCallback;
 
-        public LayoutTreeItem(string libname, List<string> libs, string layoutname, string layoutjson, string group, bool canedit, SaveLayoutToLibrary save, Action updatecallback)
+        public LayoutTreeItem(string libname, List<string> libs, string layoutname, string layoutjson, string group, bool canedit, SaveLayoutToLibrary save, Action updatecallback, Action<string, string, string> deletecallback)
         {
             InitializeComponent();
             name = layoutname;
@@ -46,6 +47,7 @@ namespace UIControls
             SaveLayout = save;
             tbDisplayName.Text = layoutname;
             updateCallback = updatecallback;
+            this.deleteCallback = deletecallback;
 
             if (!canedit)
             {
@@ -62,7 +64,7 @@ namespace UIControls
 
         private void Click_Delete(object sender, RoutedEventArgs e)
         {
-
+            deleteCallback?.Invoke(lib, group, name);
         }
     }
 }

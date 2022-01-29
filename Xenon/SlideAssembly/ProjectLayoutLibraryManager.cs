@@ -41,6 +41,21 @@ namespace Xenon.SlideAssembly
             return res;
         }
 
+        public void DeleteLayout(string libname, string group, string layout)
+        {
+            if (libname == DEFAULTLIBNAME)
+            {
+                return;
+            }
+
+            if (AllLibraries.TryGetValue(libname, out var lib))
+            {
+                var cmd = LanguageKeywords.Commands.First(x => x.Value == group).Key;
+
+                lib[cmd].Remove(layout);
+            }
+        }
+
         public LayoutLibrary? GetLibraryByName(string libname)
         {
             if (AllLibraries.ContainsKey(libname))

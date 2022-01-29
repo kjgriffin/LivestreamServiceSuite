@@ -1533,7 +1533,7 @@ namespace SlideCreater
                     treegroup.Selected += Treegroup_Selected;
                     foreach (var layout in group.layouts)
                     {
-                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibraryName, _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup().Select(x => x.LibraryName).ToList(), layout.Key, layout.Value, group.group, editable, _proj.ProjectLayouts.SaveLayoutToLibrary, () => Dispatcher.Invoke(SetupLayoutsTreeVew));
+                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibraryName, _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup().Select(x => x.LibraryName).ToList(), layout.Key, layout.Value, group.group, editable, _proj.ProjectLayouts.SaveLayoutToLibrary, () => Dispatcher.Invoke(SetupLayoutsTreeVew), (string lib, string group, string layout) => { _proj.ProjectLayouts.DeleteLayout(lib, group, layout); Dispatcher.Invoke(SetupLayoutsTreeVew); });
                         treegroup.Items.Add(treelayoutleaf);
                     }
 
