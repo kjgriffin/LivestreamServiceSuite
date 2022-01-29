@@ -184,7 +184,7 @@
 
         <Grid Grid.Row="2" Background="#272727">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" MinWidth="340"></ColumnDefinition>
+                <ColumnDefinition Width="340" MinWidth="340"></ColumnDefinition>
                 <ColumnDefinition Width="10"></ColumnDefinition>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
                 <ColumnDefinition Width="10"></ColumnDefinition>
