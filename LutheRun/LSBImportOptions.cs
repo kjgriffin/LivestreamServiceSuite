@@ -27,17 +27,17 @@ namespace LutheRun
         [BoolSetting]
         public bool Liturgy { get; set; } = true;
         [BoolSetting]
-        public bool SungLiturgy { get; set; } = false;
+        public bool SungLiturgy { get; set; } = true;
         [BoolSetting]
-        public bool Reading { get; set; } = false;
+        public bool Reading { get; set; } = true;
         [BoolSetting]
-        public bool Caption { get; set; } = false;
+        public bool Caption { get; set; } = true;
         [BoolSetting]
-        public bool Introit { get; set; } = false;
+        public bool Introit { get; set; } = true;
         [BoolSetting]
-        public bool Hymn { get; set; } = false;
+        public bool Hymn { get; set; } = true;
         [BoolSetting]
-        public bool Prefab { get; set; } = false;
+        public bool Prefab { get; set; } = true;
         [BoolSetting]
         public bool Unknown { get; set; } = false;
         [BoolSetting]
