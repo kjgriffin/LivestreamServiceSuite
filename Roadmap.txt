@@ -1,0 +1,47 @@
+TODO:
+
+Slide Creater:
+
+- paramaterized layouts
+- finish all commands as layout aware
+	- liturgy
+	- litimage (allow different key/color editing)
+	- texthymn
+	- fitimage/fullimage ?? (perhaps)
+	- finish up filterchain (now that we can modify child slides)
+	- add only script to scripted (priority = only->last/first->all->none)
+	
+	- prefab for now can be modified via a filterchain perhaps
+
+- autocomplete
+	- add to all commands
+	- fix nesting algorithm
+	- update metadata? to support this
+
+- fullscreen preview slide
+
+- script
+	- better way to handle camera source numbers ($CAM1) and we can provide a BMDSwitcherConfig I guess (use the default)
+	- way to set the config files on presentations - could edit them here too!
+	- command to add them??
+
+- unify syntax?? (BREAKING CHANGE)
+	- may need to build a converter
+
+
+Integrated Presenter:
+
+- idea: hotreload presentation (may not work?, would need to dump all slides and release all resources)
+- idea: altcontent (may not have enough things/displayresources)
+- idea: truly refactor automation out
+- idea: cleanup/optimize UI
+- idea: compromise event/slides -> turn slides into the media engine
+	- add new column to UI
+	- put event list there (with icons to make it look purty)
+	- remap UP/DOWN keys from mediacontrol to event control
+	- (media control i.e. scrubbers on videos/audio?) (media control can probably be unified with F1/2/3/4 and an appropriate mod key)
+	- need to think how next/prev slide works with next/prev event.... (but this can be an optional feature)
+	- if enabled slide automation is disabled, will use slides only as graphics-> relies on event automation
+	- so pick your mode...
+	- need to have 2 types of published output in slide creater
+	- would allow a unification of the hotmess that's the project/slide output
