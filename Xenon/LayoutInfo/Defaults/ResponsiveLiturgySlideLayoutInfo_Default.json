@@ -37,7 +37,33 @@
       },
       "HorizontalAlignment": "Left",
       "VerticalAlignment": "Center",
-
+      "LineFonts": {
+        "P": {
+          "Name": "Arial",
+          "Size": 36,
+          "Style": 0
+        },
+        "A": {
+          "Name": "Arial",
+          "Size": 36,
+          "Style": 0
+        },
+        "L": {
+          "Name": "Arial",
+          "Size": 36,
+          "Style": 0
+        },
+        "C": {
+          "Name": "Arial",
+          "Size": 36,
+          "Style": 1
+        },
+        "R": {
+          "Name": "Arial",
+          "Size": 36,
+          "Style": 1
+        }
+      },
       "MaxSpeakers": 2,
       "EnforceCallResponse": true,
       "ShowSpeaker": true,

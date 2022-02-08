@@ -1,4 +1,6 @@
-﻿using Xenon.Layouts;
+﻿using System.Collections.Generic;
+
+using Xenon.Layouts;
 
 namespace Xenon.LayoutInfo.BaseTypes
 {
@@ -9,6 +11,7 @@ namespace Xenon.LayoutInfo.BaseTypes
         public bool ShowSpeaker { get; set; }
         public LWJFont SpeakerFont { get; set; }
         public LWJColor SpeakerColor { get; set; }
+        public Dictionary<string, LWJFont> LineFonts { get; set; } = new Dictionary<string, LWJFont>();
         public int SpeakerColumnWidth { get; set; }
         public bool VPaddingEnabled { get; set; }
         public float MinInterLineSpace { get; set; }

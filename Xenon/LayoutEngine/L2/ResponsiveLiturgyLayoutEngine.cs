@@ -234,9 +234,12 @@ namespace Xenon.LayoutEngine.L2
                 List<SizedTextBlurb> sblurbs = new List<SizedTextBlurb>();
 
                 // place speaker only once per line (see assumption #2)
-                var speaker = block.Lines.First().Speaker.Clone();
-                speaker.Place(new Point(TEXTBOX.Textbox.Origin.X, (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
-                sblurbs.Add(speaker);
+                if (layout.Textboxes.FirstOrDefault()?.ShowSpeaker == true)
+                {
+                    var speaker = block.Lines.First().Speaker.Clone();
+                    speaker.Place(new Point(TEXTBOX.Textbox.Origin.X, (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
+                    sblurbs.Add(speaker);
+                }
 
                 foreach (var line in lgroup)
                 {
@@ -307,8 +310,11 @@ namespace Xenon.LayoutEngine.L2
                 // Start a new line
                 Xoff = 0;
                 // place speaker
-                line.Speaker.Place(new Point(TEXTBOX.Textbox.Origin.X, (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
-                blurbs.Add(line.Speaker);
+                if (layout.Textboxes.FirstOrDefault()?.ShowSpeaker == true)
+                {
+                    line.Speaker.Place(new Point(TEXTBOX.Textbox.Origin.X, (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
+                    blurbs.Add(line.Speaker);
+                }
 
                 Xoff = layout.Textboxes.First().SpeakerColumnWidth;
 

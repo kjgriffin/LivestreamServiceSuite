@@ -11,6 +11,7 @@ using System.Xml;
 using Xenon.Helpers;
 using Xenon.LayoutEngine.L2;
 using Xenon.LayoutInfo;
+using Xenon.Layouts;
 
 namespace Xenon.Compiler.SubParsers
 {
@@ -18,20 +19,13 @@ namespace Xenon.Compiler.SubParsers
 
     class ResponsiveStatement
     {
-        // TODO: perhaps make this extensible
-        static readonly string[] BOLDSPEAKERS = new[] { "C", "R" };
-
         public string Speaker { get; set; }
         public List<TextRun> Content { get; set; }
 
 
         public TextBlurb SpeakerBlurb(ResponsiveLiturgySlideLayoutInfo layout)
         {
-            FontStyle style = (FontStyle)layout.Textboxes.First().SpeakerFont.Style;
-            if (BOLDSPEAKERS.Contains(Speaker))
-            {
-                style = FontStyle.Bold;
-            }
+            int style = layout.Textboxes.First().SpeakerFont.Style;
             return new TextBlurb(Point.Empty, Speaker, layout.Textboxes.First().SpeakerFont.Name, style, 36, hexColor: layout.Textboxes.First().SpeakerColor.Hex);
         }
 
@@ -47,6 +41,18 @@ namespace Xenon.Compiler.SubParsers
 
             List<TextBlurb> blurbs = new List<TextBlurb>();
 
+            int linestyle = layout.Textboxes.First().Font.Style;
+            float linesize = layout.Textboxes.First().Font.Size;
+            string linefont = layout.Textboxes.First().Font.Name;
+
+            if (layout.Textboxes.FirstOrDefault()?.LineFonts.TryGetValue(Speaker, out LWJFont font) == true)
+            {
+                linestyle = font.Style;
+                linesize = font.Size;
+                linefont = font.Name;
+            }
+
+
             foreach (var run in Content)
             {
                 var matches = Regex.Split(run.Text, split);
@@ -54,9 +60,9 @@ namespace Xenon.Compiler.SubParsers
                 {
                     blurbs.Add(new TextBlurb(Point.Empty,
                         word,
-                        string.IsNullOrWhiteSpace(run.AltFont) ? layout.Textboxes.First().Font.Name : run.AltFont,
-                        run.FStyle | (FontStyle)layout.Textboxes.First().Font.Style,
-                        layout.Textboxes.First().Font.Size,
+                        string.IsNullOrWhiteSpace(run.AltFont) ? linefont : run.AltFont,
+                        run.AltStyle != -1 ? run.AltStyle : linestyle,
+                        linesize,
                         word == " ",
                         word == Environment.NewLine,
                         !string.IsNullOrWhiteSpace(run.AltColorHex) ? run.AltColorHex : layout.Textboxes.First().FColor.Hex));
@@ -72,14 +78,14 @@ namespace Xenon.Compiler.SubParsers
     {
         public string Text { get; private set; }
         public string AltFont { get; private set; }
-        public FontStyle FStyle { get; private set; }
+        public int AltStyle { get; private set; }
         public string AltColorHex { get; private set; }
 
-        public TextRun(string text, string fname = "", FontStyle fstyle = FontStyle.Regular, string altcolhex = null)
+        public TextRun(string text, string fname = "", int fstyle = -1, string altcolhex = null)
         {
             Text = text;
             AltFont = fname;
-            FStyle = fstyle;
+            AltStyle = fstyle;
             AltColorHex = altcolhex;
         }
 
@@ -94,17 +100,21 @@ namespace Xenon.Compiler.SubParsers
             var style = node.Attributes.GetNamedItem("style");
             var color = node.Attributes.GetNamedItem("color");
 
-            FontStyle fstyle = FontStyle.Regular;
+            int fstyle = -1;
             if (!string.IsNullOrEmpty(style?.Value))
             {
                 var styles = style.Value.Split(';');
+                if (styles.Contains("regular"))
+                {
+                    fstyle = 0;
+                }
                 if (styles.Contains("bold"))
                 {
-                    fstyle |= FontStyle.Bold;
+                    fstyle |= (int)FontStyle.Bold;
                 }
                 if (styles.Contains("italic"))
                 {
-                    fstyle |= FontStyle.Italic;
+                    fstyle |= (int)FontStyle.Italic;
                 }
             }
 
