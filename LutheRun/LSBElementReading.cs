@@ -64,7 +64,6 @@ namespace LutheRun
 
         public string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
-
             var postset = PostsetCmd.ExtractPostsetValues();
 
             string first = postset.first != -1 ? $"::postset(first={postset.first})" : "";

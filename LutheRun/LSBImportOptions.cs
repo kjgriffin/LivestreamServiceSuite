@@ -13,6 +13,7 @@ namespace LutheRun
         public bool UseUpNextForHymns { get; set; } = true;
         public bool OnlyKnownCaptions { get; set; } = true;
         public bool UseResponsiveLiturgy { get; set; } = true;
+        public bool UseComplexReading { get; set; } = true;
 
         public LSBElementFilter Filter { get; set; } = new LSBElementFilter();
     }
@@ -30,6 +31,8 @@ namespace LutheRun
         public bool SungLiturgy { get; set; } = true;
         [BoolSetting]
         public bool Reading { get; set; } = true;
+        [BoolSetting]
+        public bool ComplexReading { get; set; } = true;
         [BoolSetting]
         public bool Caption { get; set; } = true;
         [BoolSetting]
@@ -54,6 +57,8 @@ namespace LutheRun
                     elements.Add(typeof(LSBElementLiturgySung));
                 if (Reading)
                     elements.Add(typeof(LSBElementReading));
+                if (ComplexReading)
+                    elements.Add(typeof(LSBElementReadingComplex));
                 if (Caption)
                     elements.Add(typeof(LSBElementCaption));
                 if (Introit)

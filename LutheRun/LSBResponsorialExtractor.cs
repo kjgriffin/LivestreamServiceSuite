@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AngleSharp.Dom;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,7 +50,7 @@ namespace LutheRun
                 string ws = WhitespaceSensitive ? "xml:space=\"preserve\"" : "";
                 sb.AppendLine();
                 sb.Append("  ");
-                sb.Append($"<text{prefix}{font}{(Bold ? " " : "")}{bold}{(WhitespaceSensitive ? " ": "")}{ws}>");
+                sb.Append($"<text{prefix}{font}{(Bold ? " " : "")}{bold}{(WhitespaceSensitive ? " " : "")}{ws}>");
                 sb.Append(Text);
                 sb.Append("</text>");
             }
@@ -69,9 +71,8 @@ namespace LutheRun
             return sb.ToString();
         }
 
-        public static string ExtractResponsiveLiturgy(AngleSharp.Dom.IElement sourceHTML)
+        public static string ExtractResponsiveLiturgy(List<IElement> p_elements)
         {
-
             List<LiturgicalStatement> Lines = new List<LiturgicalStatement>();
             /* Expected Structure: 
              * - each spoken line wraped in a paragraph
@@ -82,13 +83,13 @@ namespace LutheRun
 
             LiturgicalStatement lastline = null;
             // 1. Iterate over childern (expect all to be <p> tags)
-            foreach (var child_p_tag in sourceHTML.Children.Where(c => c.LocalName == "p"))
+            foreach (var ptags in p_elements.Where(c => c.LocalName == "p"))
             {
                 LiturgicalStatement line = new LiturgicalStatement();
                 int snum = 0;
                 // build a Liturgy-Response
                 // go through all childern
-                if (child_p_tag.ClassList.Contains("lsb-responsorial-continued"))
+                if (ptags.ClassList.Contains("lsb-responsorial-continued"))
                 {
                     // keep adding to the same 'logical line'
                     snum = 1;
@@ -97,7 +98,7 @@ namespace LutheRun
                     // 2 spaces... ????
                     line.TextSegments.Add(new TextBlock("  ", false, false, whitespacesensitive: true));
                 }
-                else if (child_p_tag.ClassList.Contains("lsb-responsorial"))
+                else if (ptags.ClassList.Contains("lsb-responsorial"))
                 {
                 }
                 else
@@ -106,7 +107,7 @@ namespace LutheRun
                     continue;
                 }
 
-                foreach (var line_item in child_p_tag.Children)
+                foreach (var line_item in ptags.Children)
                 {
                     // Expect the speaker
                     if (snum == 0)
@@ -136,6 +137,11 @@ namespace LutheRun
                 lastline = line;
             }
             return GenerateSource(Lines);
+        }
+
+        public static string ExtractResponsiveLiturgy(IElement sourceHTML)
+        {
+            return ExtractResponsiveLiturgy(sourceHTML.Children.Where(c => c.LocalName == "p").ToList());
         }
 
     }

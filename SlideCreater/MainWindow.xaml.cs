@@ -1183,8 +1183,8 @@ namespace SlideCreater
                 options.OnlyKnownCaptions = !mi_importoption_notonlyknowncaptions.IsChecked;
                 options.UseResponsiveLiturgy = mi_importoption_useresponsiveliturgy.IsChecked;
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
-                await parser.ParseHTML(ofd.FileName);
                 parser.LSBImportOptions = options;
+                await parser.ParseHTML(ofd.FileName);
                 parser.Serviceify(options);
                 parser.CompileToXenon();
                 ActionState = ActionState.Downloading;

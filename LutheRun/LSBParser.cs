@@ -1,5 +1,6 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -27,11 +28,11 @@ namespace LutheRun
         private string ServiceFileName;
 
         private static int m_elementID = 0;
-        public static int elementID { get =>  m_elementID++; }
+        public static int elementID { get => m_elementID++; }
 
         public LSBImportOptions LSBImportOptions { get; set; }
 
-   
+
         public void Serviceify(LSBImportOptions options)
         {
             ServiceElements = Serviceifier.Filter(Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(ServiceElements, options), options), options);
@@ -169,7 +170,14 @@ namespace LutheRun
                 }
                 else if (element.ClassList.Contains("reading"))
                 {
-                    ServiceElements.Add(LSBElementReading.Parse(element));
+                    if (LSBImportOptions.UseComplexReading)
+                    {
+                        ServiceElements.Add(LSBElementReadingComplex.Parse(element));
+                    }
+                    else
+                    {
+                        ServiceElements.Add(LSBElementReading.Parse(element));
+                    }
                 }
                 else if (element.ClassList.Contains("hymn"))
                 {
@@ -263,7 +271,14 @@ namespace LutheRun
             }
             else if (element.ClassList.Contains("reading"))
             {
-                ServiceElements.Add(LSBElementReading.Parse(element));
+                if (LSBImportOptions.UseComplexReading)
+                {
+                    ServiceElements.Add(LSBElementReadingComplex.Parse(element));
+                }
+                else
+                {
+                    ServiceElements.Add(LSBElementReading.Parse(element));
+                }
                 return true;
             }
             else if (element.ClassList.Contains("prayer"))
