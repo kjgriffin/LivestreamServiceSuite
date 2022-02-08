@@ -32,7 +32,7 @@ namespace Xenon.Compiler.SubParsers
             {
                 style = FontStyle.Bold;
             }
-            return new TextBlurb(Point.Empty, Speaker, layout.Textboxes.First().SpeakerFont.Name, style, 36);
+            return new TextBlurb(Point.Empty, Speaker, layout.Textboxes.First().SpeakerFont.Name, style, 36, hexColor: layout.Textboxes.First().SpeakerColor.Hex);
         }
 
         public List<TextBlurb> ContentBlurbs(ResponsiveLiturgySlideLayoutInfo layout)
@@ -58,7 +58,8 @@ namespace Xenon.Compiler.SubParsers
                         run.FStyle | (FontStyle)layout.Textboxes.First().Font.Style,
                         layout.Textboxes.First().Font.Size,
                         word == " ",
-                        word == Environment.NewLine));
+                        word == Environment.NewLine,
+                        !string.IsNullOrWhiteSpace(run.AltColorHex) ? run.AltColorHex : layout.Textboxes.First().FColor.Hex));
                 }
             }
 
@@ -72,12 +73,14 @@ namespace Xenon.Compiler.SubParsers
         public string Text { get; private set; }
         public string AltFont { get; private set; }
         public FontStyle FStyle { get; private set; }
+        public string AltColorHex { get; private set; }
 
-        public TextRun(string text, string fname = "", FontStyle fstyle = FontStyle.Regular)
+        public TextRun(string text, string fname = "", FontStyle fstyle = FontStyle.Regular, string altcolhex = null)
         {
             Text = text;
             AltFont = fname;
             FStyle = fstyle;
+            AltColorHex = altcolhex;
         }
 
         public static TextRun Create(XmlNode node)
@@ -89,6 +92,7 @@ namespace Xenon.Compiler.SubParsers
             // text should be a leaf node, so just fill its content and parse its attributes
             var font = node.Attributes.GetNamedItem("altfont");
             var style = node.Attributes.GetNamedItem("style");
+            var color = node.Attributes.GetNamedItem("color");
 
             FontStyle fstyle = FontStyle.Regular;
             if (!string.IsNullOrEmpty(style?.Value))
@@ -104,7 +108,7 @@ namespace Xenon.Compiler.SubParsers
                 }
             }
 
-            return new TextRun(node.InnerText, font?.Value ?? "", fstyle);
+            return new TextRun(node.InnerText, font?.Value ?? "", fstyle, color?.Value ?? null);
         }
 
     }

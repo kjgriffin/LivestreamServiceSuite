@@ -100,13 +100,14 @@ namespace Xenon.Renderer
                 foreach (var word in words)
                 {
                     // just plunk 'er down
-                    using (Font f = new Font(word.AltFont, word.FontSize, word.FontStyle))
-                    {
-                        gfx.DrawString(word.Text, f, new SolidBrush(tb.FColor.GetColor()), word.Pos);
+                    //using (Font f = new Font(word.AltFont, word.FontSize, word.FontStyle))
+                    //{
+                    //    gfx.DrawString(word.Text, f, new SolidBrush(tb.FColor.GetColor()), word.Pos);
 
-                        Color grayalpha = Color.FromArgb(255, tb.FColor.Alpha, tb.FColor.Alpha, tb.FColor.Alpha);
-                        kgfx.DrawString(word.Text, f, new SolidBrush(grayalpha), word.Pos);
-                    }
+                    //    Color grayalpha = Color.FromArgb(255, tb.FColor.Alpha, tb.FColor.Alpha, tb.FColor.Alpha);
+                    //    kgfx.DrawString(word.Text, f, new SolidBrush(grayalpha), word.Pos);
+                    //}
+                    word.Render(gfx, kgfx, tb.FColor.GetColor(), Color.White, tb.Font.Name, tb.Font.Size, (FontStyle)tb.Font.Style);
                 }
             }
 

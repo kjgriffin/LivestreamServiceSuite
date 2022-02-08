@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xenon.Helpers;
+using Xenon.Layouts;
 
 namespace Xenon.LayoutEngine.L2
 {
@@ -22,10 +23,16 @@ namespace Xenon.LayoutEngine.L2
             return sblurb;
         }
 
-        public SizedTextBlurb(TextBlurb blurb) : base(blurb.Pos, blurb.Text, blurb.AltFont, blurb.FontStyle, blurb.FontSize, blurb.Space, blurb.IsWhitespace)
+        public SizedTextBlurb(TextBlurb blurb) : base(blurb.Pos, blurb.Text, blurb.AltFont, blurb.FontStyle, blurb.FontSize, blurb.Space, blurb.IsWhitespace, blurb.HexFColor)
         {
             Size = SizeF.Empty;
         }
+
+        public override SizedTextBlurb Clone()
+        {
+            return new SizedTextBlurb(base.Clone()) { Size = this.Size };
+        }
+
     }
 
     internal class TextBlurb
@@ -40,8 +47,15 @@ namespace Xenon.LayoutEngine.L2
         public bool Space { get; private set; }
         public bool NewLine { get; private set; }
 
+        public string HexFColor { get; private set; }
 
-        public TextBlurb(Point pos, string text, string altfont = "", FontStyle style = FontStyle.Regular, float size = -1, bool space = false, bool newline = false)
+        public virtual TextBlurb Clone()
+        {
+            return new TextBlurb(Pos, Text, AltFont, FontStyle, FontSize, Space, NewLine, HexFColor);
+        }
+
+
+        public TextBlurb(Point pos, string text, string altfont = "", FontStyle style = FontStyle.Regular, float size = -1, bool space = false, bool newline = false, string hexColor = null)
         {
             Pos = pos;
             Text = text;
@@ -50,6 +64,7 @@ namespace Xenon.LayoutEngine.L2
             FontSize = size;
             Space = space;
             NewLine = newline;
+            HexFColor = hexColor;
         }
 
         public SizeF Measure(Graphics gfx, string defaultFont, float defaultFontSize, FontStyle defaultStyle, RectangleF rect)
@@ -77,7 +92,7 @@ namespace Xenon.LayoutEngine.L2
             Pos = p;
         }
 
-        public void Render(Graphics gfx, Graphics kgfx, Color fcolor, Color kcolor, string defaultFont, int defaultFontSize, FontStyle defaultStyle)
+        public void Render(Graphics gfx, Graphics kgfx, Color defaultfcolor, Color defaultkcolor, string defaultFont, float defaultFontSize, FontStyle defaultStyle)
         {
             FontStyle style = defaultStyle | FontStyle;
             float fsize = FontSize > 0 ? FontSize : defaultFontSize;
@@ -91,8 +106,19 @@ namespace Xenon.LayoutEngine.L2
                 }
             }
 
+            Color fcolor = defaultfcolor;
+            Color kcolor = defaultkcolor;
+
+            if (!string.IsNullOrEmpty(HexFColor))
+            {
+                var fcol = new LWJColor() { Hex = HexFColor };
+                fcolor = Color.FromArgb(255, fcol.Red, fcol.Green, fcol.Blue);
+                kcolor = Color.FromArgb(255, fcol.Alpha, fcol.Alpha, fcol.Alpha);
+            }
+
+
             using (Font f = new Font(fname, fsize, style))
-            using (var gbrush = new SolidBrush(kcolor))
+            using (var gbrush = new SolidBrush(fcolor))
             using (var kbrush = new SolidBrush(kcolor))
             {
                 gfx.DrawString(Text, f, gbrush, Pos);

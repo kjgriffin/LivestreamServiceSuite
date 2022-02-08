@@ -31,11 +31,13 @@ namespace LutheRun
             public string Text { get; private set; }
             public bool Bold { get; private set; } = false;
             public bool SpecialSymbol { get; private set; } = false;
-            public TextBlock(string text, bool isbold = false, bool issymbol = false)
+            public bool WhitespaceSensitive { get; private set; } = false;
+            public TextBlock(string text, bool isbold = false, bool issymbol = false, bool whitespacesensitive = false)
             {
                 Text = text;
                 Bold = isbold;
                 SpecialSymbol = issymbol;
+                WhitespaceSensitive = whitespacesensitive;
             }
 
             public void Write(StringBuilder sb)
@@ -43,9 +45,10 @@ namespace LutheRun
                 string font = SpecialSymbol ? "altfont='LSBSymbol'" : "";
                 string bold = Bold ? "style='bold'" : "";
                 string prefix = SpecialSymbol || Bold ? " " : "";
+                string ws = WhitespaceSensitive ? "xml:space=\"preserve\"" : "";
                 sb.AppendLine();
                 sb.Append("  ");
-                sb.Append($"<text{prefix}{font}{(Bold ? " " : "")}{bold}>");
+                sb.Append($"<text{prefix}{font}{(Bold ? " " : "")}{bold}{(WhitespaceSensitive ? " ": "")}{ws}>");
                 sb.Append(Text);
                 sb.Append("</text>");
             }
@@ -90,6 +93,9 @@ namespace LutheRun
                     // keep adding to the same 'logical line'
                     snum = 1;
                     line = lastline;
+                    // add some leading whitespace
+                    // 2 spaces... ????
+                    line.TextSegments.Add(new TextBlock("  ", false, false, whitespacesensitive: true));
                 }
                 else if (child_p_tag.ClassList.Contains("lsb-responsorial"))
                 {
@@ -123,7 +129,7 @@ namespace LutheRun
                     snum++;
                 }
 
-                if (!(string.IsNullOrEmpty(line.Speaker) && line.TextSegments.All(x => string.IsNullOrWhiteSpace(x.Text))) && line != lastline)
+                if (!(string.IsNullOrEmpty(line.Speaker) && line.TextSegments.Any(x => string.IsNullOrWhiteSpace(x.Text))) && line != lastline)
                 {
                     Lines.Add(line);
                 }

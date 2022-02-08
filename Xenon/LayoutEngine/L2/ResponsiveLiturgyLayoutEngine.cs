@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -105,14 +106,169 @@ namespace Xenon.LayoutEngine.L2
             return slides;
         }
 
+        static Dictionary<string, double> LineEndScores = new Dictionary<string, double>()
+        {
+            ["."] = 10,
+            ["!"] = 10,
+            ["?"] = 10,
+            [","] = 5,
+            [";"] = 8,
+        };
+
+        static Dictionary<string, double> LineStartScores = new Dictionary<string, double>()
+        {
+
+        };
+
+
         private List<List<SizedTextBlurb>> PlaceBlurbsForSingleSpeaker(SizedCandidateBlock block, ResponsiveLiturgySlideLayoutInfo layout)
         {
             List<List<SizedTextBlurb>> slides = new List<List<SizedTextBlurb>>();
+            TextboxLayout TEXTBOX = layout.Textboxes.FirstOrDefault() ?? ResponsiveLiturgyLayoutInfoPrototyptes.TEXTBOX;
+            // determine the available width of the textbox
+            float MAXWIDTH = layout.Textboxes.FirstOrDefault()?.Textbox.Size.Width ?? 0;
+            // determine the available height
+            float MAXHEIGHT = layout.Textboxes.FirstOrDefault()?.Textbox.Size.Height ?? 0;
+            // all lines same height- use tallest height
+            double lheight = block.MaxHeight;
+
             // at this point we know:
 
             // 1. the size of every word
             // 2. we have only the one speaker
             // 3. we'll need more than 1 slide to do the job
+
+            // problem 1- don't know how many lines this will take
+            // so we'll start building lines, adjusting for local optimization (word content)
+            // then we can re-adjust
+            // need some sort of algorith that operates on width's alone
+            // do a greedy fill first, then shuffle to meet rules
+
+            RollingLineArray lines = new RollingLineArray(MAXWIDTH - layout.Textboxes.FirstOrDefault().SpeakerColumnWidth);
+
+            foreach (var line in block.Lines)
+            {
+                lines.Append(line.Content);
+                // do we want to force LSB's (or the users's) concept of lines to really == lines... ???
+                // for now no. We'll just add a space and keep rolling
+                //var newlinespace = new TextBlurb(Point.Empty, " ", TEXTBOX.Font.Name, (FontStyle)TEXTBOX.Font.Style, TEXTBOX.Font.Size, true, false); // perhaps mark as really new-line??
+                //lines.Append(SizedTextBlurb.CreateMeasured(newlinespace, Graphics.FromHwnd(IntPtr.Zero), TEXTBOX.Font.Name, TEXTBOX.Font.Size, (FontStyle)TEXTBOX.Font.Style, TEXTBOX.Textbox.GetRectangleF()));
+            }
+
+
+
+            // optimize the actual layout of each line (may want to kick before end of line etc.)
+            for (int i = 0; i < lines.Lines.Count; i++)
+            {
+                var line = lines.Lines[i];
+                // go through the line and kick as necessary
+                double lwidth = 0;
+                double tminwidth = lines.LineWidth * 0.6;
+                int j = 0;
+                int bestj = -1;
+                double bestjscore = 0;
+                while (lwidth < tminwidth && j < line.Blurbs.Count)
+                {
+                    lwidth += line.Blurbs[j].Size.Width;
+                    j++;
+                }
+                // see if there's a good candidate to kick onto a new line
+                while (j < line.Blurbs.Count)
+                {
+                    var end = line.Blurbs[j].Text.LastOrDefault();
+                    if (LineEndScores.ContainsKey(end.ToString()))
+                    {
+                        var score = LineEndScores[end.ToString()];
+                        if (score > bestjscore) // prefer earliest match if scores equal (ie kick more)
+                        {
+                            bestj = j;
+                            bestjscore = score;
+                        }
+                    }
+                    j++;
+                }
+                // kick at best j
+                if (bestj > 0)
+                {
+                    lines.KickandSpill(i, bestj + 1);
+                }
+
+            }
+
+
+            // once we've optimized the lines we can trim whitespace
+            foreach (var line in lines.Lines)
+            {
+                line.Trim();
+            }
+
+
+            // calculate max lines/slide
+            double hpadding = layout.Textboxes.FirstOrDefault().VPaddingEnabled ? layout.Textboxes.FirstOrDefault().MinInterLineSpace * 2 : 0;
+            int numlinesperslide = 0;
+            double hrem = MAXHEIGHT - hpadding;
+            while (hrem >= lheight)
+            {
+                numlinesperslide++;
+                hrem -= lheight;
+                hrem -= layout.Textboxes.FirstOrDefault().MinInterLineSpace;
+            }
+
+            // compute number of slides required
+            int slidesreq = (int)Math.Ceiling((double)lines.Lines.Count / numlinesperslide);
+
+            // put lines on slides
+            for (int i = 0; i < slidesreq; i++)
+            {
+                var lgroup = lines.Lines.Skip(i * numlinesperslide).Take((int)numlinesperslide).ToList();
+
+                // compute interspacing
+                int spacinglines = layout.Textboxes.First().VPaddingEnabled ? lgroup.Count + 1 : Math.Max(lgroup.Count - 1, 1);
+                double interspacing = (TEXTBOX.Textbox.Size.Height - (lheight * lgroup.Count)) / spacinglines;
+                interspacing = Math.Max(interspacing, layout.Textboxes.First().MinInterLineSpace);
+
+                // place every blurb
+                double Yoff = layout.Textboxes.First().VPaddingEnabled ? interspacing : 0;
+                double Xoff = 0;
+
+                List<SizedTextBlurb> sblurbs = new List<SizedTextBlurb>();
+
+                // place speaker only once per line (see assumption #2)
+                var speaker = block.Lines.First().Speaker.Clone();
+                speaker.Place(new Point(TEXTBOX.Textbox.Origin.X, (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
+                sblurbs.Add(speaker);
+
+                foreach (var line in lgroup)
+                {
+                    // Start a new line
+                    Xoff = 0;
+
+                    Xoff = layout.Textboxes.First().SpeakerColumnWidth;
+
+                    // place every piece of text on the line (should fit)
+                    foreach (var word in line.Blurbs)
+                    {
+                        if (word.Size.Width + Xoff < MAXWIDTH)
+                        {
+                            word.Place(new Point((int)(TEXTBOX.Textbox.Origin.X + Xoff), (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
+                            Xoff += word.Size.Width;
+                        }
+#if DEBUG
+                        else
+                        {
+                            // really shouldn't get to here
+                            Debugger.Break();
+                        }
+#endif
+                        sblurbs.Add(word);
+                    }
+
+                    Yoff += interspacing + lheight;
+                }
+
+                slides.Add(sblurbs);
+
+            }
 
 
 
@@ -274,11 +430,13 @@ namespace Xenon.LayoutEngine.L2
                 {
                     speakers++;
                 }
-                if (speakers > layout.Textboxes.First().MaxSpeakers || (!CALLERS.Contains(lastspeaker)).Optional(layout.Textboxes.First().EnforceCallResponse))
+                if (speakers > layout.Textboxes.First().MaxSpeakers || 
+                    (!CALLERS.Contains(lastspeaker) && CALLERS.Contains(line.Speaker)).OptionalFalse(layout.Textboxes.First().EnforceCallResponse)
+                    )
                 {
                     // NEW BLOCK
-                    lastspeaker = "";
-                    speakers = 0;
+                    lastspeaker = " ";
+                    speakers = 1;
                     if (block.Lines.Any())
                     {
                         blocks.Add(block);

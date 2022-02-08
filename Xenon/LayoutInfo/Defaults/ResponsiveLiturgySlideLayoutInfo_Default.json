@@ -44,10 +44,10 @@
       "SpeakerFont": {
         "Name": "LSBSymbol",
         "Size": 36,
-        "Style": 1
+        "Style": 0
       },
       "SpeakerColor": {
-        "Hex": "#ff0000ff"
+        "Hex": "#ffffffff"
       },
       "SpeakerColumnWidth": 100,
       "VPaddingEnabled": true,
@@ -76,16 +76,16 @@
       ],
       "BorderWidth": 2,
       "FillColor": {
-        "Hex": "#ff800000"
+        "Hex": "#ff000000"
       },
       "KeyFillColor": {
-        "Hex": "#ffffffff"
+        "Hex": "#ff808080"
       },
       "BorderColor": {
-        "Hex": "#ffff0000"
+        "Hex": "#ff000000"
       },
       "KeyBorderColor": {
-        "Hex": "#ffffffff"
+        "Hex": "#ff808080"
       }
     }
   ]
