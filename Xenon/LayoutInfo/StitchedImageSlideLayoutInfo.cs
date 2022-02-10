@@ -15,10 +15,6 @@ namespace Xenon.LayoutInfo
 {
     internal class StitchedImageSlideLayoutInfo : ALayoutInfo, ILayoutInfoResolver<StitchedImageSlideLayoutInfo>
     {
-        public LWJSize SlideSize { get; set; }
-        public LWJColor BackgroundColor { get; set; }
-        public LWJColor KeyColor { get; set; }
-
         public TextboxLayout TitleBox { get; set; }
         public TextboxLayout NameBox { get; set; }
         public TextboxLayout NumberBox { get; set; }
@@ -26,8 +22,6 @@ namespace Xenon.LayoutInfo
         public DrawingBoxLayout MusicBox { get; set; }
 
         public List<LWJPolygon> Shapes { get; set; }
-        public string ExportAs { get; set; }
-
 
         public override string GetDefaultJson()
         {

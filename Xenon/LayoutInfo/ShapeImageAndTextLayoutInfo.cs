@@ -14,11 +14,6 @@ namespace Xenon.LayoutInfo
 {
     internal class ShapeImageAndTextLayoutInfo : ALayoutInfo, ILayoutInfoResolver<ShapeImageAndTextLayoutInfo>
     {
-
-        public LWJSize SlideSize { get; set; }
-        public LWJColor Color { get; set; }
-        public LWJColor KeyColor { get; set; }
-
         public List<TextboxLayout> Textboxes { get; set; } = new List<TextboxLayout>();
         public List<LWJPolygon> Shapes { get; set; } = new List<LWJPolygon>();
 

@@ -41,7 +41,7 @@ namespace Xenon.Renderer
             Graphics gfx = Graphics.FromImage(b);
             Graphics kgfx = Graphics.FromImage(k);
 
-            gfx.Clear(layout.Color.GetColor());
+            gfx.Clear(layout.BackgroundColor.GetColor());
             kgfx.Clear(layout.KeyColor.GetColor());
 
             foreach (var shape in layout.Shapes)
@@ -71,7 +71,7 @@ namespace Xenon.Renderer
             Graphics gfx = Graphics.FromImage(bmp);
             Graphics kgfx = Graphics.FromImage(kbmp);
 
-            gfx.Clear(layout.Color.GetColor());
+            gfx.Clear(layout.BackgroundColor.GetColor());
             kgfx.Clear(layout.KeyColor.GetColor());
 
             // Draw All Shapes

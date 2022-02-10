@@ -13,11 +13,6 @@ namespace Xenon.LayoutInfo
 {
     internal class _2TitleSlideLayoutInfo : ALayoutInfo, ILayoutInfoResolver<_2TitleSlideLayoutInfo>
     {
-
-        public LWJSize SlideSize { get; set; }
-        public LWJColor Color { get; set; }
-        public LWJColor KeyColor { get; set; }
-
         public TextboxLayout MainText { get; set; }
         public TextboxLayout SubText { get; set; }
         public DrawingBoxLayout Banner { get; set; }

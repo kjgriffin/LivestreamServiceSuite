@@ -14,9 +14,6 @@ namespace Xenon.LayoutInfo
 {
     internal class TitledLiturgyVerseSlideLayoutInfo : ALayoutInfo, ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo>
     {
-        public LWJSize SlideSize { get; set; }
-        public LWJColor BackgroundColor { get; set; }
-        public LWJColor KeyColor { get; set; }
         public TextboxLayout TitleBox { get; set; }
         public TextboxLayout RefBox { get; set; }
         public TextboxLayout ContentTextbox { get; set; }

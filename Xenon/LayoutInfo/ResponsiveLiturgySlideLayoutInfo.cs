@@ -15,9 +15,6 @@ namespace Xenon.LayoutInfo
 {
     class ResponsiveLiturgySlideLayoutInfo : ALayoutInfo, ILayoutInfoResolver<ResponsiveLiturgySlideLayoutInfo>
     {
-        public LWJSize SlideSize { get; set; }
-        public LWJColor BackgroundColor { get; set; }
-        public LWJColor KeyColor { get; set; }
         public List<LWJPolygon> Shapes { get; set; } = new List<LWJPolygon>();
         public List<LiturgyTextboxLayout> Textboxes { get; set; } = new List<LiturgyTextboxLayout>();
 

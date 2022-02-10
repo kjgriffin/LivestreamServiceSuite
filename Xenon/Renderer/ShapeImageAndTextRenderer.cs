@@ -44,7 +44,7 @@ namespace Xenon.Renderer
             Graphics gfx = Graphics.FromImage(b);
             Graphics kgfx = Graphics.FromImage(k);
 
-            gfx.Clear(layout.Color.GetColor());
+            gfx.Clear(layout.BackgroundColor.GetColor());
             kgfx.Clear(layout.KeyColor.GetColor());
 
             foreach (var image in layout.Images)
@@ -85,7 +85,7 @@ namespace Xenon.Renderer
             Graphics gfx = Graphics.FromImage(bmp);
             Graphics kgfx = Graphics.FromImage(kbmp);
 
-            gfx.Clear(layout.Color.GetColor());
+            gfx.Clear(layout.BackgroundColor.GetColor());
             kgfx.Clear(layout.KeyColor.GetColor());
 
             if (slide.Data.TryGetValue(DATAKEY_BKGDIMAGES, out object a))

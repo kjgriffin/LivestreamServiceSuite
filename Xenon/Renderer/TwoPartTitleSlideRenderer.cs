@@ -26,7 +26,7 @@ namespace Xenon.Renderer
             Graphics gfx = Graphics.FromImage(b);
             Graphics kgfx = Graphics.FromImage(k);
 
-            gfx.Clear(layout.Color.GetColor());
+            gfx.Clear(layout.BackgroundColor.GetColor());
             kgfx.Clear(layout.KeyColor.GetColor());
 
             DrawingBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.Banner);
@@ -54,7 +54,7 @@ namespace Xenon.Renderer
             Graphics gfx = Graphics.FromImage(bmp);
             Graphics kgfx = Graphics.FromImage(kbmp);
 
-            gfx.Clear(layout.Color.GetColor());
+            gfx.Clear(layout.BackgroundColor.GetColor());
             kgfx.Clear(layout.KeyColor.GetColor());
 
             //gfx.FillRectangle(Brushes.Black, layout.Key);

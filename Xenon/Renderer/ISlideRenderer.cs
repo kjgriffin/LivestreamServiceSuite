@@ -12,16 +12,16 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    public interface ISlideRenderer
+    internal interface ISlideRenderer
     {
         public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result);
     }
-    public interface ISlideRenderer<out LayoutInfoType> where LayoutInfoType : ALayoutInfo
+    internal interface ISlideRenderer<out LayoutInfoType> where LayoutInfoType : ALayoutInfo
     {
         public ILayoutInfoResolver<LayoutInfoType> LayoutResolver { get; }
     }
 
-    public interface ISlideLayoutPrototypePreviewer<out LayoutInfoType> where LayoutInfoType : ALayoutInfo
+    internal interface ISlideLayoutPrototypePreviewer<out LayoutInfoType> where LayoutInfoType : ALayoutInfo
     {
         public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo);
 
@@ -47,7 +47,7 @@ namespace Xenon.Renderer
         ProjectAsset GetProjectAssetByName(string assetName);
     }
 
-    public interface ILayoutInfoResolver<out LayoutType> where LayoutType : ALayoutInfo
+    internal interface ILayoutInfoResolver<out LayoutType> where LayoutType : ALayoutInfo
     {
         static LayoutType _InternalDefault_GetLayoutInfo(Slide slide)
         {
