@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="LayoutInfo\Defaults\LibBundles\Xenon.Coypright.lib.json" />
+    <None Remove="LayoutInfo\Defaults\LibBundles\Xenon.CopyTitle.lib.json" />
     <None Remove="LayoutInfo\Defaults\ResponsiveLiturgySlideLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\ShapeAndTextLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\ShapeImageAndTextLayoutInfo_Default.json" />
@@ -19,9 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="LayoutInfo\Defaults\LibBundles\Xenon.Coypright.lib.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\ResponsiveLiturgySlideLayoutInfo_Default.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -46,6 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="LayoutInfo\Defaults\LibBundles\Xenon.CopyTitle.lib.json" />
     <Resource Include="Resources\LSBSymbol.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
