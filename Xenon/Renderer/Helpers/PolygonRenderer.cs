@@ -14,20 +14,24 @@ namespace Xenon.Renderer.Helpers
 
         public static void Render(Graphics gfx, Graphics kgfx, LWJPolygon layout)
         {
-            gfx.FillPolygon(new SolidBrush(layout.FillColor.GetColor()), layout.Verticies.Select(p => p.GetPoint()).ToArray());
-            gfx.DrawPolygon(new Pen(layout.BorderColor.GetColor(), layout.BorderWidth), layout.Verticies.Select(p => p.GetPoint()).ToArray());
+            var points = layout.Verticies.ApplyTransforms(layout.Transforms);
 
-            kgfx.FillPolygon(new SolidBrush(layout.KeyFillColor.GetColor()), layout.Verticies.Select(p => p.GetPoint()).ToArray());
-            kgfx.DrawPolygon(new Pen(layout.KeyBorderColor.GetColor(), layout.BorderWidth), layout.Verticies.Select(p => p.GetPoint()).ToArray());
+            gfx.FillPolygon(new SolidBrush(layout.FillColor.GetColor()), points);
+            gfx.DrawPolygon(new Pen(layout.BorderColor.GetColor(), layout.BorderWidth), points);
+
+            kgfx.FillPolygon(new SolidBrush(layout.KeyFillColor.GetColor()), points);
+            kgfx.DrawPolygon(new Pen(layout.KeyBorderColor.GetColor(), layout.BorderWidth), points);
         }
 
         public static void RenderLayoutPreview(Graphics gfx, Graphics kgfx, LWJPolygon layout)
         {
-            gfx.FillPolygon(new SolidBrush(layout.FillColor.GetColor()), layout.Verticies.Select(p => p.GetPoint()).ToArray());
-            gfx.DrawPolygon(new Pen(layout.BorderColor.GetColor(), layout.BorderWidth), layout.Verticies.Select(p => p.GetPoint()).ToArray());
+            var points = layout.Verticies.ApplyTransforms(layout.Transforms);
 
-            kgfx.FillPolygon(new SolidBrush(layout.KeyFillColor.GetColor()), layout.Verticies.Select(p => p.GetPoint()).ToArray());
-            kgfx.DrawPolygon(new Pen(layout.KeyBorderColor.GetColor(), layout.BorderWidth), layout.Verticies.Select(p => p.GetPoint()).ToArray());
+            gfx.FillPolygon(new SolidBrush(layout.FillColor.GetColor()), points);
+            gfx.DrawPolygon(new Pen(layout.BorderColor.GetColor(), layout.BorderWidth), points);
+
+            kgfx.FillPolygon(new SolidBrush(layout.KeyFillColor.GetColor()), points);
+            kgfx.DrawPolygon(new Pen(layout.KeyBorderColor.GetColor(), layout.BorderWidth), points);
         }
 
     }

@@ -25,6 +25,11 @@ namespace Xenon.Layouts
         {
             return new Point(X, Y);
         }
+
+        public PointF GetPointF()
+        {
+            return new PointF(X, Y);
+        }
     }
 
     class LWJSize
@@ -66,6 +71,7 @@ namespace Xenon.Layouts
 
     class LWJPolygon
     {
+        public LWJTransformSet Transforms { get; set; } = new LWJTransformSet();
         public List<LWJPoint> Verticies { get; set; } = new List<LWJPoint>();
         public int BorderWidth { get; set; }
         public LWJColor FillColor { get; set; }
@@ -74,6 +80,39 @@ namespace Xenon.Layouts
         public LWJColor KeyBorderColor { get; set; }
 
     }
+
+    class LWJTransformSet
+    {
+        public LWJScaleTransform Scale { get; set; } = new LWJScaleTransform();
+        public LWJTranslateTransform Translate { get; set; } = new LWJTranslateTransform();
+    }
+
+    abstract class LWJTransform
+    {
+        public abstract PointF[] Apply(PointF[] points);
+    }
+
+    class LWJScaleTransform : LWJTransform
+    {
+        public double XScale { get; set; } = 1;
+        public double YScale { get; set; } = 1;
+
+        public override PointF[] Apply(PointF[] points)
+        {
+            return points.Select(p => new PointF((float)(p.X * XScale), (float)(p.Y * YScale))).ToArray();
+        }
+    }
+    class LWJTranslateTransform : LWJTransform
+    {
+        public double XShift { get; set; } = 0;
+        public double YShift { get; set; } = 0;
+
+        public override PointF[] Apply(PointF[] points)
+        {
+            return points.Select(p => new PointF((float)(p.X + XShift), (float)(p.Y + YShift))).ToArray();
+        }
+    }
+
 
     class LWJFont
     {
