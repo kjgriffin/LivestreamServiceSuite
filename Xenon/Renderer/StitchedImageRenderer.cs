@@ -22,7 +22,7 @@ namespace Xenon.Renderer
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = "";
-            res.RenderedAs = layout?.SlideType ?? "Full";
+            res.RenderedAs = string.IsNullOrWhiteSpace(layout?.SlideType) ? "Full" : layout.SlideType;
 
             Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
             Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);

@@ -68,7 +68,7 @@ namespace Xenon.Renderer
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
             res.AssetPath = "";
-            res.RenderedAs = "Liturgy";
+            res.RenderedAs = string.IsNullOrWhiteSpace(layout?.SlideType) ? "Liturgy" : layout.SlideType;
 
             Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
             Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
