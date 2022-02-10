@@ -79,6 +79,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>PrefabSlides.resx</DependentUpon>
     </Compile>
+    <Compile Update="ProjectResources\ProjectDefaults.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ProjectDefaults.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -89,6 +94,10 @@
     <EmbeddedResource Update="ProjectResources\PrefabSlides.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>PrefabSlides.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ProjectResources\ProjectDefaults.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ProjectDefaults.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

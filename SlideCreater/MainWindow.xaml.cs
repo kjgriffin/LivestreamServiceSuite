@@ -226,6 +226,8 @@ namespace SlideCreater
             EnableDisableOptionalFeatures();
 
             SetupLayoutsTreeVew();
+
+            ShowProjectAssets();
         }
 
 
@@ -883,6 +885,7 @@ namespace SlideCreater
             _proj = new Project(true);
             _proj.Assets = Assets;
 
+            ShowProjectAssets();
             SetupLayoutsTreeVew();
 
             ProjectState = ProjectState.NewProject;
@@ -1178,10 +1181,6 @@ namespace SlideCreater
             if (ofd.ShowDialog() == true)
             {
                 ActionState = ActionState.Building;
-                options.InferPostset = mi_importoption_inferpostset.IsChecked;
-                options.UseUpNextForHymns = mi_importoption_useupnextforhymns.IsChecked;
-                options.OnlyKnownCaptions = !mi_importoption_notonlyknowncaptions.IsChecked;
-                options.UseResponsiveLiturgy = mi_importoption_useresponsiveliturgy.IsChecked;
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
                 parser.LSBImportOptions = options;
                 await parser.ParseHTML(ofd.FileName);
@@ -1662,6 +1661,28 @@ namespace SlideCreater
                 prop.SetValue(options.Filter, dialog.Fields[i++].value);
             }
 
+        }
+
+        private void mi_importoptions_choosebehaviour_Click(object sender, RoutedEventArgs e)
+        {
+            // get list of options
+            var props = options.GetType().GetProperties().Where(x => Attribute.IsDefined(x, typeof(BoolSettingAttribute)));
+
+            List<(string name, bool value)> fields = new List<(string name, bool value)>();
+            foreach (var prop in props)
+            {
+                fields.Add((prop.Name, (bool)prop.GetValue(options)));
+            }
+
+            // get user to select them
+            CheckboxSelection dialog = new CheckboxSelection("Import Behaviour", fields.ToArray());
+            dialog.ShowDialog();
+
+            int i = 0;
+            foreach (var prop in props)
+            {
+                prop.SetValue(options, dialog.Fields[i++].value);
+            }
         }
     }
 }

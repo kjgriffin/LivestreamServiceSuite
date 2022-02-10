@@ -118,7 +118,17 @@ namespace LutheRun
                     {
                         // ignore it
                     }
-                    else if (line_item.LocalName == "span") // for now ignore <br> tags entierly
+                    else if (line_item.LocalName == "br")
+                    {
+                        // handle br by forcing space
+                        // not sure it this really is the best way... but perhaps??
+                        // at worst we'll get extra space?
+                        // seems like LSB uses <br> for logical breaks though, so extra space may not be the worst idea
+
+                        // single or double space???
+                        line.TextSegments.Add(new TextBlock("  ", whitespacesensitive: true));
+                    }
+                    else if (line_item.LocalName == "span")
                     {
                         // is text content of some sort
 

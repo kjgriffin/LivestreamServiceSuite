@@ -13,6 +13,7 @@ using System.Drawing;
 using System.Linq;
 using System.Diagnostics;
 using Xenon.Compiler.Suggestions;
+using System.Collections;
 
 namespace Xenon.SlideAssembly
 {
@@ -152,6 +153,7 @@ namespace Xenon.SlideAssembly
                 Directory.CreateDirectory(Path.Combine(_loadTmpPath, "assets"));
             }
             ProjectLayouts.LoadDefaults();
+            InitializeDefaultAssets();
             //ProjectLayouts.InitializeNewLibrary("User.Library");
             XenonSuggestionService = new XenonSuggestionService(this);
         }
@@ -161,6 +163,37 @@ namespace Xenon.SlideAssembly
             ProjectLayouts.LoadDefaults();
             //ProjectLayouts.InitializeNewLibrary("User.Library");
             XenonSuggestionService = new XenonSuggestionService(this);
+            InitializeDefaultAssets();
+        }
+
+        public void InitializeDefaultAssets()
+        {
+
+            try
+            {
+                var defaultimages = ProjectResources.ProjectDefaults.ResourceManager.GetResourceSet(System.Globalization.CultureInfo.CurrentCulture, true, true)
+                                                                                    .Cast<DictionaryEntry>()
+                                                                                    .Where(x => x.Value.GetType() == typeof(Bitmap))
+                                                                                    .Select(x => new { Name = x.Key.ToString(), Image = x.Value as Bitmap })
+                                                                                    .ToList();
+
+                foreach (var image in defaultimages)
+                {
+                    try
+                    {
+                        CreateImageAsset(image.Image, $"xenondefault_{image.Name}.png", image.Name);
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                }
+            }
+            catch
+            {
+                return;
+            }
+
         }
 
         public static Task<Project> LoadProject(string filename)

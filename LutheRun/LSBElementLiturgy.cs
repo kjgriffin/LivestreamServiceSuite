@@ -56,14 +56,14 @@ namespace LutheRun
         public string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
 
-            string litconent = LSBResponsorialExtractor.ExtractResponsiveLiturgy(SourceHTML);
+            string litcontent = LSBResponsorialExtractor.ExtractResponsiveLiturgy(SourceHTML);
 
             if (LiturgyText.Trim() != String.Empty)
             {
                 //return "/// <XENON_AUTO_GEN>\r\n#liturgy{\r\n" + LiturgyText + "\r\n}\r\n/// </XENON_AUTO_GEN>";
                 if (lSBImportOptions.UseResponsiveLiturgy)
                 {
-                    return $"#liturgyresponsive{Environment.NewLine}{{{Environment.NewLine}{litconent}{Environment.NewLine}}}{PostsetCmd}{Environment.NewLine}";
+                    return $"#liturgyresponsive{Environment.NewLine}{{{Environment.NewLine}{litcontent}{Environment.NewLine}}}{PostsetCmd}{Environment.NewLine}";
                 }
                 else
                 {

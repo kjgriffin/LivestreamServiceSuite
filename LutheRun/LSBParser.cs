@@ -35,7 +35,8 @@ namespace LutheRun
 
         public void Serviceify(LSBImportOptions options)
         {
-            ServiceElements = Serviceifier.Filter(Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(ServiceElements, options), options), options);
+            //ServiceElements = Serviceifier.Filter(Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(ServiceElements, options), options), options);
+            ServiceElements = Serviceifier.Filter(Serviceifier.AddAdditionalInferedElements(ServiceElements, options), options);
         }
 
 
@@ -90,11 +91,11 @@ namespace LutheRun
         {
             List<ILSBElement> elements = new List<ILSBElement>();
             ServiceElements.Clear();
-            ServiceElements.Add(LSBElementAcknowledments.Parse(ack));
             foreach (var e in dom)
             {
                 _ParseLSBServiceElement(e);
             }
+            ServiceElements.Add(LSBElementAcknowledments.Parse(ack));
         }
 
         private void ParseLSBServiceElement(AngleSharp.Dom.IElement element)
@@ -293,6 +294,10 @@ namespace LutheRun
             {
                 return _ParseLSBStaticElement(element);
             }
+            else if (element.ClassList.Contains("shared-role"))
+            {
+                return _ParseLSBStaticElement(element);
+            }
             else if (element.ClassList.Contains("option-group"))
             {
                 return _ParseLSBOptionGroupElement(element);
@@ -392,6 +397,10 @@ namespace LutheRun
 
         private bool _ParseLSBContentIntoLiturgy(IElement contentelement)
         {
+            if (LSBImportOptions.UseResponsiveLiturgy)
+            {
+                return _PraseLSBContentIntoResponsiveLiturgy(contentelement);
+            }
             List<string> ltext = new List<string>();
             foreach (var child in contentelement.Children.Where(c => c.ClassList.Contains("lsb-responsorial") || c.ClassList.Contains("lsb-responsorial-continued") || c.ClassList.Contains("image")))
             {
@@ -415,6 +424,39 @@ namespace LutheRun
                 ServiceElements.Add(LSBElementLiturgy.Create(ltext.StringTogether(Environment.NewLine), contentelement));
                 ltext.Clear();
             }
+            return true;
+        }
+
+        private bool _PraseLSBContentIntoResponsiveLiturgy(IElement contentelement)
+        {
+            // need to handle mixed liturgy
+            // but collect all groups together
+
+            List<IElement> liturgyelements = new List<IElement>();
+
+            void AddChunkOfLiturgy()
+            {
+                if (liturgyelements.Any())
+                {
+                    ServiceElements.Add(LSBElementResponsiveLiturgy.Create(contentelement, liturgyelements));
+                }
+                liturgyelements.Clear();
+            }
+
+            foreach (var child in contentelement.Children.Where(c => c.ClassList.Contains("lsb-responsorial") || c.ClassList.Contains("lsb-responsorial-continued") || c.ClassList.Contains("image")))
+            {
+                if (child.ClassList.Contains("lsb-responsorial") || child.ClassList.Contains("lsb-responsorial-continued"))
+                {
+                    liturgyelements.Add(child);
+                }
+                else if (child.ClassList.Contains("image"))
+                {
+                    AddChunkOfLiturgy();
+                    ServiceElements.Add(LSBElementLiturgySung.Parse(child));
+                }
+            }
+            AddChunkOfLiturgy();
+
             return true;
         }
 

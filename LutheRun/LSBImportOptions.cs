@@ -9,11 +9,18 @@ namespace LutheRun
 {
     public class LSBImportOptions
     {
+        [BoolSetting]
         public bool InferPostset { get; set; } = true;
+        [BoolSetting]
         public bool UseUpNextForHymns { get; set; } = true;
+        [BoolSetting]
         public bool OnlyKnownCaptions { get; set; } = true;
+        [BoolSetting]
         public bool UseResponsiveLiturgy { get; set; } = true;
+        [BoolSetting]
         public bool UseComplexReading { get; set; } = true;
+        [BoolSetting]
+        public bool UseCopyTitle { get; set; } = true;
 
         public LSBElementFilter Filter { get; set; } = new LSBElementFilter();
     }
@@ -28,6 +35,8 @@ namespace LutheRun
         [BoolSetting]
         public bool Liturgy { get; set; } = true;
         [BoolSetting]
+        public bool ResponsiveLiturgy { get; set; } = true;
+        [BoolSetting]
         public bool SungLiturgy { get; set; } = true;
         [BoolSetting]
         public bool Reading { get; set; } = true;
@@ -36,11 +45,15 @@ namespace LutheRun
         [BoolSetting]
         public bool Caption { get; set; } = true;
         [BoolSetting]
+        public bool Heading { get; set; } = false;
+        [BoolSetting]
         public bool Introit { get; set; } = true;
         [BoolSetting]
         public bool Hymn { get; set; } = true;
         [BoolSetting]
         public bool Prefab { get; set; } = true;
+        [BoolSetting]
+        public bool ExternalPrefab { get; set; } = true;
         [BoolSetting]
         public bool Unknown { get; set; } = false;
         [BoolSetting]
@@ -53,6 +66,8 @@ namespace LutheRun
                 List<Type> elements = new List<Type>();
                 if (Liturgy)
                     elements.Add(typeof(LSBElementLiturgy));
+                if (ResponsiveLiturgy)
+                    elements.Add(typeof(LSBElementResponsiveLiturgy));
                 if (SungLiturgy)
                     elements.Add(typeof(LSBElementLiturgySung));
                 if (Reading)
@@ -61,12 +76,16 @@ namespace LutheRun
                     elements.Add(typeof(LSBElementReadingComplex));
                 if (Caption)
                     elements.Add(typeof(LSBElementCaption));
+                if (Heading)
+                    elements.Add(typeof(LSBElementHeading));
                 if (Introit)
                     elements.Add(typeof(LSBElementIntroit));
                 if (Hymn)
                     elements.Add(typeof(LSBElementHymn));
                 if (Prefab)
                     elements.Add(typeof(LSBElementIsPrefab));
+                if (ExternalPrefab)
+                    elements.Add(typeof(ExternalPrefab));
                 if (Unknown)
                     elements.Add(typeof(LSBElementUnknown));
                 if (Acknowledgments)

@@ -13,7 +13,7 @@ namespace LutheRun
         public string PostsetCmd { get; set; }
         public IElement SourceHTML { get; private set; }
 
-        string Text { get; set; }
+        public string Text { get; private set; }
 
         public string DebugString()
         {

@@ -26,6 +26,7 @@ namespace SlideCreater
             InitializeComponent();
             Title = title;
             _fields = fields.ToList();
+            Fields = _fields;
             LoadOptions();
         }
         private void LoadOptions()

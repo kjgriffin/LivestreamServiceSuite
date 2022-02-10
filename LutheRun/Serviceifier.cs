@@ -21,7 +21,7 @@ namespace LutheRun
          */
 
         // TODO: make this a bit less hardcoded
-        enum Camera
+        internal enum Camera
         {
             Unset = -1,
             Pulpit = 8,
@@ -51,28 +51,31 @@ namespace LutheRun
 
         public static List<ILSBElement> RemoveUnusedElement(List<ILSBElement> service, LSBImportOptions options)
         {
-            // for now just remove: headdings, captions that don't match keys and any unknown
             List<ILSBElement> trimmed = new List<ILSBElement>();
 
+            // rely on filter to remove extra junk
+            // only use here is to remove unknown captions
             foreach (var element in service)
             {
                 var caption = element as LSBElementCaption;
                 if (caption != null)
                 {
-                    if (new[] { "bells", "prelude", "postlude", "anthem", "sermon" }.Any(c => caption.Caption.ToLower().Contains(c)))
+                    if (options.OnlyKnownCaptions)
+                    {
+                        if (new[] { "bells", "prelude", "postlude", "anthem", "sermon" }.Any(c => caption.Caption.ToLower().Contains(c)))
+                        {
+                            trimmed.Add(element);
+                        }
+                        else if (!options.OnlyKnownCaptions)
+                        {
+                            trimmed.Add(element);
+                        }
+                        continue;
+                    }
+                    else
                     {
                         trimmed.Add(element);
                     }
-                    else if (!options.OnlyKnownCaptions)
-                    {
-                        trimmed.Add(element);
-                    }
-                    continue;
-                }
-
-                if (element is LSBElementHeading || element is LSBElementUnknown)
-                {
-                    continue;
                 }
 
                 trimmed.Add(element);
@@ -83,14 +86,51 @@ namespace LutheRun
 
         public static List<ILSBElement> AddAdditionalInferedElements(List<ILSBElement> service, LSBImportOptions options)
         {
+            List<ILSBElement> servicetoparse = null;
             List<ILSBElement> newservice = new List<ILSBElement>();
 
-            // always start with titlepage insert
-            newservice.Add(new InsertTitlepage());
-            // always start with copyright
-            // default to preset center after copyright (though bells would handle this...)
-            // may want to be smart too-> if there's a prelude we could do soemthing else
-            newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Organ, options.InferPostset));
+            if (!options.UseCopyTitle)
+            {
+                // always start with titlepage insert
+                newservice.Add(new InsertTitlepage());
+                // always start with copyright
+                // default to preset center after copyright (though bells would handle this...)
+                // may want to be smart too-> if there's a prelude we could do soemthing else
+                newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Organ, options.InferPostset));
+
+                servicetoparse = service;
+            }
+            else
+            {
+
+                LSBElementAcknowledments ack = service.FirstOrDefault(x => x.GetType() == typeof(LSBElementAcknowledments)) as LSBElementAcknowledments;
+                string sack = "";
+                if (ack != null)
+                {
+                    sack = ack.Text;
+                }
+
+
+                // eat the first 2 elements (expected to be either headding or caption)
+                // and generate a combined title/copyright from it
+                if (service.Take(2).All(x => x.GetType() == typeof(LSBElementCaption) || x.GetType() == typeof(LSBElementHeading)))
+                {
+                    // ignore them for the rest of the service
+                    servicetoparse = service.Skip(2).ToList();
+
+                    if (ack != null)
+                    {
+                        // remove from service- we've used it here
+                        servicetoparse.Remove(ack);
+                    }
+
+
+                    newservice.Add(ExternalPrefabGenerator.GenerateCopyTitle(service.Take(2), sack, options));
+                }
+
+            }
+
+            servicetoparse = RemoveUnusedElement(servicetoparse, options);
 
             // warn abouth prelude? (if not present??)
 
@@ -101,15 +141,15 @@ namespace LutheRun
 
             bool inliturgy = false;
 
-            ILSBElement element = service.First();
+            ILSBElement element = servicetoparse.First();
             ILSBElement prevelement = null;
             ILSBElement nextelement = null;
-            for (int i = 0; i < service.Count; i++)
+            for (int i = 0; i < servicetoparse.Count; i++)
             {
-                element = service[i];
-                if (i + 1 < service.Count)
+                element = servicetoparse[i];
+                if (i + 1 < servicetoparse.Count)
                 {
-                    nextelement = service[i + 1];
+                    nextelement = servicetoparse[i + 1];
                 }
 
 
@@ -126,7 +166,7 @@ namespace LutheRun
                     setlast = true;
                     lastselection = Camera.Pulpit;
                 }
-                if (nextelement is LSBElementReading)
+                if (nextelement is LSBElementReading || nextelement is LSBElementReadingComplex)
                 {
                     setlast = true;
                     lastselection = Camera.Lectern;
@@ -166,7 +206,7 @@ namespace LutheRun
                         // probably handled by rule for any liturgy-type to set first to liturgy (maybe)
                     }
                 }
-                if (element is LSBElementLiturgy || element is LSBElementIntroit || element is LSBElementLiturgySung || element is LSBElementReading)
+                if (element is LSBElementLiturgy || element is LSBElementIntroit || element is LSBElementLiturgySung || element is LSBElementReading || element is LSBElementReadingComplex)
                 {
                     // since we're setting the first here, if a last was previously set it will overwrite so we can be a bit more aggressive with
                     // selecting elements to set a first for
