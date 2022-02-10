@@ -24,15 +24,16 @@ namespace Xenon.Compiler
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+            List<Slide> vslides = new List<Slide>();
             _localVNum = 0;
             _localParent = _Parent;
             _localVerses = Verses.Count - 1;
             foreach (var verse in Verses)
             {
-                verse.Generate(project, this, Logger);
+                vslides.AddRange(verse.Generate(project, this, Logger));
                 _localVNum += 1;
             }
-            return new List<Slide>();
+            return vslides;
         }
 
         public void GenerateDebug(Project project)
