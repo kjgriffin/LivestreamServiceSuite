@@ -22,16 +22,12 @@ namespace Xenon.Renderer
         ImageSlideRenderer isr = new ImageSlideRenderer();
         ReadingSlideRenderer rsr = new ReadingSlideRenderer();
         SermonTitleSlideRenderer ssr = new SermonTitleSlideRenderer();
-        HymnTextVerseRenderer hvsr = new HymnTextVerseRenderer();
         PrefabSlideRenderer psr = new PrefabSlideRenderer();
         LiturgyVerseSlideRenderer lvsr = new LiturgyVerseSlideRenderer();
         AnthemTitleSlideRenderer atsr = new AnthemTitleSlideRenderer();
-        TwoPartTitleSlideRenderer tpsr = new TwoPartTitleSlideRenderer();
-        TitledLiturgyVerseSlideRenderer tlvsr = new TitledLiturgyVerseSlideRenderer();
         CopySlideRenderer csr = new CopySlideRenderer();
         ScriptRenderer sr = new ScriptRenderer();
         ImageFilterRenderer ifr = new ImageFilterRenderer();
-        //StitchedImageRenderer sir = new StitchedImageRenderer();
 
         private List<ISlideRenderer> Renderers = new List<ISlideRenderer>
         {
@@ -58,12 +54,9 @@ namespace Xenon.Renderer
             isr.Layout = proj.Layouts;
             rsr.Layouts = proj.Layouts;
             ssr.Layouts = proj.Layouts;
-            hvsr.Layouts = proj.Layouts;
             psr.Layouts = proj.Layouts;
             lvsr.Layouts = proj.Layouts;
             atsr.Layouts = proj.Layouts;
-            //tpsr.Layouts = proj.Layouts;
-            //tlvsr.Layouts = proj.Layouts;
         }
 
         public RenderedSlide RenderSlide(Slide s, List<XenonCompilerMessage> Messages)
