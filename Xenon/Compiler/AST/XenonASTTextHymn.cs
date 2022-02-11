@@ -73,6 +73,16 @@ namespace Xenon.Compiler
                 bool.TryParse(sisoverlay, out isoverlay);
                 textHymn.IsOverlay = isoverlay;
                 Lexer.Consume();
+
+                Logger.Log(new XenonCompilerMessage
+                {
+                    ErrorName = "Deprecated Feature!",
+                    ErrorMessage = "This has been deprecated. To achieve the same results, apply a layout override, and in the layout define the SlideType as 'Full.nodrive'",
+                    Generator = "XenonASTTextHymn::Compile",
+                    Inner = "",
+                    Level = XenonCompilerMessageType.Warning,
+                    Token = Lexer.CurrentToken,
+                });
             }
 
             Lexer.GobbleWhitespace();

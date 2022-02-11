@@ -27,6 +27,13 @@ namespace Xenon.LayoutInfo.BaseTypes
         public StringFormat GetTextAlignment()
         {
             StringFormat f = new StringFormat();
+            SetHAlign(f);
+            SetValign(f);
+            return f;
+        }
+
+        private void SetHAlign(StringFormat f)
+        {
             switch (HorizontalAlignment)
             {
                 case LWJHAlign.Left:
@@ -42,6 +49,10 @@ namespace Xenon.LayoutInfo.BaseTypes
                     f.Alignment = StringAlignment.Near;
                     break;
             }
+        }
+
+        private void SetValign(StringFormat f)
+        {
             switch (VerticalAlignment)
             {
                 case LWJVAlign.Top:
@@ -56,6 +67,20 @@ namespace Xenon.LayoutInfo.BaseTypes
                 default:
                     break;
             }
+        }
+
+        public StringFormat GetHTextAlignment()
+        {
+            StringFormat f = new StringFormat();
+            SetHAlign(f);
+            return f;
+
+        }
+
+        public StringFormat GetVTextAlignment()
+        {
+            StringFormat f = new StringFormat();
+            SetValign(f);
             return f;
         }
 

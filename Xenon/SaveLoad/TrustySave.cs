@@ -25,7 +25,7 @@ namespace Xenon.SaveLoad
 
         public static async Task<(Project project, Dictionary<string, string> assetfilemap, Dictionary<string, string> assetdisplaynames, Dictionary<string, string> assetextensions)> OpenTrustily(BuildVersion currentVersion, string filename, CodePreviewUpdateFunc preloadcode)
         {
-            var proj = new Project(true);
+            var proj = new Project(true, false);
 
             string sourcecode = "";
             Dictionary<string, string> assetfilemap = new Dictionary<string, string>();

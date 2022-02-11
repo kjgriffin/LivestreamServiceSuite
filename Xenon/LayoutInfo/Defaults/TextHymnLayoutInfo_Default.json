@@ -1,0 +1,212 @@
+{
+  "HymnNameBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 480,
+        "Y": 0
+      },
+      "Size": {
+        "Width": 960,
+        "Height": 120
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 34,
+      "Style": 1
+    },
+    "FColor": {
+      "Hex": "#ff000000"
+    },
+    "BColor": {
+      "Hex": "#00000000"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    },
+    "HorizontalAlignment": "Center",
+    "VerticalAlignment": "Center"
+  },
+  "HymnTitleBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 40,
+        "Y": 20
+      },
+      "Size": {
+        "Width": 440,
+        "Height": 70
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 30,
+      "Style": 0
+    },
+    "FColor": {
+      "Hex": "#ff000000"
+    },
+    "BColor": {
+      "Hex": "#00000000"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    },
+    "HorizontalAlignment": "Left",
+    "VerticalAlignment": "Bottom"
+  },
+  "HymnNumberBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 1440,
+        "Y": 20
+      },
+      "Size": {
+        "Width": 440,
+        "Height": 70
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 28,
+      "Style": 2
+    },
+    "FColor": {
+      "Hex": "#ff000000"
+    },
+    "BColor": {
+      "Hex": "#00000000"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    },
+    "HorizontalAlignment": "Right",
+    "VerticalAlignment": "Bottom"
+  },
+  "HymnTuneBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 1480,
+        "Y": 90
+      },
+      "Size": {
+        "Width": 400,
+        "Height": 50
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 28,
+      "Style": 2
+    },
+    "FColor": {
+      "Hex": "#ff000000"
+    },
+    "BColor": {
+      "Hex": "#00000000"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    },
+    "HorizontalAlignment": "Right",
+    "VerticalAlignment": "Top"
+  },
+  "CopyrightBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 40,
+        "Y": 1050
+      },
+      "Size": {
+        "Width": 1880,
+        "Height": 30
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 8,
+      "Style": 0
+    },
+    "FColor": {
+      "Hex": "#ff808080"
+    },
+    "BColor": {
+      "Hex": "#00000000"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    },
+    "HorizontalAlignment": "Left",
+    "VerticalAlignment": "Top"
+  },
+  "VerseInfoBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 40,
+        "Y": 90
+      },
+      "Size": {
+        "Width": 400,
+        "Height": 50
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 28,
+      "Style": 0
+    },
+    "FColor": {
+      "Hex": "#ff000000"
+    },
+    "BColor": {
+      "Hex": "#00000000"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    },
+    "HorizontalAlignment": "Left",
+    "VerticalAlignment": "Top"
+  },
+  "HymnContentBox": {
+    "VPaddingEnabled": true,
+    "MinInterLineSpace": 50,
+    "Textbox": {
+      "Origin": {
+        "X": 40,
+        "Y": 140
+      },
+      "Size": {
+        "Width": 1840,
+        "Height": 900
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 30,
+      "Style": 0
+    },
+    "FColor": {
+      "Hex": "#ff000000"
+    },
+    "BColor": {
+      "Hex": "#00000000"
+    },
+    "KColor": {
+      "Hex": "#ffffffff"
+    },
+    "HorizontalAlignment": "Center",
+    "VerticalAlignment": "Equidistant"
+  },
+  "Shapes": [],
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "BackgroundColor": {
+    "Hex": "#ffffffff"
+  },
+  "KeyColor": {
+    "Hex": "#ffffffff"
+  },
+  "SlideType": "Full"
+}

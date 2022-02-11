@@ -12,6 +12,7 @@
     <None Remove="LayoutInfo\Defaults\ShapeAndTextLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\ShapeImageAndTextLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\StitchedImageSlideLayoutInfo_Default.json" />
+    <None Remove="LayoutInfo\Defaults\TextHymnLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\TitledLiturgyVerseSlideLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\UpNextLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\_2TitleSlideLayoutInfo_Default.json" />
@@ -23,6 +24,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\ShapeImageAndTextLayoutInfo_Default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LayoutInfo\Defaults\TextHymnLayoutInfo_Default.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\StitchedImageSlideLayoutInfo_Default.json">

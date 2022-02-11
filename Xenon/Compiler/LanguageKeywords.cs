@@ -33,6 +33,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.UpNext] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "UpNextLayoutInfo_Default.json"),
             [LanguageKeywordCommand.CustomText] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), ""),
             [LanguageKeywordCommand.CustomDraw] = (new ShapeImageAndTextLayoutInfo(), new ShapeImageAndTextRenderer(), ""),
+            [LanguageKeywordCommand.TextHymn] = (new TextHymnLayoutInfo(), new HymnTextVerseRenderer(), ""),
         };
 
         public static List<string> WholeWords = new List<string>()
@@ -132,7 +133,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.Sermon] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTSermon()),
             [LanguageKeywordCommand.AnthemTitle] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTAnthemTitle()),
             [LanguageKeywordCommand.TwoPartTitle] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonAST2PartTitle()),
-            [LanguageKeywordCommand.TextHymn] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTTextHymn()),
+            [LanguageKeywordCommand.TextHymn] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTTextHymn()),
             [LanguageKeywordCommand.Verse] = (false, LanguageKeywordCommand.TextHymn, false, false, new XenonASTHymnVerse()),
             [LanguageKeywordCommand.Copyright] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTPrefabCopyright()),
             [LanguageKeywordCommand.ViewServices] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTPrefabViewServices()),

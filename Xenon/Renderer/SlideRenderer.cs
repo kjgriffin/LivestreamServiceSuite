@@ -41,6 +41,7 @@ namespace Xenon.Renderer
             new ShapeAndTextRenderer(),
             new ShapeImageAndTextRenderer(),
             new ResponsiveLiturgyRenderer(),
+            new HymnTextVerseRenderer(),
         };
 
         public ProjectAsset GetProjectAssetByName(string assetName)
@@ -157,7 +158,7 @@ namespace Xenon.Renderer
                     //return tpsr.RenderSlide(slide, Messages);
                     return null;
                 case SlideFormat.HymnTextVerse:
-                    return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide, Messages);
+                    //return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.Prefab:
                     return psr.RenderSlide(slide, Messages);
                 case SlideFormat.Script:

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using Xenon.Compiler.AST;
 using Xenon.Helpers;
+using Xenon.Renderer;
 
 namespace Xenon.Compiler
 {
@@ -61,20 +62,14 @@ namespace Xenon.Compiler
             slide.Format = SlideFormat.HymnTextVerse;
             slide.MediaType = MediaType.Image;
 
-            slide.Data["title"] = parent.HymnTitle;
-            slide.Data["name"] = parent.HymnName;
-            slide.Data["number"] = parent.Number;
-            slide.Data["tune"] = parent.Tune;
-            slide.Data["copyright"] = parent.CopyrightInfo;
-            slide.Data["sub-name"] = SubName;
-            slide.Data["is-overlay"] = parent.IsOverlay;
+            slide.Data[HymnTextVerseRenderer.DATAKEY_HTITLE] = parent.HymnTitle;
+            slide.Data[HymnTextVerseRenderer.DATAKEY_HNAME] = parent.HymnName;
+            slide.Data[HymnTextVerseRenderer.DATAKEY_HNUMBER] = parent.Number;
+            slide.Data[HymnTextVerseRenderer.DATAKEY_HTUNE] = parent.Tune;
+            slide.Data[HymnTextVerseRenderer.DATAKEY_COPYRIGHT] = parent.CopyrightInfo;
+            slide.Data[HymnTextVerseRenderer.DATAKEY_VINFO] = SubName;
 
-            foreach (var line in vle.LayoutLines)
-            {
-                SlideLineContent slc = new SlideLineContent() { Data = string.Join("", line.Words).Trim() };
-                SlideLine sl = new SlideLine() { Content = new List<SlideLineContent>() { slc } };
-                slide.Lines.Add(sl);
-            }
+            slide.Data[HymnTextVerseRenderer.DATAKEY_HCONTENT] = vle.LayoutLines.Select(x => string.Concat(x.Words).Trim()).ToList();
 
             slide.AddPostset(parent._localParent, parent._localVNum == 0, parent._localVNum == parent._localVerses);
 

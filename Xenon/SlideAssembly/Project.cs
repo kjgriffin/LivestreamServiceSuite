@@ -143,7 +143,12 @@ namespace Xenon.SlideAssembly
 
         public string LoadTmpPath { get => _loadTmpPath; }
 
-        public Project(bool withtemp = false)
+        /// <summary>
+        /// Creates a new project
+        /// </summary>
+        /// <param name="withtemp">Initializez a new temp folder to store assets</param>
+        /// <param name="adddefaultassets">Adds default assets to project. Set to <see langword="false"/> if loading a project from a save</param>
+        public Project(bool withtemp = false, bool adddefaultassets = true)
         {
             if (withtemp)
             {
@@ -153,7 +158,10 @@ namespace Xenon.SlideAssembly
                 Directory.CreateDirectory(Path.Combine(_loadTmpPath, "assets"));
             }
             ProjectLayouts.LoadDefaults();
-            InitializeDefaultAssets();
+            if (adddefaultassets)
+            {
+                InitializeDefaultAssets();
+            }
             //ProjectLayouts.InitializeNewLibrary("User.Library");
             XenonSuggestionService = new XenonSuggestionService(this);
         }
