@@ -11,6 +11,7 @@ using System.Xml;
 using Xenon.Helpers;
 using Xenon.LayoutEngine.L2;
 using Xenon.LayoutInfo;
+using Xenon.LayoutInfo.BaseTypes;
 using Xenon.Layouts;
 
 namespace Xenon.Compiler.SubParsers
@@ -23,13 +24,13 @@ namespace Xenon.Compiler.SubParsers
         public List<TextRun> Content { get; set; }
 
 
-        public TextBlurb SpeakerBlurb(ResponsiveLiturgySlideLayoutInfo layout)
+        public TextBlurb SpeakerBlurb(LiturgyTextboxLayout layout)
         {
-            int style = layout.Textboxes.First().SpeakerFont.Style;
-            return new TextBlurb(Point.Empty, Speaker, layout.Textboxes.First().SpeakerFont.Name, style, 36, hexColor: layout.Textboxes.First().SpeakerColor.Hex);
+            int style = layout.SpeakerFont.Style;
+            return new TextBlurb(Point.Empty, Speaker, layout.SpeakerFont.Name, style, 36, hexColor: layout.SpeakerColor.Hex);
         }
 
-        public List<TextBlurb> ContentBlurbs(ResponsiveLiturgySlideLayoutInfo layout)
+        public List<TextBlurb> ContentBlurbs(LiturgyTextboxLayout layout)
         {
             // further split the content of each Content TextRun into words
 
@@ -41,11 +42,11 @@ namespace Xenon.Compiler.SubParsers
 
             List<TextBlurb> blurbs = new List<TextBlurb>();
 
-            int linestyle = layout.Textboxes.First().Font.Style;
-            float linesize = layout.Textboxes.First().Font.Size;
-            string linefont = layout.Textboxes.First().Font.Name;
+            int linestyle = layout.Font.Style;
+            float linesize = layout.Font.Size;
+            string linefont = layout.Font.Name;
 
-            if (layout.Textboxes.FirstOrDefault()?.LineFonts.TryGetValue(Speaker, out LWJFont font) == true)
+            if (layout.LineFonts.TryGetValue(Speaker, out LWJFont font) == true)
             {
                 linestyle = font.Style;
                 linesize = font.Size;
@@ -65,7 +66,7 @@ namespace Xenon.Compiler.SubParsers
                         linesize,
                         word == " ",
                         word == Environment.NewLine,
-                        !string.IsNullOrWhiteSpace(run.AltColorHex) ? run.AltColorHex : layout.Textboxes.First().FColor.Hex));
+                        !string.IsNullOrWhiteSpace(run.AltColorHex) ? run.AltColorHex : layout.FColor.Hex));
                 }
             }
 

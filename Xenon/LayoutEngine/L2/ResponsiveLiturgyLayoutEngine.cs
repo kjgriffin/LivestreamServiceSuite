@@ -20,7 +20,7 @@ namespace Xenon.LayoutEngine.L2
         static readonly string[] CALLERS = { "P", "A", "L", };
         static readonly string[] RESPONDERS = { "C", "R", };
 
-        public List<List<SizedTextBlurb>> GenerateSlides(List<ResponsiveStatement> statements, ResponsiveLiturgySlideLayoutInfo layout)
+        public List<List<SizedTextBlurb>> GenerateSlides(List<ResponsiveStatement> statements, LiturgyTextboxLayout layout)
         {
 
             List<List<SizedTextBlurb>> slides = new List<List<SizedTextBlurb>>();
@@ -121,14 +121,13 @@ namespace Xenon.LayoutEngine.L2
         };
 
 
-        private List<List<SizedTextBlurb>> PlaceBlurbsForSingleSpeaker(SizedCandidateBlock block, ResponsiveLiturgySlideLayoutInfo layout)
+        private List<List<SizedTextBlurb>> PlaceBlurbsForSingleSpeaker(SizedCandidateBlock block, LiturgyTextboxLayout layout)
         {
             List<List<SizedTextBlurb>> slides = new List<List<SizedTextBlurb>>();
-            TextboxLayout TEXTBOX = layout.Textboxes.FirstOrDefault() ?? ResponsiveLiturgyLayoutInfoPrototyptes.TEXTBOX;
             // determine the available width of the textbox
-            float MAXWIDTH = layout.Textboxes.FirstOrDefault()?.Textbox.Size.Width ?? 0;
+            float MAXWIDTH = layout.Textbox.Size.Width;
             // determine the available height
-            float MAXHEIGHT = layout.Textboxes.FirstOrDefault()?.Textbox.Size.Height ?? 0;
+            float MAXHEIGHT = layout.Textbox.Size.Height;
             // all lines same height- use tallest height
             double lheight = block.MaxHeight;
 
@@ -144,7 +143,7 @@ namespace Xenon.LayoutEngine.L2
             // need some sort of algorith that operates on width's alone
             // do a greedy fill first, then shuffle to meet rules
 
-            RollingLineArray lines = new RollingLineArray(MAXWIDTH - layout.Textboxes.FirstOrDefault().SpeakerColumnWidth);
+            RollingLineArray lines = new RollingLineArray(MAXWIDTH - layout.SpeakerColumnWidth);
 
             foreach (var line in block.Lines)
             {
@@ -204,14 +203,14 @@ namespace Xenon.LayoutEngine.L2
 
 
             // calculate max lines/slide
-            double hpadding = layout.Textboxes.FirstOrDefault().VPaddingEnabled ? layout.Textboxes.FirstOrDefault().MinInterLineSpace * 2 : 0;
+            double hpadding = layout.VPaddingEnabled ? layout.MinInterLineSpace * 2 : 0;
             int numlinesperslide = 0;
             double hrem = MAXHEIGHT - hpadding;
             while (hrem >= lheight)
             {
                 numlinesperslide++;
                 hrem -= lheight;
-                hrem -= layout.Textboxes.FirstOrDefault().MinInterLineSpace;
+                hrem -= layout.MinInterLineSpace;
             }
 
             // compute number of slides required
@@ -223,21 +222,21 @@ namespace Xenon.LayoutEngine.L2
                 var lgroup = lines.Lines.Skip(i * numlinesperslide).Take((int)numlinesperslide).ToList();
 
                 // compute interspacing
-                int spacinglines = layout.Textboxes.First().VPaddingEnabled ? lgroup.Count + 1 : Math.Max(lgroup.Count - 1, 1);
-                double interspacing = (TEXTBOX.Textbox.Size.Height - (lheight * lgroup.Count)) / spacinglines;
-                interspacing = Math.Max(interspacing, layout.Textboxes.First().MinInterLineSpace);
+                int spacinglines = layout.VPaddingEnabled ? lgroup.Count + 1 : Math.Max(lgroup.Count - 1, 1);
+                double interspacing = (layout.Textbox.Size.Height - (lheight * lgroup.Count)) / spacinglines;
+                interspacing = Math.Max(interspacing, layout.MinInterLineSpace);
 
                 // place every blurb
-                double Yoff = layout.Textboxes.First().VPaddingEnabled ? interspacing : 0;
+                double Yoff = layout.VPaddingEnabled ? interspacing : 0;
                 double Xoff = 0;
 
                 List<SizedTextBlurb> sblurbs = new List<SizedTextBlurb>();
 
                 // place speaker only once per line (see assumption #2)
-                if (layout.Textboxes.FirstOrDefault()?.ShowSpeaker == true)
+                if (layout.ShowSpeaker == true)
                 {
                     var speaker = block.Lines.First().Speaker.Clone();
-                    speaker.Place(new Point(TEXTBOX.Textbox.Origin.X, (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
+                    speaker.Place(new Point(layout.Textbox.Origin.X, (int)(layout.Textbox.Origin.Y + Yoff)));
                     sblurbs.Add(speaker);
                 }
 
@@ -246,14 +245,14 @@ namespace Xenon.LayoutEngine.L2
                     // Start a new line
                     Xoff = 0;
 
-                    Xoff = layout.Textboxes.First().SpeakerColumnWidth;
+                    Xoff = layout.SpeakerColumnWidth;
 
                     // place every piece of text on the line (should fit)
                     foreach (var word in line.Blurbs)
                     {
                         if (word.Size.Width + Xoff < MAXWIDTH)
                         {
-                            word.Place(new Point((int)(TEXTBOX.Textbox.Origin.X + Xoff), (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
+                            word.Place(new Point((int)(layout.Textbox.Origin.X + Xoff), (int)(layout.Textbox.Origin.Y + Yoff)));
                             Xoff += word.Size.Width;
                         }
 #if DEBUG
@@ -279,15 +278,14 @@ namespace Xenon.LayoutEngine.L2
             return slides;
         }
 
-        private List<SizedTextBlurb> PlaceCandidateBlock(SizedCandidateBlock block, ResponsiveLiturgySlideLayoutInfo layout)
+        private List<SizedTextBlurb> PlaceCandidateBlock(SizedCandidateBlock block, LiturgyTextboxLayout layout)
         {
             List<SizedTextBlurb> blurbs = new List<SizedTextBlurb>();
-            TextboxLayout TEXTBOX = layout.Textboxes.FirstOrDefault() ?? ResponsiveLiturgyLayoutInfoPrototyptes.TEXTBOX;
 
             // determine the available width of the textbox
-            float MAXWIDTH = layout.Textboxes.FirstOrDefault()?.Textbox.Size.Width ?? 0;
+            float MAXWIDTH = layout.Textbox.Size.Width;
             // determine the available height
-            float MAXHEIGHT = layout.Textboxes.FirstOrDefault()?.Textbox.Size.Height ?? 0;
+            float MAXHEIGHT = layout.Textbox.Size.Height;
             // all lines same height- use tallest height
             double lheight = block.MaxHeight;
 
@@ -298,11 +296,11 @@ namespace Xenon.LayoutEngine.L2
 
             // for now use equidistant line spacing
             // TODO: add spacing options to proto
-            int spacinglines = layout.Textboxes.First().VPaddingEnabled ? block.NumLines + 1 : Math.Max(block.NumLines - 1, 1);
-            double interspacing = (TEXTBOX.Textbox.Size.Height - (lheight * block.NumLines)) / spacinglines;
-            interspacing = Math.Max(interspacing, layout.Textboxes.First().MinInterLineSpace);
+            int spacinglines = layout.VPaddingEnabled ? block.NumLines + 1 : Math.Max(block.NumLines - 1, 1);
+            double interspacing = (layout.Textbox.Size.Height - (lheight * block.NumLines)) / spacinglines;
+            interspacing = Math.Max(interspacing, layout.MinInterLineSpace);
 
-            double Yoff = layout.Textboxes.First().VPaddingEnabled ? interspacing : 0;
+            double Yoff = layout.VPaddingEnabled ? interspacing : 0;
             double Xoff = 0;
 
             foreach (var line in block.Lines)
@@ -310,28 +308,28 @@ namespace Xenon.LayoutEngine.L2
                 // Start a new line
                 Xoff = 0;
                 // place speaker
-                if (layout.Textboxes.FirstOrDefault()?.ShowSpeaker == true)
+                if (layout.ShowSpeaker == true)
                 {
-                    line.Speaker.Place(new Point(TEXTBOX.Textbox.Origin.X, (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
+                    line.Speaker.Place(new Point(layout.Textbox.Origin.X, (int)(layout.Textbox.Origin.Y + Yoff)));
                     blurbs.Add(line.Speaker);
                 }
 
-                Xoff = layout.Textboxes.First().SpeakerColumnWidth;
+                Xoff = layout.SpeakerColumnWidth;
 
                 // place every piece of text, wrap onto new lines a necessary
                 foreach (var word in line.Content)
                 {
                     if (word.Size.Width + Xoff < MAXWIDTH)
                     {
-                        word.Place(new Point((int)(TEXTBOX.Textbox.Origin.X + Xoff), (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
+                        word.Place(new Point((int)(layout.Textbox.Origin.X + Xoff), (int)(layout.Textbox.Origin.Y + Yoff)));
                         Xoff += word.Size.Width;
                     }
                     else
                     {
                         // new line
-                        Xoff = layout.Textboxes.First().SpeakerColumnWidth;
+                        Xoff = layout.SpeakerColumnWidth;
                         Yoff += interspacing + lheight;
-                        word.Place(new Point((int)(TEXTBOX.Textbox.Origin.X + Xoff), (int)(TEXTBOX.Textbox.Origin.Y + Yoff)));
+                        word.Place(new Point((int)(layout.Textbox.Origin.X + Xoff), (int)(layout.Textbox.Origin.Y + Yoff)));
                         Xoff += word.Size.Width;
                     }
                     blurbs.Add(word);
@@ -347,16 +345,14 @@ namespace Xenon.LayoutEngine.L2
         /// <summary>
         /// Rule 2: First pass line layout. If a line can't fully fit, kick the whole line. 
         /// </summary>
-        private List<SizedCandidateBlock> Rule2(CandidateBlock block, ResponsiveLiturgySlideLayoutInfo layout)
+        private List<SizedCandidateBlock> Rule2(CandidateBlock block, LiturgyTextboxLayout layout)
         {
             List<SizedCandidateBlock> sblocks = new List<SizedCandidateBlock>();
 
-            TextboxLayout TEXTBOX = layout.Textboxes.FirstOrDefault() ?? ResponsiveLiturgyLayoutInfoPrototyptes.TEXTBOX;
-
             // determine the available width of the textbox
-            float MAXWIDTH = layout.Textboxes.FirstOrDefault()?.Textbox.Size.Width ?? 0;
+            float MAXWIDTH = layout.Textbox.Size.Width;
             // determine the available height
-            float MAXHEIGHT = layout.Textboxes.FirstOrDefault()?.Textbox.Size.Height ?? 0;
+            float MAXHEIGHT = layout.Textbox.Size.Height;
 
             // now compute the height of every word in the the block's lines
             SizedCandidateBlock sblock;
@@ -373,7 +369,7 @@ namespace Xenon.LayoutEngine.L2
             foreach (SizedResponsiveStatement line in sblock.Lines)
             {
                 linesused++;
-                double widthused = line.Speaker.Size.Width + layout.Textboxes.First().SpeakerColumnWidth;
+                double widthused = line.Speaker.Size.Width + layout.SpeakerColumnWidth;
 
                 foreach (var w in line.Content)
                 {
@@ -385,7 +381,7 @@ namespace Xenon.LayoutEngine.L2
                     {
                         // we need a new line
                         linesused++;
-                        widthused = line.Speaker.Size.Width + layout.Textboxes.First().SpeakerColumnWidth + w.Size.Width;
+                        widthused = line.Speaker.Size.Width + layout.SpeakerColumnWidth + w.Size.Width;
                     }
                 }
             }
@@ -393,8 +389,8 @@ namespace Xenon.LayoutEngine.L2
             // if we discover that all the lines's total heights don't fit then we'd put the lines in seperate blocks
             double lheight = sblock.MaxHeight;
             double minheightreq = linesused * lheight
-                + Math.Max(linesused - 1, 1) * layout.Textboxes.First().MinInterLineSpace
-                + (layout.Textboxes.First().VPaddingEnabled ? layout.Textboxes.First().MinInterLineSpace * 2 : 0);
+                + Math.Max(linesused - 1, 1) * layout.MinInterLineSpace
+                + (layout.VPaddingEnabled ? layout.MinInterLineSpace * 2 : 0);
 
             if (minheightreq > MAXHEIGHT)
             {
@@ -422,7 +418,7 @@ namespace Xenon.LayoutEngine.L2
         /// <summary>
         /// Rule 1: Call/Response. Max 1 Switches of speaker per slide. If first speaker is not caller then no other speakers allowed.
         /// </summary>
-        private List<CandidateBlock> Rule1(List<ResponsiveStatement> lines, ResponsiveLiturgySlideLayoutInfo layout)
+        private List<CandidateBlock> Rule1(List<ResponsiveStatement> lines, LiturgyTextboxLayout layout)
         {
             List<CandidateBlock> blocks = new List<CandidateBlock>();
 
@@ -436,8 +432,8 @@ namespace Xenon.LayoutEngine.L2
                 {
                     speakers++;
                 }
-                if (speakers > layout.Textboxes.First().MaxSpeakers || 
-                    (!CALLERS.Contains(lastspeaker) && CALLERS.Contains(line.Speaker)).OptionalFalse(layout.Textboxes.First().EnforceCallResponse)
+                if (speakers > layout.MaxSpeakers || 
+                    (!CALLERS.Contains(lastspeaker) && CALLERS.Contains(line.Speaker)).OptionalFalse(layout.EnforceCallResponse)
                     )
                 {
                     // NEW BLOCK

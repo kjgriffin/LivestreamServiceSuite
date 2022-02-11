@@ -22,27 +22,25 @@ namespace Xenon.LayoutEngine.L2
             }
         }
 
-        public static SizedResponsiveStatement CreateSized(ResponsiveStatement statement, Graphics gfx, ResponsiveLiturgySlideLayoutInfo layout)
+        public static SizedResponsiveStatement CreateSized(ResponsiveStatement statement, Graphics gfx, LiturgyTextboxLayout layout)
         {
-            TextboxLayout TEXTBOX = layout.Textboxes.FirstOrDefault() ?? ResponsiveLiturgyLayoutInfoPrototyptes.TEXTBOX;
-
             SizedResponsiveStatement srs = new SizedResponsiveStatement();
 
             srs.Speaker = SizedTextBlurb.CreateMeasured(statement.SpeakerBlurb(layout),
                                                          gfx,
-                                                         TEXTBOX.Font.Name,
-                                                         TEXTBOX.Font.Size,
-                                                         TEXTBOX.Font.GetStyle(),
-                                                         TEXTBOX.Textbox.GetRectangleF());
+                                                         layout.Font.Name,
+                                                         layout.Font.Size,
+                                                         layout.Font.GetStyle(),
+                                                         layout.Textbox.GetRectangleF());
 
             foreach (var word in statement.ContentBlurbs(layout))
             {
                 srs.Content.Add(SizedTextBlurb.CreateMeasured(word,
                                                              gfx,
-                                                             TEXTBOX.Font.Name,
-                                                             TEXTBOX.Font.Size,
-                                                             TEXTBOX.Font.GetStyle(),
-                                                             TEXTBOX.Textbox.GetRectangleF()));
+                                                             layout.Font.Name,
+                                                             layout.Font.Size,
+                                                             layout.Font.GetStyle(),
+                                                             layout.Textbox.GetRectangleF()));
             }
 
             return srs;

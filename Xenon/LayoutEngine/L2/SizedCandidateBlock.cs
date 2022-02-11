@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 
 using Xenon.LayoutInfo;
+using Xenon.LayoutInfo.BaseTypes;
 
 namespace Xenon.LayoutEngine.L2
 {
@@ -20,7 +21,7 @@ namespace Xenon.LayoutEngine.L2
 
         public int NumLines { get; set; }
 
-        public static SizedCandidateBlock CreateSized(CandidateBlock block, Graphics gfx, ResponsiveLiturgySlideLayoutInfo layout)
+        public static SizedCandidateBlock CreateSized(CandidateBlock block, Graphics gfx, LiturgyTextboxLayout layout)
         {
             SizedCandidateBlock sblock = new SizedCandidateBlock();
             foreach (var line in block.Lines)

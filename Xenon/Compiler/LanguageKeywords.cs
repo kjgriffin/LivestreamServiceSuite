@@ -220,6 +220,7 @@ namespace Xenon.Compiler
         CustomText,
         Scripted,
         CustomDraw,
+        TitledLiturgyVerse2,
     }
 
 }

@@ -13,23 +13,64 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
-    class XenonASTLiturgy2 : IXenonASTCommand
+    class XenonAstTitledLiturgy : IXenonASTCommand
     {
         public IXenonASTElement Parent { get; private set; }
         public string RawContent { get; private set; } = "";
+
+        public List<string> Titles { get; private set; } = new List<string>();
         public int OrigContentSourceLine { get; private set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
-            XenonASTLiturgy2 liturgy = new XenonASTLiturgy2();
+            XenonAstTitledLiturgy liturgy = new XenonAstTitledLiturgy();
             liturgy.Parent = Parent;
 
+
             Lexer.GobbleWhitespace();
-            Lexer.GobbleandLog("{", "Expected opening brace at start of liturgy.");
+            Lexer.GobbleandLog("{", "Expected opening brace at start of titledliturgy.");
 
             liturgy.OrigContentSourceLine = Lexer.Peek().linenum;
 
 
+            while (!Lexer.InspectEOF())
+            {
+
+                if (Lexer.Gobble("title"))
+                {
+                    Lexer.GobbleWhitespace();
+                    Lexer.GobbleandLog("{", "expected opening '{' before title");
+                    liturgy.Titles.Add(Lexer.ConsumeUntil("}").tvalue.Trim());
+                    Lexer.GobbleandLog("}", "expected closing '}' after title");
+                }
+
+                else if (Lexer.Gobble("content"))
+                {
+                    if (!string.IsNullOrWhiteSpace(liturgy.RawContent))
+                    {
+                        Logger.Log(new XenonCompilerMessage
+                        {
+                            ErrorMessage = "Content set more than once. Will overwrite and use only the last definition.",
+                            ErrorName = "Duplicate Content",
+                            Generator = "XenonASTTitledLiturgy::Compile()",
+                            Level = XenonCompilerMessageType.Warning,
+                            Inner = "",
+                            Token = Lexer.CurrentToken,
+                        });
+                    }
+                    Lexer.GobbleWhitespace();
+                    Lexer.GobbleandLog("{", "Expected opening { at start of 'content'");
+                    CaptureLiturgyContent(Lexer, liturgy);
+                }
+            }
+
+            Lexer.GobbleandLog("}", "Expected closing brace at end of titledliturgy");
+
+            return liturgy;
+        }
+
+        private static void CaptureLiturgyContent(Lexer Lexer, XenonAstTitledLiturgy liturgy)
+        {
             // re-assemble all tokens until end of liturgy. // this will allow us to re-parse/tokenize with a custom liturgy lexer that will be better at what we're trying to do.
             StringBuilder sb = new StringBuilder();
             bool keepgoing = true;
@@ -61,8 +102,6 @@ namespace Xenon.Compiler.AST
 
             // we're done! (already captured the ending token '}')
             Lexer.GobbleWhitespace();
-
-            return liturgy;
         }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
@@ -84,15 +123,15 @@ namespace Xenon.Compiler.AST
             // that ways we won't have to do graphics stuff here, and can re-use it later (if we ever do other fancy stuff with liturgy-like things)
 
 
-            var linfo = (this as IXenonASTCommand).GetLayoutOverrideFromProj(project, Logger, LanguageKeywordCommand.Liturgy2);
-            ResponsiveLiturgySlideLayoutInfo layout = (ResponsiveLiturgySlideLayoutInfo)LanguageKeywords.LayoutForType[LanguageKeywordCommand.Liturgy2].layoutResolver._Internal_GetDefaultInfo();
+            var linfo = (this as IXenonASTCommand).GetLayoutOverrideFromProj(project, Logger, LanguageKeywordCommand.TitledLiturgyVerse2);
+            TitledResponsiveLiturgySlideLayoutInfo layout = (TitledResponsiveLiturgySlideLayoutInfo)LanguageKeywords.LayoutForType[LanguageKeywordCommand.TitledLiturgyVerse2].layoutResolver._Internal_GetDefaultInfo();
             if (linfo.found)
             {
-                layout = JsonSerializer.Deserialize<ResponsiveLiturgySlideLayoutInfo>(linfo.json);
+                layout = JsonSerializer.Deserialize<TitledResponsiveLiturgySlideLayoutInfo>(linfo.json);
             }
 
             ResponsiveLiturgyLayoutEngine engine = new ResponsiveLiturgyLayoutEngine();
-            var slideblocks = engine.GenerateSlides(statements, layout.Textboxes.FirstOrDefault());
+            var slideblocks = engine.GenerateSlides(statements, layout.ContentBox);
 
             List<Slide> slides = new List<Slide>();
             foreach (var sblock in slideblocks)
@@ -102,7 +141,7 @@ namespace Xenon.Compiler.AST
 
                 Slide slide = new Slide
                 {
-                    Name = "UNNAMED_liturgy2",
+                    Name = "UNNAMED_titledliturgy2",
                     Number = slidenum,
                     Lines = new List<SlideLine>(),
                     Asset = "",
