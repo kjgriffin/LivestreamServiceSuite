@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using AngleSharp.Dom;
 
+using static LutheRun.LSBResponsorialExtractor;
+
 namespace LutheRun
 {
     class LSBElementIntroit : ILSBElement
@@ -37,6 +39,10 @@ namespace LutheRun
 
         public string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
+            if (lSBImportOptions.UseComplexIntroit)
+            {
+                return AsComplex();
+            }
             // for now we'll have to assume that a 2 line cadence will work
             // this may not at all be correct
 
@@ -168,6 +174,29 @@ namespace LutheRun
 
             return sb.ToString();
 
+        }
+
+        private string AsComplex()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("#tlit {");
+            sb.AppendLine($"title={{{Caption}}}");
+            sb.AppendLine($"title={{{Caption}}}");
+
+            sb.AppendLine("content={");
+            foreach (var line in Lines)
+            {
+                LiturgicalStatement.Create(line.hasspeaker ? line.speaker : "", line.text).Write(sb);
+                if (line != Lines.Last())
+                {
+                    sb.AppendLine();
+                }
+            }
+            sb.AppendLine("}");
+            sb.AppendLine("}");
+
+            return sb.ToString();
         }
     }
 }

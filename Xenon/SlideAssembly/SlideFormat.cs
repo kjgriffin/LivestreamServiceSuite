@@ -29,5 +29,6 @@ namespace Xenon.SlideAssembly
         ShapesAndTexts,
         ResponsiveLiturgy,
         CustomDraw,
+        ResponsiveLiturgyTitledVerse,
     }
 }

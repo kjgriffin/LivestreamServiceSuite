@@ -38,7 +38,16 @@ namespace Xenon.Renderer.Helpers
         public static void RenderLayoutGhostPreview(Graphics gfx, Graphics kgfx, TextboxLayout layout)
         {
             gfx.FillRectangle(new SolidBrush(layout.BColor.GetColor()), layout.Textbox.GetRectangle());
-            gfx.DrawRectangle(new Pen(layout.BColor.GetColor(), 1) { DashPattern = new float[] { 15, 25 } }, layout.Textbox.GetRectangle());
+
+            if (layout.BColor.Alpha > 0)
+            {
+                gfx.DrawRectangle(new Pen(layout.BColor.GetColor(), 5) { DashPattern = new float[] { 10, 5 } }, layout.Textbox.GetRectangle());
+            }
+            else
+            {
+                gfx.DrawRectangle(new Pen(Color.FromArgb(200, 200, 200), 5) { DashPattern = new float[] { 10, 5 } }, layout.Textbox.GetRectangle());
+            }
+
 
             kgfx.FillRectangle(new SolidBrush(layout.KColor.GetColor()), layout.Textbox.GetRectangle());
         }

@@ -1,0 +1,174 @@
+{
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "BackgroundColor": {
+    "Hex": "#ff808080"
+  },
+  "KeyColor": {
+    "Hex": "#ff000000"
+  },
+  "TitleBoxes": [
+    {
+      "Textbox": {
+        "Origin": {
+          "X": 80,
+          "Y": 874
+        },
+        "Size": {
+          "Width": 1760,
+          "Height": 50
+        }
+      },
+      "Font": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 1
+      },
+      "FColor": {
+        "Hex": "#ffffffff"
+      },
+      "BColor": {
+        "Hex": "#00000000"
+      },
+      "KColor": {
+        "Hex": "#00000000"
+      },
+      "HorizontalAlignment": "Left",
+      "VerticalAlignment": "Center"
+    },
+    {
+      "Textbox": {
+        "Origin": {
+          "X": 80,
+          "Y": 874
+        },
+        "Size": {
+          "Width": 1760,
+          "Height": 50
+        }
+      },
+      "Font": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 2
+      },
+      "FColor": {
+        "Hex": "#ffffffff"
+      },
+      "BColor": {
+        "Hex": "#00000000"
+      },
+      "KColor": {
+        "Hex": "#00000000"
+      },
+      "HorizontalAlignment": "Right",
+      "VerticalAlignment": "Center"
+    }
+  ],
+  "ContentBox": {
+    "Textbox": {
+      "Origin": {
+        "X": 80,
+        "Y": 914
+      },
+      "Size": {
+        "Width": 1760,
+        "Height": 166
+      }
+    },
+    "Font": {
+      "Name": "Arial",
+      "Size": 36,
+      "Style": 1
+    },
+    "FColor": {
+      "Hex": "#ffffffff"
+    },
+    "BColor": {
+      "Hex": "#00000000"
+    },
+    "KColor": {
+      "Hex": "#00000000"
+    },
+    "HorizontalAlignment": "Left",
+    "VerticalAlignment": "Center",
+    "LineFonts": {
+      "P": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 0
+      },
+      "A": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 0
+      },
+      "L": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 0
+      },
+      "C": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 1
+      },
+      "R": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 1
+      }
+    },
+    "MaxSpeakers": 2,
+    "EnforceCallResponse": true,
+    "ShowSpeaker": true,
+    "SpeakerFont": {
+      "Name": "LSBSymbol",
+      "Size": 36,
+      "Style": 0
+    },
+    "SpeakerColor": {
+      "Hex": "#ffffffff"
+    },
+    "SpeakerColumnWidth": 100,
+    "VPaddingEnabled": true,
+    "MinInterLineSpace": 10
+  },
+  "Shapes": [
+    {
+      "Verticies": [
+        {
+          "X": 0,
+          "Y": 864
+        },
+        {
+          "X": 1920,
+          "Y": 864
+        },
+        {
+          "X": 1920,
+          "Y": 1080
+        },
+        {
+          "X": 0,
+          "Y": 1080
+        }
+      ],
+      "BorderWidth": 1,
+      "FillColor": {
+        "Hex": "#ff000000"
+      },
+      "KeyFillColor": {
+        "Hex": "#ff808080"
+      },
+      "BorderColor": {
+        "Hex": "#ff000000"
+      },
+      "KeyBorderColor": {
+        "Hex": "#ff808080"
+      }
+    }
+  ]
+}

@@ -26,6 +26,18 @@ namespace LutheRun
                 sb.AppendLine();
                 sb.Append("</line>");
             }
+
+            public static LiturgicalStatement Create(string speaker, string content)
+            {
+                return new LiturgicalStatement
+                {
+                    Speaker = speaker,
+                    TextSegments = new List<TextBlock>()
+                    {
+                        new TextBlock(content),
+                    }
+                };
+            }
         }
 
         internal struct TextBlock

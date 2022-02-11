@@ -219,6 +219,13 @@ namespace Xenon.Compiler
                 expr.Command = (IXenonASTCommand)tlverse.Compile(Lexer, Logger, parent);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.TitledLiturgyVerse2]))
+            {
+                XenonASTTitledLiturgy tlverse = new XenonASTTitledLiturgy();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.TitledLiturgyVerse2]);
+                expr.Command = (IXenonASTCommand)tlverse.Compile(Lexer, Logger, parent);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Reading]))
             {
                 XenonASTReading reading = new XenonASTReading();

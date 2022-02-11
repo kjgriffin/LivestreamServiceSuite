@@ -25,6 +25,15 @@ namespace Xenon.Compiler
             // only excpetions are we will gobble all leading whitespace in braces, and will remove the last 
             // character of whitespace before last brace
 
+            Logger.Log(new XenonCompilerMessage
+            {
+                ErrorName = "Command Deprecated",
+                ErrorMessage = $"No longer supported! Consider using {LanguageKeywords.Commands[LanguageKeywordCommand.TitledLiturgyVerse2]}",
+                Generator = "XenonASTLiturgyVerse::Compile()",
+                Inner = "",
+                Level = XenonCompilerMessageType.Error,
+                Token = Lexer.CurrentToken,
+            });
 
             Lexer.GobbleWhitespace();
             var args = Lexer.ConsumeArgList(true, "title", "reference");

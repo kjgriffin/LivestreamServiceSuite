@@ -13,7 +13,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
-    class XenonAstTitledLiturgy : IXenonASTCommand
+    class XenonASTTitledLiturgy : IXenonASTCommand
     {
         public IXenonASTElement Parent { get; private set; }
         public string RawContent { get; private set; } = "";
@@ -23,7 +23,7 @@ namespace Xenon.Compiler.AST
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
-            XenonAstTitledLiturgy liturgy = new XenonAstTitledLiturgy();
+            XenonASTTitledLiturgy liturgy = new XenonASTTitledLiturgy();
             liturgy.Parent = Parent;
 
 
@@ -32,12 +32,31 @@ namespace Xenon.Compiler.AST
 
             liturgy.OrigContentSourceLine = Lexer.Peek().linenum;
 
+            Lexer.GobbleWhitespace();
 
-            while (!Lexer.InspectEOF())
+            int stallcheck = 0;
+            while (!Lexer.InspectEOF() && !Lexer.Inspect("}"))
             {
+                if (stallcheck > 10000)
+                {
+                    Logger.Log(new XenonCompilerMessage
+                    {
+                        ErrorMessage = "Compiler probably stuck parsing. Attempted 10000 times to find end of command. Aborting- this may not generate the slides you want.",
+                        ErrorName = "Compiler Abort",
+                        Generator = "XenonASTTitledLiturgy::Compile",
+                        Inner = "Probably missing a '}' somewhere",
+                        Level = XenonCompilerMessageType.Error,
+                        Token = Lexer.CurrentToken
+                    });
+                    break;
+                }
+
+                Lexer.GobbleWhitespace();
 
                 if (Lexer.Gobble("title"))
                 {
+                    Lexer.GobbleWhitespace();
+                    Lexer.GobbleandLog("=");
                     Lexer.GobbleWhitespace();
                     Lexer.GobbleandLog("{", "expected opening '{' before title");
                     liturgy.Titles.Add(Lexer.ConsumeUntil("}").tvalue.Trim());
@@ -58,10 +77,16 @@ namespace Xenon.Compiler.AST
                             Token = Lexer.CurrentToken,
                         });
                     }
+
+                    Lexer.GobbleWhitespace();
+                    Lexer.GobbleandLog("=");
+                    Lexer.GobbleWhitespace();
+
                     Lexer.GobbleWhitespace();
                     Lexer.GobbleandLog("{", "Expected opening { at start of 'content'");
                     CaptureLiturgyContent(Lexer, liturgy);
                 }
+                stallcheck++;
             }
 
             Lexer.GobbleandLog("}", "Expected closing brace at end of titledliturgy");
@@ -69,7 +94,7 @@ namespace Xenon.Compiler.AST
             return liturgy;
         }
 
-        private static void CaptureLiturgyContent(Lexer Lexer, XenonAstTitledLiturgy liturgy)
+        private static void CaptureLiturgyContent(Lexer Lexer, XenonASTTitledLiturgy liturgy)
         {
             // re-assemble all tokens until end of liturgy. // this will allow us to re-parse/tokenize with a custom liturgy lexer that will be better at what we're trying to do.
             StringBuilder sb = new StringBuilder();
@@ -108,20 +133,8 @@ namespace Xenon.Compiler.AST
         {
             var statements = L2Parser.ParseLiturgyStatements(RawContent);
 
-            // need to further process statements- split into 'words' (whatever that means)
-            // then need to get the layout info for the slide
-            // using the layout info (perhaps get crazy here and define all the weight constants [easier to debug for sure this way]) we can resolve the fonts that should be used to measure each hunk of text
-            // once we know how big everything is we can try to stuff it where it should go as defined by the layout info
-            // we can at this point begin scoring various attempts, keeping in mind the golden rules of responsive liturgy
-            // need to figure out where to place it
-            // as for data to send to renderer- we'll build a custom renderer that does what we want
-            // it will do any background stuff
-            // then it will just print out text
-            // so the text that needs to go onto the slide will be just a bunch of 'textbox' objects containing the absolute position, font, text, styles, color etc.
-            // renderer should be pretty simple since it just needs to draw it- we've done the work for layout already. No need to make it do so twice
-            // as an architecture decision- perhaps we can have a common-layout class that can be called here, and also used in the renderer.
-            // that ways we won't have to do graphics stuff here, and can re-use it later (if we ever do other fancy stuff with liturgy-like things)
-
+            // borrows all the same logic as liturgy2
+            // we're just adding some additional textboxs to each generated slide and filling with title text
 
             var linfo = (this as IXenonASTCommand).GetLayoutOverrideFromProj(project, Logger, LanguageKeywordCommand.TitledLiturgyVerse2);
             TitledResponsiveLiturgySlideLayoutInfo layout = (TitledResponsiveLiturgySlideLayoutInfo)LanguageKeywords.LayoutForType[LanguageKeywordCommand.TitledLiturgyVerse2].layoutResolver._Internal_GetDefaultInfo();
@@ -145,14 +158,15 @@ namespace Xenon.Compiler.AST
                     Number = slidenum,
                     Lines = new List<SlideLine>(),
                     Asset = "",
-                    Format = SlideFormat.ResponsiveLiturgy,
+                    Format = SlideFormat.ResponsiveLiturgyTitledVerse,
                     MediaType = MediaType.Image,
                 };
 
-                slide.Data[ResponsiveLiturgyRenderer.DATAKEY] = sblock;
+                slide.Data[TitledResponsiveLiturgyRenderer.DATAKEY_CONTENTBLOCKS] = sblock;
+                slide.Data[TitledResponsiveLiturgyRenderer.DATAKEY_TITLETEXT] = Titles;
 
-                slide.Data["fallback-layout"] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.Liturgy2].defaultJsonFile;
-                (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.Liturgy2);
+                slide.Data["fallback-layout"] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.TitledLiturgyVerse2].defaultJsonFile;
+                (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.TitledLiturgyVerse2);
 
                 slides.Add(slide);
             }

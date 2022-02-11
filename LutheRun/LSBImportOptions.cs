@@ -18,6 +18,8 @@ namespace LutheRun
         [BoolSetting]
         public bool UseResponsiveLiturgy { get; set; } = true;
         [BoolSetting]
+        public bool UseComplexIntroit { get; set; } = true;
+        [BoolSetting]
         public bool UseComplexReading { get; set; } = true;
         [BoolSetting]
         public bool UseCopyTitle { get; set; } = true;
