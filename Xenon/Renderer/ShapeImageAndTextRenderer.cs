@@ -18,6 +18,8 @@ namespace Xenon.Renderer
     {
         public static string DATAKEY_BKGDIMAGES { get => "assets.background"; }
         public static string DATAKEY_FGDIMAGES { get => "assets.foreground"; }
+        public static string DATAKEY_TEXTS { get => "shape-and-text-strings"; }
+        public static string DATAKEY_FALLBACKLAYOUT { get => "fallback-layout"; }
         public ILayoutInfoResolver<ShapeImageAndTextLayoutInfo> LayoutResolver { get => new ShapeImageAndTextLayoutInfo(); }
 
         public bool IsValidLayoutJson(string json)
@@ -122,7 +124,7 @@ namespace Xenon.Renderer
             }
 
             // Draw All Text
-            if (slide.Data.TryGetValue("shape-and-text-strings", out object val))
+            if (slide.Data.TryGetValue(DATAKEY_TEXTS, out object val))
             {
                 List<string> strings = val as List<string> ?? new List<string>();
                 int i = 0;

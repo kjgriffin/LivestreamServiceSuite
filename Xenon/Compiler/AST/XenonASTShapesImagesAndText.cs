@@ -119,7 +119,7 @@ namespace Xenon.Compiler.AST
                 MediaType = MediaType.Image,
             };
 
-            slide.Data["shape-and-text-strings"] = Texts;
+            slide.Data[ShapeAndTextRenderer.DATAKEY_TEXTS] = Texts;
 
             List<ProjectAsset> FGAssets = new List<ProjectAsset>();
             List<ProjectAsset> BGAssets = new List<ProjectAsset>();
@@ -168,7 +168,7 @@ namespace Xenon.Compiler.AST
 
             slide.Data[ShapeImageAndTextRenderer.DATAKEY_FGDIMAGES] = FGAssets;
             slide.Data[ShapeImageAndTextRenderer.DATAKEY_BKGDIMAGES] = BGAssets;
-            slide.Data["fallback-layout"] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.CustomDraw].defaultJsonFile;
+            slide.Data[ShapeImageAndTextRenderer.DATAKEY_FALLBACKLAYOUT] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.CustomDraw].defaultJsonFile;
             (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.CustomDraw);
 
             slide.AddPostset(_Parent, true, true);

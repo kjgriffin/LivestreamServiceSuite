@@ -7,6 +7,7 @@ using System.Text;
 
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -164,17 +165,17 @@ namespace Xenon.Compiler.AST
                 slide.Format = SlideFormat.StitchedImage;
                 slide.MediaType = MediaType.Image;
 
-                slide.Data["title"] = Title;
-                slide.Data["hymnname"] = HymnName;
-                slide.Data["number"] = Number;
-                slide.Data["copyright"] = CopyrightInfo;
+                slide.Data[StitchedImageRenderer.DATAKEY_TITLE] = Title;
+                slide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
+                slide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
+                slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
                 if (CopyrightText != CopyrightTune)
                 {
-                    slide.Data["copyright-text"] = CopyrightText;
-                    slide.Data["copyright-tune"] = CopyrightTune;
+                    slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
+                    slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
                 }
 
-                slide.Data["ordered-images"] = ImageSizes.Select(i => new LSBImageResource(i.Key, i.Value)).ToList();
+                slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = ImageSizes.Select(i => new LSBImageResource(i.Key, i.Value)).ToList();
 
                 slide.AddPostset(_Parent, true, true);
 
@@ -263,17 +264,17 @@ namespace Xenon.Compiler.AST
                 slide.Format = SlideFormat.StitchedImage;
                 slide.MediaType = MediaType.Image;
 
-                slide.Data["title"] = Title;
-                slide.Data["hymnname"] = HymnName;
-                slide.Data["number"] = Number;
-                slide.Data["copyright"] = CopyrightInfo;
+                slide.Data[StitchedImageRenderer.DATAKEY_TITLE] = Title;
+                slide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
+                slide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
+                slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
                 if (CopyrightText != CopyrightTune)
                 {
-                    slide.Data["copyright-text"] = CopyrightText;
-                    slide.Data["copyright-tune"] = CopyrightTune;
+                    slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
+                    slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
                 }
 
-                slide.Data["ordered-images"] = ImageAssets.Select(i => new LSBImageResource(i, ImageSizes[i])).ToList();
+                slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = ImageAssets.Select(i => new LSBImageResource(i, ImageSizes[i])).ToList();
 
                 slide.AddPostset(_Parent, true, true);
 
@@ -361,17 +362,17 @@ namespace Xenon.Compiler.AST
                 slide.Format = SlideFormat.StitchedImage;
                 slide.MediaType = MediaType.Image;
 
-                slide.Data["title"] = Title;
-                slide.Data["hymnname"] = HymnName;
-                slide.Data["number"] = Number;
-                slide.Data["copyright"] = CopyrightInfo;
+                slide.Data[StitchedImageRenderer.DATAKEY_TITLE] = Title;
+                slide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
+                slide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
+                slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
                 if (CopyrightText != CopyrightTune)
                 {
-                    slide.Data["copyright-text"] = CopyrightText;
-                    slide.Data["copyright-tune"] = CopyrightTune;
+                    slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
+                    slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
                 }
 
-                slide.Data["ordered-images"] = hymn.OrderAllAsOne();
+                slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderAllAsOne();
                 slide.AddPostset(_Parent, true, true);
                 (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
                 slides.Add(slide);
@@ -394,17 +395,17 @@ namespace Xenon.Compiler.AST
                     slide.Format = SlideFormat.StitchedImage;
                     slide.MediaType = MediaType.Image;
 
-                    slide.Data["title"] = Title;
-                    slide.Data["hymnname"] = HymnName;
-                    slide.Data["number"] = Number;
-                    slide.Data["copyright"] = CopyrightInfo;
+                    slide.Data[StitchedImageRenderer.DATAKEY_TITLE] = Title;
+                    slide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
+                    slide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
+                    slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
                     if (CopyrightText != CopyrightTune)
                     {
-                        slide.Data["copyright-text"] = CopyrightText;
-                        slide.Data["copyright-tune"] = CopyrightTune;
+                        slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
+                        slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
                     }
 
-                    slide.Data["ordered-images"] = hymn.OrderVerse(versenum++);
+                    slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderVerse(versenum++);
 
                     slide.AddPostset(_Parent, versenum == 0, hymn.Verses.Count == versenum && !hymn.RepeatingPostRefrain);
                     (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
@@ -420,17 +421,17 @@ namespace Xenon.Compiler.AST
                         refrainslide.Format = SlideFormat.StitchedImage;
                         refrainslide.MediaType = MediaType.Image;
 
-                        refrainslide.Data["title"] = Title;
-                        refrainslide.Data["hymnname"] = HymnName;
-                        refrainslide.Data["number"] = Number;
-                        refrainslide.Data["copyright"] = CopyrightInfo;
+                        refrainslide.Data[StitchedImageRenderer.DATAKEY_TITLE] = Title;
+                        refrainslide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
+                        refrainslide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
+                        refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
                         if (CopyrightText != CopyrightTune)
                         {
-                            refrainslide.Data["copyright-text"] = CopyrightText;
-                            refrainslide.Data["copyright-tune"] = CopyrightTune;
+                            refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
+                            refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
                         }
 
-                        refrainslide.Data["ordered-images"] = hymn.OrderRefrain();
+                        refrainslide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderRefrain();
 
 
                         refrainslide.AddPostset(_Parent, false, hymn.Verses.Count == versenum);

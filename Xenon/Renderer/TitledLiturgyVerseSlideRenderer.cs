@@ -15,6 +15,13 @@ namespace Xenon.Renderer
 {
     class TitledLiturgyVerseSlideRenderer : ISlideRenderer<TitledLiturgyVerseSlideLayoutInfo>, ISlideRenderer, ISlideLayoutPrototypePreviewer<ALayoutInfo>
     {
+
+        public static string DATAKEY_MODE { get => "mode"; }
+        public static string DATAKEY_LINES { get => "lines"; }
+        public static string DATAKEY_TITLE { get => "title"; }
+        public static string DATAKEY_REF { get => "reference"; }
+        public static string DATAKEY_DRAWSPEAKER { get => "drawspeakers"; }
+
         public ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo> LayoutResolver { get => new TitledLiturgyVerseSlideLayoutInfo(); }
 
         public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
@@ -46,7 +53,7 @@ namespace Xenon.Renderer
 
         public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages, TitledLiturgyVerseSlideLayoutInfo layout)
         {
-            if (slide.Data.TryGetValue("mode", out object mode))
+            if (slide.Data.TryGetValue(DATAKEY_MODE, out object mode))
             {
                 if ((string)mode == "legacy")
                 {
@@ -81,8 +88,8 @@ namespace Xenon.Renderer
             DrawingBoxRenderer.Render(gfx, kgfx, layout.Banner);
 
 
-            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data["title"], layout.TitleBox);
-            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data["reference"], layout.RefBox);
+            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data[DATAKEY_TITLE], layout.TitleBox);
+            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data[DATAKEY_REF], layout.RefBox);
 
 
 
@@ -95,7 +102,7 @@ namespace Xenon.Renderer
             //kgfx.DrawString((string)slide.Data["reference"], itf, Brushes.White, layout.TitleLine.Move(layout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
 
 
-            List<LiturgyTextLine> Lines = (List<LiturgyTextLine>)slide.Data["lines"];
+            List<LiturgyTextLine> Lines = (List<LiturgyTextLine>)slide.Data[DATAKEY_LINES];
 
             float alltextheight = 0;
             foreach (var line in Lines)
@@ -120,7 +127,7 @@ namespace Xenon.Renderer
                 xoffset = (layout.ContentTextbox.Textbox.Size.Width / 2) - (line.Width / 2);
 
                 // draw speaker
-                if ((string)slide.Data["drawspeaker"] == "true" && lastspeaker != line.Speaker)
+                if ((string)slide.Data[DATAKEY_DRAWSPEAKER] == "true" && lastspeaker != line.Speaker)
                 {
                     SizeF speakersize = gfx.MeasureStringCharacters(line.Speaker, ref flsbregular, new RectangleF(0, 0, 100, 100));
                     float jog = 0.07f * (gfx.DpiY * speakersize.Height / 72);
@@ -180,11 +187,11 @@ namespace Xenon.Renderer
             DrawingBoxRenderer.Render(gfx, kgfx, layout.Banner);
 
 
-            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data["title"], layout.TitleBox);
-            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data["reference"], layout.RefBox);
+            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data[DATAKEY_TITLE], layout.TitleBox);
+            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data[DATAKEY_REF], layout.RefBox);
 
 
-            List<LiturgyTextLine> Lines = (List<LiturgyTextLine>)slide.Data["lines"];
+            List<LiturgyTextLine> Lines = (List<LiturgyTextLine>)slide.Data[DATAKEY_LINES];
 
             float alltextheight = 0;
             foreach (var line in Lines)

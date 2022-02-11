@@ -17,6 +17,14 @@ namespace Xenon.Renderer
     class StitchedImageRenderer : ISlideRenderer<StitchedImageSlideLayoutInfo>, ISlideRenderer, ISlideLayoutPrototypePreviewer<ALayoutInfo>
     {
 
+        public static string DATAKEY_IMAGES { get => "ordered-images"; }
+        public static string DATAKEY_TITLE { get => "title"; }
+        public static string DATAKEY_NAME { get => "name"; }
+        public static string DATAKEY_NUMBER { get => "number"; }
+        public static string DATAKEY_COPYRIGHT { get => "copyright"; }
+        public static string DATAKEY_COPYRIGHT_TEXT { get => "copyright-text"; }
+        public static string DATAKEY_COPYRIGHT_TUNE { get => "copyright-tune"; }
+
         public RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, IAssetResolver projassets, StitchedImageSlideLayoutInfo layout)
         {
             RenderedSlide res = new RenderedSlide();
@@ -41,10 +49,10 @@ namespace Xenon.Renderer
             }
 
 
-            List<LSBImageResource> imageresources = (List<LSBImageResource>)slide.Data.GetOrDefault("ordered-images", new List<LSBImageResource>());
-            string title = (string)slide.Data.GetOrDefault("title", "");
-            string hymnname = (string)slide.Data.GetOrDefault("hymnname", "");
-            string number = (string)slide.Data.GetOrDefault("number", "");
+            List<LSBImageResource> imageresources = (List<LSBImageResource>)slide.Data.GetOrDefault(DATAKEY_IMAGES, new List<LSBImageResource>());
+            string title = (string)slide.Data.GetOrDefault(DATAKEY_TITLE, "");
+            string hymnname = (string)slide.Data.GetOrDefault(DATAKEY_NAME, "");
+            string number = (string)slide.Data.GetOrDefault(DATAKEY_NUMBER, "");
 
 
             // create new bitmap for the image for now...
@@ -102,10 +110,10 @@ namespace Xenon.Renderer
             //gfx.DrawString(number, layout.NumberBox.Font.GetFont(), new SolidBrush(layout.NumberBox.FColor.GetColor()), layout.NumberBox.Textbox.GetRectangle(), GraphicsHelper.RightVerticalCenterAlign);
 
             // draw copyright
-            if (slide.Data.ContainsKey("copyright-text"))
+            if (slide.Data.ContainsKey(DATAKEY_COPYRIGHT))
             {
-                string copyrighttune = (string)slide.Data.GetOrDefault("copyright-tune", "");
-                string copyrighttext = (string)slide.Data.GetOrDefault("copyright-text", "");
+                string copyrighttune = (string)slide.Data.GetOrDefault(DATAKEY_COPYRIGHT_TUNE, "");
+                string copyrighttext = (string)slide.Data.GetOrDefault(DATAKEY_COPYRIGHT_TEXT, "");
                 gfx.DrawString(copyrighttune, layout.CopyrightBox.Font.GetFont(), new SolidBrush(layout.CopyrightBox.FColor.GetColor()), new Rectangle(layout.CopyrightBox.Textbox.Origin.X, layout.CopyrightBox.Textbox.Origin.Y, layout.CopyrightBox.Textbox.Size.Width, layout.CopyrightBox.Textbox.Size.Height / 2), GraphicsHelper.LeftVerticalCenterAlign);
                 //g.DrawRectangle(Pens.Orange, 0, height - 30, width, 15);
                 //g.DrawRectangle(Pens.Orange, 0, height - 15, width, 15);
@@ -113,7 +121,7 @@ namespace Xenon.Renderer
             }
             else
             {
-                string copyright = (string)slide.Data.GetOrDefault("copyright", "");
+                string copyright = (string)slide.Data.GetOrDefault(DATAKEY_COPYRIGHT, "");
                 //gfx.DrawString(copyright, layout.CopyrightBox.Font.GetFont(), new SolidBrush(layout.CopyrightBox.FColor.GetColor()), layout.CopyrightBox.Textbox.GetRectangle(), GraphicsHelper.LeftVerticalCenterAlign);
                 //g.DrawRectangle(Pens.Blue, 0, height - 20, width, 20);
                 TextBoxRenderer.Render(gfx, kgfx, copyright, layout.CopyrightBox);

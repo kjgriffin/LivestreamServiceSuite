@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -80,8 +81,8 @@ namespace Xenon.Compiler.AST
                 Title, MainText, InfoText,
             };
 
-            slide.Data["shape-and-text-strings"] = strings;
-            slide.Data["fallback-layout"] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.UpNext].defaultJsonFile;
+            slide.Data[ShapeAndTextRenderer.DATAKEY_TEXTS] = strings;
+            slide.Data[ShapeAndTextRenderer.DATAKEY_FALLBACKLAYOUT] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.UpNext].defaultJsonFile;
             (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.UpNext);
 
             slide.AddPostset(_Parent, true, true);

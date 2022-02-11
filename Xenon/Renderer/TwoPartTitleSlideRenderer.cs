@@ -14,6 +14,11 @@ namespace Xenon.Renderer
 {
     class TwoPartTitleSlideRenderer : ISlideRenderer, ISlideRenderer<_2TitleSlideLayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>
     {
+
+        public static string DATAKEY_MAINTEXT {get => "maintext";}
+        public static string DATAKEY_SUBTEXT { get => "subtext"; }
+        public static string DATAKEY_ORIENTATION { get => "orientation"; }
+
         public ILayoutInfoResolver<_2TitleSlideLayoutInfo> LayoutResolver { get => new _2TitleSlideLayoutInfo(); }
 
         public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
@@ -63,9 +68,9 @@ namespace Xenon.Renderer
             DrawingBoxRenderer.Render(gfx, kgfx, layout.Banner);
 
 
-            string orientation = (string)slide.Data.GetOrDefault("orientation", "horizontal");
-            string maintext = (string)slide.Data.GetOrDefault("maintext", "");
-            string subtext = (string)slide.Data.GetOrDefault("subtext", "");
+            string orientation = (string)slide.Data.GetOrDefault(DATAKEY_ORIENTATION, "horizontal");
+            string maintext = (string)slide.Data.GetOrDefault(DATAKEY_MAINTEXT, "");
+            string subtext = (string)slide.Data.GetOrDefault(DATAKEY_SUBTEXT, "");
 
             if (orientation == "horizontal")
             {

@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -80,13 +81,13 @@ namespace Xenon.Compiler.AST
             layoutEngine.BuildLines(Text, otherspeakers);
             layoutEngine.BuildTextLines(project.Layouts.TitleLiturgyVerseLayout.Textbox);
 
-            slide.Data["lines"] = layoutEngine.LiturgyTextLines;
-            slide.Data["title"] = Title;
-            slide.Data["reference"] = Reference;
-            slide.Data["drawspeaker"] = DrawSpeaker;
+            slide.Data[TitledLiturgyVerseSlideRenderer.DATAKEY_LINES] = layoutEngine.LiturgyTextLines;
+            slide.Data[TitledLiturgyVerseSlideRenderer.DATAKEY_TITLE] = Title;
+            slide.Data[TitledLiturgyVerseSlideRenderer.DATAKEY_REF] = Reference;
+            slide.Data[TitledLiturgyVerseSlideRenderer.DATAKEY_DRAWSPEAKER] = DrawSpeaker;
             if (!string.IsNullOrWhiteSpace(Mode))
             {
-                slide.Data["mode"] = Mode;
+                slide.Data[TitledLiturgyVerseSlideRenderer.DATAKEY_MODE] = Mode;
             }
 
             // This is no-longer relevatn

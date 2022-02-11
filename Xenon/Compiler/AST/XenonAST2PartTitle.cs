@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 using Xenon.Helpers;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -44,9 +45,9 @@ namespace Xenon.Compiler.AST
             };
 
 
-            titleslide.Data["orientation"] = Orientation;
-            titleslide.Data["maintext"] = Part1;
-            titleslide.Data["subtext"] = Part2;
+            titleslide.Data[TwoPartTitleSlideRenderer.DATAKEY_ORIENTATION] = Orientation;
+            titleslide.Data[TwoPartTitleSlideRenderer.DATAKEY_MAINTEXT] = Part1;
+            titleslide.Data[TwoPartTitleSlideRenderer.DATAKEY_SUBTEXT] = Part2;
             (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, titleslide, LanguageKeywordCommand.TwoPartTitle);
 
             titleslide.AddPostset(_Parent, true, true);
