@@ -228,6 +228,7 @@ namespace SlideCreater
             SetupLayoutsTreeVew();
 
             ShowProjectAssets();
+            Assets = _proj.Assets;
         }
 
 
@@ -883,7 +884,7 @@ namespace SlideCreater
             TbInput.Text = string.Empty;
             _proj.CleanupResources();
             _proj = new Project(true);
-            _proj.Assets = Assets;
+            Assets = _proj.Assets;
 
             ShowProjectAssets();
             SetupLayoutsTreeVew();

@@ -162,6 +162,10 @@ namespace Xenon.SlideAssembly
             {
                 InitializeDefaultAssets();
             }
+            else
+            {
+                Assets = new List<ProjectAsset>();
+            }
             //ProjectLayouts.InitializeNewLibrary("User.Library");
             XenonSuggestionService = new XenonSuggestionService(this);
         }
