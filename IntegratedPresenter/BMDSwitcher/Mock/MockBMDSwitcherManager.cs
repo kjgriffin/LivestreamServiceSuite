@@ -218,6 +218,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             SwitcherStateChanged?.Invoke(_state);
         }
 
+        public void PerformSetTieDSK1(bool set)
+        {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            _state.DSK1Tie = set;
+            mockMultiviewer.SetTieDSK1(_state.DSK1Tie);
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
         public void PerformTieDSK2()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -225,6 +233,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             mockMultiviewer.SetTieDSK2(_state.DSK2Tie);
             SwitcherStateChanged?.Invoke(_state);
         }
+        public void PerformSetTieDSK2(bool set)
+        {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            _state.DSK2Tie = set;
+            mockMultiviewer.SetTieDSK2(_state.DSK2Tie);
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
 
         public void PerformToggleDSK2()
         {

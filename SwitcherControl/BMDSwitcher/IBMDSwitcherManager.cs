@@ -28,6 +28,8 @@ namespace IntegratedPresenter
         void PerformTakeAutoDSK2();
         void PerformTieDSK1();
         void PerformTieDSK2();
+        void PerformSetTieDSK1(bool set);
+        void PerformSetTieDSK2(bool set);
         void PerformToggleDSK1();
         void PerformToggleDSK2();
         void PerformToggleFTB();

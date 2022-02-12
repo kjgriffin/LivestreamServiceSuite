@@ -15,13 +15,22 @@
         DSK1FadeOn,
         DSK1FadeOff,
 
+        DSK1TieOn,
+        DSK1TieOff,
+
         DSK2On,
         DSK2Off,
         DSK2FadeOn,
         DSK2FadeOff,
 
+        DSK2TieOn,
+        DSK2TieOff,
+
         USK1Off,
         USK1On,
+
+        USK1TieOn,
+        USK1TieOff,
 
         USK1SetTypeChroma,
         USK1SetTypeDVE,

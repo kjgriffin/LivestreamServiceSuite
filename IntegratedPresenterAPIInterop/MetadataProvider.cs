@@ -20,14 +20,20 @@ namespace IntegratedPresenterAPIInterop
             [AutomationActions.DSK1Off] = (0, AutomationActions.DSK1Off, "DSK1Off", null),
             [AutomationActions.DSK1FadeOn] = (0, AutomationActions.DSK1FadeOn, "DSK1FadeOn", null),
             [AutomationActions.DSK1FadeOff] = (0, AutomationActions.DSK1FadeOff, "DSK1FadeOff", null),
+            [AutomationActions.DSK1TieOn] = (0, AutomationActions.DSK1TieOn, "DSK1TieOn", null),
+            [AutomationActions.DSK1TieOff] = (0, AutomationActions.DSK1TieOff, "DSK1TieOff", null),
 
             [AutomationActions.DSK2On] = (0, AutomationActions.DSK2On, "DSK2On", null),
             [AutomationActions.DSK2Off] = (0, AutomationActions.DSK2Off, "DSK2Off", null),
             [AutomationActions.DSK2FadeOn] = (0, AutomationActions.DSK2FadeOn, "DSK2FadeOn", null),
             [AutomationActions.DSK2FadeOff] = (0, AutomationActions.DSK2FadeOff, "DSK2FadeOff", null),
+            [AutomationActions.DSK2TieOn] = (0, AutomationActions.DSK2TieOn, "DSK2TieOn", null),
+            [AutomationActions.DSK2TieOff] = (0, AutomationActions.DSK2TieOff, "DSK2TieOff", null),
 
             [AutomationActions.USK1On] = (0, AutomationActions.USK1On, "USK1On", null),
             [AutomationActions.USK1Off] = (0, AutomationActions.USK1Off, "USK1Off", null),
+            [AutomationActions.USK1TieOn] = (0, AutomationActions.USK1TieOn, "USK1TieOn", null),
+            [AutomationActions.USK1TieOff] = (0, AutomationActions.USK1TieOff, "USK1TieOff", null),
             [AutomationActions.USK1SetTypeChroma] = (0, AutomationActions.USK1SetTypeChroma, "USK1SetTypeChroma", null),
             [AutomationActions.USK1SetTypeDVE] = (0, AutomationActions.USK1SetTypeDVE, "USK1SetTypeDVE", null),
 

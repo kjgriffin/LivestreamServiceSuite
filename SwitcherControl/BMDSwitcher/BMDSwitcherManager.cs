@@ -1270,6 +1270,11 @@ namespace IntegratedPresenter
             _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {(_state.DSK1Tie ? 0 : 1)}");
             _BMDSwitcherDownstreamKey1.SetTie(_state.DSK1Tie ? 0 : 1);
         }
+        public void PerformSetTieDSK1(bool set)
+        {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {set}");
+            _BMDSwitcherDownstreamKey1.SetTie(set ? 1 : 0);
+        }
         public void PerformTakeAutoDSK1()
         {
             _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -1295,6 +1300,12 @@ namespace IntegratedPresenter
             _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {(_state.DSK2Tie ? 0 : 1)}");
             _BMDSwitcherDownstreamKey2.SetTie(_state.DSK2Tie ? 0 : 1);
         }
+        public void PerformSetTieDSK2(bool set)
+        {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {set}");
+            _BMDSwitcherDownstreamKey2.SetTie(set ? 1 : 0);
+        }
+
         public void PerformTakeAutoDSK2()
         {
             _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -1561,16 +1572,40 @@ namespace IntegratedPresenter
             });
         }
 
+        /// <summary>
+        /// Enables USK1 as part of next transition. Does not change the state of BKGD selection for the next transition.
+        /// </summary>
         public void PerformSetKey1OnForNextTrans()
         {
-
             _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+
+            _parent.Dispatcher.Invoke(() =>
+            {
+                int val = 0;
+                if (_state.TransNextBackground)
+                {
+                    val |= (int)_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionBackground;
+                }
+                val |= (int)_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionKey1;
+                _BMDSwitcherTransitionParameters.SetNextTransitionSelection((_BMDSwitcherTransitionSelection)val);
+            });
         }
 
+        /// <summary>
+        /// Assumes only 1 M/E and 1 USK
+        /// Thus this will force the BKGD layer selected, since 1 must always be selected.
+        /// </summary>
         public void PerformSetKey1OffForNextTrans()
         {
 
             _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+            _parent.Dispatcher.Invoke(() =>
+            {
+                _BMDSwitcherTransitionParameters.SetNextTransitionSelection(_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionBackground);
+            });
+
         }
 
         public void PerformAuxSelect(int sourceID)

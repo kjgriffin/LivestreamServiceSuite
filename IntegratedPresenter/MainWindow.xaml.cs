@@ -1887,6 +1887,24 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
+
+                    case AutomationActions.DSK1TieOn:
+                        Dispatcher.Invoke(() =>
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- TIE DSK1 to Next Transition");
+                            switcherManager?.PerformSetTieDSK1(true);
+                        });
+                        break;
+                    case AutomationActions.DSK1TieOff:
+                        Dispatcher.Invoke(() =>
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- UNTIE DSK1 to Next Transition");
+                            switcherManager?.PerformSetTieDSK1(false);
+                        });
+                        break;
+
+
+
                     case AutomationActions.DSK2On:
                         if (!switcherState.DSK2OnAir)
                         {
@@ -1927,6 +1945,22 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
+
+                    case AutomationActions.DSK2TieOn:
+                        Dispatcher.Invoke(() =>
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- TIE DSK2 to Next Transition");
+                            switcherManager?.PerformSetTieDSK2(true);
+                        });
+                        break;
+                    case AutomationActions.DSK2TieOff:
+                        Dispatcher.Invoke(() =>
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- UNTIE DSK2 to Next Transition");
+                            switcherManager?.PerformSetTieDSK2(false);
+                        });
+                        break;
+
                     case AutomationActions.RecordStart:
                         break;
                     case AutomationActions.RecordStop:
@@ -1963,6 +1997,23 @@ namespace IntegratedPresenter.Main
                             });
                         }
                         break;
+
+
+                    case AutomationActions.USK1TieOn:
+                        Dispatcher.Invoke(() =>
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- ENABLE USK1 layer on Next Transition");
+                            switcherManager?.PerformSetKey1OnForNextTrans();
+                        });
+                        break;
+                    case AutomationActions.USK1TieOff:
+                        Dispatcher.Invoke(() =>
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- DISABLE USK1 layer on Next Transition");
+                            switcherManager?.PerformSetKey1OffForNextTrans();
+                        });
+                        break;
+
                     case AutomationActions.USK1SetTypeChroma:
                         Dispatcher.Invoke(() =>
                         {
