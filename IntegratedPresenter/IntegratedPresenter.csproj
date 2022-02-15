@@ -5,7 +5,7 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>Integrated_Presenter</RootNamespace>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>icon4.ico</ApplicationIcon>
+    <ApplicationIcon>picon_RWa_icon.ico</ApplicationIcon>
     <!--<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>-->
     <!--<PublishSingleFile>True</PublishSingleFile>-->
     <!--<PublishReadyToRun>True</PublishReadyToRun>-->
@@ -56,6 +56,10 @@
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
     </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="picon_RWa_icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
