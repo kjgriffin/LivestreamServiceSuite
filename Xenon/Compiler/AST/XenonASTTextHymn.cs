@@ -55,6 +55,7 @@ namespace Xenon.Compiler
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTTextHymn textHymn = new XenonASTTextHymn();
+
             Lexer.GobbleWhitespace();
 
             var args = Lexer.ConsumeArgList(true, "title", "name", "tune", "number", "copyright");
@@ -97,7 +98,7 @@ namespace Xenon.Compiler
                 {
                     Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.Verse], "Only verse command is valid here");
                     XenonASTHymnVerse verse = new XenonASTHymnVerse();
-                    textHymn.Verses.Add((XenonASTHymnVerse)verse.Compile(Lexer, Logger, this));
+                    textHymn.Verses.Add((XenonASTHymnVerse)verse.Compile(Lexer, Logger, textHymn));
                 }
                 Lexer.GobbleWhitespace();
             }

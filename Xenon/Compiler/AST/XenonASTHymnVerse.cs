@@ -71,7 +71,7 @@ namespace Xenon.Compiler
 
             slide.Data[HymnTextVerseRenderer.DATAKEY_HCONTENT] = vle.LayoutLines.Select(x => string.Concat(x.Words).Trim()).ToList();
 
-            (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.TitledLiturgyVerse);
+            (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.TextHymn);
 
             slide.AddPostset(parent._localParent, parent._localVNum == 0, parent._localVNum == parent._localVerses);
 
