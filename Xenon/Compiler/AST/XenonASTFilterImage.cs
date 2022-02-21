@@ -6,9 +6,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Xenon.Renderer.ImageFilters;
 using Xenon.Helpers;
-using Xenon.Compiler.AST;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTFilterImage : IXenonASTCommand
     {

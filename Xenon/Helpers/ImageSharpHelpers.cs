@@ -40,5 +40,13 @@ namespace Xenon.Helpers
             }
         }
 
+        public static void SetupGDIGraphics(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, out GDI.Graphics gfx, out GDI.Graphics kgfx, out GDI.Bitmap bmp, out GDI.Bitmap kbmp)
+        {
+            bmp = ibmp.ToBitmap();
+            kbmp = ikbmp.ToBitmap();
+            gfx = GDI.Graphics.FromImage(bmp);
+            kgfx = GDI.Graphics.FromImage(kbmp);
+        }
+
     }
 }

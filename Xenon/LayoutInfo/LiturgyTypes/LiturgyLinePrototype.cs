@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Xenon.Layouts;
-
 namespace Xenon.LayoutInfo.LiturgyTypes
 {
     /// <summary>

@@ -3,10 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Xenon.Compiler.AST;
 using Xenon.Helpers;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTFitImage : IXenonASTCommand
     {

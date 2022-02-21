@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Media.Imaging;
 using Xenon.Helpers;
 using System.Linq.Expressions;
+using Xenon.Compiler.AST;
 
 namespace Xenon.Renderer
 {

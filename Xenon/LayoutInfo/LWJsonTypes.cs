@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 using Xenon.Helpers;
 
-namespace Xenon.Layouts
+namespace Xenon.LayoutInfo
 {
     class LWJPoint
     {

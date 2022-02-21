@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTFullText
     {

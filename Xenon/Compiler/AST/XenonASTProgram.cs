@@ -3,9 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Xenon.Compiler.AST;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTProgram : IXenonASTElement
     {
@@ -23,7 +22,7 @@ namespace Xenon.Compiler
                 Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression {item.Command.GetType()}", ErrorName = "Project Generation Debug", Generator = "XenonASTProgram:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = ("", int.MaxValue) });
                 slides.AddRange(item.Generate(project, this, Logger));
                 prog++;
-                progress?.Report(cprog + (((prog * 100) / total) * ((100 - cprog) / 100)));
+                progress?.Report(cprog + prog * 100 / total * ((100 - cprog) / 100));
             }
 
             // at this point here we'll allow slides to be put onto the project

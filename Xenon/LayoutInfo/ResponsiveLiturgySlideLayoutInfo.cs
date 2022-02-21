@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 using Xenon.LayoutInfo.BaseTypes;
 using Xenon.LayoutInfo.LiturgyTypes;
-using Xenon.Layouts;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 

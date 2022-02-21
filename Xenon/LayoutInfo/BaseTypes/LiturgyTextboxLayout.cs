@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Xenon.Layouts;
-
 namespace Xenon.LayoutInfo.BaseTypes
 {
     internal class LiturgyTextboxLayout : TextboxLayout

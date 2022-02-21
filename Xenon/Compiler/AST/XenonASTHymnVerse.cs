@@ -5,11 +5,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Xenon.Compiler.AST;
 using Xenon.Helpers;
 using Xenon.Renderer;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTHymnVerse : IXenonASTCommand
     {

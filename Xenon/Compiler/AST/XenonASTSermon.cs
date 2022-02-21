@@ -5,9 +5,8 @@ using System.Diagnostics;
 using System.Text;
 using Xenon.Helpers;
 using System.Linq;
-using Xenon.Compiler.AST;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTSermon : IXenonASTCommand
     {

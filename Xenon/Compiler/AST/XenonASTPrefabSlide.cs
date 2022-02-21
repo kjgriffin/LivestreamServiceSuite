@@ -5,9 +5,10 @@ using System.Diagnostics;
 using System.Text;
 using Xenon.Helpers;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
-    public enum PrefabSlides { 
+    public enum PrefabSlides
+    {
         Copyright,
         ViewServices,
         ViewSeries,

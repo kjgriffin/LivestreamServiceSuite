@@ -12,7 +12,6 @@ using Xenon.Helpers;
 using Xenon.LayoutEngine.L2;
 using Xenon.LayoutInfo;
 using Xenon.LayoutInfo.BaseTypes;
-using Xenon.Layouts;
 
 namespace Xenon.Compiler.SubParsers
 {

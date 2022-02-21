@@ -1,4 +1,5 @@
-﻿using Xenon.LayoutInfo.BaseTypes;
+﻿using Xenon.LayoutInfo;
+using Xenon.LayoutInfo.BaseTypes;
 
 namespace Xenon.LayoutEngine.L2
 {
@@ -6,16 +7,16 @@ namespace Xenon.LayoutEngine.L2
     {
         public static TextboxLayout TEXTBOX = new TextboxLayout
         {
-            Font = new Layouts.LWJFont
+            Font = new LWJFont
             {
                 Name = "Arial",
                 Size = 36,
                 Style = 0
             },
-            Textbox = new Layouts.LWJRect
+            Textbox = new LWJRect
             {
-                Origin = new Layouts.LWJPoint { X = 0, Y = 0 },
-                Size = new Layouts.LWJSize { Width = 1920, Height = 216 }
+                Origin = new LWJPoint { X = 0, Y = 0 },
+                Size = new LWJSize { Width = 1920, Height = 216 }
             }
         };
     }

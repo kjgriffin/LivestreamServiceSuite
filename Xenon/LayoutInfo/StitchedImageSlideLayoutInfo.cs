@@ -7,7 +7,6 @@ using System.Text.Json.Serialization;
 
 using Xenon.LayoutInfo.BaseTypes;
 using Xenon.LayoutInfo.Serialization;
-using Xenon.Layouts;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 

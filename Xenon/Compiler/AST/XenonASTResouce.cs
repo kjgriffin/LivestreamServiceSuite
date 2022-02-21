@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xenon.Helpers;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTResource : IXenonASTCommand
     {

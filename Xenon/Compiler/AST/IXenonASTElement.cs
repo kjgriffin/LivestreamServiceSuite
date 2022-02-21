@@ -2,9 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xenon.Compiler.AST;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     internal interface IXenonASTElement
     {

@@ -9,6 +9,7 @@ using System;
 using System.Text.Json;
 using Xenon.Renderer.Helpers;
 using System.Linq;
+using Xenon.Renderer.Helpers.ImageSharp;
 
 namespace Xenon.Renderer
 {
@@ -76,19 +77,9 @@ namespace Xenon.Renderer
             res.AssetPath = "";
             res.RenderedAs = string.IsNullOrWhiteSpace(layout?.SlideType) ? "Full" : layout.SlideType;
 
-            //Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            //Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-
             CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
-            Bitmap bmp = ibmp.ToBitmap();
-            Bitmap kbmp = ikbmp.ToBitmap();
-
-            Graphics gfx = Graphics.FromImage(bmp);
-            Graphics kgfx = Graphics.FromImage(kbmp);
-
-            //gfx.Clear(layout.BackgroundColor.GetColor());
-            //kgfx.Clear(layout.KeyColor.GetColor());
+            ImageSharpHelpers.SetupGDIGraphics(ibmp, ikbmp, out var gfx, out var kgfx, out var bmp, out var kbmp);
 
             // draw metadata
 

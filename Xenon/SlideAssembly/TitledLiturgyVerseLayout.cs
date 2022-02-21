@@ -4,7 +4,8 @@ using System.Drawing;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Xenon.Layouts;
+
+using Xenon.LayoutInfo;
 
 namespace Xenon.SlideAssembly
 {

@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.Json.Serialization;
 
 using Xenon.LayoutInfo.Serialization;
-using Xenon.Layouts;
 
 namespace Xenon.LayoutInfo.BaseTypes
 {

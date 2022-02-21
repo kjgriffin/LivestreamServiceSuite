@@ -4,13 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using Xenon.Compiler.AST;
 using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTLiturgy : IXenonASTCommand, IXenonCommandSuggestionCallback
     {
@@ -191,7 +190,7 @@ namespace Xenon.Compiler
 
                 bool overheight = lineheight + project.Layouts.LiturgyLayout.InterLineSpacing + line.Height > project.Layouts.LiturgyLayout.GetRenderInfo().TextBox.Height;
                 bool overspeakerswitch = speakers > 2; // Rule 2
-                bool incorrrectspeakerorder = (startspeaker == "C" && line.Speaker != "C") || (startspeaker == "R" && line.Speaker != "R"); // Rule 1
+                bool incorrrectspeakerorder = startspeaker == "C" && line.Speaker != "C" || startspeaker == "R" && line.Speaker != "R"; // Rule 1
                 bool paragraphwrapissue = speakers > 1 && line.MultilineParagraph; // Rule 3
 
                 // Asethetic rule: if next line is continuation of speaker, and is super short -> if we're nearind end of slide, push it all to the next slide since it will look better there?

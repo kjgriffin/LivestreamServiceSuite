@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using Xenon.Compiler.AST;
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTLiturgyVerse : IXenonASTCommand
     {

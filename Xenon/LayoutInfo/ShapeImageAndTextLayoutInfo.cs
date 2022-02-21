@@ -6,7 +6,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Xenon.LayoutInfo.BaseTypes;
-using Xenon.Layouts;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 

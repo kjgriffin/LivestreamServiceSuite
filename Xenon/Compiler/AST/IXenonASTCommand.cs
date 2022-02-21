@@ -5,7 +5,7 @@ using Xenon.Compiler.Suggestions;
 using Xenon.LayoutInfo;
 using Xenon.SlideAssembly;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     internal interface IXenonASTCommand : IXenonASTElement
     {
@@ -40,7 +40,7 @@ namespace Xenon.Compiler
 
             if (layoutfromproj.found && layoutfromcode.found)
             {
-                Logger.Log(new XenonCompilerMessage { ErrorName = "Conflicting Layouts", ErrorMessage = $"A layout for {{#{LanguageKeywords.Commands[layoutGroup]}}} was defined on the scope:{{{layoutfromproj.scopename}}} as well as on the project with the name{{{layoutoverridefromproj}}}", Generator = "IXenonASTCommand::ApplyLayoutOverride()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
+                Logger.Log(new XenonCompilerMessage { ErrorName = "Conflicting Layouts", ErrorMessage = $"A layout for {{#{LanguageKeywords.Commands[layoutGroup]}}} was defined on the scope:{{{layoutfromproj.scopename}}} as well as on the project with the name{{{layoutoverridefromproj}}}", Generator = "IXenonASTCommand::ApplyLayoutOverride()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", GetParentExpression(this)._SourceLine) });
             }
 
             // TODO: warn about overwrite from code
@@ -69,7 +69,7 @@ namespace Xenon.Compiler
 
             if (layoutfromproj.found && layoutfromcode.found)
             {
-                Logger.Log(new XenonCompilerMessage { ErrorName = "Conflicting Layouts", ErrorMessage = $"A layout for {{#{LanguageKeywords.Commands[layoutGroup]}}} was defined on the scope:{{{layoutfromproj.scopename}}} as well as on the project with the name{{{layoutoverridefromproj}}}", Generator = "IXenonASTCommand::ApplyLayoutOverride()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
+                Logger.Log(new XenonCompilerMessage { ErrorName = "Conflicting Layouts", ErrorMessage = $"A layout for {{#{LanguageKeywords.Commands[layoutGroup]}}} was defined on the scope:{{{layoutfromproj.scopename}}} as well as on the project with the name{{{layoutoverridefromproj}}}", Generator = "IXenonASTCommand::ApplyLayoutOverride()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", GetParentExpression(this)._SourceLine) });
             }
 
             // TODO: warn if we don't actualy find it on the project

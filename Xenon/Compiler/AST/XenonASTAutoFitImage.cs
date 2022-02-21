@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-using Xenon.Compiler.AST;
 using Xenon.Helpers;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTAutoFitImage : IXenonASTCommand
     {
@@ -62,7 +61,7 @@ namespace Xenon.Compiler
                     }
                 }
             }
-            fullimage.Parent = Parent; 
+            fullimage.Parent = Parent;
             return fullimage;
 
         }

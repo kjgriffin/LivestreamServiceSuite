@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xenon.Helpers;
+using Xenon.LayoutInfo;
 using Xenon.LayoutInfo.BaseTypes;
 
 namespace Xenon.Renderer.Helpers
@@ -31,7 +32,7 @@ namespace Xenon.Renderer.Helpers
                 // compute interline spacing
                 double interspace = (layout.Textbox.Size.Height - (lines.Count * lhmax)) / (layout.VPaddingEnabled ? lines.Count + 1 : Math.Max(lines.Count - 1, 1));
 
-                if (layout.VerticalAlignment == Layouts.LWJVAlign.Equidistant)
+                if (layout.VerticalAlignment == LWJVAlign.Equidistant)
                 {
                     interspace = Math.Max(interspace, layout.MinInterLineSpace);
                 }
@@ -43,15 +44,15 @@ namespace Xenon.Renderer.Helpers
                 double tlheight = lines.Count * lhmax + (layout.VPaddingEnabled ? (lines.Count + 1) * interspace : (lines.Count - 1) * interspace);
                 double yoff = 0;
 
-                if (layout.VerticalAlignment == Layouts.LWJVAlign.Top || layout.VerticalAlignment == Layouts.LWJVAlign.Equidistant)
+                if (layout.VerticalAlignment == LWJVAlign.Top || layout.VerticalAlignment == LWJVAlign.Equidistant)
                 {
                     yoff = 0;
                 }
-                else if (layout.VerticalAlignment == Layouts.LWJVAlign.Bottom)
+                else if (layout.VerticalAlignment == LWJVAlign.Bottom)
                 {
                     yoff = layout.Textbox.Size.Height - tlheight;
                 }
-                else if (layout.VerticalAlignment == Layouts.LWJVAlign.Center)
+                else if (layout.VerticalAlignment == LWJVAlign.Center)
                 {
                     double hrem = layout.Textbox.Size.Height - tlheight;
                     yoff = hrem / 2;

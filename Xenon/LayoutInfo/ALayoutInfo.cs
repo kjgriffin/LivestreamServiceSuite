@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 
-using Xenon.Layouts;
-
 namespace Xenon.LayoutInfo
 {
     internal abstract class ALayoutInfo

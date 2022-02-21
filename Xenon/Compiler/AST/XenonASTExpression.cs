@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using Xenon.Compiler.AST;
 using Xenon.SlideAssembly;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.AST
 {
     class XenonASTExpression : IXenonASTElement
     {

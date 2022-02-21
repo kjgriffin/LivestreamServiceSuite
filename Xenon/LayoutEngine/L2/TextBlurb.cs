@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xenon.Helpers;
-using Xenon.Layouts;
+using Xenon.LayoutInfo;
 
 namespace Xenon.LayoutEngine.L2
 {
