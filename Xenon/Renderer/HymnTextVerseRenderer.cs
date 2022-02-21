@@ -79,11 +79,13 @@ namespace Xenon.Renderer
 
             CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
+            CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.HymnNameBox, (string)slide.Data.GetValueOrDefault(DATAKEY_HNAME, ""));
+
             ImageSharpHelpers.SetupGDIGraphics(ibmp, ikbmp, out var gfx, out var kgfx, out var bmp, out var kbmp);
 
             // draw metadata
 
-            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_HNAME, ""), layout.HymnNameBox);
+            //TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_HNAME, ""), layout.HymnNameBox);
             TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_HTITLE, ""), layout.HymnTitleBox);
             TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_VINFO, ""), layout.VerseInfoBox);
             TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_HNUMBER, ""), layout.HymnNumberBox);

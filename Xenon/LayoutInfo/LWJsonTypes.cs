@@ -14,6 +14,7 @@ namespace Xenon.LayoutInfo
     {
         public int X { get; set; }
         public int Y { get; set; }
+        public SixLabors.ImageSharp.PointF PointF { get => new SixLabors.ImageSharp.PointF(X, Y); }
 
         public LWJPoint() { }
         public LWJPoint(Point p)
@@ -185,6 +186,11 @@ namespace Xenon.LayoutInfo
         public SixLabors.ImageSharp.Color ToColor()
         {
             return SixLabors.ImageSharp.Color.FromRgba((byte)Red, (byte)Green, (byte)Blue, (byte)Alpha);
+        }
+
+        public SixLabors.ImageSharp.Color ToAlphaColor()
+        {
+            return SixLabors.ImageSharp.Color.FromRgba((byte)Alpha, (byte)Alpha, (byte)Alpha, (byte)Alpha);
         }
 
     }
