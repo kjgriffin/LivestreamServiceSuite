@@ -181,6 +181,12 @@ namespace Xenon.Layouts
         {
             return Color.FromArgb(Alpha, Red, Green, Blue);
         }
+
+        public SixLabors.ImageSharp.Color ToColor()
+        {
+            return SixLabors.ImageSharp.Color.FromRgba((byte)Red, (byte)Green, (byte)Blue, (byte)Alpha);
+        }
+
     }
 
     class LWJTLVerseLayout

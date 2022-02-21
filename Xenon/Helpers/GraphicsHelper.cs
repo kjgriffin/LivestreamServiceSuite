@@ -1,4 +1,8 @@
-﻿using System;
+﻿using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
