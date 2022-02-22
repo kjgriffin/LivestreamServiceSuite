@@ -1,5 +1,6 @@
 ﻿using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
@@ -59,24 +60,44 @@ namespace Xenon.Renderer.Helpers.ImageSharp
             }
             yoff += layout.VPaddingEnabled ? interspace : 0;
 
+            float xoff = 0;
+
+            switch (layout.HorizontalAlignment)
+            {
+                case LWJHAlign.Center:
+                    xoff = layout.Textbox.Size.Width / 2f;
+                    break;
+                case LWJHAlign.Right:
+                    xoff = layout.Textbox.Size.Width;
+                    break;
+            }
+
+
+            TextOptions tops = new TextOptions(FontManager.GetFont(layout.Font))
+            {
+                HorizontalAlignment = layout.HorizontalAlignment.HALIGN(),
+                VerticalAlignment = VerticalAlignment.Top,
+                WrappingLength = layout.Textbox.Size.Width,
+            };
+
             ibmp.Mutate(ctx =>
             {
-                RectangleF vline = new RectangleF(layout.Textbox.Origin.X, layout.Textbox.Origin.Y, layout.Textbox.Size.Width, (float)lhmax);
+                tops.Origin = new System.Numerics.Vector2(layout.Textbox.Origin.X + xoff, layout.Textbox.Origin.Y);
                 foreach (var line in lines)
                 {
-                    vline = new RectangleF(vline.X, vline.Y + (float)yoff, vline.Width, vline.Height);
-                    ctx.DrawText(line, layout);
+                    tops.Origin = new System.Numerics.Vector2(tops.Origin.X, tops.Origin.Y + (float)yoff);
+                    ctx.DrawText(tops, line, layout.FColor.ToColor());
                     yoff = interspace + lhmax;
                 }
             });
 
             ikbmp.Mutate(ctx =>
             {
-                RectangleF vline = new RectangleF(layout.Textbox.Origin.X, layout.Textbox.Origin.Y, layout.Textbox.Size.Width, (float)lhmax);
+                tops.Origin = new System.Numerics.Vector2(layout.Textbox.Origin.X + xoff, layout.Textbox.Origin.Y);
                 foreach (var line in lines)
                 {
-                    vline = new RectangleF(vline.X, vline.Y + (float)yoff, vline.Width, vline.Height);
-                    ctx.DrawKeyText(line, layout);
+                    tops.Origin = new System.Numerics.Vector2(tops.Origin.X, tops.Origin.Y + (float)yoff);
+                    ctx.DrawText(tops, line, layout.FColor.ToAlphaColor());
                     yoff = interspace + lhmax;
                 }
             });
