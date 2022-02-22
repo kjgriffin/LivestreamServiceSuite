@@ -1,52 +1,42 @@
 {
-  "SlideSize": {
-    "Width": 1920,
-    "Height": 1080
-  },
-  "BackgroundColor": {
-    "Hex": "#ff000000"
-  },
-  "KeyColor": {
-    "Hex": "#ff000000"
-  },
   "Textboxes": [
     {
       "Textbox": {
         "Origin": {
-          "X": 1382,
-          "Y": 756
+          "X": 1550,
+          "Y": 750
         },
         "Size": {
-          "Width": 500,
-          "Height": 70
+          "Width": 250,
+          "Height": 50
         }
       },
       "Font": {
         "Name": "Arial",
-        "Size": 36,
+        "Size": 28,
         "Style": 1
       },
       "FColor": {
-        "Hex": "#ff7c7c7c"
+        "Hex": "#ffffffff"
       },
       "BColor": {
-        "Hex": "#00000000"
+        "Hex": "#ff000000"
       },
       "KColor": {
-        "Hex": "#00000000"
+        "Hex": "#ff808080"
       },
-      "HorizontalAlignment": "Right",
+      "HorizontalAlignment": "Center",
       "VerticalAlignment": "Center"
     },
     {
       "Textbox": {
         "Origin": {
-          "X": 1300,
-          "Y": 830
+          "X": 1200,
+          "Y": 800
         },
         "Size": {
           "Width": 600,
-          "Height": 100
+          "Height": 120
         }
       },
       "Font": {
@@ -55,13 +45,13 @@
         "Style": 1
       },
       "FColor": {
-        "Hex": "#ff4d4d4d"
+        "Hex": "#ffffffff"
       },
       "BColor": {
-        "Hex": "#000000"
+        "Hex": "#ff000000"
       },
       "KColor": {
-        "Hex": "#00000000"
+        "Hex": "#ff808080"
       },
       "HorizontalAlignment": "Center",
       "VerticalAlignment": "Center"
@@ -69,11 +59,11 @@
     {
       "Textbox": {
         "Origin": {
-          "X": 1350,
-          "Y": 930
+          "X": 1200,
+          "Y": 920
         },
         "Size": {
-          "Width": 550,
+          "Width": 600,
           "Height": 140
         }
       },
@@ -86,93 +76,26 @@
         "Hex": "#ffffffff"
       },
       "BColor": {
-        "Hex": "#00000000"
+        "Hex": "#ff000000"
       },
       "KColor": {
-        "Hex": "#00000000"
+        "Hex": "#ff808080"
       },
       "HorizontalAlignment": "Center",
-      "VerticalAlignment": "Center"
+      "VerticalAlignment": "Bottom"
     }
   ],
   "Shapes": [
-    {
-      "Verticies": [
-        {
-          "X": 1920,
-          "Y": 756
-        },
-        {
-          "X": 1920,
-          "Y": 1080
-        },
-        {
-          "X": 1344,
-          "Y": 1080
-        },
-        {
-          "X": 1252,
-          "Y": 918
-        },
-        {
-          "X": 1344,
-          "Y": 756
-        }
-      ],
-      "BorderWidth": 1,
-      "FillColor": {
-        "Hex": "#ffa6a6a6"
-      },
-      "KeyFillColor": {
-        "Hex": "#ffffffff"
-      },
-      "BorderColor": {
-        "Hex": "#ff000000"
-      },
-      "KeyBorderColor": {
-        "Hex": "#ffffffff"
-      }
-    },
-    {
-      "Verticies": [
-        {
-          "X": 1344,
-          "Y": 756
-        },
-        {
-          "X": 1252,
-          "Y": 918
-        },
-        {
-          "X": 1344,
-          "Y": 1080
-        },
-        {
-          "X": 1252,
-          "Y": 1080
-        },
-        {
-          "X": 1160,
-          "Y": 918
-        },
-        {
-          "X": 1252,
-          "Y": 756
-        }
-      ],
-      "BorderWidth": 1,
-      "FillColor": {
-        "Hex": "#ff0f0f0f"
-      },
-      "KeyFillColor": {
-        "Hex": "#fff0f0f0"
-      },
-      "BorderColor": {
-        "Hex": "#ff000000"
-      },
-      "KeyBorderColor": {
-        "Hex": "#ffffffff"
-      }
-    }
-  ]
+  ],
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "BackgroundColor": {
+    "Hex": "#00000000"
+  },
+  "KeyColor": {
+    "Hex": "#ff000000"
+  },
+  "SlideType": ""
 }

@@ -1,24 +1,14 @@
 {
-  "SlideSize": {
-    "Width": 1920,
-    "Height": 1080
-  },
-  "BackgroundColor": {
-    "Hex": "#ff000000"
-  },
-  "KeyColor": {
-    "Hex": "#ff000000"
-  },
   "Textboxes": [
     {
       "Textbox": {
         "Origin": {
-          "X": 80,
-          "Y": 864
+          "X": 0,
+          "Y": 0
         },
         "Size": {
-          "Width": 1760,
-          "Height": 216
+          "Width": 1920,
+          "Height": 1080
         }
       },
       "Font": {
@@ -35,39 +25,64 @@
       "KColor": {
         "Hex": "#00000000"
       },
-      "HorizontalAlignment": "Left",
+      "HorizontalAlignment": "Center",
       "VerticalAlignment": "Center"
     }
   ],
   "Shapes": [
     {
+      "Transforms": {
+        "Scale": {
+          "XScale": 1,
+          "YScale": 1
+        },
+        "Translate": {
+          "XShift": 0,
+          "YShift": 0
+        }
+      },
       "Verticies": [
         {
-          "X": 0,
-          "Y": 0
+          "X": 100,
+          "Y": 100
+        },
+        {
+          "X": 1820,
+          "Y": 100
+        },
+        {
+          "X": 1820,
+          "Y": 980
         },
         {
           "X": 100,
-          "Y": 1000
-        },
-        {
-          "X": 0,
-          "Y": 100
+          "Y": 980
         }
       ],
-      "BorderWidth": 1,
+      "BorderWidth": 10,
       "FillColor": {
-        "Hex": "#ff000000"
+        "Hex": "#800f0f0f"
       },
       "KeyFillColor": {
-        "Hex": "#ffffffff"
+        "Hex": "#ff808080"
       },
       "BorderColor": {
-        "Hex": "#ff00ff00"
+        "Hex": "#80f0f0f0"
       },
       "KeyBorderColor": {
-        "Hex": "#ffffffff"
+        "Hex": "#ff808080"
       }
     }
-  ]
+  ],
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "BackgroundColor": {
+    "Hex": "#ff000000"
+  },
+  "KeyColor": {
+    "Hex": "#ff000000"
+  },
+  "SlideType": ""
 }
