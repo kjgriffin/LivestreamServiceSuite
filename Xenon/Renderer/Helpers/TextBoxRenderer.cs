@@ -7,6 +7,7 @@ using Xenon.LayoutInfo.BaseTypes;
 
 namespace Xenon.Renderer.Helpers
 {
+    [Obsolete("Switch to imagesharp. Use CommonTextBoxRenderer instead.")]
     internal static class TextBoxRenderer
     {
         public static void RenderUnFilled(Graphics gfx, Graphics kgfx, TextboxLayout layout)

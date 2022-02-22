@@ -31,29 +31,22 @@ namespace Xenon.Renderer
         {
             TextHymnLayoutInfo layout = JsonSerializer.Deserialize<TextHymnLayoutInfo>(layoutInfo);
 
-            Bitmap b = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Bitmap k = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-
-            Graphics gfx = Graphics.FromImage(b);
-            Graphics kgfx = Graphics.FromImage(k);
-
-            gfx.Clear(layout.BackgroundColor.GetColor());
-            kgfx.Clear(layout.KeyColor.GetColor());
+            CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
             foreach (var shape in layout?.Shapes)
             {
-                PolygonRenderer.RenderLayoutPreview(gfx, kgfx, shape);
+                CommonPolygonRenderer.RenderLayoutPreview(ibmp, ikbmp, shape);
             }
 
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.HymnNameBox, "Hymn Name");
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.HymnTitleBox, "Title");
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.VerseInfoBox, "Verse #");
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.HymnNumberBox, "Number ###");
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.HymnTuneBox, "Tune");
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.CopyrightBox, "Copyright");
-            PoetryTextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.HymnContentBox);
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.HymnNameBox, "Hymn Name");
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.HymnTitleBox, "Title");
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.VerseInfoBox, "Verse #");
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.HymnNumberBox, "Number ###");
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.HymnTuneBox, "Tune");
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.CopyrightBox, "Copyright");
+            CommonPoetryTextRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.HymnContentBox);
 
-            return (b, k);
+            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
         }
 
         public bool IsValidLayoutJson(string json)
@@ -79,6 +72,12 @@ namespace Xenon.Renderer
 
             CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
+            // draw shapes
+            foreach (var shape in layout?.Shapes)
+            {
+                CommonPolygonRenderer.Render(ibmp, ikbmp, shape);
+            }
+
             // draw metadata
             CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.HymnNameBox, (string)slide.Data.GetValueOrDefault(DATAKEY_HNAME, ""));
             CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.HymnTitleBox, (string)slide.Data.GetValueOrDefault(DATAKEY_HTITLE, ""));
@@ -87,9 +86,6 @@ namespace Xenon.Renderer
             CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.HymnTuneBox, (string)slide.Data.GetValueOrDefault(DATAKEY_HTUNE, ""));
             CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.CopyrightBox, (string)slide.Data.GetValueOrDefault(DATAKEY_COPYRIGHT, ""));
 
-            ImageSharpHelpers.SetupGDIGraphics(ibmp, ikbmp, out var gfx, out var kgfx, out var bmp, out var kbmp);
-
-
             // draw lines
             List<string> lines = new List<string>();
             if (slide.Data.TryGetValue(DATAKEY_HCONTENT, out object lobj))
@@ -97,10 +93,10 @@ namespace Xenon.Renderer
                 lines = lobj as List<string>;
             }
 
-            PoetryTextBoxRenderer.Render(gfx, kgfx, lines, layout.HymnContentBox);
+            CommonPoetryTextRenderer.Render(ibmp, ikbmp, layout.HymnContentBox, lines);
 
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = ibmp.ToBitmap();
+            res.KeyBitmap = ikbmp.ToBitmap();
             return res;
         }
     }

@@ -44,5 +44,10 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                 g.DrawKeyText(text, layout);
             });
         }
+
+        internal static void RenderLayoutPreview(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, TextboxLayout layout, string exampleText = "Example Text")
+        {
+            Render(ibmp, ikbmp, layout, exampleText);
+        }
     }
 }

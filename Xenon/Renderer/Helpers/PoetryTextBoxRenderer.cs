@@ -11,6 +11,7 @@ using Xenon.LayoutInfo.BaseTypes;
 
 namespace Xenon.Renderer.Helpers
 {
+    [Obsolete("Use ImageSharp for drawing. CommonPoetryTextRenderer is equivalent.")]
     internal static class PoetryTextBoxRenderer
     {
 

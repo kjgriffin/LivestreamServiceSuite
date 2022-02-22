@@ -95,6 +95,7 @@ namespace Xenon.LayoutInfo
     abstract class LWJTransform
     {
         public abstract PointF[] Apply(PointF[] points);
+        public abstract SixLabors.ImageSharp.PointF[] Apply(SixLabors.ImageSharp.PointF[] points);
     }
 
     class LWJScaleTransform : LWJTransform
@@ -106,6 +107,11 @@ namespace Xenon.LayoutInfo
         {
             return points.Select(p => new PointF((float)(p.X * XScale), (float)(p.Y * YScale))).ToArray();
         }
+
+        public override SixLabors.ImageSharp.PointF[] Apply(SixLabors.ImageSharp.PointF[] points)
+        {
+            return points.Select(p => new SixLabors.ImageSharp.PointF((float)(p.X * XScale), (float)(p.Y * YScale))).ToArray();
+        }
     }
     class LWJTranslateTransform : LWJTransform
     {
@@ -115,6 +121,11 @@ namespace Xenon.LayoutInfo
         public override PointF[] Apply(PointF[] points)
         {
             return points.Select(p => new PointF((float)(p.X + XShift), (float)(p.Y + YShift))).ToArray();
+        }
+
+        public override SixLabors.ImageSharp.PointF[] Apply(SixLabors.ImageSharp.PointF[] points)
+        {
+            return points.Select(p => new SixLabors.ImageSharp.PointF((float)(p.X + XShift), (float)(p.Y + YShift))).ToArray();
         }
     }
 

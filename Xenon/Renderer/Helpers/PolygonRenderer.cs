@@ -9,9 +9,9 @@ using Xenon.LayoutInfo;
 
 namespace Xenon.Renderer.Helpers
 {
+    [Obsolete("Switch to imagesharp. Use CommonPolygonRenderer instead.")]
     internal static class PolygonRenderer
     {
-
         public static void Render(Graphics gfx, Graphics kgfx, LWJPolygon layout)
         {
             var points = layout.Verticies.ApplyTransforms(layout.Transforms);
