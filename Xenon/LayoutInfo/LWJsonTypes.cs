@@ -14,7 +14,10 @@ namespace Xenon.LayoutInfo
     {
         public int X { get; set; }
         public int Y { get; set; }
+        [JsonIgnore]
         public SixLabors.ImageSharp.PointF PointF { get => new SixLabors.ImageSharp.PointF(X, Y); }
+        [JsonIgnore]
+        public SixLabors.ImageSharp.Point Point { get => new SixLabors.ImageSharp.Point(X, Y); }
 
         public LWJPoint() { }
         public LWJPoint(Point p)
@@ -37,7 +40,10 @@ namespace Xenon.LayoutInfo
     {
         public int Width { get; set; }
         public int Height { get; set; }
+        [JsonIgnore]
         public SixLabors.ImageSharp.SizeF SizeF { get => new SixLabors.ImageSharp.SizeF(Width, Height); }
+        [JsonIgnore]
+        public SixLabors.ImageSharp.Size Size { get => new SixLabors.ImageSharp.Size(Width, Height); }
 
         public LWJSize() { }
         public LWJSize(Size size)
@@ -55,7 +61,10 @@ namespace Xenon.LayoutInfo
     {
         public LWJPoint Origin { get; set; }
         public LWJSize Size { get; set; }
+        [JsonIgnore]
         public SixLabors.ImageSharp.RectangleF RectangleF { get => new SixLabors.ImageSharp.RectangleF(Origin.PointF, Size.SizeF); }
+        [JsonIgnore]
+        public SixLabors.ImageSharp.Rectangle Rectangle { get => new SixLabors.ImageSharp.Rectangle(Origin.Point, Size.Size); }
 
         public LWJRect() { }
         public LWJRect(Rectangle rect)
