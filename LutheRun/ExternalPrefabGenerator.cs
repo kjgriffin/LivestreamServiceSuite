@@ -34,7 +34,8 @@ namespace LutheRun
 
                 if (!string.IsNullOrWhiteSpace(serviceTitle) || !string.IsNullOrWhiteSpace(serviceDate))
                 {
-                    return new ExternalPrefab(CopyTitleCommand(serviceTitle, serviceDate, lsback), (int)Serviceifier.Camera.Organ, options.InferPostset);
+                    // Since the external prefab is wrapped inside a scripted block, let the tile generate genrate the postset explicitly
+                    return new ExternalPrefab(CopyTitleCommand(serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ, options.InferPostset));
 
                 }
             }
@@ -42,7 +43,7 @@ namespace LutheRun
             return new LSBElementUnknown();
         }
 
-        private static string CopyTitleCommand(string serviceTitle = "", string serviceDate = "", string lsback = "")
+        private static string CopyTitleCommand(string serviceTitle = "", string serviceDate = "", string lsback = "", int postset = -1, bool inferPostset = true)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -71,6 +72,12 @@ namespace LutheRun
             sb.AppendLine("text={KITCHENER, ON}");
 
             sb.AppendLine("}");
+
+            // manually add postset here
+            if (inferPostset && postset != -1)
+            {
+                sb.AppendLine($"::postset(last={postset})");
+            }
 
             sb.AppendLine("}");
 
