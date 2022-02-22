@@ -79,21 +79,18 @@ namespace Xenon.Renderer
 
             CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
+            // draw metadata
             CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.HymnNameBox, (string)slide.Data.GetValueOrDefault(DATAKEY_HNAME, ""));
+            CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.HymnTitleBox, (string)slide.Data.GetValueOrDefault(DATAKEY_HTITLE, ""));
+            CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.VerseInfoBox, (string)slide.Data.GetValueOrDefault(DATAKEY_VINFO, ""));
+            CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.HymnNumberBox, (string)slide.Data.GetValueOrDefault(DATAKEY_HNUMBER, ""));
+            CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.HymnTuneBox, (string)slide.Data.GetValueOrDefault(DATAKEY_HTUNE, ""));
+            CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.CopyrightBox, (string)slide.Data.GetValueOrDefault(DATAKEY_COPYRIGHT, ""));
 
             ImageSharpHelpers.SetupGDIGraphics(ibmp, ikbmp, out var gfx, out var kgfx, out var bmp, out var kbmp);
 
-            // draw metadata
-
-            //TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_HNAME, ""), layout.HymnNameBox);
-            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_HTITLE, ""), layout.HymnTitleBox);
-            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_VINFO, ""), layout.VerseInfoBox);
-            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_HNUMBER, ""), layout.HymnNumberBox);
-            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_HTUNE, ""), layout.HymnTuneBox);
-            TextBoxRenderer.Render(gfx, kgfx, (string)slide.Data.GetValueOrDefault(DATAKEY_COPYRIGHT, ""), layout.CopyrightBox);
 
             // draw lines
-
             List<string> lines = new List<string>();
             if (slide.Data.TryGetValue(DATAKEY_HCONTENT, out object lobj))
             {

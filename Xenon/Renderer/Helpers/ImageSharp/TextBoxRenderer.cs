@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 using Xenon.LayoutInfo.BaseTypes;
 using Xenon.FontManagement;
+using Xenon.LayoutInfo;
 
 namespace Xenon.Renderer.Helpers.ImageSharp
 {
@@ -22,11 +23,11 @@ namespace Xenon.Renderer.Helpers.ImageSharp
         {
             bmp.Mutate(g =>
             {
-                g.BackgroundColor(layout.BColor.ToColor());
+                g.Fill(layout.BColor.ToColor(), layout.Textbox.RectangleF);
             });
             kbmp.Mutate(g =>
             {
-                g.BackgroundColor(layout.KColor.ToColor());
+                g.Fill(layout.KColor.ToColor(), layout.Textbox.RectangleF);
             });
         }
 
@@ -36,11 +37,11 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 
             bmp.Mutate(g =>
             {
-                g.DrawText(text, FontManager.GetFont(layout.Font), layout.FColor.ToColor(), layout.Textbox.Origin.PointF);
+                g.DrawText(text, layout);
             });
             kbmp.Mutate(g =>
             {
-                g.DrawText(text, FontManager.GetFont(layout.Font), layout.FColor.ToAlphaColor(), layout.Textbox.Origin.PointF);
+                g.DrawKeyText(text, layout);
             });
         }
     }

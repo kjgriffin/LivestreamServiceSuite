@@ -37,6 +37,8 @@ namespace Xenon.LayoutInfo
     {
         public int Width { get; set; }
         public int Height { get; set; }
+        public SixLabors.ImageSharp.SizeF SizeF { get => new SixLabors.ImageSharp.SizeF(Width, Height); }
+
         public LWJSize() { }
         public LWJSize(Size size)
         {
@@ -53,6 +55,8 @@ namespace Xenon.LayoutInfo
     {
         public LWJPoint Origin { get; set; }
         public LWJSize Size { get; set; }
+        public SixLabors.ImageSharp.RectangleF RectangleF { get => new SixLabors.ImageSharp.RectangleF(Origin.PointF, Size.SizeF); }
+
         public LWJRect() { }
         public LWJRect(Rectangle rect)
         {
@@ -151,6 +155,42 @@ namespace Xenon.LayoutInfo
         Center,
         Bottom,
         Equidistant
+    }
+
+    public static class LWJEnumExtenstions
+    {
+        internal static SixLabors.Fonts.HorizontalAlignment HALIGN(this LWJHAlign align)
+        {
+            switch (align)
+            {
+                case LWJHAlign.Left:
+                    return SixLabors.Fonts.HorizontalAlignment.Left;
+                case LWJHAlign.Center:
+                    return SixLabors.Fonts.HorizontalAlignment.Center;
+                case LWJHAlign.Right:
+                    return SixLabors.Fonts.HorizontalAlignment.Right;
+                case LWJHAlign.Justified:
+                    return SixLabors.Fonts.HorizontalAlignment.Left; // TODO: this may not be right...
+            }
+            return SixLabors.Fonts.HorizontalAlignment.Left;
+        }
+
+        internal static SixLabors.Fonts.VerticalAlignment VALIGN(this LWJVAlign align)
+        {
+            switch (align)
+            {
+                case LWJVAlign.Top:
+                    return SixLabors.Fonts.VerticalAlignment.Top;
+                case LWJVAlign.Center:
+                    return SixLabors.Fonts.VerticalAlignment.Center;
+                case LWJVAlign.Bottom:
+                    return SixLabors.Fonts.VerticalAlignment.Bottom;
+                case LWJVAlign.Equidistant:
+                    return SixLabors.Fonts.VerticalAlignment.Top; // TODO: check if this is right...
+            }
+            return SixLabors.Fonts.VerticalAlignment.Top;
+        }
+
     }
 
 
