@@ -176,7 +176,7 @@ namespace LutheRun
                     setlast = true;
                     lastselection = Camera.Organ;
                 }
-                if (nextelement is LSBElementLiturgy || nextelement is LSBElementIntroit)
+                if (nextelement is LSBElementLiturgy || nextelement is LSBElementResponsiveLiturgy || nextelement is LSBElementIntroit)
                 {
                     setlast = true;
                     lastselection = Camera.Center;
@@ -206,7 +206,7 @@ namespace LutheRun
                         // probably handled by rule for any liturgy-type to set first to liturgy (maybe)
                     }
                 }
-                if (element is LSBElementLiturgy || element is LSBElementIntroit || element is LSBElementLiturgySung || element is LSBElementReading || element is LSBElementReadingComplex)
+                if (element is LSBElementLiturgy || element is LSBElementResponsiveLiturgy || element is LSBElementIntroit || element is LSBElementLiturgySung || element is LSBElementReading || element is LSBElementReadingComplex)
                 {
                     // since we're setting the first here, if a last was previously set it will overwrite so we can be a bit more aggressive with
                     // selecting elements to set a first for
