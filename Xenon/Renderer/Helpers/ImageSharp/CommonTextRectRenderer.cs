@@ -15,7 +15,7 @@ using Xenon.LayoutInfo.BaseTypes;
 
 namespace Xenon.Renderer.Helpers.ImageSharp
 {
-    internal static class TextRectRenderer
+    internal static class CommonTextRectRenderer
     {
 
         private static System.Numerics.Vector2 GDI_Compensate(LWJHAlign HAligh, LWJVAlign VAlign, RectangleF rect)
@@ -50,8 +50,8 @@ namespace Xenon.Renderer.Helpers.ImageSharp
             DrawingOptions otps = new DrawingOptions();
             TextOptions tops = new TextOptions(font)
             {
-                HorizontalAlignment = HAlign.HALIGN(), // to simulate GDI+ behaviour, move the origin to compensate
-                VerticalAlignment = VAlign.VALIGN(), // to simulate GDI+ behaviour, move the origin to compensate 
+                HorizontalAlignment = HAlign.HALIGN(), // to simulate GDI+ behaviour: move the origin to compensate
+                VerticalAlignment = VAlign.VALIGN(), // to simulate GDI+ behaviour: move the origin to compensate 
                 WordBreaking = WordBreaking.Normal,
                 LineSpacing = 1,
                 TextDirection = TextDirection.LeftToRight,

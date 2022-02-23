@@ -8,6 +8,7 @@ using Xenon.Renderer.ImageFilters;
 
 namespace Xenon.Renderer.Helpers
 {
+    [Obsolete("Switch to imagesharp. Use CommonDrawingBoxRenderer instead.")]
     internal static class DrawingBoxRenderer
     {
         public static void Render(Graphics gfx, Graphics kgfx, DrawingBoxLayout layout)

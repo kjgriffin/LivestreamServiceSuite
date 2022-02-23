@@ -26,7 +26,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                 ctx.DrawPolygon(layout.BorderColor.ToColor(), layout.BorderWidth, points);
             });
 
-            ibmp.Mutate(ctx =>
+            ikbmp.Mutate(ctx =>
             {
                 ctx.FillPolygon(layout.KeyFillColor.ToColor(), points);
                 ctx.DrawPolygon(layout.KeyBorderColor.ToColor(), layout.BorderWidth, points);

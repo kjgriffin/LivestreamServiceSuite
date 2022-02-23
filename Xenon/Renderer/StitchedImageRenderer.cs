@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using GDI = System.Drawing;
 using System.Text;
 using Xenon.SlideAssembly;
 using System.Linq;
@@ -11,6 +11,10 @@ using Xenon.Compiler;
 using Xenon.LayoutInfo;
 using Xenon.Renderer.Helpers;
 using System.Text.Json;
+using Xenon.Renderer.Helpers.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace Xenon.Renderer
 {
@@ -32,46 +36,27 @@ namespace Xenon.Renderer
             res.AssetPath = "";
             res.RenderedAs = string.IsNullOrWhiteSpace(layout?.SlideType) ? "Full" : layout.SlideType;
 
-            Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Graphics gfx = Graphics.FromImage(bmp);
-            Graphics kgfx = Graphics.FromImage(kbmp);
-
-            gfx.Clear(layout.BackgroundColor.GetColor());
-            kgfx.Clear(layout.KeyColor.GetColor());
+            CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
             if (layout.Shapes != null)
             {
                 foreach (var shape in layout.Shapes)
                 {
-                    PolygonRenderer.Render(gfx, kgfx, shape);
+                    CommonPolygonRenderer.Render(ibmp, ikbmp, shape);
                 }
             }
-
 
             List<LSBImageResource> imageresources = (List<LSBImageResource>)slide.Data.GetOrDefault(DATAKEY_IMAGES, new List<LSBImageResource>());
             string title = (string)slide.Data.GetOrDefault(DATAKEY_TITLE, "");
             string hymnname = (string)slide.Data.GetOrDefault(DATAKEY_NAME, "");
             string number = (string)slide.Data.GetOrDefault(DATAKEY_NUMBER, "");
 
-
-            // create new bitmap for the image for now...
-            // compute max bounds of new bitmap
-            // 1920x100 box for title info
-            // find max width of images and compare
-            //int twidth = (int)gfx.MeasureString(hymnname, layout.NameBox.Font.GetFont()).Width;
-            //int width = Math.Max(twidth, imageresources.Select(i => i.Size.Width).Max());
             int width = imageresources.Select(i => i.Size.Width).Max();
-            int height = imageresources.Select(i => i.Size.Height).Aggregate((a, b) => a + b); // + 30?
-            Bitmap sbmp = new Bitmap(width, height);
-            Graphics g = Graphics.FromImage(sbmp);
-
-            g.Clear(layout.MusicBox.FillColor.GetColor());
+            int height = imageresources.Select(i => i.Size.Height).Aggregate((a, b) => a + b);
 
 
-            //int tboxheight = 120;
-            //int cboxheight = 30;
-
+            Image<Bgra32> hibmp = new Image<Bgra32>(width, height);
+            //Image<Bgra32> hikbmp = new Image<Bgra32>(width, height);
 
             // draw all images
             int hoff = 0;
@@ -80,11 +65,16 @@ namespace Xenon.Renderer
                 // load image
                 try
                 {
-                    Bitmap b = new Bitmap(projassets.GetProjectAssetByName(image.AssetRef).CurrentPath);
-                    int x = (width - b.Width) / 2;
-                    g.DrawImage(b, x, hoff, b.Width, b.Height);
-                    //g.DrawRectangle(Pens.Red, x, hoff, b.Width, b.Height);
-                    hoff += b.Height;
+                    Image<Bgra32> src = Image.Load<Bgra32>(projassets.GetProjectAssetByName(image.AssetRef).CurrentPath);
+                    //Bitmap b = new Bitmap(projassets.GetProjectAssetByName(image.AssetRef).CurrentPath);
+                    int x = (width - src.Width) / 2;
+                    //g.DrawImage(b, x, hoff, b.Width, b.Height);
+                    hibmp.Mutate(ctx =>
+                    {
+                        ctx.DrawImage(src, new Point(x, hoff), 1f);
+                    });
+
+                    hoff += src.Height;
                 }
                 catch (Exception ex)
                 {
@@ -93,50 +83,38 @@ namespace Xenon.Renderer
                 }
             }
 
-            var hdrawn = ImageFilters.ImageFilters.UniformStretch(sbmp, sbmp, new ImageFilters.UniformStretchFilterParams() { Fill = layout.MusicBox.FillColor.GetColor(), KFill = layout.MusicBox.KeyColor.GetColor(), Height = layout.MusicBox.Box.Size.Height, Width = layout.MusicBox.Box.Size.Width });
-
-
-            DrawingBoxRenderer.Render(gfx, kgfx, layout.MusicBox);
-            gfx.DrawImage(hdrawn.b, layout.MusicBox.Box.Origin.X, layout.MusicBox.Box.Origin.Y);
+            // we'll manualy scale and center the hymn to its final size
+            hibmp.Mutate(ctx => ctx.Resize(new ResizeOptions { Mode = ResizeMode.Max, Size = layout.MusicBox.Box.Size.Size }));
+            // draw it back onto a full'sized blank
+            Image<Bgra32> hibmpctr = new Image<Bgra32>(layout.MusicBox.Box.Size.Width, layout.MusicBox.Box.Size.Height);
+            int xoff = Math.Clamp(Math.Abs((hibmp.Width - layout.MusicBox.Box.Size.Width)) / 2, 0, layout.MusicBox.Box.Size.Width);
+            int yoff = Math.Clamp(Math.Abs((hibmp.Height - layout.MusicBox.Box.Size.Height)) / 2, 0, layout.MusicBox.Box.Size.Height);
+            hibmpctr.Mutate(ctx => ctx.DrawImage(hibmp, new Point(xoff, yoff), 1f));
+            // then let the render just position it inside the box
+            CommonDrawingBoxRenderer.Render(ibmp, ikbmp, layout.MusicBox, hibmpctr, inferKey: false);
 
             // draw titles
-
-            TextBoxRenderer.Render(gfx, kgfx, hymnname, layout.NameBox);
-            TextBoxRenderer.Render(gfx, kgfx, title, layout.TitleBox);
-            TextBoxRenderer.Render(gfx, kgfx, number, layout.NumberBox);
-
-            //gfx.DrawString(hymnname, layout.NameBox.Font.GetFont(), new SolidBrush(layout.NameBox.FColor.GetColor()), layout.NameBox.Textbox.GetRectangle(), GraphicsHelper.CenterAlign);
-            //gfx.DrawString(title, layout.TitleBox.Font.GetFont(), new SolidBrush(layout.TitleBox.FColor.GetColor()), layout.TitleBox.Textbox.GetRectangle(), GraphicsHelper.LeftVerticalCenterAlign);
-            //gfx.DrawString(number, layout.NumberBox.Font.GetFont(), new SolidBrush(layout.NumberBox.FColor.GetColor()), layout.NumberBox.Textbox.GetRectangle(), GraphicsHelper.RightVerticalCenterAlign);
+            CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.NameBox, hymnname);
+            CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.TitleBox, title);
+            CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.NumberBox, number);
 
             // draw copyright
             if (slide.Data.ContainsKey(DATAKEY_COPYRIGHT))
             {
                 string copyrighttune = (string)slide.Data.GetOrDefault(DATAKEY_COPYRIGHT_TUNE, "");
                 string copyrighttext = (string)slide.Data.GetOrDefault(DATAKEY_COPYRIGHT_TEXT, "");
-                gfx.DrawString(copyrighttune, layout.CopyrightBox.Font.GetFont(), new SolidBrush(layout.CopyrightBox.FColor.GetColor()), new Rectangle(layout.CopyrightBox.Textbox.Origin.X, layout.CopyrightBox.Textbox.Origin.Y, layout.CopyrightBox.Textbox.Size.Width, layout.CopyrightBox.Textbox.Size.Height / 2), GraphicsHelper.LeftVerticalCenterAlign);
-                //g.DrawRectangle(Pens.Orange, 0, height - 30, width, 15);
-                //g.DrawRectangle(Pens.Orange, 0, height - 15, width, 15);
-                gfx.DrawString(copyrighttext, layout.CopyrightBox.Font.GetFont(), new SolidBrush(layout.CopyrightBox.FColor.GetColor()), new Rectangle(layout.CopyrightBox.Textbox.Origin.X, layout.CopyrightBox.Textbox.Origin.Y + layout.CopyrightBox.Textbox.Size.Height / 2, layout.CopyrightBox.Textbox.Size.Width, layout.CopyrightBox.Textbox.Size.Height / 2), GraphicsHelper.LeftVerticalCenterAlign);
+                // change behaviour- let the textbox renderer just render out 2 lines
+                string copyright = string.Join(Environment.NewLine, copyrighttune, copyrighttext);
+                CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.CopyrightBox, copyright);
             }
             else
             {
                 string copyright = (string)slide.Data.GetOrDefault(DATAKEY_COPYRIGHT, "");
-                //gfx.DrawString(copyright, layout.CopyrightBox.Font.GetFont(), new SolidBrush(layout.CopyrightBox.FColor.GetColor()), layout.CopyrightBox.Textbox.GetRectangle(), GraphicsHelper.LeftVerticalCenterAlign);
-                //g.DrawRectangle(Pens.Blue, 0, height - 20, width, 20);
-                TextBoxRenderer.Render(gfx, kgfx, copyright, layout.CopyrightBox);
+                CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.CopyrightBox, copyright);
             }
 
-
-
-
-            //var resized = (b: bmp, k: bmp) ;// ImageFilters.ImageFilters.UniformStretch(bmp, kbmp, new ImageFilters.UniformStretchFilterParams() { Fill = Color.White, KFill = Color.White, Height = (int)(1080 * .97), Width = (int)(1920 * .97) });
-
-            //var bordered = ImageFilters.ImageFilters.CenterOnBackground(resized.b, resized.k, new ImageFilters.CenterOnBackgroundFilterParams() { Fill = Color.White, KFill = Color.White, Width = 1920, Height = 1080 });
-
-            //res.Bitmap = bordered.b;
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = ibmp.ToBitmap();
+            res.KeyBitmap = ikbmp.ToBitmap();
             return res;
         }
 
@@ -149,35 +127,28 @@ namespace Xenon.Renderer
             }
         }
 
-        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
+        public (GDI.Bitmap main, GDI.Bitmap key) GetPreviewForLayout(string layoutInfo)
         {
             StitchedImageSlideLayoutInfo layout = JsonSerializer.Deserialize<StitchedImageSlideLayoutInfo>(layoutInfo);
 
-            Bitmap b = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Bitmap k = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-
-            Graphics gfx = Graphics.FromImage(b);
-            Graphics kgfx = Graphics.FromImage(k);
-
-            gfx.Clear(layout.BackgroundColor.GetColor());
-            kgfx.Clear(layout.KeyColor.GetColor());
+            CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
             if (layout.Shapes != null)
             {
                 foreach (var shape in layout.Shapes)
                 {
-                    PolygonRenderer.Render(gfx, kgfx, shape);
+                    CommonPolygonRenderer.Render(ibmp, ikbmp, shape);
                 }
             }
 
-            DrawingBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.MusicBox);
+            CommonDrawingBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.MusicBox);
 
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.TitleBox);
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.NameBox);
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.NumberBox);
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.CopyrightBox);
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.TitleBox);
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.NameBox);
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.NumberBox);
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.CopyrightBox);
 
-            return (b, k);
+            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
         }
 
         public bool IsValidLayoutJson(string json)

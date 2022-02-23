@@ -1,6 +1,10 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+
+using System;
 using System.Collections.Generic;
-using System.Drawing;
+using GDI = System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -8,8 +12,10 @@ using System.Threading.Tasks;
 
 using Xenon.AssetManagment;
 using Xenon.Compiler;
+using Xenon.Helpers;
 using Xenon.LayoutInfo;
 using Xenon.Renderer.Helpers;
+using Xenon.Renderer.Helpers.ImageSharp;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
@@ -36,42 +42,34 @@ namespace Xenon.Renderer
             }
         }
 
-        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
+        public (GDI.Bitmap main, GDI.Bitmap key) GetPreviewForLayout(string layoutInfo)
         {
             ShapeImageAndTextLayoutInfo layout = JsonSerializer.Deserialize<ShapeImageAndTextLayoutInfo>(layoutInfo);
 
-            Bitmap b = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Bitmap k = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-
-            Graphics gfx = Graphics.FromImage(b);
-            Graphics kgfx = Graphics.FromImage(k);
-
-            gfx.Clear(layout.BackgroundColor.GetColor());
-            kgfx.Clear(layout.KeyColor.GetColor());
+            CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
             foreach (var image in layout.Images)
             {
-                DrawingBoxRenderer.RenderLayoutPreview(gfx, kgfx, image);
+                CommonDrawingBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, image);
             }
 
             foreach (var shape in layout.Shapes)
             {
-                PolygonRenderer.RenderLayoutPreview(gfx, kgfx, shape);
+                CommonPolygonRenderer.RenderLayoutPreview(ibmp, ikbmp, shape);
             }
 
             int i = 1;
             foreach (var textbox in layout.Textboxes)
             {
-                TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, textbox, $"Example Text {i++}");
+                CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, textbox, $"Example Text {i++}");
             }
 
             foreach (var image in layout.Branding)
             {
-                DrawingBoxRenderer.RenderLayoutPreview(gfx, kgfx, image);
+                CommonDrawingBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, image);
             }
 
-
-            return (b, k);
+            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
         }
 
 
@@ -82,13 +80,7 @@ namespace Xenon.Renderer
             res.AssetPath = "";
             res.RenderedAs = string.IsNullOrWhiteSpace(layout?.SlideType) ? "Liturgy" : layout.SlideType;
 
-            Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Graphics gfx = Graphics.FromImage(bmp);
-            Graphics kgfx = Graphics.FromImage(kbmp);
-
-            gfx.Clear(layout.BackgroundColor.GetColor());
-            kgfx.Clear(layout.KeyColor.GetColor());
+            CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
             if (slide.Data.TryGetValue(DATAKEY_BKGDIMAGES, out object a))
             {
@@ -101,11 +93,10 @@ namespace Xenon.Renderer
                     {
                         if (assets[i] != null && assets[i].Type == AssetType.Image)
                         {
-                            DrawingBoxRenderer.Render(gfx, kgfx, image);
                             try
                             {
-                                Bitmap src = new Bitmap(assets[i].CurrentPath);
-                                gfx.DrawImage(src, image.Box.GetRectangleF(), new RectangleF(PointF.Empty, src.Size), GraphicsUnit.Pixel);
+                                Image<Bgra32> src = Image.Load<Bgra32>(assets[i].CurrentPath);
+                                CommonDrawingBoxRenderer.Render(ibmp, ikbmp, image, src);
                             }
                             catch (Exception)
                             {
@@ -120,7 +111,7 @@ namespace Xenon.Renderer
             // Draw All Shapes
             foreach (var shape in layout.Shapes)
             {
-                PolygonRenderer.Render(gfx, kgfx, shape);
+                CommonPolygonRenderer.Render(ibmp, ikbmp, shape);
             }
 
             // Draw All Text
@@ -132,7 +123,7 @@ namespace Xenon.Renderer
                 {
                     if (i < strings.Count)
                     {
-                        TextBoxRenderer.Render(gfx, kgfx, strings[i], textbox);
+                        CommonTextBoxRenderer.Render(ibmp, ikbmp, textbox, strings[i]);
                     }
                     i++;
                 }
@@ -149,11 +140,10 @@ namespace Xenon.Renderer
                     {
                         if (assets[i] != null && assets[i].Type == AssetType.Image)
                         {
-                            DrawingBoxRenderer.Render(gfx, kgfx, image);
                             try
                             {
-                                Bitmap src = new Bitmap(assets[i].CurrentPath);
-                                gfx.DrawImage(src, image.Box.GetRectangleF(), new RectangleF(PointF.Empty, src.Size), GraphicsUnit.Pixel);
+                                Image<Bgra32> src = Image.Load<Bgra32>(assets[i].CurrentPath);
+                                CommonDrawingBoxRenderer.Render(ibmp, ikbmp, image, src);
                             }
                             catch (Exception)
                             {
@@ -166,8 +156,8 @@ namespace Xenon.Renderer
             }
 
 
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = ibmp.ToBitmap();
+            res.KeyBitmap = ikbmp.ToBitmap();
             return res;
         }
     }
