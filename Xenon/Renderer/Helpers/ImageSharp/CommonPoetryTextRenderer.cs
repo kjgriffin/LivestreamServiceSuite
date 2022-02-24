@@ -28,7 +28,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                 return;
             }
 
-            double lhmax = lines.Max(x => TextMeasurer.Measure(x, new TextOptions(FontManager.GetFont(layout.Font))).Height);
+            double lhmax = lines.Max(x => TextMeasurer.Measure(x, new TextOptions(FontManager.GetFont(layout.Font)) { Dpi = 96 }).Height);
 
             // compute interline spacing
             double interspace = (layout.Textbox.Size.Height - (lines.Count * lhmax)) / (layout.VPaddingEnabled ? lines.Count + 1 : Math.Max(lines.Count - 1, 1));
@@ -78,6 +78,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                 HorizontalAlignment = layout.HorizontalAlignment.HALIGN(),
                 VerticalAlignment = VerticalAlignment.Top,
                 WrappingLength = layout.Textbox.Size.Width,
+                Dpi = 96,
             };
 
             ibmp.Mutate(ctx =>

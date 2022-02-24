@@ -1,31 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Text;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp;
+using SixLabors.Fonts;
+using Xenon.Renderer.Helpers.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
+using System;
+using GDI = System.Drawing;
+using GDIT = System.Drawing.Text;
+using System.Linq;
+
+using Xenon.FontManagement;
 using Xenon.Helpers;
 using Xenon.LayoutInfo;
+using Xenon.LayoutInfo.BaseTypes;
 
 namespace Xenon.LayoutEngine.L2
 {
 
     class SizedTextBlurb : TextBlurb
     {
-        public SizeF Size { get; private set; }
+        public GDI.SizeF Size { get; private set; }
 
-        public static SizedTextBlurb CreateMeasured(TextBlurb blurb, Graphics gfx, string defaultFont, float defaultFontSize, FontStyle defaultStyle, RectangleF rect)
+        [Obsolete("TODO: directly call into an imagesharp based method")]
+        public static SizedTextBlurb CreateMeasured(TextBlurb blurb, GDI.Graphics gfx, string defaultFont, float defaultFontSize, GDI.FontStyle defaultStyle, GDI.RectangleF rect)
         {
             SizedTextBlurb sblurb = new SizedTextBlurb(blurb);
-            sblurb.Size = sblurb.Measure(gfx, defaultFont, defaultFontSize, defaultStyle, rect);
+            //sblurb.Size = sblurb.Measure(gfx, defaultFont, defaultFontSize, defaultStyle, rect);
+            var s = sblurb.Measure(defaultFont, defaultFontSize, (SixLabors.Fonts.FontStyle)defaultStyle);
+            sblurb.Size = new GDI.SizeF(s.Width, s.Height);
             return sblurb;
         }
 
         public SizedTextBlurb(TextBlurb blurb) : base(blurb.Pos, blurb.Text, blurb.AltFont, blurb.FontStyle, blurb.FontSize, blurb.Space, blurb.IsWhitespace, blurb.HexFColor)
         {
-            Size = SizeF.Empty;
+            Size = GDI.SizeF.Empty;
         }
 
         public override SizedTextBlurb Clone()
@@ -37,7 +46,7 @@ namespace Xenon.LayoutEngine.L2
 
     internal class TextBlurb
     {
-        public Point Pos { get; private set; }
+        public GDI.Point Pos { get; private set; }
         public string Text { get; private set; }
         public string AltFont { get; private set; }
         public int FontStyle { get; private set; }
@@ -55,7 +64,7 @@ namespace Xenon.LayoutEngine.L2
         }
 
 
-        public TextBlurb(Point pos, string text, string altfont = "", int style = -1, float size = -1, bool space = false, bool newline = false, string hexColor = null)
+        public TextBlurb(GDI.Point pos, string text, string altfont = "", int style = -1, float size = -1, bool space = false, bool newline = false, string hexColor = null)
         {
             Pos = pos;
             Text = text;
@@ -67,65 +76,142 @@ namespace Xenon.LayoutEngine.L2
             HexFColor = hexColor;
         }
 
-        public SizeF Measure(Graphics gfx, string defaultFont, float defaultFontSize, FontStyle defaultStyle, RectangleF rect)
+        [Obsolete("Use imagesharp instead.")]
+        internal GDI.SizeF Measure(GDI.Graphics gfx, string defaultFont, float defaultFontSize, GDI.FontStyle defaultStyle, GDI.RectangleF rect)
         {
-            FontStyle style = FontStyle != -1 ? (FontStyle)FontStyle : defaultStyle;
+            GDI.FontStyle style = FontStyle != -1 ? (GDI.FontStyle)FontStyle : defaultStyle;
             float fsize = FontSize > 0 ? FontSize : defaultFontSize;
             string fname = defaultFont;
             if (!string.IsNullOrEmpty(AltFont))
             {
-                var installedFonts = new InstalledFontCollection();
+                var installedFonts = new GDIT.InstalledFontCollection();
                 if (installedFonts.Families.Any(x => x.Name == AltFont))
                 {
                     fname = AltFont;
                 }
             }
 
-            Font f = new Font(fname, fsize, style);
-            SizeF size = gfx.MeasureStringCharacters(Text, ref f, rect);
+            GDI.Font f = new GDI.Font(fname, fsize, style);
+            GDI.SizeF size = gfx.MeasureStringCharacters(Text, ref f, rect);
             f.Dispose();
             return size;
         }
 
-        public void Place(Point p)
-        {
-            Pos = p;
-        }
-
-        public void Render(Graphics gfx, Graphics kgfx, Color defaultfcolor, Color defaultkcolor, string defaultFont, float defaultFontSize, FontStyle defaultStyle)
+        internal SizeF Measure(string defaultFont, float defaultFontSize, FontStyle defaultStyle)
         {
             FontStyle style = FontStyle != -1 ? (FontStyle)FontStyle : defaultStyle;
             float fsize = FontSize > 0 ? FontSize : defaultFontSize;
             string fname = defaultFont;
             if (!string.IsNullOrEmpty(AltFont))
             {
-                var installedFonts = new InstalledFontCollection();
+                if (FontManager.HasFont(AltFont))
+                {
+                    fname = AltFont;
+                }
+            }
+
+            TextOptions tops = new TextOptions(FontManager.GetFont(new LWJFont(fname, fsize, (int)style)))
+            {
+                // todo: do we need to set any more options?
+                Dpi = 96,
+            };
+
+            var frect = TextMeasurer.MeasureBounds(Text, tops);
+            return new SizeF(frect.Width, frect.Height);
+        }
+
+        public void Place(GDI.Point p)
+        {
+            Pos = p;
+        }
+
+        [Obsolete("Use an imagesharp based render")]
+        public void Render(GDI.Graphics gfx, GDI.Graphics ikbmp, GDI.Color defaultfcolor, GDI.Color defaultkcolor, string defaultFont, float defaultFontSize, GDI.FontStyle defaultStyle)
+        {
+            GDI.FontStyle style = FontStyle != -1 ? (GDI.FontStyle)FontStyle : defaultStyle;
+            float fsize = FontSize > 0 ? FontSize : defaultFontSize;
+            string fname = defaultFont;
+            if (!string.IsNullOrEmpty(AltFont))
+            {
+                var installedFonts = new GDIT.InstalledFontCollection();
                 if (installedFonts.Families.Any(x => x.Name == AltFont))
                 {
                     fname = AltFont;
                 }
             }
 
-            Color fcolor = defaultfcolor;
-            Color kcolor = defaultkcolor;
+            GDI.Color fcolor = defaultfcolor;
+            GDI.Color kcolor = defaultkcolor;
 
             if (!string.IsNullOrEmpty(HexFColor))
             {
                 var fcol = new LWJColor() { Hex = HexFColor };
-                fcolor = Color.FromArgb(255, fcol.Red, fcol.Green, fcol.Blue);
-                kcolor = Color.FromArgb(255, fcol.Alpha, fcol.Alpha, fcol.Alpha);
+                fcolor = GDI.Color.FromArgb(255, fcol.Red, fcol.Green, fcol.Blue);
+                kcolor = GDI.Color.FromArgb(255, fcol.Alpha, fcol.Alpha, fcol.Alpha);
             }
 
 
-            using (Font f = new Font(fname, fsize, style))
-            using (var gbrush = new SolidBrush(fcolor))
-            using (var kbrush = new SolidBrush(kcolor))
+            using (GDI.Font f = new GDI.Font(fname, fsize, style))
+            using (var gbrush = new GDI.SolidBrush(fcolor))
+            using (var kbrush = new GDI.SolidBrush(kcolor))
             {
                 gfx.DrawString(Text, f, gbrush, Pos);
-                kgfx.DrawString(Text, f, kbrush, Pos);
+                ikbmp.DrawString(Text, f, kbrush, Pos);
             }
 
         }
+
+        public void Render(Image<Bgra32> ibmp,
+                           Image<Bgra32> ikbmp,
+                           Color defaultfcolor,
+                           Color defaultkcolor,
+                           string defaultFont,
+                           float defaultFontSize,
+                           FontStyle defaultStyle)
+        {
+            FontStyle style = FontStyle != -1 ? (FontStyle)FontStyle : defaultStyle;
+            float fsize = FontSize > 0 ? FontSize : defaultFontSize;
+            string fname = defaultFont;
+            if (!string.IsNullOrEmpty(AltFont))
+            {
+                if (FontManager.HasFont(AltFont))
+                {
+                    fname = AltFont;
+                }
+            }
+
+            var fcolor = defaultfcolor;
+            var kcolor = defaultkcolor;
+
+            if (!string.IsNullOrEmpty(HexFColor))
+            {
+                var fcol = new LWJColor() { Hex = HexFColor };
+                fcolor = Color.FromRgb((byte)fcol.Red, (byte)fcol.Green, (byte)fcol.Blue);
+                kcolor = Color.FromRgb((byte)fcol.Alpha, (byte)fcol.Alpha, (byte)fcol.Alpha);
+            }
+
+            TextOptions topts = new TextOptions(FontManager.GetFont(new LWJFont(fname, fsize, (int)style)))
+            {
+                Dpi = 96,
+                Origin = new PointF(Pos.X, Pos.Y),
+            };
+
+            ibmp.Mutate(ctx => ctx.DrawText(topts, Text, fcolor));
+            ikbmp.Mutate(ctx => ctx.DrawText(topts, Text, kcolor));
+
+        }
+
+        public void Render(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, TextboxLayout textbox)
+        {
+            Render(ibmp,
+                   ikbmp,
+                   textbox.FColor.ToColor(),
+                   Color.FromRgb((byte)textbox.FColor.Alpha, (byte)textbox.FColor.Alpha, (byte)textbox.FColor.Alpha),
+                   textbox.Font.Name,
+                   textbox.Font.Size,
+                   (FontStyle)textbox.Font.Style);
+        }
+
 
     }
 

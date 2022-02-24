@@ -67,6 +67,10 @@ namespace Xenon.FontManagement
             return FontCollection.TryGet(name, out ffamily);
         }
 
-
+        internal static bool HasFont(string altFont)
+        {
+            Initialize();
+            return FontCollection.Families.Any(x => x.Name == altFont);
+        }
     }
 }

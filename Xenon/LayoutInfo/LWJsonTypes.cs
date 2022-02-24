@@ -151,6 +151,12 @@ namespace Xenon.LayoutInfo
             Size = f.Size;
             Style = (int)f.Style;
         }
+        public LWJFont(string name, float size, int style)
+        {
+            Name = name;
+            Size = size;
+            Style = style;
+        }
         public Font GetFont()
         {
             return new Font(Name, Size, (FontStyle)Style);

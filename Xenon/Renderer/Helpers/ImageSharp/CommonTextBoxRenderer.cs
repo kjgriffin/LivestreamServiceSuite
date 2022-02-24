@@ -49,5 +49,18 @@ namespace Xenon.Renderer.Helpers.ImageSharp
         {
             Render(ibmp, ikbmp, layout, exampleText);
         }
+
+        internal static void RenderLayoutGhostPreview(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, LiturgyTextboxLayout layout)
+        {
+            RenderUnfilled(ibmp, ikbmp, layout);
+            if (layout.BColor.Alpha > 0)
+            {
+                ibmp.Mutate(ctx => ctx.Draw(Pens.Dash(layout.BColor.ToColor(), 5), layout.Textbox.RectangleF));
+            }
+            else
+            {
+                ibmp.Mutate(ctx => ctx.Draw(Pens.Dash(Color.FromRgb(200, 200, 200), 5), layout.Textbox.RectangleF));
+            }
+        }
     }
 }

@@ -57,7 +57,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                 TextDirection = TextDirection.LeftToRight,
                 TextAlignment = TextAlignment.Start,
                 WrappingLength = rect.Width,
-                //Dpi = System.Drawing.Graphics.FromHwnd(IntPtr.Zero).DpiX, // - might not need this...
+                Dpi = 96, // we'll statically assume DPI of 96 everywhere
                 Origin = GDI_Compensate(HAlign, VAlign, rect),
             };
             SolidBrush brush = new SolidBrush(fcolor);
