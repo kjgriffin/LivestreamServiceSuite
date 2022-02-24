@@ -17,6 +17,7 @@
     <None Remove="FontManagement\Fonts\lib\ARIALNI.TTF" />
     <None Remove="FontManagement\Fonts\lib\ariblk.ttf" />
     <None Remove="FontManagement\Fonts\lib\LSBSymbol.ttf" />
+    <None Remove="LayoutInfo\Defaults\AnthemTitleLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\LibBundles\Xenon.CopyTitle.lib.json" />
     <None Remove="LayoutInfo\Defaults\ResponsiveLiturgySlideLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\ShapeAndTextLayoutInfo_Default.json" />
@@ -60,6 +61,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\ShapeAndTextLayoutInfo_Default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LayoutInfo\Defaults\AnthemTitleLayoutInfo_Default.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\UpNextLayoutInfo_Default.json">

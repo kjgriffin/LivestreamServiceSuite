@@ -147,7 +147,8 @@ namespace Xenon.Renderer
                 case SlideFormat.SermonTitle:
                     return ssr.RenderSlide(_project.Layouts.SermonLayout.GetRenderInfo(), slide, Messages);
                 case SlideFormat.AnthemTitle:
-                    return atsr.RenderSlide(slide, Messages);
+                    //return atsr.RenderSlide(slide, Messages);
+                    return null;
                 case SlideFormat.TwoPartTitle:
                     //return tpsr.RenderSlide(slide, Messages);
                     return null;

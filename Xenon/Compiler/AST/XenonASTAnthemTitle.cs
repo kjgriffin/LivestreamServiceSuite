@@ -6,6 +6,7 @@ using System.Text;
 
 using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -41,29 +42,20 @@ namespace Xenon.Compiler.AST
                 Number = project.NewSlideNumber,
                 Lines = new List<SlideLine>(),
                 Asset = "",
-                Format = SlideFormat.AnthemTitle,
+                Format = SlideFormat.ShapesAndTexts,
                 MediaType = MediaType.Image
             };
 
-            SlideLineContent slcatitle = new SlideLineContent() { Data = AnthemTitle };
-            SlideLineContent slcmusician = new SlideLineContent() { Data = Musician };
-            SlideLineContent slcaccompanianst = new SlideLineContent() { Data = Accompanianst };
-            SlideLineContent slccredits = new SlideLineContent() { Data = Credits };
-
-            SlideLine slatitle = new SlideLine() { Content = new List<SlideLineContent>() { slcatitle } };
-            SlideLine slmusician = new SlideLine() { Content = new List<SlideLineContent>() { slcmusician } };
-            SlideLine slaccompanianst = new SlideLine() { Content = new List<SlideLineContent>() { slcaccompanianst } };
-            SlideLine slcredits = new SlideLine() { Content = new List<SlideLineContent>() { slccredits } };
-
-            titleslide.Lines.Add(slatitle);
-            titleslide.Lines.Add(slmusician);
-            titleslide.Lines.Add(slaccompanianst);
-            titleslide.Lines.Add(slcredits);
-
-            if (project.GetAttribute("alphatranscol").Count > 0)
+            
+            List<string> strings = new List<string>
             {
-                titleslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
-            }
+                AnthemTitle, Musician, Accompanianst, Credits
+            };
+
+            titleslide.Data[ShapeAndTextRenderer.DATAKEY_TEXTS] = strings;
+            titleslide.Data[ShapeAndTextRenderer.DATAKEY_FALLBACKLAYOUT] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.AnthemTitle].defaultJsonFile;
+            (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, titleslide, LanguageKeywordCommand.AnthemTitle);
+
 
             titleslide.AddPostset(_Parent, true, true);
             return titleslide.ToList();
