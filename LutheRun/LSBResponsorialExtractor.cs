@@ -142,9 +142,8 @@ namespace LutheRun
                         //    line.Speaker = speakerctd;
                         //}
 
-
-                        // single or double space???
-                        line.TextSegments.Add(new TextBlock("  ", whitespacesensitive: true));
+                        // for Psalm poetry- 1 space seems best
+                        line.TextSegments.Add(new TextBlock(" ", whitespacesensitive: true));
                     }
                     else if (line_item.LocalName == "span")
                     {
