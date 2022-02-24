@@ -942,6 +942,7 @@ namespace SlideCreater
                 if (!saved)
                 {
                     e.Cancel = true;
+                    return;
                 }
             }
             // close everything else too
