@@ -7,9 +7,11 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Xenon.Compiler;
+using Xenon.Helpers;
 using Xenon.LayoutEngine.L2;
 using Xenon.LayoutInfo;
 using Xenon.Renderer.Helpers;
+using Xenon.Renderer.Helpers.ImageSharp;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
@@ -26,32 +28,24 @@ namespace Xenon.Renderer
         {
             TitledResponsiveLiturgySlideLayoutInfo layout = JsonSerializer.Deserialize<TitledResponsiveLiturgySlideLayoutInfo>(layoutInfo);
 
-            Bitmap b = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Bitmap k = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-
-            Graphics gfx = Graphics.FromImage(b);
-            Graphics kgfx = Graphics.FromImage(k);
-
-            gfx.Clear(layout.BackgroundColor.GetColor());
-            kgfx.Clear(layout.KeyColor.GetColor());
+            CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
             foreach (var shape in layout.Shapes)
             {
-                PolygonRenderer.RenderLayoutPreview(gfx, kgfx, shape);
+                CommonPolygonRenderer.RenderLayoutPreview(ibmp, ikbmp, shape);
             }
 
             foreach (var tbox in layout.TitleBoxes)
             {
-                TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, tbox);
+                CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, tbox);
             }
 
-            TextBoxRenderer.RenderLayoutGhostPreview(gfx, kgfx, layout.ContentBox);
+            CommonTextBoxRenderer.RenderLayoutGhostPreview(ibmp, ikbmp, layout.ContentBox);
 
             // preview a liturgy line in each textbox
             //_ = layout.LiturgyLineProto;
 
-            return (b, k);
-
+            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
         }
 
         public bool IsValidLayoutJson(string json)
@@ -75,18 +69,12 @@ namespace Xenon.Renderer
             res.AssetPath = "";
             res.RenderedAs = string.IsNullOrWhiteSpace(layout?.SlideType) ? "Liturgy" : layout.SlideType;
 
-            Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Graphics gfx = Graphics.FromImage(bmp);
-            Graphics kgfx = Graphics.FromImage(kbmp);
-
-            gfx.Clear(layout.BackgroundColor.GetColor());
-            kgfx.Clear(layout.KeyColor.GetColor());
+            CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
             // Draw All Shapes
             foreach (var shape in layout.Shapes)
             {
-                PolygonRenderer.Render(gfx, kgfx, shape);
+                CommonPolygonRenderer.Render(ibmp, ikbmp, shape);
             }
 
             // draw titles
@@ -98,14 +86,14 @@ namespace Xenon.Renderer
                 {
                     if (i < tlines.Count)
                     {
-                        TextBoxRenderer.Render(gfx, kgfx, tlines[i], tbox);
+                        CommonTextBoxRenderer.Render(ibmp, ikbmp, tbox, tlines[i]);
                     }
                     i++;
                 }
             }
 
 
-            TextBoxRenderer.RenderUnFilled(gfx, kgfx, layout.ContentBox);
+            CommonTextBoxRenderer.RenderUnfilled(ibmp, ikbmp, layout.ContentBox);
 
             // Draw All Text
             // for now only draw into first textbox
@@ -116,13 +104,13 @@ namespace Xenon.Renderer
 
                 foreach (var word in words)
                 {
-                    word.Render(gfx, kgfx, tb.FColor.GetColor(), Color.White, tb.Font.Name, tb.Font.Size, (FontStyle)tb.Font.Style);
+                    word.Render(ibmp, ikbmp, layout.ContentBox);
                 }
             }
 
 
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = ibmp.ToBitmap();
+            res.KeyBitmap = ikbmp.ToBitmap();
             return res;
 
         }

@@ -72,7 +72,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 
         internal static void DrawKeyText(this IImageProcessingContext ctx, string text, TextboxLayout layout)
         {
-            ctx.DrawText(text, FontManager.GetFont(layout.Font), layout.KColor.ToColor(), layout.Textbox.RectangleF, layout.HorizontalAlignment, layout.VerticalAlignment);
+            ctx.DrawText(text, FontManager.GetFont(layout.Font), layout.FColor.RGBFromAlpha(), layout.Textbox.RectangleF, layout.HorizontalAlignment, layout.VerticalAlignment);
         }
 
     }

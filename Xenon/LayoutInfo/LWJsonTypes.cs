@@ -259,6 +259,11 @@ namespace Xenon.LayoutInfo
             return SixLabors.ImageSharp.Color.FromRgba((byte)Alpha, (byte)Alpha, (byte)Alpha, (byte)Alpha);
         }
 
+        public SixLabors.ImageSharp.Color RGBFromAlpha()
+        {
+            return SixLabors.ImageSharp.Color.FromRgba((byte)Alpha, (byte)Alpha, (byte)Alpha, 255);
+        }
+
     }
 
     class LWJTLVerseLayout
