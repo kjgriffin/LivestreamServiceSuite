@@ -83,6 +83,91 @@ namespace LutheRun
             return sb.ToString();
         }
 
+        public static string ExtractResponsivePoetry(List<IElement> p_elements)
+        {
+            List<LiturgicalStatement> Lines = new List<LiturgicalStatement>();
+            /* Expected Structure: 
+             * - each spoken line wraped in a paragraph
+             * - first span identifies the speaker
+             * - next span for break
+             * - subsequent spans for content (optional br identifes good places to chunk large segments)
+             */
+
+            LiturgicalStatement lastline = null;
+            // 1. Iterate over childern (expect all to be <p> tags)
+            foreach (var ptags in p_elements.Where(c => c.LocalName == "p"))
+            {
+                LiturgicalStatement line = new LiturgicalStatement();
+                int snum = 0;
+                // build a Liturgy-Response
+                // go through all childern
+                if (ptags.ClassList.Contains("lsb-responsorial-continued_poetry"))
+                {
+                    // keep adding to the same 'logical line'
+                    snum = 1;
+                    line = lastline;
+                    // add some leading whitespace
+                    // 2 spaces... ????
+                    line.TextSegments.Add(new TextBlock("  ", false, false, whitespacesensitive: true));
+                }
+                else if (ptags.ClassList.Contains("lsb-responsorial_poetry"))
+                {
+                }
+                else
+                {
+                    // ignore it
+                    continue;
+                }
+
+                foreach (var line_item in ptags.Children)
+                {
+                    // Expect the speaker
+                    if (snum == 0)
+                    {
+                        line.Speaker = line_item.TextContent;
+                    }
+                    else if (snum > 0 && line_item.ClassList.Contains("Apple-tab-span"))
+                    {
+                        // ignore it
+                    }
+                    else if (line_item.LocalName == "br")
+                    {
+                        // for responsive poetry this is used to indicate within a p tag, that there's some logical requirement to start a new line
+                        // we'll borrow existing functionality instead and just end and start a new line (with the same speaker)
+                        //if (!(string.IsNullOrEmpty(line.Speaker) && line.TextSegments.Any(x => string.IsNullOrWhiteSpace(x.Text))) && line != lastline)
+                        //{
+                        //    var speakerctd = line.Speaker;
+                        //    Lines.Add(line);
+                        //    line = new LiturgicalStatement();
+                        //    line.Speaker = speakerctd;
+                        //}
+
+
+                        // single or double space???
+                        line.TextSegments.Add(new TextBlock("  ", whitespacesensitive: true));
+                    }
+                    else if (line_item.LocalName == "span")
+                    {
+                        // is text content of some sort
+
+                        bool specialChar = line_item.ClassList.Contains("lsb-symbol");
+                        bool boldFont = line_item.Attributes.Any(x => x.LocalName == "font-weight" && x.Value == "bold");
+
+                        line.TextSegments.Add(new TextBlock(line_item.TextContent, boldFont, specialChar));
+                    }
+                    snum++;
+                }
+
+                if (!(string.IsNullOrEmpty(line.Speaker) && line.TextSegments.Any(x => string.IsNullOrWhiteSpace(x.Text))) && line != lastline)
+                {
+                    Lines.Add(line);
+                }
+                lastline = line;
+            }
+            return GenerateSource(Lines);
+
+        }
+
         public static string ExtractResponsiveLiturgy(List<IElement> p_elements)
         {
             List<LiturgicalStatement> Lines = new List<LiturgicalStatement>();

@@ -167,7 +167,28 @@ namespace LutheRun
             }
 
             // do title
-            sb.AppendLine($"#reading(\"{ReadingTitle}\", \"{ReadingReference}\"){onreadingpostset}");
+            if (!lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy)
+            {
+                sb.AppendLine($"#reading(\"{ReadingTitle}\", \"{ReadingReference}\"){onreadingpostset}");
+            }
+            if (lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy)
+            {
+                if (ReadingTitle.ToLower().Contains("psalm") || ReadingReference.ToLower().Contains("psalm") || lSBImportOptions.PullAllReadingContentAsTitledLiturgy)
+                {
+                    // assumes only 1 reading content...
+                    sb.AppendLine("#tlit");
+                    sb.AppendLine("{");
+                    sb.AppendLine();
+                    sb.AppendLine($"title={{{ReadingTitle}}}");
+                    sb.AppendLine();
+                    sb.AppendLine($"title={{{ReadingReference}}}");
+                    sb.AppendLine();
+                    sb.AppendLine("content={");
+                    sb.AppendLine(LSBResponsorialExtractor.ExtractResponsivePoetry(ReadingContent.FirstOrDefault().Elements));
+                    sb.AppendLine("}");
+                    sb.AppendLine("}");
+                }
+            }
 
             // skip text for now
 

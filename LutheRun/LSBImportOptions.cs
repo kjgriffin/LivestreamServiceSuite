@@ -22,6 +22,10 @@ namespace LutheRun
         [BoolSetting]
         public bool UseComplexReading { get; set; } = true;
         [BoolSetting]
+        public bool InferResponsivePslamReadingsAsTitledLiturgy { get; set; } = true;
+        [BoolSetting]
+        public bool PullAllReadingContentAsTitledLiturgy { get; set; } = true;
+        [BoolSetting]
         public bool UseCopyTitle { get; set; } = true;
 
         public LSBElementFilter Filter { get; set; } = new LSBElementFilter();
