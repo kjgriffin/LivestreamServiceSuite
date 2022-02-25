@@ -1184,6 +1184,11 @@ namespace SlideCreater
                 ActionState = ActionState.Building;
                 LutheRun.LSBParser parser = new LutheRun.LSBParser();
                 parser.LSBImportOptions = options;
+                if (options.UseThemedCreeds || options.UseThemedHymns)
+                {
+                    // make user select the theme
+                    options.ServiceThemeLib = GetUserSelectedThemeForImport();
+                }
                 await parser.ParseHTML(ofd.FileName);
                 parser.Serviceify(options);
                 parser.CompileToXenon();
@@ -1193,9 +1198,19 @@ namespace SlideCreater
                 AssetsChanged();
                 ShowProjectAssets();
                 ActionState = ActionState.Ready;
-                //TbInput.SetText("/*\r\n" + parser.XenonDebug() + "*/\r\n" + parser.XenonText);
                 TbInput.Text = parser.XenonText;
             }
+        }
+
+        private string GetUserSelectedThemeForImport()
+        {
+            TbPromptDialog dialog = new TbPromptDialog("Select Theme To Import With", "Layout Library Name", "Xenon.Green");
+            dialog.ShowDialog();
+            if (!string.IsNullOrEmpty(dialog.ResultValue))
+            {
+                return dialog.ResultValue;
+            }
+            return "Xenon.Core";
         }
 
         private void cb_message_view_debug_Click(object sender, RoutedEventArgs e)

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text;
 using Xenon.Helpers;
 using System.Linq;
+using Xenon.Renderer;
 
 namespace Xenon.Compiler.AST
 {
@@ -38,26 +39,19 @@ namespace Xenon.Compiler.AST
                 Number = project.NewSlideNumber,
                 Lines = new List<SlideLine>(),
                 Asset = "",
-                Format = SlideFormat.SermonTitle,
+                Format = SlideFormat.ShapesAndTexts,
                 MediaType = MediaType.Image
             };
 
-            SlideLineContent slcref = new SlideLineContent() { Data = Reference };
-            SlideLineContent slctitle = new SlideLineContent() { Data = Title };
-            SlideLineContent slcpreacher = new SlideLineContent() { Data = Preacher };
-
-            SlideLine slref = new SlideLine() { Content = new List<SlideLineContent>() { slcref } };
-            SlideLine sltitle = new SlideLine() { Content = new List<SlideLineContent>() { slctitle } };
-            SlideLine slpreacher = new SlideLine() { Content = new List<SlideLineContent>() { slcpreacher } };
-
-            sermonslide.Lines.Add(sltitle);
-            sermonslide.Lines.Add(slref);
-            sermonslide.Lines.Add(slpreacher);
-
-            if (project.GetAttribute("alphatranscol").Count > 0)
+            List<string> strings = new List<string>
             {
-                sermonslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
-            }
+                Title, Reference, Preacher,
+            };
+
+            sermonslide.Data[ShapeAndTextRenderer.DATAKEY_TEXTS] = strings;
+            sermonslide.Data[ShapeAndTextRenderer.DATAKEY_FALLBACKLAYOUT] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.Sermon].defaultJsonFile;
+            (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, sermonslide, LanguageKeywordCommand.Sermon);
+
 
             sermonslide.AddPostset(_Parent, true, true);
 

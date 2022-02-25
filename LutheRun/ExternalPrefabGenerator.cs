@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LutheRun
@@ -43,15 +45,42 @@ namespace LutheRun
             return new LSBElementUnknown();
         }
 
-        private static string CopyTitleCommand(string serviceTitle = "", string serviceDate = "", string lsback = "", int postset = -1, bool inferPostset = true)
+        public static ILSBElement GenerateCreed(string creedtype, LSBImportOptions options)
+        {
+
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                           .GetManifestResourceNames()
+                           .Where(n => n.StartsWith("LutheRun.PrefabBlobs") && n.Contains(creedtype))
+                           .FirstOrDefault();
+
+            string txtcmd = "";
+
+            // TODO: do theme injection/replacement
+            if (!string.IsNullOrEmpty(name))
+            {
+                var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator)).GetManifestResourceStream(name);
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    txtcmd = sr.ReadToEnd();
+                }
+            }
+            txtcmd = Regex.Replace(txtcmd, @"\$SERVICETHEME\$", options.ServiceThemeLib);
+
+            // TODO: figure out how to get postset in the right place...
+            return new ExternalPrefab(txtcmd);
+
+        }
+
+        private static string CopyTitleCommand(string serviceTitle = "", string serviceDate = "", string lsback = "", int postset = -1, bool inferPostset = true, string libtheme = "Xenon.Green")
         {
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("#scope(copytitle) {");
             sb.AppendLine();
-            sb.AppendLine("#var(\"customdraw.Layout\", \"Xenon.CopyTitle::CopyTitle-Green\")");
+            sb.AppendLine($"#var(\"customdraw.Layout\", \"{libtheme}::CopyTitle\")");
             sb.AppendLine();
 
+            sb.AppendLine("/// </MANUAL_UPDATE name='TitlePage Details'>");
             sb.AppendLine("#customdraw {");
             sb.AppendLine("asset=(\"HCLogo-white\", \"fg\")");
             sb.AppendLine("// Service Title");

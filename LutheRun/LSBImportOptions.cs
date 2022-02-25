@@ -24,9 +24,15 @@ namespace LutheRun
         [BoolSetting]
         public bool InferResponsivePslamReadingsAsTitledLiturgy { get; set; } = true;
         [BoolSetting]
-        public bool PullAllReadingContentAsTitledLiturgy { get; set; } = true;
+        public bool PullAllReadingContentAsTitledLiturgy { get; set; } = false;
         [BoolSetting]
         public bool UseCopyTitle { get; set; } = true;
+        [BoolSetting]
+        public bool UseThemedCreeds { get; set; } = true;
+        [BoolSetting]
+        public bool UseThemedHymns { get; set; } = true;
+
+        public string ServiceThemeLib { get; set; } = "Xenon.Green";
 
         public LSBElementFilter Filter { get; set; } = new LSBElementFilter();
     }

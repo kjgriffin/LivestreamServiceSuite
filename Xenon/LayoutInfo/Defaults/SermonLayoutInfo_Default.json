@@ -3,17 +3,17 @@
     {
       "Textbox": {
         "Origin": {
-          "X": 50,
-          "Y": 893
+          "X": 192,
+          "Y": 950
         },
         "Size": {
-          "Width": 910,
-          "Height": 70
+          "Width": 1536,
+          "Height": 100
         }
       },
       "Font": {
         "Name": "Arial",
-        "Size": 36,
+        "Size": 40,
         "Style": 1
       },
       "FColor": {
@@ -23,26 +23,26 @@
         "Hex": "#00000000"
       },
       "KColor": {
-        "Hex": "00000000"
+        "Hex": "#00000000"
       },
-      "HorizontalAlignment": "Left",
+      "HorizontalAlignment": "Center",
       "VerticalAlignment": "Center"
     },
     {
       "Textbox": {
         "Origin": {
           "X": 960,
-          "Y": 893
+          "Y": 890
         },
         "Size": {
           "Width": 910,
-          "Height": 70
+          "Height": 60
         }
       },
       "Font": {
         "Name": "Arial",
         "Size": 36,
-        "Style": 1
+        "Style": 2
       },
       "FColor": {
         "Hex": "#ffffffff"
@@ -51,7 +51,7 @@
         "Hex": "#00000000"
       },
       "KColor": {
-        "Hex": "00000000"
+        "Hex": "#00000000"
       },
       "HorizontalAlignment": "Right",
       "VerticalAlignment": "Center"
@@ -60,11 +60,11 @@
       "Textbox": {
         "Origin": {
           "X": 50,
-          "Y": 981
+          "Y": 890
         },
         "Size": {
           "Width": 910,
-          "Height": 70
+          "Height": 60
         }
       },
       "Font": {
@@ -79,37 +79,9 @@
         "Hex": "#00000000"
       },
       "KColor": {
-        "Hex": "00000000"
-      },
-      "HorizontalAlignment": "Left",
-      "VerticalAlignment": "Center"
-    },
-    {
-      "Textbox": {
-        "Origin": {
-          "X": 960,
-          "Y": 981
-        },
-        "Size": {
-          "Width": 910,
-          "Height": 70
-        }
-      },
-      "Font": {
-        "Name": "Arial Narrow",
-        "Size": 36,
-        "Style": 0
-      },
-      "FColor": {
-        "Hex": "#ffffffff"
-      },
-      "BColor": {
         "Hex": "#00000000"
       },
-      "KColor": {
-        "Hex": "00000000"
-      },
-      "HorizontalAlignment": "Right",
+      "HorizontalAlignment": "Left",
       "VerticalAlignment": "Center"
     }
   ],
@@ -168,5 +140,5 @@
   "KeyColor": {
     "Hex": "#ff000000"
   },
-  "SlideType": ""
+  "SlideType": "Liturgy-t1restart"
 }

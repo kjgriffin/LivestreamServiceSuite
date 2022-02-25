@@ -127,6 +127,10 @@ namespace LutheRun
 
                     newservice.Add(ExternalPrefabGenerator.GenerateCopyTitle(service.Take(2), sack, options));
                 }
+                else
+                {
+                    servicetoparse = service;
+                }
 
             }
 

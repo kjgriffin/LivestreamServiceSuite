@@ -3,72 +3,16 @@
     {
       "Textbox": {
         "Origin": {
-          "X": 50,
-          "Y": 893
+          "X": 200,
+          "Y": 872
         },
         "Size": {
-          "Width": 910,
-          "Height": 70
+          "Width": 760,
+          "Height": 200
         }
       },
       "Font": {
         "Name": "Arial",
-        "Size": 36,
-        "Style": 1
-      },
-      "FColor": {
-        "Hex": "#ffffffff"
-      },
-      "BColor": {
-        "Hex": "#00000000"
-      },
-      "KColor": {
-        "Hex": "00000000"
-      },
-      "HorizontalAlignment": "Left",
-      "VerticalAlignment": "Center"
-    },
-    {
-      "Textbox": {
-        "Origin": {
-          "X": 960,
-          "Y": 893
-        },
-        "Size": {
-          "Width": 910,
-          "Height": 70
-        }
-      },
-      "Font": {
-        "Name": "Arial",
-        "Size": 36,
-        "Style": 1
-      },
-      "FColor": {
-        "Hex": "#ffffffff"
-      },
-      "BColor": {
-        "Hex": "#00000000"
-      },
-      "KColor": {
-        "Hex": "00000000"
-      },
-      "HorizontalAlignment": "Right",
-      "VerticalAlignment": "Center"
-    },
-    {
-      "Textbox": {
-        "Origin": {
-          "X": 50,
-          "Y": 981
-        },
-        "Size": {
-          "Width": 910,
-          "Height": 70
-        }
-      },
-      "Font": {
-        "Name": "Arial Narrow",
         "Size": 36,
         "Style": 0
       },
@@ -79,7 +23,7 @@
         "Hex": "#00000000"
       },
       "KColor": {
-        "Hex": "00000000"
+        "Hex": "#00000000"
       },
       "HorizontalAlignment": "Left",
       "VerticalAlignment": "Center"
@@ -88,17 +32,17 @@
       "Textbox": {
         "Origin": {
           "X": 960,
-          "Y": 981
+          "Y": 872
         },
         "Size": {
-          "Width": 910,
-          "Height": 70
+          "Width": 760,
+          "Height": 200
         }
       },
       "Font": {
-        "Name": "Arial Narrow",
+        "Name": "Arial",
         "Size": 36,
-        "Style": 0
+        "Style": 2
       },
       "FColor": {
         "Hex": "#ffffffff"
@@ -107,7 +51,7 @@
         "Hex": "#00000000"
       },
       "KColor": {
-        "Hex": "00000000"
+        "Hex": "#00000000"
       },
       "HorizontalAlignment": "Right",
       "VerticalAlignment": "Center"

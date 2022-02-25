@@ -538,11 +538,29 @@ namespace LutheRun
                     ["Nicene Creed"] = "nicenecreed",
                     ["Lords Prayer"] = "lordsprayer",
                 };
-                if (prefabs.Keys.Contains(ctext))
+                Dictionary<string, string> prefabsMkII = new Dictionary<string, string>
                 {
-                    // use a prefab instead
-                    ServiceElements.Add(new LSBElementIsPrefab(prefabs[ctext], element.StrippedText(), element));
-                    return true;
+                    ["Apostles Creed"] = "ApostlesCreed",
+                    ["Nicene Creed"] = "NiceneCreed",
+                    ["Lords Prayer"] = "LordsPrayer",
+                };
+                if (!LSBImportOptions.UseThemedCreeds)
+                {
+                    if (prefabs.Keys.Contains(ctext))
+                    {
+                        // use a prefab instead
+                        ServiceElements.Add(new LSBElementIsPrefab(prefabs[ctext], element.StrippedText(), element));
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (prefabsMkII.Keys.Contains(ctext))
+                    {
+                        // use a prefab instead
+                        ServiceElements.Add(ExternalPrefabGenerator.GenerateCreed(prefabsMkII[ctext], LSBImportOptions));
+                        return true;
+                    }
                 }
             }
             return false;
@@ -552,9 +570,25 @@ namespace LutheRun
         {
             stringBuilder.Clear();
             stringBuilder.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{System.IO.Path.GetFileName(ServiceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
+
+            if (LSBImportOptions.UseThemedHymns)
+            {
+                stringBuilder.AppendLine();
+                stringBuilder.AppendLine("#scope(LSBService) {");
+                stringBuilder.AppendLine();
+                stringBuilder.AppendLine($"#var(\"stitchedimage.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")");
+                stringBuilder.AppendLine($"#var(\"texthymn.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")");
+                stringBuilder.AppendLine();
+            }
+
             foreach (var se in ServiceElements)
             {
                 stringBuilder.AppendLine(se.XenonAutoGen(LSBImportOptions));
+            }
+
+            if (LSBImportOptions.UseThemedHymns)
+            {
+                stringBuilder.AppendLine("}");
             }
         }
 

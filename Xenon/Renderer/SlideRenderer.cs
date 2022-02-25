@@ -143,9 +143,11 @@ namespace Xenon.Renderer
                     //return sir.RenderSlide(slide, Messages, _project.Assets);
                     return null;
                 case SlideFormat.Reading:
-                    return rsr.RenderSlide(_project.Layouts.ReadingLayout.GetRenderInfo(), slide, Messages);
+                    //return rsr.RenderSlide(_project.Layouts.ReadingLayout.GetRenderInfo(), slide, Messages);
+                    return null;
                 case SlideFormat.SermonTitle:
-                    return ssr.RenderSlide(_project.Layouts.SermonLayout.GetRenderInfo(), slide, Messages);
+                    //return ssr.RenderSlide(_project.Layouts.SermonLayout.GetRenderInfo(), slide, Messages);
+                    return null;
                 case SlideFormat.AnthemTitle:
                     //return atsr.RenderSlide(slide, Messages);
                     return null;
@@ -154,6 +156,7 @@ namespace Xenon.Renderer
                     return null;
                 case SlideFormat.HymnTextVerse:
                     //return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide, Messages);
+                    return null;
                 case SlideFormat.Prefab:
                     return psr.RenderSlide(slide, Messages);
                 case SlideFormat.Script:

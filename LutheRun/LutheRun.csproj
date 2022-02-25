@@ -5,6 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="PrefabBlobs\ApostlesCreed.txt" />
+    <None Remove="PrefabBlobs\LordsPrayer.txt" />
+    <None Remove="PrefabBlobs\NiceneCreed.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="PrefabBlobs\ApostlesCreed.txt" />
+    <EmbeddedResource Include="PrefabBlobs\LordsPrayer.txt" />
+    <EmbeddedResource Include="PrefabBlobs\NiceneCreed.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.16.1" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>

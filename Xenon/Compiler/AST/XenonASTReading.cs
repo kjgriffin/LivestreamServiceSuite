@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text;
 using Xenon.Helpers;
 using System.Linq;
+using Xenon.Renderer;
 
 namespace Xenon.Compiler.AST
 {
@@ -35,22 +36,17 @@ namespace Xenon.Compiler.AST
             readingslide.Number = project.NewSlideNumber;
             readingslide.Lines = new List<SlideLine>();
             readingslide.Asset = "";
-            readingslide.Format = SlideFormat.Reading;
+            readingslide.Format = SlideFormat.ShapesAndTexts;
             readingslide.MediaType = MediaType.Image;
 
-            SlideLineContent slcref = new SlideLineContent() { Data = Reference };
-            SlideLineContent slcname = new SlideLineContent() { Data = Name };
-
-            SlideLine slref = new SlideLine() { Content = new List<SlideLineContent>() { slcref } };
-            SlideLine slname = new SlideLine() { Content = new List<SlideLineContent>() { slcname } };
-
-            readingslide.Lines.Add(slname);
-            readingslide.Lines.Add(slref);
-
-            if (project.GetAttribute("alphatranscol").Count > 0)
+            List<string> strings = new List<string>
             {
-                readingslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
-            }
+                Name, Reference,
+            };
+
+            readingslide.Data[ShapeAndTextRenderer.DATAKEY_TEXTS] = strings;
+            readingslide.Data[ShapeAndTextRenderer.DATAKEY_FALLBACKLAYOUT] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.Reading].defaultJsonFile;
+            (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, readingslide, LanguageKeywordCommand.Reading);
 
             readingslide.AddPostset(_Parent, true, true);
 

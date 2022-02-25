@@ -45,7 +45,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
             return new System.Numerics.Vector2(xadjust, yadjust);
         }
 
-        internal static void DrawText(this IImageProcessingContext ctx, string text, Font font, Color fcolor, RectangleF rect, LWJHAlign HAlign, LWJVAlign VAlign)
+        private static void DrawText(this IImageProcessingContext ctx, string text, Font font, Color fcolor, RectangleF rect, LWJHAlign HAlign, LWJVAlign VAlign, float linespace = 1f)
         {
             DrawingOptions otps = new DrawingOptions();
             TextOptions tops = new TextOptions(font)
@@ -53,7 +53,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                 HorizontalAlignment = HAlign.HALIGN(), // to simulate GDI+ behaviour: move the origin to compensate
                 VerticalAlignment = VAlign.VALIGN(), // to simulate GDI+ behaviour: move the origin to compensate 
                 WordBreaking = WordBreaking.Normal,
-                LineSpacing = 1,
+                LineSpacing = linespace,
                 TextDirection = TextDirection.LeftToRight,
                 TextAlignment = TextAlignment.Start,
                 WrappingLength = rect.Width,
@@ -67,12 +67,12 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 
         internal static void DrawText(this IImageProcessingContext ctx, string text, TextboxLayout layout)
         {
-            ctx.DrawText(text, FontManager.GetFont(layout.Font), layout.FColor.ToColor(), layout.Textbox.RectangleF, layout.HorizontalAlignment, layout.VerticalAlignment);
+            ctx.DrawText(text, FontManager.GetFont(layout.Font), layout.FColor.ToColor(), layout.Textbox.RectangleF, layout.HorizontalAlignment, layout.VerticalAlignment, layout.LineSpacing);
         }
 
         internal static void DrawKeyText(this IImageProcessingContext ctx, string text, TextboxLayout layout)
         {
-            ctx.DrawText(text, FontManager.GetFont(layout.Font), layout.FColor.RGBFromAlpha(), layout.Textbox.RectangleF, layout.HorizontalAlignment, layout.VerticalAlignment);
+            ctx.DrawText(text, FontManager.GetFont(layout.Font), layout.FColor.RGBFromAlpha(), layout.Textbox.RectangleF, layout.HorizontalAlignment, layout.VerticalAlignment, layout.LineSpacing);
         }
 
     }

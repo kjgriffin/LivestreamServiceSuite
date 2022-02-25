@@ -13,6 +13,7 @@ namespace Xenon.LayoutInfo.BaseTypes
     {
         public LWJRect Textbox { get; set; }
         public LWJFont Font { get; set; }
+        public float LineSpacing { get; set; } = 1;
         public LWJColor FColor { get; set; }
         public LWJColor BColor { get; set; }
         public LWJColor KColor { get; set; }
