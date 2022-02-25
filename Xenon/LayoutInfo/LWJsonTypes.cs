@@ -20,6 +20,12 @@ namespace Xenon.LayoutInfo
         public SixLabors.ImageSharp.Point Point { get => new SixLabors.ImageSharp.Point(X, Y); }
 
         public LWJPoint() { }
+
+        public LWJPoint(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
         public LWJPoint(Point p)
         {
             X = p.X;

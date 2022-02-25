@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommonVersionInfo;
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,5 +16,11 @@ namespace Xenon.LayoutInfo
         {
             return "";
         }
+
+        virtual public ALayoutInfo UpgradeLayoutFromPreviousVersion(BuildVersion originalVersion, BuildVersion targetVersion)
+        {
+            return this;    
+        }
+
     }
 }

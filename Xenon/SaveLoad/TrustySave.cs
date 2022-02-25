@@ -6,12 +6,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Xenon.Compiler;
+using Xenon.LayoutInfo;
 using Xenon.SlideAssembly;
 
 namespace Xenon.SaveLoad
@@ -113,7 +116,7 @@ namespace Xenon.SaveLoad
                             // Project has layouts defined
                             // we can replace the defaults created by new Project()
                             var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
-                            proj.ProjectLayouts.LoadLibrary(lib);
+                            proj.ProjectLayouts.LoadLibrary(lib.TrustilyUpgradeOldLayoutLibrary(originalVersion, currentVersion));
 
                         }
                     }
@@ -129,6 +132,139 @@ namespace Xenon.SaveLoad
             return (proj, assetfilemap, assetdisplaynames, assetextensions);
 
         }
+
+        private static LayoutLibEntry TrustilyUpgradeOldLayoutLibrary(this LayoutLibEntry oldLib, BuildVersion originalVersionSC, BuildVersion targetVersionSC)
+        {
+            LayoutLibEntry upgradedLibrary = new LayoutLibEntry();
+            upgradedLibrary.Metadata = new LibraryMetadata
+            {
+                Date = $"{DateTime.Now.Date}",
+                XenonVersion = targetVersionSC.ToString()
+            };
+
+            // at this point we rely upon the library's internal version since it's possible it was build with a different version that the source project
+            upgradedLibrary.Lib = oldLib.Lib.TrustilyUpgradeOldLayoutLibrary(BuildVersion.Parse(oldLib.Metadata.XenonVersion), targetVersionSC);
+
+            return upgradedLibrary;
+        }
+
+        private static LayoutLibrary TrustilyUpgradeOldLayoutLibrary(this LayoutLibrary lib, BuildVersion originalLibVersion, BuildVersion targetVersionSC)
+        {
+            // 1. handle groups (for now grouping has remained the same)
+            // note: if we ever move layouts from one group to another etc. we'd need to handle that case here
+            var regroupedLib = lib.TrustilyUpgradeOldLayoutLibrary_Regroup(originalLibVersion, targetVersionSC);
+
+            // 2. upgrade individual types based on group (i.e. if a group now has a different underlying layout type, we'd need to handle that here)
+            var retypedGroups = new List<LayoutGroup>();
+            foreach (var group in regroupedLib)
+            {
+                retypedGroups.Add(group.TrustilyUpgradeOldLayoutGroup_ToNewType(originalLibVersion, targetVersionSC));
+            }
+
+            // 3. uprade existing types, but to newer verion of same type
+            // (it would be nice if this could be extracted out to the type itself...)
+            // perhaps require it as an abstract on any <ALayoutInfo>
+            var upgradedLayoutGroups = new List<LayoutGroup>();
+            foreach (var group in retypedGroups)
+            {
+                LayoutGroup ugroup = new LayoutGroup();
+                ugroup.group = group.group;
+                ugroup.layouts = new Dictionary<string, string>();
+                foreach (var layout in group.layouts)
+                {
+                    var resolver = LanguageKeywords.LayoutForType[LanguageKeywords.Commands.First(cmd => cmd.Value == group.group).Key].layoutResolver;
+                    var typedLayout = resolver.Deserialize(layout.Value);
+                    typedLayout.UpgradeLayoutFromPreviousVersion(originalLibVersion, targetVersionSC);
+                    ugroup.layouts.Add(layout.Key, resolver.Serialize(typedLayout));
+                }
+                upgradedLayoutGroups.Add(ugroup);
+            }
+            return new LayoutLibrary
+            {
+                Library = upgradedLayoutGroups,
+                LibraryName = lib.LibraryName
+            };
+        }
+
+
+        private static LayoutGroup TrustilyUpgradeOldLayoutGroup_ToNewType(this LayoutGroup group, BuildVersion buildVersion, BuildVersion taretVersion)
+        {
+            LayoutGroup newGroup = new LayoutGroup();
+            
+            if (!buildVersion.ExceedsMinimumVersion(1, 7, 2, 11, matchMode: true, "Debug") && group.group == LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle])
+            {
+                // pre SC 1.7.2.11 2title was its own layout type
+                // with SC 1.7.2.11+ 2title will use customtext
+                newGroup.group = group.group;
+                newGroup.layouts = new Dictionary<string, string>();
+                foreach (var oldLayoutKVP in group.layouts)
+                {
+                    var oldLayout = JsonSerializer.Deserialize<_2TitleSlideLayoutInfo>(oldLayoutKVP.Value);
+                    // attempt to create an equivalent customtext layout
+                    ShapeAndTextLayoutInfo newlayout = new ShapeAndTextLayoutInfo()
+                    {
+                        SlideSize = oldLayout.SlideSize,
+                        BackgroundColor = oldLayout.BackgroundColor,
+                        KeyColor = oldLayout.KeyColor,
+                        SlideType = oldLayout.SlideType,
+                        // TODO: need to sort out what should happen for old 'horizontal'/'vertical' layouts
+                        Textboxes = new List<LayoutInfo.BaseTypes.TextboxLayout> { oldLayout.MainText, oldLayout.SubText },
+                        Shapes = new List<LWJPolygon>
+                        {
+                            new LWJPolygon
+                            {
+                                BorderColor = oldLayout.Banner.FillColor,
+                                FillColor = oldLayout.Banner.FillColor,
+                                KeyFillColor = oldLayout.Banner.KeyColor,
+                                KeyBorderColor = oldLayout.Banner.KeyColor,
+                                BorderWidth = 0,
+                                Verticies = new List<LWJPoint>
+                                {
+                                    new LWJPoint(0, 0),
+                                    new LWJPoint(oldLayout.Banner.Box.Size.Width, 0),
+                                    new LWJPoint(oldLayout.Banner.Box.Size.Width, oldLayout.Banner.Box.Size.Height),
+                                    new LWJPoint(0, oldLayout.Banner.Box.Size.Height),
+                                },
+                                Transforms = new LWJTransformSet
+                                {
+                                    Scale = new LWJScaleTransform
+                                    {
+                                        XScale = 1,
+                                        YScale = 1
+                                    },
+                                    Translate = new LWJTranslateTransform
+                                    {
+                                        XShift = oldLayout.Banner.Box.Origin.X,
+                                        YShift = oldLayout.Banner.Box.Origin.Y
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    newGroup.layouts.Add(oldLayoutKVP.Key, JsonSerializer.Serialize(newlayout));
+                }
+            }
+            else
+            {
+                newGroup = group;
+            }
+            return newGroup;
+        }
+
+
+        private static List<LayoutGroup> TrustilyUpgradeOldLayoutLibrary_Regroup(this LayoutLibrary lib, BuildVersion originalVerions, BuildVersion targetVersionSC)
+        {
+            List<LayoutGroup> newGroups = new List<LayoutGroup>();
+            foreach (var oldgroup in lib.Library)
+            {
+                // here we could change/merge groups if required
+                // currently no change required
+                newGroups.Add(oldgroup);
+            }
+            // here we can add new groups if required
+            return newGroups;
+        }
+
 
         private static Task TrustilyUpgradeOldVersion(ZipArchive archive, Project proj, BuildVersion originalVersion, BuildVersion targetVersion)
         {

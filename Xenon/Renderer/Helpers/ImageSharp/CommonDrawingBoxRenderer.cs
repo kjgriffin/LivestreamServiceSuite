@@ -16,6 +16,12 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 {
     internal static class CommonDrawingBoxRenderer
     {
+
+        public static void Render(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, DrawingBoxLayout layout)
+        {
+            RenderBackground(ibmp, ikbmp, layout);
+        }
+
         public static void Render(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, DrawingBoxLayout layout, Image<Bgra32> src, ResizeMode resizeMode = ResizeMode.Max, bool inferKey = true)
         {
             RenderBackground(ibmp, ikbmp, layout);

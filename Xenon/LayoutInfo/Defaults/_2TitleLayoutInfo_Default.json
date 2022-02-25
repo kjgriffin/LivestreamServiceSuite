@@ -1,0 +1,116 @@
+{
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "BackgroundColor": {
+    "Hex": "#00000000"
+  },
+  "KeyColor": {
+    "Hex": "#ff000000"
+  },
+  "SlideType": "",
+  "Textboxes": [
+    {
+      "Textbox": {
+        "Origin": {
+          "X": 80,
+          "Y": 864
+        },
+        "Size": {
+          "Width": 1760,
+          "Height": 216
+        }
+      },
+      "Font": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 1
+      },
+      "FColor": {
+        "Hex": "#ffffffff"
+      },
+      "BColor": {
+        "Hex": "#00000000"
+      },
+      "KColor": {
+        "Hex": "#00000000"
+      },
+      "HorizontalAlignment": "Left",
+      "VerticalAlignment": "Center"
+    },
+    {
+      "Textbox": {
+        "Origin": {
+          "X": 80,
+          "Y": 864
+        },
+        "Size": {
+          "Width": 1760,
+          "Height": 216
+        }
+      },
+      "Font": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 0
+      },
+      "FColor": {
+        "Hex": "#ffffffff"
+      },
+      "BColor": {
+        "Hex": "#00000000"
+      },
+      "KColor": {
+        "Hex": "#00000000"
+      },
+      "HorizontalAlignment": "Right",
+      "VerticalAlignment": "Center"
+    }
+  ],
+  "Shapes": [
+    {
+      "Transforms": {
+        "Scale": {
+          "XScale": 1,
+          "YScale": 1
+        },
+        "Translate": {
+          "XShift": 0,
+          "YShift": 864
+        }
+      },
+      "Verticies": [
+        {
+          "X": 0,
+          "Y": 0
+        },
+        {
+          "X": 1920,
+          "Y": 0
+        },
+        {
+          "X": 1920,
+          "Y": 216
+        },
+        {
+          "X": 0,
+          "Y": 216
+        }
+      ],
+      "BorderWidth": 0,
+      "FillColor": {
+        "Hex": "#ff000000"
+      },
+      "KeyFillColor": {
+        "Hex": "#ff808080"
+      },
+      "BorderColor": {
+        "Hex": "00000000"
+      },
+      "KeyBorderColor": {
+        "Hex": "#00000000"
+      }
+    }
+  ]
+}

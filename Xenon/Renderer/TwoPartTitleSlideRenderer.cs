@@ -8,6 +8,7 @@ using Xenon.Compiler;
 using Xenon.Helpers;
 using Xenon.LayoutInfo;
 using Xenon.Renderer.Helpers;
+using Xenon.Renderer.Helpers.ImageSharp;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
@@ -15,7 +16,7 @@ namespace Xenon.Renderer
     class TwoPartTitleSlideRenderer : ISlideRenderer, ISlideRenderer<_2TitleSlideLayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>
     {
 
-        public static string DATAKEY_MAINTEXT {get => "maintext";}
+        public static string DATAKEY_MAINTEXT { get => "maintext"; }
         public static string DATAKEY_SUBTEXT { get => "subtext"; }
         public static string DATAKEY_ORIENTATION { get => "orientation"; }
 
@@ -25,21 +26,14 @@ namespace Xenon.Renderer
         {
             _2TitleSlideLayoutInfo layout = JsonSerializer.Deserialize<_2TitleSlideLayoutInfo>(layoutInfo);
 
-            Bitmap b = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Bitmap k = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
+            CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
-            Graphics gfx = Graphics.FromImage(b);
-            Graphics kgfx = Graphics.FromImage(k);
+            CommonDrawingBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.Banner);
 
-            gfx.Clear(layout.BackgroundColor.GetColor());
-            kgfx.Clear(layout.KeyColor.GetColor());
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.MainText);
+            CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.SubText);
 
-            DrawingBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.Banner);
-
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.MainText);
-            TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.SubText);
-
-            return (b, k);
+            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
         }
 
         public bool IsValidLayoutJson(string json)
@@ -54,69 +48,38 @@ namespace Xenon.Renderer
             res.AssetPath = "";
             res.RenderedAs = string.IsNullOrWhiteSpace(layout?.SlideType) ? "Liturgy" : layout.SlideType;
 
-            Bitmap bmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Bitmap kbmp = new Bitmap(layout.SlideSize.Width, layout.SlideSize.Height);
-            Graphics gfx = Graphics.FromImage(bmp);
-            Graphics kgfx = Graphics.FromImage(kbmp);
 
-            gfx.Clear(layout.BackgroundColor.GetColor());
-            kgfx.Clear(layout.KeyColor.GetColor());
+            CommonSlideRenderer.Render(out var ibmp, out var ikbmp, layout);
 
-            //gfx.FillRectangle(Brushes.Black, layout.Key);
-            //kgfx.FillRectangle(new SolidBrush(slide.Colors["keytrans"]), layout.Key);
-
-            DrawingBoxRenderer.Render(gfx, kgfx, layout.Banner);
+            // this really should be changed to shapes
+            CommonDrawingBoxRenderer.Render(ibmp, ikbmp, layout.Banner);
 
 
             string orientation = (string)slide.Data.GetOrDefault(DATAKEY_ORIENTATION, "horizontal");
             string maintext = (string)slide.Data.GetOrDefault(DATAKEY_MAINTEXT, "");
             string subtext = (string)slide.Data.GetOrDefault(DATAKEY_SUBTEXT, "");
 
+
+            // TODO: DEPRECATE this -> force user to explicitly use layout
             if (orientation == "horizontal")
             {
-                TextBoxRenderer.Render(gfx, kgfx, maintext, layout._LegacyHorizontalAlignment_MainText);
-                TextBoxRenderer.Render(gfx, kgfx, subtext, layout._LegacyHorizontalAlignment_SubText);
+                CommonTextBoxRenderer.Render(ibmp, ikbmp, layout._LegacyHorizontalAlignment_MainText, maintext);
+                CommonTextBoxRenderer.Render(ibmp, ikbmp, layout._LegacyHorizontalAlignment_SubText, subtext);
             }
             else if (orientation == "vertical")
             {
-                TextBoxRenderer.Render(gfx, kgfx, maintext, layout._LegacyVerticalAlignment_MainText);
-                TextBoxRenderer.Render(gfx, kgfx, subtext, layout._LegacyVerticalAlignment_SubText);
+                CommonTextBoxRenderer.Render(ibmp, ikbmp, layout._LegacyVerticalAlignment_MainText, maintext);
+                CommonTextBoxRenderer.Render(ibmp, ikbmp, layout._LegacyVerticalAlignment_SubText, subtext);
             }
             else // use the active layout
             {
-                TextBoxRenderer.Render(gfx, kgfx, maintext, layout.MainText);
-                TextBoxRenderer.Render(gfx, kgfx, subtext, layout.SubText);
+                CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.MainText, maintext);
+                CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.SubText, subtext);
             }
 
 
-            /*
-
-            //Font bf = new Font("Arial", 36, FontStyle.Bold);
-
-            var lineheight = gfx.MeasureStringCharacters(slide.Lines[0].Content[0].Data, ref bf, Layouts.AnthemTitleLayout.Key);
-
-            if ((string)slide.Data["orientation"] == "vertical")
-            {
-                gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, layout.Line1.Move(layout.Key.Location), GraphicsHelper.CenterAlign);
-                kgfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, layout.Line1.Move(layout.Key.Location), GraphicsHelper.CenterAlign);
-                gfx.DrawString(slide.Lines[1].Content[0].Data, layout.Font, Brushes.White, layout.Line2.Move(layout.Key.Location), GraphicsHelper.CenterAlign);
-                kgfx.DrawString(slide.Lines[1].Content[0].Data, layout.Font, Brushes.White, layout.Line2.Move(layout.Key.Location), GraphicsHelper.CenterAlign);
-            }
-            else
-            {
-                int ycord = (int)((layout.Key.Height / 2) - (lineheight.Height / 2));
-                gfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, layout.MainLine.Move(layout.Key.Location).Move(0, ycord), GraphicsHelper.LeftVerticalCenterAlign);
-                kgfx.DrawString(slide.Lines[0].Content[0].Data, bf, Brushes.White, layout.MainLine.Move(layout.Key.Location).Move(0, ycord), GraphicsHelper.LeftVerticalCenterAlign);
-                gfx.DrawString(slide.Lines[1].Content[0].Data, layout.Font, Brushes.White, layout.MainLine.Move(layout.Key.Location).Move(0, ycord), GraphicsHelper.RightVerticalCenterAlign);
-                kgfx.DrawString(slide.Lines[1].Content[0].Data, layout.Font, Brushes.White, layout.MainLine.Move(layout.Key.Location).Move(0, ycord), GraphicsHelper.RightVerticalCenterAlign);
-            }
-            */
-
-
-
-
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = ibmp.ToBitmap();
+            res.KeyBitmap = ikbmp.ToBitmap();
             return res;
         }
 

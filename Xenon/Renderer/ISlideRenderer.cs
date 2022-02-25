@@ -70,6 +70,14 @@ namespace Xenon.Renderer
             }
             return GetDefaultInfo(v);
         }
+        LayoutType Deserialize(string json)
+        {
+            return JsonSerializer.Deserialize<LayoutType>(json);
+        }
+        string Serialize(object layoutType)
+        {
+            return JsonSerializer.Serialize<LayoutType>(layoutType as LayoutType, new JsonSerializerOptions() { WriteIndented = true });
+        }
         LayoutType GetLayoutInfo(Slide slide);
         static LayoutType GetDefaultInfo(string overrideDefault = "")
         {
