@@ -52,13 +52,13 @@ namespace LutheRun
             {
                 sb.AppendLine("/// </MANUAL_UPDATE name='prelude'>");
                 sb.AppendLine("//> INSERTION POINT: prelude");
-                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\", \"horizontal\"){PostsetCmd}");
+                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\"){PostsetCmd}");
             }
             else if (ctest.Contains("postlude"))
             {
                 sb.AppendLine("/// </MANUAL_UPDATE name='postlude'>");
                 sb.AppendLine("//> INSERTION POINT: postlude");
-                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\", \"horizontal\"){PostsetCmd}");
+                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\"){PostsetCmd}");
             }
             else if (ctest.Contains("anthem"))
             {
@@ -76,7 +76,7 @@ namespace LutheRun
             else if (!lSBImportOptions.OnlyKnownCaptions)
             {
                 sb.AppendLine("/// </MANUAL_UPDATE name='unknown caption'>");
-                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\", \"standard\")");
+                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\")");
             }
 
             return sb.ToString();
