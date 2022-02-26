@@ -228,7 +228,6 @@ namespace SlideCreater
             SetupLayoutsTreeVew();
 
             ShowProjectAssets();
-            Assets = _proj.Assets;
         }
 
 
@@ -497,8 +496,6 @@ namespace SlideCreater
             }
         }
 
-
-        List<ProjectAsset> Assets = new List<ProjectAsset>();
         private void ClickAddAssets(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -586,9 +583,6 @@ namespace SlideCreater
                     asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Video, Extension = System.IO.Path.GetExtension(path) };
                 }
 
-
-
-                Assets.Add(asset);
                 _proj.Assets.Add(asset);
                 ShowProjectAssets();
             }
@@ -673,8 +667,8 @@ namespace SlideCreater
         private void AssetItemCtrl_OnDeleteAssetRequest(object sender, ProjectAsset asset)
         {
             AssetsChanged();
-            Assets.Remove(asset);
-            _proj.Assets = Assets;
+            //Assets.Remove(asset);
+            _proj.Assets.Remove(asset);
             ShowProjectAssets();
             TryAutoSave();
         }
@@ -774,47 +768,9 @@ namespace SlideCreater
         }
 
 
-        private async Task OpenProjectJSON()
+        private void OpenProjectJSON()
         {
-            if (dirty)
-            {
-                bool saved = await CheckSaveChanges();
-                if (!saved)
-                {
-                    return;
-                }
-            }
-            dirty = false;
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Load Project";
-            ofd.DefaultExt = "json";
-            ofd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
-            if (ofd.ShowDialog() == true)
-            {
-                Assets.Clear();
-                slidelist.Items.Clear();
-                //slidepreviews.Clear();
-                previews.Clear();
-                _proj = Project.Load(ofd.FileName);
-                TbInput.Text = _proj.SourceCode;
-                Assets = _proj.Assets;
-                try
-                {
-                    ShowProjectAssets();
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("Failed to load project assets");
-                    Assets.Clear();
-                    _proj.Assets.Clear();
-                    ProjectState = ProjectState.LoadError;
-                    return;
-                }
-                dirty = false;
-                ProjectState = ProjectState.Saved;
-                ActionState = ActionState.Ready;
-            }
-
+            
         }
 
         private async Task OpenProject()
@@ -833,7 +789,6 @@ namespace SlideCreater
             ofd.DefaultExt = "zip";
             if (ofd.ShowDialog() == true)
             {
-                Assets.Clear();
                 slidelist.Items.Clear();
                 //slidepreviews.Clear();
                 previews.Clear();
@@ -841,7 +796,6 @@ namespace SlideCreater
                 _proj.CleanupResources();
                 _proj = await Project.LoadProject(ofd.FileName);
                 TbInput.Text = _proj.SourceCode;
-                Assets = _proj.Assets;
                 try
                 {
                     ShowProjectAssets();
@@ -849,7 +803,6 @@ namespace SlideCreater
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.ToString(), "Failed to load project assets");
-                    Assets.Clear();
                     _proj.Assets.Clear();
                     ProjectState = ProjectState.LoadError;
                     return;
@@ -877,13 +830,11 @@ namespace SlideCreater
             slidelist.Items.Clear();
             //slidepreviews.Clear();
             previews.Clear();
-            Assets.Clear();
             AssetList.Children.Clear();
             FocusSlide.Clear();
             TbInput.Text = string.Empty;
             _proj.CleanupResources();
             _proj = new Project(true);
-            Assets = _proj.Assets;
 
             ShowProjectAssets();
             SetupLayoutsTreeVew();
@@ -913,11 +864,6 @@ namespace SlideCreater
                 return true;
             }
             return false;
-        }
-
-        private async void ClickOpen(object sender, RoutedEventArgs e)
-        {
-            await OpenProject();
         }
 
         private async void ClickNew(object sender, RoutedEventArgs e)
@@ -951,24 +897,13 @@ namespace SlideCreater
 
         private void ClickClearAssets(object sender, RoutedEventArgs e)
         {
-            Assets.Clear();
-            _proj.Assets = Assets;
+            _proj.Assets.Clear();
             ShowProjectAssets();
             AssetsChanged();
             FocusSlide.Clear();
             //slidepreviews.Clear();
             previews.Clear();
             TryAutoSave();
-        }
-
-        private void ClickSaveJSON(object sender, RoutedEventArgs e)
-        {
-            SaveAsJSON();
-        }
-
-        private async void ClickOpenJSON(object sender, RoutedEventArgs e)
-        {
-            await OpenProjectJSON();
         }
 
         private void slidelist_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1022,7 +957,7 @@ namespace SlideCreater
             string filename = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.autosave.json";
             string fullpath = System.IO.Path.Join(tmppath, filename);
             AutoSave save = new AutoSave();
-            foreach (var asset in Assets)
+            foreach (var asset in _proj.Assets)
             {
                 save.SourceAssets.Add(asset.OriginalPath);
                 save.AssetMap.TryAdd(asset.Name, asset.OriginalPath);
@@ -1162,7 +1097,6 @@ namespace SlideCreater
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, InternalDisplayName = save.AssetRenames.GetOrDefault(assetkey, assetkey), Extension = save.AssetExtensions[assetkey] };
                     }
-                    Assets.Add(asset);
                     _proj.Assets.Add(asset);
                     ShowProjectAssets();
                 }
@@ -1194,7 +1128,6 @@ namespace SlideCreater
                 parser.CompileToXenon();
                 ActionState = ActionState.Downloading;
                 await parser.LoadWebAssets(_proj.CreateImageAsset);
-                Assets = _proj.Assets;
                 AssetsChanged();
                 ShowProjectAssets();
                 ActionState = ActionState.Ready;
@@ -1376,7 +1309,6 @@ namespace SlideCreater
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, InternalDisplayName = opened.assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = opened.assetextensions[assetkey] };
                     }
-                    Assets.Add(asset);
                     _proj.Assets.Add(asset);
                 });
 

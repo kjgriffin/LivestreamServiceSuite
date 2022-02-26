@@ -96,11 +96,6 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator></Separator>
-                <MenuItem Click="ClickOpen" Header="Open (Legacy)" Foreground="Black">
-                    <MenuItem.Icon>
-                        <Image Source="/ViewControls/Images/Folder_light.png"></Image>
-                    </MenuItem.Icon>
-                </MenuItem>
                 <!--<MenuItem IsEnabled="false" Click="ClickOpenJSON" Header="Open from JSON"></MenuItem>-->
                 <!--<MenuItem IsEnabled="false" Click="ClickSave" Header="Save"></MenuItem>-->
                 <!--<MenuItem IsEnabled="false" Click="ClickSaveJSON" Header="Save JSON"></MenuItem>-->
@@ -165,17 +160,17 @@
             <!--<Separator Background="#474747" Width="2"></Separator>-->
 
             <!--<Border Width="20" Height="20" VerticalAlignment="Center">-->
-                <!--<CheckBox Name="cbAgressiveSave" IsChecked="true" Click="ClickCBAutoSave" VerticalAlignment="center"></CheckBox>-->
+            <!--<CheckBox Name="cbAgressiveSave" IsChecked="true" Click="ClickCBAutoSave" VerticalAlignment="center"></CheckBox>-->
             <!--</Border>-->
             <!--<Label Foreground="#efefef" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">-->
-                <!--<Label.ToolTip>Performs a full trusty save including assets before any 'risky' operation. (May increase disk usage.)</Label.ToolTip> Aggressively Auto Save-->
+            <!--<Label.ToolTip>Performs a full trusty save including assets before any 'risky' operation. (May increase disk usage.)</Label.ToolTip> Aggressively Auto Save-->
             <!--</Label>-->
 
             <!--<Border Width="20" Height="20" VerticalAlignment="Center">-->
-                <!--<CheckBox Name="cbRenderParallel" IsChecked="false" Click="ClickCBRenderParallel" VerticalAlignment="center"></CheckBox>-->
+            <!--<CheckBox Name="cbRenderParallel" IsChecked="false" Click="ClickCBRenderParallel" VerticalAlignment="center"></CheckBox>-->
             <!--</Border>-->
             <!--<Label Foreground="#efefef" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,0,0,0">-->
-                <!--<Label.ToolTip>Legacy behaviour. Theoretically more performant. If disabled should be able to catch GDI+ errors that periodically crash Slide Creater.</Label.ToolTip> Parallelized Rendering-->
+            <!--<Label.ToolTip>Legacy behaviour. Theoretically more performant. If disabled should be able to catch GDI+ errors that periodically crash Slide Creater.</Label.ToolTip> Parallelized Rendering-->
             <!--</Label>-->
         </Grid>
 

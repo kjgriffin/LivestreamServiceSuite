@@ -178,4 +178,6 @@
     <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="96.0.14" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties version_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
 </Project>
