@@ -12,7 +12,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.LayoutInfo
 {
-    internal class StitchedImageSlideLayoutInfo : ALayoutInfo, ILayoutInfoResolver<StitchedImageSlideLayoutInfo>
+    internal class StitchedImageSlideLayoutInfo : ASlideLayoutInfo, ILayoutInfoResolver<StitchedImageSlideLayoutInfo>
     {
         public TextboxLayout TitleBox { get; set; }
         public TextboxLayout NameBox { get; set; }
@@ -34,7 +34,7 @@ namespace Xenon.LayoutInfo
 
         public StitchedImageSlideLayoutInfo _Internal_GetDefaultInfo(string overrideDefault = "")
         {
-            return ILayoutInfoResolver<StitchedImageSlideLayoutInfo>.GetDefaultInfo();
+            return ILayoutInfoResolver<StitchedImageSlideLayoutInfo>.GetDefaultInfo(overrideDefault);
         }
     }
 }

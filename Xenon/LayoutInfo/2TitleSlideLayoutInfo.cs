@@ -10,7 +10,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.LayoutInfo
 {
-    internal class _2TitleSlideLayoutInfo : ALayoutInfo, ILayoutInfoResolver<_2TitleSlideLayoutInfo>
+    internal class _2TitleSlideLayoutInfo : ASlideLayoutInfo, ILayoutInfoResolver<_2TitleSlideLayoutInfo>
     {
         public TextboxLayout MainText { get; set; }
         public TextboxLayout SubText { get; set; }
@@ -90,7 +90,7 @@ namespace Xenon.LayoutInfo
 
         public _2TitleSlideLayoutInfo _Internal_GetDefaultInfo(string overrideDefault = "")
         {
-            return ILayoutInfoResolver<_2TitleSlideLayoutInfo>.GetDefaultInfo();
+            return ILayoutInfoResolver<_2TitleSlideLayoutInfo>.GetDefaultInfo(overrideDefault);
         }
     }
 }

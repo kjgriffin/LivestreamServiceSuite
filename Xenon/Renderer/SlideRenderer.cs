@@ -32,13 +32,13 @@ namespace Xenon.Renderer
         private List<ISlideRenderer> Renderers = new List<ISlideRenderer>
         {
             new StitchedImageRenderer(),
-            new TwoPartTitleSlideRenderer(),
             new TitledLiturgyVerseSlideRenderer(),
             new TitledResponsiveLiturgyRenderer(),
             new ShapeAndTextRenderer(),
             new ShapeImageAndTextRenderer(),
             new ResponsiveLiturgyRenderer(),
             new HymnTextVerseRenderer(),
+            new AdvancedImageSlideRenderer(),
         };
 
         public ProjectAsset GetProjectAssetByName(string assetName)
@@ -138,7 +138,8 @@ namespace Xenon.Renderer
                 case SlideFormat.FilterImage:
                     return ifr.RenderImageSlide(slide, Messages);
                 case SlideFormat.LiturgyImage:
-                    return isr.RenderImageSlide(slide, Messages);
+                    //return isr.RenderImageSlide(slide, Messages);
+                    return null;
                 case SlideFormat.StitchedImage:
                     //return sir.RenderSlide(slide, Messages, _project.Assets);
                     return null;

@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using Xenon.Helpers;
 using System.Linq.Expressions;
 using Xenon.Compiler.AST;
+using Xenon.LayoutInfo;
 
 namespace Xenon.Renderer
 {
@@ -21,7 +22,7 @@ namespace Xenon.Renderer
             RenderedSlide res = new RenderedSlide();
             res.AssetPath = "";
             res.MediaType = MediaType.Image;
-            res.RenderedAs = "Full";
+            res.RenderedAs = "Full"; // I think we can leave this just fine...
 
             Bitmap bmp = new Bitmap(Layouts.PrefabLayout.Size.Width, Layouts.PrefabLayout.Size.Height);
             Bitmap kbmp = new Bitmap(Layouts.PrefabLayout.Size.Width, Layouts.PrefabLayout.Size.Height);

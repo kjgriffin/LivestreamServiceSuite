@@ -14,7 +14,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 {
     internal class CommonSlideRenderer
     {
-        public static void Render(out Image<Bgra32> bmp, out Image<Bgra32> kbmp, ALayoutInfo layout)
+        public static void Render(out Image<Bgra32> bmp, out Image<Bgra32> kbmp, ASlideLayoutInfo layout)
         {
             bmp = new Image<Bgra32>(layout.SlideSize.Width, layout.SlideSize.Height);
             kbmp = new Image<Bgra32>(layout.SlideSize.Width, layout.SlideSize.Height);

@@ -14,4 +14,12 @@ namespace Xenon.LayoutInfo.BaseTypes
         public LWJColor FillColor { get; set; }
         public LWJColor KeyColor { get; set; }
     }
+
+    internal class AdvancedDrawingBoxLayout : DrawingBoxLayout
+    {
+        public bool AutoCrop { get; set; } = true;
+        public LWJColor CropExclude { get; set; }
+        public bool CropExcludeAlpha { get; set; } = true;
+        public bool InvertColors { get; set; } = true;
+    }
 }

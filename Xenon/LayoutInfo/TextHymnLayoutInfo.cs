@@ -11,7 +11,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.LayoutInfo
 {
-    internal class TextHymnLayoutInfo : ALayoutInfo, ILayoutInfoResolver<TextHymnLayoutInfo>
+    internal class TextHymnLayoutInfo : ASlideLayoutInfo, ILayoutInfoResolver<TextHymnLayoutInfo>
     {
 
         public TextboxLayout HymnNameBox { get; set; }
@@ -36,7 +36,7 @@ namespace Xenon.LayoutInfo
 
         public TextHymnLayoutInfo _Internal_GetDefaultInfo(string overrideDefault = "")
         {
-            return ILayoutInfoResolver<TextHymnLayoutInfo>.GetDefaultInfo();
+            return ILayoutInfoResolver<TextHymnLayoutInfo>.GetDefaultInfo(overrideDefault);
         }
     }
 }

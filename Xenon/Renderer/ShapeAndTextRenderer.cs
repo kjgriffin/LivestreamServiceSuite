@@ -15,7 +15,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    internal class ShapeAndTextRenderer : ISlideRenderer, ISlideRenderer<ShapeAndTextLayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>
+    internal class ShapeAndTextRenderer : ISlideRenderer, ISlideRenderer<ShapeAndTextLayoutInfo>, ISlideLayoutPrototypePreviewer<ASlideLayoutInfo>
     {
         public static string DATAKEY_TEXTS { get => "shape-and-text-strings"; }
         public static string DATAKEY_FALLBACKLAYOUT { get => "fallback-layout"; }

@@ -11,7 +11,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.LayoutInfo
 {
-    internal class ShapeAndTextLayoutInfo : ALayoutInfo, ILayoutInfoResolver<ShapeAndTextLayoutInfo>
+    internal class ShapeAndTextLayoutInfo : ASlideLayoutInfo, ILayoutInfoResolver<ShapeAndTextLayoutInfo>
     {
         public List<TextboxLayout> Textboxes { get; set; } = new List<TextboxLayout>();
         public List<LWJPolygon> Shapes { get; set; } = new List<LWJPolygon>();

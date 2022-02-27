@@ -85,7 +85,7 @@ namespace Xenon.Renderer
             var name = string.IsNullOrEmpty(overrideDefault) ? $"{typeinfo.Namespace}.Defaults.{typeinfo.Name}_Default.json" : $"{typeinfo.Namespace}.Defaults.{overrideDefault}";
 
             //var assembly = System.Reflection.Assembly.GetAssembly(typeof(ALayoutInfo)).GetManifestResourceNames();
-            var stream = System.Reflection.Assembly.GetAssembly(typeof(ALayoutInfo)).GetManifestResourceStream(name);
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo)).GetManifestResourceStream(name);
 
             using (StreamReader sr = new StreamReader(stream))
             {

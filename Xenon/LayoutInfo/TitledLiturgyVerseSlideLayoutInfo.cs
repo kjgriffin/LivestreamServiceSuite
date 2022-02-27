@@ -11,7 +11,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.LayoutInfo
 {
-    internal class TitledLiturgyVerseSlideLayoutInfo : ALayoutInfo, ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo>
+    internal class TitledLiturgyVerseSlideLayoutInfo : ASlideLayoutInfo, ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo>
     {
         public TextboxLayout TitleBox { get; set; }
         public TextboxLayout RefBox { get; set; }
@@ -31,7 +31,7 @@ namespace Xenon.LayoutInfo
 
         public TitledLiturgyVerseSlideLayoutInfo _Internal_GetDefaultInfo(string overrideDefault = "")
         {
-            return ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo>.GetDefaultInfo();
+            return ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo>.GetDefaultInfo(overrideDefault);
         }
     }
 }

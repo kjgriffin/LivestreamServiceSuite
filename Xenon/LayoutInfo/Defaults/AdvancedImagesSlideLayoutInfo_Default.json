@@ -1,0 +1,84 @@
+{
+  "Shapes": [
+    {
+      "Transforms": {
+        "Scale": {
+          "XScale": 1,
+          "YScale": 0.2
+        },
+        "Translate": {
+          "XShift": 0,
+          "YShift": 864
+        }
+      },
+      "Verticies": [
+        {
+          "X": 0,
+          "Y": 0
+        },
+        {
+          "X": 1920,
+          "Y": 0
+        },
+        {
+          "X": 1920,
+          "Y": 1080
+        },
+        {
+          "X": 0,
+          "Y": 1080
+        }
+      ],
+      "BorderWidth": 1,
+      "FillColor": {
+        "Hex": "#80000000"
+      },
+      "KeyFillColor": {
+        "Hex": "#ff808080"
+      },
+      "BorderColor": {
+        "Hex": "#00000000"
+      },
+      "KeyBorderColor": {
+        "Hex": "#00000000"
+      }
+    }
+  ],
+  "Images": [
+    {
+      "AutoCrop": true,
+      "CropExclude": {
+        "Hex": "#00000000"
+      },
+      "CropExcludeAlpha": false,
+      "InvertColors": true,
+      "Box": {
+        "Origin": {
+          "X": 0,
+          "Y": 864
+        },
+        "Size": {
+          "Width": 1920,
+          "Height": 216
+        }
+      },
+      "FillColor": {
+        "Hex": "#00000000"
+      },
+      "KeyColor": {
+        "Hex": "#00000000"
+      }
+    }
+  ],
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "BackgroundColor": {
+    "Hex": "#00000000"
+  },
+  "KeyColor": {
+    "Hex": "#00000000"
+  },
+  "SlideType": ""
+}

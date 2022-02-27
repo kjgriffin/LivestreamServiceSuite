@@ -98,7 +98,7 @@
           "Y": 216
         }
       ],
-      "BorderWidth": 0,
+      "BorderWidth": 1,
       "FillColor": {
         "Hex": "#ff000000"
       },

@@ -35,10 +35,7 @@ This is a general list of developments that are planned for Slide Creater
 - #scaledimage
 - #autoscaledimage
 - #liturgyimage
-- #reading
-- #sermon
 - #prefab
-- #twoparttitle
 
 
 

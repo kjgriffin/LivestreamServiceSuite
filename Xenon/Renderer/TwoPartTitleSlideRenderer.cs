@@ -13,7 +13,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    class TwoPartTitleSlideRenderer : ISlideRenderer, ISlideRenderer<_2TitleSlideLayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>
+    class TwoPartTitleSlideRenderer : ISlideRenderer, ISlideRenderer<_2TitleSlideLayoutInfo>, ISlideLayoutPrototypePreviewer<ASlideLayoutInfo>
     {
 
         public static string DATAKEY_MAINTEXT { get => "maintext"; }

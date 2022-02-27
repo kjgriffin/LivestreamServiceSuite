@@ -201,13 +201,13 @@ namespace Xenon.SlideAssembly
 #if DEBUG
 
             // find all libaries
-            var names = System.Reflection.Assembly.GetAssembly(typeof(ALayoutInfo))
+            var names = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo))
                 .GetManifestResourceNames()
                 .Where(n => n.StartsWith("Xenon.LayoutInfo.Defaults.LibBundles"));
 
             foreach (var name in names)
             {
-                var stream = System.Reflection.Assembly.GetAssembly(typeof(ALayoutInfo)).GetManifestResourceStream(name);
+                var stream = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo)).GetManifestResourceStream(name);
                 using (StreamReader sr = new StreamReader(stream))
                 {
                     string json = sr.ReadToEnd();

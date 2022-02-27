@@ -100,7 +100,7 @@
           "Y": 1080
         }
       ],
-      "BorderWidth": 2,
+      "BorderWidth": 1,
       "FillColor": {
         "Hex": "#ff000000"
       },
@@ -108,10 +108,10 @@
         "Hex": "#ff808080"
       },
       "BorderColor": {
-        "Hex": "#ff000000"
+        "Hex": "#00000000"
       },
       "KeyBorderColor": {
-        "Hex": "#ff808080"
+        "Hex": "#00000000"
       }
     }
   ]

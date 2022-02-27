@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text;
 using Xenon.Helpers;
 using System.Linq;
+using Xenon.Renderer;
 
 namespace Xenon.Compiler.AST
 {
@@ -30,25 +31,16 @@ namespace Xenon.Compiler.AST
             {
                 Name = "UNNAMED_image",
                 Number = project.NewSlideNumber,
-                Lines = new List<SlideLine>()
+                Lines = new List<SlideLine>(),
+                Asset = "",
+                Format = SlideFormat.AdvancedImages,
+                MediaType = MediaType.Image,
             };
-            string assetpath = "";
-            var asset = project.Assets.Find(p => p.Name == AssetName);
-            if (asset != null)
-            {
-                assetpath = asset.CurrentPath;
-            }
-            SlideLineContent slc = new SlideLineContent() { Data = assetpath };
-            SlideLine sl = new SlideLine() { Content = new List<SlideLineContent>() { slc } };
-            imageslide.Lines.Add(sl);
-            imageslide.Format = SlideFormat.LiturgyImage;
-            imageslide.Asset = assetpath;
-            imageslide.MediaType = MediaType.Image;
 
-            if (project.GetAttribute("alphatranscol").Count > 0)
-            {
-                imageslide.Colors.Add("keytrans", GraphicsHelper.ColorFromRGB(project.GetAttribute("alphatranscol").FirstOrDefault()));
-            }
+            List<string> images = new List<string> { AssetName };
+
+            imageslide.Data[AdvancedImageSlideRenderer.DATAKEY_IMAGES] = images;
+            (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, imageslide, LanguageKeywordCommand.LiturgyImage);
 
             imageslide.AddPostset(_Parent, true, true);
 

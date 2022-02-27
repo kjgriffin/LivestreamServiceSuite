@@ -12,7 +12,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.LayoutInfo
 {
-    class ResponsiveLiturgySlideLayoutInfo : ALayoutInfo, ILayoutInfoResolver<ResponsiveLiturgySlideLayoutInfo>
+    class ResponsiveLiturgySlideLayoutInfo : ASlideLayoutInfo, ILayoutInfoResolver<ResponsiveLiturgySlideLayoutInfo>
     {
         public List<LWJPolygon> Shapes { get; set; } = new List<LWJPolygon>();
         public List<LiturgyTextboxLayout> Textboxes { get; set; } = new List<LiturgyTextboxLayout>();

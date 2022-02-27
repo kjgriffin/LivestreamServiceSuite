@@ -20,7 +20,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    internal class ShapeImageAndTextRenderer : ISlideRenderer, ISlideRenderer<ShapeImageAndTextLayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>
+    internal class ShapeImageAndTextRenderer : ISlideRenderer, ISlideRenderer<ShapeImageAndTextLayoutInfo>, ISlideLayoutPrototypePreviewer<ASlideLayoutInfo>
     {
         public static string DATAKEY_BKGDIMAGES { get => "assets.background"; }
         public static string DATAKEY_FGDIMAGES { get => "assets.foreground"; }

@@ -13,7 +13,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    class TitledLiturgyVerseSlideRenderer : ISlideRenderer<TitledLiturgyVerseSlideLayoutInfo>, ISlideRenderer, ISlideLayoutPrototypePreviewer<ALayoutInfo>
+    class TitledLiturgyVerseSlideRenderer : ISlideRenderer<TitledLiturgyVerseSlideLayoutInfo>, ISlideRenderer, ISlideLayoutPrototypePreviewer<ASlideLayoutInfo>
     {
 
         public static string DATAKEY_MODE { get => "mode"; }

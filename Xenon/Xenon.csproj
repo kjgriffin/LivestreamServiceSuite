@@ -17,6 +17,7 @@
     <None Remove="FontManagement\Fonts\lib\ARIALNI.TTF" />
     <None Remove="FontManagement\Fonts\lib\ariblk.ttf" />
     <None Remove="FontManagement\Fonts\lib\LSBSymbol.ttf" />
+    <None Remove="LayoutInfo\Defaults\AdvancedImagesSlideLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\AnthemTitleLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\LibBundles\Xenon.Green.lib.json" />
     <None Remove="LayoutInfo\Defaults\LibBundles\Xenon.Purple.lib.json" />
@@ -31,7 +32,6 @@
     <None Remove="LayoutInfo\Defaults\TitledResponsiveLiturgySlideLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\UpNextLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\_2TitleLayoutInfo_Default.json" />
-    <None Remove="LayoutInfo\Defaults\_2TitleSlideLayoutInfo_Default.json" />
     <None Remove="Resources\LSBSymbol.ttf" />
   </ItemGroup>
 
@@ -55,6 +55,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\ResponsiveLiturgySlideLayoutInfo_Default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LayoutInfo\Defaults\AdvancedImagesSlideLayoutInfo_Default.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\ShapeImageAndTextLayoutInfo_Default.json">
@@ -82,9 +85,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\_2TitleLayoutInfo_Default.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LayoutInfo\Defaults\_2TitleSlideLayoutInfo_Default.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

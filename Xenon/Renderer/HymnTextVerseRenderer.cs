@@ -13,7 +13,7 @@ using Xenon.Renderer.Helpers.ImageSharp;
 
 namespace Xenon.Renderer
 {
-    class HymnTextVerseRenderer : ISlideRenderer, ISlideRenderer<TextHymnLayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>
+    class HymnTextVerseRenderer : ISlideRenderer, ISlideRenderer<TextHymnLayoutInfo>, ISlideLayoutPrototypePreviewer<ASlideLayoutInfo>
     {
         public static string DATAKEY_HTITLE { get => "htitle"; }
         public static string DATAKEY_HNAME { get => "hname"; }

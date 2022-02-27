@@ -11,7 +11,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.LayoutInfo
 {
-    internal class TitledResponsiveLiturgySlideLayoutInfo : ALayoutInfo, ILayoutInfoResolver<TitledResponsiveLiturgySlideLayoutInfo>
+    internal class TitledResponsiveLiturgySlideLayoutInfo : ASlideLayoutInfo, ILayoutInfoResolver<TitledResponsiveLiturgySlideLayoutInfo>
     {
         public List<LWJPolygon> Shapes { get; set; } = new List<LWJPolygon>();
         public List<TextboxLayout> TitleBoxes { get; set; } = new List<TextboxLayout>();

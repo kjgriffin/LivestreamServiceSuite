@@ -18,7 +18,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Xenon.Renderer
 {
-    class StitchedImageRenderer : ISlideRenderer<StitchedImageSlideLayoutInfo>, ISlideRenderer, ISlideLayoutPrototypePreviewer<ALayoutInfo>
+    class StitchedImageRenderer : ISlideRenderer<StitchedImageSlideLayoutInfo>, ISlideRenderer, ISlideLayoutPrototypePreviewer<ASlideLayoutInfo>
     {
 
         public static string DATAKEY_IMAGES { get => "ordered-images"; }
