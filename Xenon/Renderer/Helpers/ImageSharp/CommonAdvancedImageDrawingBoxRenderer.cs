@@ -71,7 +71,8 @@ namespace Xenon.Renderer.Helpers.ImageSharp
             ResizeOptions ropts = new ResizeOptions()
             {
                 Mode = ResizeMode.Max,
-                Size = image.Box.Rectangle.Size
+                Size = image.Box.Rectangle.Size,
+                
             };
             // I don't think we want modify the source image- we're not sure we actually own it here
             srcpy.Mutate(ctx => ctx.Resize(ropts));
