@@ -123,6 +123,7 @@
     },
     "MaxSpeakers": 2,
     "EnforceCallResponse": true,
+    "SameSpeakerLineCoalescing": false,
     "ShowSpeaker": true,
     "SpeakerFont": {
       "Name": "LSBSymbol",

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Xenon.Compiler.SubParsers;
 using Xenon.Helpers;
@@ -397,11 +395,22 @@ namespace Xenon.LayoutEngine.L2
                 // split block
                 // at this point we're gauranteed 1 speaker per slide
                 // so hand it off to something that can more intelligenetly handle that case
-                sblocks.AddRange(sblock.Lines.Select(x => new SizedCandidateBlock()
+
+                // in the case we've got a bunch of singe lines...
+                // may want to coalless lines by same speaker:
+                // we'll do that here
+                if (layout.SameSpeakerLineCoalescing)
                 {
-                    Lines = new List<SizedResponsiveStatement>() { x },
-                    NumLines = -1, // TODO: need to recalculate how many lines this actually uses (this will be done by something that actually understands how to solve that part of the problem)
-                }));
+                    GroupBySpeaker(sblocks, sblock, layout);
+                }
+                else
+                {
+                    sblocks.AddRange(sblock.Lines.Select(x => new SizedCandidateBlock()
+                    {
+                        Lines = new List<SizedResponsiveStatement>() { x },
+                        NumLines = -1, // TODO: need to recalculate how many lines this actually uses (this will be done by something that actually understands how to solve that part of the problem)
+                    }));
+                }
             }
             else
             {
@@ -411,6 +420,50 @@ namespace Xenon.LayoutEngine.L2
             }
 
             return sblocks;
+        }
+
+        private static void GroupBySpeaker(List<SizedCandidateBlock> sblocks, SizedCandidateBlock sblock, LiturgyTextboxLayout layout)
+        {
+            List<List<SizedResponsiveStatement>> groupedBySpeaker = new List<List<SizedResponsiveStatement>>();
+            List<SizedResponsiveStatement> linesBySpeaker = new List<SizedResponsiveStatement>();
+
+            string lastspeaker = sblock.Lines.FirstOrDefault()?.Speaker.Text ?? "";
+            int i = 0;
+            foreach (var line in sblock.Lines)
+            {
+                if (line.Speaker.Text == lastspeaker)
+                {
+                    linesBySpeaker.Add(line);
+                }
+                else
+                {
+                    groupedBySpeaker.Add(linesBySpeaker);
+                    linesBySpeaker = new List<SizedResponsiveStatement>();
+                    linesBySpeaker.Add(line);
+                }
+
+                if (i < sblock.Lines.Count - 1)
+                {
+                    // add 2 spaces between each 'line'
+                    LWJFont f = layout.LineFonts.GetOrDefault(line.Speaker.Text, layout.Font);
+                    SizedTextBlurb space = SizedTextBlurb.CreateMeasured(new TextBlurb(Point.Empty, "  ", space: true), Graphics.FromHwnd(IntPtr.Zero), f.Name, f.Size, (System.Drawing.FontStyle)f.Style, Rectangle.Empty);
+                    line.Content.Add(space);
+                }
+
+
+                lastspeaker = line.Speaker.Text;
+                i++;
+            }
+            if (linesBySpeaker.Any())
+            {
+                groupedBySpeaker.Add(linesBySpeaker);
+            }
+
+            sblocks.AddRange(groupedBySpeaker.Select(x => new SizedCandidateBlock
+            {
+                Lines = x,
+                NumLines = -1 // we don't really know how many 'layout lines this is'. So we'll mark it unknown (-1) and let further algorithms handle it
+            }));
         }
 
 
@@ -432,7 +485,7 @@ namespace Xenon.LayoutEngine.L2
                 {
                     speakers++;
                 }
-                if (speakers > layout.MaxSpeakers || 
+                if (speakers > layout.MaxSpeakers ||
                     (!CALLERS.Contains(lastspeaker) && CALLERS.Contains(line.Speaker)).OptionalFalse(layout.EnforceCallResponse)
                     )
                 {
