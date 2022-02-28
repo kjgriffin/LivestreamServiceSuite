@@ -63,7 +63,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 
         }
 
-        private static void Mutate_OverlayImage(this Image<Bgra32> ibmp, Image<Bgra32> ioverlay, Point location)
+        internal static void Mutate_OverlayImage(this Image<Bgra32> ibmp, Image<Bgra32> ioverlay, Point location)
         {
             int XBOUND = ioverlay.Width;
             int YBOUND = ioverlay.Height;
