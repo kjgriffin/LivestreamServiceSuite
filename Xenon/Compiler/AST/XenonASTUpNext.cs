@@ -38,16 +38,6 @@ namespace Xenon.Compiler.AST
             {
                 if (Lexer.Inspect("{"))
                 {
-                    Logger.Log(new XenonCompilerMessage
-                    {
-                        ErrorName = "Slide Requires Un-released Feature",
-                        ErrorMessage = $"UpNext '{upnext.Title},{upnext.MainText},{upnext.InfoText}' with script will attempt to generate an action slide that has source&key overrides. This feature is not yet supported in any qualified build of Integrated Presenter. Expect something to break if using it in Integrated Presenter - 1.7.1.20-Experimental or similar builds. It's reccomended to disable Use UpNext for Hymns when importing from LSB.",
-                        Generator = "XenonASTUpNext::Compile",
-                        Inner = "",
-                        Level = XenonCompilerMessageType.Warning,
-                        Token = Lexer.Peek()
-                    });
-
                     // borrow the compiler for action slides
                     upnext.HasPostScript = true;
 
