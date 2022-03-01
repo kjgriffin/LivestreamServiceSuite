@@ -32,6 +32,16 @@ namespace Xenon.LayoutEngine.L2
             return sblurb;
         }
 
+        public static SizedTextBlurb CreateMeasured(TextBlurb blurb, string defaultFont, float defaultFontSize, GDI.FontStyle defaultStyle, GDI.RectangleF rect)
+        {
+            SizedTextBlurb sblurb = new SizedTextBlurb(blurb);
+            //sblurb.Size = sblurb.Measure(gfx, defaultFont, defaultFontSize, defaultStyle, rect);
+            var s = sblurb.Measure(defaultFont, defaultFontSize, (SixLabors.Fonts.FontStyle)defaultStyle);
+            sblurb.Size = new GDI.SizeF(s.Width, s.Height);
+            return sblurb;
+        }
+
+
         public SizedTextBlurb(TextBlurb blurb) : base(blurb.Pos, blurb.Text, blurb.AltFont, blurb.FontStyle, blurb.FontSize, blurb.Space, blurb.IsWhitespace, blurb.HexFColor)
         {
             Size = GDI.SizeF.Empty;

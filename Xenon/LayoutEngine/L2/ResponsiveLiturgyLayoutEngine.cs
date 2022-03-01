@@ -446,7 +446,7 @@ namespace Xenon.LayoutEngine.L2
                 {
                     // add 2 spaces between each 'line'
                     LWJFont f = layout.LineFonts.GetOrDefault(line.Speaker.Text, layout.Font);
-                    SizedTextBlurb space = SizedTextBlurb.CreateMeasured(new TextBlurb(Point.Empty, "  ", space: true), Graphics.FromHwnd(IntPtr.Zero), f.Name, f.Size, (System.Drawing.FontStyle)f.Style, Rectangle.Empty);
+                    SizedTextBlurb space = SizedTextBlurb.CreateMeasured(new TextBlurb(Point.Empty, "  ", space: true), f.Name, f.Size, (System.Drawing.FontStyle)f.Style, Rectangle.Empty);
                     line.Content.Add(space);
                 }
 

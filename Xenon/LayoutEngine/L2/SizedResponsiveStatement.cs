@@ -27,7 +27,6 @@ namespace Xenon.LayoutEngine.L2
             SizedResponsiveStatement srs = new SizedResponsiveStatement();
 
             srs.Speaker = SizedTextBlurb.CreateMeasured(statement.SpeakerBlurb(layout),
-                                                         gfx,
                                                          layout.Font.Name,
                                                          layout.Font.Size,
                                                          layout.Font.GetStyle(),
@@ -36,7 +35,6 @@ namespace Xenon.LayoutEngine.L2
             foreach (var word in statement.ContentBlurbs(layout))
             {
                 srs.Content.Add(SizedTextBlurb.CreateMeasured(word,
-                                                             gfx,
                                                              layout.Font.Name,
                                                              layout.Font.Size,
                                                              layout.Font.GetStyle(),
