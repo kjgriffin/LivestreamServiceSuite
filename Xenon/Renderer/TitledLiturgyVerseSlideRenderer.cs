@@ -24,7 +24,7 @@ namespace Xenon.Renderer
 
         public ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo> LayoutResolver { get => new TitledLiturgyVerseSlideLayoutInfo(); }
 
-        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
+        public (SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgra32> main, SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgra32> key) GetPreviewForLayout(string layoutInfo)
         {
             TitledLiturgyVerseSlideLayoutInfo layout = JsonSerializer.Deserialize<TitledLiturgyVerseSlideLayoutInfo>(layoutInfo);
 
@@ -43,7 +43,7 @@ namespace Xenon.Renderer
             TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.RefBox);
             TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.ContentTextbox);
 
-            return (b, k);
+            return (b.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>(), k.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>());
         }
 
         public bool IsValidLayoutJson(string json)

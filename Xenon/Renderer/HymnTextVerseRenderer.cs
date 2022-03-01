@@ -1,6 +1,5 @@
 ﻿using Xenon.LayoutEngine;
 using Xenon.SlideAssembly;
-using System.Drawing;
 using Xenon.Helpers;
 using Xenon.LayoutInfo;
 using System.Collections.Generic;
@@ -10,6 +9,8 @@ using System.Text.Json;
 using Xenon.Renderer.Helpers;
 using System.Linq;
 using Xenon.Renderer.Helpers.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
 
 namespace Xenon.Renderer
 {
@@ -27,7 +28,7 @@ namespace Xenon.Renderer
         public SlideLayout Layouts { get; set; }
         public ILayoutInfoResolver<TextHymnLayoutInfo> LayoutResolver { get => new TextHymnLayoutInfo(); }
 
-        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
+        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
         {
             TextHymnLayoutInfo layout = JsonSerializer.Deserialize<TextHymnLayoutInfo>(layoutInfo);
 
@@ -46,7 +47,7 @@ namespace Xenon.Renderer
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.CopyrightBox, "Copyright");
             CommonPoetryTextRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.HymnContentBox);
 
-            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
+            return (ibmp, ikbmp);
         }
 
         public bool IsValidLayoutJson(string json)

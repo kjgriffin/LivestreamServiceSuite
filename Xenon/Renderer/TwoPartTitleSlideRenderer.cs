@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
 using System.Text.Json;
 
@@ -22,7 +24,7 @@ namespace Xenon.Renderer
 
         public ILayoutInfoResolver<_2TitleSlideLayoutInfo> LayoutResolver { get => new _2TitleSlideLayoutInfo(); }
 
-        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
+        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
         {
             _2TitleSlideLayoutInfo layout = JsonSerializer.Deserialize<_2TitleSlideLayoutInfo>(layoutInfo);
 
@@ -33,7 +35,7 @@ namespace Xenon.Renderer
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.MainText);
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.SubText);
 
-            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
+            return (ibmp, ikbmp);
         }
 
         public bool IsValidLayoutJson(string json)

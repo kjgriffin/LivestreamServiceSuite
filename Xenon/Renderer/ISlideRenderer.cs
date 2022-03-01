@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -23,7 +25,7 @@ namespace Xenon.Renderer
 
     internal interface ISlideLayoutPrototypePreviewer<out LayoutInfoType> where LayoutInfoType : ALayoutInfo
     {
-        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo);
+        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo);
 
         public bool IsValidLayoutJson(string json);
 

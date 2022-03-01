@@ -85,8 +85,8 @@ namespace UIControls
             {
                 srcinvalid.Visibility = Visibility.Hidden;
                 keyinvalid.Visibility = Visibility.Hidden;
-                ImgMain.Source = r.main.ConvertToBitmapImage();
-                ImgKey.Source = r.key.ConvertToBitmapImage();
+                ImgMain.Source = r.main.ToBitmapImage();
+                ImgKey.Source = r.key.ToBitmapImage();
             }
             else
             {

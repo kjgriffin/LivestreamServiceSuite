@@ -127,7 +127,7 @@ namespace Xenon.Renderer
             }
         }
 
-        public (GDI.Bitmap main, GDI.Bitmap key) GetPreviewForLayout(string layoutInfo)
+        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
         {
             StitchedImageSlideLayoutInfo layout = JsonSerializer.Deserialize<StitchedImageSlideLayoutInfo>(layoutInfo);
 
@@ -148,7 +148,7 @@ namespace Xenon.Renderer
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.NumberBox);
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.CopyrightBox);
 
-            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
+            return (ibmp, ikbmp);
         }
 
         public bool IsValidLayoutJson(string json)

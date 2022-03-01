@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -26,7 +28,7 @@ namespace Xenon.Renderer
             return ISlideLayoutPrototypePreviewer<ResponsiveLiturgySlideLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
 
-        public (Bitmap main, Bitmap key) GetPreviewForLayout(string layoutInfo)
+        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
         {
             ResponsiveLiturgySlideLayoutInfo layout = JsonSerializer.Deserialize<ResponsiveLiturgySlideLayoutInfo>(layoutInfo);
 
@@ -45,7 +47,7 @@ namespace Xenon.Renderer
             // preview a liturgy line in each textbox
             //_ = layout.LiturgyLineProto;
 
-            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
+            return (ibmp, ikbmp);
 
         }
 

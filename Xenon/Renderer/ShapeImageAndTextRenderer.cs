@@ -42,7 +42,7 @@ namespace Xenon.Renderer
             }
         }
 
-        public (GDI.Bitmap main, GDI.Bitmap key) GetPreviewForLayout(string layoutInfo)
+        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
         {
             ShapeImageAndTextLayoutInfo layout = JsonSerializer.Deserialize<ShapeImageAndTextLayoutInfo>(layoutInfo);
 
@@ -69,7 +69,7 @@ namespace Xenon.Renderer
                 CommonDrawingBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, image);
             }
 
-            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
+            return (ibmp, ikbmp);
         }
 
 

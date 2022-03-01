@@ -28,7 +28,7 @@ namespace Xenon.Renderer
         {
             return ISlideLayoutPrototypePreviewer<AdvancedImagesSlideLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
-        public (GDI.Bitmap main, GDI.Bitmap key) GetPreviewForLayout(string layoutInfo)
+        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
         {
             AdvancedImagesSlideLayoutInfo layout = JsonSerializer.Deserialize<AdvancedImagesSlideLayoutInfo>(layoutInfo);
 
@@ -44,7 +44,7 @@ namespace Xenon.Renderer
                 CommonAdvancedImageDrawingBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, advimg);
             }
 
-            return (ibmp.ToBitmap(), ikbmp.ToBitmap());
+            return (ibmp, ikbmp);
         }
 
         public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result)

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -141,7 +144,7 @@ namespace Xenon.SlideAssembly
             get => _Internal_SaveLayoutToLibrary;
         }
 
-        public static (bool isvalid, Bitmap main, Bitmap key) GetLayoutPreview(string layoutname, string layoutjson)
+        public static (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) GetLayoutPreview(string layoutname, string layoutjson)
         {
 
             if (LanguageKeywords.Commands.ContainsValue(layoutname))
@@ -157,7 +160,7 @@ namespace Xenon.SlideAssembly
                 }
             }
 
-            return (false, new Bitmap(1920, 1080), new Bitmap(1920, 1080));
+            return (false, new Image<Bgra32>(1920, 1080), new Image<Bgra32>(1920, 1080));
         }
 
         public void LoadDefaults()
