@@ -198,8 +198,6 @@ namespace Xenon.SlideAssembly
         {
             // not ready to release bundles yet
             // only for debug builds
-#if DEBUG
-
             // find all libaries
             var names = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo))
                 .GetManifestResourceNames()
@@ -215,7 +213,6 @@ namespace Xenon.SlideAssembly
                     LoadLibrary(lib);
                 }
             }
-#endif
         }
 
         public void LoadLibrary(LayoutLibEntry lib)
