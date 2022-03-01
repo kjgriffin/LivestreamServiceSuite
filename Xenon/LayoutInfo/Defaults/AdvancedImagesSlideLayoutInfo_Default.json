@@ -54,12 +54,12 @@
       "InvertColors": true,
       "Box": {
         "Origin": {
-          "X": 0,
-          "Y": 864
+          "X": 28,
+          "Y": 867
         },
         "Size": {
-          "Width": 1920,
-          "Height": 216
+          "Width": 1862,
+          "Height": 210
         }
       },
       "FillColor": {

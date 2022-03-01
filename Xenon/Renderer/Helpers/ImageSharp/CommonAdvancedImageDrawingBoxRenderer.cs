@@ -77,12 +77,12 @@ namespace Xenon.Renderer.Helpers.ImageSharp
             // I don't think we want modify the source image- we're not sure we actually own it here
             srcpy.Mutate(ctx => ctx.Resize(ropts));
 
+            Point coffset = new Point((image.Box.Size.Width - srcpy.Width)/2 + image.Box.Origin.Point.X, (image.Box.Size.Height - srcpy.Height)/2 + image.Box.Origin.Point.Y);
 
-            //ibmp.Mutate(ctx => ctx.DrawImage(scpy, layout.Box.Origin.Point, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.Clear, 1f));
-            ibmp.Mutate_OverlayImage(srcpy, image.Box.Origin.Point);
+            ibmp.Mutate_OverlayImage(srcpy, coffset);
 
             // draw key on directly
-            ikbmp.Mutate_OverlayImage(srcpy, image.Box.Origin.Point);
+            ikbmp.Mutate_OverlayImage(srcpy, coffset);
 
         }
 
