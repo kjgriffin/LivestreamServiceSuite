@@ -40,8 +40,8 @@ namespace Xenon.Renderer
             kgfx.DrawString(slide.Lines[1].Content[0].Data, renderInfo.ItalicFont, Brushes.White, Layouts.ReadingLayout.TextAera.Move(Layouts.ReadingLayout.Key.Location).Move(-180, 0), GraphicsHelper.RightVerticalCenterAlign);
 
 
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
+            res.KeyBitmap = kbmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
             return res;
 
         }

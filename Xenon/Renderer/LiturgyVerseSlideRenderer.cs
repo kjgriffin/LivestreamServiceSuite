@@ -71,7 +71,7 @@ namespace Xenon.Renderer
                 linepos += (int)(float)line.Content[0].Attributes["height"];
             }
 
-            res.Bitmap = bmp;
+            res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
 
             return res;
         }

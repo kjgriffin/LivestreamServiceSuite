@@ -56,7 +56,7 @@ namespace SlideCreater
                     VideoDisplay.Visibility = Visibility.Hidden;
                     textDisplay.Visibility = Visibility.Hidden;
                     ImgDisplay.Visibility = Visibility.Visible;
-                    ImgDisplay.Source = Slide.KeyBitmap.ConvertToBitmapImage();
+                    ImgDisplay.Source = Slide.KeyBitmap.ToBitmapImage();
                 }
 
 
@@ -94,7 +94,7 @@ namespace SlideCreater
                     VideoDisplay.Visibility = Visibility.Hidden;
                     textDisplay.Visibility = Visibility.Hidden;
                     ImgDisplay.Visibility = Visibility.Visible;
-                    ImgDisplay.Source = Slide.Bitmap.ConvertToBitmapImage();
+                    ImgDisplay.Source = Slide.Bitmap.ToBitmapImage();
                 }
                 if (Slide?.MediaType == MediaType.Video || Slide?.MediaType == MediaType.Video_KeyedVideo)
                 {
@@ -130,7 +130,7 @@ namespace SlideCreater
                         {
                             background.Visibility = Visibility.Hidden;
                             ImgDisplay.Visibility = Visibility.Visible;
-                            ImgDisplay.Source = Slide.Bitmap?.ConvertToBitmapImage();
+                            ImgDisplay.Source = Slide.Bitmap?.ToBitmapImage();
                         }
                     }
 

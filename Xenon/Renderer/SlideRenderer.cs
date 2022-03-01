@@ -8,6 +8,7 @@ using Xenon.Renderer.ImageFilters;
 using System.Linq;
 using Xenon.LayoutInfo;
 using Xenon.AssetManagment;
+using Xenon.Helpers;
 
 namespace Xenon.Renderer
 {

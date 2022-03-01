@@ -44,8 +44,8 @@ namespace Xenon.Renderer
             gfx.DrawString(slide.Lines[3].Content[0].Data, Layouts.AnthemTitleLayout.Font, Brushes.White, Layouts.AnthemTitleLayout.MainLine.Move(Layouts.AnthemTitleLayout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
             kgfx.DrawString(slide.Lines[3].Content[0].Data, Layouts.AnthemTitleLayout.Font, Brushes.White, Layouts.AnthemTitleLayout.MainLine.Move(Layouts.AnthemTitleLayout.Key.Location), GraphicsHelper.RightVerticalCenterAlign);
 
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
+            res.KeyBitmap = kbmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
             return res;
         }
     }

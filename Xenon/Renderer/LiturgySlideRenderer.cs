@@ -127,8 +127,8 @@ namespace Xenon.Renderer
             }
 
 
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
+            res.KeyBitmap = kbmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
 
             return res;
         }

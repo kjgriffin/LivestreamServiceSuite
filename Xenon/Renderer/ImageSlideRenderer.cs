@@ -24,7 +24,7 @@ namespace Xenon.Renderer
             Bitmap kbmp = new Bitmap(1920, 1080);
             Graphics kgfx = Graphics.FromImage(kbmp);
             kgfx.Clear(Color.White);
-            res.KeyBitmap = kbmp;
+            res.KeyBitmap = kbmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
 
             Bitmap sourceimage;
             try
@@ -38,7 +38,7 @@ namespace Xenon.Renderer
 
             if (slide.Format == SlideFormat.UnscaledImage)
             {
-                res.Bitmap = RenderUnscaled(sourceimage);
+                res.Bitmap = RenderUnscaled(sourceimage).ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
                 res.RenderedAs = "Full";
                 if (slide.Data.ContainsKey("key-type"))
                 {
@@ -51,7 +51,7 @@ namespace Xenon.Renderer
             }
             else if (slide.Format == SlideFormat.ScaledImage)
             {
-                res.Bitmap = RenderUniformScale(sourceimage);
+                res.Bitmap = RenderUniformScale(sourceimage).ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
                 res.RenderedAs = "Full";
                 if (slide.Data.ContainsKey("key-type"))
                 {
@@ -79,7 +79,7 @@ namespace Xenon.Renderer
                     cct = (int)slide.Data["color-correct-black-white"];
                     ccf = Color.White;
                 }
-                res.Bitmap = RenderAutoScaled(sourceimage, invert, (cc, ccm, ccf, cct));
+                res.Bitmap = RenderAutoScaled(sourceimage, invert, (cc, ccm, ccf, cct)).ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
                 res.RenderedAs = "Full";
                 if (slide.Data.ContainsKey("key-type"))
                 {
@@ -92,8 +92,8 @@ namespace Xenon.Renderer
             }
             else if (slide.Format == SlideFormat.LiturgyImage)
             {
-                res.Bitmap = RenderLiturgyImage(sourceimage);
-                res.KeyBitmap = RenderLiturgyImageKey(sourceimage, slide.Colors["keytrans"]);
+                res.Bitmap = RenderLiturgyImage(sourceimage).ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
+                res.KeyBitmap = RenderLiturgyImageKey(sourceimage, slide.Colors["keytrans"]).ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
                 res.RenderedAs = "Liturgy";
             }
 

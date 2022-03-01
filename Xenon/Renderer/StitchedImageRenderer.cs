@@ -113,8 +113,8 @@ namespace Xenon.Renderer
                 CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.CopyrightBox, copyright);
             }
 
-            res.Bitmap = ibmp.ToBitmap();
-            res.KeyBitmap = ikbmp.ToBitmap();
+            res.Bitmap = ibmp;
+            res.KeyBitmap = ikbmp;
             return res;
         }
 

@@ -45,10 +45,8 @@ namespace Xenon.Renderer
                 }
             }
 
-            res.KeyBitmap = new Bitmap(1920, 1080);
-            Graphics gfx = Graphics.FromImage(res.KeyBitmap);
-            // for now videos are fully transparent all the time
-            gfx.Clear(Color.White);
+            res.KeyBitmap = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgra32>(1920, 1080, new SixLabors.ImageSharp.PixelFormats.Bgra32(255, 255, 255, 255));
+            // for now videos are fully opaque all the time
             return res;
         }
     }

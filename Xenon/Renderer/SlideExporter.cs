@@ -1,12 +1,12 @@
 ﻿using Xenon.SlideAssembly;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using Xenon.Compiler;
 using System.Linq;
 using System.Text.Json;
+using SixLabors.ImageSharp;
 
 namespace Xenon.Renderer
 {
@@ -93,15 +93,24 @@ namespace Xenon.Renderer
                         kfilename = Path.Join(directory, $"{slide.OverridingBehaviour.OverrideExportKeyName}.png");
                     }
 
-                    rs.Bitmap.Save(filename, ImageFormat.Png);
-                    rs.KeyBitmap.Save(kfilename, ImageFormat.Png);
+                    using (var stream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    {
+                        rs.Bitmap.SaveAsPng(stream);
+                    }
+                    using (var stream = new FileStream(kfilename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    {
+                        rs.KeyBitmap.SaveAsPng(stream);
+                    }
                 }
                 else if (rs.MediaType == MediaType.Video)
                 {
                     string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.mp4");
                     string kfilename = Path.Join(directory, $"Key_{slide.Number}.png");
                     File.Copy(rs.AssetPath, filename);
-                    rs.KeyBitmap.Save(kfilename, ImageFormat.Png);
+                    using (var stream = new FileStream(kfilename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    {
+                        rs.KeyBitmap.SaveAsPng(stream);
+                    }
                 }
                 else if (rs.MediaType == MediaType.Video_KeyedVideo)
                 {

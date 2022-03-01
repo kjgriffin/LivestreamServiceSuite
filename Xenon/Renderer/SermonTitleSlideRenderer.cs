@@ -39,8 +39,8 @@ namespace Xenon.Renderer
             gfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.BoldFont, Brushes.White, Layouts.SermonLayout.MainLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location), GraphicsHelper.CenterAlign);
             kgfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.BoldFont, Brushes.White, Layouts.SermonLayout.MainLine.Move(Layouts.SermonLayout.TextAera.Location).Move(Layouts.SermonLayout.Key.Location), GraphicsHelper.CenterAlign);
 
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
+            res.KeyBitmap = kbmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
             return res;
         }
     }

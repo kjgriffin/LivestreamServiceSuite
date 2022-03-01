@@ -32,7 +32,7 @@ namespace Xenon.Renderer
             gfx.Clear(Color.White);
             kgfx.Clear(Color.White);
 
-            res.KeyBitmap = kbmp;
+            res.KeyBitmap = kbmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
 
 
             Bitmap src = null;
@@ -99,7 +99,7 @@ namespace Xenon.Renderer
             }
             catch (Exception)
             {
-                res.Bitmap = bmp;
+                res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
                 string tmp = "KEY ERROR on data attribute";
                 object a;
                 slide.Data.TryGetValue("prefabtype", out a);
@@ -116,7 +116,7 @@ namespace Xenon.Renderer
                 gfx.DrawImage(src, new Rectangle(new Point(0, 0), Layouts.PrefabLayout.Size));
             }
 
-            res.Bitmap = bmp;
+            res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
             return res;
         }
     }

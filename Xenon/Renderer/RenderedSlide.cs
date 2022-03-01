@@ -1,8 +1,9 @@
 ﻿using Xenon.SlideAssembly;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Xenon.Renderer
 {
@@ -15,8 +16,8 @@ namespace Xenon.Renderer
         public string Name { get; set; }
         public string CopyExtension { get; set; }
         public string Text { get; set; }
-        public Bitmap Bitmap {get; set;}
-        public Bitmap KeyBitmap {get; set;}
+        public Image<Bgra32> Bitmap {get; set;}
+        public Image<Bgra32> KeyBitmap {get; set;}
         public int Number { get; set; }
 
         public bool IsPostset { get; set; }

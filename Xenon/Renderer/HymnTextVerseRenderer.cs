@@ -95,8 +95,8 @@ namespace Xenon.Renderer
 
             CommonPoetryTextRenderer.Render(ibmp, ikbmp, layout.HymnContentBox, lines);
 
-            res.Bitmap = ibmp.ToBitmap();
-            res.KeyBitmap = ikbmp.ToBitmap();
+            res.Bitmap = ibmp;
+            res.KeyBitmap = ikbmp;
             return res;
         }
     }

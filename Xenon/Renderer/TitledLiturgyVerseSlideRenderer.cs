@@ -157,8 +157,8 @@ namespace Xenon.Renderer
             }
 
 
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
+            res.KeyBitmap = kbmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
             return res;
         }
 
@@ -212,8 +212,8 @@ namespace Xenon.Renderer
             }
             TextBoxRenderer.Render(gfx, kgfx, sb.ToString(), layout.ContentTextbox);
 
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
+            res.KeyBitmap = kbmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
             return res;
         }
 

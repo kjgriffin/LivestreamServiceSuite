@@ -5,17 +5,13 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using GDI = System.Drawing;
 
 namespace Xenon.Helpers
 {
-    internal static class ImageSharpHelpers
+    public static class ImageSharpHelpers
     {
         // https://codeblog.vurdalakov.net/2019/06/imagesharp-convert-image-to-system-drawing-bitmap-and-back.html 
         public static System.Drawing.Bitmap ToBitmap<TPixel>(this SixLabors.ImageSharp.Image<TPixel> image) where TPixel : unmanaged, SixLabors.ImageSharp.PixelFormats.IPixel<TPixel>
@@ -95,6 +91,64 @@ namespace Xenon.Helpers
             gfx = GDI.Graphics.FromImage(bmp);
             kgfx = GDI.Graphics.FromImage(kbmp);
         }
+
+
+        /// <summary>
+        /// Returns a new Bitmap the same size as the src, but with each pixels' rbg values premultipled against the alphakey.
+        /// </summary>
+        /// <param name="src">Source Bitmap to premultiply</param>
+        /// <param name="alphakey">The alpha channel to premultipily against. Is assumed to be the same size and grayscale.</param>
+        /// <returns>The premultipled Bitmap image with an alpha channel.</returns>
+        public static Image<Bgra32> PreMultiplyWithAlphaFast(this Image<Bgra32> src, Image<Bgra32> alphakey)
+        {
+            if (src.Width != alphakey.Width || src.Height != alphakey.Height)
+            {
+                return src;
+            }
+
+
+            for (int y = 0; y < src.Height; y++)
+            {
+                for (int x = 0; x < src.Width; x++)
+                {
+                    var spix = src[x, y];
+
+                    var apix = alphakey[x, y];
+
+                    double alpha = (double)apix.B / 255.0d;
+
+                    src[x, y] = new Bgra32((byte)(alpha * spix.R),
+                                           (byte)(alpha * spix.G),
+                                           (byte)(alpha * spix.B),
+                                           apix.B);
+                }
+            }
+
+
+            return src;
+        }
+
+        public static System.Windows.Media.Imaging.BitmapImage ToBitmapImage(this Image<Bgra32> bmp)
+        {
+            System.Windows.Media.Imaging.BitmapImage res = new System.Windows.Media.Imaging.BitmapImage();
+            MemoryStream ms = new MemoryStream();
+            bmp.SaveAsPng(ms, new PngEncoder()
+            {
+                TransparentColorMode = PngTransparentColorMode.Clear,
+            });
+            bmp.SaveAsPng(ms);
+            res.BeginInit();
+            ms.Seek(0, SeekOrigin.Begin);
+            res.StreamSource = ms;
+            res.EndInit();
+            return res;
+        }
+
+
+
+
+
+
 
     }
 }

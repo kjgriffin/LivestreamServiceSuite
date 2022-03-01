@@ -42,8 +42,8 @@ namespace Xenon.Renderer.ImageFilters
             bmp = lastb;
             kbmp = lastkb;
 
-            res.Bitmap = bmp;
-            res.KeyBitmap = kbmp;
+            res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
+            res.KeyBitmap = kbmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
 
             return res;
         }
