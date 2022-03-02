@@ -5,7 +5,10 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 using GDI = System.Drawing;
 
@@ -106,7 +109,51 @@ namespace Xenon.Helpers
                 return src;
             }
 
+            // from my understanding of imagesharp API this is a prime candidate of work to parallelize
+            // I think it's perfectly safe to work on seperate pixels within the same image at the same time without any need for synchronization (and that does make sense)
 
+            // TODO: figure out how to sensibly split this workload (there's probably a limit/tradeoff on using tooooo many threads, but more than 1 is probably faster?)
+
+            // since this is truly a brute force approach, there's no point in using more threads than the system has
+            // so that's a reasonable upper bound
+            // FFMPEG seems to think so
+
+            // (of course, having already split the rendering in parallel by slide, this will effectively force a bottleneck)
+            // but nothing to do about that I guess....
+
+            var MAXTHREADS = Environment.ProcessorCount;
+
+            // I'm guessing that the pixel buffers are aligned on the x axis, so probably best to split vertically and make use of array line caching
+
+            int VLINES = src.Height / MAXTHREADS;
+            int LASTVBLOCK = (src.Height - (VLINES * MAXTHREADS)) + VLINES; // in case it don't line up nicely, add the remainder to the last block so we don't miss any
+
+            // split up the workload
+            List<Task> blocks = new List<Task>();
+            for (int p = 0; p < MAXTHREADS; p++)
+            {
+                int bsize = VLINES;
+                if (p == MAXTHREADS - 1)
+                {
+                    bsize = LASTVBLOCK;
+                }
+                int ystart = p * VLINES;
+                if (ystart + bsize < src.Height + 1)
+                {
+                    blocks.Add(Task.Run(() => PreMultiplyAlphaBlock(ystart, bsize, src, alphakey)));
+                }
+                else
+                {
+#if DEBUG
+                    Debugger.Break();
+#endif
+                }
+            }
+
+            Task.WaitAll(blocks.ToArray());
+
+
+            /*
             for (int y = 0; y < src.Height; y++)
             {
                 for (int x = 0; x < src.Width; x++)
@@ -123,9 +170,29 @@ namespace Xenon.Helpers
                                            apix.B);
                 }
             }
-
+            */
 
             return src;
+        }
+
+        static void PreMultiplyAlphaBlock(int yStart, int yBlockSize, Image<Bgra32> src, Image<Bgra32> alphakey)
+        {
+            for (int y = yStart; y < yStart + yBlockSize && y < src.Height; y++)
+            {
+                for (int x = 0; x < src.Width; x++)
+                {
+                    var spix = src[x, y];
+
+                    var apix = alphakey[x, y];
+
+                    double alpha = (double)apix.B / 255.0d;
+
+                    src[x, y] = new Bgra32((byte)(alpha * spix.R),
+                                           (byte)(alpha * spix.G),
+                                           (byte)(alpha * spix.B),
+                                           apix.B);
+                }
+            }
         }
 
         public static System.Windows.Media.Imaging.BitmapImage ToBitmapImage(this Image<Bgra32> bmp)
