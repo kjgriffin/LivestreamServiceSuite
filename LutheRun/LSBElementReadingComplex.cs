@@ -167,11 +167,11 @@ namespace LutheRun
             }
 
             // do title
-            if (!lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy)
+            if (!(lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy && ReadingTitle.ToLower().Contains("psalm")))
             {
                 sb.AppendLine($"#reading(\"{ReadingTitle}\", \"{ReadingReference}\"){onreadingpostset}");
             }
-            if (lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy)
+            else if (lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy)
             {
                 if (ReadingTitle.ToLower().Contains("psalm") || ReadingReference.ToLower().Contains("psalm") || lSBImportOptions.PullAllReadingContentAsTitledLiturgy)
                 {
