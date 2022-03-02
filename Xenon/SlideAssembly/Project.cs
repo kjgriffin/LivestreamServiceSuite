@@ -193,7 +193,7 @@ namespace Xenon.SlideAssembly
                 {
                     try
                     {
-                        CreateImageAsset(image.Image, $"xenondefault_{image.Name}.png", image.Name);
+                        CreateImageAsset(image.Image, $"xenondefault_{image.Name}.png", image.Name, "Xenon.Core");
                     }
                     catch
                     {
@@ -286,13 +286,22 @@ namespace Xenon.SlideAssembly
             }
         }
 
-        public void CreateImageAsset(Bitmap b, string sourceurl, string name)
+        public void CreateImageAsset(Bitmap b, string sourceurl, string name, string group = "default")
         {
             string tmpassetpath = System.IO.Path.Combine(LoadTmpPath, "assets", sourceurl.Split("/").Last());
             try
             {
                 b.Save(tmpassetpath);
-                ProjectAsset asset = new ProjectAsset() { Id = Guid.NewGuid(), LoadedTempPath = tmpassetpath, Name = name, OriginalPath = sourceurl, Type = AssetType.Image, Extension = System.IO.Path.GetExtension(sourceurl) };
+                ProjectAsset asset = new ProjectAsset()
+                {
+                    Id = Guid.NewGuid(),
+                    LoadedTempPath = tmpassetpath,
+                    Name = name,
+                    OriginalPath = sourceurl,
+                    Type = AssetType.Image,
+                    Extension = System.IO.Path.GetExtension(sourceurl),
+                    Group = group,
+                };
                 Assets.Add(asset);
             }
             catch (Exception)

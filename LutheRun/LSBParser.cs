@@ -592,7 +592,7 @@ namespace LutheRun
             }
         }
 
-        public Task LoadWebAssets(Action<Bitmap, string, string> addImageAsAsset)
+        public Task LoadWebAssets(Action<Bitmap, string, string, string> addImageAsAsset)
         {
             IEnumerable<IDownloadWebResource> resources = ServiceElements.Select(s => s as IDownloadWebResource).Where(s => s != null);
             IEnumerable<Task> tasks = resources.Select(async s =>
@@ -600,13 +600,13 @@ namespace LutheRun
                 await s.GetResourcesFromLocalOrWeb(Path.GetDirectoryName(ServiceFileName));
                 foreach (var image in s.Images)
                 {
-                    addImageAsAsset(image.Bitmap, image.RetinaScreenURL, image.InferedName);
+                    addImageAsAsset(image.Bitmap, image.RetinaScreenURL, image.InferedName, "LSB");
                 }
             });
             return Task.WhenAll(tasks);
         }
 
-        public Task LoadAssetsForElement(Action<Bitmap, string, string> addImageAsAsset, IEnumerable<ILSBElement> elements)
+        public Task LoadAssetsForElement(Action<Bitmap, string, string, string> addImageAsAsset, IEnumerable<ILSBElement> elements)
         {
             IEnumerable<IDownloadWebResource> resources = elements.Select(s => s as IDownloadWebResource).Where(s => s != null);
             IEnumerable<Task> tasks = resources.Select(async s =>
@@ -614,7 +614,7 @@ namespace LutheRun
                 await s.GetResourcesFromLocalOrWeb(Path.GetDirectoryName(ServiceFileName));
                 foreach (var image in s.Images)
                 {
-                    addImageAsAsset(image.Bitmap, image.RetinaScreenURL, image.InferedName);
+                    addImageAsAsset(image.Bitmap, image.RetinaScreenURL, image.InferedName, "LSB");
                 }
             });
             return Task.WhenAll(tasks);

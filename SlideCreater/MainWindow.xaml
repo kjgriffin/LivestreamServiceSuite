@@ -180,7 +180,7 @@
 
         <Grid Grid.Row="2" Background="#272727">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="340" MinWidth="340"></ColumnDefinition>
+                <ColumnDefinition Width="370" MinWidth="370"></ColumnDefinition>
                 <ColumnDefinition Width="10"></ColumnDefinition>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
                 <ColumnDefinition Width="10"></ColumnDefinition>
@@ -219,11 +219,22 @@
                                 </StackPanel>
                             </Grid>
                             <Border Grid.Row="1" Background="Transparent" BorderBrush="#373737" BorderThickness="0" CornerRadius="10" Padding="5" Margin="5,0,5,10">
-                                <ScrollViewer Grid.Row="1" Background="Transparent">
-                                    <StackPanel Name="AssetList">
+                                <!--<ScrollViewer Grid.Row="1" Background="Transparent">-->
+                                    <!--<StackPanel Name="AssetList">-->
 
-                                    </StackPanel>
-                                </ScrollViewer>
+                                    <!--</StackPanel>-->
+                                    <TreeView Name="AssetTree" Background="#272727" Padding="0,10,0,0" BorderBrush="#373737" BorderThickness="0">
+                                        <TreeView.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#676767"></SolidColorBrush>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#676767"></SolidColorBrush>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
+                                        </TreeView.Resources>
+                                        <TreeViewItem Header="Test" Foreground="White">
+                                        </TreeViewItem>
+                                    </TreeView>
+
+                                <!--</ScrollViewer>-->
                             </Border>
                         </Grid>
                     </TabItem>

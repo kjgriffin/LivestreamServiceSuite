@@ -510,12 +510,12 @@ namespace SlideCreater
             ofd.Multiselect = true;
             if (ofd.ShowDialog() == true)
             {
-                AddAssetsFromPaths(ofd.FileNames);
+                AddAssetsFromPaths(ofd.FileNames, "User");
             }
             TryAutoSave();
         }
 
-        private void AddAssetsFromPaths(IEnumerable<string> filenames)
+        private void AddAssetsFromPaths(IEnumerable<string> filenames, string group)
         {
             AssetsChanged();
             // add assets
@@ -551,7 +551,7 @@ namespace SlideCreater
                     asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, Extension = System.IO.Path.GetExtension(file) };
                 }
 
-
+                asset.Group = group;
 
                 _proj.Assets.Add(asset);
                 ShowProjectAssets();
@@ -597,11 +597,13 @@ namespace SlideCreater
 
         private void ShowProjectAssets()
         {
-            AssetList.Children.Clear();
+            //AssetList.Children.Clear();
+            ClearProjectAssetsView();
 
             bool loaderrors = false;
             List<string> missingassets = new List<string>();
 
+            var assetcontrols = new List<AssetItemControl>();
             foreach (var asset in _proj.Assets)
             {
                 try
@@ -613,7 +615,8 @@ namespace SlideCreater
                     assetItemCtrl.OnInsertBellsRequest += AssetItemCtrl_OnInsertBellsRequest;
                     assetItemCtrl.OnLiturgyInsertRequest += AssetItemCtrl_OnLiturgyInsertRequest;
                     assetItemCtrl.OnRenameAssetRequest += AssetItemCtrl_OnRenameAssetRequest;
-                    AssetList.Children.Add(assetItemCtrl);
+                    //AssetList.Children.Add(assetItemCtrl);
+                    assetcontrols.Add(assetItemCtrl);
                 }
                 catch (FileNotFoundException)
                 {
@@ -621,11 +624,75 @@ namespace SlideCreater
                     missingassets.Add(asset.Name);
                 }
             }
+            AddProjectAssetToTreeVeiw(assetcontrols);
 
             if (loaderrors)
             {
                 throw new Exception($"Missing ({missingassets.Count}) asset(s): {missingassets.Aggregate((agg, item) => agg + ", '" + item + "'")}");
             }
+        }
+
+        Dictionary<string, bool> expansionStateAssetsList = new Dictionary<string, bool>();
+        private void ClearProjectAssetsView()
+        {
+            expansionStateAssetsList.Clear();
+            foreach (TreeViewItem item in AssetTree.Items)
+            {
+                var gname = item.Header.ToString();
+                gname = gname.Split(' ').FirstOrDefault("default");
+                expansionStateAssetsList[gname] = item.IsExpanded;
+            }
+            AssetTree.Items.Clear();
+        }
+
+        private void AddProjectAssetToTreeVeiw(List<AssetItemControl> ctrls)
+        {
+            HashSet<string> allassetgroups = new HashSet<string>();
+            foreach (var asset in _proj.Assets)
+            {
+                allassetgroups.Add(asset.Group);
+            }
+
+            List<(TreeViewItem tvi, string group)> tvgroups = new List<(TreeViewItem, string)>();
+            foreach (var group in allassetgroups)
+            {
+                TreeViewItem tvgroup = new TreeViewItem();
+                var ctrlsingroup = ctrls.Where(ctrl => ctrl.AssetGroup == group).ToList();
+                tvgroup.Header = $"{group} ({ctrlsingroup.Count})";
+
+                tvgroup.IsExpanded = false;
+                if (expansionStateAssetsList.TryGetValue(group, out bool state))
+                {
+                    tvgroup.IsExpanded = state;
+                }
+                else
+                {
+                    // by default only expand 'User' group
+                    if (group == "User")
+                    {
+                        tvgroup.IsExpanded = true;
+                    }
+                }
+
+                foreach (var assetctrl in ctrlsingroup)
+                {
+                    tvgroup.Items.Add(assetctrl);
+                }
+                tvgroups.Add((tvgroup, group));
+            }
+
+            // order groups
+
+            foreach (var gitem in tvgroups.OrderBy(g =>
+            {
+                if (g.group == "User") return 1; // always first
+                if (g.group == "Xenon.Core") return 3; // always last
+                return 2; // otherwise we don't really care...
+            }))
+            {
+                AssetTree.Items.Add(gitem.tvi); 
+            }
+
         }
 
         private void AssetItemCtrl_OnRenameAssetRequest(object sender, ProjectAsset asset, string newname)
@@ -836,7 +903,8 @@ namespace SlideCreater
             slidelist.Items.Clear();
             //slidepreviews.Clear();
             previews.Clear();
-            AssetList.Children.Clear();
+            //AssetList.Children.Clear();
+            ClearProjectAssetsView();
             FocusSlide.Clear();
             TbInput.Text = string.Empty;
             _proj.CleanupResources();
@@ -1040,7 +1108,7 @@ namespace SlideCreater
             // load assets
             if (save.AssetMap == null)
             {
-                AddAssetsFromPaths(save.SourceAssets);
+                AddAssetsFromPaths(save.SourceAssets, "recovered");
             }
             else
             {
@@ -1103,6 +1171,7 @@ namespace SlideCreater
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, InternalDisplayName = save.AssetRenames.GetOrDefault(assetkey, assetkey), Extension = save.AssetExtensions[assetkey] };
                     }
+                    asset.Group = "recovered";
                     _proj.Assets.Add(asset);
                     ShowProjectAssets();
                 }
@@ -1302,6 +1371,7 @@ namespace SlideCreater
                 {
                     var file = opened.assetfilemap[assetkey];
                     var tmpassetpath = System.IO.Path.Combine(_proj.LoadTmpPath, file);
+                    var assetgroup = opened.assetgroups.GetValueOrDefault(assetkey, "default");
                     ProjectAsset asset = new ProjectAsset();
                     if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp3)|(\.wav)", RegexOptions.IgnoreCase))
                     {
@@ -1315,6 +1385,7 @@ namespace SlideCreater
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, InternalDisplayName = opened.assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = opened.assetextensions[assetkey] };
                     }
+                    asset.Group = assetgroup;
                     _proj.Assets.Add(asset);
                 });
 
@@ -1470,7 +1541,7 @@ namespace SlideCreater
 
         private void SetupLayoutsTreeVew()
         {
-            Dictionary<string, bool> oldstate = RememberTreeExpansion();
+            Dictionary<string, bool> oldstate = RememberTreeExpansion(LayoutsTreeView);
             LayoutsTreeView.Items.Clear();
 
             foreach (var library in _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup())
@@ -1503,11 +1574,11 @@ namespace SlideCreater
 
         }
 
-        private Dictionary<string, bool> RememberTreeExpansion()
+        private Dictionary<string, bool> RememberTreeExpansion(TreeView tv)
         {
             Dictionary<string, bool> NodeState = new Dictionary<string, bool>();
 
-            foreach (TreeViewItem tbLibNode in LayoutsTreeView.Items)
+            foreach (TreeViewItem tbLibNode in tv.Items)
             {
                 string library = tbLibNode.Header.ToString();
                 bool expanded = tbLibNode.IsExpanded;

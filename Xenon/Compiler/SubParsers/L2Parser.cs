@@ -103,6 +103,7 @@ namespace Xenon.Compiler.SubParsers
             int fstyle = -1;
             if (!string.IsNullOrEmpty(style?.Value))
             {
+                fstyle = 0;
                 var styles = style.Value.Split(';');
                 if (styles.Contains("regular"))
                 {

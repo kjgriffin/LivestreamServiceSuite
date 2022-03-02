@@ -36,6 +36,8 @@ namespace SlideCreater
 
         ProjectAsset Asset;
 
+        public string AssetGroup { get => Asset.Group; }
+
         public AssetItemControl(ProjectAsset asset)
         {
             InitializeComponent();

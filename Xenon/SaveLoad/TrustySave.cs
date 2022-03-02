@@ -26,7 +26,7 @@ namespace Xenon.SaveLoad
     {
 
 
-        public static async Task<(Project project, Dictionary<string, string> assetfilemap, Dictionary<string, string> assetdisplaynames, Dictionary<string, string> assetextensions)> OpenTrustily(BuildVersion currentVersion, string filename, CodePreviewUpdateFunc preloadcode)
+        public static async Task<(Project project, Dictionary<string, string> assetfilemap, Dictionary<string, string> assetdisplaynames, Dictionary<string, string> assetextensions, Dictionary<string, string> assetgroups)> OpenTrustily(BuildVersion currentVersion, string filename, CodePreviewUpdateFunc preloadcode)
         {
             var proj = new Project(true, false);
 
@@ -34,6 +34,7 @@ namespace Xenon.SaveLoad
             Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
             Dictionary<string, string> assetdisplaynames = new Dictionary<string, string>();
             Dictionary<string, string> assetextensions = new Dictionary<string, string>();
+            Dictionary<string, string> assetgroups = new Dictionary<string, string>();
 
             BuildVersion originalVersion = new BuildVersion();
 
@@ -96,6 +97,17 @@ namespace Xenon.SaveLoad
                     }
                 }
 
+                var assetgroupsfile = archive.GetEntry("assets_groups.json");
+                if (assetgroupsfile != null)
+                {
+                    using (StreamReader sr = new StreamReader(assetextensionsfile.Open()))
+                    {
+                        string json = await sr.ReadToEndAsync();
+                        assetgroups = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    }
+                }
+
+
                 // Project's will auto upgrade old projects, since default project constructor will have initialized the default layout library
                 if (originalVersion.ExceedsMinimumVersion(1, 7, 1, 21))
                 {
@@ -129,7 +141,7 @@ namespace Xenon.SaveLoad
                 archive.ExtractToDirectory(proj.LoadTmpPath);
             }
 
-            return (proj, assetfilemap, assetdisplaynames, assetextensions);
+            return (proj, assetfilemap, assetdisplaynames, assetextensions, assetgroups);
 
         }
 
@@ -190,7 +202,7 @@ namespace Xenon.SaveLoad
         private static LayoutGroup TrustilyUpgradeOldLayoutGroup_ToNewType(this LayoutGroup group, BuildVersion buildVersion, BuildVersion taretVersion)
         {
             LayoutGroup newGroup = new LayoutGroup();
-            
+
             if (!buildVersion.ExceedsMinimumVersion(1, 7, 2, 11, matchMode: true, "Debug") && group.group == LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle])
             {
                 // pre SC 1.7.2.11 2title was its own layout type
@@ -322,6 +334,7 @@ namespace Xenon.SaveLoad
                 Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
                 Dictionary<string, string> assetdisplaynamemap = new Dictionary<string, string>();
                 Dictionary<string, string> assetextensions = new Dictionary<string, string>();
+                Dictionary<string, string> assetgroups = new Dictionary<string, string>();
                 foreach (var asset in proj.Assets)
                 {
                     string name = $"asset_{Interlocked.Increment(ref nameid)}{asset.Extension}";
@@ -330,6 +343,7 @@ namespace Xenon.SaveLoad
                         assetfilemap.TryAdd(asset.Name, Path.Combine(assetsfolderpath, name));
                         assetdisplaynamemap.TryAdd(asset.Name, asset.DisplayName);
                         assetextensions.TryAdd(asset.Name, asset.Extension);
+                        assetgroups.TryAdd(asset.Name, asset.Group);
                         ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, name));
                         double savepercent = (completed / (double)assetcount) * 100;
                         progress?.Report(5 + 1 + (int)(savepercent) * (100 - 5 - 1 - 10));
@@ -365,6 +379,12 @@ namespace Xenon.SaveLoad
                     await writer.WriteAsync(assetsextensionsjsonstr);
                 }
 
+                string assetsgroupsjsonstr = JsonSerializer.Serialize(assetgroups);
+                ZipArchiveEntry assetsgroupsjson = archive.CreateEntry("assets_groups.json");
+                using (StreamWriter writer = new StreamWriter(assetsgroupsjson.Open()))
+                {
+                    await writer.WriteAsync(assetsextensionsjsonstr);
+                }
 
 
                 progress?.Report(95);

@@ -27,6 +27,7 @@ namespace Xenon.AssetManagment
         public string LoadedTempPath { get; set; }
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string Group { get; set; } = "default";
         public string OriginalFilename { get => Path.GetFileName(CurrentPath); }
         public AssetType Type { get; set; }
 
