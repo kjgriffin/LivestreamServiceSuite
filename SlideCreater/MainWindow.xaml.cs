@@ -288,7 +288,7 @@ namespace SlideCreater
             });
 
 
-            var build = await builder.BuildProjectAsync(_proj, compileprogress);
+            var build = await builder.CompileProjectAsync(_proj, compileprogress);
 
             if (!build.success)
             {
@@ -1631,6 +1631,11 @@ namespace SlideCreater
             {
                 prop.SetValue(options, dialog.Fields[i++].value);
             }
+        }
+
+        private void ClickRenderModeToggle(object sender, RoutedEventArgs e)
+        {
+            renderinparallel = miRenderMode.IsChecked;
         }
     }
 }

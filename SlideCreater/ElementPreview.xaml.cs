@@ -91,7 +91,7 @@ namespace SlideCreater
 
 
                 Xenon.Compiler.XenonBuildService builder = new Xenon.Compiler.XenonBuildService();
-                var compiled = await builder.BuildProjectAsync(proj);
+                var compiled = await builder.CompileProjectAsync(proj);
                 if (compiled.success)
                 {
                     var slides = await builder.RenderProjectAsync(compiled.project);

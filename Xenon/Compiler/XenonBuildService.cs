@@ -24,32 +24,7 @@ namespace Xenon.Compiler
 
         readonly XenonCompiler compiler = new XenonCompiler();
 
-        public async Task<bool> BuildProject(Project proj, string inputtext, List<ProjectAsset> Assets, IProgress<int> progress)
-        {
-            try
-            {
-                await Task.Run(async () =>
-                {
-                    try
-                    {
-                        Project = await compiler.Compile(proj, inputtext, Assets, progress);
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "Master Compiler Exception");
-            }
-
-            Messages.AddRange(compiler.Logger.AllErrors);
-            return compiler.CompilerSucess;
-        }
-
-        public async Task<(bool success, Project project)> BuildProjectAsync(Project proj, IProgress<int> progress = null)
+        public async Task<(bool success, Project project)> CompileProjectAsync(Project proj, IProgress<int> progress = null)
         {
             try
             {
