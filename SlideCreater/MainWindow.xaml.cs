@@ -241,6 +241,7 @@ namespace SlideCreater
         }
 
 
+        XenonBuildService builder = new XenonBuildService();
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
             string text = TbInput.Text;
@@ -277,7 +278,6 @@ namespace SlideCreater
             alllogs.Clear();
 
             // compile text
-            XenonBuildService builder = new XenonBuildService();
             //bool success = await builder.BuildProject(_proj, _proj.SourceCode, Assets, compileprogress);
             builder.Messages.Clear();
 
@@ -311,7 +311,7 @@ namespace SlideCreater
             //{
             //slides = await builder.RenderProject(_proj, rendererprogress);
             UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Render Starting", ErrorName = "Render Starting", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
-            slides = (await builder.RenderProjectAsync(build.project, rendererprogress, renderinparallel)).OrderBy(s => s.Number).ToList();
+            slides = (await builder.RenderProjectAsync(build.project, rendererprogress, renderinparallel, renderclean)).OrderBy(s => s.Number).ToList();
 
             // ok- here we'll need to hack into the slides a bit to get previews to work correctly (for action slides that have alt display sources)
             ApplyDisplayOverridesOnSlides(slides);
@@ -333,14 +333,20 @@ namespace SlideCreater
             //    return;
             //}
 
-            sbStatus.Dispatcher.Invoke(() =>
-            {
-                ActionState = ActionState.SuccessBuilding;
-                UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Slides built!", ErrorName = "Render Success", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
-            });
+
+            Dispatcher.Invoke(() =>
+                            {
+                                tbSubActionStatus.Text = $"Generating Slide Previews...";
+                                pbActionStatus.Value = 99;
+                            });
 
             UpdatePreviews();
 
+            sbStatus.Dispatcher.Invoke(() =>
+                       {
+                           ActionState = ActionState.SuccessBuilding;
+                           UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Slides built!", ErrorName = "Render Success", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
+                       });
         }
 
         private void ApplyDisplayOverridesOnSlides(List<RenderedSlide> slides)
@@ -770,7 +776,7 @@ namespace SlideCreater
 
         private void OpenProjectJSON()
         {
-            
+
         }
 
         private async Task OpenProject()
@@ -1446,6 +1452,7 @@ namespace SlideCreater
 
 
         bool renderinparallel = false;
+        bool renderclean = true;
 
         private void CreateNewLayoutOnLibrary(string libname, string group)
         {
@@ -1636,6 +1643,11 @@ namespace SlideCreater
         private void ClickRenderModeToggle(object sender, RoutedEventArgs e)
         {
             renderinparallel = miRenderMode.IsChecked;
+        }
+
+        private void ClickRenderFromClean(object sender, RoutedEventArgs e)
+        {
+            renderclean = miRenderClean.IsChecked;
         }
     }
 }
