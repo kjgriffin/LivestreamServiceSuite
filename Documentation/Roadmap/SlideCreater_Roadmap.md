@@ -22,7 +22,8 @@ This is a general list of developments that are planned for Slide Creater
 
 - #filterimage
 
-- #liturgyimage
+- #liturgyimage (partially...)
+	- general case of advanced image
 
 ### layouts needed for
 - closing title slide ?
@@ -34,7 +35,6 @@ This is a general list of developments that are planned for Slide Creater
 - #unscaledimage
 - #scaledimage
 - #autoscaledimage
-- #liturgyimage
 - #prefab
 
 
