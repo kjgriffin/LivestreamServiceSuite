@@ -93,6 +93,9 @@ namespace Xenon.Renderer
                 res.Bitmap = res.Bitmap?.PreMultiplyWithAlphaFast(res.KeyBitmap);
             }
 
+            res.BitmapImage = res.Bitmap?.ToBitmapImage();
+            res.KeyBitmapImage = res.KeyBitmap?.ToBitmapImage();
+
 
             return res;
         }

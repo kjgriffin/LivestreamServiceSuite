@@ -18,6 +18,10 @@ namespace Xenon.Renderer
         public string Text { get; set; }
         public Image<Bgra32> Bitmap {get; set;}
         public Image<Bgra32> KeyBitmap {get; set;}
+
+        public System.Windows.Media.Imaging.BitmapImage BitmapImage { get; set; }
+        public System.Windows.Media.Imaging.BitmapImage KeyBitmapImage { get; set; }
+
         public int Number { get; set; }
 
         public bool IsPostset { get; set; }

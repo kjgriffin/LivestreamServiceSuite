@@ -199,15 +199,14 @@ namespace Xenon.Helpers
         {
             System.Windows.Media.Imaging.BitmapImage res = new System.Windows.Media.Imaging.BitmapImage();
             MemoryStream ms = new MemoryStream();
-            bmp.SaveAsPng(ms, new PngEncoder()
-            {
-                TransparentColorMode = PngTransparentColorMode.Clear,
-            });
             bmp.SaveAsPng(ms);
             res.BeginInit();
             ms.Seek(0, SeekOrigin.Begin);
             res.StreamSource = ms;
             res.EndInit();
+            // I think this is ok, since we never want to modify this. We'd re-render through Xenon in that case
+            // this should allow a UI thread in WPF to use it even though it wasn't generated on that thread
+            res.Freeze();
             return res;
         }
 
