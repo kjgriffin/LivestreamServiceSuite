@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.IO;
 
 namespace Xenon.Renderer
 {
@@ -19,8 +20,8 @@ namespace Xenon.Renderer
         public Image<Bgra32> Bitmap {get; set;}
         public Image<Bgra32> KeyBitmap {get; set;}
 
-        public System.Windows.Media.Imaging.BitmapImage BitmapImage { get; set; }
-        public System.Windows.Media.Imaging.BitmapImage KeyBitmapImage { get; set; }
+        public MemoryStream BitmapPNGMS { get; set; }
+        public MemoryStream KeyPNGMS { get; set; }
 
         public int Number { get; set; }
 
