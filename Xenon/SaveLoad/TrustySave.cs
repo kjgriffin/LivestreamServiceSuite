@@ -100,7 +100,7 @@ namespace Xenon.SaveLoad
                 var assetgroupsfile = archive.GetEntry("assets_groups.json");
                 if (assetgroupsfile != null)
                 {
-                    using (StreamReader sr = new StreamReader(assetextensionsfile.Open()))
+                    using (StreamReader sr = new StreamReader(assetgroupsfile.Open()))
                     {
                         string json = await sr.ReadToEndAsync();
                         assetgroups = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
@@ -203,7 +203,7 @@ namespace Xenon.SaveLoad
         {
             LayoutGroup newGroup = new LayoutGroup();
 
-            if (!buildVersion.ExceedsMinimumVersion(1, 7, 2, 11, matchMode: true, "Debug") && group.group == LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle])
+            if (!buildVersion.ExceedsMinimumVersion(1, 7, 2, 11, matchMode: false, "Debug") && group.group == LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle])
             {
                 // pre SC 1.7.2.11 2title was its own layout type
                 // with SC 1.7.2.11+ 2title will use customtext
@@ -383,7 +383,7 @@ namespace Xenon.SaveLoad
                 ZipArchiveEntry assetsgroupsjson = archive.CreateEntry("assets_groups.json");
                 using (StreamWriter writer = new StreamWriter(assetsgroupsjson.Open()))
                 {
-                    await writer.WriteAsync(assetsextensionsjsonstr);
+                    await writer.WriteAsync(assetsgroupsjsonstr);
                 }
 
 
