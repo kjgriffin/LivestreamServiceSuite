@@ -81,6 +81,10 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                         return ImgSlide.Source;
                     case "key":
                         return ImgKey.Source;
+                    case "pres":
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/powerpoint.png"));
+                    case "back":
+                        return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/backcam.png"));
                     case "colorbars":
                         return new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/cbars.png"));
                     default:

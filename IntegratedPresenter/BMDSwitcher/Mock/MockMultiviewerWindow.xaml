@@ -113,10 +113,10 @@
                     <Image Name="ImgKey" Grid.ColumnSpan="1"></Image>
                 </Border>
                 <Border Background="Black" Grid.Row="2" Grid.Column="2" BorderBrush="Gray" BorderThickness="2,2,2,2">
-                    <Image Grid.ColumnSpan="1"></Image>
+                    <Image Grid.ColumnSpan="1" Source="/BMDSwitcher/Mock/Images/powerpoint.png"></Image>
                 </Border>
                 <Border Background="Black" Grid.Row="2" Grid.Column="3" BorderBrush="Gray" BorderThickness="2,2,2,2">
-                    <Image Grid.ColumnSpan="1"></Image>
+                    <Image Grid.ColumnSpan="1" Source="/BmdSwitcher/Mock/Images/backcam.png"></Image>
                 </Border>
 
             </Grid>

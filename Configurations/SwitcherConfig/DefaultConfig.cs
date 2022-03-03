@@ -33,7 +33,7 @@ namespace Configurations.SwitcherConfig
                     new ButtonSourceMapping() { KeyName = "slide", ButtonId = 5, ButtonName = "SLIDE", PhysicalInputId = 4, LongName = "SLIDESHOW", ShortName = "SLDE" },
                     new ButtonSourceMapping() { KeyName = "key", ButtonId = 6, ButtonName = "AKEY", PhysicalInputId = 3, LongName = "ALPHA KEY", ShortName = "AKEY" },
                     new ButtonSourceMapping() { KeyName = "proj", ButtonId = 7, ButtonName = "PROJ", PhysicalInputId = 2, LongName = "PROJECTOR", ShortName = "PROJ" },
-                    new ButtonSourceMapping() { KeyName = "c1", ButtonId = 8, ButtonName = "CAM1", PhysicalInputId = 1, LongName = "HDMI 1", ShortName = "CAM1" },
+                    new ButtonSourceMapping() { KeyName = "back", ButtonId = 8, ButtonName = "BACK", PhysicalInputId = 1, LongName = "BACK", ShortName = "BACK" },
                     new ButtonSourceMapping() { KeyName = "cf1", ButtonId = 9, ButtonName = "CLF1", PhysicalInputId = (int)BMDSwitcherVideoSources.CleanFeed1, LongName = "CLEAN FEED 1", ShortName = "CLF1" },
                     new ButtonSourceMapping() { KeyName = "cf2", ButtonId = 0, ButtonName = "CLF2", PhysicalInputId = (int)BMDSwitcherVideoSources.CleanFeed2, LongName = "CLEAN FEED 2", ShortName = "CLF2" },
                     new ButtonSourceMapping() { KeyName = "black", ButtonId = 10, ButtonName = "BLACK", PhysicalInputId = (int)BMDSwitcherVideoSources.Black, LongName = "BLACK", ShortName = "BLK" },

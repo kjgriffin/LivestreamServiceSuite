@@ -1329,12 +1329,174 @@
                                                 <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="5">PICTURE IN PICTURE CONTROLS</TextBlock>
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition></ColumnDefinition>
+                                                        <ColumnDefinition Width="180"></ColumnDefinition>
                                                         <ColumnDefinition></ColumnDefinition>
                                                     </Grid.ColumnDefinitions>
                                                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
 
                                                         <Grid>
+                                                            <Viewbox Name="ksc_pippreset1" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel Width="50">
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">[</TextBlock>
+                                                                                <!--<TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>-->
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoPreset1" Click="ClickPIPRunToPreset1" Foreground="White" Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                            <Grid>
+                                                                                <Image Source="./LeftSplitPIP.png"></Image>
+                                                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontFamily="Arial Narrow" Background="#a0000000">R. SPLIT</TextBlock>
+                                                                            </Grid>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_pippreset2" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel Width="50">
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">]</TextBlock>
+                                                                                <!--<TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>-->
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoPreset2" Click="ClickPIPRunToPreset2" Foreground="White" Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                            <Grid>
+                                                                                <Image Source="./RightSplitPIP.png"></Image>
+                                                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontFamily="Arial Narrow" Background="#a0000000">L. SPLIT</TextBlock>
+                                                                            </Grid>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_pippreset3" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">/</TextBlock>
+                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoPreset3" Click="ClickPIPRunToPreset3" Foreground="White" Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                            <Grid>
+                                                                                <Image Source="./BClassPIP.png"></Image>
+                                                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontFamily="Arial Narrow" Background="#a0000000">BCLASS</TextBlock>
+                                                                            </Grid>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_pippreset4" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">*</TextBlock>
+                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoPreset4" Click="ClickPIPRunToPreset4" Foreground="White" Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                            <Grid>
+                                                                                <Image Source="./HymnPIP.png"></Image>
+                                                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontFamily="Arial Narrow" Background="#a0000000">HYMN</TextBlock>
+                                                                            </Grid>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_pippreset5" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">-</TextBlock>
+                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Viewbox>
+                                                            <Button Focusable="False" IsTabStop="False" Name="BtnPIPtoPreset5" Click="ClickPIPRunToPreset5" Foreground="White" Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                                                                            <Grid>
+                                                                                <Image Source="./RightPIP.png"></Image>
+                                                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontFamily="Arial Narrow" Background="#a0000000">R. BOX</TextBlock>
+                                                                            </Grid>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+
+
+                                                        <!--<Grid>
                                                             <Viewbox Name="ksc_pkfa" Panel.ZIndex="1" Height="50" Width="50">
                                                                 <StackPanel Orientation="Horizontal">
                                                                     <Border Style="{StaticResource UIShortcutBdr}">
@@ -1363,7 +1525,6 @@
                                                                 </Button.Template>
                                                             </Button>
                                                         </Grid>
-
                                                         <Grid>
                                                             <Viewbox Name="ksc_pkfb" Panel.ZIndex="1" Height="50" Width="50">
                                                                 <StackPanel Orientation="Horizontal">
@@ -1421,7 +1582,7 @@
                                                                     </ControlTemplate>
                                                                 </Button.Template>
                                                             </Button>
-                                                        </Grid>
+                                                        </Grid>-->
 
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -1666,7 +1827,7 @@
                                         </Grid>
                                     </Grid>
                                 </Border>
-                                <Border Name="ChromaControls" Style="{StaticResource GroupBorder}" >
+                                <Border Name="ChromaControls" Style="{StaticResource GroupBorder}" Visibility="Hidden">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition></RowDefinition>

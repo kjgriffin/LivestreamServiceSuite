@@ -677,10 +677,15 @@ namespace IntegratedPresenter.Main
             BtnChromaFillProgram8.Style = (Style)Application.Current.FindResource(style);
 
             string pipstyle = "PIPControlButton";
-            BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
 
+            BtnPIPtoPreset1.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoPreset2.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoPreset3.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoPreset4.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoPreset5.Style = (Style)Application.Current.FindResource(pipstyle);
         }
 
         private void DisableKeyerControls()
@@ -729,10 +734,15 @@ namespace IntegratedPresenter.Main
             BtnChromaFillProgram7.Background = (RadialGradientBrush)Application.Current.FindResource(style);
 
             string pipstyle = "InactivePIPControlButton";
-            BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
 
+            BtnPIPtoPreset1.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoPreset2.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoPreset3.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoPreset4.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnPIPtoPreset5.Style = (Style)Application.Current.FindResource(pipstyle);
         }
 
 
@@ -873,12 +883,12 @@ namespace IntegratedPresenter.Main
             BtnPIPFillProgram7.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
             BtnPIPFillProgram8.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
 
-            BtnPIPtoA.Background = switcherState.USK1KeyFrame == 1 ? Brushes.Orange : Brushes.WhiteSmoke;
-            BtnPIPtoA.Foreground = switcherState.USK1KeyFrame == 1 ? Brushes.Orange : Brushes.WhiteSmoke;
-            BtnPIPtoB.Background = switcherState.USK1KeyFrame == 2 ? Brushes.Orange : Brushes.WhiteSmoke;
-            BtnPIPtoB.Foreground = switcherState.USK1KeyFrame == 2 ? Brushes.Orange : Brushes.WhiteSmoke;
-            BtnPIPtoFull.Background = switcherState.USK1KeyFrame == 0 ? Brushes.Orange : Brushes.WhiteSmoke;
-            BtnPIPtoFull.Foreground = switcherState.USK1KeyFrame == 0 ? Brushes.Orange : Brushes.WhiteSmoke;
+            //BtnPIPtoA.Background = switcherState.USK1KeyFrame == 1 ? Brushes.Orange : Brushes.WhiteSmoke;
+            //BtnPIPtoA.Foreground = switcherState.USK1KeyFrame == 1 ? Brushes.Orange : Brushes.WhiteSmoke;
+            //BtnPIPtoB.Background = switcherState.USK1KeyFrame == 2 ? Brushes.Orange : Brushes.WhiteSmoke;
+            //BtnPIPtoB.Foreground = switcherState.USK1KeyFrame == 2 ? Brushes.Orange : Brushes.WhiteSmoke;
+            //BtnPIPtoFull.Background = switcherState.USK1KeyFrame == 0 ? Brushes.Orange : Brushes.WhiteSmoke;
+            //BtnPIPtoFull.Foreground = switcherState.USK1KeyFrame == 0 ? Brushes.Orange : Brushes.WhiteSmoke;
         }
 
         private void UpdateChromaButtonStyles()
@@ -4256,9 +4266,16 @@ namespace IntegratedPresenter.Main
             ksc_pf6.Visibility = ShortcutVisibility;
             ksc_pf7.Visibility = ShortcutVisibility;
             ksc_pf8.Visibility = ShortcutVisibility;
-            ksc_pkfa.Visibility = ShortcutVisibility;
-            ksc_pkfb.Visibility = ShortcutVisibility;
-            ksc_pkff.Visibility = ShortcutVisibility;
+            //ksc_pkfa.Visibility = ShortcutVisibility;
+            //ksc_pkfb.Visibility = ShortcutVisibility;
+            //ksc_pkff.Visibility = ShortcutVisibility;
+
+            ksc_pippreset1.Visibility = ShortcutVisibility;
+            ksc_pippreset2.Visibility = ShortcutVisibility;
+            ksc_pippreset3.Visibility = ShortcutVisibility;
+            ksc_pippreset4.Visibility = ShortcutVisibility;
+            ksc_pippreset5.Visibility = ShortcutVisibility;
+
             ksc_pl.Visibility = ShortcutVisibility;
 
             ksc_s1.Visibility = ShortcutVisibility;
@@ -4675,6 +4692,31 @@ namespace IntegratedPresenter.Main
         private void clickSPACEOnlyForTrans(object sender, RoutedEventArgs e)
         {
             _m_integratedPresenterFeatures.InterfaceSettings.SpaceKeyOnlyAsCutTrans = miSpaceButtonClickGuard.IsChecked;
+        }
+
+        private void ClickPIPRunToPreset1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClickPIPRunToPreset2(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClickPIPRunToPreset3(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClickPIPRunToPreset4(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClickPIPRunToPreset5(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

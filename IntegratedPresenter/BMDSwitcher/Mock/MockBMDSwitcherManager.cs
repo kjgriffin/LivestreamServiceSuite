@@ -44,7 +44,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _state.SetDefault();
             Dictionary<int, string> mapping = new Dictionary<int, string>()
             {
-                [1] = "cam1",
+                [1] = "back",
                 [2] = "pres",
                 [3] = "key",
                 [4] = "slide",
