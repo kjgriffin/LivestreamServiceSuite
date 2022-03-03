@@ -108,8 +108,8 @@
                 <MenuItem  Foreground="Black" Name="openTmpFolder" Click="OpenTempFolder" Header="View Temp Folder"></MenuItem>
             </MenuItem>
             <MenuItem Header="Options">
-                <MenuItem Foreground="Black" Name="miRenderMode" Click="ClickRenderModeToggle" IsCheckable="True" IsChecked="false" Header="Parallel Rendering"></MenuItem>
-                <MenuItem Foreground="Black" Name="miRenderClean" Click="ClickRenderFromClean" IsCheckable="True" IsChecked="true" Header="Clean Pre-Render"></MenuItem>
+                <MenuItem Foreground="Black" Name="miRenderMode" Click="ClickRenderModeToggle" IsCheckable="True" IsChecked="true" Header="Parallel Rendering"></MenuItem>
+                <MenuItem Foreground="Black" Name="miRenderClean" Click="ClickRenderFromClean" IsCheckable="True" IsChecked="false" Header="Clean Pre-Render"></MenuItem>
             </MenuItem>
             <MenuItem Header="Import">
                 <MenuItem  Foreground="Black" Name="miimport" Click="ClickImportService" Header="Import from LSB Service">

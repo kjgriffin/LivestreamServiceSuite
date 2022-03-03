@@ -209,6 +209,11 @@ namespace SlideCreater
             TbInput.TextArea.TextEntering += TextArea_TextEntering;
             TbInput.TextArea.PreviewTextInput += TextArea_PreviewTextInput;
 
+            // setup indentation
+            TbInput.Options.IndentationSize = 4;
+            TbInput.Options.ConvertTabsToSpaces = true;
+            //TbInput.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
+
             dirty = false;
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
@@ -287,8 +292,12 @@ namespace SlideCreater
                 ActionState = ActionState.Building;
             });
 
+            Stopwatch compileTimer = new Stopwatch();
 
+            compileTimer.Start();
             var build = await builder.CompileProjectAsync(_proj, compileprogress);
+            compileTimer.Stop();
+
 
             if (!build.success)
             {
@@ -304,14 +313,20 @@ namespace SlideCreater
 
             alllogs.AddRange(builder.Messages);
             builder.Messages.Clear();
-            UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Compiled Successfully!", ErrorName = "Project Compiled", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
+            var timestr = compileTimer.Elapsed.ToString(@"%s\.%fff");
+            UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = $"Compiled Successfully!", ErrorName = $"Project Compiled ({timestr})s", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
 
 
             //try
             //{
             //slides = await builder.RenderProject(_proj, rendererprogress);
             UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Render Starting", ErrorName = "Render Starting", Generator = "Compile/Generate", Inner = "", Level = XenonCompilerMessageType.Debug, Token = "" });
+
+            Stopwatch buildtimer = new Stopwatch();
+            buildtimer.Start();
             slides = (await builder.RenderProjectAsync(build.project, rendererprogress, renderinparallel, renderclean)).OrderBy(s => s.Number).ToList();
+            buildtimer.Stop();
+            timestr = buildtimer.Elapsed.ToString(@"%s\.%fff");
 
             // ok- here we'll need to hack into the slides a bit to get previews to work correctly (for action slides that have alt display sources)
             ApplyDisplayOverridesOnSlides(slides);
@@ -345,7 +360,7 @@ namespace SlideCreater
             sbStatus.Dispatcher.Invoke(() =>
                        {
                            ActionState = ActionState.SuccessBuilding;
-                           UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = "Slides built!", ErrorName = "Render Success", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
+                           UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = $"Slides built!", ErrorName = $"Render Success ({timestr})s", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
                        });
         }
 
@@ -690,7 +705,7 @@ namespace SlideCreater
                 return 2; // otherwise we don't really care...
             }))
             {
-                AssetTree.Items.Add(gitem.tvi); 
+                AssetTree.Items.Add(gitem.tvi);
             }
 
         }
@@ -1522,8 +1537,8 @@ namespace SlideCreater
         }
 
 
-        bool renderinparallel = false;
-        bool renderclean = true;
+        bool renderinparallel = true;
+        bool renderclean = false;
 
         private void CreateNewLayoutOnLibrary(string libname, string group)
         {

@@ -121,10 +121,11 @@ namespace Xenon.Compiler
                 }
 
                 int completedslidecount = 0;
+                int reusedslides = 0;
 
                 foreach (var slide in proj.Slides)
                 {
-                    slidetasks.Add(Task.Run(() => RenderSlide(proj, progress, ref failedslides, slides, sr, ref completedslidecount, slide, fromclean)));
+                    slidetasks.Add(Task.Run(() => RenderSlide(proj, progress, ref failedslides, slides, sr, ref completedslidecount, slide, ref reusedslides, fromclean)));
                 }
 
                 await Task.WhenAll(slidetasks);
@@ -135,6 +136,19 @@ namespace Xenon.Compiler
                     hashedOldSlides[hs.Key] = hs.Value;
                 }
                 hashedNewSlides.Clear();
+
+                if (!fromclean)
+                {
+                    Messages.Add(new XenonCompilerMessage
+                    {
+                        ErrorName = $"{completedslidecount - reusedslides} Rendered. {reusedslides} Up to date.",
+                        ErrorMessage = "",
+                        Generator = "XenonBuildService-Summary",
+                        Inner = "",
+                        Level = XenonCompilerMessageType.Message,
+                        Token = "",
+                    });
+                }
 
                 if (failedslides > 0)
                 {
@@ -151,7 +165,7 @@ namespace Xenon.Compiler
 
         }
 
-        private void RenderSlide(Project proj, IProgress<int> progress, ref int failedslides, ConcurrentBag<RenderedSlide> slides, SlideRenderer sr, ref int completedslidecount, Slide slide, bool fromclean = true)
+        private void RenderSlide(Project proj, IProgress<int> progress, ref int failedslides, ConcurrentBag<RenderedSlide> slides, SlideRenderer sr, ref int completedslidecount, Slide slide, ref int reusedslides, bool fromclean = true)
         {
             try
             {
@@ -174,6 +188,7 @@ namespace Xenon.Compiler
 
                     if (hashedOldSlides.TryGetValue(slide.Hash(), out rs))
                     {
+                        Interlocked.Increment(ref reusedslides);
                         // make sure to update the slide's number if it has changed though
                         rs.Number = slide.Number;
                         Messages.Add(new XenonCompilerMessage

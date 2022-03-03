@@ -79,6 +79,26 @@
 			</RuleSet>
 		</Span>
 
+		<Span foreground="#ffededed" multiline="true">
+			<Begin>(?&lt;=script)\s*{</Begin>
+			<End>}</End>
+			<RuleSet>
+				<Span foreground="#ff3ea84e">
+					<Begin>\#</Begin>
+					<End>;</End>
+				</Span>
+				<Span foreground="#ff2cbfb1" ruleSet="ScriptCmdLine">
+					<Begin>@</Begin>
+					<End>;</End>
+				</Span>
+				<Span foreground="#ffc7cc39" ruleSet="ScriptCmdLine">
+					<Begin>.*(?>:)</Begin>
+					<End>;</End>
+				</Span>
+			</RuleSet>
+		</Span>
+
+
 		<Keywords foreground="#ff4f92ff">
 			<Word>#liturgyoff</Word>
 			<Word>#organintro</Word>
@@ -120,6 +140,34 @@
 		</Keywords>
 	</RuleSet>
 
+	<RuleSet name="ScriptCmdLine">
+		<Span foreground="#ff37acd4">
+			<Begin>(?&lt;=@).</Begin>
+			<End>.(?=:)</End>
+		</Span>
+	
+		<Span foreground="#ff9cd629">
+			<Begin>(?&lt;=:).</Begin>
+			<End>.(?=[;\[\(])</End>
+		</Span>
+
+		<Rule foreground="#ffededed">\(</Rule>
+		<Span foreground="#ffe84920">
+			<Begin>(?&lt;=\().</Begin>
+			<End>.*(?=\))</End>
+		</Span>
+		<Rule foreground="#ffededed">\)</Rule>
+
+		<Rule foreground="#ffededed">\[</Rule>
+		<Span foreground="#ff3ea84e">
+			<Begin>(?&lt;=\[).</Begin>
+			<End>.(?=\])</End>
+		</Span>
+		<Rule foreground="#ffededed">\]</Rule>
+
+
+	</RuleSet>
+
 
 	<RuleSet name="EntitySet">
 		<Rule color="Entity">
@@ -134,5 +182,5 @@
 			#missing ;
 		</Rule>
 	</RuleSet>
-	
+
 </SyntaxDefinition>
