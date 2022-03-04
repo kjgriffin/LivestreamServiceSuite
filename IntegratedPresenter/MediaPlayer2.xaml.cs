@@ -321,8 +321,35 @@ namespace IntegratedPresenter.Main
             }
         }
 
+        Slide _curentSlide = null;
+        bool _asKey = false;
+
+        private void ChangeSlide(Slide newSlide, bool asKey)
+        {
+            _asKey = asKey;
+            if (_curentSlide != null)
+            {
+                // un-register handler
+                _curentSlide.OnActionUpdated -= _curentSlide_OnActionUpdated;
+            }
+
+            _curentSlide = newSlide;
+            // register new handler
+            _curentSlide.OnActionUpdated += _curentSlide_OnActionUpdated;
+        }
+
+        private void _curentSlide_OnActionUpdated(TrackedAutomationAction updatedAction)
+        {
+            // for now we'll update all the text
+            Dispatcher.Invoke(() =>
+            {
+                ShowActionsText(_curentSlide);
+            });
+        }
+
         public void SetMedia(Slide slide, bool asKey)
         {
+            ChangeSlide(slide, asKey);
             if (slide.Type == SlideType.Action)
             {
                 ShowActionCommands(slide, asKey);
@@ -353,6 +380,7 @@ namespace IntegratedPresenter.Main
 
         public void SetupComplete(bool complete = true)
         {
+            return;
             if (complete)
             {
                 SetupMessages.Foreground = Brushes.Gray;
@@ -365,6 +393,7 @@ namespace IntegratedPresenter.Main
 
         public void ActionComplete(bool complete = true)
         {
+            return;
             if (complete)
             {
                 MainMessages.Foreground = Brushes.White;
@@ -416,32 +445,7 @@ namespace IntegratedPresenter.Main
 
             if (!ShowBlackForActions)
             {
-                // Show Commands
-                string description = "";
-                foreach (var action in slide.Actions)
-                {
-                    if (action?.Message != "")
-                    {
-                        description += action.Message + Environment.NewLine;
-                    }
-                }
-                MainMessages.Text = description.Trim();
-                MainMessages.Visibility = Visibility.Visible;
-
-                description = "";
-                foreach (var action in slide.SetupActions)
-                {
-                    if (action?.Message != "")
-                    {
-                        description += action.Message + Environment.NewLine;
-                    }
-                }
-                SetupMessages.Text = description.Trim();
-                SetupMessages.Visibility = Visibility.Visible;
-
-                SetupMessages.Foreground = Brushes.LightGreen;
-                MainMessages.Foreground = Brushes.Orange;
-
+                ShowActionsText(slide);
 
                 SequenceLabel.Text = slide.Title;
 
@@ -450,6 +454,38 @@ namespace IntegratedPresenter.Main
                 SequenceLabel.Visibility = Visibility.Visible;
                 ActionIndicator.Visibility = Visibility.Visible;
                 SeqType.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ShowActionsText(Slide slide)
+        {
+            if (!ShowBlackForActions)
+            {
+                // Show Commands
+                string description = "";
+                foreach (var action in slide.Actions)
+                {
+                    if (action?.Action?.Message != "")
+                    {
+                        description += $"[{action.State}] {action.Action.Message}" + Environment.NewLine;
+                    }
+                }
+                MainMessages.Text = description.Trim();
+                MainMessages.Visibility = Visibility.Visible;
+
+                description = "";
+                foreach (var action in slide.SetupActions)
+                {
+                    if (action?.Action?.Message != "")
+                    {
+                        description += $"[{action.State}] {action.Action.Message}" + Environment.NewLine;
+                    }
+                }
+                SetupMessages.Text = description.Trim();
+                SetupMessages.Visibility = Visibility.Visible;
+
+                SetupMessages.Foreground = Brushes.LightGreen;
+                MainMessages.Foreground = Brushes.Orange;
             }
         }
 

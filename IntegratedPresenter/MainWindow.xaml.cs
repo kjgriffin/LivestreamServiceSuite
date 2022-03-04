@@ -1745,7 +1745,9 @@ namespace IntegratedPresenter.Main
             {
                 foreach (var task in s.SetupActions)
                 {
-                    await PerformAutomationAction(task);
+                    s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
+                    await PerformAutomationAction(task.Action);
+                    s.FireOnActionStateChange(task.ID, TrackedActionState.Done);
                 }
             });
             Dispatcher.Invoke(() =>
@@ -1768,7 +1770,9 @@ namespace IntegratedPresenter.Main
             {
                 foreach (var task in s.Actions)
                 {
-                    await PerformAutomationAction(task);
+                    s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
+                    await PerformAutomationAction(task.Action);
+                    s.FireOnActionStateChange(task.ID, TrackedActionState.Done);
                 }
             });
             Dispatcher.Invoke(() =>
@@ -4694,29 +4698,48 @@ namespace IntegratedPresenter.Main
             _m_integratedPresenterFeatures.InterfaceSettings.SpaceKeyOnlyAsCutTrans = miSpaceButtonClickGuard.IsChecked;
         }
 
+        private void SetupPIPToPresetPosition(int presetNum)
+        {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg presetNum {presetNum}");
+            if (_config?.PIPPresets?.Presets?.ContainsKey(presetNum) == true)
+            {
+                _logger.Debug($"Requesting switcher to recall preset ({presetNum}) as configured.");
+                var cfg = _config.PIPPresets.Presets[presetNum];
+                _logger.Debug($"(SetupPIPToPresetPosition) -- PlacePIP at {cfg}");
+                var current = switcherManager?.GetCurrentState().DVESettings;
+                var config = cfg.Placement.PlaceOverride(current);
+                switcherManager?.SetPIPPosition(config);
+            }
+        }
+
         private void ClickPIPRunToPreset1(object sender, RoutedEventArgs e)
         {
-
+            _logger.Debug($"Click: PIP Run to Preset 1");
+            SetupPIPToPresetPosition(1);
         }
 
         private void ClickPIPRunToPreset2(object sender, RoutedEventArgs e)
         {
-
+            _logger.Debug($"Click: PIP Run to Preset 2");
+            SetupPIPToPresetPosition(2);
         }
 
         private void ClickPIPRunToPreset3(object sender, RoutedEventArgs e)
         {
-
+            _logger.Debug($"Click: PIP Run to Preset 3");
+            SetupPIPToPresetPosition(3);
         }
 
         private void ClickPIPRunToPreset4(object sender, RoutedEventArgs e)
         {
-
+            _logger.Debug($"Click: PIP Run to Preset 4");
+            SetupPIPToPresetPosition(4);
         }
 
         private void ClickPIPRunToPreset5(object sender, RoutedEventArgs e)
         {
-
+            _logger.Debug($"Click: PIP Run to Preset 5");
+            SetupPIPToPresetPosition(5);
         }
     }
 }

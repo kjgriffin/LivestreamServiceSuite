@@ -1,4 +1,6 @@
-﻿using IntegratedPresenterAPIInterop;
+﻿using IntegratedPresenter.BMDSwitcher.Config;
+
+using IntegratedPresenterAPIInterop;
 
 using System;
 using System.Collections.Generic;
@@ -126,12 +128,8 @@ namespace IntegratedPresenter.Main
 
             if (File.Exists(configfile))
             {
-                using (StreamReader sr = new StreamReader(configfile))
-                {
-                    var cfg = sr.ReadToEnd();
-                    SwitcherConfig = JsonSerializer.Deserialize<BMDSwitcher.Config.BMDSwitcherConfigSettings>(cfg);
-                    HasSwitcherConfig = true;
-                }
+                SwitcherConfig = BMDSwitcherConfigSettings.Load(configfile);
+                HasSwitcherConfig = true;
             }
 
             // find user config file if it exists
@@ -224,6 +222,8 @@ namespace IntegratedPresenter.Main
         {
             if (_virtualCurrentSlide + 1 < SlideCount)
             {
+                // I think we can perhaps get away with only having to reset if we go backwards
+                //Next.ResetAllActionsState();
                 _virtualCurrentSlide += 1;
                 _currentSlide = _virtualCurrentSlide;
             }
@@ -246,6 +246,7 @@ namespace IntegratedPresenter.Main
         {
             if (_virtualCurrentSlide - 1 >= 0)
             {
+                Prev.ResetAllActionsState();
                 _virtualCurrentSlide -= 1;
                 _currentSlide = _virtualCurrentSlide;
             }
@@ -272,6 +273,32 @@ namespace IntegratedPresenter.Main
 
     }
 
+
+    public enum TrackedActionState
+    {
+        Ready,
+        Started,
+        Done,
+    }
+
+    public class TrackedAutomationAction
+    {
+        public Guid ID { get; }
+        public TrackedActionState State { get; set; }
+        public AutomationAction Action { get; set; }
+
+        public TrackedAutomationAction(AutomationAction action)
+        {
+            Action = action;
+            State = TrackedActionState.Ready;
+            ID = Guid.NewGuid();
+        }
+
+    }
+
+    public delegate void AutomationActionUpdateEventArgs(TrackedAutomationAction updatedAction);
+
+
     public class Slide
     {
         public SlideType Type { get; set; }
@@ -285,14 +312,41 @@ namespace IntegratedPresenter.Main
 
         public string PreAction { get; set; }
         public Guid Guid { get; set; } = Guid.NewGuid();
-        public List<AutomationAction> SetupActions { get; set; } = new List<AutomationAction>();
-        public List<AutomationAction> Actions { get; set; } = new List<AutomationAction>();
+        public List<TrackedAutomationAction> SetupActions { get; set; } = new List<TrackedAutomationAction>();
+        public List<TrackedAutomationAction> Actions { get; set; } = new List<TrackedAutomationAction>();
         public string Title { get; set; } = "";
         public bool AutoOnly { get; set; } = false;
 
         public int PresetId { get; set; }
         public bool PostsetEnabled { get; set; } = false;
         public int PostsetId { get; set; }
+
+
+        public void FireOnActionStateChange(Guid ActionID, TrackedActionState newState)
+        {
+            var action = SetupActions.FirstOrDefault(a => a.ID == ActionID) ?? Actions.FirstOrDefault(a => a.ID == ActionID);
+            if (action == null)
+            {
+                return;
+            }
+            action.State = newState;
+            OnActionUpdated?.Invoke(action);
+        }
+
+        public void ResetAllActionsState()
+        {
+            foreach (var action in SetupActions)
+            {
+                action.State = TrackedActionState.Ready;
+            }
+            foreach (var action in Actions)
+            {
+                action.State = TrackedActionState.Ready;
+            }
+        }
+
+        public event AutomationActionUpdateEventArgs OnActionUpdated;
+
 
         public void LoadActions(string folder)
         {
@@ -349,7 +403,7 @@ namespace IntegratedPresenter.Main
                         else if (part.StartsWith("@"))
                         {
                             var a = AutomationAction.Parse(part.Remove(0, 1));
-                            SetupActions.Add(a);
+                            SetupActions.Add(new TrackedAutomationAction(a));
                         }
                         else if (part.StartsWith("#"))
                         {
@@ -359,7 +413,7 @@ namespace IntegratedPresenter.Main
                         else
                         {
                             var a = AutomationAction.Parse(part);
-                            Actions.Add(a);
+                            Actions.Add(new TrackedAutomationAction(a));
                         }
                     }
                 }
