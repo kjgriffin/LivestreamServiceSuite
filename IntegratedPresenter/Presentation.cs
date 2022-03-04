@@ -222,8 +222,13 @@ namespace IntegratedPresenter.Main
         {
             if (_virtualCurrentSlide + 1 < SlideCount)
             {
-                // I think we can perhaps get away with only having to reset if we go backwards
-                //Next.ResetAllActionsState();
+                if (Math.Abs((_currentSlide + 1) - _virtualCurrentSlide) != 1)
+                {
+                    // we're skipping around in time
+                    // reset current slide
+                    EffectiveCurrent.ResetAllActionsState();
+                }
+
                 _virtualCurrentSlide += 1;
                 _currentSlide = _virtualCurrentSlide;
             }
@@ -246,6 +251,7 @@ namespace IntegratedPresenter.Main
         {
             if (_virtualCurrentSlide - 1 >= 0)
             {
+                EffectiveCurrent.ResetAllActionsState();
                 Prev.ResetAllActionsState();
                 _virtualCurrentSlide -= 1;
                 _currentSlide = _virtualCurrentSlide;
@@ -267,6 +273,7 @@ namespace IntegratedPresenter.Main
 
         public void StartPres()
         {
+            EffectiveCurrent?.ResetAllActionsState();
             _currentSlide = 0;
             _virtualCurrentSlide = 0;
         }

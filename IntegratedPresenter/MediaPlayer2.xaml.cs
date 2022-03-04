@@ -1,4 +1,6 @@
-﻿using IntegratedPresenter.BMDSwitcher.Config;
+﻿using Integrated_Presenter.ViewModels;
+
+using IntegratedPresenter.BMDSwitcher.Config;
 
 using System;
 using System.Collections.Generic;
@@ -326,6 +328,7 @@ namespace IntegratedPresenter.Main
 
         private void ChangeSlide(Slide newSlide, bool asKey)
         {
+            ClearActionPreviews();
             _asKey = asKey;
             if (_curentSlide != null)
             {
@@ -461,32 +464,54 @@ namespace IntegratedPresenter.Main
         {
             if (!ShowBlackForActions)
             {
-                // Show Commands
-                string description = "";
-                foreach (var action in slide.Actions)
-                {
-                    if (action?.Action?.Message != "")
-                    {
-                        description += $"[{action.State}] {action.Action.Message}" + Environment.NewLine;
-                    }
-                }
-                MainMessages.Text = description.Trim();
-                MainMessages.Visibility = Visibility.Visible;
+                ClearActionPreviews();
 
-                description = "";
                 foreach (var action in slide.SetupActions)
                 {
-                    if (action?.Action?.Message != "")
-                    {
-                        description += $"[{action.State}] {action.Action.Message}" + Environment.NewLine;
-                    }
+                    spActionView.Children.Add(new AutomationActionMonitor(action));
                 }
-                SetupMessages.Text = description.Trim();
-                SetupMessages.Visibility = Visibility.Visible;
 
-                SetupMessages.Foreground = Brushes.LightGreen;
-                MainMessages.Foreground = Brushes.Orange;
+                foreach (var action in slide.Actions)
+                {
+                    spActionView.Children.Add(new AutomationActionMonitor(action));
+                }
+
+                //// Show Commands
+                //string description = "";
+                //foreach (var action in slide.Actions)
+                //{
+                //    if (action?.Action?.Message != "")
+                //    {
+                //        description += $"[{action.State}] {action.Action.Message}" + Environment.NewLine;
+                //    }
+                //}
+                //MainMessages.Text = description.Trim();
+                //MainMessages.Visibility = Visibility.Visible;
+
+                //description = "";
+                //foreach (var action in slide.SetupActions)
+                //{
+                //    if (action?.Action?.Message != "")
+                //    {
+                //        description += $"[{action.State}] {action.Action.Message}" + Environment.NewLine;
+                //    }
+                //}
+                //SetupMessages.Text = description.Trim();
+                //SetupMessages.Visibility = Visibility.Visible;
+
+                //SetupMessages.Foreground = Brushes.LightGreen;
+                //MainMessages.Foreground = Brushes.Orange;
             }
+        }
+
+        private void ClearActionPreviews()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                MainMessages.Visibility = Visibility.Hidden;
+                SetupMessages.Visibility = Visibility.Hidden;
+                spActionView.Children.Clear();
+            });
         }
 
         private void ShowImage()
