@@ -139,7 +139,8 @@ namespace Configurations.SwitcherConfig
                     VideoPreRoll = 2000,
                     ChromaVideoPreRoll = 2000,
                     PresetSelectDelay = 100,
-                }
+                },
+                PIPPresets = PIPPresetSettings.Default()
 
             };
 

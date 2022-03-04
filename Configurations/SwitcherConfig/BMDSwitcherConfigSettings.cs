@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Configurations.SwitcherConfig;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -29,22 +31,32 @@ namespace IntegratedPresenter.BMDSwitcher.Config
 
         public PrerollSettings PrerollSettings { get; set; } = new PrerollSettings();
 
+        public PIPPresetSettings PIPPresets { get; set; } = new PIPPresetSettings();
 
         public static BMDSwitcherConfigSettings Load(string filename)
         {
-            var src = "";
             try
             {
                 using (var sr = new StreamReader(filename))
                 {
-                    src = sr.ReadToEnd();
+                    return LoadJson(sr.ReadToEnd());
                 }
-                return JsonSerializer.Deserialize<BMDSwitcherConfigSettings>(src);
             }
             catch (Exception)
             {
                 return Configurations.SwitcherConfig.DefaultConfig.GetDefaultConfig();
             }
+        }
+
+        public static BMDSwitcherConfigSettings LoadJson(string json)
+        {
+            var cfg = JsonSerializer.Deserialize<BMDSwitcherConfigSettings>(json);
+
+            if (cfg.PIPPresets == null || !cfg.PIPPresets.IsValid())
+            {
+                cfg.PIPPresets = PIPPresetSettings.Default();
+            }
+            return cfg;
         }
 
         public void Save(string filename)
