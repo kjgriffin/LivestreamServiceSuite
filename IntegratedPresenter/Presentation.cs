@@ -288,16 +288,25 @@ namespace IntegratedPresenter.Main
         Done,
     }
 
+    public enum TrackedActionRunType
+    {
+        Setup,
+        Main,
+        Note,
+    }
+
     public class TrackedAutomationAction
     {
         public Guid ID { get; }
         public TrackedActionState State { get; set; }
+        public TrackedActionRunType RunType { get; set; }
         public AutomationAction Action { get; set; }
 
-        public TrackedAutomationAction(AutomationAction action)
+        public TrackedAutomationAction(AutomationAction action, TrackedActionRunType runType)
         {
             Action = action;
             State = TrackedActionState.Ready;
+            RunType = runType;
             ID = Guid.NewGuid();
         }
 
@@ -410,7 +419,8 @@ namespace IntegratedPresenter.Main
                         else if (part.StartsWith("@"))
                         {
                             var a = AutomationAction.Parse(part.Remove(0, 1));
-                            SetupActions.Add(new TrackedAutomationAction(a));
+                            var runType = a.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
+                            SetupActions.Add(new TrackedAutomationAction(a, runType));
                         }
                         else if (part.StartsWith("#"))
                         {
@@ -420,7 +430,8 @@ namespace IntegratedPresenter.Main
                         else
                         {
                             var a = AutomationAction.Parse(part);
-                            Actions.Add(new TrackedAutomationAction(a));
+                            var runType = a.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
+                            Actions.Add(new TrackedAutomationAction(a, runType));
                         }
                     }
                 }

@@ -9,18 +9,22 @@
     <Grid>
         <Grid VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"></ColumnDefinition>
-                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="25"></ColumnDefinition>
+                <ColumnDefinition Width="25"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="150"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
-                <TextBlock Foreground="White" Name="tbStatus">[Ready]</TextBlock>
+                <Image Name="imgTypeIcon" Source="../Icons/BlueBefore.png" Height="25"></Image>
             </Grid>
             <Grid Grid.Column="1">
-
+                <Image Name="imgStatusIcon" Source="../Icons/YellowWarn.png" Height="25"></Image>
             </Grid>
             <Grid Grid.Column="2">
-                <TextBlock Foreground="white" Name="tbMessage">Some Action Message...</TextBlock>
+                <TextBlock Foreground="#ffededed" Name="tbMessage" VerticalAlignment="Center" HorizontalAlignment="Left">Some Action Message...</TextBlock>
+            </Grid>
+            <Grid Grid.Column="3">
+                <TextBlock Foreground="#ffadadad" Name="tbCommand" VerticalAlignment="Center" HorizontalAlignment="Right">COMMAND</TextBlock>
             </Grid>
         </Grid>
     </Grid>

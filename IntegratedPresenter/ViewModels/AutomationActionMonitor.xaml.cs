@@ -30,7 +30,35 @@ namespace Integrated_Presenter.ViewModels
 
             // Update View
             tbMessage.Text = _action?.Action?.Message;
-            tbStatus.Text = _action?.State.ToString();
+
+            tbCommand.Text = _action?.Action?.Action.ToString();
+
+            switch (_action?.State)
+            {
+                case TrackedActionState.Ready:
+                    imgStatusIcon.Source = null;
+                    break;
+                case TrackedActionState.Started:
+                    imgStatusIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/OrangeSandTimer.png"));
+                    break;
+                case TrackedActionState.Done:
+                    imgStatusIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreenCheck.png"));
+                    break;
+            }
+
+            switch (_action?.RunType)
+            {
+                case TrackedActionRunType.Setup:
+                    imgTypeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/BlueBefore.png"));
+                    break;
+                case TrackedActionRunType.Main:
+                    imgTypeIcon.Source = null;
+                    break;
+                case TrackedActionRunType.Note:
+                    imgStatusIcon.Source = null;
+                    imgTypeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/YellowWarn.png"));
+                    break;
+            }
         }
 
     }

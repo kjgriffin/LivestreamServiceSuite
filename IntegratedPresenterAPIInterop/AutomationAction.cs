@@ -14,6 +14,14 @@ namespace IntegratedPresenterAPIInterop
         public string DataS { get; set; } = "";
         public object DataO { get; set; } = new object();
 
+
+        public override string ToString()
+        {
+            return $"{Action}";
+        }
+
+
+
         public static AutomationAction Parse(string command)
         {
             AutomationAction a = new AutomationAction();
@@ -26,6 +34,7 @@ namespace IntegratedPresenterAPIInterop
             {
                 var res = Regex.Match(command, @"\*note(\[(?<msg>.*)\])?;");
                 a.Message = res.Groups["msg"].Value;
+                a.Action = AutomationActions.OpsNote;
             }
 
             if (command.StartsWith("arg0:"))
