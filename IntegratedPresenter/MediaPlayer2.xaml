@@ -19,7 +19,7 @@
         <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close" Grid.RowSpan="2"></MediaElement>
         <Image Name="imagePlayer" Grid.RowSpan="2"></Image>
         <Rectangle Name="BlackSource" Fill="Black" Grid.RowSpan="2"></Rectangle>
-        <Viewbox Grid.Row="1" Margin="10">
+        <Viewbox Grid.Row="1" Margin="10" MaxWidth="263">
             <StackPanel Name="spActionView" Orientation="Vertical">
                 <TextBlock Name="SetupMessages" Foreground="LightGreen" Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"></TextBlock>
                 <TextBlock Name="MainMessages" Foreground="Orange" Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"></TextBlock>

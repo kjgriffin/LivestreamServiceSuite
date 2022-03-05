@@ -5,26 +5,40 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Integrated_Presenter.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="400">
+             d:DesignHeight="50" d:DesignWidth="440">
     <Grid>
         <Grid VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"></ColumnDefinition>
                 <ColumnDefinition Width="25"></ColumnDefinition>
                 <ColumnDefinition Width="25"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="150"></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
-                <Image Name="imgTypeIcon" Source="../Icons/BlueBefore.png" Height="25"></Image>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Name="imgCondeIcon" Source="../Icons/RedNoEntry.png" Height="25"></Image>
+                    <StackPanel Grid.Column="1" Name="spReqCond" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Foreground="Green" Margin="3" FontSize="20" FontWeight="Bold">1</TextBlock>
+                        <TextBlock Foreground="Red" Margin="3" FontSize="20" FontWeight="Bold">2</TextBlock>
+                    </StackPanel>
+                </Grid>
             </Grid>
             <Grid Grid.Column="1">
-                <Image Name="imgStatusIcon" Source="../Icons/YellowWarn.png" Height="25"></Image>
+                <Image Name="imgTypeIcon" Source="../Icons/BlueBefore.png" Height="25"></Image>
             </Grid>
             <Grid Grid.Column="2">
-                <TextBlock Foreground="#ffededed" Name="tbMessage" VerticalAlignment="Center" HorizontalAlignment="Left">Some Action Message...</TextBlock>
+                <Image Name="imgStatusIcon" Source="../Icons/YellowWarn.png" Height="25"></Image>
             </Grid>
             <Grid Grid.Column="3">
-                <TextBlock Foreground="#ffadadad" Name="tbCommand" VerticalAlignment="Center" HorizontalAlignment="Right">COMMAND</TextBlock>
+                <TextBlock Background="#80000000" Foreground="#ffededed" Name="tbMessage" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0">Some Action Message...</TextBlock>
+            </Grid>
+            <Grid Grid.Column="4">
+                <TextBlock Background="#20000000" Foreground="#ffadadad" Name="tbCommand" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">COMMAND</TextBlock>
             </Grid>
         </Grid>
     </Grid>

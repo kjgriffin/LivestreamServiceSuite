@@ -350,6 +350,16 @@ namespace IntegratedPresenter.Main
             });
         }
 
+        Dictionary<string, bool> Conditionals = new Dictionary<string, bool>();
+        public void FireOnActionConditionsUpdated(Dictionary<string, bool> conditionals)
+        {
+            Conditionals = conditionals;
+            Dispatcher.Invoke(() =>
+            {
+                ShowActionsText(_curentSlide);
+            });
+        }
+
         public void SetMedia(Slide slide, bool asKey)
         {
             ChangeSlide(slide, asKey);
@@ -378,32 +388,6 @@ namespace IntegratedPresenter.Main
             else
             {
                 ShowBlackSource();
-            }
-        }
-
-        public void SetupComplete(bool complete = true)
-        {
-            return;
-            if (complete)
-            {
-                SetupMessages.Foreground = Brushes.Gray;
-            }
-            else
-            {
-                SetupMessages.Foreground = Brushes.LightGreen;
-            }
-        }
-
-        public void ActionComplete(bool complete = true)
-        {
-            return;
-            if (complete)
-            {
-                MainMessages.Foreground = Brushes.White;
-            }
-            else
-            {
-                MainMessages.Foreground = Brushes.Orange;
             }
         }
 
@@ -465,15 +449,19 @@ namespace IntegratedPresenter.Main
             if (!ShowBlackForActions)
             {
                 ClearActionPreviews();
+                if (slide == null)
+                {
+                    return;
+                }
 
                 foreach (var action in slide.SetupActions)
                 {
-                    spActionView.Children.Add(new AutomationActionMonitor(action));
+                    spActionView.Children.Add(new AutomationActionMonitor(action, Conditionals));
                 }
 
                 foreach (var action in slide.Actions)
                 {
-                    spActionView.Children.Add(new AutomationActionMonitor(action));
+                    spActionView.Children.Add(new AutomationActionMonitor(action, Conditionals));
                 }
 
                 //// Show Commands

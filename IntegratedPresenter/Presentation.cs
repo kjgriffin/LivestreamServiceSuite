@@ -286,6 +286,7 @@ namespace IntegratedPresenter.Main
         Ready,
         Started,
         Done,
+        Skipped,
     }
 
     public enum TrackedActionRunType

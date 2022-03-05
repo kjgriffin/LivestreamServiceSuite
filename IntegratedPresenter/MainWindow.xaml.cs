@@ -24,6 +24,7 @@ using IntegratedPresenter.BMDSwitcher.Mock;
 using CommonVersionInfo;
 using Configurations.FeatureConfig;
 using IntegratedPresenterAPIInterop;
+using Integrated_Presenter.ViewModels;
 
 namespace IntegratedPresenter.Main
 {
@@ -86,6 +87,14 @@ namespace IntegratedPresenter.Main
             }
 
             _logger.Info($"{Title} Started.");
+
+            // initialize conditionals
+            _Cond1.Value = true;
+            _Cond2.Value = false;
+
+            Btn_Cond1.DataContext = _Cond1;
+            Btn_Cond2.DataContext = _Cond2;
+
 
 
             // set a default config
@@ -1417,6 +1426,19 @@ namespace IntegratedPresenter.Main
             }
             #endregion
 
+            // automation
+            if (e.Key == Key.PageUp)
+            {
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Toggle State of Conditional 1");
+                SetCondition1(!_Cond1.Value);
+            }
+            if (e.Key == Key.PageDown)
+            {
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Toggle State of Conditional 2");
+                SetCondition2(!_Cond2.Value);
+            }
+
+
             // numpad controls keyers
             #region keyers
 
@@ -1728,32 +1750,19 @@ namespace IntegratedPresenter.Main
 
         private bool _FeatureFlag_MRETransition = false;
 
-        private bool SetupActionsCompleted = false;
-        private bool ActionsCompleted = false;
-
         private Guid currentslideforactions;
 
         private async Task ExecuteSetupActions(Slide s)
         {
             _logger.Debug($"Begin Execution of setup actions for slide {s.Title}");
-            Dispatcher.Invoke(() =>
-            {
-                SetupActionsCompleted = false;
-                CurrentPreview.SetupComplete(false);
-            });
             await Task.Run(async () =>
             {
                 foreach (var task in s.SetupActions)
                 {
                     s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
-                    await PerformAutomationAction(task.Action);
-                    s.FireOnActionStateChange(task.ID, TrackedActionState.Done);
+                    var res = await PerformAutomationAction(task.Action);
+                    s.FireOnActionStateChange(task.ID, res);
                 }
-            });
-            Dispatcher.Invoke(() =>
-            {
-                SetupActionsCompleted = true;
-                CurrentPreview.SetupComplete(true);
             });
             _logger.Debug($"Completed Execution of setup actions for slide {s.Title}");
         }
@@ -1761,30 +1770,24 @@ namespace IntegratedPresenter.Main
         private async Task ExecuteActionSlide(Slide s)
         {
             _logger.Debug($"Begin Execution of actions for slide {s.Title}");
-            Dispatcher.Invoke(() =>
-            {
-                ActionsCompleted = false;
-                CurrentPreview.ActionComplete(false);
-            });
             await Task.Run(async () =>
             {
                 foreach (var task in s.Actions)
                 {
                     s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
-                    await PerformAutomationAction(task.Action);
-                    s.FireOnActionStateChange(task.ID, TrackedActionState.Done);
+                    var res = await PerformAutomationAction(task.Action);
+                    s.FireOnActionStateChange(task.ID, res);
                 }
-            });
-            Dispatcher.Invoke(() =>
-            {
-                ActionsCompleted = true;
-                CurrentPreview.ActionComplete(true);
             });
             _logger.Debug($"Completed Execution of actions for slide {s.Title}");
         }
 
-        private async Task PerformAutomationAction(AutomationAction task)
+        private async Task<TrackedActionState> PerformAutomationAction(AutomationAction task)
         {
+            if (!task.MeetsConditionsToRun(GetCurrentConditionStatus()))
+            {
+                return TrackedActionState.Skipped;
+            }
             await Task.Run(async () =>
             {
                 switch (task.Action)
@@ -2138,11 +2141,14 @@ namespace IntegratedPresenter.Main
                         break;
                     case AutomationActions.None:
                         break;
+                    case AutomationActions.OpsNote:
+                        break;
                     default:
                         _logger.Debug($"(PerformAutomationAction) -- UNKNOWN ACTION {task.Action}");
                         break;
                 }
             });
+            return TrackedActionState.Done;
         }
 
         private bool MediaMuted = false;
@@ -2179,9 +2185,6 @@ namespace IntegratedPresenter.Main
                 {
                     if (Presentation.Next.Type == SlideType.Action)
                     {
-                        // doesn't make sense to put preset shot on actions slides. Write it into the script as a @arg1:PresetSelect(#) insead
-                        SetupActionsCompleted = false;
-                        ActionsCompleted = false;
                         _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Starting Setup Actions for Action Slide ({Presentation.CurrentSlide}) <next {Presentation.Next.Title}>");
                         // run stetup actions
                         await ExecuteSetupActions(Presentation.Next);
@@ -2897,6 +2900,8 @@ namespace IntegratedPresenter.Main
                 DisableSlidePoolOverrides();
                 slidesUpdated();
 
+                FireOnConditionalsUpdated();
+
                 PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
             }
             // preserve mute status
@@ -2951,8 +2956,6 @@ namespace IntegratedPresenter.Main
             if (currentslideforactions != currentGuid)
             {
                 // new slide - mark changes
-                SetupActionsCompleted = false;
-                ActionsCompleted = false;
             }
 
             // update previews
@@ -2975,10 +2978,6 @@ namespace IntegratedPresenter.Main
                         currentGuid = Presentation.Current.Guid;
                     }
                 }
-                NextPreview.SetupComplete(SetupActionsCompleted);
-                NextPreview.ActionComplete(false);
-                CurrentPreview.ActionComplete(ActionsCompleted);
-                CurrentPreview.SetupComplete(true);
                 NextPreview.SetMedia(Presentation.Next, false);
                 AfterPreview.SetMedia(Presentation.After, false);
             }
@@ -4740,6 +4739,55 @@ namespace IntegratedPresenter.Main
         {
             _logger.Debug($"Click: PIP Run to Preset 5");
             SetupPIPToPresetPosition(5);
+        }
+
+
+
+        UIValue<bool> _Cond1 = new UIValue<bool>();
+        UIValue<bool> _Cond2 = new UIValue<bool>();
+
+        private Dictionary<string, bool> GetCurrentConditionStatus()
+        {
+            return new Dictionary<string, bool>
+            {
+                ["1"] = _Cond1.Value,
+                ["2"] = _Cond2.Value,
+            };
+        }
+
+        private void FireOnConditionalsUpdated()
+        {
+            var cstatus = GetCurrentConditionStatus();
+            PrevPreview?.FireOnActionConditionsUpdated(cstatus);
+            CurrentPreview?.FireOnActionConditionsUpdated(cstatus);
+            NextPreview?.FireOnActionConditionsUpdated(cstatus);
+            AfterPreview?.FireOnActionConditionsUpdated(cstatus);
+        }
+
+        private void SetCondition1(bool value)
+        {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
+            _Cond1.Value = value;
+            FireOnConditionalsUpdated();
+        }
+
+        private void SetCondition2(bool value)
+        {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
+            _Cond2.Value = value;
+            FireOnConditionalsUpdated();
+        }
+
+        private void ClickToggleCond1(object sender, RoutedEventArgs e)
+        {
+            _logger.Debug($"Click: Toggle Cond 1");
+            SetCondition1(!_Cond1.Value);
+        }
+
+        private void ClickToggleCond2(object sender, RoutedEventArgs e)
+        {
+            _logger.Debug($"Click: Toggle Cond 2");
+            SetCondition2(!_Cond2.Value);
         }
     }
 }

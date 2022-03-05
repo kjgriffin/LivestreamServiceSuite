@@ -44,16 +44,21 @@
     <None Remove="Icons\BClassPIP.png" />
     <None Remove="Icons\BlueBefore.png" />
     <None Remove="Icons\GreenCheck.png" />
+    <None Remove="Icons\GreenPlay.png" />
     <None Remove="Icons\HymnPIP.png" />
     <None Remove="Icons\keyframepushleft.png" />
     <None Remove="Icons\keyframepushright.png" />
     <None Remove="Icons\keyframetobox.png" />
     <None Remove="Icons\keyframetofill.png" />
     <None Remove="Icons\LeftSplitPIP.png" />
+    <None Remove="Icons\LightBlueBefore.png" />
     <None Remove="Icons\Mute2.png" />
     <None Remove="Icons\OrangeSandTimer.png" />
+    <None Remove="Icons\OrangeSkip.png" />
+    <None Remove="Icons\RedNoEntry.png" />
     <None Remove="Icons\RightPIP.png" />
     <None Remove="Icons\RightSplitPIP.png" />
+    <None Remove="Icons\YellowSkip.png" />
     <None Remove="Icons\YellowWarn.png" />
     <None Remove="Keys\WhiteKey.png" />
     <None Remove="LeftSplitPIP.png" />
@@ -134,6 +139,9 @@
     <Resource Include="Icons\GreenCheck.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\GreenPlay.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\HymnPIP.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -152,16 +160,28 @@
     <Resource Include="Icons\LeftSplitPIP.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\LightBlueBefore.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\Mute2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\OrangeSandTimer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\OrangeSkip.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\RedNoEntry.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\RightPIP.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\RightSplitPIP.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\YellowSkip.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\YellowWarn.png">

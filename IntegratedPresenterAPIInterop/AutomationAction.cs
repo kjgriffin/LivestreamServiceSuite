@@ -14,21 +14,60 @@ namespace IntegratedPresenterAPIInterop
         public string DataS { get; set; } = "";
         public object DataO { get; set; } = new object();
 
+        public Dictionary<string, bool> Conditions { get; set; } = new Dictionary<string, bool>();
 
         public override string ToString()
         {
             return $"{Action}";
         }
 
+        public bool MeetsConditionsToRun(Dictionary<string, bool> condValues)
+        {
+            foreach (var condReq in Conditions)
+            {
+                if (condValues?.TryGetValue(condReq.Key, out var condVal) == true)
+                {
+                    if (condVal != condReq.Value)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
-
-        public static AutomationAction Parse(string command)
+        public static AutomationAction Parse(string cline)
         {
             AutomationAction a = new AutomationAction();
             a.Action = AutomationActions.None;
             a.DataI = 0;
             a.DataS = "";
             a.Message = "";
+            a.Conditions = new Dictionary<string, bool>();
+
+            string command = cline;
+
+            if (cline.StartsWith("<"))
+            {
+                var res = Regex.Match(cline, @"<(?<conditions>.*)>(?<command>.*)");
+                var conditions = res.Groups["conditions"]?.Value.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>(0);
+                foreach (var cond in conditions)
+                {
+                    if (cond.StartsWith("!"))
+                    {
+                        a.Conditions[cond.Substring(1, cond.Length - 1)] = false;
+                    }
+                    else
+                    {
+                        a.Conditions[cond] = true;
+                    }
+                }
+                command = res.Groups["command"].Value;
+            }
 
             if (command.StartsWith("*note"))
             {

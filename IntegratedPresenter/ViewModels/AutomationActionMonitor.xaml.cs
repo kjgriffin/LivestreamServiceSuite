@@ -23,7 +23,7 @@ namespace Integrated_Presenter.ViewModels
     public partial class AutomationActionMonitor : UserControl
     {
         TrackedAutomationAction _action;
-        public AutomationActionMonitor(TrackedAutomationAction action)
+        public AutomationActionMonitor(TrackedAutomationAction action, Dictionary<string, bool> conditionals)
         {
             InitializeComponent();
             _action = action;
@@ -44,12 +44,22 @@ namespace Integrated_Presenter.ViewModels
                 case TrackedActionState.Done:
                     imgStatusIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreenCheck.png"));
                     break;
+                case TrackedActionState.Skipped:
+                    imgStatusIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/YellowSkip.png"));
+                    break;
             }
 
             switch (_action?.RunType)
             {
                 case TrackedActionRunType.Setup:
-                    imgTypeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/BlueBefore.png"));
+                    if (_action?.State == TrackedActionState.Done || _action?.State == TrackedActionState.Skipped)
+                    {
+                        imgTypeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/LightBlueBefore.png"));
+                    }
+                    else
+                    {
+                        imgTypeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/BlueBefore.png"));
+                    }
                     break;
                 case TrackedActionRunType.Main:
                     imgTypeIcon.Source = null;
@@ -58,6 +68,50 @@ namespace Integrated_Presenter.ViewModels
                     imgStatusIcon.Source = null;
                     imgTypeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/YellowWarn.png"));
                     break;
+            }
+
+            bool willRun = true;
+            spReqCond.Children.Clear();
+            foreach (var condReq in _action?.Action?.Conditions.OrderBy(x => x.Key))
+            {
+                bool cval = false;
+                if (conditionals.TryGetValue(condReq.Key, out var condVal))
+                {
+                    willRun &= (condVal == condReq.Value);
+                    cval = (condVal == condReq.Value);
+                }
+                else
+                {
+                    willRun = false;
+                }
+
+                // draw it with the current state
+                TextBlock tbCond = new TextBlock();
+                tbCond.Text = $"{(condReq.Value == false ? "!" : "")}{condReq.Key}";
+                tbCond.Margin = new Thickness(5);
+                tbCond.FontSize = 20;
+                tbCond.FontWeight = FontWeights.Bold;
+                if (cval)
+                {
+                    tbCond.Foreground = new SolidColorBrush(Color.FromRgb(3, 207, 8));
+                }
+                else
+                {
+                    tbCond.Foreground = new SolidColorBrush(Color.FromRgb(192, 0, 0));
+                }
+                spReqCond.Children.Add(tbCond);
+            }
+            if (!willRun)
+            {
+                imgCondeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/RedNoEntry.png"));
+            }
+            else if (_action?.Action?.Conditions?.Any() == true)
+            {
+                imgCondeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreenPlay.png"));
+            }
+            else
+            {
+                imgCondeIcon.Source = null;
             }
         }
 
