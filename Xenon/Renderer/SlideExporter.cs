@@ -62,12 +62,20 @@ namespace Xenon.Renderer
             return created;
         }
 
-        public static void ExportSlides(string directory, Project proj, List<XenonCompilerMessage> messages)
+        public static void ExportSlides(string directory, Project proj, List<XenonCompilerMessage> messages, IProgress<int> progress = null)
         {
             SlideRenderer slideRenderer = new SlideRenderer(proj);
 
+            int TOTALSLIDES = proj.Slides.Count;
+
+            int csnum = 0;
+
             foreach (var slide in proj.Slides)
             {
+                csnum++;
+                // report progress
+                progress?.Report((int)((double)csnum / (double)TOTALSLIDES * 100d));
+
                 // render the slide
                 RenderedSlide rs = slideRenderer.RenderSlide(slide, messages);
 

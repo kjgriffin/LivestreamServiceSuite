@@ -1,0 +1,22 @@
+﻿
+#scripted {
+
+first=#script {
+#PIP Hymn;
+!displaysrc='Resource_0_forslide_6.png';
+!keysrc='Resource_0_forkey_6.png';
+@arg0:DSK1Off[Kill Key];
+@arg0:USK1Off[Kill Key];
+@arg1:DelayMs(100);
+arg1:PresetSelect(4)[Preset Hymn];
+<2>argd8:PlacePIP(-11.2,-5.5,0.27,0.27,0,0,0,0)[Setup PIP];
+<2>arg0:USK1TieOn[Tie PIP];
+arg1:DelayMs(100);
+arg0:AutoTrans[Take Hymn];
+}
+
+duplast=#script {
+#PIP Teardown;
+arg0:USK1TieOff[Un Tie];
+arg0:USK1Off[Kill Key];
+}

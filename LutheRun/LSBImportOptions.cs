@@ -14,6 +14,8 @@ namespace LutheRun
         [BoolSetting]
         public bool UseUpNextForHymns { get; set; } = true;
         [BoolSetting]
+        public bool UsePIPHymns { get; set; } = false;
+
         public bool OnlyKnownCaptions { get; set; } = true;
         [BoolSetting]
         public bool UseResponsiveLiturgy { get; set; } = true;
@@ -29,6 +31,8 @@ namespace LutheRun
         public bool UseCopyTitle { get; set; } = true;
         [BoolSetting]
         public bool UseThemedCreeds { get; set; } = true;
+        [BoolSetting]
+        public bool UsePIPCreeds { get; set; } = false;
         [BoolSetting]
         public bool UseThemedHymns { get; set; } = true;
 

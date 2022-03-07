@@ -207,6 +207,8 @@ namespace Xenon.Compiler.AST
                     {
                         // its a duplicating last, and we've already mangled it because the first script has used it
                         // so we'll borrow the original slide, and add a new one with the dup-last
+                        // need to increase the number of scopy though
+                        scopy.Number = project.NewSlideNumber;
                         var swaped = SwapForScript(scopy, DupLastScript, project, Logger);
                         modifiedslides.Add(swaped.scripted);
                         modifiedslides.Add(swaped.resource);
@@ -252,6 +254,14 @@ namespace Xenon.Compiler.AST
 
             slide.OverridingBehaviour = behaviour;
             slide.Number = -1;
+
+            // swap postset
+            if (slide.TryGetPostset(out var postset))
+            {
+                scriptslide.Data[XenonASTHelpers.DATAKEY_POSTSET] = postset;
+                // techincally can kill the postset on the swapped slide
+                slide.Data.Remove(XenonASTHelpers.DATAKEY_POSTSET);
+            }
 
             // NOTE: only supports images for now- make huge noise if we are trying to do this for any other type of slide!
             if (slide.MediaType != MediaType.Image)

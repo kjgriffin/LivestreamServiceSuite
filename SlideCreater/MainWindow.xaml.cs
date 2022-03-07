@@ -790,11 +790,22 @@ namespace SlideCreater
             SaveFileDialog ofd = new SaveFileDialog();
             ofd.Title = "Select Output Folder";
             ofd.FileName = "Slide";
+
+            Progress<int> exportProgress = new Progress<int>(percent =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    ActionState = ActionState.Saving;
+                    tbSubActionStatus.Text = $"Exporting Slides: {percent}%";
+                    pbActionStatus.Value = percent;
+                });
+            });
+
             if (ofd.ShowDialog() == true)
             {
                 await Task.Run(() =>
                 {
-                    SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>()); // for now ignore messages
+                    SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>(), exportProgress); // for now ignore messages
                 });
                 ActionState = ActionState.SuccessExporting;
             }

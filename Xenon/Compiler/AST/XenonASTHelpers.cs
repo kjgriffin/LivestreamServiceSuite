@@ -8,6 +8,7 @@ namespace Xenon.Compiler.AST
 {
     static class XenonASTHelpers
     {
+        public static string DATAKEY_POSTSET { get => "postset"; }
         /// <summary>
         /// If the _parent is a XenonASTExpression will add postset info to slide.
         /// </summary>
@@ -26,21 +27,32 @@ namespace Xenon.Compiler.AST
             // check for first/last
             if (isfirst && parent.Postset_forFirst)
             {
-                slide.Data["postset"] = parent.Postset_First;
+                slide.Data[DATAKEY_POSTSET] = parent.Postset_First;
             }
             else if (islast && parent.Postset_forLast)
             {
                 // last will overwrite first request if only one slide.
-                slide.Data["postset"] = parent.Postset_Last;
+                slide.Data[DATAKEY_POSTSET] = parent.Postset_Last;
             }
             else
             {
                 // use the all if it exists
                 if (parent.Postset_forAll)
                 {
-                    slide.Data["postset"] = parent.Postset_All;
+                    slide.Data[DATAKEY_POSTSET] = parent.Postset_All;
                 }
             }
+        }
+
+        public static bool TryGetPostset(this Slide slide, out int postset)
+        {
+            if (slide.Data.TryGetValue(DATAKEY_POSTSET, out object val))
+            {
+                postset = (int)val;
+                return true;
+            }
+            postset = -1;
+            return false;
         }
     }
 }

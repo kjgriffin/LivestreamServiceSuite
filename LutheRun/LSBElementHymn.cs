@@ -224,6 +224,15 @@ namespace LutheRun
 
         public string XenonAutoGen(LSBImportOptions lSBImportOptions)
         {
+            if (lSBImportOptions.UsePIPHymns)
+            {
+                return XenonAutoGen_PIP();
+            }
+            return XenonAutoGen_Simple();
+        }
+
+        private string XenonAutoGen_Simple()
+        {
             // Assumes that any text verses will always be at the end.
             StringBuilder sb = new StringBuilder();
             //sb.AppendLine("/// <XENON_AUTO_GEN>");
@@ -243,6 +252,46 @@ namespace LutheRun
                 sb.AppendLine(XenonAutoGenTextHymn() + PostsetCmd);
             }
             //sb.AppendLine("/// </XENON_AUTO_GEN>");
+            return sb.ToString();
+        }
+        private string XenonAutoGen_PIP()
+        {
+            // Assumes that any text verses will always be at the end.
+            StringBuilder sb = new StringBuilder();
+            //sb.AppendLine("/// <XENON_AUTO_GEN>");
+
+            // may want to get a bit more advanced for split image/text hymns to apply first only on image and last only on text
+            // for now we'll just put it on both
+
+            var imagehymn = XenonAutoGenImageHymn();
+            var texthymn = XenonAutoGenTextHymn();
+
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                      .GetManifestResourceNames()
+                                      .FirstOrDefault(x => x.Contains("PrePIPScriptBlock"));
+
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                .GetManifestResourceStream(name);
+
+            // wrap it into a scripted block
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                sb.AppendLine(sr.ReadToEnd());
+            }
+
+            sb.AppendLine();
+
+            if (!string.IsNullOrEmpty(imagehymn))
+            {
+                sb.AppendLine(XenonAutoGenImageHymn() + PostsetCmd);
+            }
+            if (!string.IsNullOrEmpty(texthymn))
+            {
+                sb.AppendLine(XenonAutoGenTextHymn() + PostsetCmd);
+            }
+
+            sb.AppendLine("}");
+
             return sb.ToString();
         }
 
@@ -286,12 +335,9 @@ namespace LutheRun
                 string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
                 string copyright = Copyright;
 
-                //sb.AppendLine($"/// \"{title}\", \"{name}\", \"{tune}\", \"{number}\", \"{copyright}\"");
                 sb.AppendLine($"#stitchedimage(\"{title}\", \"{name}\", \"{number}\", \"{copyright}\") {{");
-                //sb.AppendLine("/// URLS::");
                 foreach (var imageline in ImageUrls)
                 {
-                    //sb.AppendLine($"/// img={imageline.RetinaScreenURL}");
                     sb.AppendLine($"{imageline.InferedName};");
                 }
                 sb.AppendLine("}");

@@ -154,7 +154,9 @@ namespace LutheRun
                 element = servicetoparse[i];
                 if (i + 1 < servicetoparse.Count)
                 {
-                    nextelement = servicetoparse[i + 1];
+                    // ignore unknown elements while parsing next element...
+                    //nextelement = servicetoparse[i + 1];
+                    nextelement = servicetoparse.Skip(i + 1).SkipWhile(x => x is LSBElementUnknown).FirstOrDefault();
                 }
 
 
