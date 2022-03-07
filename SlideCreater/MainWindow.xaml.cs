@@ -380,6 +380,7 @@ namespace SlideCreater
                     {
                         var sindex = Convert.ToInt32(srcoverride.Groups["src"].Value);
                         slide.Bitmap = slides.FirstOrDefault(s => s.Number == sindex)?.Bitmap;
+                        slide.BitmapPNGMS = slides.FirstOrDefault(s => s.Number == sindex)?.BitmapPNGMS;
                     }
                     else
                     {
@@ -388,6 +389,7 @@ namespace SlideCreater
                         {
                             var sname = srcoverride.Groups["src"].Value;
                             slide.Bitmap = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportName == sname)?.Bitmap;
+                            slide.BitmapPNGMS = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportName == sname)?.BitmapPNGMS;
                         }
                     }
 
@@ -398,6 +400,7 @@ namespace SlideCreater
                     {
                         var sindex = Convert.ToInt32(keyoverride.Groups["src"].Value);
                         slide.KeyBitmap = slides.FirstOrDefault(s => s.Number == sindex)?.KeyBitmap;
+                        slide.KeyPNGMS = slides.FirstOrDefault(s => s.Number == sindex)?.KeyPNGMS;
                     }
                     else
                     {
@@ -406,6 +409,7 @@ namespace SlideCreater
                         {
                             var sname = srcoverride.Groups["src"].Value;
                             slide.KeyBitmap = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportKeyName == sname)?.KeyBitmap;
+                            slide.KeyPNGMS = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportKeyName == sname)?.KeyPNGMS;
                         }
                     }
                 }

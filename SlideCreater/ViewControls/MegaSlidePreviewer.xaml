@@ -5,29 +5,44 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SlideCreater.ViewControls" xmlns:slidecreater="clr-namespace:SlideCreater"
              mc:Ignorable="d" 
-             d:DesignHeight="108" d:DesignWidth="384">
-    <Grid Width="800" Height="270">
+             d:DesignHeight="194" d:DesignWidth="736">
+    <Grid Width="736" Height="194">
         <Grid.RowDefinitions>
-            <RowDefinition Height="230"></RowDefinition>
-            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="0.851*"></RowDefinition>
+            <RowDefinition Height="0.148*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Viewbox Stretch="Uniform" Grid.Row="0">
-            <StackPanel Orientation="Horizontal" Width="3840" Height="1080">
+        <Viewbox Stretch="Uniform" Grid.Row="0" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal" Width="4840" Height="1080">
                 <slidecreater:SlideContentPresenter x:Name="main"></slidecreater:SlideContentPresenter>
                 <slidecreater:SlideContentPresenter x:Name="key"></slidecreater:SlideContentPresenter>
+                <Border Width="1000" Background="White">
+                    <ScrollViewer HorizontalScrollBarVisibility="Visible" Width="1000">
+                        <Viewbox>
+                            <TextBlock Name="tbScriptText" Foreground="Black" FontSize="80" TextWrapping="NoWrap">Script Text</TextBlock>
+                        </Viewbox>
+                    </ScrollViewer>
+                </Border>
             </StackPanel>
         </Viewbox>
         <Grid Grid.Row="1" Background="#272727">
-            <StackPanel Orientation="Horizontal">
-                <Label Foreground="White" FontWeight="Bold" VerticalAlignment="Center">Postset:</Label>
-                <Label Foreground="White" Name="postset" VerticalAlignment="Center"></Label>
-                <Label Foreground="White" FontWeight="Bold" Margin="10,0,0,0" VerticalAlignment="Center">Number:</Label>
-                <Label Foreground="White" Name="number" VerticalAlignment="Center"></Label>
-                <Label Foreground="White" FontWeight="Bold" Margin="0,0,0,0" VerticalAlignment="Center">Creates:</Label>
-                <Label Foreground="White" VerticalAlignment="Center">[</Label>
-                <TextBlock Name="creates" TextAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                <Label Foreground="White" VerticalAlignment="Center">]</Label>
-            </StackPanel>
+            <Viewbox HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Border Name="bIsResourceTag" Background="MediumPurple" Margin="0,0,0,0">
+                        <Label FontSize="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">Resource</Label>
+                    </Border>
+                    <Border Name="bHasScriptTag" Background="Orange" Margin="0,0,0,0">
+                        <Label FontSize="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">Has Script</Label>
+                    </Border>
+                    <Label Foreground="White" FontWeight="Bold" VerticalAlignment="Center">Postset:</Label>
+                    <Label Foreground="White" Name="postset" VerticalAlignment="Center"></Label>
+                    <Label Foreground="White" FontWeight="Bold" Margin="10,0,0,0" VerticalAlignment="Center">Number:</Label>
+                    <Label Foreground="White" Name="number" VerticalAlignment="Center"></Label>
+                    <Label Foreground="White" FontWeight="Bold" Margin="0,0,0,0" VerticalAlignment="Center">Creates:</Label>
+                    <Label Foreground="White" VerticalAlignment="Center">[</Label>
+                    <TextBlock Name="creates" TextAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                    <Label Foreground="White" VerticalAlignment="Center">]</Label>
+                </StackPanel>
+            </Viewbox>
         </Grid>
     </Grid>
 </UserControl>

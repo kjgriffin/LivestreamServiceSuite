@@ -12,7 +12,7 @@
                 <Border>
                     <Grid Height="1080" Width="1920">
                         <Viewbox Panel.ZIndex="4">
-                            <TextBlock Padding="200" Foreground="Orange" Name="textDisplay" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="200" Opacity="0.5">Empty Slide</TextBlock>
+                            <TextBlock Padding="20" Background="#a0000000" Foreground="#ffffffff" Name="textDisplay" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="200">Empty Slide</TextBlock>
                         </Viewbox>
                         <Image Name="ImgDisplay" Panel.ZIndex="3"></Image>
                         <MediaElement Name="VideoDisplay" LoadedBehavior="Manual" Panel.ZIndex="3"></MediaElement>

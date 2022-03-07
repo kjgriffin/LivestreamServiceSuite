@@ -75,7 +75,7 @@ namespace SlideCreater
                         if (!Regex.Match(Slide.Text, "!keysrc='.*\\.png';").Success)
                         {
                             background.Visibility = Visibility.Visible;
-                            textDisplay.Visibility = Visibility.Visible;
+                            textDisplay.Visibility = Visibility.Hidden;
                             ImgDisplay.Visibility = Visibility.Hidden;
                         }
                     }
@@ -119,8 +119,9 @@ namespace SlideCreater
                 {
                     VideoDisplay.Visibility = Visibility.Hidden;
                     ImgDisplay.Visibility = Visibility.Hidden;
-                    textDisplay.Visibility = Visibility.Visible;
-                    textDisplay.Text = Slide.Text;
+                    textDisplay.Visibility = Visibility.Hidden;
+                    //textDisplay.Visibility = Visibility.Visible;
+                    //textDisplay.Text = Slide.Text;
 
                     if (Slide.RenderedAs == "Action")
                     {

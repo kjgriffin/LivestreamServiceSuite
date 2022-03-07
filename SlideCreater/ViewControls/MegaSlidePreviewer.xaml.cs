@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 using Xenon.Renderer;
 
 namespace SlideCreater.ViewControls
@@ -41,6 +42,17 @@ namespace SlideCreater.ViewControls
                     number.Content = value.Number;
                     string tmp = string.Join(", ", Xenon.Renderer.SlideExporter.WillCreate(value));
                     creates.Text = tmp;
+                    if (value.MediaType == Xenon.SlideAssembly.MediaType.Text)
+                    {
+                        tbScriptText.Text = value.Text;
+                        bHasScriptTag.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        tbScriptText.Text = "";
+                        bHasScriptTag.Visibility = Visibility.Collapsed;
+                    }
+                    bIsResourceTag.Visibility = value.Number == -1 ? Visibility.Visible : Visibility.Collapsed;
                 });
             }
         }
