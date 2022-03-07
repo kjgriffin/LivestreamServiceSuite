@@ -2220,7 +2220,13 @@ namespace IntegratedPresenter.Main
                         _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Starting Actions for Action Slide ({Presentation.CurrentSlide})");
                         await ExecuteActionSlide(Presentation.EffectiveCurrent);
                         _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Finished running Actions for Action Slide ({Presentation.CurrentSlide})");
-                        // again doesn't make sense to have postset shot. Write it into the script as a @arg:PresetSelect(#) instead
+
+                        // we will let scripts run a postset if required
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
+                        {
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command preset select for postset shot. For Action type slide ({Presentation.CurrentSlide}).");
+                            switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
+                        }
                     }
                     else if (Presentation.Next.Type == SlideType.Liturgy)
                     {
@@ -2426,11 +2432,33 @@ namespace IntegratedPresenter.Main
                             if (waitfortrans)
                             {
                                 _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Wait for AutoTrans complete on slide ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
-                                await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+
+                                if (!_FeatureFlag_MRETransition)
+                                {
+                                    _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for delay that autotrans has completed. For FULL/VIDEO type slide ({Presentation.CurrentSlide}).");
+                                    await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
+                                }
+                                else
+                                {
+                                    await Task.Run(() =>
+                                    {
+                                        _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Waiting for signal that autotrans has completed. For FULL/VIDEO type slide ({Presentation.CurrentSlide}).");
+                                        if (autoTransMRE.WaitOne(TimeSpan.FromMilliseconds(1500)))
+                                        {
+                                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans signaled complete. For FULL/VIDEO type slide ({Presentation.CurrentSlide}).");
+                                        }
+                                        else
+                                        {
+                                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Autotrans not signaled- timed out after 1500ms. Continuing anyways. For FULL/VIDEO type slide ({Presentation.CurrentSlide}).");
+                                        }
+                                    });
+                                }
                             }
-                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) --  Command Preset Select for postset {Presentation.EffectiveCurrent.PostsetId} on slide ({Presentation.CurrentSlide}) of type {Presentation.Current.Type}.");
+                            _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- Command preset select for postset shot. For LITURGY type slide ({Presentation.CurrentSlide}).");
                             switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
                         }
+
+
                     }
                 }
                 else
