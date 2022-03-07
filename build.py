@@ -34,7 +34,7 @@ def main():
 
     # build SlideCreater
     #buildcmd_slidecreater = 'dotnet publish SlideCreater -c Release -p:PublishDir=.\..\publish\{0}\SlideCreater -p:PublishReadyToRun=true -p:PublishSingleFile=true --self-contained true -r win-x64-aot'.format(bnumstr)
-    buildcmd_slidecreater = 'msbuild "SlideCreater" -r /t:publish /p:PublishDir=".\..\publish\{0}\SlideCreater" /p:Configuration=Release /p:SelfContained=true /p:RuntimeIdentifier=win-x64-aot /p:PublishSingleFile=true'.format(bnumstr)
+    buildcmd_slidecreater = 'msbuild "SlideCreater" -r /t:publish /p:PublishDir=".\..\publish\{0}\SlideCreater" /p:Configuration=Release /p:SelfContained=true /p:RuntimeIdentifier=win-x64-aot /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true'.format(bnumstr)
     os.system(buildcmd_slidecreater) 
     # rename with build number
     cwd = os.getcwd()
@@ -75,7 +75,7 @@ def main():
 
 
     # build Integrated Presenter
-    buildcmd_integratedpresenter = 'msbuild "IntegratedPresenter" -r /t:publish /p:PublishDir=".\..\publish\{0}\IntegratedPresenter" /p:Configuration=Release /p:SelfContained=true /p:RuntimeIdentifier=win-x64-aot /p:PublishSingleFile=true'.format(bnumstr)
+    buildcmd_integratedpresenter = 'msbuild "IntegratedPresenter" -r /t:publish /p:PublishDir=".\..\publish\{0}\IntegratedPresenter" /p:Configuration=Release /p:SelfContained=true /p:RuntimeIdentifier=win-x64-aot /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true'.format(bnumstr)
     os.system(buildcmd_integratedpresenter) 
     # rename with build number
     cwd = os.getcwd()
