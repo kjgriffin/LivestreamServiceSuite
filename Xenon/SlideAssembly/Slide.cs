@@ -29,6 +29,21 @@ namespace Xenon.SlideAssembly
         public Dictionary<string, object> Data { get; set; } = new Dictionary<string, object>();
         public SlideOverridingBehaviour OverridingBehaviour { get; set; } = new SlideOverridingBehaviour();
 
+        public Slide Clone()
+        {
+            return new Slide()
+            {
+                Colors = Colors,
+                Name = Name,
+                Number = Number,
+                Format = Format,
+                MediaType = MediaType,
+                Asset = Asset,
+                Lines = Lines,
+                Data = Data,
+                OverridingBehaviour = OverridingBehaviour,
+            };
+        }
 
         public int Hash()
         {

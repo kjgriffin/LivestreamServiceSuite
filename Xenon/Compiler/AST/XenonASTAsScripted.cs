@@ -19,9 +19,12 @@ namespace Xenon.Compiler.AST
         public XenonASTScript FirstScript { get; private set; }
         public XenonASTScript LastScript { get; private set; }
 
+        public XenonASTScript DupLastScript { get; private set; }
+
         public bool HasAll { get; private set; }
         public bool HasFirst { get; private set; }
         public bool HasLast { get; private set; }
+        public bool HasDupLast { get; private set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
@@ -81,6 +84,18 @@ namespace Xenon.Compiler.AST
                 }
                 else if (Lexer.Inspect("last"))
                 {
+                    if (element.HasDupLast)
+                    {
+                        Logger.Log(new XenonCompilerMessage
+                        {
+                            ErrorMessage = "duplast already defined for scripted block. They will conflict with undefined behaviour",
+                            ErrorName = "Script Conflict: last conflicts with duplast",
+                            Generator = "XenonASTASScripted::Compile()",
+                            Inner = "",
+                            Level = XenonCompilerMessageType.Error,
+                            Token = Lexer.CurrentToken,
+                        });
+                    }
                     Lexer.Consume();
                     Lexer.GobbleWhitespace();
                     Lexer.GobbleandLog("=", "expected = to assign last script");
@@ -92,6 +107,32 @@ namespace Xenon.Compiler.AST
                     script = (XenonASTScript)script.Compile(Lexer, Logger, element);
                     element.LastScript = script;
                     element.HasLast = true;
+                }
+                else if (Lexer.Inspect("duplast"))
+                {
+                    if (element.HasLast)
+                    {
+                        Logger.Log(new XenonCompilerMessage
+                        {
+                            ErrorMessage = "last already defined for scripted block. They will conflict with undefined behaviour",
+                            ErrorName = "Script Conflict: last conflicts with duplast",
+                            Generator = "XenonASTASScripted::Compile()",
+                            Inner = "",
+                            Level = XenonCompilerMessageType.Error,
+                            Token = Lexer.CurrentToken,
+                        });
+                    }
+                    Lexer.Consume();
+                    Lexer.GobbleWhitespace();
+                    Lexer.GobbleandLog("=", "expected = to assign duplicating last script");
+                    Lexer.GobbleWhitespace();
+                    Lexer.GobbleandLog("#", "expected #");
+                    Lexer.GobbleandLog("script", "expected script command");
+                    Lexer.GobbleWhitespace();
+                    XenonASTScript script = new XenonASTScript();
+                    script = (XenonASTScript)script.Compile(Lexer, Logger, element);
+                    element.DupLastScript = script;
+                    element.HasDupLast = true;
                 }
                 else
                 {
@@ -135,6 +176,7 @@ namespace Xenon.Compiler.AST
 
             foreach (var slide in childslides)
             {
+                var scopy = slide.Clone();
                 if (slide == childslides.Last() && HasLast)
                 {
                     var swaped = SwapForScript(slide, LastScript, project, Logger);
@@ -153,9 +195,29 @@ namespace Xenon.Compiler.AST
                     modifiedslides.Add(swaped.scripted);
                     modifiedslides.Add(swaped.resource);
                 }
-                else
+                else if (!(slide == childslides.Last() && HasDupLast))
                 {
                     modifiedslides.Add(slide);
+                }
+
+
+                if (slide == childslides.Last() && HasDupLast)
+                {
+                    if (slide == childslides.First() && HasFirst)
+                    {
+                        // its a duplicating last, and we've already mangled it because the first script has used it
+                        // so we'll borrow the original slide, and add a new one with the dup-last
+                        var swaped = SwapForScript(scopy, DupLastScript, project, Logger);
+                        modifiedslides.Add(swaped.scripted);
+                        modifiedslides.Add(swaped.resource);
+                    }
+                    else
+                    {
+                        // its a regular 'last'
+                        var swaped = SwapForScript(slide, DupLastScript, project, Logger);
+                        modifiedslides.Add(swaped.scripted);
+                        modifiedslides.Add(swaped.resource);
+                    }
                 }
             }
 
