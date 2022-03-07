@@ -133,6 +133,9 @@ namespace IntegratedPresenter.Main
             CurrentPreview.ShowBlackForActions = false;
             CurrentPreview.ShowIfMute = true;
 
+            CurrentPreview.ShowAutomationPreviews = false;
+            NextPreview.ShowAutomationPreviews = true;
+
             CurrentPreview.OnMediaPlaybackTimeUpdate += CurrentPreview_OnMediaPlaybackTimeUpdate;
             NextPreview.OnMediaLoaded += NextPreview_OnMediaLoaded;
             AfterPreview.OnMediaLoaded += AfterPreview_OnMediaLoaded;
@@ -556,6 +559,10 @@ namespace IntegratedPresenter.Main
             UpdateFTBButtonStyle();
             UpdateCBarsStyle();
             UpdateKeyerControls();
+
+            // optionally update previews
+            CurrentPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
+            NextPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
         }
 
         private void UpdateUSK1Styles()
@@ -1747,6 +1754,7 @@ namespace IntegratedPresenter.Main
         #region SlideDriveVideo
 
         private bool _FeatureFlag_PostsetShot = true;
+        private bool _FeatureFlag_AutomationPreview = true;
 
         private bool _FeatureFlag_MRETransition = false;
 
@@ -2984,6 +2992,10 @@ namespace IntegratedPresenter.Main
             UpdateSlidePreviewControls();
             UpdatePreviewsPostets();
             currentslideforactions = currentGuid;
+
+            // update previews
+            CurrentPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
+            NextPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
         }
 
         private void UpdatePreviewsPostets()
@@ -4538,6 +4550,22 @@ namespace IntegratedPresenter.Main
             miCutTransitionGuard.IsChecked = _FeatureFlag_GaurdCutTransition;
         }
 
+
+        private void SetShowAutomationPreviews(bool show)
+        {
+            _FeatureFlag_AutomationPreview = show;
+            if (show)
+            {
+                CurrentPreview.ShowAutomationPreviews = false;
+                NextPreview.ShowAutomationPreviews = true;
+            }
+            else
+            {
+                CurrentPreview.ShowAutomationPreviews = false;
+                NextPreview.ShowAutomationPreviews = false;
+            }
+        }
+
         private void ClickTogglePostsetFeature(object sender, RoutedEventArgs e)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -4614,6 +4642,7 @@ namespace IntegratedPresenter.Main
                     EnableDriveModeAutoTransGuard = _FeatureFlag_DriveMode_AutoTransitionGuard,
                     EnablePostset = _FeatureFlag_PostsetShot,
                     EnableSermonTimer = _FeatureFlag_automationtimer1enabled,
+                    EnableAutomationStepsPreview = _FeatureFlag_AutomationPreview,
                 },
                 PresentationSettings = new Configurations.FeatureConfig.IntegratedPresentationFeatures_Presentation()
                 {
@@ -4788,6 +4817,11 @@ namespace IntegratedPresenter.Main
         {
             _logger.Debug($"Click: Toggle Cond 2");
             SetCondition2(!_Cond2.Value);
+        }
+
+        private void ClickToggleShowAutomationPreviews(object sender, RoutedEventArgs e)
+        {
+            SetShowAutomationPreviews(!_FeatureFlag_AutomationPreview);
         }
     }
 }

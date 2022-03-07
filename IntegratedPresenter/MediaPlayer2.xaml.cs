@@ -1,5 +1,6 @@
 ﻿using Integrated_Presenter.ViewModels;
 
+using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
 
 using System;
@@ -124,6 +125,17 @@ namespace IntegratedPresenter.Main
         public bool ShowIfMute { get; set; } = false;
 
         public bool ShowBlackForActions { get; set; } = true;
+
+        bool _showAutomationPreviews = false;
+        public bool ShowAutomationPreviews
+        {
+            get => _showAutomationPreviews;
+            set
+            {
+                _showAutomationPreviews = value;
+                ChangeShowAutomationPreviews();
+            }
+        }
 
         private bool _showpostset = false;
         public bool ShowPostset
@@ -326,6 +338,27 @@ namespace IntegratedPresenter.Main
         Slide _curentSlide = null;
         bool _asKey = false;
 
+        public void ChangeShowAutomationPreviews()
+        {
+            if (ShowAutomationPreviews)
+            {
+                if (_curentSlide?.Type == SlideType.Liturgy)
+                {
+                    AutomationPreviewGraphics.Visibility = Visibility.Visible;
+                    return;
+                }
+            }
+            AutomationPreviewGraphics.Visibility = Visibility.Hidden;
+        }
+        public void FireOnSwitcherStateChangedForAutomation(BMDSwitcherState state, BMDSwitcherConfigSettings config)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                ChangeShowAutomationPreviews();
+                AutomationPreviewGraphics?.FireOnSwitcherStateChanged(state, config);
+            });
+        }
+
         private void ChangeSlide(Slide newSlide, bool asKey)
         {
             ClearActionPreviews();
@@ -339,6 +372,9 @@ namespace IntegratedPresenter.Main
             _curentSlide = newSlide;
             // register new handler
             _curentSlide.OnActionUpdated += _curentSlide_OnActionUpdated;
+
+            // show/hide previews
+            ChangeShowAutomationPreviews();
         }
 
         private void _curentSlide_OnActionUpdated(TrackedAutomationAction updatedAction)

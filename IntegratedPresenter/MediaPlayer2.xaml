@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:IntegratedPresenter.Main" xmlns:viewmodels="clr-namespace:IntegratedPresenter.ViewModels"
+             xmlns:local="clr-namespace:IntegratedPresenter.Main" xmlns:viewmodels="clr-namespace:IntegratedPresenter.ViewModels" xmlns:viewmodels1="clr-namespace:Integrated_Presenter.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -16,11 +16,16 @@
                 <viewmodels:PostsetUI x:Name="postset" Visibility="Hidden"></viewmodels:PostsetUI>
             </Viewbox>
         </Grid>
+        <Grid Name="gridAutomationPreview" Panel.ZIndex="110" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,0,0,0">
+            <Viewbox Height="200" Width="200">
+                <viewmodels1:LiturgyGraphicsAutomationPreview x:Name="AutomationPreviewGraphics" Visibility="Hidden"></viewmodels1:LiturgyGraphicsAutomationPreview>
+            </Viewbox>
+        </Grid>
         <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close" Grid.RowSpan="2"></MediaElement>
         <Image Name="imagePlayer" Grid.RowSpan="2"></Image>
         <Rectangle Name="BlackSource" Fill="Black" Grid.RowSpan="2"></Rectangle>
         <Viewbox Grid.Row="1" Margin="10" MaxWidth="263">
-            <StackPanel Name="spActionView" Orientation="Vertical">
+            <StackPanel Name="spActionView" Orientation="Vertical" Background="#90000000">
                 <TextBlock Name="SetupMessages" Foreground="LightGreen" Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"></TextBlock>
                 <TextBlock Name="MainMessages" Foreground="Orange" Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"></TextBlock>
             </StackPanel>
@@ -46,8 +51,8 @@
         </Grid>
         <Rectangle Name="backgroundfill" Grid.RowSpan="2" Panel.ZIndex="-1" Style="{StaticResource CheckBackgroundFill}">
             <!--<Rectangle.Fill>-->
-                <!--<SolidColorBrush Color="Black"></SolidColorBrush>-->
-                <!--<DrawingBrush ></DrawingBrush>-->
+            <!--<SolidColorBrush Color="Black"></SolidColorBrush>-->
+            <!--<DrawingBrush ></DrawingBrush>-->
             <!--</Rectangle.Fill>-->
         </Rectangle>
         <Rectangle Name="blackbase" Grid.RowSpan="2" Panel.ZIndex="-2">

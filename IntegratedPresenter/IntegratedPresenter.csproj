@@ -43,21 +43,29 @@
     <None Remove="HymnPIP.png" />
     <None Remove="Icons\BClassPIP.png" />
     <None Remove="Icons\BlueBefore.png" />
+    <None Remove="Icons\BlueTimer.png" />
     <None Remove="Icons\GreenCheck.png" />
     <None Remove="Icons\GreenPlay.png" />
+    <None Remove="Icons\GreyTimer.png" />
+    <None Remove="Icons\GreyTransArrows.png" />
     <None Remove="Icons\HymnPIP.png" />
     <None Remove="Icons\keyframepushleft.png" />
     <None Remove="Icons\keyframepushright.png" />
     <None Remove="Icons\keyframetobox.png" />
     <None Remove="Icons\keyframetofill.png" />
+    <None Remove="Icons\KeyGrey.png" />
+    <None Remove="Icons\KeyRed.png" />
     <None Remove="Icons\LeftSplitPIP.png" />
     <None Remove="Icons\LightBlueBefore.png" />
     <None Remove="Icons\Mute2.png" />
     <None Remove="Icons\OrangeSandTimer.png" />
     <None Remove="Icons\OrangeSkip.png" />
     <None Remove="Icons\RedNoEntry.png" />
+    <None Remove="Icons\RedTransArrows.png" />
+    <None Remove="Icons\RedVideoCam.png" />
     <None Remove="Icons\RightPIP.png" />
     <None Remove="Icons\RightSplitPIP.png" />
+    <None Remove="Icons\YellowBolt.png" />
     <None Remove="Icons\YellowSkip.png" />
     <None Remove="Icons\YellowWarn.png" />
     <None Remove="Keys\WhiteKey.png" />
@@ -136,10 +144,19 @@
     <Resource Include="Icons\BlueBefore.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\BlueTimer.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\GreenCheck.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\GreenPlay.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\GreyTimer.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\GreyTransArrows.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\HymnPIP.png">
@@ -155,6 +172,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\keyframetofill.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\KeyGrey.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\KeyRed.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\LeftSplitPIP.png">
@@ -175,10 +198,19 @@
     <Resource Include="Icons\RedNoEntry.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\RedTransArrows.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\RedVideoCam.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\RightPIP.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\RightSplitPIP.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\YellowBolt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\YellowSkip.png">

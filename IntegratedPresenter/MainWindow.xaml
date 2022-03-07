@@ -36,6 +36,7 @@
                 <MenuItem Header="View" IsTabStop="False" Focusable="False">
                     <MenuItem Name="cbPrevAfter" Header="Prev/After [O]" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter" Focusable="False"></MenuItem>
                     <MenuItem Name="cbShowEffectiveCurrent" Header="Preview Effective Current" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowEffectiveCurrentPreview" Focusable="False"></MenuItem>
+                    <MenuItem Name="cbShowAutomationPreviews" Header="Preview Automation Steps" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowAutomationPreviews" Focusable="False"></MenuItem>
                     <MenuItem Name="cbShowCurrentVideoCountdownTimer" Header="Video Countdown Timer (Current)" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowCurrentVideoCountdownTimer" Focusable="False"></MenuItem>
                     <MenuItem Name="cbAdvancedPresentation" Header="Advanced Presentation [Q]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation" Focusable="False"></MenuItem>
                     <MenuItem Header="Audio Player [A]" IsTabStop="False" Click="ClickViewAudioPlayer" Focusable="False"></MenuItem>

@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="Integrated_Presenter.ViewModels.LiturgyGraphicsAutomationPreview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Integrated_Presenter.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="240" d:DesignWidth="300">
+    <Grid>
+        <Grid Background="#70000000">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="120"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <TextBlock Background="#20000000" Foreground="White" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center">GRAPHICS</TextBlock>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Rectangle Name="rectIfTrans1" Margin="20,10,0,0" Fill="Red" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
+                <Rectangle Name="rectIfTrans2" Margin="20,0,0,0" Fill="Red" Width="5" Height="100" HorizontalAlignment="Left" VerticalAlignment="Center"></Rectangle>
+                <Rectangle Name="rectIfTrans3" Margin="20,0,0,10" Fill="Red" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Rectangle>
+                <StackPanel HorizontalAlignment="Left" Orientation="Vertical" VerticalAlignment="Center" Margin="40,0,0,0">
+                    <StackPanel Height="40" Orientation="Horizontal">
+                        <Image Name="imgAutoTrans" Source="../Icons/RedTransArrows.png" Height="40"></Image>
+                        <TextBlock Name="tbAutoTransCamName" Margin="10,0,0,0" Foreground="White" VerticalAlignment="Center" FontSize="20">ORGAN</TextBlock>
+                    </StackPanel>
+                    <StackPanel Height="40" Orientation="Horizontal">
+                        <Image Name="imgTransDelay" Height="40" Source="../Icons/BlueTimer.png" HorizontalAlignment="Left"></Image>
+                        <TextBlock Name="tbAutoTransDelay" Margin="10,0,0,0" Foreground="#adadad" VerticalAlignment="Center" FontSize="20">WAIT</TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="2">
+                <StackPanel Height="40" Orientation="Horizontal">
+                    <Image Name="imgSlideChangeEvent" Source="../Icons/YellowBolt.png" HorizontalAlignment="Left"></Image>
+                    <TextBlock Margin="10,0,0,0" Foreground="#adadad" VerticalAlignment="Center" FontSize="20">NEXT SLIDE</TextBlock>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="3">
+                <StackPanel Orientation="Horizontal">
+                    <!--<Image Height="40" Source="../Icons/KeyGrey.png"></Image>-->
+                    <Image Name="imgDSKAction" Height="40" Source="../Icons/KeyRed.png"></Image>
+                    <TextBlock Name="tbDSKAction" Margin="10,0,0,0" Foreground="Red" VerticalAlignment="Center" FontSize="20">DSK1 ON AIR</TextBlock>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

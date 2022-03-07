@@ -220,6 +220,7 @@ namespace IntegratedPresenter.Main
 
         public void NextSlide()
         {
+            Prev?.ResetAllActionsState();
             if (_virtualCurrentSlide + 1 < SlideCount)
             {
                 if (Math.Abs((_currentSlide + 1) - _virtualCurrentSlide) != 1)
@@ -273,7 +274,12 @@ namespace IntegratedPresenter.Main
 
         public void StartPres()
         {
-            EffectiveCurrent?.ResetAllActionsState();
+            // need to reset all slides
+            foreach (var s in Slides)
+            {
+                s?.ResetAllActionsState();
+            }
+            //EffectiveCurrent?.ResetAllActionsState();
             _currentSlide = 0;
             _virtualCurrentSlide = 0;
         }

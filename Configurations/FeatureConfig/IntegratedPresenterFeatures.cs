@@ -93,6 +93,7 @@ namespace Configurations.FeatureConfig
         public bool EnableDriveModeAutoTransGuard { get; set; }
         public bool EnableCutTransGuard { get; set; }
         public bool EnablePostset { get; set; }
+        public bool EnableAutomationStepsPreview { get; set; }
 
         public static IntegratedPresentationFeatures_Automation Default()
         {
@@ -102,6 +103,7 @@ namespace Configurations.FeatureConfig
                 EnableSermonTimer = true,
                 EnableDriveModeAutoTransGuard = true,
                 EnablePostset = true,
+                EnableAutomationStepsPreview = true,
             };
 
         }

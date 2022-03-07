@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="440">
     <Grid>
-        <Grid VerticalAlignment="Center">
+        <Grid VerticalAlignment="Center" MaxWidth="440">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80"></ColumnDefinition>
                 <ColumnDefinition Width="25"></ColumnDefinition>
@@ -35,10 +35,10 @@
                 <Image Name="imgStatusIcon" Source="../Icons/YellowWarn.png" Height="25"></Image>
             </Grid>
             <Grid Grid.Column="3">
-                <TextBlock Background="#80000000" Foreground="#ffededed" Name="tbMessage" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0">Some Action Message...</TextBlock>
+                <TextBlock Padding="10,1,10,1" FontWeight="Bold" Background="#80000000" Foreground="#ffededed" Name="tbMessage" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0">Some Action Message...</TextBlock>
             </Grid>
             <Grid Grid.Column="4">
-                <TextBlock Background="#20000000" Foreground="#ffadadad" Name="tbCommand" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">COMMAND</TextBlock>
+                <TextBlock Background="#80000000" FontStyle="Italic" Foreground="#ffadadad" Name="tbCommand" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">COMMAND</TextBlock>
             </Grid>
         </Grid>
     </Grid>
