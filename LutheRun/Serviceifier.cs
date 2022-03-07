@@ -36,6 +36,7 @@ namespace LutheRun
 
         public static List<Type> LiturgyElements = new List<Type>()
         {
+            typeof(LSBElementResponsiveLiturgy),
             typeof(LSBElementLiturgy),
             typeof(LSBElementLiturgySung),
             typeof(LSBElementReading),
