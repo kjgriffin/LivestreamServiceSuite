@@ -1756,7 +1756,7 @@ namespace IntegratedPresenter.Main
         private bool _FeatureFlag_PostsetShot = true;
         private bool _FeatureFlag_AutomationPreview = true;
 
-        private bool _FeatureFlag_MRETransition = false;
+        private bool _FeatureFlag_MRETransition = true; // This should be safe enough
 
         private Guid currentslideforactions;
 
