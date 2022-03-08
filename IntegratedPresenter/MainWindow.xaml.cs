@@ -2824,6 +2824,7 @@ namespace IntegratedPresenter.Main
                             await Task.Delay(_config.PrerollSettings.PresetSelectDelay);
                             _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. Commanding switcher to transition preset source 'slide' to program source for slide {Presentation.EffectiveCurrent.Title}");
                             PerformGuardedAutoTransition();
+                            waitfortrans = true;
                         }
 
                         // Handle a postshot selection by setting up the preset
