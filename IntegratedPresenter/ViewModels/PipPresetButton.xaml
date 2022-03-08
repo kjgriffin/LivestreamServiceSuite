@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Integrated_Presenter.ViewModels.PipPresetButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Integrated_Presenter.ViewModels" d:DataContext="{d:DesignInstance Type=local:PipPresetButton}"
+             mc:Ignorable="d" 
+             d:DesignHeight="80" d:DesignWidth="100">
+    <Grid>
+        <Grid>
+            <Viewbox Name="ksc_key" Panel.ZIndex="1" Height="50" Width="50">
+                <StackPanel Orientation="Horizontal">
+                    <Border Style="{StaticResource UIShortcutBdr}">
+                        <Viewbox>
+                            <StackPanel Width="50">
+                                <TextBlock Name="kscKeyText" Style="{StaticResource UIShortcut}" Text="{Binding KSCText}"></TextBlock>
+                            </StackPanel>
+                        </Viewbox>
+                    </Border>
+                </StackPanel>
+            </Viewbox>
+            <Button Name="btn" Click="Button_Click" Focusable="False" IsTabStop="False" Foreground="White" Background="WhiteSmoke" Style="{StaticResource InactivePIPControlButton}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Background}" Margin="3" BorderThickness="1">
+                            <local:PIPPlacePreview x:Name="PIPPreview"></local:PIPPlacePreview>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                <Setter Property="BorderBrush" Value="Yellow" TargetName="Border"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+                <!--<DataTrigger Value="True" Binding="{Binding IsActive}">-->
+                    <!--<Setter Property="{}" Value="Red"></Setter>-->
+                <!--</DataTrigger>-->
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

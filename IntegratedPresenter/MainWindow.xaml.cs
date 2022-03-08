@@ -25,6 +25,7 @@ using CommonVersionInfo;
 using Configurations.FeatureConfig;
 using IntegratedPresenterAPIInterop;
 using Integrated_Presenter.ViewModels;
+using System.Windows.Controls;
 
 namespace IntegratedPresenter.Main
 {
@@ -111,6 +112,9 @@ namespace IntegratedPresenter.Main
 
             // start with no switcher connection so disable all controls correctly
             DisableSwitcherControls();
+
+            // update PIP place hotkeys
+            UpdateUIPIPPlaceKeys();
 
             UpdateRealTimeClock();
             UpdateSlideControls();
@@ -560,6 +564,8 @@ namespace IntegratedPresenter.Main
             UpdateCBarsStyle();
             UpdateKeyerControls();
 
+            UpdateUIPIPPlaceKeysActiveState();
+
             // optionally update previews
             CurrentPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
             NextPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
@@ -692,16 +698,16 @@ namespace IntegratedPresenter.Main
             BtnChromaFillProgram7.Style = (Style)Application.Current.FindResource(style);
             BtnChromaFillProgram8.Style = (Style)Application.Current.FindResource(style);
 
-            string pipstyle = "PIPControlButton";
+            //string pipstyle = "PIPControlButton";
             //BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
             //BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
             //BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
 
-            BtnPIPtoPreset1.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoPreset2.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoPreset3.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoPreset4.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoPreset5.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoPreset1.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoPreset2.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoPreset3.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoPreset4.Style = (Style)Application.Current.FindResource(pipstyle);
+            //BtnPIPtoPreset5.Style = (Style)Application.Current.FindResource(pipstyle);
         }
 
         private void DisableKeyerControls()
@@ -748,17 +754,6 @@ namespace IntegratedPresenter.Main
             BtnChromaFillProgram5.Background = (RadialGradientBrush)Application.Current.FindResource(style);
             BtnChromaFillProgram6.Background = (RadialGradientBrush)Application.Current.FindResource(style);
             BtnChromaFillProgram7.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-
-            string pipstyle = "InactivePIPControlButton";
-            //BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
-            //BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
-            //BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
-
-            BtnPIPtoPreset1.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoPreset2.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoPreset3.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoPreset4.Style = (Style)Application.Current.FindResource(pipstyle);
-            BtnPIPtoPreset5.Style = (Style)Application.Current.FindResource(pipstyle);
         }
 
 
@@ -3706,6 +3701,9 @@ namespace IntegratedPresenter.Main
             NextPreview.SetMVConfigForPostset(_config.MultiviewerConfig);
             AfterPreview.SetMVConfigForPostset(_config.MultiviewerConfig);
 
+            // update PIP place hotkeys
+            UpdateUIPIPPlaceKeys();
+
             // config switcher
             switcherManager?.ConfigureSwitcher(_config);
         }
@@ -4314,11 +4312,16 @@ namespace IntegratedPresenter.Main
             //ksc_pkfb.Visibility = ShortcutVisibility;
             //ksc_pkff.Visibility = ShortcutVisibility;
 
-            ksc_pippreset1.Visibility = ShortcutVisibility;
-            ksc_pippreset2.Visibility = ShortcutVisibility;
-            ksc_pippreset3.Visibility = ShortcutVisibility;
-            ksc_pippreset4.Visibility = ShortcutVisibility;
-            ksc_pippreset5.Visibility = ShortcutVisibility;
+            //ksc_pippreset1.Visibility = ShortcutVisibility;
+            //ksc_pippreset2.Visibility = ShortcutVisibility;
+            //ksc_pippreset3.Visibility = ShortcutVisibility;
+            //ksc_pippreset4.Visibility = ShortcutVisibility;
+            //ksc_pippreset5.Visibility = ShortcutVisibility;
+            pipprestbtn_1.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
+            pipprestbtn_2.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
+            pipprestbtn_3.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
+            pipprestbtn_4.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
+            pipprestbtn_5.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
 
             ksc_pl.Visibility = ShortcutVisibility;
 
@@ -4769,38 +4772,6 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        private void ClickPIPRunToPreset1(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Click: PIP Run to Preset 1");
-            SetupPIPToPresetPosition(1);
-        }
-
-        private void ClickPIPRunToPreset2(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Click: PIP Run to Preset 2");
-            SetupPIPToPresetPosition(2);
-        }
-
-        private void ClickPIPRunToPreset3(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Click: PIP Run to Preset 3");
-            SetupPIPToPresetPosition(3);
-        }
-
-        private void ClickPIPRunToPreset4(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Click: PIP Run to Preset 4");
-            SetupPIPToPresetPosition(4);
-        }
-
-        private void ClickPIPRunToPreset5(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Click: PIP Run to Preset 5");
-            SetupPIPToPresetPosition(5);
-        }
-
-
-
         UIValue<bool> _Cond1 = new UIValue<bool>();
         UIValue<bool> _Cond2 = new UIValue<bool>();
 
@@ -4851,6 +4822,89 @@ namespace IntegratedPresenter.Main
         private void ClickToggleShowAutomationPreviews(object sender, RoutedEventArgs e)
         {
             SetShowAutomationPreviews(!_FeatureFlag_AutomationPreview);
+        }
+
+
+        private void UpdateUIPIPPlaceKeys()
+        {
+
+            PipPresetButton[] btns = new PipPresetButton[5]
+            {
+                pipprestbtn_1,
+                pipprestbtn_2,
+                pipprestbtn_3,
+                pipprestbtn_4,
+                pipprestbtn_5,
+            };
+
+            for (int i = 0; i < 5; i++)
+            {
+                btns[i].IsActive = false;
+                if (_config.PIPPresets.Presets.TryGetValue(i + 1, out var cfg))
+                {
+                    btns[i].PlaceName = cfg.Name;
+                    btns[i].PIPPlace = cfg.Placement;
+                }
+            }
+
+            UpdateUIPIPPlaceKeysActiveState();
+        }
+
+        private void UpdateUIPIPPlaceKeysActiveState()
+        {
+
+            PipPresetButton[] btns = new PipPresetButton[5]
+            {
+                pipprestbtn_1,
+                pipprestbtn_2,
+                pipprestbtn_3,
+                pipprestbtn_4,
+                pipprestbtn_5,
+            };
+
+            for (int i = 0; i < 5; i++)
+            {
+                if (_config.PIPPresets.Presets.TryGetValue(i + 1, out var cfg))
+                {
+                    // check if config matches
+                    btns[i].IsActive = cfg.Placement.Equivalent(_lastState?.DVESettings);
+                }
+                else
+                {
+                    btns[i].IsActive = false;
+                }
+            }
+
+        }
+
+        private void pipprestbtn_1_OnClick()
+        {
+            _logger.Debug($"Click: PIP Run to Preset 1");
+            SetupPIPToPresetPosition(1);
+        }
+
+        private void pipprestbtn_2_OnClick()
+        {
+            _logger.Debug($"Click: PIP Run to Preset 2");
+            SetupPIPToPresetPosition(2);
+        }
+
+        private void pipprestbtn_3_OnClick()
+        {
+            _logger.Debug($"Click: PIP Run to Preset 3");
+            SetupPIPToPresetPosition(3);
+        }
+
+        private void pipprestbtn_4_OnClick()
+        {
+            _logger.Debug($"Click: PIP Run to Preset 4");
+            SetupPIPToPresetPosition(4);
+        }
+
+        private void pipprestbtn_5_OnClick()
+        {
+            _logger.Debug($"Click: PIP Run to Preset 5");
+            SetupPIPToPresetPosition(5);
         }
     }
 }

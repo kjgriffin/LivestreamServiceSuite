@@ -34,6 +34,26 @@ namespace IntegratedPresenter.BMDSwitcher.Config
             current.Current.SizeY = ScaleY;
             return current;
         }
+
+        public bool Equivalent(BMDUSKDVESettings dVESettings)
+        {
+            bool maskState = (MaskTop != 0 || MaskBottom != 0 || MaskLeft != 0 || MaskRight != 0) == (dVESettings?.IsMasked == 1);
+
+            return CloseEnough(MaskTop, dVESettings?.MaskTop) &&
+                CloseEnough(MaskBottom, dVESettings?.MaskBottom) &&
+                CloseEnough(MaskLeft, dVESettings?.MaskLeft) &&
+                CloseEnough(MaskRight, dVESettings?.MaskRight) &&
+                CloseEnough(PosX, dVESettings?.Current?.PositionX) &&
+                CloseEnough(PosY, dVESettings?.Current?.PositionY) &&
+                CloseEnough(ScaleX, dVESettings?.Current?.SizeX) &&
+                CloseEnough(ScaleY, dVESettings?.Current?.SizeY) &&
+                maskState;
+        }
+
+        private bool CloseEnough(double a, double? b)
+        {
+            return Math.Abs(a - b ?? 0) <= 0.0001;
+        }
     }
 
     public class BMDUSKDVESettings

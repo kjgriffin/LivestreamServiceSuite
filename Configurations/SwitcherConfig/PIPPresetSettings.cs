@@ -103,8 +103,8 @@ namespace Configurations.SwitcherConfig
                             MaskTop = 0,
                             PosX = 9.6,
                             PosY = -5.4,
-                            ScaleX = 0.3,
-                            ScaleY = 0.3,
+                            ScaleX = 0.4,
+                            ScaleY = 0.4,
                         }
                     }
                 }

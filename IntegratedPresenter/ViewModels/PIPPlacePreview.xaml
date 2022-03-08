@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Integrated_Presenter.ViewModels.PIPPlacePreview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Integrated_Presenter.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Viewbox ClipToBounds="True">
+            <Border Background="#ff000000" Width="32" Height="18">
+                <Grid>
+                    <Viewbox Panel.ZIndex="10">
+                        <Border Padding="10">
+                            <TextBlock FontFamily="Arial Narrow" Text="{Binding PlaceName}" Background="#80000000" Foreground="White"></TextBlock>
+                        </Border>
+                    </Viewbox>
+
+                    <Border Name="pipbdr" Background="#60edaf3b" Width="32" Height="18">
+                        <Border.LayoutTransform>
+                            <ScaleTransform x:Name="pipscaletransform" ScaleX="0.4" ScaleY="0.4"></ScaleTransform>
+                        </Border.LayoutTransform>
+                        <Border.RenderTransformOrigin>
+                            <Point X="16" Y="9"></Point>
+                        </Border.RenderTransformOrigin>
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <TranslateTransform x:Name="piptranslatetransform" X="0" Y="0"></TranslateTransform>
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <Rectangle Name="rectpip" Fill="#ffedaf3b">
+                            <Rectangle.Clip>
+                                <RectangleGeometry x:Name="pipmaskclip" Rect="0,0,32,18"></RectangleGeometry>
+                            </Rectangle.Clip>
+                        </Rectangle>
+                    </Border>
+
+                </Grid>
+            </Border>
+        </Viewbox>
+    </Grid>
+</UserControl>
