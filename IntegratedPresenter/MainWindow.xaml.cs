@@ -1753,8 +1753,6 @@ namespace IntegratedPresenter.Main
 
         private bool _FeatureFlag_MRETransition = true; // This should be safe enough
 
-        private Guid currentslideforactions;
-
         private async Task ExecuteSetupActions(Slide s)
         {
             _logger.Debug($"Begin Execution of setup actions for slide {s.Title}");
@@ -2984,12 +2982,6 @@ namespace IntegratedPresenter.Main
             _display?.ShowSlide(false);
             _keydisplay?.ShowSlide(true);
 
-            // mark update for slides
-            if (currentslideforactions != currentGuid)
-            {
-                // new slide - mark changes
-            }
-
             // update previews
             if (Presentation != null)
             {
@@ -3015,7 +3007,6 @@ namespace IntegratedPresenter.Main
             }
             UpdateSlidePreviewControls();
             UpdatePreviewsPostets();
-            currentslideforactions = currentGuid;
 
             // update previews
             CurrentPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);

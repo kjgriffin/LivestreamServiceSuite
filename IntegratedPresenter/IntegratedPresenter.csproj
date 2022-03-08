@@ -5,7 +5,7 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>Integrated_Presenter</RootNamespace>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>picon_RWa_icon.ico</ApplicationIcon>
+    <ApplicationIcon>AppIcons/picon_RWa_icon.ico</ApplicationIcon>
     <!--<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>-->
     <!--<PublishSingleFile>True</PublishSingleFile>-->
     <!--<PublishReadyToRun>True</PublishReadyToRun>-->
@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="BClassPIP.png" />
     <None Remove="BMDSwitcher\Mock\Images\backcam.PNG" />
     <None Remove="BMDSwitcher\Mock\Images\black.png" />
     <None Remove="BMDSwitcher\Mock\Images\cbars.png" />
@@ -40,7 +39,6 @@
     <None Remove="BMDSwitcher\Mock\Images\rightcam.PNG" />
     <None Remove="BMDSwitcher\Mock\Images\rightshot.PNG" />
     <None Remove="BMDSwitcher\Mock\Images\videofile.png" />
-    <None Remove="HymnPIP.png" />
     <None Remove="Icons\BClassPIP.png" />
     <None Remove="Icons\BlueBefore.png" />
     <None Remove="Icons\BlueTimer.png" />
@@ -69,10 +67,7 @@
     <None Remove="Icons\YellowSkip.png" />
     <None Remove="Icons\YellowWarn.png" />
     <None Remove="Keys\WhiteKey.png" />
-    <None Remove="LeftSplitPIP.png" />
     <None Remove="Log4Net.config" />
-    <None Remove="RightPIP.png" />
-    <None Remove="RightSplitPIP.png" />
     <None Remove="version.json" />
   </ItemGroup>
 
@@ -88,14 +83,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="picon_RWa_icon.ico" />
+    <Content Include="AppIcons\picon_RWa_icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Log4Net.config">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <Resource Include="BClassPIP.png" />
     <Resource Include="BMDSwitcher\Mock\Images\backcam.PNG" />
     <Resource Include="BMDSwitcher\Mock\Images\black.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -137,7 +131,6 @@
     <Resource Include="BMDSwitcher\Mock\Images\videofile.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="HymnPIP.png" />
     <Resource Include="Icons\BClassPIP.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -222,9 +215,6 @@
     <Resource Include="Keys\WhiteKey.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="LeftSplitPIP.png" />
-    <Resource Include="RightPIP.png" />
-    <Resource Include="RightSplitPIP.png" />
     <EmbeddedResource Include="version.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -240,6 +230,10 @@
     <ProjectReference Include="..\CommonVersionInfo\CommonVersionInfo.csproj" />
     <ProjectReference Include="..\IntegratedPresenterAPIInterop\IntegratedPresenterAPIInterop.csproj" />
     <ProjectReference Include="..\SwitcherControl\SwitcherControl.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Automation\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties version_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
