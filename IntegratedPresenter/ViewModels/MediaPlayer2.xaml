@@ -18,7 +18,10 @@
         </Grid>
         <Grid Name="gridAutomationPreview" Panel.ZIndex="110" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,0,0,0">
             <Viewbox Height="200" Width="200">
-                <viewmodels1:LiturgyGraphicsAutomationPreview x:Name="AutomationPreviewGraphics" Visibility="Hidden"></viewmodels1:LiturgyGraphicsAutomationPreview>
+                <Grid>
+                    <viewmodels1:LiturgyGraphicsAutomationPreview x:Name="AutomationPreviewGraphics" Visibility="Hidden"></viewmodels1:LiturgyGraphicsAutomationPreview>
+                    <viewmodels1:StillVideoFullContentAutomationPreview x:Name="AutomationPreviewStillVideo" Visibility="Hidden"></viewmodels1:StillVideoFullContentAutomationPreview>
+                </Grid>
             </Viewbox>
         </Grid>
         <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close" Grid.RowSpan="2"></MediaElement>

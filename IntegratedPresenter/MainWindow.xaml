@@ -2070,7 +2070,14 @@
                                             <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">00:00:00</TextBlock>
                                         </Grid>
                                     </Border>
-                                    <TextBlock Name="tbPreviewNextVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100">00:00:00</TextBlock>
+                                    <TextBlock Name="tbPreviewNextVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100" Background="#80000000" Padding="5">00:00:00
+                                        <TextBlock.LayoutTransform>
+                                            <ScaleTransform ScaleX="0.5" ScaleY="0.5"></ScaleTransform>
+                                        </TextBlock.LayoutTransform>
+                                        <TextBlock.RenderTransform>
+                                            <TranslateTransform X="100" Y="-80"></TranslateTransform>
+                                        </TextBlock.RenderTransform>
+                                    </TextBlock>
                                 </Grid>
                             </Border>
                         </Viewbox>

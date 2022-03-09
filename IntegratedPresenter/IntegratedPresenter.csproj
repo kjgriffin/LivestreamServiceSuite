@@ -44,6 +44,7 @@
     <None Remove="Icons\BlueTimer.png" />
     <None Remove="Icons\GreenCheck.png" />
     <None Remove="Icons\GreenPlay.png" />
+    <None Remove="Icons\GreyPlay.png" />
     <None Remove="Icons\GreyTimer.png" />
     <None Remove="Icons\GreyTransArrows.png" />
     <None Remove="Icons\HymnPIP.png" />
@@ -146,6 +147,7 @@
     <Resource Include="Icons\GreenPlay.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\GreyPlay.png" />
     <Resource Include="Icons\GreyTimer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

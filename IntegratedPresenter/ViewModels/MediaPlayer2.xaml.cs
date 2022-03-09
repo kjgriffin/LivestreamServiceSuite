@@ -340,22 +340,33 @@ namespace IntegratedPresenter.Main
 
         public void ChangeShowAutomationPreviews()
         {
+            AutomationPreviewStillVideo?.FireOnSlideTypeChanged(_curentSlide?.Type);
             if (ShowAutomationPreviews)
             {
                 if (_curentSlide?.Type == SlideType.Liturgy)
                 {
+                    AutomationPreviewStillVideo.Visibility = Visibility.Hidden;
                     AutomationPreviewGraphics.Visibility = Visibility.Visible;
+                    return;
+                }
+                if (_curentSlide?.Type == SlideType.Video || _curentSlide?.Type == SlideType.Full)
+                {
+                    AutomationPreviewGraphics.Visibility = Visibility.Hidden;
+                    AutomationPreviewStillVideo.Visibility = Visibility.Visible;
                     return;
                 }
             }
             AutomationPreviewGraphics.Visibility = Visibility.Hidden;
+            AutomationPreviewStillVideo.Visibility = Visibility.Hidden;
         }
+
         public void FireOnSwitcherStateChangedForAutomation(BMDSwitcherState state, BMDSwitcherConfigSettings config)
         {
             Dispatcher.Invoke(() =>
             {
                 ChangeShowAutomationPreviews();
                 AutomationPreviewGraphics?.FireOnSwitcherStateChanged(state, config);
+                AutomationPreviewStillVideo?.FireOnSwitcherStateChanged(state, config);
             });
         }
 
