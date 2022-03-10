@@ -208,8 +208,21 @@ namespace Xenon.Compiler.AST
                         // its a duplicating last, and we've already mangled it because the first script has used it
                         // so we'll borrow the original slide, and add a new one with the dup-last
                         // need to increase the number of scopy though
+
+                        // we also need to get down 'n dirty and steal the postset and add it to the duplast
+                        var swappedfirst = modifiedslides[modifiedslides.Count - 2];
+
                         scopy.Number = project.NewSlideNumber;
                         var swaped = SwapForScript(scopy, DupLastScript, project, Logger);
+
+                        // swap postset
+                        if (swappedfirst.TryGetPostset(out var postset))
+                        {
+                            swaped.scripted.Data[XenonASTHelpers.DATAKEY_POSTSET] = postset;
+                            // techincally can kill the postset on the swapped slide
+                            slide.Data.Remove(XenonASTHelpers.DATAKEY_POSTSET);
+                        }
+
                         modifiedslides.Add(swaped.scripted);
                         modifiedslides.Add(swaped.resource);
                     }

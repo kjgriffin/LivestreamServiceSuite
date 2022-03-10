@@ -40,6 +40,7 @@ namespace LutheRun
             typeof(LSBElementLiturgy),
             typeof(LSBElementLiturgySung),
             typeof(LSBElementReading),
+            typeof(LSBElementReadingComplex),
             typeof(LSBElementCaption),
             typeof(LSBElementIntroit),
         };
@@ -97,7 +98,7 @@ namespace LutheRun
                 // always start with copyright
                 // default to preset center after copyright (though bells would handle this...)
                 // may want to be smart too-> if there's a prelude we could do soemthing else
-                newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Organ, options.InferPostset));
+                newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Organ, options.InferPostset, "copyright"));
 
                 servicetoparse = service;
             }
@@ -183,7 +184,7 @@ namespace LutheRun
                     setlast = true;
                     lastselection = Camera.Organ;
                 }
-                if (nextelement is LSBElementLiturgy || nextelement is LSBElementResponsiveLiturgy || nextelement is LSBElementIntroit)
+                if (nextelement is LSBElementLiturgy || nextelement is LSBElementResponsiveLiturgy || nextelement is LSBElementIntroit || (nextelement as ExternalPrefab)?.TypeIdentifier == "upnext" )
                 {
                     setlast = true;
                     lastselection = Camera.Center;
@@ -279,7 +280,7 @@ namespace LutheRun
                         // get rid of liturgy
                         if (!skip)
                         {
-                            newservice.Add(new ExternalPrefab("#liturgyoff"));
+                            newservice.Add(new ExternalPrefab("#liturgyoff", "liturgyoff"));
                         }
                         // we'll assume the bell's script turns it off
                         inliturgy = false;
@@ -299,7 +300,7 @@ namespace LutheRun
 
 
             // add endservice slide
-            newservice.Add(new ExternalPrefab("#viewservices"));
+            newservice.Add(new ExternalPrefab("#viewservices", "viewservices"));
 
             return newservice;
         }

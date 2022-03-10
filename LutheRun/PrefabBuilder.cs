@@ -29,11 +29,11 @@ namespace LutheRun
                     "@arg1:DelayMs(100);",
                     "@arg0:AutoTrans[Take Organ];",
                     "}");
-                return new ExternalPrefab($"{upnextcmd.Trim()}{nl}{postcmd.Trim()}");
+                return new ExternalPrefab($"{upnextcmd.Trim()}{nl}{postcmd.Trim()}", "upnext");
             }
             else
             {
-                return new ExternalPrefab("#organintro");
+                return new ExternalPrefab("#organintro", "organintro");
             }
 
 
