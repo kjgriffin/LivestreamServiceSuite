@@ -58,6 +58,68 @@ namespace IntegratedPresenter.Main
         public event AutomationActionUpdateEventArgs OnActionUpdated;
 
 
+        public void LoadActions_Common(string folder)
+        {
+            if (Type == SlideType.Action)
+            {
+                try
+                {
+                    string text;
+                    using (StreamReader sr = new StreamReader(Source))
+                    {
+                        text = sr.ReadToEnd();
+                    }
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        var loaded = ActionLoader.LoadActions(text);
+                        Title = loaded.Title;
+                        AutoOnly = loaded.AutoOnly;
+                        if (loaded.AltSources)
+                        {
+                            bool srcoverrideError = false;
+                            string srcfilename = "";
+                            if (!string.IsNullOrEmpty(loaded.AltSourceFileName))
+                            {
+                                srcfilename = Path.Combine(folder, loaded.AltSourceFileName);
+                                if (!File.Exists(srcfilename))
+                                {
+                                    srcoverrideError = true;
+                                }
+                            }
+                            string keyfilename = "";
+                            if (!string.IsNullOrEmpty(loaded.AltKeySourceFileName))
+                            {
+                                keyfilename = Path.Combine(folder, loaded.AltKeySourceFileName);
+                                if (File.Exists(keyfilename))
+                                {
+                                    srcoverrideError = true;
+                                }
+                            }
+                            if (!srcoverrideError)
+                            {
+                                AltSources = true;
+                                AltSource = srcfilename;
+                                AltKeySource = keyfilename;
+                            }
+                        }
+                        foreach (var action in loaded.SetupActions)
+                        {
+                            var runType = action.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
+                            SetupActions.Add(new TrackedAutomationAction(action, runType));
+                        }
+                        foreach (var action in loaded.MainActions)
+                        {
+                            var runType = action.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
+                            Actions.Add(new TrackedAutomationAction(action, runType));
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+
         public void LoadActions(string folder)
         {
             if (Type == SlideType.Action)

@@ -86,7 +86,7 @@ namespace IntegratedPresenter.Main
                 }
                 if (s.Type == SlideType.Action)
                 {
-                    s.LoadActions(folder);
+                    s.LoadActions_Common(folder);
                 }
                 Slides.Add(s);
             }
