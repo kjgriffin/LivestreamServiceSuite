@@ -2020,66 +2020,72 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"></RowDefinition>
                         <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition></RowDefinition>
-                            <RowDefinition></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
-                            <Border BorderBrush="Red" BorderThickness="2,2,2,2">
-                                <Grid>
-                                    <local:MediaPlayer2  x:Name="CurrentPreview" Height="270" Width="480"></local:MediaPlayer2>
-                                    <Border Name="PrevPreviewDisplay" BorderBrush="Orange" Height="108" Width="192" BorderThickness="2,2,2,2">
-                                        <Border.RenderTransform>
-                                            <TranslateTransform X="144" Y="-81"></TranslateTransform>
-                                        </Border.RenderTransform>
-                                        <Grid>
-                                            <local:MediaPlayer2 Opacity="0.5" x:Name="PrevPreview"></local:MediaPlayer2>
-                                            <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">00:00:00</TextBlock>
-                                        </Grid>
-                                    </Border>
-                                    <TextBlock Name="tbPreviewCurrentVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100">00:00:00</TextBlock>
-                                </Grid>
-                            </Border>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="1" Grid.Column="0" Grid.RowSpan="2">
+                        <Grid Background="#272727">
+                            <TextBlock Foreground="#90ededed" TextWrapping="WrapWithOverflow" TextAlignment="Center" VerticalAlignment="Center" FontSize="20">Future site of auto-pilot. Comming soon TM</TextBlock>
+                        </Grid>
+                    </Grid>
+                    <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                        <Viewbox Grid.Row="0" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                            <Grid Width="1920" Height="1080">
+                                <Border BorderBrush="Red" BorderThickness="2,2,2,2">
+                                    <Grid>
+                                        <local:MediaPlayer2  x:Name="CurrentPreview"></local:MediaPlayer2>
+                                        <TextBlock Name="tbPreviewCurrentVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
+                                    </Grid>
+                                </Border>
+                            </Grid>
                         </Viewbox>
                     </Grid>
-                    <Grid Grid.Row="2">
-                        <Grid.RowDefinitions>
-                            <RowDefinition></RowDefinition>
-                            <RowDefinition></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <Viewbox Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Top">
-                            <Border BorderBrush="Green" BorderThickness="2,2,2,2">
-                                <Grid>
-                                    <local:MediaPlayer2 x:Name="NextPreview" Height="270" Width="480"></local:MediaPlayer2>
-                                    <Border Name="AfterPreviewDisplay" BorderBrush="Blue" Height="108" Width="192" BorderThickness="2,2,2,2">
-                                        <Border.RenderTransform>
-                                            <TranslateTransform X="144" Y="81"></TranslateTransform>
-                                        </Border.RenderTransform>
-                                        <Grid>
-                                            <local:MediaPlayer2 Opacity="0.5" x:Name="AfterPreview" ></local:MediaPlayer2>
-                                            <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">00:00:00</TextBlock>
-                                        </Grid>
-                                    </Border>
-                                    <TextBlock Name="tbPreviewNextVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100" Background="#80000000" Padding="5">00:00:00
-                                        <TextBlock.LayoutTransform>
-                                            <ScaleTransform ScaleX="0.5" ScaleY="0.5"></ScaleTransform>
-                                        </TextBlock.LayoutTransform>
-                                        <TextBlock.RenderTransform>
-                                            <TranslateTransform X="100" Y="-80"></TranslateTransform>
-                                        </TextBlock.RenderTransform>
-                                    </TextBlock>
-                                </Grid>
-                            </Border>
+                    <Grid Grid.Row="0" Grid.Column="0">
+                        <Viewbox Stretch="Uniform" HorizontalAlignment="Right">
+                            <Grid Width="1920" Height="1080">
+                                <Border Name="PrevPreviewDisplay" BorderBrush="Orange" BorderThickness="2,2,2,2">
+                                    <Grid>
+                                        <local:MediaPlayer2 x:Name="PrevPreview"></local:MediaPlayer2>
+                                        <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Viewbox>
+                    </Grid>
+                    <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                        <Viewbox Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <Grid Width="1920" Height="1080">
+                                <Border BorderBrush="Green" BorderThickness="2,2,2,2">
+                                    <Grid>
+                                        <local:MediaPlayer2 x:Name="NextPreview"></local:MediaPlayer2>
+                                        <TextBlock Name="tbPreviewNextVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500" Background="#80000000" Padding="5">00:00:00
+                                            <TextBlock.LayoutTransform>
+                                                <ScaleTransform ScaleX="0.5" ScaleY="0.5"></ScaleTransform>
+                                            </TextBlock.LayoutTransform>
+                                            <TextBlock.RenderTransform>
+                                                <TranslateTransform X="450" Y="-180"></TranslateTransform>
+                                            </TextBlock.RenderTransform>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Viewbox>
+                    </Grid>
+                    <Grid Grid.Row="3" Grid.Column="0">
+                        <Viewbox Stretch="Uniform" HorizontalAlignment="Right">
+                            <Grid Width="1920" Height="1080" >
+                                <Border Name="AfterPreviewDisplay" BorderBrush="Blue" BorderThickness="2,2,2,2">
+                                    <Grid>
+                                        <local:MediaPlayer2 x:Name="AfterPreview" ></local:MediaPlayer2>
+                                        <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
+                                    </Grid>
+                                </Border>
+                            </Grid>
                         </Viewbox>
                     </Grid>
                 </Grid>

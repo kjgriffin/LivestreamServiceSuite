@@ -8,16 +8,19 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="100"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid Panel.ZIndex="100" Grid.Row="0" Grid.RowSpan="2" Width="96" Height="54" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <Viewbox Width="96" Height="54">
+        <Grid Panel.ZIndex="100" Grid.Row="0" Grid.RowSpan="2" Width="384" Height="216" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Grid.RenderTransform>
+                <TranslateTransform X="200"></TranslateTransform>
+            </Grid.RenderTransform>
+            <Viewbox Width="384" Height="216">
                 <viewmodels:PostsetUI x:Name="postset" Visibility="Hidden"></viewmodels:PostsetUI>
             </Viewbox>
         </Grid>
         <Grid Name="gridAutomationPreview" Panel.ZIndex="110" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,0,0,0">
-            <Viewbox Height="200" Width="200">
+            <Viewbox Height="800" Width="1000">
                 <Grid>
                     <viewmodels1:LiturgyGraphicsAutomationPreview x:Name="AutomationPreviewGraphics" Visibility="Hidden"></viewmodels1:LiturgyGraphicsAutomationPreview>
                     <viewmodels1:StillVideoFullContentAutomationPreview x:Name="AutomationPreviewStillVideo" Visibility="Hidden"></viewmodels1:StillVideoFullContentAutomationPreview>
@@ -27,15 +30,15 @@
         <MediaElement Name="videoPlayer" LoadedBehavior="Manual" UnloadedBehavior="Close" Grid.RowSpan="2"></MediaElement>
         <Image Name="imagePlayer" Grid.RowSpan="2"></Image>
         <Rectangle Name="BlackSource" Fill="Black" Grid.RowSpan="2"></Rectangle>
-        <Viewbox Grid.Row="1" Margin="10" MaxWidth="263">
+        <Viewbox Grid.Row="1" Margin="10" MaxWidth="1000">
             <StackPanel Name="spActionView" Orientation="Vertical" Background="#90000000">
                 <TextBlock Name="SetupMessages" Foreground="LightGreen" Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"></TextBlock>
                 <TextBlock Name="MainMessages" Foreground="Orange" Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"></TextBlock>
             </StackPanel>
         </Viewbox>
-        <Rectangle Name="ActionIndicator" Fill="Orange" Panel.ZIndex="10" Height="50" VerticalAlignment="Top"></Rectangle>
-        <Grid Name="MuteIcon" Visibility="Hidden" Panel.ZIndex="100" Grid.Row="1" Width="70" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom">
-            <Viewbox Visibility="Hidden" Name="ksc_m" Panel.ZIndex="1" Height="30" Width="30">
+        <Rectangle Name="ActionIndicator" Fill="Orange" Panel.ZIndex="10" Height="100" VerticalAlignment="Top" Opacity="0.8"></Rectangle>
+        <Grid Name="MuteIcon" Visibility="Hidden" Panel.ZIndex="100" Grid.Row="1" Width="270" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom">
+            <Viewbox Visibility="Hidden" Name="ksc_m" Panel.ZIndex="1" Height="170" Width="170">
                 <StackPanel Orientation="Horizontal">
                     <Border Padding="10, 0" Style="{StaticResource UIShortcutBdr}">
                         <Viewbox>
@@ -47,9 +50,9 @@
             <Image Source="pack://application:,,,/Icons/Mute2.png" Visibility="Visible"></Image>
         </Grid>
         <Grid Panel.ZIndex="11">
-            <TextBlock Panel.ZIndex="100" Margin="10" Name="SeqType" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="30" FontWeight="Bold">SEQ</TextBlock>
+            <TextBlock Panel.ZIndex="100" Margin="10" Name="SeqType" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="80" FontWeight="Bold">SEQ</TextBlock>
             <Viewbox VerticalAlignment="Center">
-                <TextBlock Margin="1" Name="SequenceLabel" Foreground="Black" HorizontalAlignment="Center">Automated Slide</TextBlock>
+                <TextBlock Margin="1" Name="SequenceLabel" Foreground="White" Background="Orange" HorizontalAlignment="Center">Automated Slide</TextBlock>
             </Viewbox>
         </Grid>
         <Rectangle Name="backgroundfill" Grid.RowSpan="2" Panel.ZIndex="-1" Style="{StaticResource CheckBackgroundFill}">
