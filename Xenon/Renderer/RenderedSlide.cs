@@ -17,8 +17,8 @@ namespace Xenon.Renderer
         public string Name { get; set; }
         public string CopyExtension { get; set; }
         public string Text { get; set; }
-        public Image<Bgra32> Bitmap {get; set;}
-        public Image<Bgra32> KeyBitmap {get; set;}
+        public Image<Bgra32> Bitmap { get; set; }
+        public Image<Bgra32> KeyBitmap { get; set; }
 
         public MemoryStream BitmapPNGMS { get; set; }
         public MemoryStream KeyPNGMS { get; set; }
@@ -32,7 +32,29 @@ namespace Xenon.Renderer
 
         public static RenderedSlide Default()
         {
-            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", KeyAssetPath = "", CopyExtension = "", Text = "", Name = "", RenderedAs = "Default", Number = 0, IsPostset = false, Postset = -1 , OverridingBehaviour = new SlideOverridingBehaviour()};
+            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", KeyAssetPath = "", CopyExtension = "", Text = "", Name = "", RenderedAs = "Default", Number = 0, IsPostset = false, Postset = -1, OverridingBehaviour = new SlideOverridingBehaviour() };
+        }
+
+        public RenderedSlide Clone()
+        {
+            return new RenderedSlide
+            {
+                MediaType = this.MediaType,
+                AssetPath = this.AssetPath,
+                KeyAssetPath = this.KeyAssetPath,
+                CopyExtension = this.CopyExtension,
+                Text = this.Text,
+                Name = this.Name,
+                RenderedAs = this.RenderedAs,
+                Postset = this.Postset,
+                IsPostset = this.IsPostset,
+                Number = this.Number,
+                OverridingBehaviour = this.OverridingBehaviour,
+                Bitmap = this.Bitmap,
+                BitmapPNGMS = this.BitmapPNGMS,
+                KeyBitmap = this.KeyBitmap,
+                KeyPNGMS = this.KeyPNGMS,
+            };
         }
     }
 }

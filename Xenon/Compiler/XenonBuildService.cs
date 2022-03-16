@@ -180,14 +180,12 @@ namespace Xenon.Compiler
                 else
                 {
                     // if slide hasn't changed, we can just use the same result from the previous rendering
-
-                    if (hashedOldSlides.ContainsKey(slide.Hash()))
-                    {
-                        rs = hashedOldSlides[slide.Hash()];
-                    }
-
                     if (hashedOldSlides.TryGetValue(slide.Hash(), out rs))
                     {
+                        // create a shallow copy, since we're going to modify the number
+                        // but we're ok (and want) to have them all read the same underlying bitmap/streams/ other data
+                        rs = hashedOldSlides[slide.Hash()].Clone();
+
                         Interlocked.Increment(ref reusedslides);
                         // make sure to update the slide's number if it has changed though
                         rs.Number = slide.Number;
