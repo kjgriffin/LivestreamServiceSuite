@@ -4314,6 +4314,9 @@ namespace IntegratedPresenter.Main
             pipprestbtn_4.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
             pipprestbtn_5.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
 
+            ksc_cond1.Visibility = ShortcutVisibility;
+            ksc_cond2.Visibility = ShortcutVisibility;
+
             ksc_pl.Visibility = ShortcutVisibility;
 
             ksc_s1.Visibility = ShortcutVisibility;
