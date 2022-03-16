@@ -220,7 +220,7 @@ namespace Xenon.Compiler.AST
                         {
                             swaped.scripted.Data[XenonASTHelpers.DATAKEY_POSTSET] = postset;
                             // techincally can kill the postset on the swapped slide
-                            slide.Data.Remove(XenonASTHelpers.DATAKEY_POSTSET);
+                            swappedfirst.Data.Remove(XenonASTHelpers.DATAKEY_POSTSET);
                         }
 
                         modifiedslides.Add(swaped.scripted);
@@ -228,8 +228,22 @@ namespace Xenon.Compiler.AST
                     }
                     else
                     {
-                        // its a regular 'last'
-                        var swaped = SwapForScript(slide, DupLastScript, project, Logger);
+                        // still need to duplicate the slide, but it's not mangled by any other scriptification already
+
+                        // add original
+                        modifiedslides.Add(slide);
+
+                        // add duplicated scriptified slide
+                        scopy.Number = project.NewSlideNumber;
+                        var swaped = SwapForScript(scopy, DupLastScript, project, Logger);
+
+                        // extract posteset
+                        if (slide.TryGetPostset(out var postset))
+                        {
+                            swaped.scripted.Data[XenonASTHelpers.DATAKEY_POSTSET] = postset;
+                            slide.Data.Remove(XenonASTHelpers.DATAKEY_POSTSET);
+                        }
+
                         modifiedslides.Add(swaped.scripted);
                         modifiedslides.Add(swaped.resource);
                     }
