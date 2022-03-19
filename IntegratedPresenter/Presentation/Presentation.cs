@@ -31,7 +31,9 @@ namespace IntegratedPresenter.Main
             Folder = folder;
 
             // get all files in directory and hope they are slides
-            var files = Directory.GetFiles(Folder).Where(f => Regex.Match(f, "\\d+_.*").Success).OrderBy(p => Convert.ToInt32(Regex.Match(Path.GetFileName(p), "(?<slidenum>\\d+).*").Groups["slidenum"].Value)).ToList();
+            var allfiles = Directory.GetFiles(Folder);
+            var numberedfiles = allfiles.Where(f => Regex.Match(Path.GetFileName(f), @"^\d+_.*").Success);
+            var files = numberedfiles.OrderBy(p => Convert.ToInt32(Regex.Match(Path.GetFileName(p), "(?<slidenum>\\d+).*").Groups["slidenum"].Value)).ToList();
             foreach (var file in files)
             {
                 var filename = Regex.Match(Path.GetFileName(file), @"\d+_(?<type>[^-\.]+)(-(?<action>[^\.]+))?(?<drive>\.nodrive)?\.(?<extension>.*)");
