@@ -10,7 +10,7 @@ namespace DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive
 {
     public class PanTiltDrive_Direction_Command : ControlCommand
     {
-        public static ControlCommand Create(PanTiltDriveDirection direction, ushort panSpeed, ushort tiltSpeed)
+        public static ControlCommand Create(PanTiltDriveDirection direction, byte panSpeed, byte tiltSpeed)
         {
             return new PanTiltDrive_Direction_Command
             {
@@ -20,10 +20,8 @@ namespace DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive
                     (byte)ControlCommandBytes.CMD,
                     (byte)CommandStyleBytes.INDIRECT,
                     (byte)CommandModeBytes.PANTILTDRIVE_MOTION,
-                    panSpeed.High(),
-                    panSpeed.Low(),
-                    tiltSpeed.High(),
-                    tiltSpeed.Low(),
+                    panSpeed,
+                    tiltSpeed,
                     ((ushort)direction).High(),
                     ((ushort)direction).Low(),
                     (byte)ControlCommandBytes.END,

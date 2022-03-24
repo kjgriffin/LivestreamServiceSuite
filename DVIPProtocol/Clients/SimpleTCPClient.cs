@@ -77,11 +77,18 @@ namespace DVIPProtocol.Clients
             TcpClient client = new TcpClient();
             try
             {
-                client.Connect(m_address, m_port); 
+#if DEBUG
+                Console.WriteLine("    [begin TCP connection] ...");
+#endif
+                client.Connect(m_address, m_port);
+#if DEBUG
+                Console.WriteLine("    [TCP client accepted]");
+#endif
             }
             catch (Exception ex)
             {
 #if DEBUG
+                Console.WriteLine($"    [TCP exception] {ex.ToString()}");
                 Debugger.Break();
 #endif
             }
@@ -90,7 +97,15 @@ namespace DVIPProtocol.Clients
 
             // Send command
             byte[] data = req.PackagePayload();
+
+
+
             stream.Write(data, 0, data.Length);
+
+
+#if DEBUG
+            Console.WriteLine("    [sent TCP request]");
+#endif
 
             byte[] readbuffer = new byte[512 + 2]; // max length command has 512 parameters + 2 bytes for packet length high & low
 
@@ -101,8 +116,15 @@ namespace DVIPProtocol.Clients
             int returnpacketlength = readbuffer[0] << 8 | readbuffer[1];
             stream.Read(readbuffer, 2, returnpacketlength - 2);
 
+#if DEBUG
+            Console.WriteLine("    [finished reading TCP response]");
+#endif
             // release resources
             client.Close();
+
+#if DEBUG
+            Console.WriteLine("    [TCP connection closed]");
+#endif
 
             // let the command parse its return value
 
