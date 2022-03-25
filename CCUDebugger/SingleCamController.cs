@@ -13,6 +13,9 @@ namespace CCUDebugger
 {
     internal class SingleCamController
     {
+
+        IPAddress ip;
+        int port;
         internal void Start()
         {
             // create a new client
@@ -22,13 +25,13 @@ namespace CCUDebugger
             Console.WriteLine("Enter Client Port:");
             var portstr = Console.ReadLine();
 
-            if (!IPAddress.TryParse(ipstr, out var ip))
+            if (!IPAddress.TryParse(ipstr, out ip))
             {
                 Console.WriteLine("Invalid IP Address!");
                 return;
             }
 
-            if (!int.TryParse(portstr, out var port))
+            if (!int.TryParse(portstr, out port))
             {
                 Console.WriteLine("Invalid Port!");
                 return;
@@ -41,7 +44,7 @@ namespace CCUDebugger
 
             while (true)
             {
-                Console.WriteLine("Awaiting commmands (left, right, stop, exit) ...");
+                Console.WriteLine("Awaiting commmands (left, right, stop, test1, exit) ...");
 
                 var cmdstr = Console.ReadLine();
                 var cmd = CreateCommand(cmdstr);
@@ -72,7 +75,7 @@ namespace CCUDebugger
             if (cmd != null)
             {
                 Console.WriteLine($">>>>>>> Command completed with response: {BitConverter.ToString(cmd.CompletedData)}");
-                Console.WriteLine("Awaiting commmands (left, right, stop, exit) ...");
+                Console.WriteLine("Awaiting commmands (left, right, stop, test1, exit) ...");
                 Cmd_Release(cmd);
             }
         }
@@ -94,6 +97,9 @@ namespace CCUDebugger
                     return CMDPanTiltRight();
                 case "stop":
                     return CMDPanTiltStop();
+                case "test1":
+                    UDP_PRESET();
+                    return null;
                 case "exit":
                     Environment.Exit(0);
                     return null;
@@ -102,6 +108,11 @@ namespace CCUDebugger
                     return null;
             }
 
+        }
+
+        private void UDP_PRESET()
+        {
+            UDP_Debug_Test.RecallPreset(ip, port);
         }
 
         private ControlCommand CMDPanTiltLeft()
