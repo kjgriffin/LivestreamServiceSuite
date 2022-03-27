@@ -1486,17 +1486,31 @@ namespace IntegratedPresenter.Main
 
             if (e.Key == Key.Divide)
             {
-                USK1RuntoA();
+                //USK1RuntoA();
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Set PIP to Preset 3");
+                SetupPIPToPresetPosition(3);
             }
-
             if (e.Key == Key.Multiply)
             {
-                USK1RuntoB();
+                //USK1RuntoB();
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Set PIP to Preset 4");
+                SetupPIPToPresetPosition(4);
             }
-
             if (e.Key == Key.Subtract)
             {
-                USK1RuntoFull();
+                //USK1RuntoFull();
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Set PIP to Preset 5");
+                SetupPIPToPresetPosition(5);
+            }
+            if (e.Key == Key.OemOpenBrackets)
+            {
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Set PIP to Preset 1");
+                SetupPIPToPresetPosition(1);
+            }
+            if (e.Key == Key.OemCloseBrackets)
+            {
+                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Set PIP to Preset 2");
+                SetupPIPToPresetPosition(2);
             }
 
             if (e.Key == Key.NumPad0)
