@@ -122,6 +122,7 @@ namespace Xenon.Compiler.AST
             foreach (var slide in slides)
             {
                 slide.AddPostset(_Parent, i == 0, i == slides.Count - 1);
+                i++;
             }
 
             return slides;
