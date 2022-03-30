@@ -47,6 +47,7 @@ namespace LutheRun
 
         public static ILSBElement GenerateCreed(string creedtype, LSBImportOptions options)
         {
+            const string postsetReplacementIdentifier = "$POSTSET$";
 
             var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                            .GetManifestResourceNames()
@@ -55,7 +56,6 @@ namespace LutheRun
 
             string txtcmd = "";
 
-            // TODO: do theme injection/replacement
             if (!string.IsNullOrEmpty(name))
             {
                 var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator)).GetManifestResourceStream(name);
@@ -66,10 +66,36 @@ namespace LutheRun
             }
             txtcmd = Regex.Replace(txtcmd, @"\$SERVICETHEME\$", options.ServiceThemeLib);
 
-            // TODO: figure out how to get postset in the right place...
-            return new ExternalPrefab(txtcmd, "creed");
+            if (options.UsePIPCreeds)
+            {
+                StringBuilder sb = new StringBuilder();
+                name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                      .GetManifestResourceNames()
+                                      .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Creed"));
+
+                var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                    .GetManifestResourceStream(name);
+
+                // wrap it into a scripted block
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    sb.AppendLine(sr.ReadToEnd());
+                }
+
+                sb.AppendLine();
+
+                sb.AppendLine(txtcmd);
+
+                sb.AppendLine("}");
+
+                txtcmd = sb.ToString();
+            }
+
+            return new ExternalPrefab(txtcmd, "creed") { PostsetReplacementIdentifier = postsetReplacementIdentifier };
 
         }
+
+
 
         private static string CopyTitleCommand(string serviceTitle = "", string serviceDate = "", string lsback = "", int postset = -1, bool inferPostset = true, string libtheme = "Xenon.Green")
         {

@@ -7,7 +7,7 @@ namespace LutheRun
 {
     abstract class ExternalElement : ILSBElement
     {
-        public string PostsetCmd { get; set; }
+        public virtual string PostsetCmd { get; set; }
 
         public IElement SourceHTML { get; private set; }
 

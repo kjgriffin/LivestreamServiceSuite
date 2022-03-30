@@ -19,5 +19,5 @@ For Thine is the kingdom
      and the power and the glory
      forever and ever. Amen.
 }
-}
+}$POSTSET$
 }

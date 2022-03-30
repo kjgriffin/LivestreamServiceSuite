@@ -60,6 +60,6 @@ And I believe in the Holy Spirit,
      and I look for the resurrection of the dead
      and the life of the world to come. Amen.
 }
-}
+}$POSTSET$
 }
 }

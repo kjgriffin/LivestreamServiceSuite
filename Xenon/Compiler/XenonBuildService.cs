@@ -25,8 +25,8 @@ namespace Xenon.Compiler
 
         readonly XenonCompiler compiler = new XenonCompiler();
 
-        private Dictionary<int, RenderedSlide> hashedOldSlides = new Dictionary<int, RenderedSlide>();
-        private Dictionary<int, RenderedSlide> hashedNewSlides = new Dictionary<int, RenderedSlide>();
+        private ConcurrentDictionary<int, RenderedSlide> hashedOldSlides = new ConcurrentDictionary<int, RenderedSlide>();
+        private ConcurrentDictionary<int, RenderedSlide> hashedNewSlides = new ConcurrentDictionary<int, RenderedSlide>();
 
         public async Task<(bool success, Project project)> CompileProjectAsync(Project proj, IProgress<int> progress = null)
         {

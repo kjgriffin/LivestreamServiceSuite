@@ -571,7 +571,7 @@ namespace LutheRun
             stringBuilder.Clear();
             stringBuilder.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{System.IO.Path.GetFileName(ServiceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
 
-            if (LSBImportOptions.UseThemedHymns)
+            if (LSBImportOptions.UseThemedHymns || LSBImportOptions.UseThemedCreeds)
             {
                 stringBuilder.AppendLine();
                 stringBuilder.AppendLine("#scope(LSBService) {");

@@ -25,5 +25,5 @@ I believe in the Holy Spirit,
      the resurrection of the body,
      and the life everlasting. Amen.
 }
-}
+}$POSTSET$
 }

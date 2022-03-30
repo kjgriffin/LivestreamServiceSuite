@@ -268,7 +268,7 @@ namespace LutheRun
 
             var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                                       .GetManifestResourceNames()
-                                      .FirstOrDefault(x => x.Contains("PrePIPScriptBlock"));
+                                      .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Hymn"));
 
             var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                 .GetManifestResourceStream(name);

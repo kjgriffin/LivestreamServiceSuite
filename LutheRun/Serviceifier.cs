@@ -184,7 +184,7 @@ namespace LutheRun
                     setlast = true;
                     lastselection = Camera.Organ;
                 }
-                if (nextelement is LSBElementLiturgy || nextelement is LSBElementResponsiveLiturgy || nextelement is LSBElementIntroit || (nextelement as ExternalPrefab)?.TypeIdentifier == "upnext" )
+                if (nextelement is LSBElementLiturgy || nextelement is LSBElementResponsiveLiturgy || nextelement is LSBElementIntroit || new List<string> { "upnext", "creed" }.Contains((nextelement as ExternalPrefab)?.TypeIdentifier))
                 {
                     setlast = true;
                     lastselection = Camera.Center;

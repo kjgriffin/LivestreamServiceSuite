@@ -3,8 +3,8 @@
 
 first=#script {
 #PIP Hymn;
-!displaysrc='Resource_0_forslide_6.png';
-!keysrc='Resource_0_forkey_6.png';
+!displaysrc='Resource_#_forslide_#.png';
+!keysrc='Resource_#_forkey_#.png';
 @arg0:DSK1Off[Kill Key];
 @arg0:USK1Off[Kill Key];
 @arg1:DelayMs(100);

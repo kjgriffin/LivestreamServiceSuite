@@ -8,14 +8,19 @@
     <None Remove="PrefabBlobs\ApostlesCreed.txt" />
     <None Remove="PrefabBlobs\LordsPrayer.txt" />
     <None Remove="PrefabBlobs\NiceneCreed.txt" />
-    <None Remove="PrefabBlobs\PrePIPScriptBlock.txt" />
+    <None Remove="PrefabBlobs\PrePIPScriptBlock_Creed.txt" />
+    <None Remove="PrefabBlobs\PrePIPScriptBlock_Hymn.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Creed.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="PrefabBlobs\ApostlesCreed.txt" />
     <EmbeddedResource Include="PrefabBlobs\LordsPrayer.txt" />
     <EmbeddedResource Include="PrefabBlobs\NiceneCreed.txt" />
-    <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Hymn.txt" />
   </ItemGroup>
 
   <ItemGroup>
