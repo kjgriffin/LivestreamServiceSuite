@@ -7,10 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Protocol\ControlCommand\Focus\Inq\" />
-    <Folder Include="Protocol\ControlCommand\Focus\PanTiltDrive\" />
-    <Folder Include="Protocol\ControlCommand\Focus\Zoom\" />
-    <Folder Include="Protocol\ControlCommand\Cmd\Inq\" />
+    <Folder Include="Protocol\ControlCommand\Cmd\Focus\" />
     <Folder Include="Protocol\ControlCommand\Cmd\Zoom\" />
   </ItemGroup>
 

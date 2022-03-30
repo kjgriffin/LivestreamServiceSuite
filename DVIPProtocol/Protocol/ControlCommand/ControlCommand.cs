@@ -6,6 +6,20 @@ using System.Threading.Tasks;
 
 namespace DVIPProtocol.Protocol.ControlCommand
 {
+
+    public class ControlCommand_Raw : ControlCommand
+    {
+        public ControlCommand_Raw(byte[] data)
+        {
+            SendCommandData = data.ToList();
+        }
+
+        private protected override void ParseResponse(byte[] response)
+        {
+        }
+    }
+
+
     public abstract class ControlCommand : IRequest
     {
 

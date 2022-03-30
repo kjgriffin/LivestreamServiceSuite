@@ -1,6 +1,8 @@
 ﻿using DVIPProtocol.Clients;
 using DVIPProtocol.Protocol.ControlCommand;
+using DVIPProtocol.Protocol.ControlCommand.Cmd.Other;
 using DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive;
+using DVIPProtocol.Protocol.ControlCommand.Cmd.Memory;
 
 using System;
 using System.Collections.Generic;
@@ -8,14 +10,37 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using DVIPProtocol.Protocol.ControlCommand.Cmd.Inq;
 
 namespace CCUDebugger
 {
+
+    delegate ControlCommand CamCommand(int value);
+
     internal class SingleCamController
     {
 
         IPAddress ip;
         int port;
+
+        static Dictionary<string, CamCommand> CommandDispatcher = new Dictionary<string, CamCommand>()
+        {
+            ["left"] = CMDPanTiltLeft,
+            ["right"] = CMDPanTiltRight,
+            ["up"] = CMDPanTiltUp,
+            ["down"] = CMDPanTiltDown,
+            ["stop"] = CMDPanTiltStop,
+            ["vf1080p60"] = CMDVideoFormat,
+            ["set"] = CMDSetPreset,
+            ["recall"] = CMDRecallPreset,
+            ["raw"] = CMDCommandRAW,
+        };
+
+        private static void ListCommands()
+        {
+            Console.WriteLine($"Awaiting commands ({string.Join(',', CommandDispatcher.Keys)}, sublive, exit) ...");
+        }
+
         internal void Start()
         {
             // create a new client
@@ -44,19 +69,24 @@ namespace CCUDebugger
 
             while (true)
             {
-                Console.WriteLine("Awaiting commmands (left, right, stop, test1, exit) ...");
+                ListCommands();
 
                 var cmdstr = Console.ReadLine();
-                var cmd = CreateCommand(cmdstr);
+                var cmd = CreateCommand(cmdstr, _client);
                 if (cmd != null)
                 {
                     Console.WriteLine($"Sending {cmdstr} cmd");
-                    cmd.OnCommandReturnPacketRecieved += Cmd_OnCommandReturnPacketRecieved;
-                    cmd.OnCommandRejected += Cmd_OnCommandRejected;
-                    _client.SendCommand(cmd);
+                    FireCommand(_client, cmd);
                 }
             }
 
+        }
+
+        private void FireCommand(SimpleTCPClient _client, ControlCommand? cmd)
+        {
+            cmd.OnCommandReturnPacketRecieved += Cmd_OnCommandReturnPacketRecieved;
+            cmd.OnCommandRejected += Cmd_OnCommandRejected;
+            _client.SendCommand(cmd);
         }
 
         private void Cmd_OnCommandRejected(object? sender, DVIPProtocol.Protocol.RejectionReason e)
@@ -75,7 +105,7 @@ namespace CCUDebugger
             if (cmd != null)
             {
                 Console.WriteLine($">>>>>>> Command completed with response: {BitConverter.ToString(cmd.CompletedData)}");
-                Console.WriteLine("Awaiting commmands (left, right, stop, test1, exit) ...");
+                ListCommands();
                 Cmd_Release(cmd);
             }
         }
@@ -86,17 +116,19 @@ namespace CCUDebugger
             cmd.OnCommandReturnPacketRecieved -= Cmd_OnCommandReturnPacketRecieved;
         }
 
-        private ControlCommand? CreateCommand(string cmd)
+        private ControlCommand? CreateCommand(string cmd, SimpleTCPClient client)
         {
+
+            if (CommandDispatcher.ContainsKey(cmd))
+            {
+                return CommandDispatcher[cmd](-1);
+            }
 
             switch (cmd)
             {
-                case "left":
-                    return CMDPanTiltLeft();
-                case "right":
-                    return CMDPanTiltRight();
-                case "stop":
-                    return CMDPanTiltStop();
+                case "sublive":
+                    SubLiveMode(client);
+                    return null;
                 case "test1":
                     UDP_PRESET();
                     return null;
@@ -115,20 +147,180 @@ namespace CCUDebugger
             UDP_Debug_Test.RecallPreset(ip, port);
         }
 
-        private ControlCommand CMDPanTiltLeft()
+        private static int GetSpeed()
         {
-            return PanTiltDrive_Direction_Command.Create(PanTiltDriveDirection.Left, 0x01, 0x00);
+            Console.WriteLine("Speed: ");
+            return int.TryParse(Console.ReadLine(), out int speed) ? speed : -1;
         }
 
-        private ControlCommand CMDPanTiltRight()
+        private static ControlCommand CMDPanTiltLeft(int speed = -1)
         {
-            return PanTiltDrive_Direction_Command.Create(PanTiltDriveDirection.Right, 0x00, 0x01);
+            if (speed == -1)
+            {
+                speed = GetSpeed();
+            }
+            return PanTiltDrive_Direction_Command.Create(PanTiltDriveDirection.Left, (byte)speed, 0x00);
         }
 
-        private ControlCommand CMDPanTiltStop()
+        private static ControlCommand CMDPanTiltRight(int speed = -1)
+        {
+            if (speed == -1)
+            {
+                speed = GetSpeed();
+            }
+            return PanTiltDrive_Direction_Command.Create(PanTiltDriveDirection.Right, (byte)speed, 0x00);
+        }
+
+        private static ControlCommand CMDPanTiltUp(int speed = -1)
+        {
+            if (speed == -1)
+            {
+                speed = GetSpeed();
+            }
+            return PanTiltDrive_Direction_Command.Create(PanTiltDriveDirection.Up, 0x00, (byte)speed);
+        }
+
+        private static ControlCommand CMDPanTiltDown(int speed = -1)
+        {
+            if (speed == -1)
+            {
+                speed = GetSpeed();
+            }
+            return PanTiltDrive_Direction_Command.Create(PanTiltDriveDirection.Down, 0x00, (byte)speed);
+        }
+
+
+        private static ControlCommand CMDCommandRAW(int value)
+        {
+            Console.WriteLine("RAW Command Bytes:");
+            var hex = Console.ReadLine();
+
+            try
+            {
+                byte[] data = Enumerable.Range(0, hex.Length)
+                                        .Where(x => x % 2 == 0)
+                                        .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                                        .ToArray();
+
+                return new ControlCommand_Raw(data);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+
+        }
+
+
+        private static ControlCommand CMDPanTiltStop(int value = 0)
         {
             return PanTiltDrive_Direction_Command.Create(PanTiltDriveDirection.Stop, 0x00, 0x00);
         }
+
+        private static ControlCommand CMDVideoFormat(int value = 0)
+        {
+            return VideoFormatCommand.Create(VideoFormatBytes.VF_1080_60p_NTSC);
+        }
+
+        private static ControlCommand CMDSetPreset(int value = 0)
+        {
+            Console.WriteLine("Preset Num: ");
+            int.TryParse(Console.ReadLine(), out int num);
+            return SetMemory_Command.Create(num);
+        }
+
+        private static ControlCommand CMDRecallPreset(int value = 0)
+        {
+            Console.WriteLine("Preset Num: ");
+            int.TryParse(Console.ReadLine(), out int num);
+            return RecallMemory_Command.Create(num);
+        }
+
+        private void SubLiveMode(SimpleTCPClient client)
+        {
+            // poll for status update every 100ms
+
+            // await keyboard input to move
+
+            // wasd to move camera
+            // z/x for speed
+            // q to exit mode
+
+            Console.Clear();
+            Console.WriteLine("Live Control Mode");
+            LiveLoop(client);
+        }
+
+        private void LiveLoop(SimpleTCPClient client)
+        {
+            bool run = true;
+
+
+            long lastInputTicks = 0;
+            long lastPollTicks = 0;
+
+            byte speed = 0x05;
+
+            while (run)
+            {
+                long nowTicks = DateTime.Now.Ticks;
+
+                if (Console.KeyAvailable)
+                {
+                    // next command
+                    char cmd = (char)Console.Read();
+
+                    switch (cmd)
+                    {
+                        case 'w':
+                            FireCommand(client, CMDPanTiltUp(speed));
+                            break;
+                        case 'a':
+                            FireCommand(client, CMDPanTiltLeft(speed));
+                            break;
+                        case 's':
+                            FireCommand(client, CMDPanTiltDown(speed));
+                            break;
+                        case 'd':
+                            FireCommand(client, CMDPanTiltRight(speed));
+                            break;
+                        case 'x':
+                            speed = (byte)Math.Min(speed + 1, 0x18);
+                            break;
+                        case 'z':
+                            speed = (byte)Math.Max(speed - 1, 0x00);
+                            break;
+                        case 'e':
+                            FireCommand(client, CMDPanTiltStop());
+                            break;
+                        case 'q':
+                            // stop and quit
+                            FireCommand(client, CMDPanTiltStop());
+                            run = false;
+                            break;
+                        default:
+                            break;
+                    }
+                    lastInputTicks = nowTicks;
+                }
+                else if (nowTicks - lastInputTicks > TimeSpan.FromMilliseconds(100).Ticks)
+                {
+                    // if we exceed 100ms timeout issue stop command
+                    FireCommand(client, CMDPanTiltStop());
+                }
+
+                // if we need to poll for new data, do so now
+                if (nowTicks - lastPollTicks > TimeSpan.FromMilliseconds(100).Ticks)
+                {
+                    FireCommand(client, PanTiltPos_Inq.Create());
+                    lastPollTicks = nowTicks;
+                }
+
+            }
+
+        }
+
 
 
     }
