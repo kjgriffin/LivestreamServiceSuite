@@ -14,6 +14,8 @@ using System.Linq;
 using System.Diagnostics;
 using Xenon.Compiler.Suggestions;
 using System.Collections;
+using IntegratedPresenter.BMDSwitcher.Config;
+using Configurations.SwitcherConfig;
 
 namespace Xenon.SlideAssembly
 {
@@ -37,6 +39,7 @@ namespace Xenon.SlideAssembly
 
         public XenonSuggestionService XenonSuggestionService { get; set; }
 
+        public BMDSwitcherConfigSettings BMDSwitcherConfig { get; set; } = DefaultConfig.GetDefaultConfig();
 
         public void AddAttribute(string key, string value)
         {
@@ -57,71 +60,7 @@ namespace Xenon.SlideAssembly
         }
 
 
-        public void Save(string filename)
-        {
-            try
-            {
-                var sobj = JsonSerializer.Serialize<Project>(this);
-                using var sw = new StreamWriter(filename);
-                sw.Write(sobj);
-            }
-            catch (Exception)
-            {
-                //MessageBox.Show("Failed to save project");
-                throw new Exception("Failed to save project");
-            }
-        }
-
-        public Task SaveProject(string filename, IProgress<int> progress)
-        {
-            return Task.Run(async () =>
-            {
-                progress.Report(0);
-
-                using FileStream ziptoopen = new FileStream($"{filename}", FileMode.Create);
-                using ZipArchive archive = new ZipArchive(ziptoopen, ZipArchiveMode.Update);
-                // create readme
-                ZipArchiveEntry readmeEntry = archive.CreateEntry("Readme.txt");
-                using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                {
-                    await writer.WriteLineAsync("Information about this package.");
-                    await writer.WriteLineAsync("===============================");
-                }
-
-                progress.Report(1);
-
-
-
-                // create assets folder
-                string assetsfolderpath = $"assets{Path.DirectorySeparatorChar}";
-                var assetsfolder = archive.CreateEntry(assetsfolderpath);
-
-                progress.Report(5);
-
-                int count = Assets.Count;
-
-                int completed = 0;
-
-                Parallel.ForEach(Assets, (asset) =>
-                 {
-                     ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, asset.OriginalFilename));
-                     Interlocked.Increment(ref completed);
-                     double assetssaved = (completed / (double)count) * 100;
-                     progress.Report(5 + (int)(assetssaved * 0.85));
-                 });
-
-                progress.Report(90);
-
-                // save json format
-                ZipArchiveEntry jsonfile = archive.CreateEntry("Project.json");
-                var sobj = JsonSerializer.Serialize(this);
-                using (StreamWriter writer = new StreamWriter(jsonfile.Open()))
-                {
-                    await writer.WriteLineAsync(sobj);
-                }
-            });
-        }
-
+      
         internal void Clear()
         {
             Slides.Clear();
@@ -178,6 +117,11 @@ namespace Xenon.SlideAssembly
             InitializeDefaultAssets();
         }
 
+        private void InitializeConfig()
+        {
+
+        }
+
         public void InitializeDefaultAssets()
         {
 
@@ -207,67 +151,6 @@ namespace Xenon.SlideAssembly
             }
 
         }
-
-        public static Task<Project> LoadProject(string filename)
-        {
-
-            Project p = null;
-
-            using (ZipArchive archive = ZipFile.OpenRead(filename))
-            {
-                var projectjson = archive.GetEntry("Project.json");
-                string contents = "";
-                using (StreamReader sr = new StreamReader(projectjson.Open()))
-                {
-                    contents = sr.ReadToEnd();
-                }
-                p = JsonSerializer.Deserialize<Project>(contents);
-
-                // create temp folder for unpacking zipped assets into
-                p._loadTmpPath = Path.Combine(Path.GetTempPath(), $"tmpprojassets_{Path.GetFileNameWithoutExtension(filename)}_{DateTime.Now:yyyyMMddhhmmss}");
-                Directory.CreateDirectory(p._loadTmpPath);
-
-                // unzip all assets
-                archive.ExtractToDirectory(p._loadTmpPath, true);
-
-                // update all asset temp locations
-                foreach (var asset in p.Assets)
-                {
-                    asset.UpdateTmpLocation(Path.Combine(p._loadTmpPath, "assets"));
-                }
-
-                // try checking that extraction worked...
-                foreach (var assetfile in p.Assets)
-                {
-                    if (!System.IO.File.Exists(assetfile.CurrentPath))
-                    {
-                        Debug.WriteLine($"Failed to extract file {assetfile.CurrentPath} for {assetfile.Name}");
-                    }
-                }
-
-            }
-
-            return Task.FromResult(p);
-        }
-
-        public static Project Load(string filename)
-        {
-            try
-            {
-                string contents;
-                using (var sr = new StreamReader(filename))
-                {
-                    contents = sr.ReadToEnd();
-                }
-                return JsonSerializer.Deserialize<Project>(contents);
-            }
-            catch (Exception)
-            {
-                //MessageBox.Show("Failed to load project");
-                throw new Exception("Failed to load project");
-            }
-        }
-
 
         public void CleanupResources()
         {

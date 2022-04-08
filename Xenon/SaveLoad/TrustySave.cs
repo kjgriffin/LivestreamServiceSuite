@@ -64,6 +64,27 @@ namespace Xenon.SaveLoad
                     }
                 }
 
+                // get configuration
+                if (originalVersion.ExceedsMinimumVersion(1, 7, 2, 26))
+                {
+                    var configsourcefile = archive.GetEntry("bmdconfig.json");
+                    if (configsourcefile != null)
+                    {
+                        using (StreamReader sr = new StreamReader(configsourcefile.Open()))
+                        {
+                            // make sure we can parse it
+                            try
+                            {
+                                var config = JsonSerializer.Deserialize<IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings>(sr.ReadToEnd());
+                                proj.BMDSwitcherConfig = config;
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                }
+
                 // in case a UI want's to be responsive and show text before we finish extracting/copying all assets out to the project directory
                 preloadcode?.Invoke(sourcecode);
 
@@ -296,6 +317,14 @@ namespace Xenon.SaveLoad
                 sb.AppendLine(setvar);
                 sb.AppendLine(proj.SourceCode);
                 proj.SourceCode = sb.ToString();
+
+                // default config file will need to be reset
+                proj.BMDSwitcherConfig.DownstreamKey1Config.IsPremultipled = 0;
+                proj.BMDSwitcherConfig.DownstreamKey1Config.IsMasked = 1;
+                proj.BMDSwitcherConfig.DownstreamKey1Config.MaskTop = -5.5f;
+                proj.BMDSwitcherConfig.DownstreamKey1Config.MaskBottom = -9f;
+                proj.BMDSwitcherConfig.DownstreamKey1Config.MaskLeft = -16f;
+                proj.BMDSwitcherConfig.DownstreamKey1Config.MaskRight = 16f;
             }
 
             return Task.CompletedTask;
@@ -396,6 +425,14 @@ namespace Xenon.SaveLoad
                 {
                     await writer.WriteAsync(proj.SourceCode);
                 }
+
+                // handle config
+                ZipArchiveEntry bmdconfigfile = archive.CreateEntry("bmdconfig.json");
+                using (StreamWriter writer = new StreamWriter(bmdconfigfile.Open()))
+                {
+                    await writer.WriteAsync(JsonSerializer.Serialize(proj.BMDSwitcherConfig));
+                }
+
 
                 // handle layouts
 

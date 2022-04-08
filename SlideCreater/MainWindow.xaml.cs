@@ -209,11 +209,17 @@ namespace SlideCreater
             TbInput.TextArea.TextEntering += TextArea_TextEntering;
             TbInput.TextArea.PreviewTextInput += TextArea_PreviewTextInput;
 
+            TbConfig.LoadLanguage_JSON();
+            // load default config file
+
             // setup indentation
             TbInput.Options.IndentationSize = 4;
             TbInput.Options.ConvertTabsToSpaces = true;
             //TbInput.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
+            TbConfig.Options.IndentationSize = 4;
+            TbConfig.Options.ConvertTabsToSpaces = true;
 
+            NewProject().Wait();
             dirty = false;
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
@@ -486,7 +492,7 @@ namespace SlideCreater
 
         }
 
-        Project _proj = new Project(true);
+        Project _proj;
         //List<SlideContentPresenter> slidepreviews = new List<SlideContentPresenter>();
         List<MegaSlidePreviewer> previews = new List<MegaSlidePreviewer>();
 
@@ -815,110 +821,6 @@ namespace SlideCreater
             }
         }
 
-        private async void ClickSave(object sender, RoutedEventArgs e)
-        {
-            await SaveProject();
-        }
-
-        private async Task SaveProject()
-        {
-            TryAutoSave();
-            var saveprogress = new Progress<int>(percent =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    ActionState = ActionState.Saving;
-                    tbSubActionStatus.Text = $"Saving Project: {percent}%";
-                    pbActionStatus.Value = percent;
-                });
-            });
-
-            _proj.SourceCode = TbInput.Text;
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Title = "Save Project";
-            //sfd.DefaultExt = "json";
-            sfd.DefaultExt = "zip";
-            sfd.AddExtension = false;
-            sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
-            if (sfd.ShowDialog() == true)
-            {
-                await _proj.SaveProject(sfd.FileName, saveprogress);
-                Dispatcher.Invoke(() =>
-                {
-                    dirty = false;
-                    ProjectState = ProjectState.Saved;
-                    ActionState = ActionState.Ready;
-                });
-            }
-        }
-
-        private void SaveAsJSON()
-        {
-            TryAutoSave();
-            _proj.SourceCode = TbInput.Text;
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Title = "Save Project";
-            sfd.DefaultExt = "json";
-            sfd.AddExtension = true;
-            sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
-            if (sfd.ShowDialog() == true)
-            {
-                _proj.Save(sfd.FileName);
-                dirty = false;
-                ProjectState = ProjectState.Saved;
-                ActionState = ActionState.Ready;
-            }
-        }
-
-
-        private void OpenProjectJSON()
-        {
-
-        }
-
-        private async Task OpenProject()
-        {
-            if (dirty)
-            {
-                bool saved = await CheckSaveChanges();
-                if (!saved)
-                {
-                    return;
-                }
-            }
-            dirty = false;
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Load Project";
-            ofd.DefaultExt = "zip";
-            if (ofd.ShowDialog() == true)
-            {
-                slidelist.Items.Clear();
-                //slidepreviews.Clear();
-                previews.Clear();
-                FocusSlide.Clear();
-                _proj.CleanupResources();
-                _proj = await Project.LoadProject(ofd.FileName);
-                TbInput.Text = _proj.SourceCode;
-                try
-                {
-                    ShowProjectAssets();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString(), "Failed to load project assets");
-                    _proj.Assets.Clear();
-                    ProjectState = ProjectState.LoadError;
-                    return;
-                }
-                dirty = false;
-                ProjectState = ProjectState.Saved;
-                ActionState = ActionState.Ready;
-            }
-            UpdateErrorReport(new List<XenonCompilerMessage>());
-
-        }
-
-
         private async Task NewProject()
         {
             if (dirty)
@@ -937,8 +839,10 @@ namespace SlideCreater
             ClearProjectAssetsView();
             FocusSlide.Clear();
             TbInput.Text = string.Empty;
-            _proj.CleanupResources();
+            _proj?.CleanupResources();
             _proj = new Project(true);
+
+            TbConfig.Text = JsonSerializer.Serialize(_proj.BMDSwitcherConfig, new JsonSerializerOptions() { WriteIndented = true });
 
             ShowProjectAssets();
             SetupLayoutsTreeVew();

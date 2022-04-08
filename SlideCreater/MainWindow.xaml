@@ -34,7 +34,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="TabPanel" Property="Background" Value="#373737" />
+                                <Setter TargetName="TabPanel" Property="Background" Value="#474747" />
                                 <Setter Property="FontWeight" Value="Bold" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="False">
@@ -220,19 +220,19 @@
                             </Grid>
                             <Border Grid.Row="1" Background="Transparent" BorderBrush="#373737" BorderThickness="0" CornerRadius="10" Padding="5" Margin="5,0,5,10">
                                 <!--<ScrollViewer Grid.Row="1" Background="Transparent">-->
-                                    <!--<StackPanel Name="AssetList">-->
+                                <!--<StackPanel Name="AssetList">-->
 
-                                    <!--</StackPanel>-->
-                                    <TreeView Name="AssetTree" Background="#272727" Padding="0,10,0,0" BorderBrush="#373737" BorderThickness="0">
-                                        <TreeView.Resources>
-                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#676767"></SolidColorBrush>
-                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
-                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#676767"></SolidColorBrush>
-                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
-                                        </TreeView.Resources>
-                                        <TreeViewItem Header="Test" Foreground="White">
-                                        </TreeViewItem>
-                                    </TreeView>
+                                <!--</StackPanel>-->
+                                <TreeView Name="AssetTree" Background="#272727" Padding="0,10,0,0" BorderBrush="#373737" BorderThickness="0">
+                                    <TreeView.Resources>
+                                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#676767"></SolidColorBrush>
+                                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
+                                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#676767"></SolidColorBrush>
+                                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
+                                    </TreeView.Resources>
+                                    <TreeViewItem Header="Test" Foreground="White">
+                                    </TreeViewItem>
+                                </TreeView>
 
                                 <!--</ScrollViewer>-->
                             </Border>
@@ -310,7 +310,17 @@
                     </Grid.RowDefinitions>
                     <!--<ScrollViewer Grid.Row="0">-->
                     <!--<uicontrols:BetterTextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged"></uicontrols:BetterTextBox>-->
-                    <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
+
+                    <TabControl Grid.Column="0" Background="#272727" BorderBrush="#373737" BorderThickness="3">
+                        <TabItem Header="Source" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
+                            <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
+                        </TabItem>
+                        <TabItem Header="Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
+                            <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfig" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
+                        </TabItem>
+                    </TabControl>
+
+
                     <!--</ScrollViewer>-->
                     <GridSplitter Grid.Row="1" Height="3" HorizontalAlignment="Stretch" Background="#474747"></GridSplitter>
                     <Grid Grid.Row="2">
