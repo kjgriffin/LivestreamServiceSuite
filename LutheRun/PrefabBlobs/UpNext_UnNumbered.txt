@@ -1,0 +1,15 @@
+﻿#scope(hymnintro)
+{
+$>#var("upnext.Layout", "Xenon.Hymns::NoNumber")
+
+$>#upnext("Next Hymn", "$HYMNNAME", "")
+$>{
+$>$>#Organ Intro;
+$>$>!displaysrc='#_Liturgy.png';
+$>$>!keysrc='Key_#.png';
+$>$>@arg1:PresetSelect(5)[Preset Organ];
+$>$>@arg1:DelayMs(100);
+$>$>@arg0:AutoTrans[Take Organ];
+$>}$POSTSET
+
+}

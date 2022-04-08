@@ -1,0 +1,9 @@
+﻿#upnext("Next Hymn", "$HYMNNAME", "$HYMNNUMBER")
+{
+$>#Organ Intro;
+$>!displaysrc='#_Liturgy.png';
+$>!keysrc='Key_#.png';
+$>@arg1:PresetSelect(5)[Preset Organ];
+$>@arg1:DelayMs(100);
+$>@arg0:AutoTrans[Take Organ];
+}$POSTSET

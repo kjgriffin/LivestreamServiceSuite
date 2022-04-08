@@ -11,6 +11,55 @@ namespace LutheRun
     internal static class ExternalPrefabGenerator
     {
 
+
+        public static ExternalPrefab BuildHymnIntroSlides(LSBElementHymn hymn, bool useUpNextForHymns)
+        {
+            // we can use the new up-next tabs if we have a hymn #
+            var match = Regex.Match(hymn.Caption, @"(?<number>\d+)?(?<name>.*)");
+            string name = match.Groups["name"]?.Value.Trim() ?? "";
+            string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
+            if (!string.IsNullOrWhiteSpace(number) && useUpNextForHymns)
+            {
+                return new ExternalPrefab(UpNextCommand("UpNext_Numbered", name, number, ""), "upnext") { IndentReplacementIndentifier = "$>" };
+            }
+            else if (!string.IsNullOrWhiteSpace(name) && useUpNextForHymns)
+            {
+                return new ExternalPrefab(UpNextCommand("UpNext_UnNumbered", name, number, ""), "upnext") { IndentReplacementIndentifier = "$>" };
+            }
+            else
+            {
+                return new ExternalPrefab("#organintro", "organintro");
+            }
+
+
+        }
+
+        private static string UpNextCommand(string blobfile, string hname, string hnumber, string postset)
+        {
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                             .GetManifestResourceNames()
+                                             .FirstOrDefault(x => x.Contains(blobfile));
+
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                .GetManifestResourceStream(name);
+
+            var prefabblob = "";
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                prefabblob = sr.ReadToEnd();
+            }
+
+            // inject name
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$HYMNNAME"), hname);
+            // inject number (if no-number, we just won't replace anythin)
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$HYMNNUMBER"), hnumber);
+            // inject postset
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$POSTSET"), postset);
+
+            return prefabblob;
+        }
+
+
         private static string GetStringFromCaptionOrHeading(ILSBElement element)
         {
             if (element is LSBElementCaption)
@@ -37,7 +86,7 @@ namespace LutheRun
                 if (!string.IsNullOrWhiteSpace(serviceTitle) || !string.IsNullOrWhiteSpace(serviceDate))
                 {
                     // Since the external prefab is wrapped inside a scripted block, let the tile generate genrate the postset explicitly
-                    return new ExternalPrefab(CopyTitleCommand(serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ, options.InferPostset, options.ServiceThemeLib), "copytitle") { IndentReplacementIndentifier = "$>"};
+                    return new ExternalPrefab(CopyTitleCommand(serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ, options.InferPostset, options.ServiceThemeLib), "copytitle") { IndentReplacementIndentifier = "$>" };
 
                 }
             }
@@ -104,57 +153,42 @@ namespace LutheRun
 
         private static string CopyTitleCommand(string serviceTitle = "", string serviceDate = "", string lsback = "", int postset = -1, bool inferPostset = true, string libtheme = "Xenon.Green")
         {
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                  .GetManifestResourceNames()
+                                  .FirstOrDefault(x => x.Contains("CopyTitle"));
+
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                .GetManifestResourceStream(name);
+
+            // wrap it into a scripted block
+            var prefabblob = "";
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                prefabblob = sr.ReadToEnd();
+            }
+
+            // inject theme
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$LIBTHEME"), libtheme);
+            // inject title
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$SERVICETITLE"), serviceTitle);
+            // inject date
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$SERVICEDATE"), serviceDate);
+            // inject ack
             StringBuilder sb = new StringBuilder();
-
-            sb.AppendLine("#scope(copytitle) {");
-            sb.AppendLine();
-            sb.AppendLine($"$>#var(\"customdraw.Layout\", \"{libtheme}::CopyTitle\")");
-            sb.AppendLine();
-
-            sb.AppendLine("$>/// </MANUAL_UPDATE name='TitlePage Details'>");
-            sb.AppendLine("$>#customdraw {");
-            sb.AppendLine("$>$>asset=(\"HCLogo-white\", \"fg\")");
-            sb.AppendLine("$>$>// Service Title");
-            sb.AppendLine($"$>$>text={{{serviceTitle}}}");
-            sb.AppendLine("$>$>// Service Type");
-            sb.AppendLine("$>$>text={Worship Service}"); // TODO: perhaps we can infer this based on the date?? (ie Lent)
-            sb.AppendLine("$>$>// Service Date");
-            sb.AppendLine($"$>$>text={{{serviceDate}}}");
-            sb.AppendLine("$>$>// Service Time");
-            sb.AppendLine("$>$>text={11:00 a.m.}");
-            sb.AppendLine("$>$>// LSB Acknowledgements");
-            sb.AppendLine("$>$>text(pretrim,trimat:`)=");
-            sb.AppendLine("$>$>{");
             foreach (var line in lsback.Split(Environment.NewLine))
             {
                 sb.AppendLine($"$>$>`{line}");
             }
-            sb.AppendLine("$>$>}");
-            sb.AppendLine("$>$>// Holy Cross Licences");
-            sb.AppendLine("$>$>text={CCLI License # 524846; CSPL127841}");
-            sb.AppendLine("$>$>// Church Name");
-            sb.AppendLine("$>$>text={HOLY CROSS LUTHERAN CHURCH}");
-            sb.AppendLine("$>$>// Church Location");
-            sb.AppendLine("$>$>text={KITCHENER, ON}");
-
-            sb.Append("$>}");
-
-            // manually add postset here
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$LSBACK"), sb.ToString().TrimEnd());
+            // inject postset
+            string postsetstr = "";
             if (inferPostset && postset != -1)
             {
-                sb.AppendLine($"::postset(last={postset})");
+                postsetstr = $"::postset(last={postset})";
             }
-            else
-            {
-                sb.AppendLine();
-            }
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$POSTSET"), postsetstr);
 
-            sb.AppendLine("}");
-
-
-
-
-            return sb.ToString();
+            return prefabblob;
         }
 
 

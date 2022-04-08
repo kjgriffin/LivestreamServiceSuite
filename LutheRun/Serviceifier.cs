@@ -290,7 +290,7 @@ namespace LutheRun
                 if (element is LSBElementHymn)
                 {
                     // we can use the new up-next tabs if we have a hymn #
-                    newservice.Add(PrefabBuilder.BuildHymnIntroSlides(element as LSBElementHymn, options.UseUpNextForHymns));
+                    newservice.Add(ExternalPrefabGenerator.BuildHymnIntroSlides(element as LSBElementHymn, options.UseUpNextForHymns));
                 }
 
                 newservice.Add(element);

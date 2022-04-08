@@ -1,0 +1,30 @@
+﻿#scope(copytitle)
+{
+$>#var("customdraw.Layout", "$LIBTHEME::CopyTitle")
+
+$>/// </MANUAL_UPDATE name='TitlePage Details'>
+$>#customdraw
+$>{
+$>$>asset=("HCLogo-white", "fg")
+$>$>// Service Title
+$>$>text={$SERVICETITLE}
+$>$>// Service Type
+$>$>text={Worship Service}
+$>$>// Service Date
+$>$>text={$SERVICEDATE}
+$>$>// Service Time
+$>$>/// </MANUAL_UPDATE name='Service Time'>
+$>$>text={11:00 a.m.}
+$>$>// LSB Copyright/Acknowledgements
+$>$>text(pretrim,trimat:`)=
+$>$>{
+$LSBACK
+$>$>}
+$>$>// Holy Cross LIcences
+$>$>text={CCLI License # 524846; CSPL127841}
+$>$>// Church Name
+$>$>text={HOLY CROSS LUTHERAN CHURCH}
+$>$>// Church Location
+$>$>text={KITCHENER, ON}
+$>}$POSTSET
+}
