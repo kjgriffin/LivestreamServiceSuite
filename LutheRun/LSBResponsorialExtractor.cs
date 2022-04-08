@@ -16,15 +16,18 @@ namespace LutheRun
             public string Speaker { get; set; }
             public List<TextBlock> TextSegments { get; set; } = new List<TextBlock>();
 
-            public void Write(StringBuilder sb)
+            public void Write(StringBuilder sb, ref int indentDepth, int indentSpaces)
             {
-                sb.Append($"<line speaker='{Speaker}'>");
+                sb.Append($"<line speaker='{Speaker}'>".Indent(indentDepth, indentSpaces));
+                indentDepth++;
                 foreach (var run in TextSegments)
                 {
-                    run.Write(sb);
+                    sb.AppendLine();
+                    run.Write(sb, ref indentDepth, indentSpaces);
                 }
                 sb.AppendLine();
-                sb.Append("</line>");
+                indentDepth--;
+                sb.Append("</line>".Indent(indentDepth, indentSpaces));
             }
 
             public static LiturgicalStatement Create(string speaker, string content)
@@ -54,27 +57,25 @@ namespace LutheRun
                 WhitespaceSensitive = whitespacesensitive;
             }
 
-            public void Write(StringBuilder sb)
+            public void Write(StringBuilder sb, ref int indentDepth, int indentSpaces)
             {
                 string font = SpecialSymbol ? "altfont='LSBSymbol'" : "";
                 string bold = Bold ? "style='bold'" : "";
                 string prefix = SpecialSymbol || Bold ? " " : "";
                 string ws = WhitespaceSensitive ? "xml:space=\"preserve\"" : "";
-                sb.AppendLine();
-                sb.Append("  ");
-                sb.Append($"<text{prefix}{font}{(Bold ? " " : "")}{bold}{(WhitespaceSensitive ? " " : "")}{ws}>");
+                sb.Append($"<text{prefix}{font}{(Bold ? " " : "")}{bold}{(WhitespaceSensitive ? " " : "")}{ws}>".Indent(indentDepth, indentSpaces));
                 sb.Append(Text);
                 sb.Append("</text>");
             }
         }
 
-        public static string GenerateSource(List<LiturgicalStatement> lines)
+        public static string GenerateSource(List<LiturgicalStatement> lines, ref int indentDepth, int indentSpaces)
         {
             StringBuilder sb = new StringBuilder();
 
             foreach (var line in lines)
             {
-                line.Write(sb);
+                line.Write(sb, ref indentDepth, indentSpaces);
                 if (lines.IndexOf(line) < lines.Count - 1)
                 {
                     sb.AppendLine();
@@ -83,7 +84,7 @@ namespace LutheRun
             return sb.ToString();
         }
 
-        public static string ExtractResponsivePoetry(List<IElement> p_elements)
+        public static string ExtractResponsivePoetry(List<IElement> p_elements, ref int indentDepth, int indentSpaces)
         {
             List<LiturgicalStatement> Lines = new List<LiturgicalStatement>();
             /* Expected Structure: 
@@ -163,11 +164,11 @@ namespace LutheRun
                 }
                 lastline = line;
             }
-            return GenerateSource(Lines);
+            return GenerateSource(Lines, ref indentDepth, indentSpaces);
 
         }
 
-        public static string ExtractResponsiveLiturgy(List<IElement> p_elements)
+        public static string ExtractResponsiveLiturgy(List<IElement> p_elements, ref int indentDepth, int indentSpaces)
         {
             List<LiturgicalStatement> Lines = new List<LiturgicalStatement>();
             /* Expected Structure: 
@@ -242,12 +243,12 @@ namespace LutheRun
                 }
                 lastline = line;
             }
-            return GenerateSource(Lines);
+            return GenerateSource(Lines, ref indentDepth, indentSpaces);
         }
 
-        public static string ExtractResponsiveLiturgy(IElement sourceHTML)
+        public static string ExtractResponsiveLiturgy(IElement sourceHTML, ref int indentDepth, int indentSpaces)
         {
-            return ExtractResponsiveLiturgy(sourceHTML.Children.Where(c => c.LocalName == "p").ToList());
+            return ExtractResponsiveLiturgy(sourceHTML.Children.Where(c => c.LocalName == "p").ToList(), ref indentDepth, indentSpaces);
         }
 
     }

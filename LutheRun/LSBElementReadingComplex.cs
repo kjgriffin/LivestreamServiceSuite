@@ -20,26 +20,27 @@ namespace LutheRun
 
             public List<HymnImageLine> _imagelines = new List<HymnImageLine>();
 
-            public string XenonCmdText(string postset, bool asfirst)
+            public string XenonCmdText(string postset, bool asfirst, ref int indentDepth, int indentSpaces)
             {
                 switch (Type)
                 {
                     case ReadingResponsePart.SpokenResponse:
-                        return "#liturgyresponsive"
-                            + Environment.NewLine
-                            + "{"
-                            + Environment.NewLine
-                            + LSBResponsorialExtractor.ExtractResponsiveLiturgy(Elements)
-                            + Environment.NewLine
-                            + "}"
-                            + postset;
+                        StringBuilder sb = new StringBuilder();
+                        sb.AppendLine("#liturgyresponsive".Indent(indentDepth, indentSpaces));
+                        sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+                        indentDepth++;
+                        sb.AppendLine(LSBResponsorialExtractor.ExtractResponsiveLiturgy(Elements, ref indentDepth, indentSpaces));
+                        indentDepth--;
+                        sb.Append("}".Indent(indentDepth, indentSpaces));
+                        sb.Append(postset);
+                        return sb.ToString();
                     case ReadingResponsePart.SungResponse:
-                        return AsLitImages(postset, asfirst);
+                        return AsLitImages(postset, asfirst, ref indentDepth, indentSpaces);
                     default:
                         return "";
                 }
             }
-            private string AsLitImages(string postset, bool asfirst)
+            private string AsLitImages(string postset, bool asfirst, ref int indentDepth, int indentSpaces)
             {
                 StringBuilder sb = new StringBuilder();
                 int i = 0;
@@ -47,11 +48,11 @@ namespace LutheRun
                 {
                     if ((asfirst && i == 0) || (!asfirst && i == _imagelines.Count - 1))
                     {
-                        sb.AppendLine($"#litimage({image.InferedName}){postset}");
+                        sb.AppendLine($"#litimage({image.InferedName}){postset}".Indent(indentDepth, indentSpaces));
                     }
                     else
                     {
-                        sb.AppendLine($"#litimage({image.InferedName})");
+                        sb.AppendLine($"#litimage({image.InferedName})".Indent(indentDepth, indentSpaces));
                     }
                     i++;
                 }
@@ -120,7 +121,7 @@ namespace LutheRun
             return Task.WhenAll(tasks);
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
             // get the postset onto the right command
             var postset = PostsetCmd.ExtractPostsetValues();
@@ -158,35 +159,39 @@ namespace LutheRun
                 if (firstcmd)
                 {
                     firstcmd = false;
-                    sb.AppendLine($"{group.XenonCmdText(first, true)}");
+                    sb.AppendLine($"{group.XenonCmdText(first, true, ref indentDepth, indentSpaces)}");
                 }
                 else
                 {
-                    sb.AppendLine(group.XenonCmdText("", false));
+                    sb.AppendLine(group.XenonCmdText("", false, ref indentDepth, indentSpaces));
                 }
             }
 
             // do title
             if (!(lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy && ReadingTitle.ToLower().Contains("psalm")))
             {
-                sb.AppendLine($"#reading(\"{ReadingTitle}\", \"{ReadingReference}\"){onreadingpostset}");
+                sb.AppendLine($"#reading(\"{ReadingTitle}\", \"{ReadingReference}\"){onreadingpostset}".Indent(indentDepth, indentSpaces));
             }
             else if (lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy)
             {
                 if (ReadingTitle.ToLower().Contains("psalm") || ReadingReference.ToLower().Contains("psalm") || lSBImportOptions.PullAllReadingContentAsTitledLiturgy)
                 {
                     // assumes only 1 reading content...
-                    sb.AppendLine("#tlit");
-                    sb.AppendLine("{");
+                    sb.AppendLine("#tlit".Indent(indentDepth, indentSpaces));
+                    sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+                    indentDepth++;
                     sb.AppendLine();
-                    sb.AppendLine($"title={{{ReadingTitle}}}");
+                    sb.AppendLine($"title={{{ReadingTitle}}}".Indent(indentDepth, indentSpaces));
                     sb.AppendLine();
-                    sb.AppendLine($"title={{{ReadingReference}}}");
+                    sb.AppendLine($"title={{{ReadingReference}}}".Indent(indentDepth, indentSpaces));
                     sb.AppendLine();
-                    sb.AppendLine("content={");
-                    sb.AppendLine(LSBResponsorialExtractor.ExtractResponsivePoetry(ReadingContent.FirstOrDefault().Elements));
-                    sb.AppendLine("}");
-                    sb.AppendLine("}");
+                    sb.AppendLine("content={".Indent(indentDepth, indentSpaces));
+                    indentDepth++;
+                    sb.AppendLine(LSBResponsorialExtractor.ExtractResponsivePoetry(ReadingContent.FirstOrDefault().Elements, ref indentDepth, indentSpaces));
+                    indentDepth--;
+                    sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+                    indentDepth--;
+                    sb.AppendLine("}".Indent(indentDepth, indentSpaces));
                 }
             }
 
@@ -198,11 +203,11 @@ namespace LutheRun
             {
                 if (i == PostTitle.Count - 1)
                 {
-                    sb.AppendLine($"{group.XenonCmdText(last, false)}");
+                    sb.AppendLine($"{group.XenonCmdText(last, false, ref indentDepth, indentSpaces)}");
                 }
                 else
                 {
-                    sb.AppendLine(group.XenonCmdText("", false));
+                    sb.AppendLine(group.XenonCmdText("", false, ref indentDepth, indentSpaces));
                 }
                 i++;
             }

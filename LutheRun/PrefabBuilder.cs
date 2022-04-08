@@ -22,14 +22,14 @@ namespace LutheRun
                 var nl = Environment.NewLine;
                 string postcmd = string.Join(Environment.NewLine, 
                     "{",
-                    "#Organ Intro;", 
-                    "!displaysrc='#_Liturgy.png';",
-                    "!keysrc='Key_#.png';",
-                    "@arg1:PresetSelect(5)[Preset Organ];", 
-                    "@arg1:DelayMs(100);",
-                    "@arg0:AutoTrans[Take Organ];",
+                    "$>#Organ Intro;", 
+                    "$>!displaysrc='#_Liturgy.png';",
+                    "$>!keysrc='Key_#.png';",
+                    "$>@arg1:PresetSelect(5)[Preset Organ];", 
+                    "$>@arg1:DelayMs(100);",
+                    "$>@arg0:AutoTrans[Take Organ];",
                     "}");
-                return new ExternalPrefab($"{upnextcmd.Trim()}{nl}{postcmd.Trim()}", "upnext");
+                return new ExternalPrefab($"{upnextcmd.Trim()}{nl}{postcmd.Trim()}", "upnext") { IndentReplacementIndentifier = "$>"};
             }
             else
             {

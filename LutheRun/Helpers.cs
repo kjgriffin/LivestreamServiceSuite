@@ -10,6 +10,17 @@ namespace LutheRun
     static class Helpers
     {
 
+        public static string Indent(this string str, int indentdepth, int indentspace)
+        {
+            return str.PadLeft(indentdepth * indentspace + str.Length); 
+        }
+
+        public static string IndentBlock(this string str, int indentdepth, int indentspace)
+        {
+            var lines = str.Split(Environment.NewLine);
+            return string.Join(Environment.NewLine, lines.Select(x => x.Indent(indentdepth, indentspace)));
+        }
+
         public static string StringTogether(this IEnumerable<string> s, string seperator = "")
         {
             StringBuilder sb = new StringBuilder();

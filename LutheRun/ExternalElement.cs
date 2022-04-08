@@ -16,7 +16,7 @@ namespace LutheRun
             return $"/// XENON DEBUG::Added External Element";
         }
 
-        public virtual string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public virtual string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace)
         {
             return "";
         }

@@ -43,6 +43,7 @@ namespace LutheRun
 
 
         public string PostsetReplacementIdentifier { get; set; } = "";
+        public string IndentReplacementIndentifier { get; set; } = "";
 
         public ExternalPrefab(string command, string typeID)
         {
@@ -58,7 +59,7 @@ namespace LutheRun
             Postset = postset;
         }
 
-        public override string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public override string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
             string postset = isPostset ? $"::postset(last={Postset})" : "";
             // Injected postset takes precedence??
@@ -66,15 +67,16 @@ namespace LutheRun
             {
                 postset = PostsetCmd;
             }
-            if (string.IsNullOrEmpty(PostsetReplacementIdentifier))
+            string cmd = $"{PrefabCommand}{postset}".IndentBlock(indentDepth, indentSpaces);
+            if (!string.IsNullOrEmpty(PostsetReplacementIdentifier))
             {
-                return $"{PrefabCommand}{postset}";
+                cmd = Regex.Replace(cmd, Regex.Escape(PostsetReplacementIdentifier), postset);
             }
-            else
+            if (!string.IsNullOrEmpty(IndentReplacementIndentifier))
             {
-                string tmp = Regex.Replace(PrefabCommand, Regex.Escape(PostsetReplacementIdentifier), postset);
-                return tmp;
+                cmd = Regex.Replace(cmd, Regex.Escape(IndentReplacementIndentifier), "".PadLeft(indentSpaces));
             }
+            return cmd;
         }
 
     }

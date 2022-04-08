@@ -53,10 +53,10 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_LITURGY. LiturgyText:'{LiturgyText}'";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
 
-            string litcontent = LSBResponsorialExtractor.ExtractResponsiveLiturgy(SourceHTML);
+            string litcontent = LSBResponsorialExtractor.ExtractResponsiveLiturgy(SourceHTML, ref indentDepth, indentSpaces);
 
             if (LiturgyText.Trim() != String.Empty)
             {
@@ -67,7 +67,7 @@ namespace LutheRun
                 }
                 else
                 {
-                    return "#liturgy{\r\n" + LiturgyText + "\r\n}" + PostsetCmd;
+                    return ("#liturgy{\r\n" + LiturgyText + "\r\n}" + PostsetCmd).IndentBlock(indentDepth, indentSpaces);
                 }
             }
             return "";

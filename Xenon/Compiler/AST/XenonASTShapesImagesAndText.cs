@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xenon.AssetManagment;
+using Xenon.Compiler.SubParsers;
 using Xenon.Helpers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
@@ -41,28 +42,10 @@ namespace Xenon.Compiler.AST
                     });
                 }
 
-                if (Lexer.Inspect("text"))
-                {
-                    Lexer.Consume();
-                    Lexer.GobbleWhitespace();
-                    Lexer.GobbleandLog("=");
-                    Lexer.GobbleWhitespace();
-                    Lexer.GobbleandLog("{");
-                    Lexer.GobbleWhitespace();
 
-                    StringBuilder sb = new StringBuilder();
-                    while (!Lexer.Inspect("}"))
-                    {
-                        sb.Append(Lexer.Consume());
-                        // allow string escaping
-                        if (Lexer.Peek() == "}" && Lexer.PeekNext() == "}")
-                        {
-                            Lexer.Consume();
-                            sb.Append(Lexer.Consume());
-                        }
-                    }
-                    Lexer.Consume();
-                    slide.Texts.Add(sb.ToString());
+                if (TextBlockParser.TryParseTextBlock(Lexer, out var text))
+                {
+                    slide.Texts.Add(text);
                 }
 
                 if (Lexer.Inspect("asset"))

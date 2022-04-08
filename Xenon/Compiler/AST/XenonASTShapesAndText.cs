@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Xenon.Compiler.SubParsers;
 using Xenon.Helpers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
@@ -20,14 +21,9 @@ namespace Xenon.Compiler.AST
         {
             XenonASTShapesAndText shapeAndTexts = new XenonASTShapesAndText();
             Lexer.GobbleWhitespace();
-            Lexer.GobbleandLog("{");
-            Lexer.GobbleWhitespace();
 
-            // TODO: allow escaping of }
-            string x = Lexer.ConsumeUntil("}");
-            Lexer.GobbleandLog("}");
+            shapeAndTexts.Texts = TextBlockParser.ParseTextBlockLines(Lexer);
 
-            shapeAndTexts.Texts = x.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
             shapeAndTexts.Parent = Parent;
 
             return shapeAndTexts;
@@ -37,7 +33,7 @@ namespace Xenon.Compiler.AST
         {
             Slide slide = new Slide
             {
-                Name = "UNNAMED_upnext",
+                Name = "UNNAMED_customtext",
                 Number = project.NewSlideNumber,
                 Lines = new List<SlideLine>(),
                 Asset = "",

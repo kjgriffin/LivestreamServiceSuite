@@ -1,6 +1,9 @@
 ﻿using AngleSharp.Dom;
+
 using CefSharp;
+
 using SlideCreater.ViewControls;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +48,8 @@ namespace SlideCreater
             element = lsbelement;
             this.parser = parser;
             // get the xenon command for the element
-            string xenon_text = lsbelement.XenonAutoGen(new LutheRun.LSBImportOptions());
+            int _ = 0;
+            string xenon_text = lsbelement.XenonAutoGen(new LutheRun.LSBImportOptions(), ref _, 0);
             // add text to textbox
             textbox.SetText(xenon_text);
 

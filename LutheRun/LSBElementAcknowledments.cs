@@ -20,7 +20,7 @@ namespace LutheRun
             return "";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace)
         {
             return $"acknowledments={{{Text}}}";
         }

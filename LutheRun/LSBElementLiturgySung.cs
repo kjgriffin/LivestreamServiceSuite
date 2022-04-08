@@ -109,12 +109,12 @@ namespace LutheRun
             }
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
             StringBuilder sb = new StringBuilder();
 
             //sb.AppendLine("/// <XENON_AUTO_GEN>");
-            sb.AppendLine($"#litimage({Image.InferedName}){PostsetCmd}");
+            sb.AppendLine($"#litimage({Image.InferedName}){PostsetCmd}".Indent(indentDepth, indentSpaces));
             //sb.AppendLine("/// </XENON_AUTO_GEN>");
 
             return sb.ToString();

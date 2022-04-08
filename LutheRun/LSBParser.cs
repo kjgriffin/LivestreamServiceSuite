@@ -568,26 +568,30 @@ namespace LutheRun
 
         public void CompileToXenon()
         {
+            int indentDepth = 0;
+            int indentSpace = 4;
             stringBuilder.Clear();
             stringBuilder.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{System.IO.Path.GetFileName(ServiceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
 
             if (LSBImportOptions.UseThemedHymns || LSBImportOptions.UseThemedCreeds)
             {
                 stringBuilder.AppendLine();
-                stringBuilder.AppendLine("#scope(LSBService) {");
+                stringBuilder.AppendLine("#scope(LSBService) {".Indent(indentDepth, indentSpace));
                 stringBuilder.AppendLine();
-                stringBuilder.AppendLine($"#var(\"stitchedimage.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")");
-                stringBuilder.AppendLine($"#var(\"texthymn.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")");
+                indentDepth++;
+                stringBuilder.AppendLine($"#var(\"stitchedimage.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")".Indent(indentDepth, indentSpace));
+                stringBuilder.AppendLine($"#var(\"texthymn.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")".Indent(indentDepth, indentSpace));
                 stringBuilder.AppendLine();
             }
 
             foreach (var se in ServiceElements)
             {
-                stringBuilder.AppendLine(se.XenonAutoGen(LSBImportOptions));
+                stringBuilder.AppendLine(se.XenonAutoGen(LSBImportOptions, ref indentDepth, indentSpace));
             }
 
             if (LSBImportOptions.UseThemedHymns)
             {
+                indentDepth--;
                 stringBuilder.AppendLine("}");
             }
         }

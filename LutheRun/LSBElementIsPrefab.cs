@@ -25,9 +25,9 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_PREFAB[{Prefab}]. For Source Element: {SourceText}";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
-            return $"#{Prefab}";
+            return $"#{Prefab}".Indent(indentDepth, indentSpaces);
         }
     }
 }
