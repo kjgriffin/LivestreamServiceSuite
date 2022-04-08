@@ -258,6 +258,24 @@ namespace SlideCreater
             string text = TbInput.Text;
             _proj.SourceCode = text;
 
+            try
+            {
+                _proj.BMDSwitcherConfig = JsonSerializer.Deserialize<IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings>(TbConfig.Text);
+            }
+            catch (Exception ex)
+            {
+                // log error, but otherwise ignore
+                UpdateErrorReport(alllogs, new XenonCompilerMessage()
+                {
+                    ErrorName = "Invalid Switcher Config",
+                    ErrorMessage = "Something went wrong parsing the switcher config file",
+                    Generator = "RenderSlides",
+                    Inner = ex.ToString(),
+                    Level = XenonCompilerMessageType.Error,
+                    Token = "",
+                });
+            }
+
             TryAutoSave();
 
             if (!m_agressive_autosave_enabled)
