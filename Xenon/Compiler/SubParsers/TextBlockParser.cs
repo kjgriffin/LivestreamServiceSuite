@@ -48,7 +48,7 @@ namespace Xenon.Compiler.SubParsers
                 }
                 Lexer.Consume();
 
-                if (trimmode == "trim")
+                if (!trimmode.Contains("notrim"))
                 {
                     result = sb.ToString().Trim();
                 }
