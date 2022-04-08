@@ -29,6 +29,7 @@ namespace Xenon.SlideAssembly
 
         public List<ProjectAsset> Assets { get; set; } = new List<ProjectAsset>();
         public string SourceCode { get; set; } = string.Empty;
+        public string SourceConfig { get; set; } = string.Empty;
 
 
         private int slidenum = 0;
@@ -107,6 +108,7 @@ namespace Xenon.SlideAssembly
             }
             //ProjectLayouts.InitializeNewLibrary("User.Library");
             XenonSuggestionService = new XenonSuggestionService(this);
+            SourceConfig = JsonSerializer.Serialize(BMDSwitcherConfig, new JsonSerializerOptions() { WriteIndented = true });
         }
 
         public Project()
@@ -117,11 +119,7 @@ namespace Xenon.SlideAssembly
             InitializeDefaultAssets();
         }
 
-        private void InitializeConfig()
-        {
-
-        }
-
+      
         public void InitializeDefaultAssets()
         {
 

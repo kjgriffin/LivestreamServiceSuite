@@ -72,15 +72,18 @@ namespace Xenon.SaveLoad
                     {
                         using (StreamReader sr = new StreamReader(configsourcefile.Open()))
                         {
-                            // make sure we can parse it
+                            string cfg = sr.ReadToEnd();
+                            // try and parse it
                             try
                             {
-                                var config = JsonSerializer.Deserialize<IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings>(sr.ReadToEnd());
+                                var config = JsonSerializer.Deserialize<IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings>(cfg);
                                 proj.BMDSwitcherConfig = config;
                             }
                             catch
                             {
                             }
+                            // always recover the source though
+                            proj.SourceConfig = cfg;
                         }
                     }
                 }
@@ -430,7 +433,7 @@ namespace Xenon.SaveLoad
                 ZipArchiveEntry bmdconfigfile = archive.CreateEntry("bmdconfig.json");
                 using (StreamWriter writer = new StreamWriter(bmdconfigfile.Open()))
                 {
-                    await writer.WriteAsync(JsonSerializer.Serialize(proj.BMDSwitcherConfig));
+                    await writer.WriteAsync(proj.SourceConfig);
                 }
 
 

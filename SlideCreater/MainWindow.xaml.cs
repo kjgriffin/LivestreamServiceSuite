@@ -255,27 +255,9 @@ namespace SlideCreater
         XenonBuildService builder = new XenonBuildService();
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
-            string text = TbInput.Text;
-            _proj.SourceCode = text;
-
-            try
-            {
-                _proj.BMDSwitcherConfig = JsonSerializer.Deserialize<IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings>(TbConfig.Text);
-            }
-            catch (Exception ex)
-            {
-                // log error, but otherwise ignore
-                UpdateErrorReport(alllogs, new XenonCompilerMessage()
-                {
-                    ErrorName = "Invalid Switcher Config",
-                    ErrorMessage = "Something went wrong parsing the switcher config file",
-                    Generator = "RenderSlides",
-                    Inner = ex.ToString(),
-                    Level = XenonCompilerMessageType.Error,
-                    Token = "",
-                });
-            }
-
+            _proj.SourceCode = TbInput.Text;
+            _proj.SourceConfig = TbConfig.Text;
+           
             TryAutoSave();
 
             if (!m_agressive_autosave_enabled)
@@ -860,7 +842,7 @@ namespace SlideCreater
             _proj?.CleanupResources();
             _proj = new Project(true);
 
-            TbConfig.Text = JsonSerializer.Serialize(_proj.BMDSwitcherConfig, new JsonSerializerOptions() { WriteIndented = true });
+            TbConfig.Text = _proj.SourceConfig;
 
             ShowProjectAssets();
             SetupLayoutsTreeVew();
@@ -1258,6 +1240,7 @@ namespace SlideCreater
             {
                 // perhaps we should forcibly take the latest changes to the source
                 _proj.SourceCode = TbInput.Text;
+                _proj.SourceConfig = TbConfig.Text;
                 await Xenon.SaveLoad.TrustySave.SaveTrustily(_proj, sfd.FileName, saveprogress, VersionInfo.ToString());
                 Dispatcher.Invoke(() =>
                 {

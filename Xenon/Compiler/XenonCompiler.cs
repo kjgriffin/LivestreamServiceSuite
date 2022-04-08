@@ -55,6 +55,27 @@ namespace Xenon.Compiler
         {
             CompilerSucess = false;
 
+            try
+            {
+                proj.BMDSwitcherConfig = JsonSerializer.Deserialize<IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings>(proj.SourceConfig);
+            }
+            catch (Exception ex)
+            {
+                // log error, but otherwise ignore
+                Logger.Log(new XenonCompilerMessage()
+                {
+                    ErrorName = "Invalid Switcher Config",
+                    ErrorMessage = "Something went wrong parsing the switcher config file",
+                    Generator = "RenderSlides",
+                    Inner = ex.ToString(),
+                    Level = XenonCompilerMessageType.Error,
+                    Token = "",
+                });
+                Debug.WriteLine($"Compilation Failed \n{ex}");
+                return Task.FromResult(proj);
+            }
+
+
             progress?.Report(0);
 
             var preproc = Lexer.StripComments(proj.SourceCode);
@@ -95,7 +116,7 @@ namespace Xenon.Compiler
 
 
 
-            string jsonproj = JsonSerializer.Serialize<Project>(proj, new JsonSerializerOptions() { MaxDepth = 256, ReferenceHandler = ReferenceHandler.Preserve});
+            string jsonproj = JsonSerializer.Serialize<Project>(proj, new JsonSerializerOptions() { MaxDepth = 256, ReferenceHandler = ReferenceHandler.Preserve });
             Debug.WriteLine(jsonproj);
 
             progress?.Report(100);

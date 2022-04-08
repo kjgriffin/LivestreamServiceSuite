@@ -409,6 +409,7 @@
                                             <Setter Property="Foreground" Value="White"></Setter>
                                         </DataTrigger>
                                     </Style.Triggers>
+                                    <Setter Property="VerticalContentAlignment" Value="Top"></Setter>
                                 </Style>
                             </ListView.Resources>
                             <ListView.View>
