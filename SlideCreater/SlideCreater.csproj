@@ -32,6 +32,7 @@
     <None Remove="ViewControls\Images\LayoutBlue.png" />
     <None Remove="ViewControls\Images\LayoutGray.png" />
     <None Remove="ViewControls\Images\LibraryWhite.png" />
+    <None Remove="ViewControls\Images\Mop.png" />
     <None Remove="ViewControls\Images\musicnote.png" />
     <None Remove="ViewControls\Images\NewGreen.png" />
     <None Remove="ViewControls\Images\OpenFolderWhite.png" />
@@ -89,6 +90,7 @@
     <Resource Include="ViewControls\Images\LayoutBlue.png" />
     <Resource Include="ViewControls\Images\LayoutGray.png" />
     <Resource Include="ViewControls\Images\LibraryWhite.png" />
+    <Resource Include="ViewControls\Images\Mop.png" />
     <Resource Include="ViewControls\Images\NewGreen.png" />
     <Resource Include="ViewControls\Images\OpenFolderWhite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

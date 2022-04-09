@@ -33,6 +33,7 @@ using Xenon.Compiler.Suggestions;
 using CommonVersionInfo;
 using System.Net.Http;
 using LutheRun;
+using Xenon.Compiler.Formatter;
 
 namespace SlideCreater
 {
@@ -204,6 +205,12 @@ namespace SlideCreater
         {
             InitializeComponent();
 
+#if ! DEBUG
+            miEdit.Visibility = Visibility.Collapsed;        
+            miFormatSource.Visibility = Visibility.Collapsed;
+#endif
+
+
             TbInput.LoadLanguage_XENON();
             TbInput.TextArea.TextEntered += TextArea_TextEntered;
             TbInput.TextArea.TextEntering += TextArea_TextEntering;
@@ -215,6 +222,7 @@ namespace SlideCreater
             // setup indentation
             TbInput.Options.IndentationSize = 4;
             TbInput.Options.ConvertTabsToSpaces = true;
+            //TbInput.TextArea.IndentationStrategy = new XenonIndentationStrategy();
             //TbInput.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
             TbConfig.Options.IndentationSize = 4;
             TbConfig.Options.ConvertTabsToSpaces = true;
@@ -257,7 +265,7 @@ namespace SlideCreater
         {
             _proj.SourceCode = TbInput.Text;
             _proj.SourceConfig = TbConfig.Text;
-           
+
             TryAutoSave();
 
             if (!m_agressive_autosave_enabled)
@@ -1654,6 +1662,14 @@ namespace SlideCreater
         private void ClickRenderFromClean(object sender, RoutedEventArgs e)
         {
             renderclean = miRenderClean.IsChecked;
+        }
+
+        private void FormatCode(object sender, RoutedEventArgs e)
+        {
+#if DEBUG
+            // not quite production ready :(
+            TbInput.Text = XenonFastFormatter.Reformat(TbInput.Text, 4);
+#endif
         }
     }
 }
