@@ -33,11 +33,14 @@ namespace Xenon.Compiler.AST
                 sb.Append(Lexer.Consume());
                 if (Lexer.Inspect("}"))
                 {
-                    script.Source = sb.ToString();
                     Lexer.Consume();
                     break;
                 }
             }
+            string src = sb.ToString();
+            // handle whitespace
+            var slines = src.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+            script.Source = string.Join(Environment.NewLine, slines.Select(x => x.Trim()));
             script.Parent = Parent;
             return script;
 
