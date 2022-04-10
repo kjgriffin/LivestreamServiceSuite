@@ -463,21 +463,14 @@ namespace SlideCreater
 
         private void UpdatePreviews()
         {
+            int oldSIndex = slidelist.SelectedIndex;
+
             slidelist.Items.Clear();
             //slidepreviews.Clear();
             previews.Clear();
             // add all slides to list
-            foreach (var slide in slides)
+            foreach (var slide in slides.OrderBy(s => s.Number != -1 ? s.Number : int.MaxValue)) // insert slides by order. kick resources to bottom
             {
-                /*
-                SlideContentPresenter slideContentPresenter = new SlideContentPresenter();
-                slideContentPresenter.Width = slidelist.Width;
-                slideContentPresenter.Slide = slide;
-                slideContentPresenter.Height = 200;
-                slideContentPresenter.ShowSlide(previewkeys);
-                slidelist.Items.Add(slideContentPresenter);
-                slidepreviews.Add(slideContentPresenter);
-                */
                 MegaSlidePreviewer previewer = new MegaSlidePreviewer();
                 previewer.Width = slidelist.Width;
                 previewer.Slide = slide;
@@ -488,9 +481,19 @@ namespace SlideCreater
             // update focusslide
             if (slides?.Count > 0)
             {
-                FocusSlide.Slide = slides.First();
+                if (slides.Count > oldSIndex && oldSIndex >= 0)
+                {
+                    // try and refocus on last inspected slide
+                    FocusSlide.Slide = slides[oldSIndex];
+                    slidelist.SelectedIndex = oldSIndex;
+                    slidelist.ScrollIntoView(slidelist.Items[oldSIndex]);
+                }
+                else
+                {
+                    FocusSlide.Slide = slides.First();
+                    slidelist.SelectedIndex = 0;
+                }
                 FocusSlide.ShowSlide(previewkeys);
-                slidelist.SelectedIndex = 0;
                 tbSlideCount.Text = $"Slides: {slides.First().Number + 1}/{slides.Count()}";
             }
             else

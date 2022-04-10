@@ -30,7 +30,7 @@ namespace Xenon.Compiler.SubParsers
                 Lexer.GobbleWhitespace();
                 Lexer.GobbleandLog("{");
 
-                if (trimmode.Contains("pretrim"))
+                if (trimmode.Contains("pretrim") && !trimmode.Contains("notrim"))
                 {
                     Lexer.GobbleWhitespace();
                 }
@@ -48,32 +48,32 @@ namespace Xenon.Compiler.SubParsers
                 }
                 Lexer.Consume();
 
-                if (!trimmode.Contains("notrim"))
-                {
-                    result = sb.ToString().Trim();
-                }
-                else if (trimmode.Contains("trimlines"))
-                {
-                    var lines = sb.ToString().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim());
-                    result = string.Join(Environment.NewLine, lines);
-                }
-                else if (trimmode.Contains("trimat:`"))
-                {
-                    var lines = sb.ToString().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-                    var tmp = new List<string>();
-                    foreach (var line in lines)
-                    {
-                        // remove all leading whitespace up to first instance of `. Won't allow double escaping. If you really need that you'll have to manually handle the trimming
-                        int index = line.IndexOf('`');
-                        tmp.Add(line.Remove(0, index != -1 ? Math.Min(index + 1, line.Length) : 0));
-                    }
-                    result = string.Join(Environment.NewLine, tmp);
-                }
-                else
+                if (trimmode.Contains("notrim"))
                 {
                     result = sb.ToString();
                 }
+                else
+                {
+                    result = sb.ToString().Trim();
 
+                    if (trimmode.Contains("trimlines"))
+                    {
+                        var lines = sb.ToString().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim());
+                        result = string.Join(Environment.NewLine, lines);
+                    }
+                    if (trimmode.Contains("trimat:`"))
+                    {
+                        var lines = sb.ToString().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+                        var tmp = new List<string>();
+                        foreach (var line in lines)
+                        {
+                            // remove all leading whitespace up to first instance of `. Won't allow double escaping. If you really need that you'll have to manually handle the trimming
+                            int index = line.IndexOf('`');
+                            tmp.Add(line.Remove(0, index != -1 ? Math.Min(index + 1, line.Length) : 0));
+                        }
+                        result = string.Join(Environment.NewLine, tmp);
+                    }
+                }
 
                 return true;
             }
