@@ -110,7 +110,7 @@ namespace Xenon.Compiler.SubParsers
                     sb.Append(Lexer.Consume());
                 }
             }
-            Lexer.Consume();
+            //Lexer.Consume();
             Lexer.GobbleWhitespace();
             Lexer.GobbleandLog("}");
 
