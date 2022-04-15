@@ -1430,7 +1430,7 @@ namespace SlideCreater
             }
             else if (!string.IsNullOrWhiteSpace(e.Text))
             {
-                ShowSuggestions();
+                //ShowSuggestions();
             }
         }
 
@@ -1667,11 +1667,19 @@ namespace SlideCreater
             renderclean = miRenderClean.IsChecked;
         }
 
-        private void FormatCode(object sender, RoutedEventArgs e)
+        private async void FormatCode(object sender, RoutedEventArgs e)
         {
 #if DEBUG
             // not quite production ready :(
-            TbInput.Text = XenonFastFormatter.Reformat(TbInput.Text, 4);
+            //TbInput.Text = XenonFastFormatter.Reformat(TbInput.Text, 4);
+            try
+            {
+                string formatted = await XenonFastFormatter.CompileReformat(TbInput.Text, 4);
+                Dispatcher.Invoke(() => TbInput.Text = formatted);
+            }
+            catch (Exception)
+            {
+            }
 #endif
         }
     }
