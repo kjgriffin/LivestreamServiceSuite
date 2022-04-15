@@ -46,6 +46,13 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.SetVar]);
+            sb.AppendLine($"(\"{VariableName}\", \"{Value}\")");
+        }
 
         List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
         {

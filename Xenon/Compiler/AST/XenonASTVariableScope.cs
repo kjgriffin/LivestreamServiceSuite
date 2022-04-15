@@ -97,6 +97,21 @@ namespace Xenon.Compiler.AST
             return scope;
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.VariableScope]);
+            sb.AppendLine($"({ScopeName})");
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            indentDepth++;
+
+            children.DecompileFormatted(sb, ref indentDepth, indentSize);
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             return (children as IXenonASTElement).Generate(project, _Parent, Logger);

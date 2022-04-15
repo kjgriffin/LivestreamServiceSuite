@@ -11,6 +11,14 @@ namespace Xenon.Compiler.AST
     {
         public IXenonASTElement Parent { get; private set; }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.ViewServices]);
+            sb.AppendLine();
+        }
+
         IXenonASTElement IXenonASTElement.Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             this.Parent = Parent;

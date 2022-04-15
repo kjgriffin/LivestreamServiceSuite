@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
@@ -76,6 +77,22 @@ namespace Xenon.Compiler.AST
 
             return liturgy;
         }
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyVerse]);
+            sb.AppendLine($"(\"{Title}\", \"{Reference}\")");
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+
+            foreach (var content in Content)
+            {
+                content.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+        }
+
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
@@ -165,5 +182,6 @@ namespace Xenon.Compiler.AST
         {
             throw new NotImplementedException();
         }
+
     }
 }

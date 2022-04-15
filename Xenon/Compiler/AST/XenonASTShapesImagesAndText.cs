@@ -90,6 +90,44 @@ namespace Xenon.Compiler.AST
             return slide;
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.AppendLine(LanguageKeywords.Commands[LanguageKeywordCommand.CustomDraw]);
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            indentDepth++;
+
+            foreach (var asset in BGAssetNames)
+            {
+                sb.AppendLine($"asset=(\"{asset}\", \"bg\")".PadLeft(indentDepth * indentSize));
+            }
+            foreach (var asset in FGAssetNames)
+            {
+                sb.AppendLine($"asset=(\"{asset}\", \"fg\")".PadLeft(indentDepth * indentSize));
+            }
+
+            foreach (var text in Texts)
+            {
+                var refmt = TextBlockParser.ReformatTextBlock(text);
+                sb.Append($"text({string.Join(',', refmt.modes)}{(refmt.modes.Any() ? "," : "")}trimat:`)=".PadLeft(indentDepth * indentSize));
+
+                sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+                indentDepth++;
+                foreach (var line in refmt.lines)
+                {
+                    sb.AppendLine($"`{line}".PadLeft(indentDepth * indentSize));
+                }
+                indentDepth--;
+                sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+            }
+
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide slide = new Slide

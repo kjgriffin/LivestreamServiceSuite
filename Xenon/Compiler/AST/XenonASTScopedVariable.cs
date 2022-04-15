@@ -45,6 +45,22 @@ namespace Xenon.Compiler.AST
             Lexer.GobbleWhitespace();
             return variable;
         }
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.ScopedVariable]);
+
+            if (VValue.Contains('"'))
+            {
+                sb.AppendLine($"(\"{VName}\", ```{VValue}```)");
+            }
+            else
+            {
+                sb.AppendLine($"(\"{VName}\", \"{VValue}\")");
+            }
+        }
+
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
@@ -88,6 +104,7 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
+
         List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
         {
             ("#set", false, "", new List<(string, string)> { ("#set", "")}, null),
@@ -107,5 +124,5 @@ namespace Xenon.Compiler.AST
             */
         };
 
-      }
+    }
 }

@@ -45,6 +45,14 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            foreach (var elem in Elements)
+            {
+                elem.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+        }
+
         public XenonASTElementCollection(IXenonASTElement Parent)
         {
             this.Parent = Parent;

@@ -96,6 +96,31 @@ namespace Xenon.Compiler.AST
             hymn.Parent = Parent;
             return hymn;
         }
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.StitchedImage]);
+            sb.Append($"(\"{Title}\", \"{HymnName}\", \"{Number}\", \"{CopyrightInfo}\")");
+
+            if (StitchAll)
+            {
+                sb.Append("(stitchall)");
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            indentDepth++;
+
+            foreach (var asset in ImageAssets)
+            {
+                sb.Append(asset.PadLeft(indentDepth * indentSize));
+            }
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+        }
+
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
@@ -494,5 +519,6 @@ namespace Xenon.Compiler.AST
         {
             throw new NotImplementedException();
         }
+
     }
 }

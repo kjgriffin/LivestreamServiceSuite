@@ -54,6 +54,27 @@ namespace Xenon.Compiler.AST
             return this;
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.TitledLiturgyVerse]);
+            sb.Append($"(\"{Title}\", \"{Reference}\", \"{DrawSpeaker}\")");
+            if (!string.IsNullOrEmpty(Mode))
+            {
+                sb.Append($"<{Mode}>");
+            }
+            sb.AppendLine();
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            //indentDepth++;
+            //sb.Append("".PadLeft(indentDepth * indentSize));
+
+            // so here we just ignore indentation??
+            sb.AppendLine(string.Join("", Text));
+
+            //indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+        }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {

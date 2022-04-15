@@ -28,6 +28,18 @@ namespace Xenon.Compiler.AST
             return this;
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.Script_LiturgyOff]);
+            if (SlideTitleMessage != "Liturgy Off")
+            {
+                sb.Append($"({SlideTitleMessage})");
+            }
+            sb.AppendLine();
+        }
+
         List<Slide> IXenonASTElement.Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide slide = new Slide();

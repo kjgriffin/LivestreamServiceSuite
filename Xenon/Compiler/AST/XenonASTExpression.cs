@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 using Xenon.SlideAssembly;
 
@@ -363,5 +364,50 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            // postset is handled at this level,
+            // may need to refactor the newline/command logic to here
+
+            // new line between all commands?
+            sb.AppendLine();
+
+            // let the command generate itself
+            Command.DecompileFormatted(sb, ref indentDepth, indentSize);
+
+            // add its postset
+            if (Postset)
+            {
+                sb.Append("::postset(");
+                bool sep = false;
+
+                if (Postset_forFirst)
+                {
+                    sb.Append($"first={Postset_First}");
+                    sep = true;
+                }
+
+                if (Postset_forLast)
+                {
+                    if (sep)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append($"last={Postset_Last}");
+                    sep = true;
+                }
+
+                if (Postset_forAll)
+                {
+                    if (sep)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append($"all={Postset_All}");
+                }
+
+                sb.AppendLine(")");
+            }
+        }
     }
 }

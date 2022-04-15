@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -159,6 +160,38 @@ namespace Xenon.Compiler.SubParsers
             doc.LoadXml(doctext);
 
             return doc;
+        }
+
+        public static List<string> ToFormattedXMLLines(string input)
+        {
+            XmlDocument doc = new XmlDocument();
+            var doctext = $"<content>{input}</content>";
+
+            doc.LoadXml(doctext);
+
+            StringBuilder sb = new StringBuilder();
+            using (var writer = new XmlTextWriter(new StringWriter(sb)))
+            {
+                writer.Formatting = Formatting.Indented;
+                writer.Indentation = 4;
+                writer.IndentChar = ' ';
+
+                doc.Save(writer);
+            }
+
+
+            string dstr = sb.ToString();
+            // need to remove the content tags...
+
+            dstr = dstr.Remove(0, 8);
+
+            List<string> lines = dstr.Split(Environment.NewLine).ToList();
+
+            lines.RemoveAt(0);
+            lines.RemoveAt(0);
+            lines.Remove(lines.Last());
+
+            return lines.Select(x => x.Remove(0, 4)).ToList();
         }
 
 

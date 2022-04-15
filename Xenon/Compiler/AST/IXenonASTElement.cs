@@ -16,6 +16,8 @@ namespace Xenon.Compiler.AST
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer);
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent);
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize);
+
         public (bool found, string scopename) TryGetScopedVariable(string vname, out string value)
         {
             var scope = this as IXenonASTScope;

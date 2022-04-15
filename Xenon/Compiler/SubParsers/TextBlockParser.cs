@@ -10,6 +10,22 @@ namespace Xenon.Compiler.SubParsers
     {
 
 
+        public static (List<string> modes, List<string> lines) ReformatTextBlock(string input)
+        {
+            List<string> modes = new List<string>();
+            // we assume the input string is wanted...
+            if (char.IsWhiteSpace(input.First()))
+            {
+                modes.Add("notrim");
+            }
+            else
+            {
+                modes.Add("pretrim");
+            }
+
+            return (modes, input.Split(Environment.NewLine).ToList());
+        }
+
         public static bool TryParseTextBlock(Lexer Lexer, out string result)
         {
             result = String.Empty;

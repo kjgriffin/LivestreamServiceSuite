@@ -16,6 +16,11 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append(TextContent);
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             throw new NotImplementedException();

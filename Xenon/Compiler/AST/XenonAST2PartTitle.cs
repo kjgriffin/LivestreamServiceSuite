@@ -120,5 +120,18 @@ namespace Xenon.Compiler.AST
         {
             throw new NotImplementedException();
         }
+
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.TwoPartTitle]);
+            sb.Append($"(\"{Part1}\", \"{Part2}\"");
+            if (!string.IsNullOrEmpty(Orientation))
+            {
+                sb.Append($",\"{Orientation}\"");
+            }
+            sb.AppendLine(")");
+        }
     }
 }

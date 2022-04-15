@@ -93,6 +93,36 @@ namespace Xenon.Compiler.AST
 
             return liturgy;
         }
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.AppendLine(LanguageKeywords.Commands[LanguageKeywordCommand.TitledLiturgyVerse]);
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            indentDepth++;
+
+            foreach (var title in Titles)
+            {
+                sb.AppendLine($"title={{{title}}}".PadLeft(indentDepth * indentSize));
+            }
+
+            sb.AppendLine($"content=".PadLeft(indentDepth * indentSize));
+
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            indentDepth++;
+
+            foreach (var line in L2Parser.ToFormattedXMLLines(RawContent))
+            {
+                sb.AppendLine(line.PadLeft(indentDepth * indentSize));
+            }
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+        }
+
 
         private static void CaptureLiturgyContent(Lexer Lexer, XenonASTTitledLiturgy liturgy)
         {
@@ -189,5 +219,6 @@ namespace Xenon.Compiler.AST
         {
             throw new NotImplementedException();
         }
+
     }
 }

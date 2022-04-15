@@ -59,6 +59,11 @@ namespace Xenon.Compiler.AST
             return this;
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide slide = new Slide();

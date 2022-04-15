@@ -25,6 +25,14 @@ namespace Xenon.Compiler.AST
             return resource;
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.Resource]);
+            sb.AppendLine($"(\"{AssetName}\", \"{Assettype}\")");
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide res = new Slide

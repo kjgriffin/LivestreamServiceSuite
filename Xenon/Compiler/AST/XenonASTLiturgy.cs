@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 using Xenon.Compiler.Suggestions;
@@ -275,6 +276,22 @@ namespace Xenon.Compiler.AST
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
         {
             throw new NotImplementedException();
+        }
+
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.AppendLine(LanguageKeywords.Commands[LanguageKeywordCommand.Liturgy]);
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+
+            // old liturgy probably needs to ignore indentation since its whitespace sensitive
+            foreach (var content in Content)
+            {
+                content.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
         }
 
         List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()

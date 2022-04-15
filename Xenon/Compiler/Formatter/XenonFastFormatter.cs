@@ -5,10 +5,40 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using Xenon.Compiler.AST;
+
 namespace Xenon.Compiler.Formatter
 {
     public class XenonFastFormatter
     {
+
+        public static Task<string> CompileReformat(string source, int indent)
+        {
+            XenonErrorLogger _logger = new XenonErrorLogger();
+            Lexer _lexer = new Lexer(_logger);
+            XenonASTProgram p = new XenonASTProgram();
+            return Task.Run(() =>
+            {
+                try
+                {
+                    // TODO: need to be able to recover comments....
+                    var preproc = _lexer.StripComments(source);
+                    _lexer.Tokenize(preproc);
+
+                    p = (XenonASTProgram)p.Compile(_lexer, _logger, null);
+
+                    StringBuilder sb = new StringBuilder();
+                    int indentDepth = 0;
+                    p.DecompileFormatted(sb, ref indentDepth, indent);
+                    return sb.ToString();
+                }
+                catch (Exception)
+                {
+                    return source;
+                }
+            });
+        }
+
 
         public static string Reformat(string source, int indent)
         {

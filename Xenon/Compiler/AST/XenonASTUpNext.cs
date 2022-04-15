@@ -51,6 +51,20 @@ namespace Xenon.Compiler.AST
             return upnext;
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.UpNext]);
+            sb.AppendLine($"(\"{Title}\", \"{MainText}\", \"{InfoText}\")");
+            
+            if (HasPostScript)
+            {
+                PostScript.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
 

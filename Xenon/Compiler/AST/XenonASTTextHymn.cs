@@ -111,6 +111,26 @@ namespace Xenon.Compiler.AST
 
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]);
+            sb.AppendLine($"(\"{HymnTitle}\", \"{HymnName}\", \"{Tune}\" \"{Number}\", \"{CopyrightInfo}\")");
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            indentDepth++;
+
+            foreach (var verse in Verses)
+            {
+                verse.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+
+        }
+
+
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
         {
             throw new NotImplementedException();
