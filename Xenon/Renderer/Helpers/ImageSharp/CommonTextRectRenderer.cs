@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Xenon.FontManagement;
@@ -63,6 +64,60 @@ namespace Xenon.Renderer.Helpers.ImageSharp
             SolidBrush brush = new SolidBrush(fcolor);
 
             ctx.DrawText(otps, tops, text, brush, null);
+        }
+
+        private static void DrawText_ManualOverflowCenter(this IImageProcessingContext ctx, string text, Font font, Color fcolor, RectangleF rect, LWJVAlign VAlign, float linespace = 1f)
+        {
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return;
+            }
+            // 1. split text by whitespace (or some other split policy....)
+            // 2. Try an put as much text on a line as posible
+            // 3. once lines are determined, center each individually
+
+            TextOptions opts = new TextOptions(font)
+            {
+                WrappingLength = rect.Width,
+                Dpi = 96,
+            };
+
+            var words = Regex.Split(text, @"\s");
+
+            List<string> lines = new List<string>();
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var word in words)
+            {
+                var str = sb.ToString() + " " + word;
+                if (TextMeasurer.Measure(str, opts).Width <= rect.Width)
+                {
+                    sb.Append(" ");
+                    sb.Append(word);
+                }
+                else
+                {
+                    lines.Add(sb.ToString());
+                    sb.Clear();
+                }
+            }
+            lines.Add(sb.ToString());
+
+            // measure all lines
+            List<FontRectangle> linesizes = new List<FontRectangle>();
+            foreach (var line in lines)
+            {
+                linesizes.Add(TextMeasurer.Measure(line, opts));
+            }
+
+            // draw all lines
+            // need to space them correctly
+            
+            // calculate the vertical position based on VAlign
+
+
+
         }
 
         internal static void DrawText(this IImageProcessingContext ctx, string text, TextboxLayout layout)
