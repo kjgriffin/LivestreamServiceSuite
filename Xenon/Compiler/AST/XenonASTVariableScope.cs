@@ -114,7 +114,9 @@ namespace Xenon.Compiler.AST
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            return (children as IXenonASTElement).Generate(project, _Parent, Logger);
+            var slides = (children as IXenonASTElement).Generate(project, _Parent, Logger);
+
+            return slides;
         }
 
         public void GenerateDebug(Project project)
@@ -152,9 +154,18 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
-        public bool SetScopedVariableValue(string vname, string value)
+        public bool SetScopedVariableValue(string vname, string value, Project project)
         {
             Variables[vname] = value;
+
+            // don't REALLY like this, but this is the only place we can do it
+            var match = Regex.Match(vname, "MACRO@(?<lib>.*)::(?<name>(.*))");
+            if (match.Success)
+            {
+                project.LayoutManager.SetMacroOverride(match.Groups["lib"].Value, match.Groups["name"].Value, value);
+            }
+
+
             if (Variables.ContainsKey(vname) || (this as IXenonASTElement).CheckAnsestorScopeFornameConflict(vname).found)
             {
                 return true;

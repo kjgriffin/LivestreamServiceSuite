@@ -79,7 +79,7 @@ namespace Xenon.Compiler.AST
                 if (p is IXenonASTScope)
                 {
 
-                    (p as IXenonASTScope).SetScopedVariableValue(VName, VValue);
+                    (p as IXenonASTScope).SetScopedVariableValue(VName, VValue, project);
                     set = true;
                     break;
                 }
@@ -107,7 +107,7 @@ namespace Xenon.Compiler.AST
 
         List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
         {
-            ("#set", false, "", new List<(string, string)> { ("#set", "")}, null),
+            ("#var", false, "", new List<(string, string)> { ("#var", "")}, null),
             ("\\(\"", false, "", new List<(string, string)> { ("(\"", "insert variable name")}, null),
             /*
             ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end variable name")},  ),

@@ -54,6 +54,7 @@
     <None Remove="ViewControls\Images\Trash.png" />
     <None Remove="ViewControls\Images\TrashRed.png" />
     <None Remove="ViewControls\Images\XRed.png" />
+    <None Remove="ViewControls\Images\YellowBolt.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -171,6 +172,9 @@
     </Resource>
     <Resource Include="ViewControls\Images\TrashRed.png" />
     <Resource Include="ViewControls\Images\XRed.png" />
+    <Resource Include="ViewControls\Images\YellowBolt.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

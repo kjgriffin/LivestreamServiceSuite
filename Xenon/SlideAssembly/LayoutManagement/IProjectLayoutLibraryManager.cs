@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
+using System.Collections.Generic;
 
 using Xenon.Compiler;
 using Xenon.SaveLoad;
@@ -9,6 +12,11 @@ namespace Xenon.SlideAssembly
     public interface IProjectLayoutLibraryManager
     {
         SaveLayoutToLibrary SaveLayoutToLibrary { get; }
+        ResolveLayoutMacros ResolveLayoutMacros { get; }
+        GetLayoutPreview GetLayoutPreview { get; }
+
+        GetLibraryMacros GetLibraryMacros { get; }
+        EditLibraryMacros EditLibraryMacros { get; }
 
         void CreateNewLayoutFromDefaults(string libname, string group, string layoutname);
         void DeleteLayout(string libname, string group, string layout);
@@ -22,5 +30,7 @@ namespace Xenon.SlideAssembly
         void RemoveLib(string libname);
         (bool found, string json) FindLayoutByFullyQualifiedName(LanguageKeywordCommand type, string fullname, string defaultLibrary = "");
         List<string> FindTypesSupportingLayouts();
+
+        void SetMacroOverride(string libname, string macroname, string value);
     }
 }

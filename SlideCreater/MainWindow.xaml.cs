@@ -1525,7 +1525,9 @@ namespace SlideCreater
                                                                            (string lib, string group, string layout) =>
                                                                            {
                                                                                _proj.LayoutManager.DeleteLayout(lib, group, layout); Dispatcher.Invoke(SetupLayoutsTreeVew);
-                                                                           });
+                                                                           },
+                                                                           _proj.LayoutManager.GetLayoutPreview
+                                                                           );
                         treegroup.Items.Add(treelayoutleaf);
                     }
 
@@ -1539,11 +1541,15 @@ namespace SlideCreater
                 {
                     LayoutGroupTreeItem treegroup = new LayoutGroupTreeItem(missingGroup, missingGroup, editable, (g) => CreateNewLayoutOnLibrary(library.LibName, g));
                     treegroup.Selected += Treegroup_Selected;
-                    
+
                     treegroup.IsExpanded = oldstate.GetOrDefault($"{library.LibName}.{missingGroup}", false);
 
                     treelibrary.Items.Add(treegroup);
                 }
+
+                // add macros editor
+                treelibrary.Items.Insert(0, new LibraryMacrosTreeItem("Macros...", library.LibName, true, _proj.LayoutManager.GetLibraryMacros, _proj.LayoutManager.EditLibraryMacros));
+
 
                 treelibrary.IsExpanded = oldstate.GetOrDefault(library.LibName, false);
 

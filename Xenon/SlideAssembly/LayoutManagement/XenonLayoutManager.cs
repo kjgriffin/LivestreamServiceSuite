@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,7 +47,8 @@ namespace Xenon.SlideAssembly.LayoutManagement
         public string LibName { get; set; }
         public string LibVersion { get; set; }
         public string Date { get; set; }
-        public List<XenonLayout> Layouts { get; set; }
+        public List<XenonLayout> Layouts { get; set; } = new List<XenonLayout>();
+        public Dictionary<string, string> Macros { get; set; } = new Dictionary<string, string>();
 
         public List<(string Group, Dictionary<string, XenonLayout> Layouts)> AsGroupedLayouts()
         {
@@ -74,15 +78,24 @@ namespace Xenon.SlideAssembly.LayoutManagement
         public string RawSource { get; set; }
     }
 
+    public delegate string ResolveLayoutMacros(string rawjson, string layoutName, string groupName, string libName);
+    public delegate (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) GetLayoutPreview(string layoutname, string group, string lib, string layoutjson);
+
+    public delegate Dictionary<string, string> GetLibraryMacros(string libname);
+    public delegate void EditLibraryMacros(string libname, Dictionary<string, string> value);
+
     internal class XenonLayoutManager : IProjectLayoutLibraryManager
     {
 
         private Dictionary<string, XenonLayoutLibrary> m_libraries = new Dictionary<string, XenonLayoutLibrary>();
 
+        private Dictionary<string, Dictionary<string, string>> m_macroOverrides = new System.Collections.Generic.Dictionary<string, Dictionary<string, string>>();
+
         public const string DEFAULTLIBNAME = "Xenon.Core";
 
         [JsonIgnore]
         public SaveLayoutToLibrary SaveLayoutToLibrary { get => _Internal_SaveLayoutToLibrary; }
+
 
         private bool _Internal_SaveLayoutToLibrary(string libname, string layoutname, string group, string json)
         {
@@ -97,6 +110,61 @@ namespace Xenon.SlideAssembly.LayoutManagement
                 RawSource = json
             });
             return true;
+        }
+
+        [JsonIgnore]
+        public ResolveLayoutMacros ResolveLayoutMacros { get => _Internal_ResolveLayoutMacros; }
+
+        private string _Internal_ResolveLayoutMacros(string rawjson, string layoutName, string groupName, string libName)
+        {
+            // start finding matches
+            // replace matches with macro
+            string newjson = rawjson;
+
+            int attempts = 100000;
+            while (attempts-- > 0)
+            {
+                var firstmatch = Regex.Match(newjson, "%(?<mname>.*)%");
+                if (firstmatch.Success)
+                {
+                    var regex = new Regex("%.*%");
+                    newjson = regex.Replace(newjson, _Internal_ResolveMacro(firstmatch.Groups["mname"].Value, libName), 1);
+                }
+                else
+                {
+                    // no match- no macro
+                    break;
+                }
+            }
+
+            return newjson;
+        }
+
+        private string _Internal_ResolveMacro(string macroName, string library)
+        {
+            // use overriden value
+            if (m_macroOverrides.TryGetValue(library, out var overrides))
+            {
+                if (overrides.TryGetValue(macroName, out var value))
+                {
+                    return value;
+                }
+            }
+
+            // use library default
+            if (m_libraries.TryGetValue(library, out var lib))
+            {
+                if (lib.Macros.TryGetValue(macroName, out var value))
+                {
+                    return value;
+                }
+            }
+
+#if DEBUG
+            System.Diagnostics.Debugger.Break();
+#endif
+
+            return "_$MISSING$_"; //... hmmm this is probably bad
         }
 
         public void CreateNewLayoutFromDefaults(string libname, string group, string layoutname)
@@ -214,10 +282,11 @@ namespace Xenon.SlideAssembly.LayoutManagement
 
             m_libraries[DEFAULTLIBNAME] = defaultlib;
 
-            LoadBundledLibraries();
+            LoadBundledLibraries_Legacy();
+            LoadBundledLibraries_New();
         }
 
-        private void LoadBundledLibraries()
+        private void LoadBundledLibraries_Legacy()
         {
             var names = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo))
                 .GetManifestResourceNames()
@@ -230,6 +299,23 @@ namespace Xenon.SlideAssembly.LayoutManagement
                 {
                     string json = sr.ReadToEnd();
                     var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
+                    LoadLibrary(lib);
+                }
+            }
+        }
+        private void LoadBundledLibraries_New()
+        {
+            var names = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo))
+                .GetManifestResourceNames()
+                .Where(n => n.StartsWith("Xenon.LayoutInfo.Defaults.NewLibBundles"));
+
+            foreach (var name in names)
+            {
+                var stream = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo)).GetManifestResourceStream(name);
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    string json = sr.ReadToEnd();
+                    var lib = JsonSerializer.Deserialize<XenonLayoutLibrary>(json, new JsonSerializerOptions() { IncludeFields = true });
                     LoadLibrary(lib);
                 }
             }
@@ -276,12 +362,78 @@ namespace Xenon.SlideAssembly.LayoutManagement
 
                     if (typeMatched != null)
                     {
-                        return (true, typeMatched.RawSource);
+                        // resolve macros
+                        // 1. assumes that all libraries have any defined macros provided a default- so it should be able to put something here...
+                        // 2. during compilation, we need to forward declare any macro overrides, such that by the point they get invoked in a layout, we can find them
+                        return (true, _Internal_ResolveLayoutMacros(typeMatched.RawSource, typeMatched.Name, typeMatched.Group, libname));
                     }
                 }
             }
             return (false, "");
 
         }
+
+        public GetLayoutPreview GetLayoutPreview { get => _Internal_GetLayoutPreview; }
+
+        private (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) _Internal_GetLayoutPreview(string layoutname, string groupname, string libname, string layoutjson)
+        {
+            string json = _Internal_ResolveLayoutMacros(layoutjson, layoutname, groupname, libname);
+            if (LanguageKeywords.Commands.ContainsValue(groupname))
+            {
+                LanguageKeywordCommand cmd = LanguageKeywords.Commands.FirstOrDefault(x => x.Value == groupname).Key;
+                if (LanguageKeywords.LayoutForType.TryGetValue(cmd, out var proto))
+                {
+                    if (proto.prototypicalLayoutPreviewer.IsValidLayoutJson(json))
+                    {
+                        var r = proto.prototypicalLayoutPreviewer.GetPreviewForLayout(json);
+                        return (true, r.main, r.key);
+                    }
+                }
+            }
+
+            return (false, new Image<Bgra32>(1920, 1080), new Image<Bgra32>(1920, 1080));
+
+        }
+
+        public void SetMacroOverride(string libname, string macroname, string value)
+        {
+            if (libname != DEFAULTLIBNAME) // won't allow overrideing macros in default lib
+            {
+                if (m_libraries.ContainsKey(libname))
+                {
+                    Dictionary<string, string> macros;
+                    if (!m_macroOverrides.TryGetValue(libname, out macros))
+                    {
+                        macros = new Dictionary<string, string>();
+                    }
+                    macros[macroname] = value;
+                    m_macroOverrides[libname] = macros;
+                }
+            }
+        }
+
+
+
+        [JsonIgnore]
+        public GetLibraryMacros GetLibraryMacros { get => _Internal_GetLibraryMacros; }
+        private Dictionary<string, string> _Internal_GetLibraryMacros(string libname)
+        {
+            if (m_libraries.TryGetValue(libname, out var lib))
+            {
+                return lib.Macros;
+            }
+            return new Dictionary<string, string>();
+        }
+
+        [JsonIgnore]
+        public EditLibraryMacros EditLibraryMacros { get => _Internal_EditLibraryMacros; }
+        private void _Internal_EditLibraryMacros(string libname, Dictionary<string, string> value)
+        {
+            if (m_libraries.ContainsKey(libname))
+            {
+                m_libraries[libname].Macros = value;
+            }
+        }
+
     }
 }

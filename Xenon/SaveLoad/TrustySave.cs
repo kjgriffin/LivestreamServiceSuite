@@ -481,17 +481,17 @@ namespace Xenon.SaveLoad
             });
         }
 
-        public static async Task ExportLibrary(string versioninfo, LayoutLibrary lib, StreamWriter writer)
+        public static async Task ExportLibrary(string versioninfo, XenonLayoutLibrary lib, StreamWriter writer)
         {
-            var metadata = new { XenonVersion = versioninfo, Date = DateTime.Now.ToString("dd/MM/yyyy") };
+            //var metadata = new { XenonVersion = versioninfo, Date = DateTime.Now.ToString("dd/MM/yyyy") };
             using (writer)
             {
-                var obj = new
-                {
-                    Lib = lib,
-                    Metadata = metadata,
-                };
-                await writer.WriteAsync(JsonSerializer.Serialize(obj, new JsonSerializerOptions() { IncludeFields = true }));
+                //var obj = new
+                //{
+                //    Lib = lib,
+                //    Metadata = metadata,
+                //};
+                await writer.WriteAsync(JsonSerializer.Serialize(lib, new JsonSerializerOptions() { IncludeFields = true }));
             }
         }
 

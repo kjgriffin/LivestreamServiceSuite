@@ -1,0 +1,43 @@
+﻿<Window x:Class="UIControls.MacroEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UIControls"
+        mc:Ignorable="d"
+        Title="MacroEditor" Height="800" Width="1200">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <ListBox Name="lbMacroNames" SelectionChanged="lbMacroNames_SelectionChanged"></ListBox>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft">
+                    <Button Width="100" Margin="10" Click="AddMacro">Add</Button>
+                    <TextBox Width="200" Name="tbMName" Margin="10" FontSize="15" TextAlignment="Center" VerticalContentAlignment="Center">MacroName</TextBox>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Button Width="100" Margin="10" Click="SaveMacros">SAVE</Button>
+                    <Button Width="100" Margin="10" Click="DiscardMacros">DISCARD</Button>
+                </StackPanel>
+
+            </Grid>
+
+            <TextBox Name="tbView" Grid.Column="1" Margin="10"></TextBox>
+
+        </Grid>
+    </Grid>
+</Window>

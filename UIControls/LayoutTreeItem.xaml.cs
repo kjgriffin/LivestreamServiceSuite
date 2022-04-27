@@ -12,6 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using Xenon.SlideAssembly;
+using Xenon.SlideAssembly.LayoutManagement;
 
 namespace UIControls
 {
@@ -35,7 +36,9 @@ namespace UIControls
         Action updateCallback;
         Action<string, string, string> deleteCallback;
 
-        public LayoutTreeItem(string libname, List<string> libs, string layoutname, string layoutjson, string group, bool canedit, SaveLayoutToLibrary save, Action updatecallback, Action<string, string, string> deletecallback)
+        GetLayoutPreview getLayoutPreview;
+
+        public LayoutTreeItem(string libname, List<string> libs, string layoutname, string layoutjson, string group, bool canedit, SaveLayoutToLibrary save, Action updatecallback, Action<string, string, string> deletecallback, GetLayoutPreview getLayoutPreview)
         {
             InitializeComponent();
             name = layoutname;
@@ -48,6 +51,7 @@ namespace UIControls
             tbDisplayName.Text = layoutname;
             updateCallback = updatecallback;
             this.deleteCallback = deletecallback;
+            this.getLayoutPreview = getLayoutPreview;
 
             if (!canedit)
             {
@@ -58,7 +62,7 @@ namespace UIControls
 
         private void Click_EditLayout(object sender, RoutedEventArgs e)
         {
-            LayoutDesigner designer = new LayoutDesigner(lib, libs, name, json, group, canedit, SaveLayout, updateCallback);
+            LayoutDesigner designer = new LayoutDesigner(lib, libs, name, json, group, canedit, SaveLayout, updateCallback, getLayoutPreview);
             designer.Show();
         }
 
