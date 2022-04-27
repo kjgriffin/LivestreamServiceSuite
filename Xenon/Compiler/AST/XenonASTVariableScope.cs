@@ -159,7 +159,7 @@ namespace Xenon.Compiler.AST
             Variables[vname] = value;
 
             // don't REALLY like this, but this is the only place we can do it
-            var match = Regex.Match(vname, "MACRO@(?<lib>.*)::(?<name>(.*))");
+            var match = Regex.Match(vname, "(?<lib>.*)@(?<name>(.*))");
             if (match.Success)
             {
                 project.LayoutManager.SetMacroOverride(match.Groups["lib"].Value, match.Groups["name"].Value, value);

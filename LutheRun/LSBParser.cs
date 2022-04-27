@@ -586,7 +586,7 @@ namespace LutheRun
                 // macros!
                 foreach (var macro in LSBImportOptions.Macros)
                 {
-                    stringBuilder.AppendLine($"#var(\"MACRO@{LSBImportOptions.ServiceThemeLib}::{macro.Key}\", ```{macro.Value}```)".Indent(indentDepth, indentSpace));
+                    stringBuilder.AppendLine($"#var(\"{LSBImportOptions.ServiceThemeLib}@{macro.Key}\", ```{macro.Value}```)".Indent(indentDepth, indentSpace));
                 }
                 stringBuilder.AppendLine();
 
