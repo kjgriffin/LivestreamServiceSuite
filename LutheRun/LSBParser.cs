@@ -582,6 +582,14 @@ namespace LutheRun
                 stringBuilder.AppendLine($"#var(\"stitchedimage.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")".Indent(indentDepth, indentSpace));
                 stringBuilder.AppendLine($"#var(\"texthymn.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")".Indent(indentDepth, indentSpace));
                 stringBuilder.AppendLine();
+
+                // macros!
+                foreach (var macro in LSBImportOptions.Macros)
+                {
+                    stringBuilder.AppendLine($"#var(\"MACRO@{LSBImportOptions.ServiceThemeLib}::{macro.Key}\", ```{macro.Value}```)".Indent(indentDepth, indentSpace));
+                }
+                stringBuilder.AppendLine();
+
             }
 
             foreach (var se in ServiceElements)

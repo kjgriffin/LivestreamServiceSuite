@@ -1,6 +1,6 @@
 ﻿#scope(hymnintro)
 {
-$>#var("upnext.Layout", "Xenon.Hymns::NoNumber")
+$>#var("upnext.Layout", "Xenon.CommonColored::NoNumber")
 
 $>#upnext("Next Hymn", "$HYMNNAME", "")
 $>{

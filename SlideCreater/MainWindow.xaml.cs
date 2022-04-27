@@ -1149,6 +1149,11 @@ namespace SlideCreater
                 {
                     // make user select the theme
                     options.ServiceThemeLib = GetUserSelectedThemeForImport();
+                    // lets ask Xenon for the macros for the libray
+                    var tmp = IProjectLayoutLibraryManager.GetDefaultBundledLibraries();
+                    options.Macros = IProjectLayoutLibraryManager.GetDefaultBundledLibraries()
+                                                                 .FirstOrDefault(x => x.LibName == options.ServiceThemeLib)?.Macros ?? new Dictionary<string, string>();
+
                 }
                 await parser.ParseHTML(ofd.FileName);
                 parser.Serviceify(options);
@@ -1164,7 +1169,7 @@ namespace SlideCreater
 
         private string GetUserSelectedThemeForImport()
         {
-            TbPromptDialog dialog = new TbPromptDialog("Select Theme To Import With", "Layout Library Name", "Xenon.Green");
+            TbPromptDialog dialog = new TbPromptDialog("Select Theme To Import With", "Layout Library Name", "Xenon.CommonColored");
             dialog.ShowDialog();
             if (!string.IsNullOrEmpty(dialog.ResultValue))
             {

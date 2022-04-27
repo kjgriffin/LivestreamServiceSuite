@@ -2,8 +2,12 @@
 using SixLabors.ImageSharp.PixelFormats;
 
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 using Xenon.Compiler;
+using Xenon.LayoutInfo;
 using Xenon.SaveLoad;
 using Xenon.SlideAssembly.LayoutManagement;
 
@@ -32,5 +36,28 @@ namespace Xenon.SlideAssembly
         List<string> FindTypesSupportingLayouts();
 
         void SetMacroOverride(string libname, string macroname, string value);
+
+
+        public static List<XenonLayoutLibrary> GetDefaultBundledLibraries()
+        {
+            List<XenonLayoutLibrary> res = new List<XenonLayoutLibrary>();
+            var names = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo))
+                .GetManifestResourceNames()
+                .Where(n => n.StartsWith("Xenon.LayoutInfo.Defaults.NewLibBundles"));
+
+            foreach (var name in names)
+            {
+                var stream = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo)).GetManifestResourceStream(name);
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    string json = sr.ReadToEnd();
+                    var lib = JsonSerializer.Deserialize<XenonLayoutLibrary>(json, new JsonSerializerOptions() { IncludeFields = true });
+                    res.Add(lib);
+                }
+            }
+            return res;
+        }
+
+
     }
 }
