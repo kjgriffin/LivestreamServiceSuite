@@ -152,7 +152,7 @@ namespace Xenon.SaveLoad
                             // Project has layouts defined
                             // we can replace the defaults created by new Project()
                             var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
-                            proj.ProjectLayouts.LoadLibrary(lib.TrustilyUpgradeOldLayoutLibrary(originalVersion, currentVersion));
+                            proj.LayoutManager.LoadLibrary(lib.TrustilyUpgradeOldLayoutLibrary(originalVersion, currentVersion));
 
                         }
                     }
@@ -443,13 +443,13 @@ namespace Xenon.SaveLoad
 
                 string layoutsfolderpath = $"layouts{Path.DirectorySeparatorChar}";
                 var layoutsfolder = archive.CreateEntry(layoutsfolderpath);
-                var libraries = proj.ProjectLayouts.GetAllLibraryLayoutsByGroup();
+                var libraries = proj.LayoutManager.AllLibraries();
                 Dictionary<string, string> layoutsmapdict = new Dictionary<string, string>();
                 foreach (var lib in libraries)
                 {
-                    ZipArchiveEntry layoutlib_entry = archive.CreateEntry(Path.Combine(layoutsfolderpath, lib.LibraryName + ".json"));
+                    ZipArchiveEntry layoutlib_entry = archive.CreateEntry(Path.Combine(layoutsfolderpath, lib.LibName + ".json"));
                     await ExportLibrary(versioninfo, lib, new StreamWriter(layoutlib_entry.Open()));
-                    layoutsmapdict[lib.LibraryName] = Path.Combine(layoutsfolderpath, lib.LibraryName + ".json");
+                    layoutsmapdict[lib.LibName] = Path.Combine(layoutsfolderpath, lib.LibName + ".json");
                 }
 
                 string layoutsmapjsonstr = JsonSerializer.Serialize(layoutsmapdict);
@@ -486,7 +486,7 @@ namespace Xenon.SaveLoad
             {
                 string json = await sr.ReadToEndAsync();
                 var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
-                proj?.ProjectLayouts?.LoadLibrary(lib);
+                proj?.LayoutManager?.LoadLibrary(lib);
 
             }
         }

@@ -227,10 +227,6 @@ namespace SlideCreater
             TbConfig.Options.IndentationSize = 4;
             TbConfig.Options.ConvertTabsToSpaces = true;
 
-            NewProject().Wait();
-            dirty = false;
-            ProjectState = ProjectState.NewProject;
-            ActionState = ActionState.Ready;
             // Load Version Number
             var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SlideCreater.version.json");
             using (StreamReader sr = new StreamReader(stream))
@@ -240,6 +236,17 @@ namespace SlideCreater
             }
             // Set title
             Title = $"Slide Creater - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
+
+            // Initialize XenonLibrary to use version
+            Xenon.Versioning.Versioning.SetVersion(VersionInfo);
+
+
+
+
+            NewProject().Wait();
+            dirty = false;
+            ProjectState = ProjectState.NewProject;
+            ActionState = ActionState.Ready;
 
             // enable optional features
             EnableDisableOptionalFeatures();
@@ -1478,7 +1485,7 @@ namespace SlideCreater
                 TbPromptDialog namedialg = new TbPromptDialog("Create New Layout", "Layout Name", $"{group}.NewLayout");
                 if (namedialg.ShowDialog() == true)
                 {
-                    _proj.ProjectLayouts.CreateNewLayoutFromDefaults(libname, group, namedialg.ResultValue);
+                    _proj.LayoutManager.CreateNewLayoutFromDefaults(libname, group, namedialg.ResultValue);
                     SetupLayoutsTreeVew();
                 }
             }
@@ -1490,30 +1497,55 @@ namespace SlideCreater
             Dictionary<string, bool> oldstate = RememberTreeExpansion(LayoutsTreeView);
             LayoutsTreeView.Items.Clear();
 
-            foreach (var library in _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup())
+            foreach (var library in _proj.LayoutManager.AllLibraries())
             {
                 TreeViewItem treelibrary = new TreeViewItem();
-                treelibrary.Header = $"{library.LibraryName}";
+                treelibrary.Header = $"{library.LibName}";
                 treelibrary.Selected += Treelibrary_Selected;
 
-                bool editable = library.LibraryName != ProjectLayoutLibraryManager.DEFAULTLIBNAME;
+                bool editable = library.LibName != ProjectLayoutLibraryManager.DEFAULTLIBNAME;
 
-                foreach (var group in library.Library)
+                List<string> foundGroups = new List<string>();
+                foreach (var group in library.AsGroupedLayouts())
                 {
-                    LayoutGroupTreeItem treegroup = new LayoutGroupTreeItem(group.group, group.group, editable, (g) => CreateNewLayoutOnLibrary(library.LibraryName, g));
+                    LayoutGroupTreeItem treegroup = new LayoutGroupTreeItem(group.Group, group.Group, editable, (g) => CreateNewLayoutOnLibrary(library.LibName, g));
                     treegroup.Selected += Treegroup_Selected;
-                    foreach (var layout in group.layouts)
+                    foreach (var layout in group.Layouts)
                     {
-                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibraryName, _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup().Select(x => x.LibraryName).ToList(), layout.Key, layout.Value, group.group, editable, _proj.ProjectLayouts.SaveLayoutToLibrary, () => Dispatcher.Invoke(SetupLayoutsTreeVew), (string lib, string group, string layout) => { _proj.ProjectLayouts.DeleteLayout(lib, group, layout); Dispatcher.Invoke(SetupLayoutsTreeVew); });
+                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibName,
+                                                                           _proj.LayoutManager.AllLibraries()
+                                                                                              .Select(x => x.LibName)
+                                                                                              .ToList(),
+                                                                           layout.Value.Name,
+                                                                           layout.Value.RawSource,
+                                                                           group.Group,
+                                                                           editable,
+                                                                           _proj.LayoutManager.SaveLayoutToLibrary,
+                                                                           () => Dispatcher.Invoke(SetupLayoutsTreeVew),
+                                                                           (string lib, string group, string layout) =>
+                                                                           {
+                                                                               _proj.LayoutManager.DeleteLayout(lib, group, layout); Dispatcher.Invoke(SetupLayoutsTreeVew);
+                                                                           });
                         treegroup.Items.Add(treelayoutleaf);
                     }
 
-                    treegroup.IsExpanded = oldstate.GetOrDefault($"{library.LibraryName}.{group.group}", false);
+                    treegroup.IsExpanded = oldstate.GetOrDefault($"{library.LibName}.{group.Group}", false);
+
+                    treelibrary.Items.Add(treegroup);
+                    foundGroups.Add(group.Group);
+                }
+                // add missing groups
+                foreach (var missingGroup in _proj.LayoutManager.FindTypesSupportingLayouts().Where(x => !foundGroups.Contains(x)))
+                {
+                    LayoutGroupTreeItem treegroup = new LayoutGroupTreeItem(missingGroup, missingGroup, editable, (g) => CreateNewLayoutOnLibrary(library.LibName, g));
+                    treegroup.Selected += Treegroup_Selected;
+                    
+                    treegroup.IsExpanded = oldstate.GetOrDefault($"{library.LibName}.{missingGroup}", false);
 
                     treelibrary.Items.Add(treegroup);
                 }
 
-                treelibrary.IsExpanded = oldstate.GetOrDefault(library.LibraryName, false);
+                treelibrary.IsExpanded = oldstate.GetOrDefault(library.LibName, false);
 
                 LayoutsTreeView.Items.Add(treelibrary);
             }
@@ -1562,8 +1594,8 @@ namespace SlideCreater
         {
             if (!string.IsNullOrWhiteSpace(selectedLib))
             {
-                var lib = _proj.ProjectLayouts.GetLibraryByName(selectedLib);
-                if (lib.HasValue)
+                var lib = _proj.LayoutManager.GetLibraryByName(selectedLib);
+                if (lib != null)
                 {
                     // export 'er real good
                     SaveFileDialog dialog = new SaveFileDialog();
@@ -1574,7 +1606,7 @@ namespace SlideCreater
                     dialog.FileName = selectedLib;
                     if (dialog.ShowDialog() == true)
                     {
-                        await Xenon.SaveLoad.TrustySave.ExportLibrary(VersionInfo.ToString(), lib.Value, new StreamWriter(File.Open(dialog.FileName, FileMode.OpenOrCreate)));
+                        await Xenon.SaveLoad.TrustySave.ExportLibrary(VersionInfo.ToString(), lib, new StreamWriter(File.Open(dialog.FileName, FileMode.OpenOrCreate)));
                     }
                 }
             }
@@ -1598,7 +1630,7 @@ namespace SlideCreater
         {
             if (!string.IsNullOrWhiteSpace(selectedLib))
             {
-                _proj.ProjectLayouts.RemoveLib(selectedLib);
+                _proj.LayoutManager.RemoveLib(selectedLib);
                 SetupLayoutsTreeVew();
             }
         }
@@ -1607,7 +1639,7 @@ namespace SlideCreater
             TbPromptDialog prompt = new TbPromptDialog("New Library", "Library Name", "User.Library");
             if (prompt.ShowDialog() == true)
             {
-                _proj.ProjectLayouts.InitializeNewLibrary(prompt.ResultValue);
+                _proj.LayoutManager.InitializeNewLibrary(prompt.ResultValue);
                 SetupLayoutsTreeVew();
             }
         }

@@ -116,8 +116,8 @@ namespace Xenon.Compiler
 
 
 
-            string jsonproj = JsonSerializer.Serialize<Project>(proj, new JsonSerializerOptions() { MaxDepth = 256, ReferenceHandler = ReferenceHandler.Preserve });
-            Debug.WriteLine(jsonproj);
+            //string jsonproj = JsonSerializer.Serialize<Project>(proj, new JsonSerializerOptions() { MaxDepth = 256, ReferenceHandler = ReferenceHandler.Preserve });
+            //Debug.WriteLine(jsonproj);
 
             progress?.Report(100);
 

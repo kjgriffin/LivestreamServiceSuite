@@ -16,13 +16,17 @@ using Xenon.Compiler.Suggestions;
 using System.Collections;
 using IntegratedPresenter.BMDSwitcher.Config;
 using Configurations.SwitcherConfig;
+using Xenon.SlideAssembly.LayoutManagement;
 
 namespace Xenon.SlideAssembly
 {
     public class Project
     {
         public SlideLayout Layouts { get; set; } = new SlideLayout();
-        public ProjectLayoutLibraryManager ProjectLayouts { get; set; } = new ProjectLayoutLibraryManager();
+        //public ProjectLayoutLibraryManager ProjectLayouts { get; set; } = new ProjectLayoutLibraryManager();
+
+        public IProjectLayoutLibraryManager LayoutManager { get; private set; } = new XenonLayoutManager();
+
         public List<Slide> Slides { get; set; } = new List<Slide>();
 
         public Dictionary<string, List<string>> ProjectVariables = new Dictionary<string, List<string>>();
@@ -97,7 +101,7 @@ namespace Xenon.SlideAssembly
                 Directory.CreateDirectory(_loadTmpPath);
                 Directory.CreateDirectory(Path.Combine(_loadTmpPath, "assets"));
             }
-            ProjectLayouts.LoadDefaults();
+            LayoutManager.LoadDefaults();
             if (adddefaultassets)
             {
                 InitializeDefaultAssets();
@@ -113,7 +117,7 @@ namespace Xenon.SlideAssembly
 
         public Project()
         {
-            ProjectLayouts.LoadDefaults();
+            LayoutManager.LoadDefaults();
             //ProjectLayouts.InitializeNewLibrary("User.Library");
             XenonSuggestionService = new XenonSuggestionService(this);
             InitializeDefaultAssets();
