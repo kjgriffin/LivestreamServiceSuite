@@ -247,6 +247,11 @@ namespace Xenon.SlideAssembly.LayoutManagement
             };
             m_libraries[library.LibName] = library;
         }
+        public void LoadLibrary(XenonLayoutLibrary lib)
+        {
+            m_libraries[lib.LibName] = lib;
+        }
+
 
         public void RemoveLib(string libname)
         {

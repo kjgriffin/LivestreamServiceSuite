@@ -18,6 +18,7 @@ namespace Xenon.SlideAssembly
         bool InitializeNewLibrary(string libname);
         void LoadDefaults();
         void LoadLibrary(LayoutLibEntry lib);
+        void LoadLibrary(XenonLayoutLibrary lib);
         void RemoveLib(string libname);
         (bool found, string json) FindLayoutByFullyQualifiedName(LanguageKeywordCommand type, string fullname, string defaultLibrary = "");
         List<string> FindTypesSupportingLayouts();

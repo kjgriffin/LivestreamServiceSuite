@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Xenon.Compiler;
 using Xenon.LayoutInfo;
 using Xenon.SlideAssembly;
+using Xenon.SlideAssembly.LayoutManagement;
 
 namespace Xenon.SaveLoad
 {
@@ -151,9 +152,18 @@ namespace Xenon.SaveLoad
                             string json = await sr.ReadToEndAsync();
                             // Project has layouts defined
                             // we can replace the defaults created by new Project()
-                            var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
-                            proj.LayoutManager.LoadLibrary(lib.TrustilyUpgradeOldLayoutLibrary(originalVersion, currentVersion));
+                            if (originalVersion.MeetsMinimumVersion(1, 7, 2, 31))
+                            {
+                                // new style of libraries
+                                var lib = JsonSerializer.Deserialize<XenonLayoutLibrary>(json, new JsonSerializerOptions() { IncludeFields = true });
+                                proj.LayoutManager.LoadLibrary(lib); // TODO: upgrade libs...
+                            }
+                            else
+                            {
 
+                                var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
+                                proj.LayoutManager.LoadLibrary(lib.TrustilyUpgradeOldLayoutLibrary(originalVersion, currentVersion));
+                            }
                         }
                     }
                 }
@@ -448,7 +458,12 @@ namespace Xenon.SaveLoad
                 foreach (var lib in libraries)
                 {
                     ZipArchiveEntry layoutlib_entry = archive.CreateEntry(Path.Combine(layoutsfolderpath, lib.LibName + ".json"));
-                    await ExportLibrary(versioninfo, lib, new StreamWriter(layoutlib_entry.Open()));
+                    //await ExportLibrary(versioninfo, lib, new StreamWriter(layoutlib_entry.Open()));
+                    string json = JsonSerializer.Serialize(lib);
+                    using (var writer = new StreamWriter(layoutlib_entry.Open()))
+                    {
+                        await writer.WriteAsync(json);
+                    }
                     layoutsmapdict[lib.LibName] = Path.Combine(layoutsfolderpath, lib.LibName + ".json");
                 }
 
