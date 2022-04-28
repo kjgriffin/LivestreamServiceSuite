@@ -6,7 +6,31 @@
         xmlns:local="clr-namespace:UIControls"
         mc:Ignorable="d"
         Title="MacroEditor" Height="800" Width="1200">
-    <Grid>
+    <Window.Resources>
+        <Style TargetType="Button" x:Name="DarkBtn" x:Key="DarkBtn">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Name="border" BorderBrush="#575757" BorderThickness="2">
+                                <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#676767" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#373737" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#272727">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
@@ -22,21 +46,21 @@
                     <RowDefinition Height="50"></RowDefinition>
                     <RowDefinition Height="50"></RowDefinition>
                 </Grid.RowDefinitions>
-                <ListBox Name="lbMacroNames" SelectionChanged="lbMacroNames_SelectionChanged"></ListBox>
+                <ListBox Name="lbMacroNames" SelectionChanged="lbMacroNames_SelectionChanged" Margin="10" KeyDown="lbMacroNames_KeyDown" Background="#171717" Foreground="#eaeaea" BorderBrush="#474747"></ListBox>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft">
-                    <Button Width="100" Margin="10" Click="AddMacro">Add</Button>
-                    <TextBox Width="200" Name="tbMName" Margin="10" FontSize="15" TextAlignment="Center" VerticalContentAlignment="Center">MacroName</TextBox>
+                    <Button Width="100" Margin="10" Click="AddMacro" Style="{StaticResource DarkBtn}" Foreground="#eaeaea">Add</Button>
+                    <TextBox Width="200" Name="tbMName" Margin="10" FontSize="15" TextAlignment="Center" VerticalContentAlignment="Center" FlowDirection="LeftToRight" Background="#171717" BorderBrush="#474747" Foreground="#eaeaea">MacroName</TextBox>
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Button Width="100" Margin="10" Click="SaveMacros">SAVE</Button>
-                    <Button Width="100" Margin="10" Click="DiscardMacros">DISCARD</Button>
+                    <Button Width="100" Margin="10" Click="SaveMacros" Foreground="#eaeaea" Style="{StaticResource DarkBtn}">SAVE</Button>
+                    <Button Width="100" Margin="10" Click="DiscardMacros" Foreground="#eaeaea" Style="{StaticResource DarkBtn}">DISCARD</Button>
                 </StackPanel>
 
             </Grid>
 
-            <TextBox Name="tbView" Grid.Column="1" Margin="10"></TextBox>
+            <TextBox Name="tbView" Grid.Column="1" Margin="10" Background="#171717" BorderBrush="#474747" Foreground="#eaeaea"></TextBox>
 
         </Grid>
     </Grid>

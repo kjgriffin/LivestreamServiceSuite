@@ -161,7 +161,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
             }
 
 #if DEBUG
-            System.Diagnostics.Debugger.Break();
+            //System.Diagnostics.Debugger.Break();
 #endif
 
             return "_$MISSING$_"; //... hmmm this is probably bad

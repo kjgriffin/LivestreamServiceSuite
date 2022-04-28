@@ -68,6 +68,10 @@ namespace UIControls
         int id = 1;
         private void AddMacro(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(tbMName.Text))
+            {
+                return;
+            }
             new_Macros[tbMName.Text] = "";
             tbMName.Text = $"New Macro {id++}";
             UpdateMacroNamesUI();
@@ -86,6 +90,20 @@ namespace UIControls
         {
             Accepted = false;
             Close();
+        }
+
+        private void lbMacroNames_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                if (lbMacroNames.SelectedItem != null)
+                {
+                    lastSelection = lbMacroNames.SelectedItem.ToString();
+                    new_Macros.Remove(lastSelection);
+                    lastSelection = "";
+                    UpdateMacroNamesUI();
+                }
+            }
         }
     }
 }
