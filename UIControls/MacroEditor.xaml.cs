@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +12,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+
+using Xenon.SlideAssembly.LayoutManagement;
 
 namespace UIControls
 {
@@ -24,7 +27,14 @@ namespace UIControls
 
         public bool Accepted = false;
 
-        public MacroEditor(string libname, Dictionary<string, string> macros)
+        RenameMacroReferences renameMacro;
+        FindAllMacroReferences findRefs;
+
+        private Stack<(string, string)> renames = new Stack<(string, string)>();
+
+        private string libname;
+
+        public MacroEditor(string libname, Dictionary<string, string> macros, FindAllMacroReferences find, RenameMacroReferences rename)
         {
             InitializeComponent();
 
@@ -34,6 +44,10 @@ namespace UIControls
             orig_Macros = macros;
             new_Macros = new Dictionary<string, string>(macros);
 
+            this.findRefs = find;
+            this.renameMacro = rename;
+            this.libname = libname;
+
             UpdateMacroNamesUI();
         }
 
@@ -42,14 +56,19 @@ namespace UIControls
             lbMacroNames.Items.Clear();
             foreach (var macro in new_Macros)
             {
-                lbMacroNames.Items.Add(macro.Key);
+                lbMacroNames.Items.Add($"{macro.Key} ({findRefs(macro.Key, libname)})");
             }
             if (lbMacroNames.Items.Count > 0)
             {
                 lbMacroNames.SelectedIndex = 0;
-                lastSelection = lbMacroNames.Items[0].ToString();
+                GetSelection();
                 tbView.Text = new_Macros[lastSelection];
             }
+        }
+
+        private void GetSelection()
+        {
+            lastSelection = Regex.Match(lbMacroNames.SelectedItem?.ToString() ?? "", @"(?<macro>.*) \([-\d]*\)$")?.Groups["macro"]?.Value ?? "";
         }
 
         string lastSelection = "";
@@ -61,7 +80,7 @@ namespace UIControls
                 new_Macros[lastSelection] = tbView.Text;
 
                 // show new selection
-                lastSelection = lbMacroNames.SelectedItem.ToString();
+                GetSelection();
                 tbView.Text = new_Macros[lastSelection].ToString();
             }
         }
@@ -79,7 +98,7 @@ namespace UIControls
 
         private void SaveMacros(object sender, RoutedEventArgs e)
         {
-            lastSelection = lbMacroNames.SelectedItem.ToString();
+            GetSelection();
             new_Macros[lastSelection] = tbView.Text;
 
             Accepted = true;
@@ -89,6 +108,13 @@ namespace UIControls
         private void DiscardMacros(object sender, RoutedEventArgs e)
         {
             Accepted = false;
+
+            // undo all the renaming in order
+            while(renames.TryPop(out var rename))
+            {
+                this.renameMacro(rename.Item2, rename.Item1, libname);
+            }
+
             Close();
         }
 
@@ -98,11 +124,32 @@ namespace UIControls
             {
                 if (lbMacroNames.SelectedItem != null)
                 {
-                    lastSelection = lbMacroNames.SelectedItem.ToString();
+                    GetSelection();
                     new_Macros.Remove(lastSelection);
                     lastSelection = "";
                     UpdateMacroNamesUI();
                 }
+            }
+        }
+
+        private void RenameMacro(object sender, RoutedEventArgs e)
+        {
+            GetSelection();
+            if (!string.IsNullOrWhiteSpace(tbMName.Text) && lastSelection != "")
+            {
+                // track what we're doing so discard can undo it
+                renames.Push((lastSelection, tbMName.Text));
+                
+                renameMacro(lastSelection, tbMName.Text, libname);
+
+                // rename it here too...
+                var val = new_Macros[lastSelection];
+                new_Macros.Remove(lastSelection);
+                new_Macros[tbMName.Text] = val;
+
+                lastSelection = "";
+
+                UpdateMacroNamesUI();
             }
         }
     }

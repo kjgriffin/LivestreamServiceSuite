@@ -1500,6 +1500,24 @@ namespace SlideCreater
         private void SetupLayoutsTreeVew()
         {
             Dictionary<string, bool> oldstate = RememberTreeExpansion(LayoutsTreeView);
+
+            foreach (var item in LayoutsTreeView.Items)
+            {
+                var library = item as TreeViewItem;
+                if (library != null)
+                {
+                    library.Selected -= Treelibrary_Selected;
+                    foreach (var citem in library.Items)
+                    {
+                        var group = citem as LayoutGroupTreeItem;
+                        if (group != null)
+                        {
+                            group.Selected -= Treelibrary_Selected;
+                        }
+                    }
+                }
+            }
+
             LayoutsTreeView.Items.Clear();
 
             foreach (var library in _proj.LayoutManager.AllLibraries())
@@ -1511,18 +1529,21 @@ namespace SlideCreater
                 bool editable = library.LibName != ProjectLayoutLibraryManager.DEFAULTLIBNAME;
 
                 List<string> foundGroups = new List<string>();
+
+                var groupsToAdd = new List<LayoutGroupTreeItem>();
+
                 foreach (var group in library.AsGroupedLayouts())
                 {
                     LayoutGroupTreeItem treegroup = new LayoutGroupTreeItem(group.Group, group.Group, editable, (g) => CreateNewLayoutOnLibrary(library.LibName, g));
                     treegroup.Selected += Treegroup_Selected;
-                    foreach (var layout in group.Layouts)
+                    foreach (var layout in group.Layouts.OrderBy(x => x.Value.Name)) // order these consistently
                     {
                         LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibName,
                                                                            _proj.LayoutManager.AllLibraries()
                                                                                               .Select(x => x.LibName)
                                                                                               .ToList(),
                                                                            layout.Value.Name,
-                                                                           layout.Value.RawSource,
+                                                                           _proj.LayoutManager.GetLayoutSource,
                                                                            group.Group,
                                                                            editable,
                                                                            _proj.LayoutManager.SaveLayoutToLibrary,
@@ -1538,7 +1559,8 @@ namespace SlideCreater
 
                     treegroup.IsExpanded = oldstate.GetOrDefault($"{library.LibName}.{group.Group}", false);
 
-                    treelibrary.Items.Add(treegroup);
+                    //treelibrary.Items.Add(treegroup);
+                    groupsToAdd.Add(treegroup);
                     foundGroups.Add(group.Group);
                 }
                 // add missing groups
@@ -1549,11 +1571,23 @@ namespace SlideCreater
 
                     treegroup.IsExpanded = oldstate.GetOrDefault($"{library.LibName}.{missingGroup}", false);
 
-                    treelibrary.Items.Add(treegroup);
+                    //treelibrary.Items.Add(treegroup);
+                    groupsToAdd.Add(treegroup);
                 }
 
                 // add macros editor
-                treelibrary.Items.Insert(0, new LibraryMacrosTreeItem("Macros...", library.LibName, true, _proj.LayoutManager.GetLibraryMacros, _proj.LayoutManager.EditLibraryMacros));
+                treelibrary.Items.Add(new LibraryMacrosTreeItem("Macros...",
+                                                                      library.LibName,
+                                                                      true,
+                                                                      _proj.LayoutManager.GetLibraryMacros,
+                                                                      _proj.LayoutManager.EditLibraryMacros,
+                                                                      _proj.LayoutManager.FindAllMacroRefs,
+                                                                      _proj.LayoutManager.RenameAllMacroRefs));
+                // add groups- but in order!
+                foreach (var groupItem in groupsToAdd.OrderBy(x => x.HName))
+                {
+                    treelibrary.Items.Add(groupItem);
+                }
 
 
                 treelibrary.IsExpanded = oldstate.GetOrDefault(library.LibName, false);

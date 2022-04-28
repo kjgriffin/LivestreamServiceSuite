@@ -29,7 +29,10 @@ namespace UIControls
         GetLibraryMacros getMacros;
         EditLibraryMacros editMacros;
 
-        public LibraryMacrosTreeItem(string hname, string libName, bool editable, GetLibraryMacros getMacros, EditLibraryMacros editMacros)
+        FindAllMacroReferences find;
+        RenameMacroReferences rename;
+
+        public LibraryMacrosTreeItem(string hname, string libName, bool editable, GetLibraryMacros getMacros, EditLibraryMacros editMacros, FindAllMacroReferences find, RenameMacroReferences rename)
         {
             InitializeComponent();
 
@@ -38,6 +41,8 @@ namespace UIControls
 
             this.getMacros = getMacros;
             this.editMacros = editMacros;
+            this.find = find;
+            this.rename = rename;
 
             tbHeader.Text = HName;
 
@@ -54,7 +59,7 @@ namespace UIControls
 
         private void Click_EditMacros(object sender, RoutedEventArgs e)
         {
-            MacroEditor editor = new MacroEditor(LibName, getMacros(LibName));
+            MacroEditor editor = new MacroEditor(LibName, getMacros(LibName), find, rename);
             editor.ShowDialog();
             if (editor.Accepted)
             {

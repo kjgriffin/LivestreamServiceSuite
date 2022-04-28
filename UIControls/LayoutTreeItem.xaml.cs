@@ -22,7 +22,6 @@ namespace UIControls
     public partial class LayoutTreeItem : UserControl
     {
 
-        string json;
         string name;
         string group;
         string lib;
@@ -37,12 +36,13 @@ namespace UIControls
         Action<string, string, string> deleteCallback;
 
         GetLayoutPreview getLayoutPreview;
+        GetLayoutSource getLayoutSource;
 
-        public LayoutTreeItem(string libname, List<string> libs, string layoutname, string layoutjson, string group, bool canedit, SaveLayoutToLibrary save, Action updatecallback, Action<string, string, string> deletecallback, GetLayoutPreview getLayoutPreview)
+        public LayoutTreeItem(string libname, List<string> libs, string layoutname, GetLayoutSource getSource, string group, bool canedit, SaveLayoutToLibrary save, Action updatecallback, Action<string, string, string> deletecallback, GetLayoutPreview getLayoutPreview)
         {
             InitializeComponent();
             name = layoutname;
-            json = layoutjson;
+            getLayoutSource = getSource;
             lib = libname;
             this.libs = libs;
             this.canedit = canedit;
@@ -62,7 +62,7 @@ namespace UIControls
 
         private void Click_EditLayout(object sender, RoutedEventArgs e)
         {
-            LayoutDesigner designer = new LayoutDesigner(lib, libs, name, json, group, canedit, SaveLayout, updateCallback, getLayoutPreview);
+            LayoutDesigner designer = new LayoutDesigner(lib, libs, name, getLayoutSource(name, group, lib), group, canedit, SaveLayout, updateCallback, getLayoutPreview);
             designer.Show();
         }
 

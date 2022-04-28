@@ -21,6 +21,9 @@ namespace Xenon.SlideAssembly
 
         GetLibraryMacros GetLibraryMacros { get; }
         EditLibraryMacros EditLibraryMacros { get; }
+        FindAllMacroReferences FindAllMacroRefs { get; }
+        RenameMacroReferences RenameAllMacroRefs { get; }
+        GetLayoutSource GetLayoutSource { get; }
 
         void CreateNewLayoutFromDefaults(string libname, string group, string layoutname);
         void DeleteLayout(string libname, string group, string layout);

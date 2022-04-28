@@ -49,8 +49,9 @@
                 <ListBox Name="lbMacroNames" SelectionChanged="lbMacroNames_SelectionChanged" Margin="10" KeyDown="lbMacroNames_KeyDown" Background="#171717" Foreground="#eaeaea" BorderBrush="#474747"></ListBox>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft">
-                    <Button Width="100" Margin="10" Click="AddMacro" Style="{StaticResource DarkBtn}" Foreground="#eaeaea">Add</Button>
-                    <TextBox Width="200" Name="tbMName" Margin="10" FontSize="15" TextAlignment="Center" VerticalContentAlignment="Center" FlowDirection="LeftToRight" Background="#171717" BorderBrush="#474747" Foreground="#eaeaea">MacroName</TextBox>
+                    <Button Width="80" Margin="10" Click="AddMacro" Style="{StaticResource DarkBtn}" Foreground="#eaeaea">Add</Button>
+                    <TextBox Width="180" Name="tbMName" Margin="10" FontSize="15" TextAlignment="Center" VerticalContentAlignment="Center" FlowDirection="LeftToRight" Background="#171717" BorderBrush="#474747" Foreground="#eaeaea">MacroName</TextBox>
+                    <Button Width="80" Margin="10" Click="RenameMacro" Style="{StaticResource DarkBtn}" Foreground="#eaeaea">Rename</Button>
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal">

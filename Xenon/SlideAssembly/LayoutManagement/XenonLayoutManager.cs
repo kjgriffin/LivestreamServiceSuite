@@ -84,6 +84,11 @@ namespace Xenon.SlideAssembly.LayoutManagement
     public delegate Dictionary<string, string> GetLibraryMacros(string libname);
     public delegate void EditLibraryMacros(string libname, Dictionary<string, string> value);
 
+    public delegate void RenameMacroReferences(string oldname, string newname, string libname);
+    public delegate int FindAllMacroReferences(string name, string libname);
+
+    public delegate string GetLayoutSource(string name, string group, string lib);
+
     internal class XenonLayoutManager : IProjectLayoutLibraryManager
     {
 
@@ -321,7 +326,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
             }
         }
 
-       
+
 
         public void LoadLibrary(LayoutLibEntry lib)
         {
@@ -434,6 +439,47 @@ namespace Xenon.SlideAssembly.LayoutManagement
             {
                 m_libraries[libname].Macros = value;
             }
+        }
+
+
+        [JsonIgnore]
+        public FindAllMacroReferences FindAllMacroRefs { get => _Internal_FindAllMacroRefs; }
+        private int _Internal_FindAllMacroRefs(string macroName, string libname)
+        {
+            // ignore any recursive behaviour- we'll only try and find what's written on the first pass
+
+            int finds = 0;
+            foreach (var layout in m_libraries.Where(x => x.Value.LibName == libname).SelectMany(x => x.Value.Layouts))
+            {
+                // look at the source and find every instance of macro
+                finds += Regex.Matches(layout.RawSource, $"%{macroName}%").Count;
+            }
+
+            return finds;
+        }
+
+
+        [JsonIgnore]
+        public RenameMacroReferences RenameAllMacroRefs { get => _Internal_RenameAllMacroRefs; }
+        private void _Internal_RenameAllMacroRefs(string oldMacroName, string newMacroName, string libname)
+        {
+            foreach (var layout in m_libraries.Where(x => x.Value.LibName == libname).SelectMany(x => x.Value.Layouts))
+            {
+                // replace matches with new name
+                layout.RawSource = Regex.Replace(layout.RawSource, $"%{oldMacroName}%", $"%{newMacroName}%");
+            }
+        }
+
+
+        [JsonIgnore]
+        public GetLayoutSource GetLayoutSource { get => _Internal_GetLayoutSource; }
+        private string _Internal_GetLayoutSource(string name, string group, string lib)
+        {
+            if (m_libraries.TryGetValue(lib, out var library))
+            {
+                return library.Layouts.FirstOrDefault(x => x.Group == group && x.Name == name)?.RawSource ?? "";
+            }
+            return "";
         }
 
     }
