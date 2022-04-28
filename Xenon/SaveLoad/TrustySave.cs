@@ -500,8 +500,22 @@ namespace Xenon.SaveLoad
             using (StreamReader sr = new StreamReader(File.Open(filename, FileMode.Open)))
             {
                 string json = await sr.ReadToEndAsync();
-                var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
-                proj?.LayoutManager?.LoadLibrary(lib);
+                try
+                {
+                    var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
+                    if (lib.Lib.LibraryName != null && lib.Lib.Library != null && lib.Metadata.XenonVersion != null && lib.Metadata.Date != null)
+                    {
+                        proj?.LayoutManager?.LoadLibrary(lib);
+                    }
+                    else
+                    {
+                        var libnew = JsonSerializer.Deserialize<XenonLayoutLibrary>(json, new JsonSerializerOptions() { IncludeFields = true });
+                        proj?.LayoutManager?.LoadLibrary(libnew);
+                    }
+                }
+                catch (Exception)
+                {
+                }
 
             }
         }
