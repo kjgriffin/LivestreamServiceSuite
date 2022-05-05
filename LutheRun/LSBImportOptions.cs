@@ -30,6 +30,8 @@ namespace LutheRun
         [BoolSetting]
         public bool UseCopyTitle { get; set; } = true;
         [BoolSetting]
+        public bool UseTitledEnd { get; set; } = true;
+        [BoolSetting]
         public bool UseThemedCreeds { get; set; } = true;
         [BoolSetting]
         public bool UsePIPCreeds { get; set; } = false;

@@ -1,0 +1,24 @@
+﻿#scope(endpage)
+{
+$>#var("customdraw.Layout", "Xenon.CommonColored::EndPage")
+
+$>#customdraw
+$>{
+$>$>asset=("HCFront", "fg")
+$>$>asset=("HCLogo-white", "fg")
+
+$>/// </MANUAL_UPDATE name='EndPage Service Title'>
+$>$>text={$SERVICETITLE}
+
+$>$>text={HOLY CROSS LUTHERAN CHURCH}
+$>$>text={KITCHENER ON.}
+$>$>text={Website}
+$>$>text={https:\//holycrosskitchener.org}
+$>$>text={Previous Services}
+$>$>text={https:\//holycrosskitchener.org/ worship-service-videos}
+$>$>text={YouTube}
+$>$>text={Holy Cross Audio Video}
+$>}
+
+
+}

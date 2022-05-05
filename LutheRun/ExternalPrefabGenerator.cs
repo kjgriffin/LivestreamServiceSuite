@@ -94,6 +94,28 @@ namespace LutheRun
             return new LSBElementUnknown();
         }
 
+        public static ILSBElement GenerateEndPage(IEnumerable<ILSBElement> titleelements, LSBImportOptions options)
+        {
+
+            if (titleelements.Count() == 2)
+            {
+                // assumes service title is first element
+                string serviceTitle = GetStringFromCaptionOrHeading(titleelements.First());
+                // assume service date is second element
+                string serviceDate = GetStringFromCaptionOrHeading(titleelements.Last());
+
+                if (!string.IsNullOrWhiteSpace(serviceTitle) || !string.IsNullOrWhiteSpace(serviceDate))
+                {
+                    // Since the external prefab is wrapped inside a scripted block, let the tile generate genrate the postset explicitly
+                    return new ExternalPrefab(EndPageCommand(serviceTitle), "endtitle") { IndentReplacementIndentifier = "$>" };
+
+                }
+            }
+
+            return new LSBElementUnknown();
+        }
+
+
         public static ILSBElement GenerateCreed(string creedtype, LSBImportOptions options)
         {
             const string postsetReplacementIdentifier = "$POSTSET$";
@@ -187,6 +209,28 @@ namespace LutheRun
                 postsetstr = $"::postset(last={postset})";
             }
             prefabblob = Regex.Replace(prefabblob, Regex.Escape("$POSTSET"), postsetstr);
+
+            return prefabblob;
+        }
+
+        private static string EndPageCommand(string serviceTitle = "")
+        {
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                  .GetManifestResourceNames()
+                                  .FirstOrDefault(x => x.Contains("EndTitle"));
+
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                .GetManifestResourceStream(name);
+
+            // wrap it into a scripted block
+            var prefabblob = "";
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                prefabblob = sr.ReadToEnd();
+            }
+
+            // inject title
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$SERVICETITLE"), serviceTitle);
 
             return prefabblob;
         }
