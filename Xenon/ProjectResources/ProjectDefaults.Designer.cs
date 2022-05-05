@@ -63,6 +63,16 @@ namespace Xenon.ProjectResources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap HCFront {
+            get {
+                object obj = ResourceManager.GetObject("HCFront", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap HCLogo_white {
             get {
                 object obj = ResourceManager.GetObject("HCLogo-white", resourceCulture);
