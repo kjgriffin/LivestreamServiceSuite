@@ -216,6 +216,8 @@ namespace SlideCreater
             TbInput.TextArea.TextEntering += TextArea_TextEntering;
             TbInput.TextArea.PreviewTextInput += TextArea_PreviewTextInput;
 
+            TbInput.TextArea.TextView.LinkTextForegroundBrush = System.Windows.Media.Brushes.LawnGreen;
+
             TbConfig.LoadLanguage_JSON();
             // load default config file
 

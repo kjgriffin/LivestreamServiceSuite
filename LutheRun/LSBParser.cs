@@ -585,6 +585,7 @@ namespace LutheRun
 
 
                 stringBuilder.AppendLine($"/// </MANUAL_UPDATE name='Theme Colors'>".Indent(indentDepth, indentSpace));
+                stringBuilder.AppendLine($"// See: https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Themes".Indent(indentDepth, indentSpace));
 
                 // macros!
                 foreach (var macro in LSBImportOptions.Macros)
