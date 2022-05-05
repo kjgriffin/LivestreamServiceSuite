@@ -583,6 +583,9 @@ namespace LutheRun
                 stringBuilder.AppendLine($"#var(\"texthymn.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")".Indent(indentDepth, indentSpace));
                 stringBuilder.AppendLine();
 
+
+                stringBuilder.AppendLine($"/// </MANUAL_UPDATE name='Theme Colors'>".Indent(indentDepth, indentSpace));
+
                 // macros!
                 foreach (var macro in LSBImportOptions.Macros)
                 {
