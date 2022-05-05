@@ -295,7 +295,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
 
             m_libraries[DEFAULTLIBNAME] = defaultlib;
 
-            LoadBundledLibraries_Legacy();
+            //LoadBundledLibraries_Legacy();
             LoadBundledLibraries_New();
         }
 
