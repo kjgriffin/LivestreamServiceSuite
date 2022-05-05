@@ -29,7 +29,7 @@
 			<End>$</End>
 		</Span>
 
-		<Span color="Comment" begin="//" />
+		<Span color="Comment" begin="(?&lt;!\\)//" />
 		<Span color="Comment" multiline="true"
 		   begin="/\*" end="\*/" />
 
