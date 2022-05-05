@@ -25,6 +25,11 @@ namespace Xenon.Compiler.AST
             return Command?.Generate(project, this, Logger) ?? new List<Slide>();
         }
 
+        void IXenonASTElement.PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
+            Command.PreGenerate(project, this, Logger);
+        }
+
         public void GenerateDebug(Project project)
         {
             Debug.WriteLine("<XenonASTExperession>");

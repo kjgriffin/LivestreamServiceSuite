@@ -114,7 +114,19 @@ namespace Xenon.Compiler.AST
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+            // Use-Pre Generate to get variables to declare themseleves
+            (children as IXenonASTElement).PreGenerate(project, _Parent, Logger);
+
+            // inject layout macros
+            var regex = new Regex("(?<lib>.*)@(?<name>(.*))");
+            foreach (var variable in Variables.Where(x => regex.Match(x.Key).Success).Select(x => new { variable = x, match = regex.Match(x.Key)}))
+            {
+                project.LayoutManager.OverrideMacroOnScope(variable.match.Groups["lib"].Value, variable.match.Groups["name"].Value, variable.variable.Value, ScopeName);
+            }
+
             var slides = (children as IXenonASTElement).Generate(project, _Parent, Logger);
+
+            project.LayoutManager.ReleaseMacrosOnScope(ScopeName);
 
             return slides;
         }
@@ -159,11 +171,11 @@ namespace Xenon.Compiler.AST
             Variables[vname] = value;
 
             // don't REALLY like this, but this is the only place we can do it
-            var match = Regex.Match(vname, "(?<lib>.*)@(?<name>(.*))");
-            if (match.Success)
-            {
-                project.LayoutManager.SetMacroOverride(match.Groups["lib"].Value, match.Groups["name"].Value, value);
-            }
+            //var match = Regex.Match(vname, "(?<lib>.*)@(?<name>(.*))");
+            //if (match.Success)
+            //{
+            //    project.LayoutManager.SetMacroOverride(match.Groups["lib"].Value, match.Groups["name"].Value, value);
+            //}
 
 
             if (Variables.ContainsKey(vname) || (this as IXenonASTElement).CheckAnsestorScopeFornameConflict(vname).found)

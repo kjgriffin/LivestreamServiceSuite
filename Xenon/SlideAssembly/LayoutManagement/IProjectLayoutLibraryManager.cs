@@ -38,7 +38,8 @@ namespace Xenon.SlideAssembly
         (bool found, string json) FindLayoutByFullyQualifiedName(LanguageKeywordCommand type, string fullname, string defaultLibrary = "");
         List<string> FindTypesSupportingLayouts();
 
-        void SetMacroOverride(string libname, string macroname, string value);
+        void OverrideMacroOnScope(string libname, string macroname, string value, string scope);
+        void ReleaseMacrosOnScope(string scope);
 
 
         public static List<XenonLayoutLibrary> GetDefaultBundledLibraries()

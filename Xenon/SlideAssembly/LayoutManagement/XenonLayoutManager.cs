@@ -78,6 +78,14 @@ namespace Xenon.SlideAssembly.LayoutManagement
         public string RawSource { get; set; }
     }
 
+    public class XenonMacroOverride
+    {
+        public string LibName { get; set; }
+        public string MacroName { get; set; }
+        public string Value { get; set; }
+        public string Scope { get; set; }
+    }
+
     public delegate string ResolveLayoutMacros(string rawjson, string layoutName, string groupName, string libName);
     public delegate (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) GetLayoutPreview(string layoutname, string group, string lib, string layoutjson);
 
@@ -94,7 +102,9 @@ namespace Xenon.SlideAssembly.LayoutManagement
 
         private Dictionary<string, XenonLayoutLibrary> m_libraries = new Dictionary<string, XenonLayoutLibrary>();
 
-        private Dictionary<string, Dictionary<string, string>> m_macroOverrides = new System.Collections.Generic.Dictionary<string, Dictionary<string, string>>();
+
+        private Dictionary<string, Stack<XenonMacroOverride>> m_macroHistory = new Dictionary<string, Stack<XenonMacroOverride>>();
+        private List<XenonMacroOverride> m_activeMacroOverrides = new List<XenonMacroOverride>();
 
         public const string DEFAULTLIBNAME = "Xenon.Core";
 
@@ -148,12 +158,10 @@ namespace Xenon.SlideAssembly.LayoutManagement
         private string _Internal_ResolveMacro(string macroName, string library)
         {
             // use overriden value
-            if (m_macroOverrides.TryGetValue(library, out var overrides))
+            var overriden = m_activeMacroOverrides.FirstOrDefault(x => x.LibName == library && x.MacroName == macroName);
+            if (overriden != null)
             {
-                if (overrides.TryGetValue(macroName, out var value))
-                {
-                    return value;
-                }
+                return overriden.Value;
             }
 
             // use library default
@@ -401,22 +409,55 @@ namespace Xenon.SlideAssembly.LayoutManagement
 
         }
 
-        public void SetMacroOverride(string libname, string macroname, string value)
+
+
+        public void OverrideMacroOnScope(string libname, string macroname, string value, string scope)
         {
             if (libname != DEFAULTLIBNAME) // won't allow overrideing macros in default lib
             {
-                if (m_libraries.ContainsKey(libname))
+                // track the original value so we can repalce it later
+                var old = m_activeMacroOverrides.FirstOrDefault(x => x.LibName == libname && x.MacroName == macroname);
+                if (old != null)
                 {
-                    Dictionary<string, string> macros;
-                    if (!m_macroOverrides.TryGetValue(libname, out macros))
+                    m_macroHistory.TryGetValue(libname + macroname, out var stack);
+                    if (stack == null)
                     {
-                        macros = new Dictionary<string, string>();
+                        stack = new Stack<XenonMacroOverride>();
+                        m_macroHistory[libname + macroname] = stack;
                     }
-                    macros[macroname] = value;
-                    m_macroOverrides[libname] = macros;
+                    stack.Push(old);
+                }
+
+                m_activeMacroOverrides.Remove(old);
+                m_activeMacroOverrides.Add(new XenonMacroOverride
+                {
+                    LibName = libname,
+                    MacroName = macroname,
+                    Value = value,
+                    Scope = scope,
+                });
+            }
+        }
+
+        public void ReleaseMacrosOnScope(string scope)
+        {
+            var deleted = m_activeMacroOverrides.Where(x => x.Scope == scope);
+
+            m_activeMacroOverrides.RemoveAll(x => x.Scope == scope);
+
+            foreach (var macro in deleted)
+            {
+                if (m_macroHistory.TryGetValue(macro.LibName + macro.MacroName, out var stack))
+                {
+                    var old = stack?.Pop();
+                    if (old != null)
+                    {
+                        m_activeMacroOverrides.Add(old);
+                    }
                 }
             }
         }
+
 
 
 

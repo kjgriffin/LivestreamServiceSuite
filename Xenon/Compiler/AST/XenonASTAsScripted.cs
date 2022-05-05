@@ -191,6 +191,13 @@ namespace Xenon.Compiler.AST
             sb.AppendLine("}".PadLeft(indentDepth * indentSize));
         }
 
+        void IXenonASTElement.PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
+            ((IXenonASTElement)Children).PreGenerate(project, _Parent, Logger);
+            // TODO: do we care about the scripts...
+            // like- NO for now, but in future?
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             List<Slide> childslides = (Children as IXenonASTElement).Generate(project, _Parent, Logger);

@@ -118,6 +118,10 @@ namespace Xenon.Compiler.SubParsers
                 {
                     fstyle |= (int)FontStyle.Italic;
                 }
+                if (styles.Contains("underline"))
+                {
+                    fstyle |= (int)FontStyle.Underline;
+                }
             }
 
             return new TextRun(node.InnerText, font?.Value ?? "", fstyle, color?.Value ?? null);

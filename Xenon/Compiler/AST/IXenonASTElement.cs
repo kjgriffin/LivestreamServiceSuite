@@ -11,6 +11,12 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Parent { get; }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger);
+        public virtual void PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
+            return;
+        }
+
+
 
         public void GenerateDebug(Project project);
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer);

@@ -36,6 +36,14 @@ namespace Xenon.Compiler.AST
             return vslides;
         }
 
+        void IXenonASTElement.PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
+            foreach (var verse in Verses)
+            {
+                ((IXenonASTElement)verse).PreGenerate(project, this, Logger);
+            }
+        }
+
         public void GenerateDebug(Project project)
         {
             Debug.WriteLine("<XenonASTTextHymn>");

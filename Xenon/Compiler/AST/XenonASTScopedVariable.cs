@@ -64,6 +64,11 @@ namespace Xenon.Compiler.AST
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
+            return new List<Slide>();
+        }
+
+        public void PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
             IXenonASTElement p = Parent;
 
             var sc = (this as IXenonASTElement).CheckAnsestorScopeFornameConflict(VName);
@@ -91,7 +96,6 @@ namespace Xenon.Compiler.AST
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Variable named {{{VName}}} was defined outside any valid scope. Will not be set.", ErrorName = "Invalid variable declaration", Generator = "XenonASTScopedVariable::Generate", Level = XenonCompilerMessageType.Error });
             }
-            return new List<Slide>();
         }
 
         public void GenerateDebug(Project project)
