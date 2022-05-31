@@ -133,11 +133,17 @@ namespace Xenon.LayoutEngine
     class LSBImageResource
     {
         public string AssetRef { get; private set; }
-        public Size Size { get; private set; }
-        public LSBImageResource(string assetref, Size size)
+        public SixLabors.ImageSharp.Size Size { get; private set; }
+        //public LSBImageResource(string assetref, Size size)
+        //{
+            //AssetRef = assetref;
+            //Size = size;
+        //}
+        public LSBImageResource(string assetref, SixLabors.ImageSharp.Size size)
         {
             AssetRef = assetref;
-            Size = size;
+            // prevent muation by copying this
+            Size = new SixLabors.ImageSharp.Size(size.Width, size.Height);
         }
     }
 

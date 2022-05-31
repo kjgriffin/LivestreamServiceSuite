@@ -576,9 +576,10 @@ namespace LutheRun
             if (LSBImportOptions.UseThemedHymns || LSBImportOptions.UseThemedCreeds)
             {
                 stringBuilder.AppendLine();
-                stringBuilder.AppendLine("#scope(LSBService) {".Indent(indentDepth, indentSpace));
-                stringBuilder.AppendLine();
+                stringBuilder.AppendLine("#scope(LSBService)".Indent(indentDepth, indentSpace));
+                stringBuilder.AppendLine("{".Indent(indentDepth, indentSpace));
                 indentDepth++;
+                stringBuilder.AppendLine();
                 stringBuilder.AppendLine($"#var(\"stitchedimage.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")".Indent(indentDepth, indentSpace));
                 stringBuilder.AppendLine($"#var(\"texthymn.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")".Indent(indentDepth, indentSpace));
                 stringBuilder.AppendLine();

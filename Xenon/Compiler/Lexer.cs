@@ -82,6 +82,8 @@ namespace Xenon.Compiler
             List<string> Seperators = new List<string>() {
                 "```",
                 "\r\n",
+                //"/*",
+                //"*/",
                 "//",
                 "::",
                 "?",

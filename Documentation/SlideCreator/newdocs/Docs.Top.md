@@ -32,6 +32,12 @@ Each Asset will be previewed like this:
 
 - The Blue pencil will let you rename the asset. This will change how the asset must be referenced in the source code.
 
+- the 3 blue hyperlinks will automatically generate the appropriate command text and insert it into the source code at the cursor location
+	- `Insert` will add it as a #fullimage
+	- `Hymn` will add it as an #autofitimage
+	- `Liturgy` will ad it as #litimage
+	- `Bells` will add (only for audio) a script with the setup
+
 
 ## 4. Layouts Tab 
 

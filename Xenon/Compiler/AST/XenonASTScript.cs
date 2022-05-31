@@ -51,16 +51,22 @@ namespace Xenon.Compiler.AST
             sb.Append("#");
             sb.AppendLine(LanguageKeywords.Commands[LanguageKeywordCommand.Script]);
 
-            sb.Append("{".PadLeft(indentDepth * indentSize));
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("{");
             indentDepth++;
 
             foreach (var line in Source.Split(Environment.NewLine))
             {
-                sb.AppendLine(line.PadLeft(indentDepth * indentSize));
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    sb.Append("".PadLeft(indentDepth * indentSize));
+                    sb.AppendLine(line);
+                }
             }
 
             indentDepth--;
-            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("}");
         }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)

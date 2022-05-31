@@ -103,13 +103,15 @@ namespace Xenon.Compiler.AST
             sb.Append("#");
             sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.VariableScope]);
             sb.AppendLine($"({ScopeName})");
-            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("{");
             indentDepth++;
 
             children.DecompileFormatted(sb, ref indentDepth, indentSize);
 
             indentDepth--;
-            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("}");
         }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)

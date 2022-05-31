@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Xenon.Compiler.SubParsers
@@ -23,7 +24,9 @@ namespace Xenon.Compiler.SubParsers
                 modes.Add("pretrim");
             }
 
-            return (modes, input.Split(Environment.NewLine).ToList());
+            string escapedinput = Regex.Replace(input, "//", @"\//");
+
+            return (modes, escapedinput.Split(Environment.NewLine).Where(x => !string.IsNullOrWhiteSpace(x)).ToList());
         }
 
         public static bool TryParseTextBlock(Lexer Lexer, out string result)

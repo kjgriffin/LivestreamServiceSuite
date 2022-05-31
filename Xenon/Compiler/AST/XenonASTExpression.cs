@@ -182,6 +182,13 @@ namespace Xenon.Compiler.AST
                 expr.Command = (IXenonASTCommand)hymn.Compile(Lexer, Logger, parent);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.ReStitchedHymn]))
+            {
+                XenonASTReStitchedHymn hymn = new XenonASTReStitchedHymn();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.ReStitchedHymn]);
+                expr.Command = (IXenonASTCommand)hymn.Compile(Lexer, Logger, parent);
+                return expr;
+            }
             else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.LiturgyImage]))
             {
                 XenonASTLiturgyImage liturgyimage = new XenonASTLiturgyImage();

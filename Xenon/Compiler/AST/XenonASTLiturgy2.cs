@@ -70,16 +70,19 @@ namespace Xenon.Compiler.AST
             sb.Append("".PadLeft(indentDepth * indentSize));
             sb.Append("#");
             sb.AppendLine(LanguageKeywords.Commands[LanguageKeywordCommand.Liturgy2]);
-            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("{");
             indentDepth++;
 
             foreach (var line in L2Parser.ToFormattedXMLLines(RawContent))
             {
-                sb.AppendLine(line.PadLeft(indentDepth * indentSize));
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine(line);
             }
 
             indentDepth--;
-            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("}");
 
         }
 

@@ -1753,7 +1753,8 @@ namespace SlideCreater
             //TbInput.Text = XenonFastFormatter.Reformat(TbInput.Text, 4);
             try
             {
-                string formatted = await XenonFastFormatter.CompileReformat(TbInput.Text, 4);
+                //string formatted = await XenonFastFormatter.CompileReformat(TbInput.Text, 4);
+                string formatted = XenonSimpleFormatter.Format(TbInput.Text);
                 Dispatcher.Invoke(() => TbInput.Text = formatted);
             }
             catch (Exception)

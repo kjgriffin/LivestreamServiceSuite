@@ -95,36 +95,47 @@ namespace Xenon.Compiler.AST
             sb.Append("".PadLeft(indentDepth * indentSize));
             sb.Append("#");
             sb.AppendLine(LanguageKeywords.Commands[LanguageKeywordCommand.CustomDraw]);
-            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("{");
             indentDepth++;
 
             foreach (var asset in BGAssetNames)
             {
-                sb.AppendLine($"asset=(\"{asset}\", \"bg\")".PadLeft(indentDepth * indentSize));
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine($"asset=(\"{asset}\", \"bg\")");
             }
             foreach (var asset in FGAssetNames)
             {
-                sb.AppendLine($"asset=(\"{asset}\", \"fg\")".PadLeft(indentDepth * indentSize));
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine($"asset=(\"{asset}\", \"fg\")");
             }
 
             foreach (var text in Texts)
             {
                 var refmt = TextBlockParser.ReformatTextBlock(text);
-                sb.Append($"text({string.Join(',', refmt.modes)}{(refmt.modes.Any() ? "," : "")}trimat:`)=".PadLeft(indentDepth * indentSize));
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine($"text({string.Join(',', refmt.modes)}{(refmt.modes.Any() ? "," : "")}trimat:`)=");
 
-                sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine("{");
                 indentDepth++;
                 foreach (var line in refmt.lines)
                 {
-                    sb.AppendLine($"`{line}".PadLeft(indentDepth * indentSize));
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        sb.Append("".PadLeft(indentDepth * indentSize));
+                        sb.AppendLine($"`{line}");
+                    }
                 }
                 indentDepth--;
-                sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine("}");
             }
 
 
             indentDepth--;
-            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("}");
 
         }
 
