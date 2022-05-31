@@ -105,6 +105,7 @@ namespace DVIPProtocol.Clients
 #endif
             }
 
+
             Stream stream = m_client.GetStream();
 
             // Send command
@@ -123,34 +124,41 @@ namespace DVIPProtocol.Clients
 
             byte[] readbuffer = new byte[512 + 2]; // max length command has 512 parameters + 2 bytes for packet length high & low
 
+            bool read = false;
+            if (read)
+            {
 
 #if DEBUG
-            Console.WriteLine("    [Reading TCP response size]");
+                Console.WriteLine("    [Reading TCP response size]");
 #endif
-            // since we're sending a controlcommand we know that we should get at least 2 bytes telling us how much more to expect
-            stream.Read(readbuffer, 0, 1);
-            stream.Read(readbuffer, 1, 1);
-            // figure out how much more we expect
-            int returnpacketlength = readbuffer[0] << 8 | readbuffer[1];
+                // since we're sending a controlcommand we know that we should get at least 2 bytes telling us how much more to expect
+                stream.Read(readbuffer, 0, 1);
+                stream.Read(readbuffer, 1, 1);
+                // figure out how much more we expect
+                int returnpacketlength = readbuffer[0] << 8 | readbuffer[1];
 #if DEBUG
-            Console.WriteLine($"    [Reading TCP response data (expected size: {returnpacketlength - 2})]");
+                Console.WriteLine($"    [Reading TCP response data (expected size: {returnpacketlength - 2})]");
 #endif
-            stream.Read(readbuffer, 2, returnpacketlength - 2);
+                stream.Read(readbuffer, 2, returnpacketlength - 2);
 
 #if DEBUG
-            Console.WriteLine("    [Finished reading TCP response]");
+                Console.WriteLine("    [Finished reading TCP response]");
 #endif
 
 
-            // let the command parse its return value
+                // let the command parse its return value
 
 
-            // we're done firing this command
-            // command can alert whoever created it that its done
-            byte[] retdata = new byte[returnpacketlength - 2];
-            Buffer.BlockCopy(readbuffer, 2, retdata, 0, returnpacketlength - 2);
-            req.Complete(retdata);
-
+                // we're done firing this command
+                // command can alert whoever created it that its done
+                byte[] retdata = new byte[returnpacketlength - 2];
+                Buffer.BlockCopy(readbuffer, 2, retdata, 0, returnpacketlength - 2);
+                req.Complete(retdata);
+            }
+            else
+            {
+                req.Complete(new[] { (byte)0 });
+            }
         }
 
         private void SetupClient()
