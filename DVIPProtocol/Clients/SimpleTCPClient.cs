@@ -73,17 +73,29 @@ namespace DVIPProtocol.Clients
 
         private void Internal_MakeReq(ControlCommand req)
         {
+            if (m_client == null)
+            {
+                m_client = new TcpClient();
+            }
 
-            TcpClient client = new TcpClient();
             try
             {
+                if (m_client.Connected)
+                {
 #if DEBUG
-                Console.WriteLine("    [begin TCP connection] ...");
+                    Console.WriteLine($"    [TCP Client Already Connected]");
 #endif
-                client.Connect(m_address, m_port);
+                }
+                else
+                {
 #if DEBUG
-                Console.WriteLine("    [TCP client accepted]");
+                    Console.WriteLine($"    [TCP Client Begin Connection]");
 #endif
+                    m_client.Connect(m_address, m_port);
+#if DEBUG
+                    Console.WriteLine($"    [TCP Client Connection Established]");
+#endif
+                }
             }
             catch (Exception ex)
             {
@@ -93,38 +105,42 @@ namespace DVIPProtocol.Clients
 #endif
             }
 
-            Stream stream = client.GetStream();
+            Stream stream = m_client.GetStream();
 
             // Send command
             byte[] data = req.PackagePayload();
 
 
-
+#if DEBUG
+            Console.WriteLine("    [Sending TCP request]");
+#endif
             stream.Write(data, 0, data.Length);
 
 
 #if DEBUG
-            Console.WriteLine("    [sent TCP request]");
+            Console.WriteLine("    [Sent TCP request]");
 #endif
 
             byte[] readbuffer = new byte[512 + 2]; // max length command has 512 parameters + 2 bytes for packet length high & low
 
+
+#if DEBUG
+            Console.WriteLine("    [Reading TCP response size]");
+#endif
             // since we're sending a controlcommand we know that we should get at least 2 bytes telling us how much more to expect
             stream.Read(readbuffer, 0, 1);
             stream.Read(readbuffer, 1, 1);
             // figure out how much more we expect
             int returnpacketlength = readbuffer[0] << 8 | readbuffer[1];
+#if DEBUG
+            Console.WriteLine($"    [Reading TCP response data (expected size: {returnpacketlength - 2})]");
+#endif
             stream.Read(readbuffer, 2, returnpacketlength - 2);
 
 #if DEBUG
-            Console.WriteLine("    [finished reading TCP response]");
+            Console.WriteLine("    [Finished reading TCP response]");
 #endif
-            // release resources
-            client.Close();
 
-#if DEBUG
-            Console.WriteLine("    [TCP connection closed]");
-#endif
 
             // let the command parse its return value
 
@@ -134,11 +150,6 @@ namespace DVIPProtocol.Clients
             byte[] retdata = new byte[returnpacketlength - 2];
             Buffer.BlockCopy(readbuffer, 2, retdata, 0, returnpacketlength - 2);
             req.Complete(retdata);
-
-
-
-
-
 
         }
 

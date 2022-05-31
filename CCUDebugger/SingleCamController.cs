@@ -11,6 +11,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using DVIPProtocol.Protocol.ControlCommand.Cmd.Inq;
+using DVIPProtocol.Protocol.ControlCommand.Cmd.Zoom;
 
 namespace CCUDebugger
 {
@@ -29,6 +30,7 @@ namespace CCUDebugger
             ["right"] = CMDPanTiltRight,
             ["up"] = CMDPanTiltUp,
             ["down"] = CMDPanTiltDown,
+            ["zoom"] = CMDZoom,
             ["stop"] = CMDPanTiltStop,
             ["vf1080p60"] = CMDVideoFormat,
             ["set"] = CMDSetPreset,
@@ -152,6 +154,21 @@ namespace CCUDebugger
             Console.WriteLine("Speed: ");
             return int.TryParse(Console.ReadLine(), out int speed) ? speed : -1;
         }
+        private static ZoomDir_STD GetZoomDir()
+        {
+            Console.WriteLine("Zoom Direction (tele/wide): ");
+            var x = Console.ReadLine();
+            if (x == "tele")
+            {
+                return ZoomDir_STD.TELE;
+            }
+            else if (x == "wide")
+            {
+                return ZoomDir_STD.WIDE;
+            }
+            return ZoomDir_STD.STOP;
+        }
+
 
         private static ControlCommand CMDPanTiltLeft(int speed = -1)
         {
@@ -187,6 +204,12 @@ namespace CCUDebugger
                 speed = GetSpeed();
             }
             return PanTiltDrive_Direction_Command.Create(PanTiltDriveDirection.Down, 0x00, (byte)speed);
+        }
+
+        private static ControlCommand CMDZoom(int dir = -1)
+        {
+            var z = GetZoomDir();
+            return ZoomCommand_STD.Create(z);
         }
 
 

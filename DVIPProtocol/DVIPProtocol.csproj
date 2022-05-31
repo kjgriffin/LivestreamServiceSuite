@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Protocol\ControlCommand\Cmd\Focus\" />
-    <Folder Include="Protocol\ControlCommand\Cmd\Zoom\" />
   </ItemGroup>
 
 </Project>

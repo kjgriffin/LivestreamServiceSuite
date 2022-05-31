@@ -36,6 +36,9 @@
         PANTILTDRIVE_RELPOS = 0x03,
         PANTILTDRIVE_HOME = 0x04,
         PANTILTDRIVE_RESET = 0x05,
+
+        CAM_ZOOM = 0x07,
+        CAM_FOCUS = 0x08,
     }
 
 
