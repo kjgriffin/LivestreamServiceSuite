@@ -8,11 +8,28 @@ using System.Threading.Tasks;
 namespace DVIPProtocol.Clients.Advanced
 {
 
-    public delegate void OnCommandReply(byte[] response);
+    public delegate void OnRequestReply(byte[] response);
 
-    internal interface IClient
+    public interface IClient
     {
         public IPEndPoint Endpoint { get; set; }
-        void SendCommand(byte[] data, OnCommandReply responseDelegate);
+        void Init();
+        void Stop();
     }
+
+    public interface ICmdClient : IClient
+    {
+        void SendCommand(byte[] data);
+    }
+
+    public interface IReqClient : IClient
+    {
+        void SendRequest(byte[] data, OnRequestReply reply);
+    }
+
+    public interface IFullClient : ICmdClient, IReqClient
+    {
+
+    }
+
 }
