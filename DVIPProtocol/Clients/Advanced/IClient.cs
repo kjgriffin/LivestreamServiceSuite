@@ -22,12 +22,12 @@ namespace DVIPProtocol.Clients.Advanced
         void SendCommand(byte[] data);
     }
 
-    public interface IReqClient : IClient
+    public interface IInqClient : IClient
     {
-        void SendRequest(byte[] data, OnRequestReply reply);
+        void SendRequest(byte[] data, int expectedRequestLength, OnRequestReply reply);
     }
 
-    public interface IFullClient : ICmdClient, IReqClient
+    public interface IFullClient : ICmdClient, IInqClient
     {
 
     }
