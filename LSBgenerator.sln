@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegratedPresenterAPIInter
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DVIPProtocol", "DVIPProtocol\DVIPProtocol.csproj", "{7CAC91F4-74D5-4968-AFD0-F2F90E7E6EF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCUDebugger", "CCUDebugger\CCUDebugger.csproj", "{2FEE5F28-C5F6-4900-A18A-BDDA180BFC64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCUDebugger", "CCUDebugger\CCUDebugger.csproj", "{2FEE5F28-C5F6-4900-A18A-BDDA180BFC64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraDriver", "CameraDriver\CameraDriver.csproj", "{70094233-76B9-4291-ADEC-763187E1BF51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +89,10 @@ Global
 		{2FEE5F28-C5F6-4900-A18A-BDDA180BFC64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FEE5F28-C5F6-4900-A18A-BDDA180BFC64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FEE5F28-C5F6-4900-A18A-BDDA180BFC64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70094233-76B9-4291-ADEC-763187E1BF51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70094233-76B9-4291-ADEC-763187E1BF51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70094233-76B9-4291-ADEC-763187E1BF51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70094233-76B9-4291-ADEC-763187E1BF51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

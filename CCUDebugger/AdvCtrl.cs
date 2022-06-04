@@ -17,6 +17,11 @@ namespace CCUDebugger
         int zSpeed = 0;
         int ptSpeed = 0;
 
+        int pan = 0;
+        int tilt = 0;
+
+        bool readInq = false;
+
         bool run = true;
 
 
@@ -42,9 +47,11 @@ namespace CCUDebugger
 
             while (run)
             {
-                ReadInput();
-                Display();
-
+                bool _redraw = ReadInput();
+                if (_redraw)
+                {
+                    Display();
+                }
             }
 
             client.Stop();
@@ -54,15 +61,11 @@ namespace CCUDebugger
         private void Display()
         {
             sb.Clear();
-            sb.AppendLine("[wasd]       - pan/tilt  ");
-            sb.AppendLine("[rf]         - wide/tele ");
-            sb.AppendLine("[pg up/down] - speed     ");
-            sb.AppendLine("[space]      - stop      ");
-            sb.AppendLine("[q]          - quit      ");
-            sb.AppendLine("-------------------------");
             sb.AppendLine($"PTSpeed: {ptSpeed:0}     ");
             sb.AppendLine($"ZSpeed:  {zSpeed:0}     ");
-            sb.AppendLine();
+            sb.AppendLine($"Pan:     {zSpeed:0}     ");
+            sb.AppendLine($"Tilt:    {zSpeed:0}     ");
+            sb.AppendLine("-------------------------");
             sb.AppendLine();
 
 
@@ -81,11 +84,11 @@ namespace CCUDebugger
             client.SendCommand(CMD_PanTiltDrive.CMD_STOP_DRIVE().PackagePayload());
         }
 
-        private void ReadInput()
+        private bool ReadInput()
         {
             if (!Console.KeyAvailable)
             {
-                return;
+                return false;
             }
             var key = Console.ReadKey();
 
@@ -93,7 +96,7 @@ namespace CCUDebugger
             {
                 run = false;
                 _cmd_STOP();
-                return;
+                return true;
             }
 
             if (key.Key == ConsoleKey.Spacebar)
@@ -169,7 +172,7 @@ namespace CCUDebugger
             }
 
 
-
+            return true;
         }
 
 
