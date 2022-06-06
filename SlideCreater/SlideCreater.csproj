@@ -6,6 +6,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>icon2.ico</ApplicationIcon>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,6 +32,7 @@
     <None Remove="ViewControls\Images\LayoutBlue.png" />
     <None Remove="ViewControls\Images\LayoutGray.png" />
     <None Remove="ViewControls\Images\LibraryWhite.png" />
+    <None Remove="ViewControls\Images\Mop.png" />
     <None Remove="ViewControls\Images\musicnote.png" />
     <None Remove="ViewControls\Images\NewGreen.png" />
     <None Remove="ViewControls\Images\OpenFolderWhite.png" />
@@ -52,6 +54,7 @@
     <None Remove="ViewControls\Images\Trash.png" />
     <None Remove="ViewControls\Images\TrashRed.png" />
     <None Remove="ViewControls\Images\XRed.png" />
+    <None Remove="ViewControls\Images\YellowBolt.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -88,6 +91,7 @@
     <Resource Include="ViewControls\Images\LayoutBlue.png" />
     <Resource Include="ViewControls\Images\LayoutGray.png" />
     <Resource Include="ViewControls\Images\LibraryWhite.png" />
+    <Resource Include="ViewControls\Images\Mop.png" />
     <Resource Include="ViewControls\Images\NewGreen.png" />
     <Resource Include="ViewControls\Images\OpenFolderWhite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -168,6 +172,9 @@
     </Resource>
     <Resource Include="ViewControls\Images\TrashRed.png" />
     <Resource Include="ViewControls\Images\XRed.png" />
+    <Resource Include="ViewControls\Images\YellowBolt.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

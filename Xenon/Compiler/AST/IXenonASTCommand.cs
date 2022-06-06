@@ -52,7 +52,7 @@ namespace Xenon.Compiler.AST
             // TODO: warn if we don't actualy find it on the project
             if (layoutfromproj.found)
             {
-                var l = project.ProjectLayouts.GetLayoutByFullyQualifiedName(layoutGroup, layoutoverridefromproj);
+                var l = project.LayoutManager.FindLayoutByFullyQualifiedName(layoutGroup, layoutoverridefromproj);
                 if (l.found)
                 {
                     return (true, l.json);
@@ -75,7 +75,7 @@ namespace Xenon.Compiler.AST
             // TODO: warn if we don't actualy find it on the project
             if (layoutfromproj.found)
             {
-                var l = project.ProjectLayouts.GetLayoutByFullyQualifiedName(layoutGroup, layoutoverridefromproj);
+                var l = project.LayoutManager.FindLayoutByFullyQualifiedName(layoutGroup, layoutoverridefromproj);
                 if (l.found)
                 {
                     slide.Data[Slide.LAYOUT_INFO_KEY] = l.json;

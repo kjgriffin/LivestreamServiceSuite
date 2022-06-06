@@ -18,6 +18,14 @@ namespace Xenon.Compiler.AST
             this.Parent = Parent;
             throw new NotImplementedException();
         }
+        void IXenonASTElement.PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
+            foreach (var elem in Elements)
+            {
+                elem.PreGenerate(project, _Parent, Logger);
+            }
+        }
+
 
         List<Slide> IXenonASTElement.Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
@@ -36,13 +44,21 @@ namespace Xenon.Compiler.AST
             foreach (var elem in Elements)
             {
                 elem.GenerateDebug(project);
-            } 
+            }
             Debug.WriteLine("</XenonASTElementCollection>");
         }
 
         XenonCompilerSyntaxReport IXenonASTElement.Recognize(Lexer Lexer)
         {
             throw new NotImplementedException();
+        }
+
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            foreach (var elem in Elements)
+            {
+                elem.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
         }
 
         public XenonASTElementCollection(IXenonASTElement Parent)

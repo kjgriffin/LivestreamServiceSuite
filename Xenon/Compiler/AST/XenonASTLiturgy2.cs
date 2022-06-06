@@ -65,6 +65,27 @@ namespace Xenon.Compiler.AST
             return liturgy;
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.AppendLine(LanguageKeywords.Commands[LanguageKeywordCommand.Liturgy2]);
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("{");
+            indentDepth++;
+
+            foreach (var line in L2Parser.ToFormattedXMLLines(RawContent))
+            {
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine(line);
+            }
+
+            indentDepth--;
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("}");
+
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             var statements = L2Parser.ParseLiturgyStatements(RawContent);
@@ -122,6 +143,7 @@ namespace Xenon.Compiler.AST
             foreach (var slide in slides)
             {
                 slide.AddPostset(_Parent, i == 0, i == slides.Count - 1);
+                i++;
             }
 
             return slides;

@@ -45,6 +45,36 @@ namespace Xenon.Compiler.AST
 
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.Verse]);
+
+            if (!string.IsNullOrEmpty(SubName))
+            {
+                sb.Append($"({SubName})");
+            }
+            sb.AppendLine();
+
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            indentDepth++;
+
+            // rather do it like this than spit out raw content
+            VerseLayoutEngine vle = new VerseLayoutEngine();
+            vle.BuildLines(Content.Select(p => p.TextContent).ToList());
+            var lines = vle.LayoutLines.Select(x => string.Concat(x.Words).Trim()).ToList();
+
+            foreach (var line in lines)
+            {
+                sb.Append(line.PadLeft(indentDepth * indentSize));
+            }
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             VerseLayoutEngine vle = new VerseLayoutEngine();

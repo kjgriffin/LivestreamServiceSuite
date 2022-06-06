@@ -96,6 +96,34 @@ namespace Xenon.Compiler.AST
             hymn.Parent = Parent;
             return hymn;
         }
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.StitchedImage]);
+            sb.Append($"(\"{Title}\", \"{HymnName}\", \"{Number}\", \"{CopyrightInfo}\")");
+
+            if (StitchAll)
+            {
+                sb.Append("(stitchall)");
+            }
+
+            sb.AppendLine();
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("{");
+            indentDepth++;
+
+            foreach (var asset in ImageAssets)
+            {
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.Append(asset);
+                sb.AppendLine(";");
+            }
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+        }
+
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
@@ -109,7 +137,7 @@ namespace Xenon.Compiler.AST
             //      if its height is less than 45px its text, if its more than 85 its music
             //      might need to be inefficient here and open the file to check the height. Don't think we've got that info yet
 
-            Dictionary<string, Size> ImageSizes = new Dictionary<string, Size>();
+            Dictionary<string, SixLabors.ImageSharp.Size> ImageSizes = new Dictionary<string, SixLabors.ImageSharp.Size>();
 
             foreach (var item in ImageAssets)
             {
@@ -118,11 +146,9 @@ namespace Xenon.Compiler.AST
                 {
                     if (!string.IsNullOrEmpty(assetpath))
                     {
-                        using (Bitmap b = new Bitmap(assetpath))
-                        {
-                            ImageSizes[item] = b.Size;
-                            Debug.WriteLine($"Image {item} has size {b.Size}");
-                        }
+
+                        SixLabors.ImageSharp.IImageInfo metadata = SixLabors.ImageSharp.Image.Identify(assetpath);
+                        ImageSizes[item] = new SixLabors.ImageSharp.Size(metadata.Width, metadata.Height);
                     }
                     else
                     {
@@ -445,7 +471,7 @@ namespace Xenon.Compiler.AST
             return slides;
         }
 
-        private void WarnVerseOverheight(XenonErrorLogger Logger, Dictionary<string, Size> ImageSizes)
+        private void WarnVerseOverheight(XenonErrorLogger Logger, Dictionary<string, SixLabors.ImageSharp.Size> ImageSizes)
         {
             var heightaprox = 200 + ImageAssets.Select(i => ImageSizes[i].Height).Aggregate((item, sum) => sum + item);
             var mwidth = ImageAssets.Select(i => ImageSizes[i].Width).Max();
@@ -456,7 +482,7 @@ namespace Xenon.Compiler.AST
             WarnAspectRatio(mwidth, heightaprox, Logger);
         }
 
-        private void WarnVerseOverheightStitchAll(XenonErrorLogger Logger, Dictionary<string, Size> ImageSizes)
+        private void WarnVerseOverheightStitchAll(XenonErrorLogger Logger, Dictionary<string, SixLabors.ImageSharp.Size> ImageSizes)
         {
             var heightaprox = 200 + ImageSizes.Select(i => i.Value.Height).Aggregate((item, sum) => sum + item);
             var mwidth = ImageSizes.Values.Select(s => s.Width).Max();
@@ -494,5 +520,6 @@ namespace Xenon.Compiler.AST
         {
             throw new NotImplementedException();
         }
+
     }
 }

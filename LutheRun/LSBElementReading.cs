@@ -62,7 +62,7 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_READING. Title: {ReadingTitle} Reference: {ReadingReference} PreLiturgy: {PreLiturgy} PostLiturgy: {PostLiturgy}";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
             var postset = PostsetCmd.ExtractPostsetValues();
 
@@ -92,12 +92,12 @@ namespace LutheRun
             //sb.AppendLine("/// <XENON_AUTO_GEN>");
             if (prelit)
             {
-                sb.AppendLine($"#liturgy{{\r\n{PreLiturgy}\r\n}}{first}");
+                sb.AppendLine($"#liturgy{{\r\n{PreLiturgy}\r\n}}{first}".Indent(indentDepth, indentSpaces));
             }
-            sb.AppendLine($"#reading(\"{ReadingTitle}\", \"{ReadingReference}\"){onreadingpostset}");
+            sb.AppendLine($"#reading(\"{ReadingTitle}\", \"{ReadingReference}\"){onreadingpostset}".Indent(indentDepth, indentSpaces));
             if (postlit)
             {
-                sb.AppendLine($"#liturgy{{\r\n{PostLiturgy}\r\n}}{last}");
+                sb.AppendLine($"#liturgy{{\r\n{PostLiturgy}\r\n}}{last}".Indent(indentDepth, indentSpaces));
             }
             //sb.AppendLine("/// </XENON_AUTO_GEN>");
             return sb.ToString();

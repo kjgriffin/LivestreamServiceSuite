@@ -527,5 +527,10 @@ namespace Xenon.Compiler.AST
         {
             throw new NotImplementedException();
         }
+
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

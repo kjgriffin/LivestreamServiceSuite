@@ -153,6 +153,50 @@ namespace Xenon.Compiler.AST
 
             return element;
         }
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.AppendLine(LanguageKeywords.Commands[LanguageKeywordCommand.Scripted]);
+
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            indentDepth++;
+
+
+            if (HasFirst)
+            {
+                sb.Append("first=".PadLeft(indentDepth * indentSize));
+                FirstScript.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+
+            if (HasLast)
+            {
+                sb.Append("last=".PadLeft(indentDepth * indentSize));
+                LastScript.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+
+            if (HasDupLast)
+            {
+                sb.Append("duplast=".PadLeft(indentDepth * indentSize));
+                DupLastScript.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+
+            if (HasAll)
+            {
+                sb.Append("all=".PadLeft(indentDepth * indentSize));
+                AllScript.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+        }
+
+        void IXenonASTElement.PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
+            ((IXenonASTElement)Children).PreGenerate(project, _Parent, Logger);
+            // TODO: do we care about the scripts...
+            // like- NO for now, but in future?
+        }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
@@ -363,5 +407,6 @@ namespace Xenon.Compiler.AST
         {
             throw new NotImplementedException();
         }
+
     }
 }

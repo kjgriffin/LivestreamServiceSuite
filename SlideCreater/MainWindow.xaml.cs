@@ -33,6 +33,7 @@ using Xenon.Compiler.Suggestions;
 using CommonVersionInfo;
 using System.Net.Http;
 using LutheRun;
+using Xenon.Compiler.Formatter;
 
 namespace SlideCreater
 {
@@ -204,19 +205,30 @@ namespace SlideCreater
         {
             InitializeComponent();
 
+#if ! DEBUG
+            miEdit.Visibility = Visibility.Collapsed;        
+            miFormatSource.Visibility = Visibility.Collapsed;
+#endif
+
+
             TbInput.LoadLanguage_XENON();
             TbInput.TextArea.TextEntered += TextArea_TextEntered;
             TbInput.TextArea.TextEntering += TextArea_TextEntering;
             TbInput.TextArea.PreviewTextInput += TextArea_PreviewTextInput;
 
+            TbInput.TextArea.TextView.LinkTextForegroundBrush = System.Windows.Media.Brushes.LawnGreen;
+
+            TbConfig.LoadLanguage_JSON();
+            // load default config file
+
             // setup indentation
             TbInput.Options.IndentationSize = 4;
             TbInput.Options.ConvertTabsToSpaces = true;
+            //TbInput.TextArea.IndentationStrategy = new XenonIndentationStrategy();
             //TbInput.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
+            TbConfig.Options.IndentationSize = 4;
+            TbConfig.Options.ConvertTabsToSpaces = true;
 
-            dirty = false;
-            ProjectState = ProjectState.NewProject;
-            ActionState = ActionState.Ready;
             // Load Version Number
             var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SlideCreater.version.json");
             using (StreamReader sr = new StreamReader(stream))
@@ -226,6 +238,17 @@ namespace SlideCreater
             }
             // Set title
             Title = $"Slide Creater - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
+
+            // Initialize XenonLibrary to use version
+            Xenon.Versioning.Versioning.SetVersion(VersionInfo);
+
+
+
+
+            NewProject().Wait();
+            dirty = false;
+            ProjectState = ProjectState.NewProject;
+            ActionState = ActionState.Ready;
 
             // enable optional features
             EnableDisableOptionalFeatures();
@@ -249,8 +272,8 @@ namespace SlideCreater
         XenonBuildService builder = new XenonBuildService();
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
-            string text = TbInput.Text;
-            _proj.SourceCode = text;
+            _proj.SourceCode = TbInput.Text;
+            _proj.SourceConfig = TbConfig.Text;
 
             TryAutoSave();
 
@@ -449,21 +472,14 @@ namespace SlideCreater
 
         private void UpdatePreviews()
         {
+            int oldSIndex = slidelist.SelectedIndex;
+
             slidelist.Items.Clear();
             //slidepreviews.Clear();
             previews.Clear();
             // add all slides to list
-            foreach (var slide in slides)
+            foreach (var slide in slides.OrderBy(s => s.Number != -1 ? s.Number : int.MaxValue)) // insert slides by order. kick resources to bottom
             {
-                /*
-                SlideContentPresenter slideContentPresenter = new SlideContentPresenter();
-                slideContentPresenter.Width = slidelist.Width;
-                slideContentPresenter.Slide = slide;
-                slideContentPresenter.Height = 200;
-                slideContentPresenter.ShowSlide(previewkeys);
-                slidelist.Items.Add(slideContentPresenter);
-                slidepreviews.Add(slideContentPresenter);
-                */
                 MegaSlidePreviewer previewer = new MegaSlidePreviewer();
                 previewer.Width = slidelist.Width;
                 previewer.Slide = slide;
@@ -474,9 +490,19 @@ namespace SlideCreater
             // update focusslide
             if (slides?.Count > 0)
             {
-                FocusSlide.Slide = slides.First();
+                if (slides.Count > oldSIndex && oldSIndex >= 0)
+                {
+                    // try and refocus on last inspected slide
+                    FocusSlide.Slide = slides[oldSIndex];
+                    slidelist.SelectedIndex = oldSIndex;
+                    slidelist.ScrollIntoView(slidelist.Items[oldSIndex]);
+                }
+                else
+                {
+                    FocusSlide.Slide = slides.First();
+                    slidelist.SelectedIndex = 0;
+                }
                 FocusSlide.ShowSlide(previewkeys);
-                slidelist.SelectedIndex = 0;
                 tbSlideCount.Text = $"Slides: {slides.First().Number + 1}/{slides.Count()}";
             }
             else
@@ -486,7 +512,7 @@ namespace SlideCreater
 
         }
 
-        Project _proj = new Project(true);
+        Project _proj;
         //List<SlideContentPresenter> slidepreviews = new List<SlideContentPresenter>();
         List<MegaSlidePreviewer> previews = new List<MegaSlidePreviewer>();
 
@@ -815,110 +841,6 @@ namespace SlideCreater
             }
         }
 
-        private async void ClickSave(object sender, RoutedEventArgs e)
-        {
-            await SaveProject();
-        }
-
-        private async Task SaveProject()
-        {
-            TryAutoSave();
-            var saveprogress = new Progress<int>(percent =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    ActionState = ActionState.Saving;
-                    tbSubActionStatus.Text = $"Saving Project: {percent}%";
-                    pbActionStatus.Value = percent;
-                });
-            });
-
-            _proj.SourceCode = TbInput.Text;
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Title = "Save Project";
-            //sfd.DefaultExt = "json";
-            sfd.DefaultExt = "zip";
-            sfd.AddExtension = false;
-            sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
-            if (sfd.ShowDialog() == true)
-            {
-                await _proj.SaveProject(sfd.FileName, saveprogress);
-                Dispatcher.Invoke(() =>
-                {
-                    dirty = false;
-                    ProjectState = ProjectState.Saved;
-                    ActionState = ActionState.Ready;
-                });
-            }
-        }
-
-        private void SaveAsJSON()
-        {
-            TryAutoSave();
-            _proj.SourceCode = TbInput.Text;
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Title = "Save Project";
-            sfd.DefaultExt = "json";
-            sfd.AddExtension = true;
-            sfd.FileName = $"Service_{DateTime.Now:yyyyMMdd}";
-            if (sfd.ShowDialog() == true)
-            {
-                _proj.Save(sfd.FileName);
-                dirty = false;
-                ProjectState = ProjectState.Saved;
-                ActionState = ActionState.Ready;
-            }
-        }
-
-
-        private void OpenProjectJSON()
-        {
-
-        }
-
-        private async Task OpenProject()
-        {
-            if (dirty)
-            {
-                bool saved = await CheckSaveChanges();
-                if (!saved)
-                {
-                    return;
-                }
-            }
-            dirty = false;
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Load Project";
-            ofd.DefaultExt = "zip";
-            if (ofd.ShowDialog() == true)
-            {
-                slidelist.Items.Clear();
-                //slidepreviews.Clear();
-                previews.Clear();
-                FocusSlide.Clear();
-                _proj.CleanupResources();
-                _proj = await Project.LoadProject(ofd.FileName);
-                TbInput.Text = _proj.SourceCode;
-                try
-                {
-                    ShowProjectAssets();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString(), "Failed to load project assets");
-                    _proj.Assets.Clear();
-                    ProjectState = ProjectState.LoadError;
-                    return;
-                }
-                dirty = false;
-                ProjectState = ProjectState.Saved;
-                ActionState = ActionState.Ready;
-            }
-            UpdateErrorReport(new List<XenonCompilerMessage>());
-
-        }
-
-
         private async Task NewProject()
         {
             if (dirty)
@@ -937,8 +859,10 @@ namespace SlideCreater
             ClearProjectAssetsView();
             FocusSlide.Clear();
             TbInput.Text = string.Empty;
-            _proj.CleanupResources();
+            _proj?.CleanupResources();
             _proj = new Project(true);
+
+            TbConfig.Text = _proj.SourceConfig;
 
             ShowProjectAssets();
             SetupLayoutsTreeVew();
@@ -1227,6 +1151,11 @@ namespace SlideCreater
                 {
                     // make user select the theme
                     options.ServiceThemeLib = GetUserSelectedThemeForImport();
+                    // lets ask Xenon for the macros for the libray
+                    var tmp = IProjectLayoutLibraryManager.GetDefaultBundledLibraries();
+                    options.Macros = IProjectLayoutLibraryManager.GetDefaultBundledLibraries()
+                                                                 .FirstOrDefault(x => x.LibName == options.ServiceThemeLib)?.Macros ?? new Dictionary<string, string>();
+
                 }
                 await parser.ParseHTML(ofd.FileName);
                 parser.Serviceify(options);
@@ -1242,7 +1171,7 @@ namespace SlideCreater
 
         private string GetUserSelectedThemeForImport()
         {
-            TbPromptDialog dialog = new TbPromptDialog("Select Theme To Import With", "Layout Library Name", "Xenon.Green");
+            TbPromptDialog dialog = new TbPromptDialog("Select Theme To Import With", "Layout Library Name", "Xenon.CommonColored");
             dialog.ShowDialog();
             if (!string.IsNullOrEmpty(dialog.ResultValue))
             {
@@ -1336,6 +1265,7 @@ namespace SlideCreater
             {
                 // perhaps we should forcibly take the latest changes to the source
                 _proj.SourceCode = TbInput.Text;
+                _proj.SourceConfig = TbConfig.Text;
                 await Xenon.SaveLoad.TrustySave.SaveTrustily(_proj, sfd.FileName, saveprogress, VersionInfo.ToString());
                 Dispatcher.Invoke(() =>
                 {
@@ -1514,7 +1444,7 @@ namespace SlideCreater
             }
             else if (!string.IsNullOrWhiteSpace(e.Text))
             {
-                ShowSuggestions();
+                //ShowSuggestions();
             }
         }
 
@@ -1562,7 +1492,7 @@ namespace SlideCreater
                 TbPromptDialog namedialg = new TbPromptDialog("Create New Layout", "Layout Name", $"{group}.NewLayout");
                 if (namedialg.ShowDialog() == true)
                 {
-                    _proj.ProjectLayouts.CreateNewLayoutFromDefaults(libname, group, namedialg.ResultValue);
+                    _proj.LayoutManager.CreateNewLayoutFromDefaults(libname, group, namedialg.ResultValue);
                     SetupLayoutsTreeVew();
                 }
             }
@@ -1572,32 +1502,97 @@ namespace SlideCreater
         private void SetupLayoutsTreeVew()
         {
             Dictionary<string, bool> oldstate = RememberTreeExpansion(LayoutsTreeView);
+
+            foreach (var item in LayoutsTreeView.Items)
+            {
+                var library = item as TreeViewItem;
+                if (library != null)
+                {
+                    library.Selected -= Treelibrary_Selected;
+                    foreach (var citem in library.Items)
+                    {
+                        var group = citem as LayoutGroupTreeItem;
+                        if (group != null)
+                        {
+                            group.Selected -= Treelibrary_Selected;
+                        }
+                    }
+                }
+            }
+
             LayoutsTreeView.Items.Clear();
 
-            foreach (var library in _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup())
+            foreach (var library in _proj.LayoutManager.AllLibraries())
             {
                 TreeViewItem treelibrary = new TreeViewItem();
-                treelibrary.Header = $"{library.LibraryName}";
+                treelibrary.Header = $"{library.LibName}";
                 treelibrary.Selected += Treelibrary_Selected;
 
-                bool editable = library.LibraryName != ProjectLayoutLibraryManager.DEFAULTLIBNAME;
+                bool editable = library.LibName != ProjectLayoutLibraryManager.DEFAULTLIBNAME;
 
-                foreach (var group in library.Library)
+                List<string> foundGroups = new List<string>();
+
+                var groupsToAdd = new List<LayoutGroupTreeItem>();
+
+                foreach (var group in library.AsGroupedLayouts())
                 {
-                    LayoutGroupTreeItem treegroup = new LayoutGroupTreeItem(group.group, group.group, editable, (g) => CreateNewLayoutOnLibrary(library.LibraryName, g));
+                    LayoutGroupTreeItem treegroup = new LayoutGroupTreeItem(group.Group, group.Group, editable, (g) => CreateNewLayoutOnLibrary(library.LibName, g));
                     treegroup.Selected += Treegroup_Selected;
-                    foreach (var layout in group.layouts)
+                    foreach (var layout in group.Layouts.OrderBy(x => x.Value.Name)) // order these consistently
                     {
-                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibraryName, _proj.ProjectLayouts.GetAllLibraryLayoutsByGroup().Select(x => x.LibraryName).ToList(), layout.Key, layout.Value, group.group, editable, _proj.ProjectLayouts.SaveLayoutToLibrary, () => Dispatcher.Invoke(SetupLayoutsTreeVew), (string lib, string group, string layout) => { _proj.ProjectLayouts.DeleteLayout(lib, group, layout); Dispatcher.Invoke(SetupLayoutsTreeVew); });
+                        LayoutTreeItem treelayoutleaf = new LayoutTreeItem(library.LibName,
+                                                                           _proj.LayoutManager.AllLibraries()
+                                                                                              .Select(x => x.LibName)
+                                                                                              .ToList(),
+                                                                           layout.Value.Name,
+                                                                           _proj.LayoutManager.GetLayoutSource,
+                                                                           group.Group,
+                                                                           editable,
+                                                                           _proj.LayoutManager.SaveLayoutToLibrary,
+                                                                           () => Dispatcher.Invoke(SetupLayoutsTreeVew),
+                                                                           (string lib, string group, string layout) =>
+                                                                           {
+                                                                               _proj.LayoutManager.DeleteLayout(lib, group, layout); Dispatcher.Invoke(SetupLayoutsTreeVew);
+                                                                           },
+                                                                           _proj.LayoutManager.GetLayoutPreview
+                                                                           );
                         treegroup.Items.Add(treelayoutleaf);
                     }
 
-                    treegroup.IsExpanded = oldstate.GetOrDefault($"{library.LibraryName}.{group.group}", false);
+                    treegroup.IsExpanded = oldstate.GetOrDefault($"{library.LibName}.{group.Group}", false);
 
-                    treelibrary.Items.Add(treegroup);
+                    //treelibrary.Items.Add(treegroup);
+                    groupsToAdd.Add(treegroup);
+                    foundGroups.Add(group.Group);
+                }
+                // add missing groups
+                foreach (var missingGroup in _proj.LayoutManager.FindTypesSupportingLayouts().Where(x => !foundGroups.Contains(x)))
+                {
+                    LayoutGroupTreeItem treegroup = new LayoutGroupTreeItem(missingGroup, missingGroup, editable, (g) => CreateNewLayoutOnLibrary(library.LibName, g));
+                    treegroup.Selected += Treegroup_Selected;
+
+                    treegroup.IsExpanded = oldstate.GetOrDefault($"{library.LibName}.{missingGroup}", false);
+
+                    //treelibrary.Items.Add(treegroup);
+                    groupsToAdd.Add(treegroup);
                 }
 
-                treelibrary.IsExpanded = oldstate.GetOrDefault(library.LibraryName, false);
+                // add macros editor
+                treelibrary.Items.Add(new LibraryMacrosTreeItem("Macros...",
+                                                                      library.LibName,
+                                                                      true,
+                                                                      _proj.LayoutManager.GetLibraryMacros,
+                                                                      _proj.LayoutManager.EditLibraryMacros,
+                                                                      _proj.LayoutManager.FindAllMacroRefs,
+                                                                      _proj.LayoutManager.RenameAllMacroRefs));
+                // add groups- but in order!
+                foreach (var groupItem in groupsToAdd.OrderBy(x => x.HName))
+                {
+                    treelibrary.Items.Add(groupItem);
+                }
+
+
+                treelibrary.IsExpanded = oldstate.GetOrDefault(library.LibName, false);
 
                 LayoutsTreeView.Items.Add(treelibrary);
             }
@@ -1646,8 +1641,8 @@ namespace SlideCreater
         {
             if (!string.IsNullOrWhiteSpace(selectedLib))
             {
-                var lib = _proj.ProjectLayouts.GetLibraryByName(selectedLib);
-                if (lib.HasValue)
+                var lib = _proj.LayoutManager.GetLibraryByName(selectedLib);
+                if (lib != null)
                 {
                     // export 'er real good
                     SaveFileDialog dialog = new SaveFileDialog();
@@ -1658,7 +1653,7 @@ namespace SlideCreater
                     dialog.FileName = selectedLib;
                     if (dialog.ShowDialog() == true)
                     {
-                        await Xenon.SaveLoad.TrustySave.ExportLibrary(VersionInfo.ToString(), lib.Value, new StreamWriter(File.Open(dialog.FileName, FileMode.OpenOrCreate)));
+                        await Xenon.SaveLoad.TrustySave.ExportLibrary(VersionInfo.ToString(), lib, new StreamWriter(File.Open(dialog.FileName, FileMode.OpenOrCreate)));
                     }
                 }
             }
@@ -1682,7 +1677,7 @@ namespace SlideCreater
         {
             if (!string.IsNullOrWhiteSpace(selectedLib))
             {
-                _proj.ProjectLayouts.RemoveLib(selectedLib);
+                _proj.LayoutManager.RemoveLib(selectedLib);
                 SetupLayoutsTreeVew();
             }
         }
@@ -1691,7 +1686,7 @@ namespace SlideCreater
             TbPromptDialog prompt = new TbPromptDialog("New Library", "Library Name", "User.Library");
             if (prompt.ShowDialog() == true)
             {
-                _proj.ProjectLayouts.InitializeNewLibrary(prompt.ResultValue);
+                _proj.LayoutManager.InitializeNewLibrary(prompt.ResultValue);
                 SetupLayoutsTreeVew();
             }
         }
@@ -1749,6 +1744,23 @@ namespace SlideCreater
         private void ClickRenderFromClean(object sender, RoutedEventArgs e)
         {
             renderclean = miRenderClean.IsChecked;
+        }
+
+        private async void FormatCode(object sender, RoutedEventArgs e)
+        {
+#if DEBUG
+            // not quite production ready :(
+            //TbInput.Text = XenonFastFormatter.Reformat(TbInput.Text, 4);
+            try
+            {
+                //string formatted = await XenonFastFormatter.CompileReformat(TbInput.Text, 4);
+                string formatted = XenonSimpleFormatter.Format(TbInput.Text);
+                Dispatcher.Invoke(() => TbInput.Text = formatted);
+            }
+            catch (Exception)
+            {
+            }
+#endif
         }
     }
 }

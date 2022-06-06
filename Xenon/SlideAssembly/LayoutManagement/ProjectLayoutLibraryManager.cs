@@ -15,6 +15,7 @@ using Xenon.Compiler;
 using Xenon.LayoutInfo;
 using Xenon.Renderer;
 using Xenon.SaveLoad;
+using Xenon.SlideAssembly.LayoutManagement;
 
 namespace Xenon.SlideAssembly
 {
@@ -199,9 +200,6 @@ namespace Xenon.SlideAssembly
 
         private void LoadBundledLibraries()
         {
-            // not ready to release bundles yet
-            // only for debug builds
-            // find all libaries
             var names = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo))
                 .GetManifestResourceNames()
                 .Where(n => n.StartsWith("Xenon.LayoutInfo.Defaults.LibBundles"));
@@ -231,6 +229,8 @@ namespace Xenon.SlideAssembly
             }
         }
     }
+
+
 
     public struct LayoutLibrary
     {
@@ -271,6 +271,23 @@ namespace Xenon.SlideAssembly
             return new LayoutLibrary(value.libname, value.lib);
         }
 
+        public static implicit operator LayoutLibrary(XenonLayoutLibrary value)
+        {
+            var groups = value.AsGroupedLayouts();
+            List<LayoutGroup> oldgroups = new List<LayoutGroup>();
+            foreach (var group in groups)
+            {
+                Dictionary<string, string> glayouts = new Dictionary<string, string>();
+                foreach (var layout in group.Layouts)
+                {
+                    glayouts.Add(layout.Key, layout.Value.RawSource);
+                }
+                oldgroups.Add(new LayoutGroup(group.Group, glayouts));
+            }
+            LayoutLibrary lib = new LayoutLibrary(value.LibName, oldgroups);
+            return lib;
+        }
+
         internal Dictionary<LanguageKeywordCommand, Dictionary<string, string>> ToTypedLayouts()
         {
             Dictionary<LanguageKeywordCommand, Dictionary<string, string>> res = new Dictionary<LanguageKeywordCommand, Dictionary<string, string>>();
@@ -281,6 +298,7 @@ namespace Xenon.SlideAssembly
             }
             return res;
         }
+
     }
 
     public struct LayoutGroup

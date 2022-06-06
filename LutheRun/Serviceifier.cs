@@ -91,6 +91,8 @@ namespace LutheRun
             List<ILSBElement> servicetoparse = null;
             List<ILSBElement> newservice = new List<ILSBElement>();
 
+            ILSBElement end = null;
+
             if (!options.UseCopyTitle)
             {
                 // always start with titlepage insert
@@ -126,8 +128,14 @@ namespace LutheRun
                         servicetoparse.Remove(ack);
                     }
 
+                    var acks = service.Take(2).ToList();
 
-                    newservice.Add(ExternalPrefabGenerator.GenerateCopyTitle(service.Take(2), sack, options));
+                    newservice.Add(ExternalPrefabGenerator.GenerateCopyTitle(acks, sack, options));
+
+                    if (options.UseTitledEnd)
+                    {
+                        end = ExternalPrefabGenerator.GenerateEndPage(acks, options);
+                    }
                 }
                 else
                 {
@@ -184,7 +192,7 @@ namespace LutheRun
                     setlast = true;
                     lastselection = Camera.Organ;
                 }
-                if (nextelement is LSBElementLiturgy || nextelement is LSBElementResponsiveLiturgy || nextelement is LSBElementIntroit || (nextelement as ExternalPrefab)?.TypeIdentifier == "upnext" )
+                if (nextelement is LSBElementLiturgy || nextelement is LSBElementResponsiveLiturgy || nextelement is LSBElementIntroit || new List<string> { "upnext", "creed" }.Contains((nextelement as ExternalPrefab)?.TypeIdentifier))
                 {
                     setlast = true;
                     lastselection = Camera.Center;
@@ -290,7 +298,7 @@ namespace LutheRun
                 if (element is LSBElementHymn)
                 {
                     // we can use the new up-next tabs if we have a hymn #
-                    newservice.Add(PrefabBuilder.BuildHymnIntroSlides(element as LSBElementHymn, options.UseUpNextForHymns));
+                    newservice.Add(ExternalPrefabGenerator.BuildHymnIntroSlides(element as LSBElementHymn, options.UseUpNextForHymns));
                 }
 
                 newservice.Add(element);
@@ -300,7 +308,14 @@ namespace LutheRun
 
 
             // add endservice slide
-            newservice.Add(new ExternalPrefab("#viewservices", "viewservices"));
+            if (end == null)
+            {
+                newservice.Add(new ExternalPrefab("#viewservices", "viewservices"));
+            }
+            else
+            {
+                newservice.Add(end);
+            }
 
             return newservice;
         }

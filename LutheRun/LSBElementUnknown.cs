@@ -23,7 +23,7 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as UNKNOWN. {Unknown}";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
             return "";
         }

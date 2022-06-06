@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xenon.AssetManagment;
+using Xenon.Compiler.SubParsers;
 using Xenon.Helpers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
@@ -41,28 +42,10 @@ namespace Xenon.Compiler.AST
                     });
                 }
 
-                if (Lexer.Inspect("text"))
-                {
-                    Lexer.Consume();
-                    Lexer.GobbleWhitespace();
-                    Lexer.GobbleandLog("=");
-                    Lexer.GobbleWhitespace();
-                    Lexer.GobbleandLog("{");
-                    Lexer.GobbleWhitespace();
 
-                    StringBuilder sb = new StringBuilder();
-                    while (!Lexer.Inspect("}"))
-                    {
-                        sb.Append(Lexer.Consume());
-                        // allow string escaping
-                        if (Lexer.Peek() == "}" && Lexer.PeekNext() == "}")
-                        {
-                            Lexer.Consume();
-                            sb.Append(Lexer.Consume());
-                        }
-                    }
-                    Lexer.Consume();
-                    slide.Texts.Add(sb.ToString());
+                if (TextBlockParser.TryParseTextBlock(Lexer, out var text))
+                {
+                    slide.Texts.Add(text);
                 }
 
                 if (Lexer.Inspect("asset"))
@@ -105,6 +88,55 @@ namespace Xenon.Compiler.AST
 
             slide.Parent = Parent;
             return slide;
+        }
+
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.AppendLine(LanguageKeywords.Commands[LanguageKeywordCommand.CustomDraw]);
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("{");
+            indentDepth++;
+
+            foreach (var asset in BGAssetNames)
+            {
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine($"asset=(\"{asset}\", \"bg\")");
+            }
+            foreach (var asset in FGAssetNames)
+            {
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine($"asset=(\"{asset}\", \"fg\")");
+            }
+
+            foreach (var text in Texts)
+            {
+                var refmt = TextBlockParser.ReformatTextBlock(text);
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine($"text({string.Join(',', refmt.modes)}{(refmt.modes.Any() ? "," : "")}trimat:`)=");
+
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine("{");
+                indentDepth++;
+                foreach (var line in refmt.lines)
+                {
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        sb.Append("".PadLeft(indentDepth * indentSize));
+                        sb.AppendLine($"`{line}");
+                    }
+                }
+                indentDepth--;
+                sb.Append("".PadLeft(indentDepth * indentSize));
+                sb.AppendLine("}");
+            }
+
+
+            indentDepth--;
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("}");
+
         }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)

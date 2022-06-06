@@ -55,10 +55,32 @@ namespace Xenon.Compiler
         {
             CompilerSucess = false;
 
+            try
+            {
+                proj.BMDSwitcherConfig = JsonSerializer.Deserialize<IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings>(proj.SourceConfig);
+            }
+            catch (Exception ex)
+            {
+                // log error, but otherwise ignore
+                Logger.Log(new XenonCompilerMessage()
+                {
+                    ErrorName = "Invalid Switcher Config",
+                    ErrorMessage = "Something went wrong parsing the switcher config file",
+                    Generator = "RenderSlides",
+                    Inner = ex.ToString(),
+                    Level = XenonCompilerMessageType.Error,
+                    Token = "",
+                });
+                Debug.WriteLine($"Compilation Failed \n{ex}");
+                return Task.FromResult(proj);
+            }
+
+
             progress?.Report(0);
 
             var preproc = Lexer.StripComments(proj.SourceCode);
             Lexer.Tokenize(preproc);
+            //Lexer.Tokenize(new List<(string inputblock, int startline)> { (proj.SourceCode, 9) });
 
             progress?.Report(10);
 
@@ -95,66 +117,14 @@ namespace Xenon.Compiler
 
 
 
-            string jsonproj = JsonSerializer.Serialize<Project>(proj, new JsonSerializerOptions() { MaxDepth = 256, ReferenceHandler = ReferenceHandler.Preserve});
-            Debug.WriteLine(jsonproj);
+            //string jsonproj = JsonSerializer.Serialize<Project>(proj, new JsonSerializerOptions() { MaxDepth = 256, ReferenceHandler = ReferenceHandler.Preserve });
+            //Debug.WriteLine(jsonproj);
 
             progress?.Report(100);
 
             CompilerSucess = true;
             return Task.FromResult(proj);
 
-        }
-
-        public Task<Project> Compile(Project proj, string input, List<ProjectAsset> assets, IProgress<int> progress)
-        {
-            CompilerSucess = false;
-
-            progress.Report(0);
-
-            var preproc = Lexer.StripComments(input);
-            Lexer.Tokenize(preproc);
-
-            progress.Report(10);
-
-            XenonASTProgram p = new XenonASTProgram();
-            try
-            {
-                Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Started", ErrorMessage = "Starting to compile", Generator = "Compiler", Level = XenonCompilerMessageType.Debug });
-                XMLMessageGenerator.AddXMLNotes(input, Logger);
-                p = (XenonASTProgram)p.Compile(Lexer, Logger, null);
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Failed", ErrorMessage = "Failed to compile project. Check syntax.", Generator = "Compiler", Level = XenonCompilerMessageType.Error });
-                Debug.WriteLine($"Compilation Failed \n{ex}");
-                return Task.FromResult(proj);
-            }
-
-            progress.Report(50);
-
-
-            try
-            {
-                proj?.Clear();
-                proj.SourceCode = input;
-                p.Generate(proj, null, Logger);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Generation Failed \n{ex}");
-                p.GenerateDebug(proj);
-                return Task.FromResult(proj);
-            }
-
-
-
-            string jsonproj = JsonSerializer.Serialize<Project>(proj);
-            Debug.WriteLine(jsonproj);
-
-            progress.Report(100);
-
-            CompilerSucess = true;
-            return Task.FromResult(proj);
         }
 
     }

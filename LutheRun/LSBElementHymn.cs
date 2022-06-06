@@ -222,16 +222,16 @@ namespace LutheRun
             return "";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
             if (lSBImportOptions.UsePIPHymns)
             {
-                return XenonAutoGen_PIP();
+                return XenonAutoGen_PIP(ref indentDepth, indentSpaces);
             }
-            return XenonAutoGen_Simple();
+            return XenonAutoGen_Simple(ref indentDepth, indentSpaces);
         }
 
-        private string XenonAutoGen_Simple()
+        private string XenonAutoGen_Simple(ref int indentDepth, int indentSpaces)
         {
             // Assumes that any text verses will always be at the end.
             StringBuilder sb = new StringBuilder();
@@ -240,35 +240,33 @@ namespace LutheRun
             // may want to get a bit more advanced for split image/text hymns to apply first only on image and last only on text
             // for now we'll just put it on both
 
-            var imagehymn = XenonAutoGenImageHymn();
-            var texthymn = XenonAutoGenTextHymn();
+            var imagehymn = XenonAutoGenImageHymn(ref indentDepth, indentSpaces);
+            var texthymn = XenonAutoGenTextHymn(ref indentDepth, indentSpaces);
 
             if (!string.IsNullOrEmpty(imagehymn))
             {
-                sb.AppendLine(XenonAutoGenImageHymn() + PostsetCmd);
+                sb.AppendLine(imagehymn + PostsetCmd);
             }
             if (!string.IsNullOrEmpty(texthymn))
             {
-                sb.AppendLine(XenonAutoGenTextHymn() + PostsetCmd);
+                sb.AppendLine(texthymn + PostsetCmd);
             }
             //sb.AppendLine("/// </XENON_AUTO_GEN>");
             return sb.ToString();
         }
-        private string XenonAutoGen_PIP()
+        private string XenonAutoGen_PIP(ref int indentDepth, int indentSpaces)
         {
             // Assumes that any text verses will always be at the end.
             StringBuilder sb = new StringBuilder();
             //sb.AppendLine("/// <XENON_AUTO_GEN>");
 
-            // may want to get a bit more advanced for split image/text hymns to apply first only on image and last only on text
+            // may want to get a bit more advanced for split image/text hymns to apply postset first only on image and postset last only on text
             // for now we'll just put it on both
 
-            var imagehymn = XenonAutoGenImageHymn();
-            var texthymn = XenonAutoGenTextHymn();
 
             var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                                       .GetManifestResourceNames()
-                                      .FirstOrDefault(x => x.Contains("PrePIPScriptBlock"));
+                                      .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Hymn"));
 
             var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                 .GetManifestResourceStream(name);
@@ -276,27 +274,34 @@ namespace LutheRun
             // wrap it into a scripted block
             using (StreamReader sr = new StreamReader(stream))
             {
-                sb.AppendLine(sr.ReadToEnd());
+                string pcmd = sr.ReadToEnd();
+                pcmd = Regex.Replace(pcmd, Regex.Escape("$>"), "".PadLeft(indentSpaces));
+
+                sb.AppendLine(pcmd.IndentBlock(indentDepth, indentSpaces));
             }
+            indentDepth++;
 
             sb.AppendLine();
 
+            var imagehymn = XenonAutoGenImageHymn(ref indentDepth, indentSpaces);
             if (!string.IsNullOrEmpty(imagehymn))
             {
-                sb.AppendLine(XenonAutoGenImageHymn() + PostsetCmd);
+                sb.AppendLine(imagehymn + PostsetCmd);
             }
+            var texthymn = XenonAutoGenTextHymn(ref indentDepth, indentSpaces);
             if (!string.IsNullOrEmpty(texthymn))
             {
-                sb.AppendLine(XenonAutoGenTextHymn() + PostsetCmd);
+                sb.AppendLine(texthymn + PostsetCmd);
             }
 
-            sb.AppendLine("}");
+            indentDepth--;
+            sb.AppendLine("}".Indent(indentDepth, indentSpaces));
 
             return sb.ToString();
         }
 
 
-        private string XenonAutoGenTextHymn()
+        private string XenonAutoGenTextHymn(ref int indentDepth, int indentSpaces)
         {
             StringBuilder sb = new StringBuilder();
             if (HasText)
@@ -307,24 +312,29 @@ namespace LutheRun
                 string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
                 string tune = "";
                 string copyright = Copyright;
-                sb.Append($"#texthymn(\"{title}\", \"{name}\", \"{tune}\", \"{number}\", \"{copyright}\") {{\r\n");
+                sb.AppendLine($"#texthymn(\"{title}\", \"{name}\", \"{tune}\", \"{number}\", \"{copyright}\")".Indent(indentDepth, indentSpaces));
+                sb.AppendLine("{".Indent(indentDepth, indentSpaces));
 
+                indentDepth++;
                 foreach (var verse in TextVerses)
                 {
                     string verseinsert = verse.Number != string.Empty ? $"(Verse {verse.Number})" : "";
-                    sb.AppendLine($"#verse{verseinsert} {{");
+                    sb.AppendLine($"#verse{verseinsert} {{".Indent(indentDepth, indentSpaces));
+                    indentDepth++;
                     foreach (var line in verse.Lines)
                     {
-                        sb.AppendLine(line.Trim());
+                        sb.AppendLine(line.Trim().Indent(indentDepth, indentSpaces));
                     }
+                    indentDepth--;
                     sb.AppendLine("}");
                 }
+                indentDepth--;
                 sb.Append("}");
             }
             return sb.ToString();
         }
 
-        private string XenonAutoGenImageHymn()
+        private string XenonAutoGenImageHymn(ref int indentDepth, int indentSpaces)
         {
             StringBuilder sb = new StringBuilder();
             if (ImageUrls.Count() > 0)
@@ -335,12 +345,15 @@ namespace LutheRun
                 string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
                 string copyright = Copyright;
 
-                sb.AppendLine($"#stitchedimage(\"{title}\", \"{name}\", \"{number}\", \"{copyright}\") {{");
+                sb.AppendLine($"#stitchedimage(\"{title}\", \"{name}\", \"{number}\", \"{copyright}\")".Indent(indentDepth, indentSpaces));
+                sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+                indentDepth++;
                 foreach (var imageline in ImageUrls)
                 {
-                    sb.AppendLine($"{imageline.InferedName};");
+                    sb.AppendLine($"{imageline.InferedName};".Indent(indentDepth, indentSpaces));
                 }
-                sb.AppendLine("}");
+                indentDepth--;
+                sb.Append("}".Indent(indentDepth, indentSpaces));
             }
             return sb.ToString();
         }

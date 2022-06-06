@@ -97,9 +97,40 @@ namespace Xenon.Compiler.AST
             return scope;
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.VariableScope]);
+            sb.AppendLine($"({ScopeName})");
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("{");
+            indentDepth++;
+
+            children.DecompileFormatted(sb, ref indentDepth, indentSize);
+
+            indentDepth--;
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("}");
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            return (children as IXenonASTElement).Generate(project, _Parent, Logger);
+            // Use-Pre Generate to get variables to declare themseleves
+            (children as IXenonASTElement).PreGenerate(project, _Parent, Logger);
+
+            // inject layout macros
+            var regex = new Regex("(?<lib>.*)@(?<name>(.*))");
+            foreach (var variable in Variables.Where(x => regex.Match(x.Key).Success).Select(x => new { variable = x, match = regex.Match(x.Key)}))
+            {
+                project.LayoutManager.OverrideMacroOnScope(variable.match.Groups["lib"].Value, variable.match.Groups["name"].Value, variable.variable.Value, ScopeName);
+            }
+
+            var slides = (children as IXenonASTElement).Generate(project, _Parent, Logger);
+
+            project.LayoutManager.ReleaseMacrosOnScope(ScopeName);
+
+            return slides;
         }
 
         public void GenerateDebug(Project project)
@@ -137,9 +168,18 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
-        public bool SetScopedVariableValue(string vname, string value)
+        public bool SetScopedVariableValue(string vname, string value, Project project)
         {
             Variables[vname] = value;
+
+            // don't REALLY like this, but this is the only place we can do it
+            //var match = Regex.Match(vname, "(?<lib>.*)@(?<name>(.*))");
+            //if (match.Success)
+            //{
+            //    project.LayoutManager.SetMacroOverride(match.Groups["lib"].Value, match.Groups["name"].Value, value);
+            //}
+
+
             if (Variables.ContainsKey(vname) || (this as IXenonASTElement).CheckAnsestorScopeFornameConflict(vname).found)
             {
                 return true;

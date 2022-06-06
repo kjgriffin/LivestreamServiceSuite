@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Xenon.SlideAssembly;
+
 namespace Xenon.Compiler.AST
 {
     interface IXenonASTScope
@@ -10,7 +12,7 @@ namespace Xenon.Compiler.AST
         public string ScopeName { get; }
 
         public (bool found, string scopename) GetScopedVariableValue(string vname, out string value);
-        public bool SetScopedVariableValue(string vname, string value);
+        public bool SetScopedVariableValue(string vname, string value, Project proj);
 
 
     }

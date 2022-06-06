@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using AngleSharp.Dom;
 
 using static LutheRun.LSBResponsorialExtractor;
@@ -37,11 +38,11 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_INTROIT'";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
             if (lSBImportOptions.UseComplexIntroit)
             {
-                return AsComplex();
+                return AsComplex(ref indentDepth, indentSpaces);
             }
             // for now we'll have to assume that a 2 line cadence will work
             // this may not at all be correct
@@ -176,25 +177,34 @@ namespace LutheRun
 
         }
 
-        private string AsComplex()
+        private string AsComplex(ref int indentDepth, int indentSpaces)
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("#tlit {");
-            sb.AppendLine($"title={{{Caption}}}");
-            sb.AppendLine($"title={{{Caption}}}");
+            sb.AppendLine("#tlit {".Indent(indentDepth, indentSpaces));
 
-            sb.AppendLine("content={");
+            indentDepth++;
+
+            sb.AppendLine($"title={{{Caption}}}".Indent(indentDepth, indentSpaces));
+            sb.AppendLine($"title={{{Caption}}}".Indent(indentDepth, indentSpaces));
+
+            sb.AppendLine("content={".Indent(indentDepth, indentSpaces));
+
+            indentDepth++;
+
             foreach (var line in Lines)
             {
-                LiturgicalStatement.Create(line.hasspeaker ? line.speaker : "", line.text).Write(sb);
+                LiturgicalStatement.Create(line.hasspeaker ? line.speaker : "", line.text).Write(sb, ref indentDepth, indentSpaces);
                 if (line != Lines.Last())
                 {
                     sb.AppendLine();
                 }
             }
-            sb.AppendLine("}");
-            sb.AppendLine("}");
+
+            indentDepth--;
+            sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+            indentDepth--;
+            sb.AppendLine("}".Indent(indentDepth, indentSpaces));
 
             return sb.ToString();
         }

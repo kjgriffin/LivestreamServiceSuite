@@ -8,6 +8,7 @@ using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
 using System.Linq;
 using Xenon.AssetManagment;
+using System.Text.RegularExpressions;
 
 namespace Xenon.Compiler.AST
 {
@@ -17,9 +18,12 @@ namespace Xenon.Compiler.AST
         public string Source { get; set; } = "";
         public IXenonASTElement Parent { get; private set; }
 
+        private Token _srcToken;
+
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTScript script = new XenonASTScript();
+            script._srcToken = Lexer.CurrentToken;
             Lexer.GobbleWhitespace();
             StringBuilder sb = new StringBuilder();
             Lexer.GobbleandLog("{");
@@ -29,14 +33,40 @@ namespace Xenon.Compiler.AST
                 sb.Append(Lexer.Consume());
                 if (Lexer.Inspect("}"))
                 {
-                    script.Source = sb.ToString();
                     Lexer.Consume();
                     break;
                 }
             }
+            string src = sb.ToString();
+            // handle whitespace
+            var slines = src.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+            script.Source = string.Join(Environment.NewLine, slines.Select(x => x.Trim()));
             script.Parent = Parent;
             return script;
 
+        }
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.AppendLine(LanguageKeywords.Commands[LanguageKeywordCommand.Script]);
+
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("{");
+            indentDepth++;
+
+            foreach (var line in Source.Split(Environment.NewLine))
+            {
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    sb.Append("".PadLeft(indentDepth * indentSize));
+                    sb.AppendLine(line);
+                }
+            }
+
+            indentDepth--;
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.AppendLine("}");
         }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
@@ -51,7 +81,34 @@ namespace Xenon.Compiler.AST
             script.Format = SlideFormat.Script;
             script.Asset = "";
             script.MediaType = MediaType.Text;
-            script.Data["source"] = Source;
+
+            string src = Source;
+
+            // resolve variables
+            // for now only check if a button in the config file
+            foreach (var match in Regex.Matches(Source, "%(?<var>.*)%").AsEnumerable())
+            {
+                // check if we have that one
+                if (project.BMDSwitcherConfig.Routing.Any(x => x.ButtonName == match?.Groups["var"]?.Value))
+                {
+                    src = Regex.Replace(src, $"%{match.Groups["var"].Value}%", project.BMDSwitcherConfig.Routing.FirstOrDefault(x => x.ButtonName == match.Groups["var"].Value).PhysicalInputId.ToString());
+                }
+                else
+                {
+                    Logger.Log(new XenonCompilerMessage()
+                    {
+                        ErrorName = "Invalid Variable Substution",
+                        ErrorMessage = $"Attempting to replace varible with name %{match?.Groups["var"]?.Value}%, but could not find it.",
+                        Generator = "XenonASTScript::Generate",
+                        Inner = "",
+                        Level = XenonCompilerMessageType.Error,
+                        Token = _srcToken,
+                    });
+                }
+            }
+
+
+            script.Data["source"] = src;
 
             return script.ToList();
         }
@@ -231,7 +288,10 @@ namespace Xenon.Compiler.AST
 
             if (IsInsideParamList(action))
             {
-                // get command and look it up by string
+
+                // TODO: confirm request wants a camera
+                // for now assume it might and allow variable '%' substituion for any of the named variables in the config
+
 
             }
 
@@ -288,7 +348,6 @@ namespace Xenon.Compiler.AST
 
             return suggestions;
         }
-
 
     }
 }

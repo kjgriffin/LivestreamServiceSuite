@@ -67,12 +67,12 @@ namespace Configurations.SwitcherConfig
                     Gain = 0.35,
                     Rate = 30,
                     Invert = 0,
-                    IsPremultipled = 0,
+                    IsPremultipled = 1,
                     IsMasked = 0,
-                    MaskTop = -5.5f,
-                    MaskBottom = -9,
-                    MaskLeft = -16,
-                    MaskRight = 16
+                    MaskTop = 0,
+                    MaskBottom = 0,
+                    MaskLeft = 0,
+                    MaskRight = 0
                 },
                 DownstreamKey2Config = new BMDDSKSettings()
                 {

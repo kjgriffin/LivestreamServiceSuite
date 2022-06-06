@@ -1,23 +1,26 @@
-﻿#scope(Lords Prayer) {
-#var("customdraw.Layout", "$SERVICETHEME$::SideBar-expanded")
-#customdraw {
-asset=("HCLogo-white", "fg")
-text={Lord's Prayer}
-text={
-Our Father who art in heaven,
-     hallowed be Thy name,
-     Thy kingdom come,
-     Thy will be done on earth
-          as it is in heaven;
-     give us this day our daily bread;
-     and forgive us our trespasses
-          as we forgive those
-          who trespass against us;
-     and lead us not into temptation,
-     but deliver us from evil.
-For Thine is the kingdom
-     and the power and the glory
-     forever and ever. Amen.
-}
-}
+﻿#scope(Lords Prayer)
+{
+$>#var("customdraw.Layout", "$SERVICETHEME$::SideBar-expanded")
+$>#customdraw
+$>{
+$>$>asset=("HCLogo-white", "fg")
+$>$>text={Lord's Prayer}
+$>$>text(pretrim,trimat:`)=
+$>$>{
+$>$>`Our Father who art in heaven,
+$>$>`     hallowed be Thy name,
+$>$>`     Thy kingdom come,
+$>$>`     Thy will be done on earth
+$>$>`          as it is in heaven;
+$>$>`     give us this day our daily bread;
+$>$>`     and forgive us our trespasses
+$>$>`          as we forgive those
+$>$>`          who trespass against us;
+$>$>`     and lead us not into temptation,
+$>$>`     but deliver us from evil.
+$>$>`For Thine is the kingdom
+$>$>`     and the power and the glory
+$>$>`     forever and ever. Amen.
+$>$>}
+$>}$POSTSET$
 }

@@ -30,7 +30,7 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_CAPTION. Caption:'{Caption}' SubCaption:'{SubCaption}'";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace)
         {
             // for now just make a title slide:: and flag it as optional
             //return $"/// <XENON_AUTO_GEN optional=\"true\">\r\n#2title(\"{Caption.Replace('\"', '\'')}\", \"{SubCaption.Replace('\"', '\'')}\", \"horizontal\")\r\n/// </XENON_AUTO_GEN>";
@@ -45,38 +45,38 @@ namespace LutheRun
 
             if (ctest.Contains("bells"))
             {
-                sb.AppendLine("/// </MANUAL_UPDATE name='bells'>");
-                sb.AppendLine("//> INSERTION POINT: bells");
+                sb.AppendLine("/// </MANUAL_UPDATE name='bells'>".Indent(indentDepth, indentSpace));
+                sb.AppendLine("//> INSERTION POINT: bells".Indent(indentDepth, indentSpace));
             }
             else if (ctest.Contains("prelude"))
             {
-                sb.AppendLine("/// </MANUAL_UPDATE name='prelude'>");
-                sb.AppendLine("//> INSERTION POINT: prelude");
-                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\"){PostsetCmd}");
+                sb.AppendLine("/// </MANUAL_UPDATE name='prelude'>".Indent(indentDepth, indentSpace));
+                sb.AppendLine("//> INSERTION POINT: prelude".Indent(indentDepth, indentSpace));
+                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\"){PostsetCmd}".Indent(indentDepth, indentSpace));
             }
             else if (ctest.Contains("postlude"))
             {
-                sb.AppendLine("/// </MANUAL_UPDATE name='postlude'>");
-                sb.AppendLine("//> INSERTION POINT: postlude");
-                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\"){PostsetCmd}");
+                sb.AppendLine("/// </MANUAL_UPDATE name='postlude'>".Indent(indentDepth, indentSpace));
+                sb.AppendLine("//> INSERTION POINT: postlude".Indent(indentDepth, indentSpace));
+                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\"){PostsetCmd}".Indent(indentDepth, indentSpace));
             }
             else if (ctest.Contains("anthem"))
             {
-                sb.AppendLine("/// </MANUAL_UPDATE name='anthem'>");
-                sb.AppendLine("//> INSERTION POINT: anthem");
-                sb.AppendLine($"#anthemtitle(\"{Caption}\", \"{SubCaption}\", \"\", \"\"){PostsetCmd}");
+                sb.AppendLine("/// </MANUAL_UPDATE name='anthem'>".Indent(indentDepth, indentSpace));
+                sb.AppendLine("//> INSERTION POINT: anthem".Indent(indentDepth, indentSpace));
+                sb.AppendLine($"#anthemtitle(\"{Caption}\", \"{SubCaption}\", \"\", \"\"){PostsetCmd}".Indent(indentDepth, indentSpace));
             }
-            else if (ctest.Contains("sermon"))
+            else if (ctest.Contains("sermon".Indent(indentDepth, indentSpace)))
             {
-                sb.AppendLine("/// </MANUAL_UPDATE name='sermon'>");
-                sb.AppendLine("//> INSERTION POINT: sermon");
-                sb.AppendLine($"#sermon(\"TITLE\", \"REFERENCE\", \"PREACHER\"){PostsetCmd}");
+                sb.AppendLine("/// </MANUAL_UPDATE name='sermon'>".Indent(indentDepth, indentSpace));
+                sb.AppendLine("//> INSERTION POINT: sermon".Indent(indentDepth, indentSpace));
+                sb.AppendLine($"#sermon(\"TITLE\", \"REFERENCE\", \"PREACHER\"){PostsetCmd}".Indent(indentDepth, indentSpace));
             }
 
             else if (!lSBImportOptions.OnlyKnownCaptions)
             {
-                sb.AppendLine("/// </MANUAL_UPDATE name='unknown caption'>");
-                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\")");
+                sb.AppendLine("/// </MANUAL_UPDATE name='unknown caption'>".Indent(indentDepth, indentSpace));
+                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\")".Indent(indentDepth, indentSpace));
             }
 
             return sb.ToString();

@@ -46,7 +46,7 @@ namespace Xenon.Compiler.AST
                 MediaType = MediaType.Image
             };
 
-            
+
             List<string> strings = new List<string>
             {
                 AnthemTitle, Musician, Accompanianst, Credits
@@ -74,6 +74,14 @@ namespace Xenon.Compiler.AST
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
         {
             throw new NotImplementedException();
+        }
+
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.AnthemTitle]);
+            sb.AppendLine($"(\"{AnthemTitle}\", \"{Musician}\", \"{Accompanianst}\", \"{Credits}\")");
         }
 
         List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()

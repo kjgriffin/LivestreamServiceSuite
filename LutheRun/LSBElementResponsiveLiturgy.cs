@@ -29,10 +29,17 @@ namespace LutheRun
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_RESPONSIVE_LITURGY.";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
-            string litcontent = LSBResponsorialExtractor.ExtractResponsiveLiturgy(_litPTags);
-            return $"#liturgyresponsive{Environment.NewLine}{{{Environment.NewLine}{litcontent}{Environment.NewLine}}}{PostsetCmd}{Environment.NewLine}";
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("#liturgyresponsive".Indent(indentDepth, indentSpaces));
+            sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+            indentDepth++;
+            sb.AppendLine(LSBResponsorialExtractor.ExtractResponsiveLiturgy(_litPTags, ref indentDepth, indentSpaces));
+            indentDepth--;
+            sb.Append("}".Indent(indentDepth, indentSpaces));
+            sb.AppendLine(PostsetCmd);
+            return sb.ToString();
         }
     }
 }

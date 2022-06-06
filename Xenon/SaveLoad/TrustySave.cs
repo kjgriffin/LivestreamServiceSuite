@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Xenon.Compiler;
 using Xenon.LayoutInfo;
 using Xenon.SlideAssembly;
+using Xenon.SlideAssembly.LayoutManagement;
 
 namespace Xenon.SaveLoad
 {
@@ -61,6 +62,30 @@ namespace Xenon.SaveLoad
                     {
                         sourcecode = await sr.ReadToEndAsync();
                         proj.SourceCode = sourcecode;
+                    }
+                }
+
+                // get configuration
+                if (originalVersion.ExceedsMinimumVersion(1, 7, 2, 26))
+                {
+                    var configsourcefile = archive.GetEntry("bmdconfig.json");
+                    if (configsourcefile != null)
+                    {
+                        using (StreamReader sr = new StreamReader(configsourcefile.Open()))
+                        {
+                            string cfg = sr.ReadToEnd();
+                            // try and parse it
+                            try
+                            {
+                                var config = JsonSerializer.Deserialize<IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings>(cfg);
+                                proj.BMDSwitcherConfig = config;
+                            }
+                            catch
+                            {
+                            }
+                            // always recover the source though
+                            proj.SourceConfig = cfg;
+                        }
                     }
                 }
 
@@ -127,9 +152,18 @@ namespace Xenon.SaveLoad
                             string json = await sr.ReadToEndAsync();
                             // Project has layouts defined
                             // we can replace the defaults created by new Project()
-                            var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
-                            proj.ProjectLayouts.LoadLibrary(lib.TrustilyUpgradeOldLayoutLibrary(originalVersion, currentVersion));
+                            if (originalVersion.MeetsMinimumVersion(1, 7, 2, 31))
+                            {
+                                // new style of libraries
+                                var lib = JsonSerializer.Deserialize<XenonLayoutLibrary>(json, new JsonSerializerOptions() { IncludeFields = true });
+                                proj.LayoutManager.LoadLibrary(lib); // TODO: upgrade libs...
+                            }
+                            else
+                            {
 
+                                var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
+                                proj.LayoutManager.LoadLibrary(lib.TrustilyUpgradeOldLayoutLibrary(originalVersion, currentVersion));
+                            }
                         }
                     }
                 }
@@ -296,6 +330,14 @@ namespace Xenon.SaveLoad
                 sb.AppendLine(setvar);
                 sb.AppendLine(proj.SourceCode);
                 proj.SourceCode = sb.ToString();
+
+                // default config file will need to be reset
+                proj.BMDSwitcherConfig.DownstreamKey1Config.IsPremultipled = 0;
+                proj.BMDSwitcherConfig.DownstreamKey1Config.IsMasked = 1;
+                proj.BMDSwitcherConfig.DownstreamKey1Config.MaskTop = -5.5f;
+                proj.BMDSwitcherConfig.DownstreamKey1Config.MaskBottom = -9f;
+                proj.BMDSwitcherConfig.DownstreamKey1Config.MaskLeft = -16f;
+                proj.BMDSwitcherConfig.DownstreamKey1Config.MaskRight = 16f;
             }
 
             return Task.CompletedTask;
@@ -397,19 +439,32 @@ namespace Xenon.SaveLoad
                     await writer.WriteAsync(proj.SourceCode);
                 }
 
+                // handle config
+                ZipArchiveEntry bmdconfigfile = archive.CreateEntry("bmdconfig.json");
+                using (StreamWriter writer = new StreamWriter(bmdconfigfile.Open()))
+                {
+                    await writer.WriteAsync(proj.SourceConfig);
+                }
+
+
                 // handle layouts
 
                 progress?.Report(97);
 
                 string layoutsfolderpath = $"layouts{Path.DirectorySeparatorChar}";
                 var layoutsfolder = archive.CreateEntry(layoutsfolderpath);
-                var libraries = proj.ProjectLayouts.GetAllLibraryLayoutsByGroup();
+                var libraries = proj.LayoutManager.AllLibraries();
                 Dictionary<string, string> layoutsmapdict = new Dictionary<string, string>();
                 foreach (var lib in libraries)
                 {
-                    ZipArchiveEntry layoutlib_entry = archive.CreateEntry(Path.Combine(layoutsfolderpath, lib.LibraryName + ".json"));
-                    await ExportLibrary(versioninfo, lib, new StreamWriter(layoutlib_entry.Open()));
-                    layoutsmapdict[lib.LibraryName] = Path.Combine(layoutsfolderpath, lib.LibraryName + ".json");
+                    ZipArchiveEntry layoutlib_entry = archive.CreateEntry(Path.Combine(layoutsfolderpath, lib.LibName + ".json"));
+                    //await ExportLibrary(versioninfo, lib, new StreamWriter(layoutlib_entry.Open()));
+                    string json = JsonSerializer.Serialize(lib);
+                    using (var writer = new StreamWriter(layoutlib_entry.Open()))
+                    {
+                        await writer.WriteAsync(json);
+                    }
+                    layoutsmapdict[lib.LibName] = Path.Combine(layoutsfolderpath, lib.LibName + ".json");
                 }
 
                 string layoutsmapjsonstr = JsonSerializer.Serialize(layoutsmapdict);
@@ -426,17 +481,17 @@ namespace Xenon.SaveLoad
             });
         }
 
-        public static async Task ExportLibrary(string versioninfo, LayoutLibrary lib, StreamWriter writer)
+        public static async Task ExportLibrary(string versioninfo, XenonLayoutLibrary lib, StreamWriter writer)
         {
-            var metadata = new { XenonVersion = versioninfo, Date = DateTime.Now.ToString("dd/MM/yyyy") };
+            //var metadata = new { XenonVersion = versioninfo, Date = DateTime.Now.ToString("dd/MM/yyyy") };
             using (writer)
             {
-                var obj = new
-                {
-                    Lib = lib,
-                    Metadata = metadata,
-                };
-                await writer.WriteAsync(JsonSerializer.Serialize(obj, new JsonSerializerOptions() { IncludeFields = true }));
+                //var obj = new
+                //{
+                //    Lib = lib,
+                //    Metadata = metadata,
+                //};
+                await writer.WriteAsync(JsonSerializer.Serialize(lib, new JsonSerializerOptions() { IncludeFields = true }));
             }
         }
 
@@ -445,8 +500,22 @@ namespace Xenon.SaveLoad
             using (StreamReader sr = new StreamReader(File.Open(filename, FileMode.Open)))
             {
                 string json = await sr.ReadToEndAsync();
-                var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
-                proj?.ProjectLayouts?.LoadLibrary(lib);
+                try
+                {
+                    var lib = JsonSerializer.Deserialize<LayoutLibEntry>(json, new JsonSerializerOptions() { IncludeFields = true });
+                    if (lib.Lib.LibraryName != null && lib.Lib.Library != null && lib.Metadata.XenonVersion != null && lib.Metadata.Date != null)
+                    {
+                        proj?.LayoutManager?.LoadLibrary(lib);
+                    }
+                    else
+                    {
+                        var libnew = JsonSerializer.Deserialize<XenonLayoutLibrary>(json, new JsonSerializerOptions() { IncludeFields = true });
+                        proj?.LayoutManager?.LoadLibrary(libnew);
+                    }
+                }
+                catch (Exception)
+                {
+                }
 
             }
         }

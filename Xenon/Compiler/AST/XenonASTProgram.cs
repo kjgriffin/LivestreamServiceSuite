@@ -77,5 +77,12 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            foreach (var expr in Expressions)
+            {
+                expr.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+        }
     }
 }

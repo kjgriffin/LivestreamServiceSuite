@@ -179,7 +179,8 @@ namespace Xenon.LayoutInfo
         Left,
         Center,
         Right,
-        Justified
+        Justified,
+        Centered
     }
     enum LWJVAlign
     {
@@ -202,6 +203,8 @@ namespace Xenon.LayoutInfo
                 case LWJHAlign.Right:
                     return SixLabors.Fonts.HorizontalAlignment.Right;
                 case LWJHAlign.Justified:
+                    return SixLabors.Fonts.HorizontalAlignment.Left; // TODO: this may not be right...
+                case LWJHAlign.Centered:
                     return SixLabors.Fonts.HorizontalAlignment.Left; // TODO: this may not be right...
             }
             return SixLabors.Fonts.HorizontalAlignment.Left;

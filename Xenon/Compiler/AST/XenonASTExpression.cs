@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 using Xenon.SlideAssembly;
 
@@ -22,6 +23,11 @@ namespace Xenon.Compiler.AST
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             return Command?.Generate(project, this, Logger) ?? new List<Slide>();
+        }
+
+        void IXenonASTElement.PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
+            Command.PreGenerate(project, this, Logger);
         }
 
         public void GenerateDebug(Project project)
@@ -173,6 +179,13 @@ namespace Xenon.Compiler.AST
             {
                 XenonASTStitchedHymn hymn = new XenonASTStitchedHymn();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.StitchedImage]);
+                expr.Command = (IXenonASTCommand)hymn.Compile(Lexer, Logger, parent);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.ReStitchedHymn]))
+            {
+                XenonASTReStitchedHymn hymn = new XenonASTReStitchedHymn();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.ReStitchedHymn]);
                 expr.Command = (IXenonASTCommand)hymn.Compile(Lexer, Logger, parent);
                 return expr;
             }
@@ -363,5 +376,50 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            // postset is handled at this level,
+            // may need to refactor the newline/command logic to here
+
+            // new line between all commands?
+            sb.AppendLine();
+
+            // let the command generate itself
+            Command.DecompileFormatted(sb, ref indentDepth, indentSize);
+
+            // add its postset
+            if (Postset)
+            {
+                sb.Append("::postset(");
+                bool sep = false;
+
+                if (Postset_forFirst)
+                {
+                    sb.Append($"first={Postset_First}");
+                    sep = true;
+                }
+
+                if (Postset_forLast)
+                {
+                    if (sep)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append($"last={Postset_Last}");
+                    sep = true;
+                }
+
+                if (Postset_forAll)
+                {
+                    if (sep)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append($"all={Postset_All}");
+                }
+
+                sb.AppendLine(")");
+            }
+        }
     }
 }

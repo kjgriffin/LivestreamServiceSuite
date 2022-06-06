@@ -14,6 +14,9 @@ namespace Xenon.Compiler
         public static readonly Token EOFText = ("$EOF$", int.MaxValue);
 
         public string SingleLineComment { get; } = "//";
+
+        public string EscapedSingleLineComment { get; } = @"\//";
+
         public string BeginBlockComment { get; } = "/*";
         public string EndBlockComment { get; } = "*/";
 
@@ -79,6 +82,8 @@ namespace Xenon.Compiler
             List<string> Seperators = new List<string>() {
                 "```",
                 "\r\n",
+                //"/*",
+                //"*/",
                 "//",
                 "::",
                 "?",
@@ -180,6 +185,7 @@ namespace Xenon.Compiler
                 //"\r",
                 BeginBlockComment,
                 EndBlockComment,
+                EscapedSingleLineComment,
                 SingleLineComment,
             };
 
@@ -224,7 +230,14 @@ namespace Xenon.Compiler
 
                 if (!iscomment)
                 {
-                    nocomments.Add(b);
+                    if (b.Item1 == EscapedSingleLineComment)
+                    {
+                        nocomments.Add((SingleLineComment, b.Item2));
+                    }
+                    else
+                    {
+                        nocomments.Add(b);
+                    }
                 }
 
                 if (b.Item1 == System.Environment.NewLine)

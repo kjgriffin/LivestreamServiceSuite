@@ -154,6 +154,7 @@ namespace Xenon.Renderer
             // we'd always want this now unless legacy is supplied
             if (rendermode == null || !rendermode.Any(s => s == "legacy"))
             {
+                /*
                 var config = Configurations.SwitcherConfig.DefaultConfig.GetDefaultConfig();
                 config.DownstreamKey1Config.IsPremultipled = 1;
                 string json = JsonSerializer.Serialize(config);
@@ -162,6 +163,27 @@ namespace Xenon.Renderer
                 {
                     sw.Write(json);
                 }
+                */
+                // At this point we support explicit editing of the config
+                // So we'll just make nose complaining that we don't support this behaviour
+                // edit the values yourself
+                messages.Add(new XenonCompilerMessage()
+                {
+                    ErrorName = "Possible Error Generating Config",
+                    ErrorMessage = "To achieve the legacy functionality, confirm the Switcher Config is set correctly.",
+                    Generator = "SlideExporter",
+                    Inner = "",
+                    Level = XenonCompilerMessageType.Error,
+                    Token = "",
+                });
+            }
+            // dump out config
+            var config = proj.BMDSwitcherConfig;
+            string json = JsonSerializer.Serialize(config);
+            string configfilename = Path.Join(directory, $"BMDSwitcherConfig.json");
+            using (StreamWriter sw = new StreamWriter(configfilename, false))
+            {
+                sw.Write(json);
             }
 
 

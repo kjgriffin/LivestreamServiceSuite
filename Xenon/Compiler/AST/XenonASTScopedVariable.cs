@@ -45,8 +45,29 @@ namespace Xenon.Compiler.AST
             Lexer.GobbleWhitespace();
             return variable;
         }
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.ScopedVariable]);
+
+            if (VValue.Contains('"'))
+            {
+                sb.AppendLine($"(\"{VName}\", ```{VValue}```)");
+            }
+            else
+            {
+                sb.AppendLine($"(\"{VName}\", \"{VValue}\")");
+            }
+        }
+
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
+            return new List<Slide>();
+        }
+
+        public void PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             IXenonASTElement p = Parent;
 
@@ -63,7 +84,7 @@ namespace Xenon.Compiler.AST
                 if (p is IXenonASTScope)
                 {
 
-                    (p as IXenonASTScope).SetScopedVariableValue(VName, VValue);
+                    (p as IXenonASTScope).SetScopedVariableValue(VName, VValue, project);
                     set = true;
                     break;
                 }
@@ -75,7 +96,6 @@ namespace Xenon.Compiler.AST
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Variable named {{{VName}}} was defined outside any valid scope. Will not be set.", ErrorName = "Invalid variable declaration", Generator = "XenonASTScopedVariable::Generate", Level = XenonCompilerMessageType.Error });
             }
-            return new List<Slide>();
         }
 
         public void GenerateDebug(Project project)
@@ -88,9 +108,10 @@ namespace Xenon.Compiler.AST
             throw new NotImplementedException();
         }
 
+
         List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
         {
-            ("#set", false, "", new List<(string, string)> { ("#set", "")}, null),
+            ("#var", false, "", new List<(string, string)> { ("#var", "")}, null),
             ("\\(\"", false, "", new List<(string, string)> { ("(\"", "insert variable name")}, null),
             /*
             ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end variable name")},  ),
@@ -107,5 +128,5 @@ namespace Xenon.Compiler.AST
             */
         };
 
-      }
+    }
 }

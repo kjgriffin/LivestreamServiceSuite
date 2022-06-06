@@ -11,10 +11,18 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Parent { get; }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger);
+        public virtual void PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
+            return;
+        }
+
+
 
         public void GenerateDebug(Project project);
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer);
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent);
+
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize);
 
         public (bool found, string scopename) TryGetScopedVariable(string vname, out string value)
         {

@@ -15,6 +15,7 @@ using System.Windows.Threading;
 
 using Xenon.Helpers;
 using Xenon.SlideAssembly;
+using Xenon.SlideAssembly.LayoutManagement;
 
 namespace UIControls
 {
@@ -41,7 +42,9 @@ namespace UIControls
 
         Action UpdateCallback;
 
-        public LayoutDesigner(string libname, List<string> alllibs, string layoutname, string layoutjson, string group, bool editable, SaveLayoutToLibrary save, Action updateCallback)
+        GetLayoutPreview getLayoutPreview;
+
+        public LayoutDesigner(string libname, List<string> alllibs, string layoutname, string layoutjson, string group, bool editable, SaveLayoutToLibrary save, Action updateCallback, GetLayoutPreview getLayoutPreview)
         {
             InitializeComponent();
             TbJson.LoadLanguage_JSON();
@@ -56,6 +59,8 @@ namespace UIControls
             //tbnameorig1.Text = LayoutName;
             tbName.Text = $"{LayoutName}";
             Editable = editable;
+
+            this.getLayoutPreview = getLayoutPreview;
 
             cbLibs.Items.Clear();
             alllibs.ForEach((x) => cbLibs.Items.Add(x));
@@ -80,7 +85,10 @@ namespace UIControls
 
         private void ShowPreviews(string layoutjson)
         {
-            var r = ProjectLayoutLibraryManager.GetLayoutPreview(Group, layoutjson);
+            //string resolvedJson = ResolveLayoutMacros?.Invoke(layoutjson, LayoutName, Group, LibName);
+
+            //var r = ProjectLayoutLibraryManager.GetLayoutPreview(Group, layoutjson);
+            var r = getLayoutPreview.Invoke(LayoutName, Group, LibName, layoutjson);
             if (r.isvalid)
             {
                 srcinvalid.Visibility = Visibility.Hidden;

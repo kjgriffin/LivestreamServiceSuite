@@ -24,6 +24,11 @@ namespace Xenon.Compiler.AST
             return filter;
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             return new List<Slide>();

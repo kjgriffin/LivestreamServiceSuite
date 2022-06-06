@@ -36,6 +36,14 @@ namespace Xenon.Compiler.AST
             return vslides;
         }
 
+        void IXenonASTElement.PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
+        {
+            foreach (var verse in Verses)
+            {
+                ((IXenonASTElement)verse).PreGenerate(project, this, Logger);
+            }
+        }
+
         public void GenerateDebug(Project project)
         {
             Debug.WriteLine("<XenonASTTextHymn>");
@@ -110,6 +118,26 @@ namespace Xenon.Compiler.AST
             return textHymn;
 
         }
+
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.TextHymn]);
+            sb.AppendLine($"(\"{HymnTitle}\", \"{HymnName}\", \"{Tune}\" \"{Number}\", \"{CopyrightInfo}\")");
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            indentDepth++;
+
+            foreach (var verse in Verses)
+            {
+                verse.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+
+        }
+
 
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer)
         {

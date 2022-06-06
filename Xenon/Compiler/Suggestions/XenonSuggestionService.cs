@@ -312,13 +312,13 @@ namespace Xenon.Compiler.Suggestions
         private List<(string, LanguageKeywordCommand, string)> GetKnownLayouts()
         {
             List<(string, LanguageKeywordCommand, string)> knownLayouts = new List<(string, LanguageKeywordCommand, string)>();
-            foreach (var lib in proj?.ProjectLayouts?.GetAllLibraryLayoutsByGroup())
+            foreach (var lib in proj?.LayoutManager?.AllLibraries())
             {
-                foreach (var grp in lib.Library)
+                foreach (var grp in lib.Layouts.GroupBy(x => x.Group))
                 {
-                    foreach (var layout in grp.layouts)
+                    foreach (var layout in grp)
                     {
-                        knownLayouts.Add((lib.LibraryName, LanguageKeywords.Commands.First(x => x.Value == grp.group).Key, layout.Key));
+                        knownLayouts.Add((lib.LibName, LanguageKeywords.Commands.First(x => x.Value == grp.Key).Key, layout.Name));
                     }
                 }
             }

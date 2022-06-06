@@ -30,13 +30,17 @@ namespace LutheRun
         [BoolSetting]
         public bool UseCopyTitle { get; set; } = true;
         [BoolSetting]
+        public bool UseTitledEnd { get; set; } = true;
+        [BoolSetting]
         public bool UseThemedCreeds { get; set; } = true;
         [BoolSetting]
         public bool UsePIPCreeds { get; set; } = false;
         [BoolSetting]
         public bool UseThemedHymns { get; set; } = true;
 
-        public string ServiceThemeLib { get; set; } = "Xenon.Green";
+        public string ServiceThemeLib { get; set; } = "Xenon.CommonColored";
+
+        public Dictionary<string, string> Macros { get; set; } = new Dictionary<string, string>();
 
         public LSBElementFilter Filter { get; set; } = new LSBElementFilter();
     }

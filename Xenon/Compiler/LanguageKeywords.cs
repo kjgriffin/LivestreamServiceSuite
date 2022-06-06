@@ -47,6 +47,7 @@ namespace Xenon.Compiler
             "solidcolorcanvas",
             "crop",
             "centerassetfill",
+            "assets",
             "asset",
             "width",
             "height",
@@ -89,6 +90,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.FitImage] = "fitimage",
             [LanguageKeywordCommand.AutoFitImage] = "autofitimage",
             [LanguageKeywordCommand.StitchedImage] = "stitchedimage",
+            [LanguageKeywordCommand.ReStitchedHymn] = "restitchedhymn",
             [LanguageKeywordCommand.LiturgyImage] = "litimage",
             [LanguageKeywordCommand.Liturgy] = "liturgy",
             [LanguageKeywordCommand.Liturgy2] = "liturgyresponsive",
@@ -131,6 +133,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.FitImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTFitImage()),
             [LanguageKeywordCommand.AutoFitImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTAutoFitImage()),
             [LanguageKeywordCommand.StitchedImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTStitchedHymn()),
+            [LanguageKeywordCommand.ReStitchedHymn] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, true, new XenonASTReStitchedHymn()),
             [LanguageKeywordCommand.LiturgyImage] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTLiturgyImage()),
             [LanguageKeywordCommand.Liturgy] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTLiturgy()),
             [LanguageKeywordCommand.Liturgy2] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTLiturgy2()),
@@ -229,6 +232,7 @@ namespace Xenon.Compiler
         Scripted,
         CustomDraw,
         TitledLiturgyVerse2,
+        ReStitchedHymn,
     }
 
 }

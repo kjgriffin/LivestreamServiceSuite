@@ -66,6 +66,27 @@ namespace Xenon.Compiler.AST
 
         }
 
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.AutoFitImage]);
+            sb.Append($"(\"{AssetName}\")");
+            if (InvertColor)
+            {
+                sb.Append("(true)");
+            }
+            if (!string.IsNullOrEmpty(Options))
+            {
+                sb.Append($"[({Options})]");
+            }
+            else if (!string.IsNullOrEmpty(KeyType))
+            {
+                sb.Append($"[{KeyType}]");
+            }
+            sb.AppendLine();
+        }
+
         public List<Slide> Generate(Project project, IXenonASTElement _parent, XenonErrorLogger Logger)
         {
             // create a full image slide

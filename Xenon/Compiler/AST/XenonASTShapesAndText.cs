@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Xenon.Compiler.SubParsers;
 using Xenon.Helpers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
@@ -20,24 +21,38 @@ namespace Xenon.Compiler.AST
         {
             XenonASTShapesAndText shapeAndTexts = new XenonASTShapesAndText();
             Lexer.GobbleWhitespace();
-            Lexer.GobbleandLog("{");
-            Lexer.GobbleWhitespace();
 
-            // TODO: allow escaping of }
-            string x = Lexer.ConsumeUntil("}");
-            Lexer.GobbleandLog("}");
+            shapeAndTexts.Texts = TextBlockParser.ParseTextBlockLines(Lexer);
 
-            shapeAndTexts.Texts = x.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
             shapeAndTexts.Parent = Parent;
 
             return shapeAndTexts;
+        }
+
+        public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            sb.Append("".PadLeft(indentDepth * indentSize));
+            sb.Append("#");
+            sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.CustomText]);
+            sb.AppendLine("(pretrim,trimat:`)");
+            sb.AppendLine("{".PadLeft(indentDepth * indentSize));
+            indentDepth++;
+
+            foreach (var text in Texts)
+            {
+                sb.AppendLine($"`{text}".PadLeft(indentDepth * indentSize));
+            }
+
+            indentDepth--;
+            sb.AppendLine("}".PadLeft(indentDepth * indentSize));
+
         }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             Slide slide = new Slide
             {
-                Name = "UNNAMED_upnext",
+                Name = "UNNAMED_customtext",
                 Number = project.NewSlideNumber,
                 Lines = new List<SlideLine>(),
                 Asset = "",

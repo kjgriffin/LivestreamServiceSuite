@@ -1,65 +1,65 @@
 ﻿#scope(Nicene Creed) {
-#scope(First Article) {
-#var("customdraw.Layout", "$SERVICETHEME$::SideBar-expanded")
-#customdraw {
-asset=("HCLogo-white", "fg")
-text={Nicene Creed}
-text={
-I believe in one God,
-     the Father Almighty,
-     maker of heaven and earth
-          and of all things visible and invisible.
-}
-}
-}
-#scope(Second Article) {
-#var("customdraw.Layout", "$SERVICETHEME$::SideBar-compact")
-#customdraw {
-asset=("HCLogo-white", "fg")
-text={Nicene Creed}
-text={
-And in one Lord Jesus Christ,
-     the only-begotten Son of God,
-     begotten of His Father before all worlds,
-     God of God, Light of Light,
-     very God of very God,
-     begotten, not made,
-     being of one substance with the Father,
-     by whom all things were made;
-     who for us men and for our salvation
-       came down from heaven
-     and was incarnate by the Holy Spirit of the virgin Mary
-     and was made man;
-     and was crucified also for us under Pontius Pilate.
-     He suffered and was buried.
-     And the third day He rose again according to the Scriptures
-          and ascended into heaven
-     and sits at the right hand of the Father.
-     And He will come again with glory to judge
-       both the living and the dead,
-     whose kingdom will have no end.
-}
-}
-}
-#scope(Third Article) {
-#var("customdraw.Layout", "$SERVICETHEME$::SideBar-expanded")
-#customdraw {
-asset=("HCLogo-white", "fg")
-text={Nicene Creed}
-text={
-And I believe in the Holy Spirit,
-     the Lord and giver of life,
-     who proceeds from the Father and the Son,
-     who with the Father and the Son together
-       is worshiped and glorified,
-     who spoke by the prophets.
-     And I believe in one holy Christian
-       and apostolic Church,
-     I acknowledge one Baptism for the
-       remission of sins,
-     and I look for the resurrection of the dead
-     and the life of the world to come. Amen.
-}
-}
-}
+$>#scope(First Article) {
+$>$>#var("customdraw.Layout", "$SERVICETHEME$::SideBar-expanded")
+$>$>#customdraw {
+$>$>$>asset=("HCLogo-white", "fg")
+$>$>$>text={Nicene Creed}
+$>$>$>text(pretrim,trimat:`)={
+$>$>$>`I believe in one God,
+$>$>$>`     the Father Almighty,
+$>$>$>`     maker of heaven and earth
+$>$>$>`          and of all things visible and invisible.
+$>$>$>}
+$>$>}
+$>}
+$>#scope(Second Article) {
+$>$>#var("customdraw.Layout", "$SERVICETHEME$::SideBar-compact")
+$>$>#customdraw {
+$>$>$>asset=("HCLogo-white", "fg")
+$>$>$>text={Nicene Creed}
+$>$>$>text(pretrim,trimat:`)={
+$>$>$>`And in one Lord Jesus Christ,
+$>$>$>`     the only-begotten Son of God,
+$>$>$>`     begotten of His Father before all worlds,
+$>$>$>`     God of God, Light of Light,
+$>$>$>`     very God of very God,
+$>$>$>`     begotten, not made,
+$>$>$>`     being of one substance with the Father,
+$>$>$>`     by whom all things were made;
+$>$>$>`     who for us men and for our salvation
+$>$>$>`       came down from heaven
+$>$>$>`     and was incarnate by the Holy Spirit of the virgin Mary
+$>$>$>`     and was made man;
+$>$>$>`     and was crucified also for us under Pontius Pilate.
+$>$>$>`     He suffered and was buried.
+$>$>$>`     And the third day He rose again according to the Scriptures
+$>$>$>`          and ascended into heaven
+$>$>$>`     and sits at the right hand of the Father.
+$>$>$>`     And He will come again with glory to judge
+$>$>$>`       both the living and the dead,
+$>$>$>`     whose kingdom will have no end.
+$>$>$>}
+$>$>}
+$>}
+$>#scope(Third Article) {
+$>$>#var("customdraw.Layout", "$SERVICETHEME$::SideBar-expanded")
+$>$>#customdraw {
+$>$>$>asset=("HCLogo-white", "fg")
+$>$>$>text={Nicene Creed}
+$>$>$>text(pretrim,trimat:`)={
+$>$>$>`And I believe in the Holy Spirit,
+$>$>$>`     the Lord and giver of life,
+$>$>$>`     who proceeds from the Father and the Son,
+$>$>$>`     who with the Father and the Son together
+$>$>$>`       is worshiped and glorified,
+$>$>$>`     who spoke by the prophets.
+$>$>$>`     And I believe in one holy Christian
+$>$>$>`       and apostolic Church,
+$>$>$>`     I acknowledge one Baptism for the
+$>$>$>`       remission of sins,
+$>$>$>`     and I look for the resurrection of the dead
+$>$>$>`     and the life of the world to come. Amen.
+$>$>$>}
+$>$>}$POSTSET$
+$>}
 }
