@@ -1,4 +1,8 @@
-﻿using System;
+﻿using DVIPProtocol.Protocol;
+using DVIPProtocol.Protocol.Lib.Command;
+using DVIPProtocol.Protocol.Lib.Inquiry;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -19,12 +23,12 @@ namespace DVIPProtocol.Clients.Advanced
 
     public interface ICmdClient : IClient
     {
-        void SendCommand(byte[] data);
+        void SendCommand(ICommand cmd);
     }
 
     public interface IInqClient : IClient
     {
-        void SendRequest(byte[] data, int expectedRequestLength, OnRequestReply reply);
+        void SendRequest<TResp>(IInquiry<IResponse> inq, int expectedRequestLength, OnRequestReply reply);
     }
 
     public interface IFullClient : ICmdClient, IInqClient

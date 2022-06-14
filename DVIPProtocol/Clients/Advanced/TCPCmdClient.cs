@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DVIPProtocol.Protocol.Lib.Command;
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,9 +89,9 @@ namespace DVIPProtocol.Clients.Advanced
             }
         }
 
-        void ICmdClient.SendCommand(byte[] data)
+        void ICmdClient.SendCommand(ICommand cmd)
         {
-            m_commands?.Enqueue(data);
+            m_commands?.Enqueue(cmd.PackagePayload());
             m_cmdAvail.Set();
         }
 

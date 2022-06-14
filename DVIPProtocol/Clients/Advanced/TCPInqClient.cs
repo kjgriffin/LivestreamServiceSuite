@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DVIPProtocol.Protocol.Lib.Inquiry;
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,8 @@ namespace DVIPProtocol.Clients.Advanced
 
     class DVIP_Inq
     {
+        public byte[] GoodFakeResp { get; set; }
+        public byte[] BadFakeResp { get; set; }
         public byte[] Data { get; set; }
         public int ExpectedResponseSize { get; set; }
         public OnRequestReply ReplyDelegate { get; set; }
@@ -139,11 +143,11 @@ namespace DVIPProtocol.Clients.Advanced
             inq.ReplyDelegate(respBuffer);
         }
 
-        public void SendRequest(byte[] data, int expectedResponseLength, OnRequestReply reply)
+        public void SendRequest<TResp>(IInquiry<IResponse> inq, int expectedResponseLength, OnRequestReply reply)
         {
             m_commands.Enqueue(new DVIP_Inq
             {
-                Data = data,
+                Data = inq.PackagePayload(),
                 ExpectedResponseSize = expectedResponseLength,
                 ReplyDelegate = reply
             });

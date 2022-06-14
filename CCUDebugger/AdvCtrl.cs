@@ -80,8 +80,8 @@ namespace CCUDebugger
 
         private void _cmd_STOP()
         {
-            client.SendCommand(CMD_Zoom_Std.Create(ZoomDir.STOP).PackagePayload());
-            client.SendCommand(CMD_PanTiltDrive.CMD_STOP_DRIVE().PackagePayload());
+            client.SendCommand(CMD_Zoom_Std.Create(ZoomDir.STOP));
+            client.SendCommand(CMD_PanTiltDrive.CMD_STOP_DRIVE());
         }
 
         private bool ReadInput()
@@ -106,37 +106,37 @@ namespace CCUDebugger
 
             if (key.KeyChar == 'w')
             {
-                client.SendCommand(CMD_PanTiltDrive.UpDownLeftRight(PanTiltDirection.UP, (byte)ptSpeed).PackagePayload());
+                client.SendCommand(CMD_PanTiltDrive.UpDownLeftRight(PanTiltDirection.UP, (byte)ptSpeed));
             }
             if (key.KeyChar == 'a')
             {
-                client.SendCommand(CMD_PanTiltDrive.UpDownLeftRight(PanTiltDirection.LEFT, (byte)ptSpeed).PackagePayload());
+                client.SendCommand(CMD_PanTiltDrive.UpDownLeftRight(PanTiltDirection.LEFT, (byte)ptSpeed));
             }
             if (key.KeyChar == 's')
             {
-                client.SendCommand(CMD_PanTiltDrive.UpDownLeftRight(PanTiltDirection.DOWN, (byte)ptSpeed).PackagePayload());
+                client.SendCommand(CMD_PanTiltDrive.UpDownLeftRight(PanTiltDirection.DOWN, (byte)ptSpeed));
             }
             if (key.KeyChar == 'd')
             {
-                client.SendCommand(CMD_PanTiltDrive.UpDownLeftRight(PanTiltDirection.RIGHT, (byte)ptSpeed).PackagePayload());
+                client.SendCommand(CMD_PanTiltDrive.UpDownLeftRight(PanTiltDirection.RIGHT, (byte)ptSpeed));
             }
 
             if (key.KeyChar == 'r')
             {
-                client.SendCommand(CMD_Zoom_Std.Create(ZoomDir.WIDE).PackagePayload());
+                client.SendCommand(CMD_Zoom_Std.Create(ZoomDir.WIDE));
             }
             if (key.KeyChar == 'f')
             {
-                client.SendCommand(CMD_Zoom_Std.Create(ZoomDir.TELE).PackagePayload());
+                client.SendCommand(CMD_Zoom_Std.Create(ZoomDir.TELE));
             }
 
             if (key.KeyChar == 't')
             {
-                client.SendCommand(CMD_Zoom_Variable.Create(ZoomDir.WIDE, (byte)zSpeed).PackagePayload());
+                client.SendCommand(CMD_Zoom_Variable.Create(ZoomDir.WIDE, (byte)zSpeed));
             }
             if (key.KeyChar == 'g')
             {
-                client.SendCommand(CMD_Zoom_Variable.Create(ZoomDir.TELE, (byte)zSpeed).PackagePayload());
+                client.SendCommand(CMD_Zoom_Variable.Create(ZoomDir.TELE, (byte)zSpeed));
             }
 
 

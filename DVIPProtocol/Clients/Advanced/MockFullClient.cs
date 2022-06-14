@@ -4,6 +4,7 @@ using DVIPProtocol.Protocol.Lib.Inquiry;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -13,18 +14,18 @@ using System.Threading.Tasks;
 namespace DVIPProtocol.Clients.Advanced
 {
 
-    public class TCPFullClient : IFullClient
+    public class MockFullClient : IFullClient
     {
 
         IPEndPoint m_endpoint;
         Thread? m_thread;
-        TcpClient? m_client;
+        //TcpClient? m_client;
         CancellationTokenSource m_cancel;
         bool m_init = false;
         ConcurrentQueue<DVIP_Inq> m_commands;
         ManualResetEvent m_cmdAvail;
 
-        public TCPFullClient(IPEndPoint endpoint)
+        public MockFullClient(IPEndPoint endpoint)
         {
             m_endpoint = endpoint;
             m_commands = new ConcurrentQueue<DVIP_Inq>();
@@ -45,8 +46,6 @@ namespace DVIPProtocol.Clients.Advanced
         private void Dispose_Internal()
         {
             m_cancel?.Dispose();
-            m_client?.Close();
-            m_client?.Dispose();
         }
 
         void IClient.Init()
@@ -54,7 +53,7 @@ namespace DVIPProtocol.Clients.Advanced
             m_init = true;
             m_cancel = new CancellationTokenSource();
             m_thread = new Thread(OnStart_Internal);
-            m_thread.Name = "TCPFullClientThread";
+            m_thread.Name = "MockFullClientThread";
             m_thread.IsBackground = true;
             m_thread.Start();
         }
@@ -66,6 +65,10 @@ namespace DVIPProtocol.Clients.Advanced
 
         private void Run()
         {
+#if DEBUG
+            Debug.WriteLine($"[{Thread.CurrentThread.Name}] Started.");
+#endif
+
             while (true)
             {
                 if (m_cancel.IsCancellationRequested == true)
@@ -93,52 +96,25 @@ namespace DVIPProtocol.Clients.Advanced
 
         private void SendAndWaitTCPCommand(DVIP_Inq inq)
         {
-            if (m_client == null)
-            {
-                m_client = new TcpClient();
-            }
-            if (!m_client.Connected)
-            {
-                try
-                {
-                    m_client.Connect(m_endpoint);
-                }
-                catch (Exception ex)
-                {
-                    // ... reject for now
-                    return;
-                }
-            }
-            var stream = m_client.GetStream();
-            stream.Write(inq.Data);
+            // fake sending the data, and just respond immediately
+#if DEBUG
+            Debug.WriteLine($"[{Thread.CurrentThread.Name}] Sending data: {BitConverter.ToString(inq.Data)}");
+#endif
 
-            // wait for read...
             byte[] respBuffer = new byte[512];
-
-            int read = 0;
-
-            // ok- so here we're going to play fast and loose...
-            // assumption is that the network:
-            // 1. works (if not, I'll claim there's bigger problems I can't solve)
-            // 2. is fast (relatively)
-            // 3. all communications are rather small
-            if (stream.DataAvailable)
-            {
-                stream.Read(respBuffer, 0, 512);
-            }
-
-            // send out response
-            inq.ReplyDelegate(respBuffer);
+            inq.ReplyDelegate(inq?.GoodFakeResp ?? respBuffer);
         }
 
         public void SendRequest<TResp>(IInquiry<IResponse> inq, int expectedResponseLength, OnRequestReply reply)
         {
             m_commands.Enqueue(new DVIP_Inq
             {
+                GoodFakeResp = inq.Parse_FakeGood().Data,
+                BadFakeResp = inq.Parse_FakeBad().Data,
                 Data = inq.PackagePayload(),
                 ExpectedResponseSize = expectedResponseLength,
                 ReplyDelegate = reply
-            });
+            }); ;
             m_cmdAvail.Set();
         }
 

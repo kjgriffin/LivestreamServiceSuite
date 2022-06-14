@@ -8,4 +8,18 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Icons\LightGreenPlay.png" />
+    <None Remove="Icons\RedErase.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CameraDriver\CameraDriver.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icons\LightGreenPlay.png" />
+    <Resource Include="Icons\RedErase.png" />
+  </ItemGroup>
+
 </Project>

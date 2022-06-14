@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
 {
-    public class RESP_PanTilt_Position
+    public class RESP_PanTilt_Position : IResponse
     {
         public int Pan { get; private set; }
         public int Tilt { get; private set; }
-        public byte Speed { get; private set; }
         public bool Valid { get; private set; }
+        public byte[] Data { get; }
 
         /// <summary>
         /// Creates a pan/tilt preset.
@@ -21,13 +21,12 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
         /// <param name="speed">Desired recall speed</param>
         /// <param name="valid">Is the preset valid</param>
         /// <returns></returns>
-        internal static RESP_PanTilt_Position Create(int pan, int tilt, byte speed, bool valid)
+        internal static RESP_PanTilt_Position Create(int pan, int tilt, bool valid)
         {
             return new RESP_PanTilt_Position
             {
                 Pan = pan,
                 Tilt = tilt,
-                Speed = speed,
                 Valid = valid,
             };
         }
@@ -39,7 +38,7 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
         /// <param name="speed">Desired recall speed</param>
         /// <param name="valid">Is the preset valid</param>
         /// <returns></returns>
-        internal static RESP_PanTilt_Position Create(byte[] sortedbytes, byte speed, bool valid)
+        internal static RESP_PanTilt_Position Create(byte[] sortedbytes, bool valid)
         {
             if (sortedbytes.Length != 9)
             {
@@ -47,14 +46,13 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
                 {
                     Pan = 0,
                     Tilt = 0,
-                    Speed = 0,
                     Valid = false
                 };
             }
 
             int pan = sortedbytes[0] | sortedbytes[1] | sortedbytes[2] | sortedbytes[3] | sortedbytes[4];
             int tilt = sortedbytes[5] | sortedbytes[6] | sortedbytes[7] | sortedbytes[8];
-            return Create(pan, tilt, speed, valid);
+            return Create(pan, tilt, valid);
         }
 
     }

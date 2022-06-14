@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="CCUI_UI.CamPresetControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CCUI_UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="400">
+    <Grid>
+        <Grid Background="#272727">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="200"></RowDefinition>
+                <RowDefinition Height="5"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Camera Name</TextBlock>
+                <TextBox Name="tbCamName" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
+                <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DarkTextblock}">IP Address</TextBlock>
+                <TextBox Name="tbCamIP" Grid.Row="1" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
+                <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource DarkTextblock}">Port</TextBlock>
+                <TextBox x:Name="tbCamPort" Grid.Row="2" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
+
+                <Grid Grid.Row="3" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Button Click="btnReStart_Click" x:Name="btnReStart" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="LightGreen" FontSize="15">(RE)/START</Button>
+                    <Button Click="btnStop_Click" x:Name="btnStop" Width="100" Grid.Column="1" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="Orange" FontSize="15">STOP</Button>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1" Background="#777777" Margin="10,0,10,0"></Grid>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="5"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Recall Speed</TextBlock>
+                    <TextBox Name="tbPresetSpeed" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
+                </Grid>
+                <Grid Grid.Row="1" Background="#171717" Margin="10,0,10,0"></Grid>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Preset Name</TextBlock>
+                    <TextBox Name="tbPresetName" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
+                </Grid>
+
+                <Grid Grid.Row="3">
+                    <Button Click="btnSavePreset_Click" x:Name="btnSavePreset" Width="250" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15">PRESET CURRENT POSITION</Button>
+                </Grid>
+
+                <Grid Grid.Row="4">
+                    <ListView MinWidth="300" Name="lvPresets" Background="#171717" Margin="10" BorderBrush="#474747" HorizontalAlignment="Center">
+                        <!--<local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>
+                        <local:PresetControl></local:PresetControl>-->
+                    </ListView>
+                </Grid>
+
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

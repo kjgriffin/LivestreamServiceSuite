@@ -1,10 +1,12 @@
 ﻿using DVIPProtocol.Clients.Advanced;
 using DVIPProtocol.Protocol.Lib.Command.PTDrive;
+using DVIPProtocol.Protocol.Lib.Inquiry;
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -21,9 +23,22 @@ namespace CameraDriver
         private Thread? m_workerThread;
         private ConcurrentDictionary<string, Dictionary<string, RESP_PanTilt_Position>> m_presets = new ConcurrentDictionary<string, Dictionary<string, RESP_PanTilt_Position>>();
 
+        private bool m_fakeClients = false;
+
+        public event CameraPresetSaved OnPresetSavedSuccess;
+
+        internal SimpleCamServer(bool useFakeClients = false)
+        {
+            m_fakeClients = useFakeClients;
+        }
 
         private void Internal_Loop()
         {
+
+#if DEBUG
+            Debug.WriteLine($"[{Thread.CurrentThread.Name}] Started.");
+#endif
+
             while (!m_cancel.IsCancellationRequested)
             {
                 // execute all work
@@ -34,6 +49,7 @@ namespace CameraDriver
                         work?.Invoke();
                     }
                 }
+                m_workAvailable.Reset();
 
                 // wait for work
                 if (!m_cancel.IsCancellationRequested)
@@ -48,7 +64,7 @@ namespace CameraDriver
         }
 
 
-        public void Cam_RecallPresetPosition(string cnameID, string presetName)
+        public void Cam_RecallPresetPosition(string cnameID, string presetName, byte speed = 0x10)
         {
             m_dispatchCommands.Enqueue(() =>
             {
@@ -58,11 +74,12 @@ namespace CameraDriver
                     {
                         if (m_clients.TryGetValue(cnameID, out IFullClient? client))
                         {
-                            client?.SendCommand(CMD_PanTiltAbsPos.CMD_ABS_POS(preset.Pan, preset.Tilt, preset.Speed).PackagePayload());
+                            client?.SendCommand(CMD_PanTiltAbsPos.CMD_ABS_POS(preset.Pan, preset.Tilt, speed));
                         }
                     }
                 }
             });
+            m_workAvailable.Set();
         }
 
         public void Cam_SaveCurentPosition(string cnameID, string presetName)
@@ -72,18 +89,25 @@ namespace CameraDriver
                 if (m_clients.TryGetValue(cnameID, out IFullClient? client))
                 {
                     var cmd = INQ_PanTilt_Position.Create();
-                    client?.SendRequest(cmd.PackagePayload(), 0, (byte[] resp) =>
+                    client?.SendRequest<RESP_PanTilt_Position>((IInquiry<IResponse>)cmd, 0, (byte[] resp) =>
                     {
-                        var preset = cmd.Parse(resp);
-                        Internal_UpdatePreset(cnameID, presetName, preset);
+                        // this will come back and be run on the client's thread...
+                        // wrap this into a task and run it somewhere
+                        Task.Run(() =>
+                        {
+                            var preset = cmd.Parse(resp);
+                            Internal_UpdatePreset(cnameID, presetName, preset);
+                        });
                     });
                 }
             });
+            m_workAvailable.Set();
         }
 
         public void Cam_SaveRawPosition(string cnameID, string presetName, RESP_PanTilt_Position preset)
         {
             m_dispatchCommands.Enqueue(() => Internal_UpdatePreset(cnameID, presetName, preset));
+            m_workAvailable.Set();
         }
 
         private void Internal_UpdatePreset(string cnameID, string presetName, RESP_PanTilt_Position pos)
@@ -96,6 +120,7 @@ namespace CameraDriver
                     pdict[presetName] = pos;
                     return pdict;
                 });
+                OnPresetSavedSuccess?.Invoke(cnameID, presetName);
             }
         }
 
@@ -112,7 +137,15 @@ namespace CameraDriver
                 // stop first so we can restart
                 StopCamClient(cnameID);
             }
-            IFullClient client = new TCPFullClient(endpoint);
+            IFullClient client;
+            if (m_fakeClients)
+            {
+                client = new MockFullClient(endpoint);
+            }
+            else
+            {
+                client = new TCPFullClient(endpoint);
+            }
             client.Init();
             m_clients.TryAdd(cnameID, client);
         }
@@ -131,6 +164,18 @@ namespace CameraDriver
                 client = null;
             }
         }
+        public void StopAllCamClients()
+        {
+            m_dispatchCommands.Enqueue(() =>
+            {
+                foreach (var client in m_clients.Values)
+                {
+                    client?.Stop();
+                }
+                m_clients.Clear();
+            });
+            m_workAvailable.Set();
+        }
 
         public void Start()
         {
@@ -144,7 +189,7 @@ namespace CameraDriver
             m_workerThread.Start();
         }
 
-        public void Stop()
+        public void Shutdown()
         {
             m_cancel.Cancel();
             // TODO: make sure all commands are finished executing before we kill everything...
@@ -154,25 +199,36 @@ namespace CameraDriver
                 client.Value?.Stop();
             }
         }
+
     }
+
+    public delegate void CameraPresetSaved(string cname, string pname);
 
     public interface ISimpleCamServer
     {
 
+        event CameraPresetSaved OnPresetSavedSuccess;
+
         void Start();
-        void Stop();
+        void Shutdown();
 
         void StartCamClient(string cnameID, IPEndPoint endpoint);
         void StopCamClient(string cnameID);
+        void StopAllCamClients();
 
         void Cam_SaveCurentPosition(string cnameID, string presetName);
         void Cam_SaveRawPosition(string cnameID, string presetName, RESP_PanTilt_Position value);
-        void Cam_RecallPresetPosition(string cnameID, string presetName);
+        void Cam_RecallPresetPosition(string cnameID, string presetName, byte speed = 0x10);
 
 
         public static ISimpleCamServer Instantiate()
         {
             return new SimpleCamServer();
+        }
+
+        public static ISimpleCamServer Instantiate_Mock()
+        {
+            return new SimpleCamServer(true);
         }
 
     }

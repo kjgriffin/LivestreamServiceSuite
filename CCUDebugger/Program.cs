@@ -1,6 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using CCUDebugger;
 using DVIPProtocol.Clients.Advanced;
+using DVIPProtocol.Protocol.Lib.Inquiry;
+
 using System.Linq;
 using System.Net;
 
@@ -46,7 +48,7 @@ else
                                     .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                                     .ToArray();
 
-            client.SendRequest(data, len, onReply);
+            client.SendRequest<RawInquiryResp>(RawInquiry.Create(data), len, onReply);
         }
         catch (Exception ex)
         {

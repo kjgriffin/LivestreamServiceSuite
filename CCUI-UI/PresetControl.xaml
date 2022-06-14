@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="CCUI_UI.PresetControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CCUI_UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="300">
+    <Grid Background="#373737">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="50"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Button Click="btnDelete_Click" Name="btnDelete" Grid.Column="0" Style="{StaticResource DarkBtn}" Width="40" Height="40">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/Icons/RedErase.png"></Image>
+            </StackPanel>
+        </Button>
+
+        <TextBlock Name="tbName" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Foreground="#efefef">PRESET NAME [stuff but it gets smaller]</TextBlock>
+
+        <Button Click="btnRun_Click" Name="btnRun" Grid.Column="2" Style="{StaticResource DarkBtn}" Width="40" Height="40">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/Icons/LightGreenPlay.png"></Image>
+            </StackPanel>
+        </Button>
+    </Grid>
+</UserControl>

@@ -11,6 +11,7 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
     public class INQ_PanTilt_Position : IInquiry<RESP_PanTilt_Position>
     {
         public byte[] Data { get; }
+        byte[] ICommand.Data { get; }
 
         private INQ_PanTilt_Position(byte[] data)
         {
@@ -36,6 +37,7 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
                     ackOK = true;
                     break;
                 }
+                i++;
             }
 
             // parse response
@@ -54,13 +56,23 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
                 if (i++ < resp.Length && resp[i] == 0xFF)
                 {
                     // found end of response, build valid response
-                    return RESP_PanTilt_Position.Create(data, 0x10, true); // TODO: hardcode the speed?
+                    return RESP_PanTilt_Position.Create(data, true);
                 }
 
             }
 
             // return invalid
-            return RESP_PanTilt_Position.Create(0, 0, 0, false);
+            return RESP_PanTilt_Position.Create(0, 0, false);
+        }
+
+        public RESP_PanTilt_Position Parse_FakeGood()
+        {
+            return RESP_PanTilt_Position.Create(0, 0, true);
+        }
+
+        public RESP_PanTilt_Position Parse_FakeBad()
+        {
+            return RESP_PanTilt_Position.Create(0, 0, false);
         }
 
         [Flags]
