@@ -43,6 +43,7 @@
                     <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP [P]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP" Focusable="False"></MenuItem>
                     <MenuItem Name="cbAdvancedPIPMovement" Header="Advanced PIP Location [L]" IsTabStop="False" Click="ClickViewAdvancedPIPLocation" Focusable="False"></MenuItem>
                     <MenuItem Header="Aux Output [X]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAuxOutput" Focusable="False"></MenuItem>
+                    <MenuItem Name="cbViewProgramOverPresetBus" Header="Program/Preset Bus Inverted" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickToggleProgramPresetBusSwap" Focusable="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Interaction" IsTabStop="False" Focusable="False">
                     <MenuItem Click="clickENTEROnlyForTrans" Name="miEnterButtonClickGuard" Header="ENTER Only For Auto Trans" IsCheckable="True" IsChecked="True" IsTabStop="False" Focusable="False"></MenuItem>
@@ -433,7 +434,7 @@
                                         </StackPanel>
 
                                     </Grid>
-                                    <Grid Grid.Row="1">
+                                    <Grid Grid.Row="1" Name="gr_PresetBus">
                                         <Border Style="{StaticResource GroupBorder}">
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PRESET</TextBlock>
@@ -538,7 +539,7 @@
                                             </StackPanel>
                                         </Border>
                                     </Grid>
-                                    <Grid Grid.Row="2">
+                                    <Grid Grid.Row="2" Name="gr_ProgramBus">
                                         <Border Style="{StaticResource GroupBorder}">
                                             <StackPanel>
                                                 <Grid>

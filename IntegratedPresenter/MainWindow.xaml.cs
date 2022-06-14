@@ -4634,6 +4634,9 @@ namespace IntegratedPresenter.Main
         private void LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures config)
         {
             _m_integratedPresenterFeatures = config;
+
+            SetProgramPresetBusOrder(config.ViewSettings.View_ProgramBusOverPresetBus);
+
             SetViewPrevAfter(config.ViewSettings.View_PrevAfterPreviews);
             SetShowEffectiveCurrentPreview(config.ViewSettings.View_PreviewEffectiveCurrent);
             SetViewAdvancedPIP(config.ViewSettings.View_AdvancedDVE);
@@ -4913,6 +4916,29 @@ namespace IntegratedPresenter.Main
         {
             _logger.Debug($"Click: PIP Run to Preset 5");
             SetupPIPToPresetPosition(5);
+        }
+
+
+        private void ClickToggleProgramPresetBusSwap(object sender, RoutedEventArgs e)
+        {
+            SetProgramPresetBusOrder(cbViewProgramOverPresetBus.IsChecked);
+        }
+
+        bool _FeatureFlag_ViewProgramOverPresetBus = false;
+        private void SetProgramPresetBusOrder(bool programontop)
+        {
+            _FeatureFlag_ViewProgramOverPresetBus = programontop;
+            cbViewProgramOverPresetBus.IsChecked = _FeatureFlag_ViewProgramOverPresetBus;
+            if (_FeatureFlag_ViewProgramOverPresetBus)
+            {
+                gr_ProgramBus.SetValue(Grid.RowProperty, 1);
+                gr_PresetBus.SetValue(Grid.RowProperty, 2);
+            }
+            else
+            {
+                gr_PresetBus.SetValue(Grid.RowProperty, 1);
+                gr_ProgramBus.SetValue(Grid.RowProperty, 2);
+            }
         }
     }
 }
