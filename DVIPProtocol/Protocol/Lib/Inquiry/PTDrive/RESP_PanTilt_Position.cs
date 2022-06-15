@@ -15,23 +15,26 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
         {
             get
             {
-                byte[] res = new byte[12];
+                byte[] res = new byte[14];
 
-                res[0] = 0x90;
-                res[1] = 0x50;
+                res[0] = 0;
+                res[1] = 0x0e;
 
-                res[2] = (byte)(Pan >> 0 & 0xF);
-                res[3] = (byte)(Pan >> 4 & 0xF);
-                res[4] = (byte)(Pan >> 8 & 0xF);
-                res[5] = (byte)(Pan >> 12 & 0xF);
-                res[6] = (byte)(Pan >> 16 & 0xF);
+                res[2] = 0x90;
+                res[3] = 0x50;
 
-                res[7] = (byte)(Pan >> 0 & 0xF);
-                res[8] = (byte)(Pan >> 4 & 0xF);
-                res[9] = (byte)(Pan >> 8 & 0xF);
-                res[10] = (byte)(Pan >> 12 & 0xF);
+                res[4] = (byte)(Pan >> 0 & 0xF);
+                res[5] = (byte)(Pan >> 4 & 0xF);
+                res[6] = (byte)(Pan >> 8 & 0xF);
+                res[7] = (byte)(Pan >> 12 & 0xF);
+                res[8] = (byte)(Pan >> 16 & 0xF);
 
-                res[11] = 0xFF;
+                res[9] = (byte)(Pan >> 0 & 0xF);
+                res[10] = (byte)(Pan >> 4 & 0xF);
+                res[11] = (byte)(Pan >> 8 & 0xF);
+                res[12] = (byte)(Pan >> 12 & 0xF);
+
+                res[13] = 0xFF;
 
                 return res;
             }
