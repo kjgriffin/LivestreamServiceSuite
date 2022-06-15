@@ -26,6 +26,7 @@ using Configurations.FeatureConfig;
 using IntegratedPresenterAPIInterop;
 using Integrated_Presenter.ViewModels;
 using System.Windows.Controls;
+using CCUI_UI;
 
 namespace IntegratedPresenter.Main
 {
@@ -54,6 +55,8 @@ namespace IntegratedPresenter.Main
 
         System.Threading.ManualResetEvent autoTransMRE = new System.Threading.ManualResetEvent(true);
 
+
+        CCPUPresetMonitor _camMonitor;
 
         List<SlidePoolSource> SlidePoolButtons;
 
@@ -96,7 +99,8 @@ namespace IntegratedPresenter.Main
             Btn_Cond1.DataContext = _Cond1;
             Btn_Cond2.DataContext = _Cond2;
 
-
+            _logger.Info("Starting Camera Server");
+            _camMonitor = new CCPUPresetMonitor(headless: true, fakeClients: true);
 
             // set a default config
             SetDefaultConfig();
@@ -4939,6 +4943,11 @@ namespace IntegratedPresenter.Main
                 gr_PresetBus.SetValue(Grid.RowProperty, 1);
                 gr_ProgramBus.SetValue(Grid.RowProperty, 2);
             }
+        }
+
+        private void ClickOpenCCUDriverUI(object sender, RoutedEventArgs e)
+        {
+            _camMonitor?.ShowUI();
         }
     }
 }

@@ -6,6 +6,14 @@
              xmlns:local="clr-namespace:CCUI_UI"
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="300">
+    <Control.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="CommonStyles.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+    </Control.Resources>
     <Grid Background="#373737">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50"></ColumnDefinition>
@@ -14,7 +22,7 @@
         </Grid.ColumnDefinitions>
         <Button Click="btnDelete_Click" Name="btnDelete" Grid.Column="0" Style="{StaticResource DarkBtn}" Width="40" Height="40">
             <StackPanel Orientation="Horizontal">
-                <Image Source="/Icons/RedErase.png"></Image>
+                <Image Source="pack://Application:,,,/CommonIcons;component/Icons/RedErase.png"></Image>
             </StackPanel>
         </Button>
 
@@ -22,7 +30,7 @@
 
         <Button Click="btnRun_Click" Name="btnRun" Grid.Column="2" Style="{StaticResource DarkBtn}" Width="40" Height="40">
             <StackPanel Orientation="Horizontal">
-                <Image Source="/Icons/LightGreenPlay.png"></Image>
+                <Image Source="pack://Application:,,,/CommonIcons;component/Icons/LightGreenPlay.png"></Image>
             </StackPanel>
         </Button>
     </Grid>

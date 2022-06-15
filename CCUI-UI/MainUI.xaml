@@ -7,6 +7,14 @@
         mc:Ignorable="d"
         Closed="Window_Closed"
         Title="DVIP-CCU" Height="1000" Width="1400">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="CommonStyles.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+    </Window.Resources>
     <Grid>
         <Grid Background="#373737">
             <Grid.RowDefinitions>

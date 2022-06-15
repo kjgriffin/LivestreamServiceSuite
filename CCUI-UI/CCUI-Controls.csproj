@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>CCUI_UI</RootNamespace>
     <Nullable>enable</Nullable>
@@ -9,17 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Icons\LightGreenPlay.png" />
-    <None Remove="Icons\RedErase.png" />
+    <ApplicationDefinition Remove="App.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CameraDriver\CameraDriver.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Icons\LightGreenPlay.png" />
-    <Resource Include="Icons\RedErase.png" />
+    <ProjectReference Include="..\CommonIcons\CommonIcons.csproj" />
   </ItemGroup>
 
 </Project>

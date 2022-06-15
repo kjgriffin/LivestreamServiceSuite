@@ -6,6 +6,13 @@
              xmlns:local="clr-namespace:CCUI_UI"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="400">
+    <Control.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="CommonStyles.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Control.Resources>
     <Grid>
         <Grid Background="#272727">
             <Grid.RowDefinitions>

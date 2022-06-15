@@ -229,6 +229,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CCUI-UI\CCUI-Controls.csproj" />
     <ProjectReference Include="..\CommonVersionInfo\CommonVersionInfo.csproj" />
     <ProjectReference Include="..\IntegratedPresenterAPIInterop\IntegratedPresenterAPIInterop.csproj" />
     <ProjectReference Include="..\SwitcherControl\SwitcherControl.csproj" />

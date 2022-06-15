@@ -62,5 +62,4 @@
         <Setter Property="FontSize" Value="15"></Setter>
         <Setter Property="Margin" Value="10"></Setter>
     </Style>
-
 </ResourceDictionary>
