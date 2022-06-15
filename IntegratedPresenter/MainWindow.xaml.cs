@@ -102,7 +102,7 @@ namespace IntegratedPresenter.Main
             Btn_Cond2.DataContext = _Cond2;
 
             _logger.Info("Starting Camera Server");
-            _camMonitor = new CCPUPresetMonitor(headless: true, fakeClients: true);
+            _camMonitor = new CCPUPresetMonitor(headless: true, fakeClients: false);
 
             // set a default config
             SetDefaultConfig();
