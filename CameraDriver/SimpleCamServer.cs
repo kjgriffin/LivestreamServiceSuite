@@ -66,6 +66,10 @@ namespace CameraDriver
 
         public void Cam_RecallPresetPosition(string cnameID, string presetName, byte speed = 0x10)
         {
+            if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(cnameID) || speed < 0 || speed > 0x18)
+            {
+                return;
+            }
             m_dispatchCommands.Enqueue(() =>
             {
                 if (m_presets.TryGetValue(cnameID, out var presets))

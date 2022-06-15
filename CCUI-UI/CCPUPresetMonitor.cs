@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CCUI_UI
 {
-    public class CCPUPresetMonitor
+    public class CCPUPresetMonitor : ICCPUPresetMonitor_Executor
     {
 
         MainUI m_UIWindow;

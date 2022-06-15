@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="Integrated_Presenter.ViewModels.PilotUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Integrated_Presenter.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="1300" d:DesignWidth="300">
+    <Grid>
+        <Viewbox>
+            <Grid Background="#272727" Height="1600" Width="600">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="10"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Ellipse Name="ellipseState" Width="50" Height="50" HorizontalAlignment="Right" Margin="10" Fill="Red"></Ellipse>
+                </Grid>
+                <Grid Grid.Row="1" Background="#30f00000">
+                    <local:PilotSlidePreview x:Name="pvCurrent" Grid.Row="1" Margin="10"></local:PilotSlidePreview>
+                </Grid>
+                <Grid Grid.Row="2" Background="#000000"></Grid>
+                <Grid Grid.Row="3" Background="Green">
+                    <local:PilotSlidePreview x:Name="pvNext" Grid.Row="3" Margin="10"></local:PilotSlidePreview>
+                </Grid>
+            </Grid>
+        </Viewbox>
+    </Grid>
+</UserControl>

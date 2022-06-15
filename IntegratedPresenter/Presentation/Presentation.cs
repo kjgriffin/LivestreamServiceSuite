@@ -1,4 +1,6 @@
-﻿using IntegratedPresenter.BMDSwitcher.Config;
+﻿using Integrated_Presenter.Presentation;
+
+using IntegratedPresenter.BMDSwitcher.Config;
 
 using System;
 using System.Collections.Generic;
@@ -93,7 +95,7 @@ namespace IntegratedPresenter.Main
                 Slides.Add(s);
             }
 
-            // attack keyfiles to slides
+            // attach keyfiles to slides
             files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"Key_\d+").Success).ToList();
             foreach (var file in files)
             {
@@ -120,6 +122,37 @@ namespace IntegratedPresenter.Main
                 }
                 catch (Exception)
                 {
+                }
+            }
+
+            // attach pilot to slides
+            files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"Pilot_\d+").Success).ToList();
+            foreach (var file in files)
+            {
+                var num = Regex.Match(file, @"Pilot_(?<num>\d+)").Groups["num"].Value;
+                if (int.TryParse(num, out int snum))
+                {
+                    try
+                    {
+                        using (StreamReader sr = new StreamReader(file))
+                        {
+                            // load the pilot actions...
+                            var src = sr.ReadToEnd();
+                            List<IPilotAction> pilotActions = new List<IPilotAction>();
+                            foreach (var line in src.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                if (PilotDriveNamedPreset.TryParse(line, out var pcmd))
+                                {
+                                    pilotActions.Add(pcmd);
+                                }
+                            }
+
+                            Slides[snum].AutoPilotActions = pilotActions;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
             }
 

@@ -28,6 +28,7 @@ using Integrated_Presenter.ViewModels;
 using System.Windows.Controls;
 using CCUI_UI;
 using SwitcherControl.BMDSwitcher;
+using Integrated_Presenter.Presentation;
 
 namespace IntegratedPresenter.Main
 {
@@ -166,6 +167,8 @@ namespace IntegratedPresenter.Main
             gp_timer_2.Interval = 1000;
             gp_timer_2.Elapsed += Gp_timer_2_Elapsed1;
             gp_timer_2.Start();
+
+            UpdatePilotUI();
         }
 
         private void Gp_timer_2_Elapsed1(object sender, ElapsedEventArgs e)
@@ -286,6 +289,7 @@ namespace IntegratedPresenter.Main
             ResetSlideMediaTimes();
             UpdateSlideControls();
             UpdateMediaControls();
+            UpdatePilotUI();
         }
 
         IBMDSwitcherManager switcherManager;
@@ -2489,6 +2493,8 @@ namespace IntegratedPresenter.Main
                 }
                 // At this point we've switched to the slide
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
+
+                PerformAutoPilotActions(Presentation.EffectiveCurrent.AutoPilotActions);
             }
         }
 
@@ -2680,6 +2686,9 @@ namespace IntegratedPresenter.Main
                 // At this point we've switched to the slide
                 _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. About to call SlideDriveVideo_Action() for slide {s.Title}");
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
+
+
+                PerformAutoPilotActions(Presentation.EffectiveCurrent.AutoPilotActions);
             }
 
         }
@@ -2856,6 +2865,9 @@ namespace IntegratedPresenter.Main
                 // Do Action on current slide
                 _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. About to call SlideDriveVideo_Action() for slide {Presentation.EffectiveCurrent.Title}");
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
+
+
+                PerformAutoPilotActions(Presentation.EffectiveCurrent.AutoPilotActions);
             }
 
         }
@@ -2880,6 +2892,19 @@ namespace IntegratedPresenter.Main
                 if (_FeatureFlag_MRETransition)
                 {
                     autoTransMRE.Reset();
+                }
+            }
+        }
+
+        // TODO: add this to config....
+        private bool _FeatureFlag_EnableAutoPilot = true;
+        private void PerformAutoPilotActions(List<IPilotAction> actions)
+        {
+            if (_FeatureFlag_EnableAutoPilot)
+            {
+                foreach (var preset in actions)
+                {
+                    preset.Execute(_camMonitor, 8);
                 }
             }
         }
@@ -4949,6 +4974,29 @@ namespace IntegratedPresenter.Main
         private void ClickOpenCCUDriverUI(object sender, RoutedEventArgs e)
         {
             _camMonitor?.ShowUI();
+        }
+
+        private void ClickToggleAutoPilot(object sender, RoutedEventArgs e)
+        {
+            ToggleAutoPilot();
+        }
+
+        private void ToggleAutoPilot()
+        {
+            _FeatureFlag_EnableAutoPilot = !_FeatureFlag_EnableAutoPilot;
+            Dispatcher.Invoke(() =>
+            {
+                miCCUEnabled.IsChecked = _FeatureFlag_EnableAutoPilot;
+            });
+            UpdatePilotUI();
+        }
+
+        private void UpdatePilotUI()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                pilotUI.UpdateUI(_FeatureFlag_EnableAutoPilot, Presentation?.EffectiveCurrent?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.Next?.AutoPilotActions ?? new List<IPilotAction>());
+            });
         }
     }
 }

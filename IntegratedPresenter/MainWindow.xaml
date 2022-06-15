@@ -67,6 +67,7 @@
                     <MenuItem Name="miPostset" Header="Enable Postset" IsCheckable="True" IsChecked="True" Click="ClickTogglePostsetFeature" Focusable="False"></MenuItem>
                     <MenuItem Name="miMRETransitions" Header="Blocking Auto Transition" IsCheckable="True" IsChecked="True" Click="ClickToggleMRETransitionFeature" Focusable="False"></MenuItem>
                     <MenuItem Header="Open CCU Driver" Click="ClickOpenCCUDriverUI" Focusable="False"></MenuItem>
+                    <MenuItem Name="miCCUEnabled" Header="Enable Auto Pilot" IsCheckable="True" IsChecked="True" Click="ClickToggleAutoPilot" Focusable="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Help" IsTabStop="False" Focusable="False">
                     <MenuItem Name="miShowShortcuts" Header="Show Keyboard Shortcuts [S]" IsCheckable="True" IsChecked="False" Click="ClickShowKeyboardShortcuts" Focusable="False"></MenuItem>
@@ -2058,7 +2059,7 @@
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Row="1" Grid.Column="0" Grid.RowSpan="2">
                         <Grid Background="#272727">
-                            <TextBlock Foreground="#90ededed" TextWrapping="WrapWithOverflow" TextAlignment="Center" VerticalAlignment="Center" FontSize="20">Future site of auto-pilot. Comming soon TM</TextBlock>
+                            <viewmodels:PilotUI x:Name="pilotUI"></viewmodels:PilotUI>
                         </Grid>
                     </Grid>
                     <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2">

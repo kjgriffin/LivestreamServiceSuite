@@ -1,4 +1,6 @@
 ﻿
+using Integrated_Presenter.Presentation;
+
 using IntegratedPresenterAPIInterop;
 
 using System;
@@ -24,6 +26,7 @@ namespace IntegratedPresenter.Main
         public Guid Guid { get; set; } = Guid.NewGuid();
         public List<TrackedAutomationAction> SetupActions { get; set; } = new List<TrackedAutomationAction>();
         public List<TrackedAutomationAction> Actions { get; set; } = new List<TrackedAutomationAction>();
+        public List<IPilotAction> AutoPilotActions { get; set; } = new List<IPilotAction>();
         public string Title { get; set; } = "";
         public bool AutoOnly { get; set; } = false;
 
