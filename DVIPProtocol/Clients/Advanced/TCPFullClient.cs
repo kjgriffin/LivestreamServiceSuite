@@ -113,6 +113,9 @@ namespace DVIPProtocol.Clients.Advanced
 
             int read = 0;
 
+
+            // hmmmm... but this is probably fine?
+            Thread.Sleep(1);
             // ok- so here we're going to play fast and loose...
             // assumption is that the network:
             // 1. works (if not, I'll claim there's bigger problems I can't solve)
