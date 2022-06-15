@@ -53,6 +53,34 @@ namespace CCUI_UI
             cam3.OnSavePresetRequest += Cam_OnSavePresetRequest;
             cam3.OnFirePresetRequest += Cam_OnFirePresetRequest;
             cam3.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
+
+            ReConfigure();
+        }
+
+        internal void ReConfigure()
+        {
+            var cfg = m_monitor?.ExportStateToConfig() ?? new CCPUConfig();
+
+            var c1 = cfg.Clients.Count > 0 ? cfg.Clients[0] : null;
+            var c2 = cfg.Clients.Count > 1 ? cfg.Clients[1] : null;
+            var c3 = cfg.Clients.Count > 2 ? cfg.Clients[2] : null;
+
+            if (c1 != null)
+            {
+                cfg.KeyedPresets.TryGetValue(c1.Name, out var presets);
+                cam1.Reconfigure(c1.Name, c1.IPAddress, c1.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>());
+            }
+            if (c2 != null)
+            {
+                cfg.KeyedPresets.TryGetValue(c2.Name, out var presets);
+                cam2.Reconfigure(c2.Name, c2.IPAddress, c2.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>());
+            }
+            if (c3 != null)
+            {
+                cfg.KeyedPresets.TryGetValue(c3.Name, out var presets);
+                cam3.Reconfigure(c3.Name, c3.IPAddress, c3.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>());
+            }
+
         }
 
         private void Cam_OnDeletePresetRequest(string cname, string presetname)
@@ -154,5 +182,34 @@ namespace CCUI_UI
         {
             Export();
         }
+
+        private void ClickLoad(object sender, RoutedEventArgs e)
+        {
+            Load();
+        }
+
+        private void Load()
+        {
+            OpenFileDialog sfd = new OpenFileDialog();
+            sfd.Title = "Load Cameras and Presets";
+            sfd.AddExtension = true;
+            sfd.DefaultExt = ".json";
+            if (sfd.ShowDialog() == true)
+            {
+                try
+                {
+                    using (var reader = new StreamReader(sfd.FileName))
+                    {
+                        var json = reader.ReadToEnd();
+                        var cfg = JsonSerializer.Deserialize<CCPUConfig>(json);
+                        m_monitor?.LoadConfig(cfg);
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+        }
+
     }
 }

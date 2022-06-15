@@ -16,6 +16,7 @@
 
             <Menu Grid.Row="0" Background="#171717" Foreground="#efefef" VerticalContentAlignment="Center" VerticalAlignment="Top">
                 <MenuItem Header="File" Background="#171717" Foreground="#efefef">
+                    <MenuItem Click="ClickLoad" Header="Load State" Background="#171717" Foreground="#efefef"></MenuItem>
                     <MenuItem Click="ClickExport" Header="Export State" Background="#171717" Foreground="#efefef"></MenuItem>
                 </MenuItem>
             </Menu>

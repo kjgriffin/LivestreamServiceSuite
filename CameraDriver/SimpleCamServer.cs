@@ -112,8 +112,9 @@ namespace CameraDriver
 
         public void Cam_SaveRawPosition(string cnameID, string presetName, RESP_PanTilt_Position preset)
         {
-            m_dispatchCommands.Enqueue(() => Internal_UpdatePreset(cnameID, presetName, preset));
-            m_workAvailable.Set();
+            //m_dispatchCommands.Enqueue(() => Internal_UpdatePreset(cnameID, presetName, preset));
+            //m_workAvailable.Set();
+            Internal_UpdatePreset(cnameID, presetName, preset);
         }
 
         private void Internal_UpdatePreset(string cnameID, string presetName, RESP_PanTilt_Position pos)
@@ -134,6 +135,7 @@ namespace CameraDriver
         {
             m_dispatchCommands.Enqueue(() => Internal_StartCamClient(cnameID, endpoint));
             m_workAvailable.Set();
+            //Internal_StartCamClient(cnameID, endpoint);
         }
 
         private void Internal_StartCamClient(string cnameID, IPEndPoint endpoint)
@@ -160,6 +162,7 @@ namespace CameraDriver
         {
             m_dispatchCommands.Enqueue(() => Internal_StopCamClient(cnameID));
             m_workAvailable.Set();
+            //Internal_StopCamClient(cnameID);
         }
 
         private void Internal_StopCamClient(string cnameID)
@@ -175,15 +178,16 @@ namespace CameraDriver
         }
         public void StopAllCamClients()
         {
-            m_dispatchCommands.Enqueue(() =>
+            foreach (var client in m_clients.Values)
             {
-                foreach (var client in m_clients.Values)
-                {
-                    client?.Stop();
-                }
-                m_clients.Clear();
-            });
-            m_workAvailable.Set();
+                client?.Stop();
+            }
+            m_clients.Clear();
+        }
+
+        public void ClearAllPresets()
+        {
+            m_presets.Clear();
         }
 
         public void Start()
@@ -269,6 +273,8 @@ namespace CameraDriver
         void Cam_RecallPresetPosition(string cnameID, string presetName, byte speed = 0x10);
 
         void RemovePreset(string cnameID, string presetName);
+
+        void ClearAllPresets();
 
         List<(string camName, IPEndPoint endpoint)> GetClientConfig();
         List<string> GetClientNamesWithPresets();

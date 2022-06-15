@@ -37,10 +37,6 @@ namespace DVIPProtocol.Clients.Advanced
         void IClient.Stop()
         {
             m_cancel?.Cancel();
-            if (!m_init)
-            {
-                Dispose_Internal();
-            }
         }
 
         private void Dispose_Internal()
@@ -69,29 +65,26 @@ namespace DVIPProtocol.Clients.Advanced
             Debug.WriteLine($"[{Thread.CurrentThread.Name}] Started.");
 #endif
 
-            while (true)
+            while (!m_cancel.IsCancellationRequested)
             {
-                if (m_cancel.IsCancellationRequested == true)
-                {
-                    //... need to stop
-                    Dispose_Internal();
-                }
-
                 // to prevent blocking forever (and missing the cancel)
                 // we will wait on a mre, not the collection
                 // once we're signaled that the collectio has data
                 // consume as much as possible
                 WaitHandle.WaitAny(new[] { m_cancel.Token.WaitHandle, m_cmdAvail });
 
-                // wait for command to send
-                while (m_commands.TryDequeue(out var inq))
+                if (!m_cancel.IsCancellationRequested)
                 {
-                    // send commands
-                    SendAndWaitTCPCommand(inq);
+                    // wait for command to send
+                    while (m_commands.TryDequeue(out var inq))
+                    {
+                        // send commands
+                        SendAndWaitTCPCommand(inq);
+                    }
+                    m_cmdAvail.Reset();
                 }
-
-                m_cmdAvail.Reset();
             }
+            Dispose_Internal();
         }
 
         private void SendAndWaitTCPCommand(DVIP_Inq inq)

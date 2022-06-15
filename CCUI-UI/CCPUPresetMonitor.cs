@@ -90,7 +90,7 @@ namespace CCUI_UI
 
         public CCPUConfig ExportStateToConfig()
         {
-            var cams = m_server?.GetClientNamesWithPresets();
+            var cams = m_server?.GetClientNamesWithPresets() ?? new List<string>();
             Dictionary<string, Dictionary<string, RESP_PanTilt_Position>> keyedPresets = new Dictionary<string, Dictionary<string, RESP_PanTilt_Position>>();
             foreach (var cam in cams)
             {
@@ -112,6 +112,41 @@ namespace CCUI_UI
             return cfg;
         }
 
+        public void LoadConfig(CCPUConfig? cfg)
+        {
+            if (cfg == null)
+            {
+                return;
+            }
+
+            // stop all clients
+            m_server?.StopAllCamClients();
+            // flush all presets
+            m_server?.ClearAllPresets();
+
+            // start all new clients
+            foreach (var client in cfg.Clients)
+            {
+                if (IPEndPoint.TryParse($"{client.IPAddress}:{client.Port}", out var endpoint))
+                {
+                    m_server?.StartCamClient(client.Name, endpoint);
+                }
+            }
+            // load all new presets
+            foreach (var client in cfg.Clients)
+            {
+                if (cfg.KeyedPresets.TryGetValue(client.Name, out var presets))
+                {
+                    foreach (var preset in presets)
+                    {
+                        m_server?.Cam_SaveRawPosition(client.Name, preset.Key, preset.Value);
+                    }
+                }
+            }
+
+            // any UI's should be re-created
+            m_UIWindow?.ReConfigure();
+        }
     }
 
     public class CCPUConfig

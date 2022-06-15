@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
 {
     public class RESP_PanTilt_Position : IResponse
     {
-        public int Pan { get; private set; }
-        public int Tilt { get; private set; }
-        public bool Valid { get; private set; }
+        public int Pan { get; set; }
+        public int Tilt { get; set; }
+        public bool Valid { get; set; }
+
+        [JsonIgnore]
         public byte[] Data
         {
             get

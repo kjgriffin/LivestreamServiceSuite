@@ -61,7 +61,38 @@ namespace CCUI_UI
             InitializeComponent();
         }
 
+        internal void Reconfigure(string name, string ip, string port, List<string> presets)
+        {
+            tbCamName.Text = name;
+            tbCamIP.Text = ip;
+            tbCamPort.Text = port;
+
+            CamName = name;
+            m_camIP = ip;
+            m_camPort = port;
+            LockedSettings = true;
+
+            // reload any presets
+            foreach (var pst in m_presets)
+            {
+                pst.OnRemovePreset -= RemovePreset;
+                pst.OnRunPreset -= RunPreset;
+            }
+            lvPresets.Items.Clear();
+            m_presets.Clear();
+
+            foreach (var preset in presets)
+            {
+                NewPresetAdded(preset);
+            }
+        }
+
         private void btnReStart_Click(object sender, RoutedEventArgs e)
+        {
+            Internal_ReStart();
+        }
+
+        private void Internal_ReStart()
         {
             if (!LockedSettings)
             {
@@ -78,6 +109,11 @@ namespace CCUI_UI
         }
 
         private void btnStop_Click(object sender, RoutedEventArgs e)
+        {
+            Internal_Stop();
+        }
+
+        private void Internal_Stop()
         {
             OnStopRequest?.Invoke(CamName);
             LockedSettings = false;
