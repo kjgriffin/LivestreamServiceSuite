@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DVIPProtocol.Protocol.Lib.Inquiry
 {
-    public class RawInquiry : IInquiry<RawInquiryResp>
+    public class RawInquiry : IInquiry<IResponse>
     {
         public byte[] Data { get; private set; }
 
@@ -34,10 +34,23 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry
 
         public static IInquiry<IResponse> Create(byte[] data)
         {
-            var x = new RawInquiry(data);
-            return (IInquiry<IResponse>)x;
+            return new RawInquiry(data);
         }
 
+        IResponse IInquiry<IResponse>.Parse(byte[] resp)
+        {
+            return Parse(resp);
+        }
+
+        IResponse IInquiry<IResponse>.Parse_FakeGood()
+        {
+            return Parse_FakeGood();
+        }
+
+        IResponse IInquiry<IResponse>.Parse_FakeBad()
+        {
+            return Parse_FakeBad();
+        }
     }
 
     public class RawInquiryResp : IResponse

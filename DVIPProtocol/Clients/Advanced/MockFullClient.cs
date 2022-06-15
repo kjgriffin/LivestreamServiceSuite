@@ -114,7 +114,7 @@ namespace DVIPProtocol.Clients.Advanced
                 Data = inq.PackagePayload(),
                 ExpectedResponseSize = expectedResponseLength,
                 ReplyDelegate = reply
-            }); ;
+            });
             m_cmdAvail.Set();
         }
 

@@ -8,17 +8,16 @@ using System.Threading.Tasks;
 
 namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
 {
-    public class INQ_PanTilt_Position : IInquiry<RESP_PanTilt_Position>
+    public class INQ_PanTilt_Position : IInquiry<IResponse>
     {
         public byte[] Data { get; }
-        byte[] ICommand.Data { get; }
 
         private INQ_PanTilt_Position(byte[] data)
         {
             Data = data;
         }
 
-        public static IInquiry<RESP_PanTilt_Position> Create()
+        public static IInquiry<IResponse> Create()
         {
             return new INQ_PanTilt_Position(new byte[] { 0x81, 0x09, 0x06, 0x12, 0xff });
         }
@@ -49,11 +48,11 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
 
                 while (++i < resp.Length && di < 9)
                 {
-                    data[di] = (byte)(resp[i] & 0xF << di);
+                    data[di] = (byte)(resp[i] & 0xF << (di * 4));
                     di++;
                 }
-                
-                if (i++ < resp.Length && resp[i] == 0xFF)
+
+                if (i < resp.Length && resp[i] == 0xFF)
                 {
                     // found end of response, build valid response
                     return RESP_PanTilt_Position.Create(data, true);
@@ -73,6 +72,21 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
         public RESP_PanTilt_Position Parse_FakeBad()
         {
             return RESP_PanTilt_Position.Create(0, 0, false);
+        }
+
+        IResponse IInquiry<IResponse>.Parse(byte[] resp)
+        {
+            return Parse(resp);
+        }
+
+        IResponse IInquiry<IResponse>.Parse_FakeGood()
+        {
+            return Parse_FakeGood();
+        }
+
+        IResponse IInquiry<IResponse>.Parse_FakeBad()
+        {
+            return Parse_FakeBad();
         }
 
         [Flags]
