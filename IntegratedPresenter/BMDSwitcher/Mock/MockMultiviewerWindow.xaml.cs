@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 
 using IntegratedPresenter.Main;
 
+using SwitcherControl.BMDSwitcher;
+
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {
 

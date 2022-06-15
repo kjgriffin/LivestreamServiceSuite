@@ -1,8 +1,9 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IntegratedPresenter.BMDSwitcher
+namespace SwitcherControl.BMDSwitcher
 {
 
     /* acording to: https://www.skaarhoj.com/fileadmin/BMDPROTOCOL.html

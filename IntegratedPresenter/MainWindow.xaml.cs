@@ -27,6 +27,7 @@ using IntegratedPresenterAPIInterop;
 using Integrated_Presenter.ViewModels;
 using System.Windows.Controls;
 using CCUI_UI;
+using SwitcherControl.BMDSwitcher;
 
 namespace IntegratedPresenter.Main
 {

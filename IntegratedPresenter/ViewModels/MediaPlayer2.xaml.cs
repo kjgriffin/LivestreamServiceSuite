@@ -1,7 +1,8 @@
 ﻿using Integrated_Presenter.ViewModels;
 
-using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
+
+using SwitcherControl.BMDSwitcher;
 
 using System;
 using System.Collections.Generic;

@@ -1,9 +1,10 @@
 ﻿using BMDSwitcherAPI;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IntegratedPresenter
+namespace SwitcherControl.BMDSwitcher
 {
     public class MixEffectBlockMonitor : IBMDSwitcherMixEffectBlockCallback
     {
@@ -13,7 +14,7 @@ namespace IntegratedPresenter
         public event SwitcherEventHandler InTransitionChanged;
         public event SwitcherEventHandler TransitionPositionChanged;
         public event SwitcherEventHandler TransitionFramesRemainingChanged;
-        
+
 
         public MixEffectBlockMonitor()
         {
@@ -22,7 +23,7 @@ namespace IntegratedPresenter
 
         void IBMDSwitcherMixEffectBlockCallback.Notify(_BMDSwitcherMixEffectBlockEventType eventType)
         {
-            switch(eventType)
+            switch (eventType)
             {
                 case _BMDSwitcherMixEffectBlockEventType.bmdSwitcherMixEffectBlockEventTypeProgramInputChanged:
                     ProgramInputChanged?.Invoke(this, null);

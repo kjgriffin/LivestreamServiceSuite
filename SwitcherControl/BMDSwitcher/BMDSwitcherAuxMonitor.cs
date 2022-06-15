@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
 using BMDSwitcherAPI;
 
-namespace IntegratedPresenter.BMDSwitcher
+namespace SwitcherControl.BMDSwitcher
 {
     class BMDSwitcherAuxMonitor : IBMDSwitcherInputAuxCallback
     {
-        public event SwitcherEventHandler OnAuxInputChanged; 
+        public event SwitcherEventHandler OnAuxInputChanged;
         public void Notify(_BMDSwitcherInputAuxEventType eventType)
         {
             switch (eventType)

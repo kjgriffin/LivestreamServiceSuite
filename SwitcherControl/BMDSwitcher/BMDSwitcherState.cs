@@ -1,10 +1,12 @@
 ﻿using BMDSwitcherAPI;
+
 using IntegratedPresenter.BMDSwitcher.Config;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IntegratedPresenter.BMDSwitcher
+namespace SwitcherControl.BMDSwitcher
 {
     public class BMDSwitcherState
     {
@@ -116,7 +118,7 @@ namespace IntegratedPresenter.BMDSwitcher
         public bool IsDifferentShot(BMDSwitcherState oldstate)
         {
             // for now only look at program output
-            if (this.ProgramID != oldstate.ProgramID)
+            if (ProgramID != oldstate.ProgramID)
             {
                 return true;
             }
@@ -127,25 +129,25 @@ namespace IntegratedPresenter.BMDSwitcher
         {
             return new BMDSwitcherState()
             {
-                InTransition = this.InTransition,
-                TransitionFramesRemaining = this.TransitionFramesRemaining,
-                TransitionPosition = this.TransitionPosition,
-                PresetID = this.PresetID,
-                ProgramID = this.ProgramID,
-                AuxID = this.AuxID,
-                USK1OnAir = this.USK1OnAir,
-                USK1KeyType = this.USK1KeyType,
-                USK1FillSource = this.USK1FillSource,
-                USK1KeyFrame = this.USK1KeyFrame,
-                DSK1OnAir = this.DSK1OnAir,
-                DSK1Tie = this.DSK1Tie,
-                DSK2OnAir = this.DSK2OnAir,
-                DSK2Tie = this.DSK2Tie,
-                FTB = this.FTB,
-                TransNextBackground = this.TransNextBackground,
-                TransNextKey1 = this.TransNextKey1,
-                ChromaSettings = this.ChromaSettings.Copy(),
-                DVESettings = this.DVESettings.Copy(),
+                InTransition = InTransition,
+                TransitionFramesRemaining = TransitionFramesRemaining,
+                TransitionPosition = TransitionPosition,
+                PresetID = PresetID,
+                ProgramID = ProgramID,
+                AuxID = AuxID,
+                USK1OnAir = USK1OnAir,
+                USK1KeyType = USK1KeyType,
+                USK1FillSource = USK1FillSource,
+                USK1KeyFrame = USK1KeyFrame,
+                DSK1OnAir = DSK1OnAir,
+                DSK1Tie = DSK1Tie,
+                DSK2OnAir = DSK2OnAir,
+                DSK2Tie = DSK2Tie,
+                FTB = FTB,
+                TransNextBackground = TransNextBackground,
+                TransNextKey1 = TransNextKey1,
+                ChromaSettings = ChromaSettings.Copy(),
+                DVESettings = DVESettings.Copy(),
             };
 
         }
