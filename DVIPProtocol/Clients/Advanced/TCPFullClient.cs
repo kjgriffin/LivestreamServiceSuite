@@ -31,7 +31,7 @@ namespace DVIPProtocol.Clients.Advanced
             m_cmdAvail = new ManualResetEvent(false);
         }
 
-        IPEndPoint IClient.Endpoint { get; set; }
+        IPEndPoint IClient.Endpoint { get => m_endpoint; }
 
         void IClient.Stop()
         {

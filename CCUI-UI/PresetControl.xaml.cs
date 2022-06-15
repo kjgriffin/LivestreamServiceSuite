@@ -34,6 +34,7 @@ namespace CCUI_UI
         {
             InitializeComponent();
             tbName.Text = pname;
+            PresetName = pname;
         }
 
         private void btnRun_Click(object sender, RoutedEventArgs e)

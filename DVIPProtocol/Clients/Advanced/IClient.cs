@@ -16,7 +16,7 @@ namespace DVIPProtocol.Clients.Advanced
 
     public interface IClient
     {
-        public IPEndPoint Endpoint { get; set; }
+        public IPEndPoint Endpoint { get; }
         void Init();
         void Stop();
     }

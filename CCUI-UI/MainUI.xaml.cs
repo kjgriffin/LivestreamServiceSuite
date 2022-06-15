@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,16 +40,24 @@ namespace CCUI_UI
             cam1.OnStopRequest += Cam_OnStopRequest;
             cam1.OnSavePresetRequest += Cam_OnSavePresetRequest;
             cam1.OnFirePresetRequest += Cam_OnFirePresetRequest;
+            cam1.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
 
             cam2.OnRestartRequest += Cam_OnRestartRequest;
             cam2.OnStopRequest += Cam_OnStopRequest;
             cam2.OnSavePresetRequest += Cam_OnSavePresetRequest;
             cam2.OnFirePresetRequest += Cam_OnFirePresetRequest;
+            cam2.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
 
             cam3.OnRestartRequest += Cam_OnRestartRequest;
             cam3.OnStopRequest += Cam_OnStopRequest;
             cam3.OnSavePresetRequest += Cam_OnSavePresetRequest;
             cam3.OnFirePresetRequest += Cam_OnFirePresetRequest;
+            cam3.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
+        }
+
+        private void Cam_OnDeletePresetRequest(string cname, string presetname)
+        {
+            m_monitor?.RemovePreset(cname, presetname);
         }
 
         private void Cam_OnSavePresetRequest(string cname, string presetname)
@@ -74,16 +86,19 @@ namespace CCUI_UI
             cam1.OnStopRequest -= Cam_OnStopRequest;
             cam1.OnSavePresetRequest -= Cam_OnSavePresetRequest;
             cam1.OnFirePresetRequest -= Cam_OnFirePresetRequest;
+            cam1.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
 
             cam2.OnRestartRequest -= Cam_OnRestartRequest;
             cam2.OnStopRequest -= Cam_OnStopRequest;
             cam2.OnSavePresetRequest -= Cam_OnSavePresetRequest;
             cam2.OnFirePresetRequest -= Cam_OnFirePresetRequest;
+            cam2.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
 
             cam3.OnRestartRequest -= Cam_OnRestartRequest;
             cam3.OnStopRequest -= Cam_OnStopRequest;
             cam3.OnSavePresetRequest -= Cam_OnSavePresetRequest;
             cam3.OnFirePresetRequest -= Cam_OnFirePresetRequest;
+            cam3.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
         }
 
         internal void AddKnownPreset(string cname, string pname)
@@ -105,6 +120,39 @@ namespace CCUI_UI
             {
                 cam3.NewPresetAdded(pname);
             }
+        }
+
+
+        private void Export()
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Export Cameras and Presets";
+            sfd.AddExtension = true;
+            sfd.DefaultExt = ".json";
+            sfd.FileName = "CCU-Config";
+            if (sfd.ShowDialog() == true)
+            {
+                try
+                {
+                    // get list of all presets
+                    var cfg = m_monitor?.ExportStateToConfig() ?? new CCPUConfig();
+
+                    string json = JsonSerializer.Serialize(cfg);
+
+                    using (var writer = new StreamWriter(sfd.FileName))
+                    {
+                        writer.Write(json);
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+        }
+
+        private void ClickExport(object sender, RoutedEventArgs e)
+        {
+            Export();
         }
     }
 }

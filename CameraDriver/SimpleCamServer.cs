@@ -164,10 +164,13 @@ namespace CameraDriver
 
         private void Internal_StopCamClient(string cnameID)
         {
-            if (m_clients.TryRemove(cnameID, out IFullClient? client))
+            if (!string.IsNullOrEmpty(cnameID) && m_clients.ContainsKey(cnameID))
             {
-                client?.Stop();
-                client = null;
+                if (m_clients.TryRemove(cnameID, out IFullClient? client))
+                {
+                    client?.Stop();
+                    client = null;
+                }
             }
         }
         public void StopAllCamClients()
@@ -206,6 +209,45 @@ namespace CameraDriver
             }
         }
 
+        public void RemovePreset(string cnameID, string presetName)
+        {
+            if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(presetName))
+            {
+                return;
+            }
+
+            m_presets.TryGetValue(cnameID, out var presets);
+            if (presets?.ContainsKey(presetName) == true)
+            {
+                presets.Remove(presetName);
+            }
+        }
+
+        public List<string> GetClientNamesWithPresets()
+        {
+            return m_presets.Keys.ToList() ?? new List<string>();
+        }
+
+        public Dictionary<string, RESP_PanTilt_Position> GetKnownPresetsForClient(string cnameID)
+        {
+            if (string.IsNullOrEmpty(cnameID))
+            {
+                return new Dictionary<string, RESP_PanTilt_Position>();
+            }
+            if (m_presets.TryGetValue(cnameID, out var presets))
+            {
+                if (presets != null)
+                {
+                    return new Dictionary<string, RESP_PanTilt_Position>(presets);
+                }
+            }
+            return new Dictionary<string, RESP_PanTilt_Position>();
+        }
+
+        public List<(string camName, IPEndPoint endpoint)> GetClientConfig()
+        {
+            return m_clients?.Select(x => (x.Key, x.Value.Endpoint)).ToList() ?? new List<(string, IPEndPoint)>();
+        }
     }
 
     public delegate void CameraPresetSaved(string cname, string pname);
@@ -225,6 +267,12 @@ namespace CameraDriver
         void Cam_SaveCurentPosition(string cnameID, string presetName);
         void Cam_SaveRawPosition(string cnameID, string presetName, RESP_PanTilt_Position value);
         void Cam_RecallPresetPosition(string cnameID, string presetName, byte speed = 0x10);
+
+        void RemovePreset(string cnameID, string presetName);
+
+        List<(string camName, IPEndPoint endpoint)> GetClientConfig();
+        List<string> GetClientNamesWithPresets();
+        Dictionary<string, RESP_PanTilt_Position> GetKnownPresetsForClient(string cnameID);
 
 
         public static ISimpleCamServer Instantiate()

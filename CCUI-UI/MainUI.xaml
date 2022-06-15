@@ -15,7 +15,9 @@
             </Grid.RowDefinitions>
 
             <Menu Grid.Row="0" Background="#171717" Foreground="#efefef" VerticalContentAlignment="Center" VerticalAlignment="Top">
-                <MenuItem Header="File"></MenuItem>
+                <MenuItem Header="File" Background="#171717" Foreground="#efefef">
+                    <MenuItem Click="ClickExport" Header="Export State" Background="#171717" Foreground="#efefef"></MenuItem>
+                </MenuItem>
             </Menu>
 
             <Viewbox Grid.Row="1">

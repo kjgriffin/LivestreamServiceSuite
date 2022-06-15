@@ -21,6 +21,7 @@ namespace CCUI_UI
     internal delegate void OnStopEvent(string cname);
     internal delegate void SavePresetEvent(string cname, string presetname);
     internal delegate void FirePresetEvent(string cname, string presetname, int speed);
+    internal delegate void DeletePresetEvent(string cname, string presetname);
 
     /// <summary>
     /// Interaction logic for CamPresetControl.xaml
@@ -51,6 +52,7 @@ namespace CCUI_UI
         internal event OnStopEvent OnStopRequest;
         internal event SavePresetEvent OnSavePresetRequest;
         internal event FirePresetEvent OnFirePresetRequest;
+        internal event DeletePresetEvent OnDeletePresetRequest;
 
         List<PresetControl> m_presets = new List<PresetControl>();
 
@@ -100,6 +102,7 @@ namespace CCUI_UI
 
         private void RemovePreset(string pName)
         {
+            OnDeletePresetRequest?.Invoke(CamName, pName);
             var ctrl = m_presets.FirstOrDefault(p => p.PresetName == pName);
             if (ctrl != null)
             {
