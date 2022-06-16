@@ -12,7 +12,7 @@ namespace LutheRun
 
         public static string Indent(this string str, int indentdepth, int indentspace)
         {
-            return str.PadLeft(indentdepth * indentspace + str.Length); 
+            return str.PadLeft(indentdepth * indentspace + str.Length);
         }
 
         public static string IndentBlock(this string str, int indentdepth, int indentspace)
@@ -196,6 +196,8 @@ namespace LutheRun
             string speaker = "";
             StringBuilder sb = new StringBuilder();
 
+            bool poetryIgnoreSpeakerCondition = false;
+
             List<IElement> flattree = element.ElementTreeToFlatList();
 
             foreach (var node in flattree)
@@ -219,6 +221,12 @@ namespace LutheRun
                     if (node.ClassList.Contains("lsb-responsorial_poetry"))
                     {
                         expectspeaker = true;
+                    }
+                    else if (node.ClassList.Contains("poetry"))
+                    {
+                        expectspeaker = false;
+                        // mark all lines as having valid speaker...
+                        poetryIgnoreSpeakerCondition = true;
                     }
 
                     var textlines = node.ParagraphText2();
@@ -269,6 +277,10 @@ namespace LutheRun
                 sb.Clear();
             }
 
+            if (poetryIgnoreSpeakerCondition)
+            {
+                return lines.Where(l => !string.IsNullOrEmpty(l.value)).ToList();
+            }
             return lines.Where(l => !string.IsNullOrEmpty(l.speaker) && !string.IsNullOrEmpty(l.value)).ToList();
         }
 

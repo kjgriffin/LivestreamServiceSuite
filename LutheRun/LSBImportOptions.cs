@@ -14,7 +14,7 @@ namespace LutheRun
         [BoolSetting]
         public bool UseUpNextForHymns { get; set; } = true;
         [BoolSetting]
-        public bool UsePIPHymns { get; set; } = false;
+        public bool UsePIPHymns { get; set; } = true;
 
         public bool OnlyKnownCaptions { get; set; } = true;
         [BoolSetting]
@@ -34,7 +34,7 @@ namespace LutheRun
         [BoolSetting]
         public bool UseThemedCreeds { get; set; } = true;
         [BoolSetting]
-        public bool UsePIPCreeds { get; set; } = false;
+        public bool UsePIPCreeds { get; set; } = true;
         [BoolSetting]
         public bool UseThemedHymns { get; set; } = true;
 

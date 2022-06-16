@@ -66,7 +66,7 @@ namespace LutheRun
                 sb.AppendLine("//> INSERTION POINT: anthem".Indent(indentDepth, indentSpace));
                 sb.AppendLine($"#anthemtitle(\"{Caption}\", \"{SubCaption}\", \"\", \"\"){PostsetCmd}".Indent(indentDepth, indentSpace));
             }
-            else if (ctest.Contains("sermon".Indent(indentDepth, indentSpace)))
+            else if (ctest.Contains("sermon"))
             {
                 sb.AppendLine("/// </MANUAL_UPDATE name='sermon'>".Indent(indentDepth, indentSpace));
                 sb.AppendLine("//> INSERTION POINT: sermon".Indent(indentDepth, indentSpace));
