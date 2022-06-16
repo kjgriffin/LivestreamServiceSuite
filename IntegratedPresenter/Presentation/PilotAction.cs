@@ -37,7 +37,7 @@ namespace Integrated_Presenter.Presentation
                 bool doSpeed = false;
                 if (match.Groups.TryGetValue("speed", out var g))
                 {
-                    if (int.TryParse(g.Value.Substring(1, g.Value.Length - 2), out int s))
+                    if (int.TryParse(g.Value.Substring(1), out int s))
                     {
                         speed = s;
                         doSpeed = true;
