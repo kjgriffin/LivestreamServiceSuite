@@ -48,7 +48,7 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
 
                 while (++i < resp.Length && di < 9)
                 {
-                    data[di] = (byte)(resp[i] & 0xF << (di * 4));
+                    data[di] = (byte)(resp[i] & 0xF);
                     di++;
                 }
 

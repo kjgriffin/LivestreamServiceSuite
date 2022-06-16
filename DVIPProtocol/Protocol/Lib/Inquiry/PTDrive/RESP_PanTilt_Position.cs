@@ -9,7 +9,7 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
 {
     public class RESP_PanTilt_Position : IResponse
     {
-        public int Pan { get; set; }
+        public long Pan { get; set; }
         public int Tilt { get; set; }
         public bool Valid { get; set; }
 
@@ -26,16 +26,16 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
                 res[2] = 0x90;
                 res[3] = 0x50;
 
-                res[4] = (byte)(Pan >> 0 & 0xF);
-                res[5] = (byte)(Pan >> 4 & 0xF);
+                res[4] = (byte)(Pan >> 16 & 0xF);
+                res[5] = (byte)(Pan >> 12 & 0xF);
                 res[6] = (byte)(Pan >> 8 & 0xF);
-                res[7] = (byte)(Pan >> 12 & 0xF);
-                res[8] = (byte)(Pan >> 16 & 0xF);
+                res[7] = (byte)(Pan >> 4 & 0xF);
+                res[8] = (byte)(Pan >> 0 & 0xF);
 
-                res[9] = (byte)(Pan >> 0 & 0xF);
-                res[10] = (byte)(Pan >> 4 & 0xF);
-                res[11] = (byte)(Pan >> 8 & 0xF);
-                res[12] = (byte)(Pan >> 12 & 0xF);
+                res[9] = (byte)(Pan >> 12 & 0xF);
+                res[10] = (byte)(Pan >> 8 & 0xF);
+                res[11] = (byte)(Pan >> 4 & 0xF);
+                res[12] = (byte)(Pan >> 0 & 0xF);
 
                 res[13] = 0xFF;
 
@@ -50,7 +50,7 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
         /// <param name="tilt">Assumes the byte order to be: 0000_abcd</param>
         /// <param name="valid">Is the preset valid</param>
         /// <returns></returns>
-        internal static RESP_PanTilt_Position Create(int pan, int tilt, bool valid)
+        internal static RESP_PanTilt_Position Create(long pan, int tilt, bool valid)
         {
             return new RESP_PanTilt_Position
             {
@@ -79,8 +79,8 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
                 };
             }
 
-            int pan = sortedbytes[0] | sortedbytes[1] | sortedbytes[2] | sortedbytes[3] | sortedbytes[4];
-            int tilt = sortedbytes[5] | sortedbytes[6] | sortedbytes[7] | sortedbytes[8];
+            long pan = sortedbytes[0] << 16 | sortedbytes[1] << 12 | sortedbytes[2] << 8 | sortedbytes[3] << 4 | sortedbytes[4];
+            int tilt = sortedbytes[5] << 12 | sortedbytes[6] << 8 | sortedbytes[7] << 4 | sortedbytes[8];
             return Create(pan, tilt, valid);
         }
 
