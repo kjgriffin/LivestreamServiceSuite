@@ -1449,6 +1449,16 @@ namespace IntegratedPresenter.Main
                 SetCondition2(!_Cond2.Value);
             }
 
+            // CCU
+            if (e.Key == Key.Y)
+            {
+                ToggleAutoPilot();
+            }
+            if (e.Key == Key.U)
+            {
+                _camMonitor?.ShowUI();
+            }
+
 
             // numpad controls keyers
             #region keyers
@@ -3527,6 +3537,7 @@ namespace IntegratedPresenter.Main
             switcherManager?.Close();
             audioPlayer?.Close();
             pipctrl?.Close();
+            _camMonitor?.Shutdown();
             _logger.Info("Integrated Presenter requested to close by USER");
         }
 
