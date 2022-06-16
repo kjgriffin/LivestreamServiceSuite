@@ -16,8 +16,15 @@ namespace CCUI_UI
 
         MainUI m_UIWindow;
         ISimpleCamServer m_server;
+        internal bool m_usingFake;
 
         public CCPUPresetMonitor(bool headless = false, bool fakeClients = false)
+        {
+            m_usingFake = fakeClients;
+            Spinup(headless, fakeClients);
+        }
+
+        private void Spinup(bool headless, bool fakeClients)
         {
             if (!headless)
             {
@@ -43,8 +50,8 @@ namespace CCUI_UI
 
         public void Shutdown()
         {
-            m_server?.Shutdown();
             m_server.OnPresetSavedSuccess -= m_server_OnPresetSavedSuccess;
+            m_server?.Shutdown();
             m_UIWindow.Close();
         }
 
@@ -146,6 +153,26 @@ namespace CCUI_UI
 
             // any UI's should be re-created
             m_UIWindow?.ReConfigure();
+        }
+
+        internal void ReSpinWithFake()
+        {
+            bool ui = m_UIWindow?.IsVisible ?? false;
+            var cfg = ExportStateToConfig();
+            Shutdown();
+            m_usingFake = true;
+            Spinup(headless: !ui, fakeClients: true);
+            LoadConfig(cfg);
+        }
+
+        internal void ReSpinWithReal()
+        {
+            bool ui = m_UIWindow?.IsVisible ?? false;
+            var cfg = ExportStateToConfig();
+            Shutdown();
+            m_usingFake = false;
+            Spinup(headless: !ui, fakeClients: false);
+            LoadConfig(cfg);
         }
     }
 

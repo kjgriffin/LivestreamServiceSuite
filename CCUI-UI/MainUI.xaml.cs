@@ -54,6 +54,8 @@ namespace CCUI_UI
             cam3.OnFirePresetRequest += Cam_OnFirePresetRequest;
             cam3.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
 
+            miFakeClients.IsChecked = m_monitor?.m_usingFake ?? false;
+
             ReConfigure();
         }
 
@@ -211,5 +213,18 @@ namespace CCUI_UI
             }
         }
 
+        private void ClickToggleMock(object sender, RoutedEventArgs e)
+        {
+            if (m_monitor?.m_usingFake == true)
+            {
+                m_monitor?.ReSpinWithReal();
+                miFakeClients.IsChecked = false;
+            }
+            else
+            {
+                m_monitor?.ReSpinWithFake();
+                miFakeClients.IsChecked = true;
+            }
+        }
     }
 }
