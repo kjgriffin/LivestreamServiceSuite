@@ -57,6 +57,14 @@ namespace Xenon.Renderer
             if (rs.IsPostset)
             {
                 string filename = $"Postset_{rs.Number}.txt";
+                created.Add(filename);
+            }
+
+            // generate optional Pilot
+            if (!string.IsNullOrWhiteSpace(rs.Pilot))
+            {
+                string filename = $"Pilot_{rs.Number}.txt";
+                created.Add(filename);
             }
 
             return created;
@@ -144,6 +152,16 @@ namespace Xenon.Renderer
                     using (StreamWriter sw = new StreamWriter(filename, false))
                     {
                         sw.Write(rs.Postset);
+                    }
+                }
+
+                // generate optional Pilot
+                if (rs.HasPilot)
+                {
+                    string filename = Path.Join(directory, $"Pilot_{slide.Number}.txt");
+                    using(StreamWriter sw = new StreamWriter(filename, false))
+                    {
+                        sw.Write(rs.Pilot);
                     }
                 }
 

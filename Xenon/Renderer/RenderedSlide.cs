@@ -17,6 +17,8 @@ namespace Xenon.Renderer
         public string Name { get; set; }
         public string CopyExtension { get; set; }
         public string Text { get; set; }
+        public string Pilot { get; set; }
+        public bool HasPilot { get => !string.IsNullOrWhiteSpace(Pilot); }
         public Image<Bgra32> Bitmap { get; set; }
         public Image<Bgra32> KeyBitmap { get; set; }
 
@@ -32,7 +34,7 @@ namespace Xenon.Renderer
 
         public static RenderedSlide Default()
         {
-            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", KeyAssetPath = "", CopyExtension = "", Text = "", Name = "", RenderedAs = "Default", Number = 0, IsPostset = false, Postset = -1, OverridingBehaviour = new SlideOverridingBehaviour() };
+            return new RenderedSlide() { MediaType = MediaType.Empty, AssetPath = "", KeyAssetPath = "", CopyExtension = "", Text = "", Name = "", RenderedAs = "Default", Number = 0, IsPostset = false, Postset = -1, OverridingBehaviour = new SlideOverridingBehaviour(), Pilot = "" };
         }
 
         public RenderedSlide Clone()
@@ -44,6 +46,7 @@ namespace Xenon.Renderer
                 KeyAssetPath = this.KeyAssetPath,
                 CopyExtension = this.CopyExtension,
                 Text = this.Text,
+                Pilot = this.Pilot,
                 Name = this.Name,
                 RenderedAs = this.RenderedAs,
                 Postset = this.Postset,

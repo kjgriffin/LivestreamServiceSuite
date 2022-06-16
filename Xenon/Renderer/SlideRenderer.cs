@@ -9,6 +9,7 @@ using System.Linq;
 using Xenon.LayoutInfo;
 using Xenon.AssetManagment;
 using Xenon.Helpers;
+using Xenon.Compiler.AST;
 
 namespace Xenon.Renderer
 {
@@ -72,6 +73,12 @@ namespace Xenon.Renderer
             {
                 res.IsPostset = true;
                 res.Postset = (int)s.Data["postset"];
+            }
+
+            // attach Pilot
+            if (s.Data.TryGetValue(XenonASTExpression.DATAKEY_PILOT, out var pilot))
+            {
+                res.Pilot = (string)pilot;
             }
 
             // we can premultiple here if nessecary

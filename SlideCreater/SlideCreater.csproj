@@ -59,7 +59,6 @@
 
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.1.2.30" />
-    <PackageReference Include="CefSharp.Wpf.NETCore" Version="95.7.141" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>
 

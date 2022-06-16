@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+using Xenon.Compiler.SubParsers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
     class XenonASTExpression : IXenonASTElement
     {
+        public static string DATAKEY_PILOT { get => "pilot-data"; }
+
         public int _SourceLine { get; private set; }
         public IXenonASTCommand Command { get; set; }
         public bool Postset { get; set; } = false;
@@ -18,11 +21,62 @@ namespace Xenon.Compiler.AST
         public int Postset_All { get; set; } = -1;
         public int Postset_First { get; set; } = -1;
         public int Postset_Last { get; set; } = -1;
+
+        public Dictionary<string, string> PilotCommands = new Dictionary<string, string>();
+
         public IXenonASTElement Parent { get; private set; }
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            return Command?.Generate(project, this, Logger) ?? new List<Slide>();
+            var slides = Command?.Generate(project, this, Logger) ?? new List<Slide>();
+
+            // add pilot here
+            Dictionary<string, int> mappedKeys = new Dictionary<string, int>();
+            Dictionary<int, string> sanatizedCommands = new Dictionary<int, string>();
+            foreach (var key in PilotCommands.Keys)
+            {
+                int slideid = -1;
+                // compute it's refrenced slide
+                if (key.StartsWith("!"))
+                {
+                    if (int.TryParse(key.Substring(1), out int sid))
+                    {
+                        var rs = slides.Count - 1 - sid;
+                        if (rs < slides.Count && rs > 0)
+                        {
+                            slideid = rs;
+                        }
+                    }
+                }
+                else
+                {
+                    if (int.TryParse(key, out int sid))
+                    {
+                        if (sid < slides.Count)
+                        {
+                            slideid = sid;
+                        } 
+                    }
+                }
+                if (slideid != -1)
+                {
+                    mappedKeys[key] = slideid;
+                }
+            }
+
+            foreach (var val in mappedKeys)
+            {
+                var rawSrc = PilotCommands[val.Key];
+                var src = PilotParser.SanatizePilotCommands(rawSrc);
+                sanatizedCommands[val.Value] = src;
+            }
+
+            foreach (var pilotSet in sanatizedCommands)
+            {
+                slides[pilotSet.Key].Data[DATAKEY_PILOT] = pilotSet.Value;
+            }
+
+            return slides;
         }
 
         void IXenonASTElement.PreGenerate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
@@ -63,8 +117,57 @@ namespace Xenon.Compiler.AST
                 }
             }
 
+            Lexer.GobbleWhitespace();
+
+            // parse optional pilot
+            if (!Lexer.InspectEOF())
+            {
+                if (Lexer.Inspect(">>"))
+                {
+                    CompilePilot(expr, Lexer, Logger);
+                }
+            }
+
             expr.Parent = Parent;
             return expr;
+        }
+
+        private void CompilePilot(XenonASTExpression expr, Lexer lexer, XenonErrorLogger logger)
+        {
+            lexer.Gobble(">>");
+            lexer.GobbleandLog("pilot", "Expected 'pilot' tag.");
+
+            lexer.GobbleWhitespace();
+
+            lexer.GobbleandLog("{");
+            lexer.GobbleWhitespace();
+
+            int inspections = 0;
+            while (inspections++ < 10000 && !lexer.InspectEOF() && !lexer.Inspect("}"))
+            {
+                lexer.GobbleandLog("<");
+                var id = lexer.ConsumeUntil(">");
+                lexer.GobbleandLog(">");
+                lexer.GobbleWhitespace();
+                lexer.GobbleandLog("{");
+                var src = lexer.ConsumeUntil("}");
+                lexer.GobbleandLog("}");
+                lexer.GobbleWhitespace();
+                expr.PilotCommands[id] = src;
+            }
+            if (inspections >= 10000)
+            {
+                logger.Log(new XenonCompilerMessage
+                {
+                    ErrorMessage = "Lexer possibly stuck in a loop trying to parse malformed pilot sequence",
+                    ErrorName = "Lexer stuck",
+                    Generator = "XenonASTExpression::CompilePilot()",
+                    Inner = "",
+                    Level = XenonCompilerMessageType.Error,
+                    Token = lexer.CurrentToken,
+                });
+            }
+            lexer.GobbleandLog("}");
         }
 
         private void CompilePostset(XenonASTExpression expr, Lexer lexer, XenonErrorLogger logger)
