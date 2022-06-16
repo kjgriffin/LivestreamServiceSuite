@@ -22,7 +22,7 @@ namespace Xenon.Compiler.SubParsers
                 commands.AddRange(lines);
             }
 
-            return string.Join(Environment.NewLine, commands.Select(cmd => $"{cmd};"));
+            return string.Join(Environment.NewLine, commands.Select(cmd => $"{cmd};".Trim()));
         }
 
 
