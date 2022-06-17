@@ -111,19 +111,40 @@ namespace DVIPProtocol.Clients.Advanced
             // wait for read...
             byte[] respBuffer = new byte[512];
 
-            int read = 0;
-
-
             // hmmmm... but this is probably fine?
-            Thread.Sleep(1);
+            //Thread.Sleep(10);
             // ok- so here we're going to play fast and loose...
             // assumption is that the network:
             // 1. works (if not, I'll claim there's bigger problems I can't solve)
             // 2. is fast (relatively)
             // 3. all communications are rather small
-            if (stream.DataAvailable)
+            // expects 2... blocking wait for 2
+
+            if (inq.ExpectedResponseSize <= 0)
             {
-                stream.Read(respBuffer, 0, 512);
+                if (stream.DataAvailable)
+                {
+                    stream.Read(respBuffer, 0, 512);
+                }
+            }
+            else
+            {
+                int expecteddata = 0;
+                int prefix = 0;
+                byte[] sizebuf = new byte[512];
+                while (prefix < 2)
+                {
+                    prefix += stream.Read(sizebuf, prefix, 2 - prefix);
+                }
+                expecteddata = sizebuf[0] << 8 | sizebuf[1];
+                int read = 0;
+                while (read < expecteddata - 2)
+                {
+                    if (stream.DataAvailable)
+                    {
+                        read += stream.Read(respBuffer, 0, expecteddata - read);
+                    }
+                }
             }
 
             // send out response

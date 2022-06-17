@@ -35,6 +35,7 @@ namespace DVIPProtocol.Protocol.Lib.Command.PTDrive
                 0x06,
                 0x02,
                 speed,
+                0x00,
                 p, q, r, s, t,
                 a, b, c, d,
                 0xFF
