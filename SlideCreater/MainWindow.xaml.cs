@@ -1762,5 +1762,11 @@ namespace SlideCreater
             }
 #endif
         }
+
+        private void ClickAnalyzePilotPresetUse(object sender, RoutedEventArgs e)
+        {
+            string report = Xenon.Analyzers.PilotReportGenerator.GeneratePilotPresetReport(_proj);
+            MessageBox.Show(report, "Presets Used");
+        }
     }
 }

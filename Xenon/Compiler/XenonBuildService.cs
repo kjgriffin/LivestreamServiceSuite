@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
+using Xenon.Analyzers;
 using Xenon.AssetManagment;
 using Xenon.Helpers;
 using Xenon.Renderer;
@@ -96,6 +97,17 @@ namespace Xenon.Compiler
                     Messages.Add(new XenonCompilerMessage() { ErrorMessage = $"Rendering failed to render {failedslides} slides.", ErrorName = "Failed to Render Slides", Level = XenonCompilerMessageType.Error });
                 }
 
+                var report = PilotReportGenerator.GeneratePilotPresetReport(proj);
+                Messages.Add(new XenonCompilerMessage()
+                {
+                    ErrorName = "Pilot Preset Use Report",
+                    ErrorMessage = report,
+                    Generator = "PilotReportGenerator",
+                    Inner = "",
+                    Level = XenonCompilerMessageType.Message,
+                    Token = "",
+                });
+
                 return slides;
             }
             catch (Exception ex)
@@ -149,6 +161,18 @@ namespace Xenon.Compiler
                         Token = "",
                     });
                 }
+
+                var report = PilotReportGenerator.GeneratePilotPresetReport(proj);
+                Messages.Add(new XenonCompilerMessage()
+                {
+                    ErrorName = "Pilot Preset Use Report",
+                    ErrorMessage = report,
+                    Generator = "PilotReportGenerator",
+                    Inner = "",
+                    Level = XenonCompilerMessageType.Message,
+                    Token = "",
+                });
+
 
                 if (failedslides > 0)
                 {
