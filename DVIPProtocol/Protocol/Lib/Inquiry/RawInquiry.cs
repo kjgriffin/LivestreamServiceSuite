@@ -56,6 +56,8 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry
     public class RawInquiryResp : IResponse
     {
         public byte[] Data { get; private set; }
+        public int ExpectedResponseLength { get => 0; }
+
         public RawInquiryResp(byte[] resp)
         {
             Data = resp;

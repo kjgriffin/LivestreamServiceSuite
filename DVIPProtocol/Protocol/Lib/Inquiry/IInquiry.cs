@@ -18,6 +18,7 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry
     public interface IResponse
     {
         byte[] Data { get; }
+        static int ExpectedResponseLength { get; }
     }
 
 }

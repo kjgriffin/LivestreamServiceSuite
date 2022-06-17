@@ -89,18 +89,6 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
             return Parse_FakeBad();
         }
 
-        [Flags]
-        enum ParseState
-        {
-            AwaitStart = 1,
-            RespHeadder = 1 << 1,
-            Data = 1 << 2,
-            AwaitEnd = 1 << 3,
-
-            Incomplete = 1 << 5,
-
-            Invalid = 1 << 8,
-        }
 
     }
 }

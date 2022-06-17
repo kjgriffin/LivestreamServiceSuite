@@ -17,11 +17,8 @@ namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive.Tests
         {
 
             // this is an real response returned by hardware
-            byte[] resp = new byte[14]
+            byte[] resp = new byte[12]
             {
-                0x00, // length
-                0x0E,
-
                 0x90,
                 0x50, // ack
 

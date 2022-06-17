@@ -105,50 +105,80 @@ namespace DVIPProtocol.Clients.Advanced
                     return;
                 }
             }
+            // send it immediately
+            m_client.NoDelay = true;
+
+            /*
+            Ok- so I've actually read the underlying VISCA protocol spec now.
+            It's expected that you ONLY send one command at a time, and wait to recieve an ACK/Error
+            or response (for inquiry)
+
+            This means that using a blocking send/recieve approach here (rathern than async recieve)
+            IS correct and exactly what should be done.
+
+            The only issue here is we don't really handle network level disconnect/reconnect
+            so its' entirely possible that we could block waiting for data after being disconnected
+
+            The good thing here is that the workerThread is all that should be blocked...
+            though I suppose any consuming code that blocks on the replyDelegate could block forever- so just don't do that
+
+            Thus the only downfall is having a stale/dead/blocked client.
+            The fix is probably to just kill it and start it again. Or just accept that no further communication/commands can ever
+            be fired.
+             */
+
+
             var stream = m_client.GetStream();
+
+            // send data
             stream.Write(inq.Data);
 
-            // wait for read...
-            byte[] respBuffer = new byte[512];
-
-            // hmmmm... but this is probably fine?
-            //Thread.Sleep(10);
-            // ok- so here we're going to play fast and loose...
-            // assumption is that the network:
-            // 1. works (if not, I'll claim there's bigger problems I can't solve)
-            // 2. is fast (relatively)
-            // 3. all communications are rather small
-            // expects 2... blocking wait for 2
-
-            if (inq.ExpectedResponseSize <= 0)
+            if (inq.ExpectedResponseSize > 0)
             {
-                if (stream.DataAvailable)
+                try
                 {
-                    stream.Read(respBuffer, 0, 512);
+                    // DVIP protocol specifies 2 bytes returned with response lenght
+                    int sizehigh = 0;
+                    int sizelow = 0;
+                    uint dataSize = 0;
+                    sizehigh = stream.ReadByte();
+                    sizelow = stream.ReadByte();
+                    if (sizehigh == -1 || sizelow == -1)
+                    {
+                        // unexpected end of stream too soon
+                        // abort
+                        inq.ReplyDelegate(new byte[0]);
+                    }
+                    // get data here
+                    dataSize = (uint)(sizehigh << 8 | sizelow) - 2;
+                    byte[] data = new byte[dataSize];
+                    for (int x = 0; x < dataSize; x++)
+                    {
+                        int b = stream.ReadByte();
+                        if (b != -1)
+                        {
+                            data[x] = (byte)b;
+                        }
+                        else
+                        {
+                            // unexpected end of stream too soon
+                            // abort
+                            inq.ReplyDelegate(new byte[0]);
+                        }
+                    }
+                    inq.ReplyDelegate(data);
+                }
+                catch (System.IO.IOException ex)
+                {
+                    // send invalid response
+                    inq.ReplyDelegate(new byte[0]);
                 }
             }
             else
             {
-                int expecteddata = 0;
-                int prefix = 0;
-                byte[] sizebuf = new byte[512];
-                while (prefix < 2)
-                {
-                    prefix += stream.Read(sizebuf, prefix, 2 - prefix);
-                }
-                expecteddata = sizebuf[0] << 8 | sizebuf[1];
-                int read = 0;
-                while (read < expecteddata - 2)
-                {
-                    if (stream.DataAvailable)
-                    {
-                        read += stream.Read(respBuffer, 0, expecteddata - read);
-                    }
-                }
+                // send out response
+                inq.ReplyDelegate(new byte[0]);
             }
-
-            // send out response
-            inq.ReplyDelegate(respBuffer);
         }
 
         public void SendRequest<TResp>(IInquiry<IResponse> inq, int expectedResponseLength, OnRequestReply reply)
@@ -169,7 +199,7 @@ namespace DVIPProtocol.Clients.Advanced
             m_commands.Enqueue(new DVIP_Inq
             {
                 Data = cmd.PackagePayload(),
-                ExpectedResponseSize = 0,
+                ExpectedResponseSize = 3, // eat the ACK
                 ReplyDelegate = IgnoreCommand,
             });
             m_cmdAvail.Set();

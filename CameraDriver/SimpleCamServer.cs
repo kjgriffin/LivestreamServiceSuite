@@ -93,7 +93,7 @@ namespace CameraDriver
                 if (m_clients.TryGetValue(cnameID, out IFullClient? client))
                 {
                     var cmd = INQ_PanTilt_Position.Create();
-                    client?.SendRequest<RESP_PanTilt_Position>(cmd, 2, (byte[] resp) =>
+                    client?.SendRequest<RESP_PanTilt_Position>(cmd, RESP_PanTilt_Position.ExpectedResponseLength, (byte[] resp) =>
                     {
                         // this will come back and be run on the client's thread...
                         // wrap this into a task and run it somewhere
@@ -147,7 +147,7 @@ namespace CameraDriver
             if (m_clients.ContainsKey(cnameID))
             {
                 // stop first so we can restart
-                StopCamClient(cnameID);
+                Internal_StopCamClient(cnameID);
             }
             IFullClient client;
             if (m_fakeClients)

@@ -18,12 +18,13 @@ namespace DVIPProtocol.Protocol.Lib.Command.PTDrive.Tests
             byte[] expectedData = new byte[]
             {
                 0x00,
-                0x11,
+                0x12,
                 0x81,
                 0x01,
                 0x06,
                 0x02,
                 0x0a,
+                0x00,
                 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
                 0x0a, 0x0b, 0x0c, 0x0d,
                 0xFF
