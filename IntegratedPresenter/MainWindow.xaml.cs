@@ -102,7 +102,9 @@ namespace IntegratedPresenter.Main
             Btn_Cond2.DataContext = _Cond2;
 
             _logger.Info("Starting Camera Server");
-            _camMonitor = new CCPUPresetMonitor(headless: true, fakeClients: false);
+
+            ILog pilotLogger = LogManager.GetLogger("PilotLogger");
+            _camMonitor = new CCPUPresetMonitor(headless: true, fakeClients: false, pilotLogger);
 
             // set a default config
             SetDefaultConfig();
@@ -2912,8 +2914,10 @@ namespace IntegratedPresenter.Main
         {
             if (_FeatureFlag_EnableAutoPilot)
             {
+                _logger.Info($"Performing AutoPilotActions for slide.");
                 foreach (var preset in actions)
                 {
+                    _logger.Info($"Requesting execution of preset: {preset.DisplayInfo}");
                     preset.Execute(_camMonitor, 8);
                 }
             }

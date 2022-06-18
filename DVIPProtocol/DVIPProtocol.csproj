@@ -11,4 +11,8 @@
     <Folder Include="Protocol\Lib\Common\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.14" />
+  </ItemGroup>
+
 </Project>

@@ -3,6 +3,8 @@ using DVIPProtocol.Protocol.Lib.Command.PTDrive;
 using DVIPProtocol.Protocol.Lib.Inquiry;
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
+using log4net;
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -25,16 +27,20 @@ namespace CameraDriver
 
         private bool m_fakeClients = false;
 
+        ILog? m_log;
+
         public event CameraPresetSaved OnPresetSavedSuccess;
 
-        internal SimpleCamServer(bool useFakeClients = false)
+        internal SimpleCamServer(ILog log, bool useFakeClients = false)
         {
+            m_log = log;
             m_fakeClients = useFakeClients;
         }
 
         private void Internal_Loop()
         {
 
+            m_log?.Info($"[{Thread.CurrentThread.Name}] Started.");
 #if DEBUG
             Debug.WriteLine($"[{Thread.CurrentThread.Name}] Started.");
 #endif
@@ -46,6 +52,7 @@ namespace CameraDriver
                 {
                     if (!m_cancel.IsCancellationRequested)
                     {
+                        m_log?.Info($"[{Thread.CurrentThread.Name}] Executing work.");
                         work?.Invoke();
                     }
                 }
@@ -54,6 +61,7 @@ namespace CameraDriver
                 // wait for work
                 if (!m_cancel.IsCancellationRequested)
                 {
+                    m_log?.Info($"[{Thread.CurrentThread.Name}] waiting for work...");
                     WaitHandle.WaitAny(new WaitHandle[] { m_cancel.Token.WaitHandle, m_workAvailable });
                 }
             }
@@ -70,14 +78,17 @@ namespace CameraDriver
             {
                 return;
             }
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing recall preset job");
             m_dispatchCommands.Enqueue(() =>
             {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] running recall preset job");
                 if (m_presets.TryGetValue(cnameID, out var presets))
                 {
                     if (presets?.TryGetValue(presetName, out var preset) == true)
                     {
                         if (m_clients.TryGetValue(cnameID, out IFullClient? client))
                         {
+                            m_log?.Info($"[{Thread.CurrentThread.Name}] requesting abs position for camera");
                             client?.SendCommand(CMD_PanTiltAbsPos.CMD_ABS_POS(preset.Pan, preset.Tilt, speed));
                         }
                     }
@@ -88,19 +99,24 @@ namespace CameraDriver
 
         public void Cam_SaveCurentPosition(string cnameID, string presetName)
         {
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enquing save position job");
             m_dispatchCommands.Enqueue(() =>
             {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] running save position job");
                 if (m_clients.TryGetValue(cnameID, out IFullClient? client))
                 {
                     var cmd = INQ_PanTilt_Position.Create();
+                    m_log?.Info($"[{Thread.CurrentThread.Name}] requesting pantilt position inquiry");
                     client?.SendRequest<RESP_PanTilt_Position>(cmd, RESP_PanTilt_Position.ExpectedResponseLength, (byte[] resp) =>
                     {
                         // this will come back and be run on the client's thread...
                         // wrap this into a task and run it somewhere
+                        m_log?.Info($"[{Thread.CurrentThread.Name}] recieved pantilt position inquiry response");
                         Task.Run(() =>
                         {
                             try
                             {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] parsing pantilt position inquiry response");
                                 var preset = cmd.Parse(resp) as RESP_PanTilt_Position;
                                 Internal_UpdatePreset(cnameID, presetName, preset);
                             }
@@ -126,6 +142,7 @@ namespace CameraDriver
             // assign it
             if (pos.Valid)
             {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] updating preset position {presetName} for cam {cnameID}");
                 m_presets.AddOrUpdate(cnameID, new Dictionary<string, RESP_PanTilt_Position> { [presetName] = pos }, (cid, pdict) =>
                 {
                     pdict[presetName] = pos;
@@ -137,6 +154,7 @@ namespace CameraDriver
 
         public void StartCamClient(string cnameID, IPEndPoint endpoint)
         {
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing start cam job");
             m_dispatchCommands.Enqueue(() => Internal_StartCamClient(cnameID, endpoint));
             m_workAvailable.Set();
             //Internal_StartCamClient(cnameID, endpoint);
@@ -144,9 +162,11 @@ namespace CameraDriver
 
         private void Internal_StartCamClient(string cnameID, IPEndPoint endpoint)
         {
+            m_log?.Info($"[{Thread.CurrentThread.Name}] running start cam job for cam {cnameID}");
             if (m_clients.ContainsKey(cnameID))
             {
                 // stop first so we can restart
+                m_log?.Info($"[{Thread.CurrentThread.Name}] stopping running cam {cnameID}");
                 Internal_StopCamClient(cnameID);
             }
             IFullClient client;
@@ -156,8 +176,9 @@ namespace CameraDriver
             }
             else
             {
-                client = new TCPFullClient(endpoint);
+                client = new TCPFullClient(endpoint, m_log);
             }
+            m_log?.Info($"[{Thread.CurrentThread.Name}] starting running cam {cnameID}");
             client.Init();
             m_clients.TryAdd(cnameID, client);
         }
@@ -182,6 +203,7 @@ namespace CameraDriver
         }
         public void StopAllCamClients()
         {
+            m_log?.Info($"[{Thread.CurrentThread.Name}] stopping all cam clients");
             foreach (var client in m_clients.Values)
             {
                 client?.Stop();
@@ -191,6 +213,7 @@ namespace CameraDriver
 
         public void ClearAllPresets()
         {
+            m_log?.Info($"[{Thread.CurrentThread.Name}] clearing all presets");
             m_presets.Clear();
         }
 
@@ -227,6 +250,7 @@ namespace CameraDriver
             m_presets.TryGetValue(cnameID, out var presets);
             if (presets?.ContainsKey(presetName) == true)
             {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] removeing preset {presetName} for cam {cnameID}");
                 presets.Remove(presetName);
             }
         }
@@ -285,14 +309,14 @@ namespace CameraDriver
         Dictionary<string, RESP_PanTilt_Position> GetKnownPresetsForClient(string cnameID);
 
 
-        public static ISimpleCamServer Instantiate()
+        public static ISimpleCamServer Instantiate(ILog log)
         {
-            return new SimpleCamServer();
+            return new SimpleCamServer(log: log);
         }
 
-        public static ISimpleCamServer Instantiate_Mock()
+        public static ISimpleCamServer Instantiate_Mock(ILog log)
         {
-            return new SimpleCamServer(true);
+            return new SimpleCamServer(log, true);
         }
 
     }

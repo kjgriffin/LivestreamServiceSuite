@@ -2,6 +2,8 @@
 
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
+using log4net;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +19,11 @@ namespace CCUI_UI
         MainUI m_UIWindow;
         ISimpleCamServer m_server;
         internal bool m_usingFake;
+        ILog? m_log;
 
-        public CCPUPresetMonitor(bool headless = false, bool fakeClients = false)
+        public CCPUPresetMonitor(bool headless = false, bool fakeClients = false, ILog log = null)
         {
+            m_log = log;
             m_usingFake = fakeClients;
             Spinup(headless, fakeClients);
         }
@@ -33,11 +37,11 @@ namespace CCUI_UI
             }
             if (fakeClients)
             {
-                m_server = ISimpleCamServer.Instantiate_Mock();
+                m_server = ISimpleCamServer.Instantiate_Mock(m_log);
             }
             else
             {
-                m_server = ISimpleCamServer.Instantiate();
+                m_server = ISimpleCamServer.Instantiate(m_log);
             }
             m_server.Start();
             m_server.OnPresetSavedSuccess += m_server_OnPresetSavedSuccess;
