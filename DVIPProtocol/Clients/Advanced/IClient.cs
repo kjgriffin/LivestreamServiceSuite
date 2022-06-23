@@ -14,6 +14,33 @@ namespace DVIPProtocol.Clients.Advanced
 
     public delegate void OnRequestReply(byte[] response);
 
+
+    delegate void OnRequestFail();
+
+    interface IDVIP_Message
+    {
+        OnRequestFail FailDelegate { get; set; }
+        OnRequestReply ReplyDelegate { get; set; }
+        public int ExpectedResponseSize { get; set; }
+        byte[] Data { get; }
+        int RetryAttempts { get; }
+    }
+
+    interface IDVIP_Package
+    {
+        OnRequestReply OnCompleted { get; }
+        OnRequestFail OnFail { get; }
+        List<IDVIP_Message> Messages { get; }
+        int RetryAttempts { get; }
+        uint 
+    }
+
+
+
+
+
+
+
     public interface IClient
     {
         public IPEndPoint Endpoint { get; }
@@ -24,6 +51,11 @@ namespace DVIPProtocol.Clients.Advanced
     public interface ICmdClient : IClient
     {
         void SendCommand(ICommand cmd);
+    }
+
+    public interface ITimeCriticalCmdClient : IClient
+    {
+        void SendCommand();
     }
 
     public interface IInqClient : IClient

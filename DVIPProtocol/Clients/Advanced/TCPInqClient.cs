@@ -21,6 +21,8 @@ namespace DVIPProtocol.Clients.Advanced
         public OnRequestReply ReplyDelegate { get; set; }
     }
 
+
+
     public class TCPInqClient : IInqClient
     {
 
