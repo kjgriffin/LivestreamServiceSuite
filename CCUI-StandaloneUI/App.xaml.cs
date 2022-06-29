@@ -20,12 +20,12 @@ namespace CCUI_StandaloneUI
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            Start(e.Args.Contains("debug-fake"));
+            Start();
         }
 
-        public void Start(bool fake = false)
+        public void Start()
         {
-            monitor = new CCPUPresetMonitor(false, fake);
+            monitor = new CCPUPresetMonitor(false);
         }
 
     }

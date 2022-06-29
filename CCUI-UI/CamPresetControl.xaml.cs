@@ -23,6 +23,9 @@ namespace CCUI_UI
     internal delegate void FirePresetEvent(string cname, string presetname, int speed);
     internal delegate void DeletePresetEvent(string cname, string presetname);
 
+    internal delegate void RunZoom(string cname, int direction);
+    internal delegate void ChirpZoom(string cname, int direction, int chirps);
+
     /// <summary>
     /// Interaction logic for CamPresetControl.xaml
     /// </summary>
@@ -53,8 +56,10 @@ namespace CCUI_UI
         internal event SavePresetEvent OnSavePresetRequest;
         internal event FirePresetEvent OnFirePresetRequest;
         internal event DeletePresetEvent OnDeletePresetRequest;
+        internal event RunZoom OnRunZoomRequest;
+        internal event ChirpZoom OnChirpZoomRequest;
 
-        List<PresetControl> m_presets = new List<PresetControl>();
+        Dictionary<string, PresetControl> m_presets = new Dictionary<string, PresetControl>();
 
         public CamPresetControl()
         {
@@ -63,6 +68,12 @@ namespace CCUI_UI
 
         internal void Reconfigure(string name, string ip, string port, List<string> presets)
         {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => Reconfigure(name, ip, port, presets));
+                return;
+            }
+
             tbCamName.Text = name;
             tbCamIP.Text = ip;
             tbCamPort.Text = port;
@@ -73,7 +84,7 @@ namespace CCUI_UI
             LockedSettings = true;
 
             // reload any presets
-            foreach (var pst in m_presets)
+            foreach (var pst in m_presets.Values)
             {
                 pst.OnRemovePreset -= RemovePreset;
                 pst.OnRunPreset -= RunPreset;
@@ -94,6 +105,12 @@ namespace CCUI_UI
 
         private void Internal_ReStart()
         {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(Internal_ReStart);
+                return;
+            }
+
             if (!LockedSettings)
             {
                 CamName = tbCamName.Text;
@@ -105,6 +122,7 @@ namespace CCUI_UI
             {
                 OnRestartRequest?.Invoke(CamName, endpoint);
                 LockedSettings = true;
+                UpdateLastStatus("Restart", "Waiting for command...", true);
             }
         }
 
@@ -129,24 +147,61 @@ namespace CCUI_UI
 
         internal void NewPresetAdded(string presetName)
         {
-            var ctrl = new PresetControl(presetName);
-            ctrl.OnRunPreset += RunPreset;
-            ctrl.OnRemovePreset += RemovePreset;
-            m_presets.Add(ctrl);
-            lvPresets.Items.Add(ctrl);
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => NewPresetAdded(presetName));
+                return;
+            }
+            if (!m_presets.ContainsKey(presetName))
+            {
+                var ctrl = new PresetControl(presetName);
+                ctrl.OnRunPreset += RunPreset;
+                ctrl.OnRemovePreset += RemovePreset;
+                ctrl.OnPresetSelected += SelectPreset;
+                m_presets[presetName] = ctrl;
+                lvPresets.Items.Add(ctrl);
+            }
+        }
+
+        private void SelectPreset(string pName)
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => SelectPreset(pName));
+                return;
+            }
+            tbPresetName.Text = pName;
         }
 
         private void RemovePreset(string pName)
         {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => RemovePreset(pName));
+                return;
+            }
             OnDeletePresetRequest?.Invoke(CamName, pName);
-            var ctrl = m_presets.FirstOrDefault(p => p.PresetName == pName);
-            if (ctrl != null)
+            if (m_presets.TryGetValue(pName, out var ctrl))
             {
                 ctrl.OnRemovePreset -= RemovePreset;
                 ctrl.OnRunPreset -= RunPreset;
-                m_presets.Remove(ctrl);
+                ctrl.OnPresetSelected -= SelectPreset;
+                m_presets.Remove(pName);
                 lvPresets.Items.Remove(ctrl);
             }
+        }
+
+        internal void UpdateLastStatus(string command, string status, bool OK)
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => UpdateLastStatus(command, status, OK));
+                return;
+            }
+
+            tbPending.Text = command;
+            tbStatus.Text = status;
+            tbStatus.Foreground = OK ? Brushes.LimeGreen : Brushes.Red;
         }
 
         private void RunPreset(string pName)
@@ -156,5 +211,39 @@ namespace CCUI_UI
                 OnFirePresetRequest?.Invoke(CamName, pName, speed);
             }
         }
+
+        private void btnChirpTele_Click(object sender, RoutedEventArgs e)
+        {
+            if (LockedSettings && int.TryParse(tbChirps.Text, out int chirps) && chirps > 0)
+            {
+                OnChirpZoomRequest?.Invoke(CamName, 1, chirps);
+            }
+        }
+
+        private void btnChirpWide_Click(object sender, RoutedEventArgs e)
+        {
+            if (LockedSettings && int.TryParse(tbChirps.Text, out int chirps) && chirps > 0)
+            {
+                OnChirpZoomRequest?.Invoke(CamName, -1, chirps);
+            }
+        }
+
+        private void btnRunTele_Click(object sender, RoutedEventArgs e)
+        {
+            if (LockedSettings)
+            {
+                OnRunZoomRequest?.Invoke(CamName, 1);
+            }
+        }
+
+        private void btnRunWide_Click(object sender, RoutedEventArgs e)
+        {
+            if (LockedSettings)
+            {
+                OnRunZoomRequest?.Invoke(CamName, -1);
+            }
+        }
+
+
     }
 }

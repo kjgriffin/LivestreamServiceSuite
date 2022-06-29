@@ -104,7 +104,7 @@ namespace IntegratedPresenter.Main
             _logger.Info("Starting Camera Server");
 
             ILog pilotLogger = LogManager.GetLogger("PilotLogger");
-            _camMonitor = new CCPUPresetMonitor(headless: true, fakeClients: false, pilotLogger);
+            _camMonitor = new CCPUPresetMonitor(headless: true, pilotLogger);
 
             // set a default config
             SetDefaultConfig();

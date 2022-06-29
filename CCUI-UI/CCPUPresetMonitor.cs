@@ -13,38 +13,83 @@ using System.Threading.Tasks;
 
 namespace CCUI_UI
 {
+
+    public delegate void CCUEvent(string cName, params string[] args);
+
     public class CCPUPresetMonitor : ICCPUPresetMonitor_Executor
     {
 
         MainUI m_UIWindow;
-        ISimpleCamServer m_server;
+        IRobustCamServer m_server;
         internal bool m_usingFake;
         ILog? m_log;
 
-        public CCPUPresetMonitor(bool headless = false, bool fakeClients = false, ILog log = null)
+        public event CCUEvent OnCommandUpdate;
+
+        public CCPUPresetMonitor(bool headless = false, ILog log = null)
         {
             m_log = log;
-            m_usingFake = fakeClients;
-            Spinup(headless, fakeClients);
+            Spinup(headless);
         }
 
-        private void Spinup(bool headless, bool fakeClients)
+        private void Spinup(bool headless)
         {
             if (!headless)
             {
                 m_UIWindow = new MainUI(this);
                 m_UIWindow.Show();
             }
-            if (fakeClients)
-            {
-                m_server = ISimpleCamServer.Instantiate_Mock(m_log);
-            }
-            else
-            {
-                m_server = ISimpleCamServer.Instantiate(m_log);
-            }
+            m_server = ISimpleCamServer.InstantiateRobust(m_log);
             m_server.Start();
             m_server.OnPresetSavedSuccess += m_server_OnPresetSavedSuccess;
+            m_server.OnWorkCompleted += m_server_OnWorkCompleted;
+            m_server.OnWorkFailed += m_server_OnWorkFailed;
+            m_server.OnWorkStarted += m_server_OnWorkStarted;
+        }
+
+        private void m_server_OnWorkStarted(string cnameID, params string[] args)
+        {
+            if (args.Length > 1)
+            {
+                m_UIWindow.UpdateCamStatus(cnameID, getDetails(args), getStatus("STARTED", args), true);
+            }
+            OnCommandUpdate?.Invoke(cnameID, new string[] { "STARTED" }.Concat(args).ToArray());
+        }
+
+        private void m_server_OnWorkFailed(string cnameID, params string[] args)
+        {
+            if (args.Length > 1)
+            {
+                m_UIWindow.UpdateCamStatus(cnameID, getDetails(args), getStatus("FAILED", args), false);
+            }
+            OnCommandUpdate?.Invoke(cnameID, new string[] { "FAILED" }.Concat(args).ToArray());
+        }
+
+        private void m_server_OnWorkCompleted(string cnameID, params string[] args)
+        {
+            if (args.Length > 1)
+            {
+                m_UIWindow.UpdateCamStatus(cnameID, getDetails(args), getStatus("COMPLETED", args), true);
+            }
+            OnCommandUpdate?.Invoke(cnameID, new string[] { "COMPLETED" }.Concat(args).ToArray());
+        }
+
+        private string getDetails(string[] args)
+        {
+            if (args.Length > 1)
+            {
+                return $"{args[0]} [{args[1]}]";
+            }
+            return "";
+        }
+
+        private string getStatus(string msg, string[] args)
+        {
+            if (args.Length > 2)
+            {
+                return $"{msg}{Environment.NewLine}({string.Join(" ", args.Skip(2))})";
+            }
+            return msg;
         }
 
         private void m_server_OnPresetSavedSuccess(string cname, string pname)
@@ -55,6 +100,8 @@ namespace CCUI_UI
         public void Shutdown()
         {
             m_server.OnPresetSavedSuccess -= m_server_OnPresetSavedSuccess;
+            m_server.OnWorkCompleted -= m_server_OnWorkCompleted;
+            m_server.OnWorkFailed -= m_server_OnWorkFailed;
             m_server?.Shutdown();
             m_UIWindow.Close();
         }
@@ -97,6 +144,32 @@ namespace CCUI_UI
         public void RemovePreset(string camname, string presetname)
         {
             m_server?.RemovePreset(camname, presetname);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="camname"></param>
+        /// <param name="direction">-1 = WIDE/ 1 = TELE</param>
+        public void RunZoom(string camname, int direction)
+        {
+            m_server?.Cam_RunZoomProgram(camname, direction);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="camname"></param>
+        /// <param name="direction">-1 = WIDE/ 1 = TELE</param>
+        /// <param name="chirps"></param>
+        public void ChirpZoom(string camname, int direction, int chirps)
+        {
+            // reject insensible commands
+            if (chirps < 1 || chirps > 100)
+            {
+                return;
+            }
+            m_server?.Cam_RunZoomChrip(camname, direction, chirps);
         }
 
         public CCPUConfig ExportStateToConfig()
@@ -159,23 +232,13 @@ namespace CCUI_UI
             m_UIWindow?.ReConfigure();
         }
 
-        internal void ReSpinWithFake()
-        {
-            bool ui = m_UIWindow?.IsVisible ?? false;
-            var cfg = ExportStateToConfig();
-            Shutdown();
-            m_usingFake = true;
-            Spinup(headless: !ui, fakeClients: true);
-            LoadConfig(cfg);
-        }
-
         internal void ReSpinWithReal()
         {
             bool ui = m_UIWindow?.IsVisible ?? false;
             var cfg = ExportStateToConfig();
             Shutdown();
             m_usingFake = false;
-            Spinup(headless: !ui, fakeClients: false);
+            Spinup(headless: !ui);
             LoadConfig(cfg);
         }
     }

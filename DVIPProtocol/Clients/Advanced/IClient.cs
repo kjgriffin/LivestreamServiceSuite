@@ -1,4 +1,5 @@
-﻿using DVIPProtocol.Protocol;
+﻿using DVIPProtocol.Clients.Execution;
+using DVIPProtocol.Protocol;
 using DVIPProtocol.Protocol.Lib.Command;
 using DVIPProtocol.Protocol.Lib.Inquiry;
 
@@ -25,19 +26,6 @@ namespace DVIPProtocol.Clients.Advanced
         byte[] Data { get; }
         int RetryAttempts { get; }
     }
-
-    interface IDVIP_Package
-    {
-        OnRequestReply OnCompleted { get; }
-        OnRequestFail OnFail { get; }
-        List<IDVIP_Message> Messages { get; }
-        int RetryAttempts { get; }
-        uint 
-    }
-
-
-
-
 
 
 
@@ -66,6 +54,11 @@ namespace DVIPProtocol.Clients.Advanced
     public interface IFullClient : ICmdClient, IInqClient
     {
 
+    }
+
+    public interface IRobustClient : IClient
+    {
+        void DoRobustWork(IRobustWork work);
     }
 
 }

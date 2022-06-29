@@ -18,6 +18,7 @@ namespace CCUI_UI
 
     internal delegate void RunPresetEvent(string pName);
     internal delegate void RemovePresetEvent(string pName);
+    internal delegate void PresetSelected(string pName);
 
     /// <summary>
     /// Interaction logic for PresetControl.xaml
@@ -27,6 +28,7 @@ namespace CCUI_UI
 
         internal event RunPresetEvent OnRunPreset;
         internal event RemovePresetEvent OnRemovePreset;
+        internal event PresetSelected OnPresetSelected;
 
         public string PresetName { get; private set; }
 
@@ -46,5 +48,11 @@ namespace CCUI_UI
         {
             OnRemovePreset?.Invoke(PresetName);
         }
+
+        private void _PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            OnPresetSelected?.Invoke(PresetName);
+        }
+
     }
 }

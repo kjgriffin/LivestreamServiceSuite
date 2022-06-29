@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace DVIPProtocol.Clients.Advanced
 {
 
-    public class RobustTCPClient : IClient
+    public class RobustTCPClient : IRobustClient
     {
 
         IPEndPoint m_endpoint;
@@ -155,7 +155,7 @@ namespace DVIPProtocol.Clients.Advanced
                     var c2 = DoTCPTimed(seq.Second, 0);
                     if (c2.success)
                     {
-                        seq.OnCompleted(c1.resp.Concat(c2.resp).ToArray());
+                        seq.OnCompleted(i + 1, c1.resp.Concat(c2.resp).ToArray());
                         return;
                     }
                 }
@@ -170,7 +170,7 @@ namespace DVIPProtocol.Clients.Advanced
                 var attempt = DoTCPTimed(cmd.Data, 0);
                 if (attempt.success)
                 {
-                    cmd.OnCompleted(attempt.resp);
+                    cmd.OnCompleted(i + 1, attempt.resp);
                     return;
                 }
             }
@@ -180,7 +180,25 @@ namespace DVIPProtocol.Clients.Advanced
         private (bool success, byte[] resp) DoTCPTimed(byte[] msg, int msTime)
         {
             var stream = m_client.GetStream();
-            stream.ReadTimeout = 100;
+            stream.ReadTimeout = 1000; // TODO: figure out how long this really should be...
+            // idealy we'd never give-up, but abort after some time
+            // probably can get away with an order of seconds here in practice
+
+            // effectively flush the read buffer
+            // in the event that we'd timed out previously but it did come eventually
+            // we'll just ignore it because it's stale and we're firing again
+            try
+            {
+                while (stream.DataAvailable)
+                {
+                    stream.ReadByte();
+                }
+            }
+            catch (Exception ex)
+            {
+                m_log?.Info($"[{m_endpoint.ToString()}] threw exception while flushing the read buffer {ex}");
+            }
+
             Stopwatch timer = new Stopwatch();
 
             // send data
@@ -191,6 +209,7 @@ namespace DVIPProtocol.Clients.Advanced
             m_log?.Info($"[{m_endpoint.ToString()}] expecting response.");
             try
             {
+
                 // DVIP protocol specifies 2 bytes returned with response lenght
                 int sizehigh = 0;
                 int sizelow = 0;
@@ -208,6 +227,13 @@ namespace DVIPProtocol.Clients.Advanced
                 }
                 // get data here
                 dataSize = (uint)(sizehigh << 8 | sizelow) - 2;
+                // validate dataSize
+                if (dataSize < 0 || dataSize > 512)
+                {
+                    // reject
+                    m_log?.Info($"[{m_endpoint.ToString()}] expecting invalid datasize of {dataSize}. REJECTED!");
+                    return (false, new byte[0]);
+                }
                 byte[] data = new byte[dataSize];
                 m_log?.Info($"[{m_endpoint.ToString()}] expecting size {dataSize}");
                 for (int x = 0; x < dataSize; x++)
@@ -246,31 +272,13 @@ namespace DVIPProtocol.Clients.Advanced
 
         }
 
-        public void SendRequest<TResp>(IInquiry<IResponse> inq, int expectedResponseLength, OnRequestReply reply)
+        private void SubmitWork(IRobustWork work)
         {
-            m_log?.Info($"[{m_endpoint.ToString()}] enqueue send request.");
-            m_commands.Enqueue(new DVIP_Inq
-            {
-                Data = inq.PackagePayload(),
-                ExpectedResponseSize = expectedResponseLength,
-                ReplyDelegate = reply
-            });
+            m_log?.Info($"[{m_endpoint.ToString()}] enqueue work item.");
+            m_commands.Enqueue(work);
             m_cmdAvail.Set();
         }
 
-        public void SendCommand(ICommand cmd)
-        {
-            m_log?.Info($"[{m_endpoint.ToString()}] enqueue send command.");
-            // turn cmd into inq and just ignore result
-            // ... though techincally there should be an ACK response, but who cares?
-            m_commands.Enqueue(new DVIP_Inq
-            {
-                Data = cmd.PackagePayload(),
-                ExpectedResponseSize = 3, // eat the ACK
-                ReplyDelegate = IgnoreCommand,
-            });
-            m_cmdAvail.Set();
-        }
 
         private void IgnoreCommand(byte[] resp)
         {
@@ -278,6 +286,11 @@ namespace DVIPProtocol.Clients.Advanced
             // log it perhaps, or just toss it?
             // may be a use for /devnull as a service
             // look into a subscription https://devnull-as-a-service.com/
+        }
+
+        void IRobustClient.DoRobustWork(IRobustWork work)
+        {
+            SubmitWork(work);
         }
     }
 }

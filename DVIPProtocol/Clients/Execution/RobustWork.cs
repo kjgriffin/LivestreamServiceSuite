@@ -6,27 +6,18 @@ using System.Threading.Tasks;
 
 namespace DVIPProtocol.Clients.Execution
 {
-    internal class WorkList
-    {
-
-    }
-
-    internal class Work
-    {
-
-    }
 
     public delegate void RobustFail(int attempts);
-    public delegate void Completed(byte[] data);
+    public delegate void Completed(int attempts, byte[] data);
 
-    internal interface IRobustWork
+    public interface IRobustWork
     {
         public RobustFail OnFail { get; }
         public Completed OnCompleted { get; }
         public int RetryAttempts { get; }
     }
 
-    internal class RobustCommand : IRobustWork
+    public class RobustCommand : IRobustWork
     {
         public byte[] Data { get; set; }
         public RobustFail OnFail { get; set; }
@@ -34,7 +25,7 @@ namespace DVIPProtocol.Clients.Execution
         public int RetryAttempts { get; set; }
     }
 
-    internal class RobustSequence : IRobustWork
+    public class RobustSequence : IRobustWork
     {
         public RobustFail OnFail { get; set; }
         public Completed OnCompleted { get; set; }

@@ -41,22 +41,38 @@ namespace CCUI_UI
             cam1.OnSavePresetRequest += Cam_OnSavePresetRequest;
             cam1.OnFirePresetRequest += Cam_OnFirePresetRequest;
             cam1.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
+            cam1.OnRunZoomRequest += Cam_OnRunZoomRequest;
+            cam1.OnChirpZoomRequest += Cam_OnChripZoomRequest;
 
             cam2.OnRestartRequest += Cam_OnRestartRequest;
             cam2.OnStopRequest += Cam_OnStopRequest;
             cam2.OnSavePresetRequest += Cam_OnSavePresetRequest;
             cam2.OnFirePresetRequest += Cam_OnFirePresetRequest;
             cam2.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
+            cam2.OnRunZoomRequest += Cam_OnRunZoomRequest;
+            cam2.OnChirpZoomRequest += Cam_OnChripZoomRequest;
 
             cam3.OnRestartRequest += Cam_OnRestartRequest;
             cam3.OnStopRequest += Cam_OnStopRequest;
             cam3.OnSavePresetRequest += Cam_OnSavePresetRequest;
             cam3.OnFirePresetRequest += Cam_OnFirePresetRequest;
             cam3.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
+            cam3.OnRunZoomRequest += Cam_OnRunZoomRequest;
+            cam3.OnChirpZoomRequest += Cam_OnChripZoomRequest;
 
             miFakeClients.IsChecked = m_monitor?.m_usingFake ?? false;
 
             ReConfigure();
+        }
+
+        private void Cam_OnChripZoomRequest(string cname, int direction, int chirps)
+        {
+            m_monitor?.ChirpZoom(cname, direction, chirps);
+        }
+
+        private void Cam_OnRunZoomRequest(string cname, int direction)
+        {
+            m_monitor?.RunZoom(cname, direction);
         }
 
         internal void ReConfigure()
@@ -117,18 +133,24 @@ namespace CCUI_UI
             cam1.OnSavePresetRequest -= Cam_OnSavePresetRequest;
             cam1.OnFirePresetRequest -= Cam_OnFirePresetRequest;
             cam1.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
+            cam1.OnRunZoomRequest -= Cam_OnRunZoomRequest;
+            cam1.OnChirpZoomRequest -= Cam_OnChripZoomRequest;
 
             cam2.OnRestartRequest -= Cam_OnRestartRequest;
             cam2.OnStopRequest -= Cam_OnStopRequest;
             cam2.OnSavePresetRequest -= Cam_OnSavePresetRequest;
             cam2.OnFirePresetRequest -= Cam_OnFirePresetRequest;
             cam2.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
+            cam2.OnRunZoomRequest -= Cam_OnRunZoomRequest;
+            cam2.OnChirpZoomRequest -= Cam_OnChripZoomRequest;
 
             cam3.OnRestartRequest -= Cam_OnRestartRequest;
             cam3.OnStopRequest -= Cam_OnStopRequest;
             cam3.OnSavePresetRequest -= Cam_OnSavePresetRequest;
             cam3.OnFirePresetRequest -= Cam_OnFirePresetRequest;
             cam3.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
+            cam3.OnRunZoomRequest -= Cam_OnRunZoomRequest;
+            cam3.OnChirpZoomRequest -= Cam_OnChripZoomRequest;
         }
 
         internal void AddKnownPreset(string cname, string pname)
@@ -222,8 +244,24 @@ namespace CCUI_UI
             }
             else
             {
-                m_monitor?.ReSpinWithFake();
-                miFakeClients.IsChecked = true;
+                //m_monitor?.ReSpinWithFake();
+                //miFakeClients.IsChecked = true;
+            }
+        }
+
+        internal void UpdateCamStatus(string cname, string cmd, string status, bool ok)
+        {
+            if (cname == cam1?.CamName)
+            {
+                cam1.UpdateLastStatus(cmd, status, ok);
+            }
+            else if (cname == cam2?.CamName)
+            {
+                cam2.UpdateLastStatus(cmd, status, ok);
+            }
+            else if (cname == cam3?.CamName)
+            {
+                cam3.UpdateLastStatus(cmd, status, ok);
             }
         }
     }

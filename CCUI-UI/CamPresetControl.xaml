@@ -49,57 +49,105 @@
             </Grid>
             <Grid Grid.Row="1" Background="#777777" Margin="10,0,10,0"></Grid>
             <Grid Grid.Row="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition Height="5"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="155"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="100"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150"></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Recall Speed</TextBlock>
-                    <TextBox Name="tbPresetSpeed" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
-                </Grid>
-                <Grid Grid.Row="1" Background="#171717" Margin="10,0,10,0"></Grid>
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150"></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Preset Name</TextBlock>
-                    <TextBox Name="tbPresetName" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
-                </Grid>
+                    <Grid>
 
-                <Grid Grid.Row="3">
-                    <Button Click="btnSavePreset_Click" x:Name="btnSavePreset" Width="250" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15">PRESET CURRENT POSITION</Button>
-                </Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"></RowDefinition>
+                            <RowDefinition Height="50"></RowDefinition>
+                            <RowDefinition Height="5"></RowDefinition>
+                            <RowDefinition Height="50"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="5"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
 
-                <Grid Grid.Row="4">
-                    <ListView MinWidth="300" Name="lvPresets" Background="#171717" Margin="10" BorderBrush="#474747" HorizontalAlignment="Center">
-                        <!--<local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>
-                        <local:PresetControl></local:PresetControl>-->
-                    </ListView>
-                </Grid>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Name</TextBlock>
+                            <TextBox Name="tbPresetName" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Button Click="btnSavePreset_Click" x:Name="btnSavePreset" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">SAVE</Button>
+                        </Grid>
+                        <Grid Grid.Row="2" Background="#171717" Margin="10,0,10,0"></Grid>
+                        <Grid Grid.Row="3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Recall Speed</TextBlock>
+                            <TextBox Name="tbPresetSpeed" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}">15</TextBox>
+                        </Grid>
 
+                        <Grid Grid.Row="0" Grid.RowSpan="4" Grid.Column="1" Background="#171717"></Grid>
+
+                        <Grid Grid.Row="0" Grid.Column="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="65"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Chirps</TextBlock>
+                            <TextBox Name="tbChirps" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}">1</TextBox>
+                        </Grid>
+
+                        <Grid Grid.Row="1" Grid.Column="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Click="btnChirpTele_Click" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">TELE</Button>
+                            <Button Click="btnChirpWide_Click" Width="100" Grid.Column="1" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">WIDE</Button>
+                        </Grid>
+
+                        <Grid Grid.Row="2" Grid.Column="2" Background="#171717" Margin="10,0,10,0"></Grid>
+
+                        <Grid Grid.Row="3" Grid.Column="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Click="btnRunTele_Click" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">ZOOM IN</Button>
+                            <Button Click="btnRunWide_Click" Width="100" Grid.Column="1" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">ZOOM OUT</Button>
+                        </Grid>
+
+
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <ListView Width="380" Name="lvPresets" Background="#171717" Margin="10" BorderBrush="#474747" HorizontalAlignment="Center" HorizontalContentAlignment="Stretch">
+                        </ListView>
+                    </Grid>
+
+                    <Grid Grid.Row="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="75"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="Orange">Command:</TextBlock>
+                            <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="#8a8a8a">Status:</TextBlock>
+                            <TextBlock Name="tbPending" Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" FontSize="25" Foreground="White"></TextBlock>
+                            <TextBlock Name="tbStatus" Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" FontSize="20" Foreground="LimeGreen"></TextBlock>
+                        </Grid>
+                    </Grid>
+
+                </Grid>
             </Grid>
         </Grid>
     </Grid>
