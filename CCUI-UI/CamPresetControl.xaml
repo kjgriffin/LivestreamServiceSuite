@@ -95,11 +95,11 @@
 
                         <Grid Grid.Row="0" Grid.Column="2">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="65"></ColumnDefinition>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Chirps</TextBlock>
-                            <TextBox Name="tbChirps" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}">1</TextBox>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Duration</TextBlock>
+                            <TextBox Name="tbChirps" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}">200</TextBox>
                         </Grid>
 
                         <Grid Grid.Row="1" Grid.Column="2">
