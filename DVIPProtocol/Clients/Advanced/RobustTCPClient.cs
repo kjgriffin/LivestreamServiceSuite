@@ -180,7 +180,7 @@ namespace DVIPProtocol.Clients.Advanced
         private (bool success, byte[] resp) DoTCPTimed(byte[] msg, int msTime)
         {
             var stream = m_client.GetStream();
-            stream.ReadTimeout = 1000; // TODO: figure out how long this really should be...
+            stream.ReadTimeout = 5000; // TODO: figure out how long this really should be...
             // idealy we'd never give-up, but abort after some time
             // probably can get away with an order of seconds here in practice
 

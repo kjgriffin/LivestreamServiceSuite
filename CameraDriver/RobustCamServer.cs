@@ -93,20 +93,19 @@ namespace CameraDriver
                 if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
                 {
                     m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom program [{direction}] for camera {cnameID}");
-                    var zoom = CMD_Zoom_Std.Create(direction == -1 ? ZoomDir.WIDE : direction == 1 ? ZoomDir.TELE : ZoomDir.STOP);
+                    var zoom = CMD_Zoom_Variable.Create(direction == -1 ? ZoomDir.WIDE : direction == 1 ? ZoomDir.TELE : ZoomDir.STOP, 0x07);
                     var stop = CMD_Zoom_Std.Create(ZoomDir.STOP);
                     RobustSequence rcmd = new RobustSequence
                     {
                         First = zoom.PackagePayload(),
                         Second = stop.PackagePayload(),
-                        DelayMS = 5000, // TODO: time this
-                        // TODO: if variable zoom works (and is faster) use that to reduce required time
+                        DelayMS = 3800, // emperical evidence suggests at fastest zoom speed ~ 3.5 seconds
                         OnCompleted = (int attempts, byte[] resp) =>
                         {
                             Task.Run(() =>
                             {
                                 m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom program [{direction}] for camera {cnameID} COMPLETED");
-                                OnWorkCompleted?.Invoke(cnameID, "ZOOM", $"after {attempts} tries");
+                                OnWorkCompleted?.Invoke(cnameID, "ZOOM", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"after {attempts} tries");
                             });
                         },
                         OnFail = (int attempts) =>
@@ -114,12 +113,12 @@ namespace CameraDriver
                             Task.Run(() =>
                             {
                                 m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom program [{direction}] for camera {cnameID} FAILED");
-                                OnWorkFailed?.Invoke(cnameID, "ZOOM");
+                                OnWorkFailed?.Invoke(cnameID, "ZOOM", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP");
                             });
                         },
                         RetryAttempts = 3,
                     };
-                    OnWorkStarted?.Invoke(cnameID, "ZOOM");
+                    OnWorkStarted?.Invoke(cnameID, "ZOOM", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP");
                     client?.DoRobustWork(rcmd);
                 }
             });
@@ -144,7 +143,7 @@ namespace CameraDriver
                 if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
                 {
                     m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chrip [{direction}] for camera {cnameID}");
-                    var zoom = CMD_Zoom_Std.Create(direction == -1 ? ZoomDir.WIDE : direction == 1 ? ZoomDir.TELE : ZoomDir.STOP);
+                    var zoom = CMD_Zoom_Variable.Create(direction == -1 ? ZoomDir.WIDE : direction == 1 ? ZoomDir.TELE : ZoomDir.STOP, 0x00);
                     var stop = CMD_Zoom_Std.Create(ZoomDir.STOP);
 
                     long sentChirps = 0;
@@ -153,7 +152,12 @@ namespace CameraDriver
                     {
                         First = zoom.PackagePayload(),
                         Second = stop.PackagePayload(),
-                        DelayMS = 100, // TODO: figure out what chirp interval makes sense
+                        DelayMS = 200, // TODO: figure out what chirp interval makes sense
+                        // ok- so it seeems that we'd like to do this in small increments, but the ~minimum reliable time to gaurantee completed matters
+                        // so we'll sacrafice resolution for time
+                        // that, or we'll need to be able to pipe direct times in rather than chirps
+                        // or convert chips to a time unit
+                        // and then specify a minimum we can gaurantee
                         // TODO: if variable zoom works then figure out which speed makes sense. Slower should be more tolerant to timing slop, but perhaps is too costly to run real-time
                         OnCompleted = (int attempts, byte[] resp) =>
                         {
@@ -165,7 +169,7 @@ namespace CameraDriver
                                     m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chirp ({after} of {chirps}) [{direction}] for camera {cnameID} COMPLETED");
                                     if (Interlocked.Increment(ref sentChirps) == chirps)
                                     {
-                                        OnWorkCompleted?.Invoke(cnameID, "CHIRP", $"after {attempts} tries");
+                                        OnWorkCompleted?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"after {attempts} tries");
                                     }
                                 }
                             });
@@ -176,13 +180,13 @@ namespace CameraDriver
                             {
                                 var after = Interlocked.Exchange(ref sentChirps, -1);
                                 m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chrip [{direction}] for camera {cnameID} on chirp {after} of {chirps} FAILED");
-                                OnWorkFailed?.Invoke(cnameID, "CHIRP", $"on chirp {after} of {chirps}");
+                                OnWorkFailed?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"on chirp {after} of {chirps}");
                             });
                         },
                         RetryAttempts = 3,
                     };
 
-                    OnWorkStarted?.Invoke(cnameID, "CHIRP");
+                    OnWorkStarted?.Invoke(cnameID, "CHIRP", $"x{chirps}", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP");
 
                     for (int i = 0; i < chirps; i++)
                     {
