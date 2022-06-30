@@ -161,15 +161,15 @@ namespace CCUI_UI
         /// </summary>
         /// <param name="camname"></param>
         /// <param name="direction">-1 = WIDE/ 1 = TELE</param>
-        /// <param name="chirps"></param>
-        public void ChirpZoom(string camname, int direction, int chirps)
+        /// <param name="duration">Duration in ms. Expected that 200ms is about as small as will work</param>
+        public void ChirpZoom(string camname, int direction, int duration)
         {
-            // reject insensible commands
-            if (chirps < 1 || chirps > 100)
+            // reject invalid duration, or greater than 10 sec
+            if (duration < 0 || duration > 10000)
             {
                 return;
             }
-            m_server?.Cam_RunZoomChrip(camname, direction, chirps);
+            m_server?.Cam_RunZoomChrip(camname, direction, duration);
         }
 
         public CCPUConfig ExportStateToConfig()

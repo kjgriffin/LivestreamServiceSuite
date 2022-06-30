@@ -149,14 +149,53 @@ namespace DVIPProtocol.Clients.Advanced
         {
             for (int i = 0; i < seq.RetryAttempts; i++)
             {
-                var c1 = DoTCPTimed(seq.First, seq.DelayMS);
-                if (c1.success)
+                bool proceed = true;
+
+                byte[] resp = new byte[0];
+
+                if (seq.Setup != null && seq.Setup.Length > 0)
+                {
+                    var s = DoTCPTimed(seq.Setup, seq.SetupDelayMS);
+                    proceed = s.success;
+                    resp = s.resp;
+                }
+
+                if (proceed)
+                {
+                    var c1 = DoTCPTimed(seq.First, seq.DelayMS);
+                    proceed = c1.success;
+                    resp = resp.Concat(c1.resp).ToArray();
+                }
+
+                if (proceed)
                 {
                     var c2 = DoTCPTimed(seq.Second, 0);
-                    if (c2.success)
+                    proceed = c2.success;
+                    resp = resp.Concat(c2.resp).ToArray();
+                }
+
+                if (proceed)
+                {
+                    seq.OnCompleted(i + 1, resp);
+                    return;
+                }
+
+                if (seq.Reset != null && seq.Reset.Length > 0)
+                {
+                    // forcibly run reset until it works
+                    // max out at retry attempts and fail command at that point
+                    bool reset = false;
+                    for (int j = 0; j < seq.RetryAttempts; j++)
                     {
-                        seq.OnCompleted(i + 1, c1.resp.Concat(c2.resp).ToArray());
-                        return;
+                        if (DoTCPTimed(seq.Reset, seq.DelayMS).success)
+                        {
+                            reset = true;
+                            j = seq.RetryAttempts;
+                        }
+                    }
+                    if (!reset)
+                    {
+                        seq.OnFail(seq.RetryAttempts);
                     }
                 }
             }

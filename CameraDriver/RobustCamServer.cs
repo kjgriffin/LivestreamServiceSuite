@@ -100,6 +100,8 @@ namespace CameraDriver
                         First = zoom.PackagePayload(),
                         Second = stop.PackagePayload(),
                         DelayMS = 3800, // emperical evidence suggests at fastest zoom speed ~ 3.5 seconds
+                        Reset = stop.PackagePayload(), // try to gaurantee zoom in a stopped state even if we fail
+                        ResetDelayMS = 0,
                         OnCompleted = (int attempts, byte[] resp) =>
                         {
                             Task.Run(() =>
@@ -130,7 +132,8 @@ namespace CameraDriver
         /// </summary>
         /// <param name="cnameID"></param>
         /// <param name="direction">-1 WIDE / 1 TELE / 0 STOP</param>
-        public void Cam_RunZoomChrip(string cnameID, int direction, int chirps)
+        /// <param name="duration">time in MS to run zoom for. Note: 200ms seems to be the smallest gauranteed interval</param>
+        public void Cam_RunZoomChrip(string cnameID, int direction, int duration)
         {
             if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(cnameID))
             {
@@ -143,55 +146,48 @@ namespace CameraDriver
                 if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
                 {
                     m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chrip [{direction}] for camera {cnameID}");
+                    var setup = CMD_Zoom_Variable.Create(direction == -1 ? ZoomDir.TELE : direction == 1 ? ZoomDir.WIDE : ZoomDir.STOP, 0x07);
                     var zoom = CMD_Zoom_Variable.Create(direction == -1 ? ZoomDir.WIDE : direction == 1 ? ZoomDir.TELE : ZoomDir.STOP, 0x00);
                     var stop = CMD_Zoom_Std.Create(ZoomDir.STOP);
-
-                    long sentChirps = 0;
 
                     RobustSequence rcmd = new RobustSequence
                     {
                         First = zoom.PackagePayload(),
                         Second = stop.PackagePayload(),
-                        DelayMS = 200, // TODO: figure out what chirp interval makes sense
-                        // ok- so it seeems that we'd like to do this in small increments, but the ~minimum reliable time to gaurantee completed matters
-                        // so we'll sacrafice resolution for time
-                        // that, or we'll need to be able to pipe direct times in rather than chirps
-                        // or convert chips to a time unit
-                        // and then specify a minimum we can gaurantee
-                        // TODO: if variable zoom works then figure out which speed makes sense. Slower should be more tolerant to timing slop, but perhaps is too costly to run real-time
+                        DelayMS = duration, // note it seems that 200ms is about the smallest time we can gaurantee reliably
+                        // Setup full program sequence
+                        // automatically determine the setup sequence required
+                        // if we're going in, then the only initial state that makes sense is from full wide
+                        // likewise going out you need to start all the way in
+                        // use the stop command as a reset.....
+                        Setup = setup.PackagePayload(),
+                        SetupDelayMS = 3500,
+                        // TODO: do we *really* need to stop the zoom in once we're maxed in, or can we let it just change direction?
+                        Reset = stop.PackagePayload(),
+                        ResetDelayMS = 0,
+
                         OnCompleted = (int attempts, byte[] resp) =>
                         {
                             Task.Run(() =>
                             {
-                                var after = Interlocked.Read(ref sentChirps);
-                                if (after != -1)
-                                {
-                                    m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chirp ({after} of {chirps}) [{direction}] for camera {cnameID} COMPLETED");
-                                    if (Interlocked.Increment(ref sentChirps) == chirps)
-                                    {
-                                        OnWorkCompleted?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"after {attempts} tries");
-                                    }
-                                }
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chirp ({duration}ms) [{direction}] for camera {cnameID} COMPLETED");
+                                OnWorkCompleted?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"after {attempts} tries");
                             });
                         },
                         OnFail = (int attempts) =>
                         {
                             Task.Run(() =>
                             {
-                                var after = Interlocked.Exchange(ref sentChirps, -1);
-                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chrip [{direction}] for camera {cnameID} on chirp {after} of {chirps} FAILED");
-                                OnWorkFailed?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"on chirp {after} of {chirps}");
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chrip [{direction}] for camera {cnameID} of {duration}ms FAILED");
+                                OnWorkFailed?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"of {duration}ms");
                             });
                         },
-                        RetryAttempts = 3,
+                        RetryAttempts = 2,
                     };
 
-                    OnWorkStarted?.Invoke(cnameID, "CHIRP", $"x{chirps}", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP");
+                    OnWorkStarted?.Invoke(cnameID, "CHIRP", $"{duration}ms", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP");
 
-                    for (int i = 0; i < chirps; i++)
-                    {
-                        client?.DoRobustWork(rcmd);
-                    }
+                    client?.DoRobustWork(rcmd);
                 }
             });
             m_workAvailable.Set();
