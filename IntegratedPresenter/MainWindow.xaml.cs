@@ -3682,14 +3682,16 @@ namespace IntegratedPresenter.Main
 
         private void ShowAdvancedPIPControls()
         {
-            grAdvancedPIP.Height = new GridLength(1, GridUnitType.Star);
+            grd_advanced.Height = new GridLength(2.35, GridUnitType.Star);
+            gr_advanced_pip.Visibility = Visibility.Visible;
         }
 
         private void HideAdvancedPIPControls()
         {
             //var heightreduction = grAdvancedPIP.ActualHeight;
-            grAdvancedPIP.Height = new GridLength(0);
             //Height -= heightreduction;
+            grd_advanced.Height = new GridLength(0);
+            gr_advanced_pip.Visibility = Visibility.Collapsed;
         }
 
         private void ToggleTransBkgd()
@@ -3995,15 +3997,17 @@ namespace IntegratedPresenter.Main
         private void ShowAuxButtonControls()
         {
             _FeatureFlag_showAuxButons = true;
-            gridbtns.Width = 770;
-            gcAdvancedProjector.Width = new GridLength(1.2, GridUnitType.Star);
+            //gridbtns.Width = 770;
+            //gcAdvancedProjector.Width = new GridLength(1.2, GridUnitType.Star);
+            grd_aux.Height = new GridLength(1, GridUnitType.Star);
         }
 
         private void HideAuxButtonConrols()
         {
             _FeatureFlag_showAuxButons = false;
-            gridbtns.Width = 660;
-            gcAdvancedProjector.Width = new GridLength(0);
+            //gridbtns.Width = 660;
+            //gcAdvancedProjector.Width = new GridLength(0);
+            grd_aux.Height = new GridLength(0, GridUnitType.Star);
         }
 
 
@@ -4974,15 +4978,17 @@ namespace IntegratedPresenter.Main
         {
             _FeatureFlag_ViewProgramOverPresetBus = programontop;
             cbViewProgramOverPresetBus.IsChecked = _FeatureFlag_ViewProgramOverPresetBus;
+            const int top = 2;
+            const int bottom = 3;
             if (_FeatureFlag_ViewProgramOverPresetBus)
             {
-                gr_ProgramBus.SetValue(Grid.RowProperty, 1);
-                gr_PresetBus.SetValue(Grid.RowProperty, 2);
+                gr_ProgramBus.SetValue(Grid.RowProperty, top);
+                gr_PresetBus.SetValue(Grid.RowProperty, bottom);
             }
             else
             {
-                gr_PresetBus.SetValue(Grid.RowProperty, 1);
-                gr_ProgramBus.SetValue(Grid.RowProperty, 2);
+                gr_PresetBus.SetValue(Grid.RowProperty, top);
+                gr_ProgramBus.SetValue(Grid.RowProperty, bottom);
             }
         }
 
