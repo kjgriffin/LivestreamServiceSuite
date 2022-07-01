@@ -103,7 +103,7 @@ namespace CCUI_UI
             m_server.OnWorkCompleted -= m_server_OnWorkCompleted;
             m_server.OnWorkFailed -= m_server_OnWorkFailed;
             m_server?.Shutdown();
-            m_UIWindow.Close();
+            m_UIWindow?.Close();
         }
 
         public void ShowUI()
