@@ -11,6 +11,16 @@ using System.Threading.Tasks;
 
 namespace DVIPProtocol.Servers.Mock
 {
+
+
+    enum ZoomState
+    {
+        STOP,
+        TELE,
+        WIDE
+    }
+
+
     public class TCPMockDevice
     {
 
@@ -24,6 +34,12 @@ namespace DVIPProtocol.Servers.Mock
         long pan = 0;
         long tilt = 0;
         int zoom = 0; // 0 - 99
+        int zoomSpeed = 0; // 1-8
+        ZoomState zoomState = ZoomState.STOP;
+        bool _zoomUpdate = false;
+
+
+        Stopwatch cmdTimer = new Stopwatch();
 
         public void Start(IPEndPoint endpoint, bool keepalive = false, bool randomErrors = false)
         {
@@ -166,45 +182,49 @@ namespace DVIPProtocol.Servers.Mock
             {
                 bool good = false;
                 // its a zoom command
+                var previousState = zoomState;
                 if (msg[0] == 0x81 && msg[1] == 0x01 && msg[2] == 0x04 && msg[3] == 0x07 && msg[5] == 0xFF)
                 {
                     if (msg[4] == 0x00)
                     {
                         Console.WriteLine($"[{Thread.CurrentThread.Name}] recieved Zoom STOP command. Responding with OK.");
                         good = true;
+                        zoomState = ZoomState.STOP;
                     }
                     else if (msg[4] == 0x02)
                     {
                         Console.WriteLine($"[{Thread.CurrentThread.Name}] recieved Zoom STD TELE command. Responding with OK.");
                         good = true;
-                        this.zoom = 99;
+                        zoomState = ZoomState.TELE;
                     }
                     else if (msg[4] == 0x03)
                     {
                         Console.WriteLine($"[{Thread.CurrentThread.Name}] recieved Zoom STD WIDE command. Responding with OK.");
                         good = true;
-                        this.zoom = 0;
+                        zoomState = ZoomState.WIDE;
                     }
-                    else if ((msg[4] & 0x20) == 0x20)
+                    else if ((msg[4] & 0xF0) == 0x20)
                     {
                         var speed = msg[4] & 0x0F;
                         Console.WriteLine($"[{Thread.CurrentThread.Name}] recieved Zoom VAR {speed} TELE command. Responding with OK.");
                         good = true;
-                        this.zoom--;
-                        Math.Clamp(this.zoom, 0, 99);
+                        zoomState = ZoomState.TELE;
                     }
-                    else if ((msg[4] & 0x30) == 0x30)
+                    else if ((msg[4] & 0xF0) == 0x30)
                     {
                         var speed = msg[4] & 0x0F;
                         Console.WriteLine($"[{Thread.CurrentThread.Name}] recieved Zoom VAR {speed} WIDE command. Responding with OK.");
                         good = true;
-                        this.zoom++;
-                        Math.Clamp(this.zoom, 0, 99);
+                        zoomState = ZoomState.WIDE;
                     }
                 }
                 if (good)
                 {
-                    Console.WriteLine($"--INTERNAL-- <zoom> now at {this.zoom}");
+                    if (zoomState != ZoomState.STOP)
+                    {
+                        _zoomUpdate = true;
+                    }
+                    PerformZoom(previousState);
                     return new byte[]
                     {
                         0x00,
@@ -227,6 +247,57 @@ namespace DVIPProtocol.Servers.Mock
                     0x02,
                     0xFF,
             };
+        }
+
+        void PerformZoom(ZoomState previous)
+        {
+            var interval = cmdTimer.ElapsedMilliseconds;
+            // use elapsed time to calculate curent state
+            CalculateZoom(previous, interval);
+            if (zoomState == ZoomState.STOP)
+            {
+                cmdTimer.Stop();
+            }
+            else
+            {
+                cmdTimer.Restart();
+                // let it finish eventually....
+                Task.Run(async () =>
+                {
+                    await Task.Delay(4000);
+                    if (_zoomUpdate)
+                    {
+                        var previous = zoomState;
+                        if (cmdTimer.IsRunning)
+                        {
+                            var interval = cmdTimer.ElapsedMilliseconds;
+                            cmdTimer.Stop();
+                            zoomState = ZoomState.STOP;
+                        }
+                        CalculateZoom(previous, interval);
+                    }
+                });
+            }
+        }
+
+        void CalculateZoom(ZoomState previous, long ms)
+        {
+            _zoomUpdate = false;
+            // based on curent zoom speed- we'll figure out how far it has zoomed
+            // 0.03 zoom stops /ms ?? at speed = 7
+            // 0.014 zoom /ms at speed = 0 ??
+            // assume linear
+            const double slowPerMS = 0.03;
+            const double stepPerSpeed = 0.00196;
+
+            double speedPerMs = slowPerMS + zoomSpeed * stepPerSpeed;
+            double zoomDiff = speedPerMs * ms;
+            int dir = previous == ZoomState.WIDE ? -1 : previous == ZoomState.TELE ? 1 : 0;
+            int zoom = (int)(dir * zoomDiff) + this.zoom;
+
+            this.zoom = Math.Clamp(zoom, 0, 99);
+
+            Console.WriteLine($"--INTERNAL-- <zoom> now at {this.zoom}");
         }
 
 
