@@ -56,8 +56,9 @@ namespace CameraDriver
         event RobustReport OnWorkFailed;
         event RobustReport OnWorkStarted;
 
-        void Cam_RunZoomChrip(string cnameID, int direction, int duration);
+        Guid Cam_RunZoomChrip(string cnameID, int direction, int duration);
         void Cam_RunZoomProgram(string cnameID, int direction);
+        new Guid Cam_RecallPresetPosition(string cnameID, string presetName, byte speed = 0x10);
     }
 
 

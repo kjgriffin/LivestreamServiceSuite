@@ -105,6 +105,7 @@ namespace IntegratedPresenter.Main
 
             ILog pilotLogger = LogManager.GetLogger("PilotLogger");
             _camMonitor = new CCPUPresetMonitor(headless: true, pilotLogger);
+            _camMonitor.OnCommandUpdate += _camMonitor_OnCommandUpdate;
 
             // set a default config
             SetDefaultConfig();
@@ -171,6 +172,11 @@ namespace IntegratedPresenter.Main
             gp_timer_2.Start();
 
             UpdatePilotUI();
+        }
+
+        private void _camMonitor_OnCommandUpdate(string cName, params string[] args)
+        {
+            UpdatePilotUIStatus(cName, args);
         }
 
         private void Gp_timer_2_Elapsed1(object sender, ElapsedEventArgs e)
@@ -3458,7 +3464,7 @@ namespace IntegratedPresenter.Main
         private void ShowAdvancedPresControls()
         {
             Width = Width + Width / 4;
-            gcAdvancedPresentation.Width = new GridLength(1, GridUnitType.Star);
+            gcAdvancedPresentation.Width = new GridLength(1.2, GridUnitType.Star);
         }
 
         private void HideAdvancedPresControls()
@@ -3684,6 +3690,8 @@ namespace IntegratedPresenter.Main
         {
             grd_advanced.Height = new GridLength(2.35, GridUnitType.Star);
             gr_advanced_pip.Visibility = Visibility.Visible;
+            UpdateUIPIPPlaceKeys();
+            UpdateUIPIPPlaceKeysActiveState();
         }
 
         private void HideAdvancedPIPControls()
@@ -5016,8 +5024,19 @@ namespace IntegratedPresenter.Main
         {
             Dispatcher.Invoke(() =>
             {
-                pilotUI.UpdateUI(_FeatureFlag_EnableAutoPilot, Presentation?.EffectiveCurrent?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.Next?.AutoPilotActions ?? new List<IPilotAction>());
+                pilotUI.UpdateUI(_FeatureFlag_EnableAutoPilot, Presentation?.EffectiveCurrent?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.Next?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.CurrentSlide ?? 0);
             });
+        }
+
+        private void UpdatePilotUIStatus(string camName, params string[] args)
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => UpdatePilotUIStatus(camName, args));
+                return;
+            }
+
+            pilotUI.UpdateUIStatus(camName, args);
         }
     }
 }

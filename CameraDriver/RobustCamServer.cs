@@ -133,16 +133,17 @@ namespace CameraDriver
         /// <param name="cnameID"></param>
         /// <param name="direction">-1 WIDE / 1 TELE / 0 STOP</param>
         /// <param name="duration">time in MS to run zoom for. Note: 200ms seems to be the smallest gauranteed interval</param>
-        public void Cam_RunZoomChrip(string cnameID, int direction, int duration)
+        public Guid Cam_RunZoomChrip(string cnameID, int direction, int duration)
         {
             if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(cnameID))
             {
-                return;
+                return Guid.Empty;
             }
-            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing zoom chrip job");
+            Guid reqId = Guid.NewGuid();
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing zoom chrip job {reqId}");
             m_dispatchCommands.Enqueue(() =>
             {
-                m_log?.Info($"[{Thread.CurrentThread.Name}] running zoom chrip job");
+                m_log?.Info($"[{Thread.CurrentThread.Name}] running zoom chrip job {reqId}");
                 if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
                 {
                     m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chrip [{direction}] for camera {cnameID}");
@@ -171,7 +172,7 @@ namespace CameraDriver
                             Task.Run(() =>
                             {
                                 m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chirp ({duration}ms) [{direction}] for camera {cnameID} COMPLETED");
-                                OnWorkCompleted?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"after {attempts} tries");
+                                OnWorkCompleted?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"after {attempts} tries", reqId.ToString());
                             });
                         },
                         OnFail = (int attempts) =>
@@ -179,38 +180,40 @@ namespace CameraDriver
                             Task.Run(() =>
                             {
                                 m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chrip [{direction}] for camera {cnameID} of {duration}ms FAILED");
-                                OnWorkFailed?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"of {duration}ms");
+                                OnWorkFailed?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"of {duration}ms", reqId.ToString());
                             });
                         },
                         RetryAttempts = 2,
                     };
 
-                    OnWorkStarted?.Invoke(cnameID, "CHIRP", $"{duration}ms", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP");
+                    OnWorkStarted?.Invoke(cnameID, "CHIRP", $"{duration}ms", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", reqId.ToString());
 
                     client?.DoRobustWork(rcmd);
                 }
             });
             m_workAvailable.Set();
+            return reqId;
         }
 
 
-        public void Cam_RecallPresetPosition(string cnameID, string presetName, byte speed = 0x10)
+        public Guid Cam_RecallPresetPosition(string cnameID, string presetName, byte speed = 0x10)
         {
             if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(presetName) || speed < 0 || speed > 0x18) // might actually be 18 dec or 0x12
             {
-                return;
+                return Guid.Empty;
             }
-            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing recall preset job");
+            Guid reqId = Guid.NewGuid();
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing recall preset job {reqId}");
             m_dispatchCommands.Enqueue(() =>
             {
-                m_log?.Info($"[{Thread.CurrentThread.Name}] running recall preset job");
+                m_log?.Info($"[{Thread.CurrentThread.Name}] running recall preset job {reqId}");
                 if (m_presets.TryGetValue(cnameID, out var presets))
                 {
                     if (presets?.TryGetValue(presetName, out var preset) == true)
                     {
                         if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
                         {
-                            m_log?.Info($"[{Thread.CurrentThread.Name}] requesting abs position [{presetName}] for camera {cnameID}");
+                            m_log?.Info($"[{Thread.CurrentThread.Name}] requesting abs position [{presetName}] for camera {cnameID} {reqId}");
                             var cmd = CMD_PanTiltAbsPos.CMD_ABS_POS(preset.Pan, preset.Tilt, speed);
                             RobustCommand rcmd = new RobustCommand
                             {
@@ -220,7 +223,7 @@ namespace CameraDriver
                                     Task.Run(() =>
                                     {
                                         m_log?.Info($"[{Thread.CurrentThread.Name}] requesting abs position [{presetName}] for camera {cnameID} COMPLETED");
-                                        OnWorkCompleted?.Invoke(cnameID, "DRIVE.ABSPOS", presetName, $"after {attempts} tries");
+                                        OnWorkCompleted?.Invoke(cnameID, "DRIVE.ABSPOS", presetName, $"after {attempts} tries", reqId.ToString());
                                     });
                                 },
                                 OnFail = (int attempts) =>
@@ -228,18 +231,19 @@ namespace CameraDriver
                                     Task.Run(() =>
                                     {
                                         m_log?.Info($"[{Thread.CurrentThread.Name}] requesting abs position [{presetName}] for camera {cnameID} FAILED");
-                                        OnWorkFailed?.Invoke(cnameID, "DRIVE.ABSPOS", presetName);
+                                        OnWorkFailed?.Invoke(cnameID, "DRIVE.ABSPOS", presetName, reqId.ToString());
                                     });
                                 },
                                 RetryAttempts = 3,
                             };
-                            OnWorkStarted?.Invoke(cnameID, "DRIVE.ABSPOS", presetName);
+                            OnWorkStarted?.Invoke(cnameID, "DRIVE.ABSPOS", presetName, reqId.ToString());
                             client?.DoRobustWork(rcmd);
                         }
                     }
                 }
             });
             m_workAvailable.Set();
+            return reqId;
         }
 
         public void Cam_SaveCurentPosition(string cnameID, string presetName)
@@ -448,6 +452,11 @@ namespace CameraDriver
         public List<(string camName, IPEndPoint endpoint)> GetClientConfig()
         {
             return m_clients?.Select(x => (x.Key, x.Value.Endpoint)).ToList() ?? new List<(string, IPEndPoint)>();
+        }
+
+        void ISimpleCamServer.Cam_RecallPresetPosition(string cnameID, string presetName, byte speed)
+        {
+            Cam_RecallPresetPosition(cnameID, presetName, speed);
         }
     }
 

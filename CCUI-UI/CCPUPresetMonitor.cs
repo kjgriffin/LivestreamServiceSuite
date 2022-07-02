@@ -138,7 +138,12 @@ namespace CCUI_UI
 
         public void FirePreset(string camname, string presetname, int speed)
         {
-            m_server?.Cam_RecallPresetPosition(camname, presetname, (byte)speed);
+            FirePreset_Internal(camname, presetname, (byte)speed);
+        }
+
+        internal Guid FirePreset_Internal(string camname, string presetname, int speed)
+        {
+            return m_server?.Cam_RecallPresetPosition(camname, presetname, (byte)speed) ?? Guid.Empty;
         }
 
         public void RemovePreset(string camname, string presetname)
@@ -164,12 +169,17 @@ namespace CCUI_UI
         /// <param name="duration">Duration in ms. Expected that 200ms is about as small as will work</param>
         public void ChirpZoom(string camname, int direction, int duration)
         {
+            ChirpZoom_Internal(camname, direction, duration);
+        }
+
+        internal Guid ChirpZoom_Internal(string camname, int direction, int duration)
+        {
             // reject invalid duration, or greater than 10 sec
             if (duration < 0 || duration > 10000)
             {
-                return;
+                return Guid.Empty;
             }
-            m_server?.Cam_RunZoomChrip(camname, direction, duration);
+            return m_server?.Cam_RunZoomChrip(camname, direction, duration) ?? Guid.Empty;
         }
 
         public CCPUConfig ExportStateToConfig()
@@ -240,6 +250,28 @@ namespace CCUI_UI
             m_usingFake = false;
             Spinup(headless: !ui);
             LoadConfig(cfg);
+        }
+
+        void ICCPUPresetMonitor_Executor.FirePreset(string camname, string presetname, int speed)
+        {
+            FirePreset(camname, presetname, speed);
+        }
+
+        Guid ICCPUPresetMonitor_Executor.FirePreset_Tracked(string camname, string presetname, int speed)
+        {
+            return FirePreset_Internal(camname, presetname, speed);
+        }
+
+        Guid ICCPUPresetMonitor_Executor.FireZoom_Tracked(string camname, int zoomdir, int msdur)
+        {
+            return ChirpZoom_Internal(camname, zoomdir, msdur);
+        }
+
+        (Guid move, Guid zoom) ICCPUPresetMonitor_Executor.FirePresetWithZoom_Tracked(string camname, string presetname, int speed, int zoomdir, int msdur)
+        {
+            Guid m = FirePreset_Internal(camname, presetname, speed);
+            Guid z =  ChirpZoom_Internal(camname, zoomdir, msdur);
+            return (m, z);
         }
     }
 

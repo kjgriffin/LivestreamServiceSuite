@@ -5,26 +5,43 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Integrated_Presenter.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="1300" d:DesignWidth="300">
+             d:DesignHeight="1300" d:DesignWidth="800">
     <Grid>
         <Viewbox>
-            <Grid Background="#272727" Height="1600" Width="600">
+            <Grid Background="#272727" Height="1710" Width="800">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="80"></RowDefinition>
-                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="100"></RowDefinition>
+                    <RowDefinition Height="800"></RowDefinition>
                     <RowDefinition Height="10"></RowDefinition>
-                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="800"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid>
-                    <Ellipse Name="ellipseState" Width="50" Height="50" HorizontalAlignment="Right" Margin="10" Fill="Red"></Ellipse>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Name="tbALTmode" Foreground="#a0a0a0" VerticalAlignment="Center" FontSize="50" Margin="50,0,0,0">ALT</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Foreground="#808080" FontSize="50" Margin="10,0,10,0">/</TextBlock>
+                        <TextBlock Name="tbSTDmode" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" FontSize="50" Margin="0,0,150,0">STD</TextBlock>
+                        <Ellipse Name="ellipseState" Width="50" Height="50" HorizontalAlignment="Right" Margin="10" Fill="Red"></Ellipse>
+                    </StackPanel>
                 </Grid>
-                <Grid Grid.Row="1" Background="#30f00000">
-                    <local:PilotSlidePreview x:Name="pvCurrent" Grid.Row="1" Margin="10"></local:PilotSlidePreview>
-                </Grid>
-                <Grid Grid.Row="2" Background="#000000"></Grid>
-                <Grid Grid.Row="3" Background="Green">
-                    <local:PilotSlidePreview x:Name="pvNext" Grid.Row="3" Margin="10"></local:PilotSlidePreview>
-                </Grid>
+                <Border Grid.Row="1" Background="#918d8d" CornerRadius="30" Padding="10">
+                    <Viewbox>
+                        <StackPanel Orientation="Horizontal" Width="940">
+                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvCurrent_lec" Margin="10,0,0,0"></local:PilotCamPreview>
+                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvCurrent_ctr" Grid.Row="1" Margin="10,0,0,0"></local:PilotCamPreview>
+                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvCurrent_plt" Grid.Row="1" Margin="10,0,10,0"></local:PilotCamPreview>
+                        </StackPanel>
+                    </Viewbox>
+                </Border>
+                <Border Grid.Row="3" Background="#80004f00" CornerRadius="30" Padding="10" Margin="0,0,0,20">
+                    <Viewbox>
+                        <StackPanel Orientation="Horizontal" Width="940">
+                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvNext_lec" Margin="10,0,0,0"></local:PilotCamPreview>
+                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvNext_ctr" Grid.Row="1" Margin="10,0,0,0"></local:PilotCamPreview>
+                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvNext_plt" Grid.Row="1" Margin="10,0,10,0"></local:PilotCamPreview>
+                        </StackPanel>
+                    </Viewbox>
+
+                </Border>
             </Grid>
         </Viewbox>
     </Grid>

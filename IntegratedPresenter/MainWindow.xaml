@@ -76,7 +76,7 @@
             </Menu>
         </Grid>
 
-        <Grid Grid.Row="1" VerticalAlignment="Top">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"></ColumnDefinition>
                 <ColumnDefinition Width="4*"></ColumnDefinition>
@@ -87,9 +87,9 @@
 
                     <Grid.RowDefinitions>
                         <RowDefinition Name="grd_timers" Height="2*"></RowDefinition>
-                        <RowDefinition Name="grd_aux" Height="1*"></RowDefinition>
-                        <RowDefinition Name="grd_program" Height="1*"></RowDefinition>
-                        <RowDefinition Name="grd_preset" Height="1*"></RowDefinition>
+                        <RowDefinition Name="grd_aux" Height="1.2*"></RowDefinition>
+                        <RowDefinition Name="grd_program" Height="1.3*"></RowDefinition>
+                        <RowDefinition Name="grd_preset" Height="1.2*"></RowDefinition>
                         <RowDefinition Name="grd_transitions" Height="1*"></RowDefinition>
                         <RowDefinition Name="grd_keyers" Height="3*"></RowDefinition>
                         <RowDefinition Name="grd_advanced" Height="2.35*"></RowDefinition>
@@ -98,7 +98,7 @@
 
                     <Grid Grid.Row="0">
                         <Viewbox>
-                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="10,0,10,0">
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <Border Padding="5,5,5,5" Style="{StaticResource GroupBorder}" Width="180">
                                     <StackPanel>
                                         <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME</TextBlock>
@@ -2057,24 +2057,6 @@
                         </Viewbox>
                     </Grid>
 
-
-                    <!--<Viewbox Stretch="Uniform">
-                        <Grid Name="gridbtns" Width="760">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Name="gcAdvancedProjector" Width="1.2*"></ColumnDefinition>
-                                <ColumnDefinition Width="8*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="480"></RowDefinition>
-                                <RowDefinition Height="280"></RowDefinition>
-                                <RowDefinition Name="grAdvancedPIP" Height="*"></RowDefinition>
-                            </Grid.RowDefinitions>
-
-
-
-
-                        </Grid>
-                    </Viewbox>-->
                 </Grid>
             </Grid>
             <Grid Grid.Column="1">
@@ -2082,20 +2064,51 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"></RowDefinition>
                         <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.5*"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="2.6*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.Row="1" Grid.Column="0" Grid.RowSpan="2">
-                        <Grid Background="#272727">
-                            <viewmodels:PilotUI x:Name="pilotUI"></viewmodels:PilotUI>
+                    <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"></RowDefinition>
+                                <RowDefinition Height="4*"></RowDefinition>
+                                <RowDefinition Height="1*"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0" Grid.Column="0">
+                                <Viewbox Stretch="Uniform" HorizontalAlignment="Right">
+                                    <Grid Width="1920" Height="1080">
+                                        <Border Name="PrevPreviewDisplay" BorderBrush="Orange" BorderThickness="2,2,2,2">
+                                            <Grid>
+                                                <local:MediaPlayer2 x:Name="PrevPreview"></local:MediaPlayer2>
+                                                <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                </Viewbox>
+                            </Grid>
+
+                            <Grid Background="#272727" Grid.Row="1">
+                                <viewmodels:PilotUI x:Name="pilotUI"></viewmodels:PilotUI>
+                            </Grid>
+
+                            <Grid Grid.Row="2" Grid.Column="0">
+                                <Viewbox Stretch="Uniform" HorizontalAlignment="Right">
+                                    <Grid Width="1920" Height="1080" >
+                                        <Border Name="AfterPreviewDisplay" BorderBrush="Blue" BorderThickness="2,2,2,2">
+                                            <Grid>
+                                                <local:MediaPlayer2 x:Name="AfterPreview" ></local:MediaPlayer2>
+                                                <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                </Viewbox>
+                            </Grid>
                         </Grid>
                     </Grid>
-                    <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                    <Grid Grid.Row="0" Grid.Column="1">
                         <Viewbox Grid.Row="0" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                             <Grid Width="1920" Height="1080">
                                 <Border BorderBrush="Red" BorderThickness="2,2,2,2">
@@ -2107,19 +2120,7 @@
                             </Grid>
                         </Viewbox>
                     </Grid>
-                    <Grid Grid.Row="0" Grid.Column="0">
-                        <Viewbox Stretch="Uniform" HorizontalAlignment="Right">
-                            <Grid Width="1920" Height="1080">
-                                <Border Name="PrevPreviewDisplay" BorderBrush="Orange" BorderThickness="2,2,2,2">
-                                    <Grid>
-                                        <local:MediaPlayer2 x:Name="PrevPreview"></local:MediaPlayer2>
-                                        <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
-                                    </Grid>
-                                </Border>
-                            </Grid>
-                        </Viewbox>
-                    </Grid>
-                    <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                    <Grid Grid.Row="2" Grid.Column="1">
                         <Viewbox Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Top">
                             <Grid Width="1920" Height="1080">
                                 <Border BorderBrush="Green" BorderThickness="2,2,2,2">
@@ -2133,18 +2134,6 @@
                                                 <TranslateTransform X="450" Y="-180"></TranslateTransform>
                                             </TextBlock.RenderTransform>
                                         </TextBlock>
-                                    </Grid>
-                                </Border>
-                            </Grid>
-                        </Viewbox>
-                    </Grid>
-                    <Grid Grid.Row="3" Grid.Column="0">
-                        <Viewbox Stretch="Uniform" HorizontalAlignment="Right">
-                            <Grid Width="1920" Height="1080" >
-                                <Border Name="AfterPreviewDisplay" BorderBrush="Blue" BorderThickness="2,2,2,2">
-                                    <Grid>
-                                        <local:MediaPlayer2 x:Name="AfterPreview" ></local:MediaPlayer2>
-                                        <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
                                     </Grid>
                                 </Border>
                             </Grid>
