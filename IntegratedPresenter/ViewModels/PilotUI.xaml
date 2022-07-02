@@ -26,18 +26,18 @@
                 <Border Grid.Row="1" Background="#918d8d" CornerRadius="30" Padding="10">
                     <Viewbox>
                         <StackPanel Orientation="Horizontal" Width="940">
-                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvCurrent_lec" Margin="10,0,0,0"></local:PilotCamPreview>
-                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvCurrent_ctr" Grid.Row="1" Margin="10,0,0,0"></local:PilotCamPreview>
                             <local:PilotCamPreview Height="950" Width="300" x:Name="pvCurrent_plt" Grid.Row="1" Margin="10,0,10,0"></local:PilotCamPreview>
+                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvCurrent_ctr" Grid.Row="1" Margin="10,0,0,0"></local:PilotCamPreview>
+                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvCurrent_lec" Margin="10,0,0,0"></local:PilotCamPreview>
                         </StackPanel>
                     </Viewbox>
                 </Border>
                 <Border Grid.Row="3" Background="#80004f00" CornerRadius="30" Padding="10" Margin="0,0,0,20">
                     <Viewbox>
                         <StackPanel Orientation="Horizontal" Width="940">
-                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvNext_lec" Margin="10,0,0,0"></local:PilotCamPreview>
-                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvNext_ctr" Grid.Row="1" Margin="10,0,0,0"></local:PilotCamPreview>
                             <local:PilotCamPreview Height="950" Width="300" x:Name="pvNext_plt" Grid.Row="1" Margin="10,0,10,0"></local:PilotCamPreview>
+                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvNext_ctr" Grid.Row="1" Margin="10,0,0,0"></local:PilotCamPreview>
+                            <local:PilotCamPreview Height="950" Width="300" x:Name="pvNext_lec" Margin="10,0,0,0"></local:PilotCamPreview>
                         </StackPanel>
                     </Viewbox>
 
