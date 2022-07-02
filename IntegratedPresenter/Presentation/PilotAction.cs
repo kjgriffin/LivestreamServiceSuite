@@ -165,7 +165,7 @@ namespace Integrated_Presenter.Presentation
 
         internal static bool TryParse(string cmd, out IPilotAction pilot)
         {
-            var match = Regex.Match(cmd, @"^drive\[(?<cam>.*)\]\((?<pos>.*)\)(?<speed>@\d+)(|(?<zdir>.*):(?<zdur>\d+))?;");
+            var match = Regex.Match(cmd, @"^drive\[(?<cam>.*)\]\((?<pos>.*)\)(?<speed>@\d+)(\|(?<zdir>.*):(?<zdur>\d+))?;");
             if (match.Success)
             {
                 int speed = -1;
