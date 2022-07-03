@@ -43,10 +43,10 @@ namespace Integrated_Presenter.Presentation
 
         PilotActionState State = PilotActionState.READY;
 
-        string IPilotAction.DisplayInfo { get => $"Move"; }
+        string IPilotAction.DisplayInfo { get => $""; }
         string IPilotAction.CamName { get => CamName; }
         string IPilotAction.PresetName { get => PresetName; }
-        string IPilotAction.AltName { get => $"TODO: alt"; }
+        string IPilotAction.AltName { get => $""; }
         string IPilotAction.Status { get => State.ToString(); }
 
         List<Guid> IPilotAction.ReqIds { get => new List<Guid> { moveId }; }
@@ -124,10 +124,10 @@ namespace Integrated_Presenter.Presentation
         PilotActionState MoveState = PilotActionState.READY;
         PilotActionState ZoomState = PilotActionState.READY;
 
-        string IPilotAction.DisplayInfo { get => $"Move with Zoom: {ZoomDir} {ZoomDur}ms"; }
+        string IPilotAction.DisplayInfo { get => $"ZOOM {ZoomDir}{Environment.NewLine}{ZoomDur}ms"; }
         string IPilotAction.CamName { get => CamName; }
         string IPilotAction.PresetName { get => PresetName; }
-        string IPilotAction.AltName { get => $"TODO: alt"; }
+        string IPilotAction.AltName { get => $""; }
 
         string IPilotAction.Status
         {

@@ -17,6 +17,8 @@
                 </Grid.RowDefinitions>
                 <Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Name="tbLASTmode" Foreground="#a0a0a0" VerticalAlignment="Center" FontSize="50" Margin="50,0,150,0">LAST</TextBlock>
+
                         <TextBlock Name="tbALTmode" Foreground="#a0a0a0" VerticalAlignment="Center" FontSize="50" Margin="50,0,0,0">ALT</TextBlock>
                         <TextBlock VerticalAlignment="Center" Foreground="#808080" FontSize="50" Margin="10,0,10,0">/</TextBlock>
                         <TextBlock Name="tbSTDmode" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" FontSize="50" Margin="0,0,150,0">STD</TextBlock>

@@ -23,10 +23,39 @@ namespace Integrated_Presenter.ViewModels
     public partial class PilotCamPreview : UserControl
     {
 
+        bool hasAction = false;
+
         public PilotCamPreview()
         {
             InitializeComponent();
+            UpdateOnAirWarning(false);
         }
+
+        string splitify(string input)
+        {
+            if (input.Length > 12)
+            {
+                return input.Substring(0, 6) + Environment.NewLine + input.Substring(6, 6) + Environment.NewLine + input.Substring(12, 6);
+            }
+            if (input.Length > 6)
+            {
+                return input.Substring(0, 6) + Environment.NewLine + input.Substring(6);
+            }
+            return input;
+        }
+
+        internal void UpdateOnAirWarning(bool warn)
+        {
+            if (warn && hasAction)
+            {
+                tbOnAir.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                tbOnAir.Visibility = Visibility.Hidden;
+            }
+        }
+
         internal void UpdateUI(IPilotAction action)
         {
             if (!CheckAccess())
@@ -35,10 +64,16 @@ namespace Integrated_Presenter.ViewModels
                 return;
             }
 
+            if (action != null)
+            {
+                hasAction = true;
+            }
+
             g_back.Background = new SolidColorBrush(Color.FromRgb(80, 80, 80));
 
+
             tbName.Text = action.CamName.ToUpper();
-            tbPstName.Text = action.PresetName;
+            tbPstName.Text = splitify(action.PresetName);
             tbPstInfo.Text = action.DisplayInfo;
 
             switch (action.Status)
@@ -64,12 +99,13 @@ namespace Integrated_Presenter.ViewModels
                     break;
 
                 default:
-                    tbStatus.Text = "-----";
+                    tbStatus.Text = action.Status;
+                    tbStatus.Foreground = Brushes.Yellow;
                     break;
             }
 
             tbaltstd.Text = "ALT";
-            tbPstAlt.Text = action.AltName;
+            tbPstAlt.Text = ""; // action.AltName;
 
         }
 
@@ -80,6 +116,8 @@ namespace Integrated_Presenter.ViewModels
                 Dispatcher.Invoke(() => ClearUI(cname));
                 return;
             }
+
+            hasAction = false;
 
             g_back.Background = new SolidColorBrush(Color.FromRgb(20, 20, 20));
 

@@ -218,8 +218,23 @@ namespace DVIPProtocol.Clients.Advanced
 
         private (bool success, byte[] resp) DoTCPTimed(byte[] msg, int msTime)
         {
-            var stream = m_client.GetStream();
-            stream.ReadTimeout = 5000; // TODO: figure out how long this really should be...
+            NetworkStream stream = null;
+            try
+            {
+                stream = m_client.GetStream();
+                stream.ReadTimeout = 5000; // TODO: figure out how long this really should be...
+            }
+            catch (Exception ex)
+            {
+                m_log?.Info($"[{m_endpoint.ToString()}] threw exception while getting the underlying network stream {ex}");
+                return (false, new byte[0]);
+            }
+
+            if (stream == null)
+            {
+                m_log?.Info($"[{m_endpoint.ToString()}] got a null stream.");
+                return (false, new byte[0]);
+            }
             // idealy we'd never give-up, but abort after some time
             // probably can get away with an order of seconds here in practice
 

@@ -586,6 +586,24 @@ namespace IntegratedPresenter.Main
             // optionally update previews
             CurrentPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
             NextPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
+
+
+            pilotUI?.FireOnSwitcherStateChangedForAutomation(_lastState, _config, PredictNextSlideTakesLiveCam());
+        }
+
+        private bool PredictNextSlideTakesLiveCam()
+        {
+            // liturgy does
+            // full does not (usually)
+            // video does not (usually)
+            // slide.... (perhaps we ought to read actions and see if any set the program source, or call an auto trans?)
+            // default to yes??
+            if (Presentation?.Next?.Type == SlideType.Liturgy || Presentation?.Next?.Type == SlideType.Action)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void UpdateUSK1Styles()
@@ -1274,6 +1292,8 @@ namespace IntegratedPresenter.Main
                     TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, true, SlidePoolSource0.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(1);
+                else if (Keyboard.IsKeyDown(Key.OemTilde))
+                    PilotFireLast(1);
                 else
                     ClickPreset(1);
             }
@@ -1289,6 +1309,8 @@ namespace IntegratedPresenter.Main
                     TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, true, SlidePoolSource1.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(2);
+                else if (Keyboard.IsKeyDown(Key.OemTilde))
+                    PilotFireLast(2);
                 else
                     ClickPreset(2);
             }
@@ -1304,6 +1326,8 @@ namespace IntegratedPresenter.Main
                     TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, true, SlidePoolSource2.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(3);
+                else if (Keyboard.IsKeyDown(Key.OemTilde))
+                    PilotFireLast(3);
                 else
                     ClickPreset(3);
             }
@@ -1467,6 +1491,12 @@ namespace IntegratedPresenter.Main
                 _camMonitor?.ShowUI();
             }
 
+            if (e.Key == Key.OemPipe)
+            {
+                TogglePilotMode();
+            }
+
+
 
             // numpad controls keyers
             #region keyers
@@ -1617,6 +1647,27 @@ namespace IntegratedPresenter.Main
                 OverrideSlideModeWithKey(1);
             }
 
+        }
+
+        private void PilotFireLast(int v)
+        {
+            //if (PilotMode == -1)
+            //{
+            pilotUI?.FireLast(v, _camMonitor);
+            //}
+            // let it re-fire existing slide
+        }
+
+        private void TogglePilotMode()
+        {
+            if (PilotMode == 0)
+            {
+                PilotMode = -1;
+            }
+            else
+            {
+                PilotMode = 0;
+            }
         }
 
         private void ToggleUSK1Type()
@@ -3700,6 +3751,8 @@ namespace IntegratedPresenter.Main
             //Height -= heightreduction;
             grd_advanced.Height = new GridLength(0);
             gr_advanced_pip.Visibility = Visibility.Collapsed;
+            UpdateUIPIPPlaceKeys();
+            UpdateUIPIPPlaceKeysActiveState();
         }
 
         private void ToggleTransBkgd()
@@ -5024,9 +5077,25 @@ namespace IntegratedPresenter.Main
         {
             Dispatcher.Invoke(() =>
             {
-                pilotUI.UpdateUI(_FeatureFlag_EnableAutoPilot, Presentation?.EffectiveCurrent?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.Next?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.CurrentSlide ?? 0);
+                pilotUI.UpdateUI(_FeatureFlag_EnableAutoPilot, Presentation?.EffectiveCurrent?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.Next?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.CurrentSlide ?? 0, PilotMode);
+                pilotUI.FireOnSwitcherStateChangedForAutomation(_lastState, _config, PredictNextSlideTakesLiveCam());
             });
         }
+
+        /// <summary>
+        /// 0 = std, 1 = alt, -1 = last
+        /// </summary>
+        int PilotMode
+        {
+            get => _pilotMode;
+            set
+            {
+                _pilotMode = value;
+                UpdatePilotUI();
+            }
+        }
+
+        int _pilotMode = 0;
 
         private void UpdatePilotUIStatus(string camName, params string[] args)
         {
