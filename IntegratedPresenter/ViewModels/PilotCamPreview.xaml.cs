@@ -35,7 +35,7 @@ namespace Integrated_Presenter.ViewModels
         {
             if (input.Length > 12)
             {
-                return input.Substring(0, 6) + Environment.NewLine + input.Substring(6, 6) + Environment.NewLine + input.Substring(12, 6);
+                return input.Substring(0, 6) + Environment.NewLine + input.Substring(6, 6) + Environment.NewLine + input.Substring(12);
             }
             if (input.Length > 6)
             {
