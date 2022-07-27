@@ -24,6 +24,8 @@ namespace LutheRun
         [BoolSetting]
         public bool UseComplexReading { get; set; } = true;
         [BoolSetting]
+        public bool FullTextReadings { get; set; } = true; // not sure if we default true- but for debug sure
+        [BoolSetting]
         public bool InferResponsivePslamReadingsAsTitledLiturgy { get; set; } = true;
         [BoolSetting]
         public bool PullAllReadingContentAsTitledLiturgy { get; set; } = false;

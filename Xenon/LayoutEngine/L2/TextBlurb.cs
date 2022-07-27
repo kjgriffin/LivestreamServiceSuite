@@ -42,7 +42,7 @@ namespace Xenon.LayoutEngine.L2
         }
 
 
-        public SizedTextBlurb(TextBlurb blurb) : base(blurb.Pos, blurb.Text, blurb.AltFont, blurb.FontStyle, blurb.FontSize, blurb.Space, blurb.IsWhitespace, blurb.HexFColor)
+        public SizedTextBlurb(TextBlurb blurb) : base(blurb.Pos, blurb.Text, blurb.AltFont, blurb.FontStyle, blurb.FontSize, blurb.Space, blurb.IsWhitespace, blurb.HexFColor, blurb.ScriptType, blurb.Rules)
         {
             Size = GDI.SizeF.Empty;
         }
@@ -56,10 +56,18 @@ namespace Xenon.LayoutEngine.L2
 
     internal class TextBlurb
     {
+
+        public static float SCRIPT_FSIZE_MODIFIER = 0.6f;
+        public static float SCRIPT_OFFSET_MODIFIER = 1.4f;
+
         public GDI.Point Pos { get; private set; }
         public string Text { get; private set; }
         public string AltFont { get; private set; }
         public int FontStyle { get; private set; }
+        /// <summary>
+        /// 0: regular, 1: superscript, -1: subscript
+        /// </summary>
+        public int ScriptType { get; private set; } = 0;
         public float FontSize { get; private set; }
 
         public bool IsWhitespace { get => Space || NewLine; }
@@ -68,13 +76,18 @@ namespace Xenon.LayoutEngine.L2
 
         public string HexFColor { get; private set; }
 
+        /// <summary>
+        ///  Provides addition context for layout rules that may be used by layout engines when performing measurement/layout
+        /// </summary>
+        public string Rules { get; private set; } = "";
+
         public virtual TextBlurb Clone()
         {
-            return new TextBlurb(Pos, Text, AltFont, FontStyle, FontSize, Space, NewLine, HexFColor);
+            return new TextBlurb(Pos, Text, AltFont, FontStyle, FontSize, Space, NewLine, HexFColor, ScriptType, Rules);
         }
 
 
-        public TextBlurb(GDI.Point pos, string text, string altfont = "", int style = -1, float size = -1, bool space = false, bool newline = false, string hexColor = null)
+        public TextBlurb(GDI.Point pos, string text, string altfont = "", int style = -1, float size = -1, bool space = false, bool newline = false, string hexColor = null, int scripttype = 0, string rules = "")
         {
             Pos = pos;
             Text = text;
@@ -84,6 +97,8 @@ namespace Xenon.LayoutEngine.L2
             Space = space;
             NewLine = newline;
             HexFColor = hexColor;
+            ScriptType = scripttype;
+            Rules = rules;
         }
 
         [Obsolete("Use imagesharp instead.")]
@@ -111,6 +126,12 @@ namespace Xenon.LayoutEngine.L2
         {
             FontStyle style = FontStyle != -1 ? (FontStyle)FontStyle : defaultStyle;
             float fsize = FontSize > 0 ? FontSize : defaultFontSize;
+
+            if (ScriptType != 0)
+            {
+                fsize = fsize * SCRIPT_FSIZE_MODIFIER;
+            }
+
             string fname = defaultFont;
             if (!string.IsNullOrEmpty(AltFont))
             {
@@ -127,7 +148,17 @@ namespace Xenon.LayoutEngine.L2
             };
 
             var frect = TextMeasurer.MeasureBounds(Text, tops);
-            return new SizeF(frect.Width, frect.Height);
+            var size = new SizeF(frect.Width, frect.Height);
+
+            if (ScriptType != 0)
+            {
+                // make it a bit wider
+                // NOTE: since it will be bigger this will work for any right-to-left read language since extra space to the right is where we want the margin
+
+                size.Width = size.Width * SCRIPT_OFFSET_MODIFIER;
+            }
+
+            return size;
         }
 
         public void Place(GDI.Point p)
@@ -181,6 +212,12 @@ namespace Xenon.LayoutEngine.L2
         {
             FontStyle style = FontStyle != -1 ? (FontStyle)FontStyle : defaultStyle;
             float fsize = FontSize > 0 ? FontSize : defaultFontSize;
+
+            if (ScriptType != 0)
+            {
+                fsize = fsize * SCRIPT_FSIZE_MODIFIER;
+            }
+
             string fname = defaultFont;
             if (!string.IsNullOrEmpty(AltFont))
             {

@@ -1,0 +1,142 @@
+{
+  "ComplexBoxes": [
+    {
+      "Textbox": {
+        "Origin": {
+          "X": 100,
+          "Y": 100
+        },
+        "Size": {
+          "Width": 1720,
+          "Height": 980
+        }
+      },
+      "Font": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 1
+      },
+      "FColor": {
+        "Hex": "#ffffffff"
+      },
+      "BColor": {
+        "Hex": "#00000000"
+      },
+      "KColor": {
+        "Hex": "#00000000"
+      },
+      "HorizontalAlignment": "Center",
+      "VerticalAlignment": "Center",
+      "NewLineForBlocks": true,
+      "VPaddingEnabled": false,
+      "MinInterLineSpace": 10
+    }
+  ],
+  "Textboxes": [
+    {
+      "Textbox": {
+        "Origin": {
+          "X": 100,
+          "Y": 100
+        },
+        "Size": {
+          "Width": 1720,
+          "Height": 980
+        }
+      },
+      "Font": {
+        "Name": "Arial",
+        "Size": 36,
+        "Style": 1
+      },
+      "FColor": {
+        "Hex": "#ffffffff"
+      },
+      "BColor": {
+        "Hex": "#00000000"
+      },
+      "KColor": {
+        "Hex": "#00000000"
+      },
+      "HorizontalAlignment": "Center",
+      "VerticalAlignment": "Center"
+    }
+  ],
+  "Shapes": [
+    {
+      "Transforms": {
+        "Scale": {
+          "XScale": 1,
+          "YScale": 1
+        },
+        "Translate": {
+          "XShift": 0,
+          "YShift": 0
+        }
+      },
+      "Verticies": [
+        {
+          "X": 100,
+          "Y": 100
+        },
+        {
+          "X": 1820,
+          "Y": 100
+        },
+        {
+          "X": 1820,
+          "Y": 980
+        },
+        {
+          "X": 100,
+          "Y": 980
+        }
+      ],
+      "BorderWidth": 10,
+      "FillColor": {
+        "Hex": "#0f0f0f0f"
+      },
+      "KeyFillColor": {
+        "Hex": "#ff808080"
+      },
+      "BorderColor": {
+        "Hex": "#80808080"
+      },
+      "KeyBorderColor": {
+        "Hex": "#ff808080"
+      }
+    }
+  ],
+  "Images": [
+    {
+      "Box": {
+        "Origin": {
+          "X": 50,
+          "Y": 50
+        },
+        "Size": {
+          "Width": 50,
+          "Height": 50
+        }
+      },
+      "FillColor": {
+        "Hex": "#ffffffff"
+      },
+      "KeyColor": {
+        "Hex": "#ffffffff"
+      }
+    }
+  ],
+  "Branding": [],
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "BackgroundColor": {
+    "Hex": "#ff000000"
+  },
+  "KeyColor": {
+    "Hex": "#ff000000"
+  },
+  "SlideType": ""
+}

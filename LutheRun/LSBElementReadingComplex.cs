@@ -195,7 +195,29 @@ namespace LutheRun
                 }
             }
 
-            // skip text for now
+            // optional insert text
+            if (lSBImportOptions.UseComplexReading && lSBImportOptions.FullTextReadings)
+            {
+                //... hmmmmmm
+                // see if we get it at all
+                sb.AppendLine("#complextext".Indent(indentDepth, indentSpaces));
+                sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+                indentDepth++;
+
+                sb.AppendLine($"text={{{ReadingTitle}}}".Indent(indentDepth, indentSpaces));
+                sb.AppendLine($"text={{{ReadingReference}}}".Indent(indentDepth, indentSpaces));
+                sb.AppendLine($"text={{ESV}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
+
+                sb.AppendLine("ctext={".Indent(indentDepth, indentSpaces));
+                indentDepth++;
+
+                sb.AppendLine(LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault().Elements, ref indentDepth, indentSpaces));
+
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+            }
 
             // do post-reading 'liturgy'
             int i = 0;

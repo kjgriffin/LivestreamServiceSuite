@@ -21,12 +21,12 @@ namespace Xenon.LayoutEngine.L2
 
         public int NumLines { get; set; }
 
-        public static SizedCandidateBlock CreateSized(CandidateBlock block, Graphics gfx, LiturgyTextboxLayout layout)
+        public static SizedCandidateBlock CreateSized(CandidateBlock block, LiturgyTextboxLayout layout)
         {
             SizedCandidateBlock sblock = new SizedCandidateBlock();
             foreach (var line in block.Lines)
             {
-                sblock.Lines.Add(SizedResponsiveStatement.CreateSized(line, gfx, layout));
+                sblock.Lines.Add(SizedResponsiveStatement.CreateSized(line, layout));
             }
             return sblock;
         }

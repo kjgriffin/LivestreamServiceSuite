@@ -22,13 +22,13 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 
             ibmp.Mutate(ctx =>
             {
-                ctx.FillPolygon(layout.FillColor.ToColor(), points);
+                ctx.FillPolygon(layout.GetFillBrush(), points);
                 ctx.DrawPolygon(layout.BorderColor.ToColor(), layout.BorderWidth, points);
             });
 
             ikbmp.Mutate(ctx =>
             {
-                ctx.FillPolygon(layout.KeyFillColor.ToColor(), points);
+                ctx.FillPolygon(layout.GetKeyFillBrush(), points);
                 ctx.DrawPolygon(layout.KeyBorderColor.ToColor(), layout.BorderWidth, points);
             });
         }

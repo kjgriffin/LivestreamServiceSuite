@@ -55,7 +55,7 @@ namespace Xenon.Compiler.AST
                         if (sid < slides.Count)
                         {
                             slideid = sid;
-                        } 
+                        }
                     }
                 }
                 if (slideid != -1)
@@ -457,6 +457,13 @@ namespace Xenon.Compiler.AST
             {
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.CustomDraw]);
                 var command = new XenonASTShapesImagesAndText();
+                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
+                return expr;
+            }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.ComplexText]))
+            {
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.ComplexText]);
+                var command = new XenonASTShapesImagesAndTextComplex();
                 expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
                 return expr;
             }

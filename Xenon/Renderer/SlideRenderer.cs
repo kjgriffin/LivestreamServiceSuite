@@ -41,6 +41,7 @@ namespace Xenon.Renderer
             new ResponsiveLiturgyRenderer(),
             new HymnTextVerseRenderer(),
             new AdvancedImageSlideRenderer(),
+            new ComplexShapeImageAndTextRenderer()
         };
 
         public ProjectAsset GetProjectAssetByName(string assetName)
