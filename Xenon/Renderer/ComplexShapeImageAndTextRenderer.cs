@@ -104,7 +104,7 @@ namespace Xenon.Renderer
                             try
                             {
                                 Image<Bgra32> src = Image.Load<Bgra32>(assets[i].CurrentPath);
-                                CommonDrawingBoxRenderer.Render(ibmp, ikbmp, image, src);
+                                CommonAdvancedImageDrawingBoxRenderer.Render(ibmp, ikbmp, image, src);
                             }
                             catch (Exception)
                             {
@@ -162,7 +162,7 @@ namespace Xenon.Renderer
                             try
                             {
                                 Image<Bgra32> src = Image.Load<Bgra32>(assets[i].CurrentPath);
-                                CommonDrawingBoxRenderer.Render(ibmp, ikbmp, image, src);
+                                CommonAdvancedImageDrawingBoxRenderer.Render(ibmp, ikbmp, image, src);
                             }
                             catch (Exception)
                             {

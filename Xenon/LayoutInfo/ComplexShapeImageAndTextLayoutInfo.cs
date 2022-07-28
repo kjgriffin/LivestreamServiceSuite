@@ -13,8 +13,8 @@ namespace Xenon.LayoutInfo
         public List<TextboxLayout> Textboxes { get; set; } = new List<TextboxLayout>();
         public List<LWJPolygon> Shapes { get; set; } = new List<LWJPolygon>();
 
-        public List<DrawingBoxLayout> Images { get; set; } = new List<DrawingBoxLayout>();
-        public List<DrawingBoxLayout> Branding { get; set; } = new List<DrawingBoxLayout>();
+        public List<AdvancedDrawingBoxLayout> Images { get; set; } = new List<AdvancedDrawingBoxLayout>();
+        public List<AdvancedDrawingBoxLayout> Branding { get; set; } = new List<AdvancedDrawingBoxLayout>();
 
 
         public override string GetDefaultJson()

@@ -23,8 +23,17 @@ namespace LutheRun
         public bool UseComplexIntroit { get; set; } = true;
         [BoolSetting]
         public bool UseComplexReading { get; set; } = true;
+        /// <summary>
+        /// Requires ComplexReadings. Used to bring the full text in, but does not force the whole package.
+        /// </summary>
         [BoolSetting]
-        public bool FullTextReadings { get; set; } = true; // not sure if we default true- but for debug sure
+        public bool FullTextReadings { get; set; } = false;
+        /// <summary>
+        /// Requires ComplexReadings. Will include the full reading text, but packaged (to handle titles/scripts) accordingly.
+        /// Will attempt to ignore introit/responsive psalms if InferResponsivePsalmReadingsAsTitledLiturgy is enabled
+        /// </summary>
+        [BoolSetting]
+        public bool FullPackageReadings { get; set; } = true;
         [BoolSetting]
         public bool InferResponsivePslamReadingsAsTitledLiturgy { get; set; } = true;
         [BoolSetting]

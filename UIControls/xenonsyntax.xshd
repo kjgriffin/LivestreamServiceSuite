@@ -135,6 +135,7 @@
 			<Word>#customtext</Word>
 			<Word>#scripted</Word>
 			<Word>#customdraw</Word>
+			<Word>#complextext</Word>
 			<Word>#tlit</Word>
 			<!-- ... -->
 		</Keywords>

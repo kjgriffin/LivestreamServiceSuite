@@ -17,9 +17,13 @@ namespace Xenon.LayoutInfo.BaseTypes
 
     internal class AdvancedDrawingBoxLayout : DrawingBoxLayout
     {
-        public bool AutoCrop { get; set; } = true;
-        public LWJColor CropExclude { get; set; }
-        public bool CropExcludeAlpha { get; set; } = true;
-        public bool InvertColors { get; set; } = true;
+        public bool ForceBasic { get; set; } = false;
+        public bool AutoCrop { get; set; } = false;
+        public LWJColor CropExclude { get; set; } = new LWJColor(Color.Black);
+        public bool CropExcludeAlpha { get; set; } = false;
+        public bool InvertColors { get; set; } = false;
+        public bool ForceSolidKey { get; set; } = false;
+        public bool AlphaReplace { get; set; } = true;
+        public bool AlphaToGrey { get; set; } = false;
     }
 }

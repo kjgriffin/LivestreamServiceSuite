@@ -201,6 +201,11 @@ namespace Xenon.Compiler.AST
 
             List<Slide> slides = new List<Slide>();
 
+            if (!stextdata.Any()) // should still generate even without complex text
+            {
+                stextdata.Add(new List<SizedTextBlurb>());
+            }
+
             // then dump all the other content on each slide
             foreach (var sblock in stextdata)
             {

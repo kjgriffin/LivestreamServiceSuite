@@ -269,6 +269,12 @@ namespace LutheRun
                 if (LiturgyElements.Contains(element.GetType()))
                 {
                     inliturgy = true;
+                    // also skip if its a full-package reading, since they're considered responsible for their own teardown
+                    var reading = element as LSBElementReadingComplex;
+                    if (reading != null && options.FullPackageReadings)
+                    {
+                        inliturgy = false;
+                    }
                 }
                 else
                 {
