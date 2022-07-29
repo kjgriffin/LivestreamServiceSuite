@@ -10,6 +10,7 @@
     <None Remove="PrefabBlobs\EndTitle.txt" />
     <None Remove="PrefabBlobs\LordsPrayer.txt" />
     <None Remove="PrefabBlobs\NiceneCreed.txt" />
+    <None Remove="PrefabBlobs\PIPReadingScripBlock.txt" />
     <None Remove="PrefabBlobs\PrePIPScriptBlock_Creed.txt" />
     <None Remove="PrefabBlobs\PrePIPScriptBlock_Hymn.txt" />
     <None Remove="PrefabBlobs\UpNext_Numbered.txt" />
@@ -19,6 +20,7 @@
   <ItemGroup>
     <EmbeddedResource Include="PrefabBlobs\EndTitle.txt" />
     <EmbeddedResource Include="PrefabBlobs\CopyTitle.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PIPReadingScripBlock.txt" />
   </ItemGroup>
 
   <ItemGroup>

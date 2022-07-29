@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using static LutheRun.LSBElementHymn;
@@ -311,12 +313,14 @@ namespace LutheRun
             return sb.ToString();
         }
 
-        private string FullPackageReading(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        private string FullPackageReading(LSBImportOptions lSBImportOptions, ref int _indentDepth, int indentSpaces)
         {
             StringBuilder sb = new StringBuilder();
 
-            // styling scripts??
+            // NOTE: local depth here for local command, since it's placed in a prefab blob.
+            int indentDepth = 0;
 
+            // styling scripts
             sb.AppendLine("#scope(readingfull)".Indent(indentDepth, indentSpaces));
             sb.AppendLine("{".Indent(indentDepth, indentSpaces));
             indentDepth++;
@@ -324,7 +328,7 @@ namespace LutheRun
             sb.AppendLine("#var(\"complextext.Layout\",\"Xenon.Readings::SideBarReading\")".Indent(indentDepth, indentSpaces));
             sb.AppendLine("#var(\"tlit.Layout\",\"Xenon.Readings::SideBarResponse\")".Indent(indentDepth, indentSpaces));
 
-            // setup scripts???
+            // setup scripts -> handled by surrounding scripted block
 
             // do title first without text??
             if (!PreTitle.Any())
@@ -367,12 +371,34 @@ namespace LutheRun
             }
 
 
-            // teardowns ??
+            // teardowns -> handled by surrounding scripted block
 
             indentDepth--;
             sb.AppendLine("}".Indent(indentDepth, indentSpaces));
 
-            return sb.ToString();
+            // dump command into sucripted block
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                                                     .GetManifestResourceNames()
+                                                                     .FirstOrDefault(x => x.Contains("PIPReading"));
+
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                .GetManifestResourceStream(name);
+
+            var prefabblob = "";
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                prefabblob = sr.ReadToEnd();
+            }
+
+            int indent = Regex.Match(prefabblob, @"^(?<indent>\$>)\$READING", RegexOptions.Multiline).Groups["indent"].Value.Length / 2;
+            string inject = sb.ToString().IndentBlock(indent, indentSpaces);
+
+
+            prefabblob = Regex.Replace(prefabblob, "\\$>", "    ");
+
+            prefabblob = Regex.Replace(prefabblob, @" +\$READING", inject);
+
+            return prefabblob.IndentBlock(_indentDepth, indentSpaces);
         }
 
         enum ReadingResponsePart
