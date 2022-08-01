@@ -17,7 +17,6 @@ using Xenon.LayoutInfo.BaseTypes;
 namespace Xenon.Compiler.SubParsers
 {
 
-
     class ResponsiveStatement
     {
         public string Speaker { get; set; }
@@ -82,12 +81,32 @@ namespace Xenon.Compiler.SubParsers
         public int AltStyle { get; private set; }
         public string AltColorHex { get; private set; }
 
-        public TextRun(string text, string fname = "", int fstyle = -1, string altcolhex = null)
+        public string Rules { get; private set; }
+        public string StyleMod { get; private set; }
+
+        public void AddRule(string rule)
+        {
+            if (!Rules.Contains(rule))
+            {
+                if (string.IsNullOrEmpty(Rules))
+                {
+                    Rules = rule;
+                }
+                else
+                {
+                    Rules = $"{Rules};{rule}";
+                }
+            }
+        }
+
+        public TextRun(string text, string fname = "", int fstyle = -1, string altcolhex = null, string stylemod = "", string rules = "")
         {
             Text = text;
             AltFont = fname;
             AltStyle = fstyle;
             AltColorHex = altcolhex;
+            StyleMod = stylemod;
+            Rules = rules;
         }
 
         public static TextRun Create(XmlNode node)
@@ -100,6 +119,9 @@ namespace Xenon.Compiler.SubParsers
             var font = node.Attributes.GetNamedItem("altfont");
             var style = node.Attributes.GetNamedItem("style");
             var color = node.Attributes.GetNamedItem("color");
+            var rules = node.Attributes.GetNamedItem("rules");
+
+            string stylemod = "";
 
             int fstyle = -1;
             if (!string.IsNullOrEmpty(style?.Value))
@@ -122,9 +144,13 @@ namespace Xenon.Compiler.SubParsers
                 {
                     fstyle |= (int)FontStyle.Underline;
                 }
+                if (styles.Contains("superscript"))
+                {
+                    stylemod = "superscript";
+                }
             }
 
-            return new TextRun(node.InnerText, font?.Value ?? "", fstyle, color?.Value ?? null);
+            return new TextRun(node.InnerText, font?.Value ?? "", fstyle, color?.Value ?? null, stylemod, rules?.Value);
         }
 
     }

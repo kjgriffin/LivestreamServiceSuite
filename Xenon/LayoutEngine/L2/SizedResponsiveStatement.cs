@@ -22,7 +22,7 @@ namespace Xenon.LayoutEngine.L2
             }
         }
 
-        public static SizedResponsiveStatement CreateSized(ResponsiveStatement statement, Graphics gfx, LiturgyTextboxLayout layout)
+        public static SizedResponsiveStatement CreateSized(ResponsiveStatement statement, LiturgyTextboxLayout layout)
         {
             SizedResponsiveStatement srs = new SizedResponsiveStatement();
 

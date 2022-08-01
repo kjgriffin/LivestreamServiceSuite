@@ -326,10 +326,10 @@ namespace LutheRun
                         sb.AppendLine(line.Trim().Indent(indentDepth, indentSpaces));
                     }
                     indentDepth--;
-                    sb.AppendLine("}");
+                    sb.AppendLine("}".Indent(indentDepth, indentSpaces));
                 }
                 indentDepth--;
-                sb.Append("}");
+                sb.Append("}".Indent(indentDepth, indentSpaces));
             }
             return sb.ToString();
         }

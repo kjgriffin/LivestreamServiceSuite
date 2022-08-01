@@ -52,6 +52,16 @@ namespace SlideCreater.ViewControls
                         tbScriptText.Text = "";
                         bHasScriptTag.Visibility = Visibility.Collapsed;
                     }
+                    if (value.HasPilot)
+                    {
+                        bHasPilotTag.Visibility = Visibility.Visible;
+                        tbPilotText.Text = value.Pilot;
+                    }
+                    else
+                    {
+                        bHasPilotTag.Visibility = Visibility.Collapsed;
+                        tbPilotText.Text = string.Empty;
+                    }
                     bIsResourceTag.Visibility = value.Number == -1 ? Visibility.Visible : Visibility.Collapsed;
                 });
             }

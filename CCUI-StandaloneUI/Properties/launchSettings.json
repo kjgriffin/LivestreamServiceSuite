@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "CCUI-StandaloneUI": {
+      "commandName": "Project"
+    },
+    "CCUI-StandaloneUI-FakeClients": {
+      "commandName": "Project",
+      "commandLineArgs": "debug-fake"
+    }
+  }
+}

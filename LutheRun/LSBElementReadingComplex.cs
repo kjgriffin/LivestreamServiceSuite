@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using static LutheRun.LSBElementHymn;
@@ -19,6 +21,66 @@ namespace LutheRun
             public ReadingResponsePart Type { get; private set; } = ReadingResponsePart.Unknown;
 
             public List<HymnImageLine> _imagelines = new List<HymnImageLine>();
+
+            public string XenonCmdText(string title, string reference, ref int indentDepth, int indentSpaces)
+            {
+                switch (Type)
+                {
+                    case ReadingResponsePart.SpokenResponse:
+                        return AsPackageResponse(title, reference, ref indentDepth, indentSpaces);
+                    case ReadingResponsePart.SungResponse:
+                        return AsPackageLiturgy(title, reference, ref indentDepth, indentSpaces);
+                    default:
+                        return "";
+                }
+            }
+
+            private string AsPackageResponse(string title, string reference, ref int indentDepth, int indentSpaces)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine("#tlit".Indent(indentDepth, indentSpaces));
+                sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+                indentDepth++;
+                sb.AppendLine($"title={{{title}}}".Indent(indentDepth, indentSpaces));
+                sb.AppendLine($"title={{{reference}}}".Indent(indentDepth, indentSpaces));
+                sb.AppendLine("content={".Indent(indentDepth, indentSpaces));
+                indentDepth++;
+                sb.AppendLine(LSBResponsorialExtractor.ExtractResponsiveLiturgy(Elements, ref indentDepth, indentSpaces));
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+
+                return sb.ToString();
+            }
+            private string AsPackageLiturgy(string title, string reference, ref int indentDepth, int indentSpaces)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                foreach (var img in _imagelines)
+                {
+                    sb.AppendLine("#scope(readingresponsesung)".Indent(indentDepth, indentSpaces));
+                    sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+                    indentDepth++;
+
+                    sb.AppendLine("#var(\"complextext.Layout\",\"Xenon.Readings::SideBarSungResponse\")".Indent(indentDepth, indentSpaces));
+
+                    sb.AppendLine("#complextext".Indent(indentDepth, indentSpaces));
+                    sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+                    indentDepth++;
+                    sb.AppendLine($"asset=(\"{img.InferedName}\", \"fg\")".Indent(indentDepth, indentSpaces));
+                    sb.AppendLine($"text={{{title}}}".Indent(indentDepth, indentSpaces));
+                    sb.AppendLine($"text={{{reference}}}".Indent(indentDepth, indentSpaces));
+                    indentDepth--;
+                    sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+
+                    indentDepth--;
+                    sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+                }
+
+                return sb.ToString();
+            }
 
             public string XenonCmdText(string postset, bool asfirst, ref int indentDepth, int indentSpaces)
             {
@@ -123,6 +185,16 @@ namespace LutheRun
 
         public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
+
+            if (!(lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy
+                && (ReadingTitle.ToLower().Contains("psalm")
+                || ReadingTitle.ToLower().Contains("introit")
+                || ReadingReference.ToLower().Contains("psalm")
+                || ReadingReference.ToLower().Contains("introit"))) && lSBImportOptions.FullPackageReadings)
+            {
+                return FullPackageReading(lSBImportOptions, ref indentDepth, indentSpaces);
+            }
+
             // get the postset onto the right command
             var postset = PostsetCmd.ExtractPostsetValues();
 
@@ -195,7 +267,29 @@ namespace LutheRun
                 }
             }
 
-            // skip text for now
+            // optional insert text
+            if (lSBImportOptions.UseComplexReading && lSBImportOptions.FullTextReadings)
+            {
+                //... hmmmmmm
+                // see if we get it at all
+                sb.AppendLine("#complextext".Indent(indentDepth, indentSpaces));
+                sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+                indentDepth++;
+
+                sb.AppendLine($"text={{{ReadingTitle}}}".Indent(indentDepth, indentSpaces));
+                sb.AppendLine($"text={{{ReadingReference}}}".Indent(indentDepth, indentSpaces));
+                sb.AppendLine($"text={{ESV}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
+
+                sb.AppendLine("ctext={".Indent(indentDepth, indentSpaces));
+                indentDepth++;
+
+                sb.AppendLine(LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault().Elements, ref indentDepth, indentSpaces));
+
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+            }
 
             // do post-reading 'liturgy'
             int i = 0;
@@ -217,6 +311,94 @@ namespace LutheRun
 
 
             return sb.ToString();
+        }
+
+        private string FullPackageReading(LSBImportOptions lSBImportOptions, ref int _indentDepth, int indentSpaces)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // NOTE: local depth here for local command, since it's placed in a prefab blob.
+            int indentDepth = 0;
+
+            // styling scripts
+            sb.AppendLine("#scope(readingfull)".Indent(indentDepth, indentSpaces));
+            sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+            indentDepth++;
+
+            sb.AppendLine("#var(\"complextext.Layout\",\"Xenon.Readings::SideBarReading\")".Indent(indentDepth, indentSpaces));
+            sb.AppendLine("#var(\"tlit.Layout\",\"Xenon.Readings::SideBarResponse\")".Indent(indentDepth, indentSpaces));
+
+            // setup scripts -> handled by surrounding scripted block
+
+            // do title first without text??
+            if (!PreTitle.Any())
+            {
+
+            }
+            else
+            {
+                foreach (var group in PreTitle)
+                {
+                    sb.AppendLine(group.XenonCmdText(ReadingTitle, ReadingReference, ref indentDepth, indentSpaces));
+                }
+            }
+            // handle any pre-reading content??
+            // tlit but what about lit images -> uses complex text
+
+            // create reading text
+            sb.AppendLine("#complextext".Indent(indentDepth, indentSpaces));
+            sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+            indentDepth++;
+
+            sb.AppendLine($"text={{{ReadingTitle}}}".Indent(indentDepth, indentSpaces));
+            sb.AppendLine($"text={{{ReadingReference}}}".Indent(indentDepth, indentSpaces));
+            sb.AppendLine($"text={{ESV}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
+
+            sb.AppendLine("ctext={".Indent(indentDepth, indentSpaces));
+            indentDepth++;
+
+            sb.AppendLine(LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault().Elements, ref indentDepth, indentSpaces));
+
+            indentDepth--;
+            sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+            indentDepth--;
+            sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+
+            // do post-reading responses
+            foreach (var group in PostTitle)
+            {
+                sb.AppendLine(group.XenonCmdText(ReadingTitle, ReadingReference, ref indentDepth, indentSpaces));
+            }
+
+
+            // teardowns -> handled by surrounding scripted block
+
+            indentDepth--;
+            sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+
+            // dump command into sucripted block
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                                                     .GetManifestResourceNames()
+                                                                     .FirstOrDefault(x => x.Contains("PIPReading"));
+
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                .GetManifestResourceStream(name);
+
+            var prefabblob = "";
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                prefabblob = sr.ReadToEnd();
+            }
+
+            int indent = Regex.Match(prefabblob, @"^(?<indent>\$>)\$READING", RegexOptions.Multiline).Groups["indent"].Value.Length / 2;
+            string inject = sb.ToString().IndentBlock(indent, indentSpaces);
+
+
+            prefabblob = Regex.Replace(prefabblob, "\\$>", "    ");
+
+            prefabblob = Regex.Replace(prefabblob, @" +\$READING", inject);
+
+            return prefabblob.IndentBlock(_indentDepth, indentSpaces);
         }
 
         enum ReadingResponsePart

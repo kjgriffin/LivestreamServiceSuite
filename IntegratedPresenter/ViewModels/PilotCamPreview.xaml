@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Integrated_Presenter.ViewModels.PilotCamPreview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Integrated_Presenter.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="300">
+    <Grid>
+        <Border Background="#373737" Name="g_back" Padding="5" CornerRadius="20">
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" FontSize="30" Name="tbName" Foreground="#a0a0a0" VerticalAlignment="Center" HorizontalAlignment="Center">CAM NAME</TextBlock>
+                <Viewbox Grid.Row="1">
+
+                    <TextBlock Name="tbOnAir" Foreground="Red" FontWeight="Bold">ON AIR</TextBlock>
+
+                </Viewbox>
+                <Viewbox Grid.Row="2" Margin="5,0,5,0">
+                    <TextBlock FontSize="40" FontWeight="Bold" Name="tbPstName" Foreground="#efefef" VerticalAlignment="Center" HorizontalAlignment="Center">PRESET-Name</TextBlock>
+                </Viewbox>
+                <TextBlock Grid.Row="3" FontSize="35" Name="tbPstInfo" Foreground="#cfcfcf" VerticalAlignment="Center" HorizontalAlignment="Center">Description/info<LineBreak/>more info here</TextBlock>
+                <TextBlock Grid.Row="4" FontSize="40" Name="tbStatus" Foreground="Orange" VerticalAlignment="Center" HorizontalAlignment="Center">STATUS</TextBlock>
+
+                <Grid Grid.Row="6">
+                    <TextBlock FontSize="20" Name="tbaltstd" Foreground="#a7a7a7" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0">ALT/STD</TextBlock>
+                    <TextBlock FontSize="30" Name="tbPstAlt" Foreground="#a7a7a7" VerticalAlignment="Center" HorizontalAlignment="Center">ALT-PREST</TextBlock>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

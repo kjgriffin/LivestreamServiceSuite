@@ -86,6 +86,7 @@ namespace Xenon.Compiler
                 //"*/",
                 "//",
                 "::",
+                ">>",
                 "?",
                 ":", // hopefully this doesn't break anything
                 ";",

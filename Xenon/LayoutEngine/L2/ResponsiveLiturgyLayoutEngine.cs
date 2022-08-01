@@ -354,10 +354,7 @@ namespace Xenon.LayoutEngine.L2
 
             // now compute the height of every word in the the block's lines
             SizedCandidateBlock sblock;
-            using (Graphics gfx = Graphics.FromHwnd(IntPtr.Zero))
-            {
-                sblock = SizedCandidateBlock.CreateSized(block, gfx, layout);
-            }
+            sblock = SizedCandidateBlock.CreateSized(block, layout);
 
             // use a greed stuffing check to see what the 'maximum' quantity of words we can stuff in is
 

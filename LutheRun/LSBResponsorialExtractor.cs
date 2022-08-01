@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LutheRun
@@ -11,7 +12,12 @@ namespace LutheRun
     internal static class LSBResponsorialExtractor
     {
 
-        internal class LiturgicalStatement
+        internal interface ILineWritable
+        {
+            void Write(StringBuilder sb, ref int indentDepth, int indentSpaces);
+        }
+
+        internal class LiturgicalStatement : ILineWritable
         {
             public string Speaker { get; set; }
             public List<TextBlock> TextSegments { get; set; } = new List<TextBlock>();
@@ -43,33 +49,76 @@ namespace LutheRun
             }
         }
 
-        internal struct TextBlock
+        internal class Paragraph : ILineWritable
         {
-            public string Text { get; private set; }
-            public bool Bold { get; private set; } = false;
-            public bool SpecialSymbol { get; private set; } = false;
-            public bool WhitespaceSensitive { get; private set; } = false;
-            public TextBlock(string text, bool isbold = false, bool issymbol = false, bool whitespacesensitive = false)
-            {
-                Text = text;
-                Bold = isbold;
-                SpecialSymbol = issymbol;
-                WhitespaceSensitive = whitespacesensitive;
-            }
+            public List<TextBlock> TextSegments { get; set; } = new List<TextBlock>();
 
             public void Write(StringBuilder sb, ref int indentDepth, int indentSpaces)
             {
-                string font = SpecialSymbol ? "altfont='LSBSymbol'" : "";
-                string bold = Bold ? "style='bold'" : "";
-                string prefix = SpecialSymbol || Bold ? " " : "";
-                string ws = WhitespaceSensitive ? "xml:space=\"preserve\"" : "";
-                sb.Append($"<text{prefix}{font}{(Bold ? " " : "")}{bold}{(WhitespaceSensitive ? " " : "")}{ws}>".Indent(indentDepth, indentSpaces));
+                sb.Append($"<block>".Indent(indentDepth, indentSpaces));
+                indentDepth++;
+                foreach (var run in TextSegments)
+                {
+                    sb.AppendLine();
+                    run.Write(sb, ref indentDepth, indentSpaces);
+                }
+                sb.AppendLine();
+                indentDepth--;
+                sb.Append("</block>".Indent(indentDepth, indentSpaces));
+            }
+
+        }
+
+
+
+        internal struct TextBlock
+        {
+            public string Text { get; private set; }
+            public string AltFont { get; private set; } = "";
+            public bool WhitespaceSensitive { get; private set; } = false;
+            public string RawAttr { get; private set; } = "";
+            public string RawStyle { get; private set; } = "";
+
+            public TextBlock(string text, bool isbold = false, bool issymbol = false, bool whitespacesensitive = false)
+            {
+                Text = text;
+                if (isbold)
+                {
+                    RawStyle = "bold";
+                }
+                AltFont = issymbol ? "LSBSymbol" : "";
+                WhitespaceSensitive = whitespacesensitive;
+            }
+            public TextBlock(string text, string rawstyle = "", string altfont = "", string rawattr = "")
+            {
+                Text = text;
+                RawStyle = rawstyle;
+                AltFont = altfont;
+                WhitespaceSensitive = false;
+                RawAttr = rawattr;
+            }
+            public TextBlock(string text)
+            {
+                Text = text;
+            }
+
+
+            public void Write(StringBuilder sb, ref int indentDepth, int indentSpaces)
+            {
+                string font = string.IsNullOrWhiteSpace(AltFont) ? "" : $" altfont='{AltFont}'";
+                string style = string.IsNullOrWhiteSpace(RawStyle) ? "" : $" style='{RawStyle}'";
+                string rat = string.IsNullOrWhiteSpace(RawAttr) ? "" : $" {RawAttr}";
+
+                string ws = WhitespaceSensitive ? " xml:space=\"preserve\"" : "";
+
+
+                sb.Append($"<text{font}{style}{ws}{rat}>".Indent(indentDepth, indentSpaces));
                 sb.Append(Text);
                 sb.Append("</text>");
             }
         }
 
-        public static string GenerateSource(List<LiturgicalStatement> lines, ref int indentDepth, int indentSpaces)
+        public static string GenerateSource(List<ILineWritable> lines, ref int indentDepth, int indentSpaces)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -164,9 +213,78 @@ namespace LutheRun
                 }
                 lastline = line;
             }
-            return GenerateSource(Lines, ref indentDepth, indentSpaces);
+            return GenerateSource(Lines.Select(x => x as ILineWritable).ToList(), ref indentDepth, indentSpaces);
 
         }
+
+        public static string ExtractPoetryReading(List<IElement> p_elements, ref int indentDepth, int indentSpaces, bool keepVerseNumbering = true)
+        {
+            List<Paragraph> Lines = new List<Paragraph>();
+
+            // 1. Iterate over childern (expect all to be <p> tags)
+            foreach (var ptag in p_elements.Where(c => c.LocalName == "p"))
+            {
+                Paragraph rline = new Paragraph();
+
+                string rcontent = ptag.InnerHtml;
+
+                // expected output
+                // <p>
+                // <text>content</text>
+                // <text style='superscript' rules='non-break-next'>12</text>
+                // <text>more content</text>
+                // </p>
+
+                // replace whitespace with marker
+                // replace verse with marker
+
+                // then split
+                // then dump into textblocks
+
+
+                string wformat = Regex.Replace(rcontent, "<span class=\"Apple-tab-span\" style=\"white-space:pre; mso-tab-count: 1;\">\\s<\\/span>", " "); // we'll handle tabs with single space
+                string vformat = Regex.Replace(wformat, "<sup class=\"verse-number\">(?<vnum>\\d+)</sup>", m => $" #[{m.Groups["vnum"].Value}] ");
+
+                // may want to preserve/handle <br> ....
+                // either remove or keep/translate to double space...
+                var segments = vformat.Split("<br>", StringSplitOptions.RemoveEmptyEntries);
+
+                for (int i = 0; i < segments.Length; i++)
+                {
+                    // split out into verses...
+                    var chunks = segments[i].Split("#", StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var chunk in chunks)
+                    {
+                        // check for verse number
+                        string ctext = chunk;
+                        var match = Regex.Match(chunk, @"^\[(?<vnum>\d+)\]");
+                        if (match.Success)
+                        {
+                            ctext = Regex.Replace(chunk, @"^\[\d+\]\s+", "");
+                            rline.TextSegments.Add(new TextBlock(match.Groups["vnum"].Value, rawstyle: "superscript", rawattr: "rules='nbspn'"));
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(ctext))
+                        {
+                            rline.TextSegments.Add(new TextBlock(ctext));
+                        }
+                    }
+
+                    if (i < segments.Length - 1)
+                    {
+                        rline.TextSegments.Add(new TextBlock("  ", whitespacesensitive: true));
+                    }
+
+                }
+
+                Lines.Add(rline);
+
+            }
+            return GenerateSource(Lines.Select(x => x as ILineWritable).ToList(), ref indentDepth, indentSpaces);
+
+        }
+
 
         public static string ExtractResponsiveLiturgy(List<IElement> p_elements, ref int indentDepth, int indentSpaces)
         {
@@ -243,7 +361,7 @@ namespace LutheRun
                 }
                 lastline = line;
             }
-            return GenerateSource(Lines, ref indentDepth, indentSpaces);
+            return GenerateSource(Lines.Select(x => x as ILineWritable).ToList(), ref indentDepth, indentSpaces);
         }
 
         public static string ExtractResponsiveLiturgy(IElement sourceHTML, ref int indentDepth, int indentSpaces)

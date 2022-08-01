@@ -1,9 +1,10 @@
 ﻿using BMDSwitcherAPI;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IntegratedPresenter.BMDSwitcher
+namespace SwitcherControl.BMDSwitcher
 {
     class UpstreamKeyMonitor : IBMDSwitcherKeyCallback
     {
@@ -14,7 +15,7 @@ namespace IntegratedPresenter.BMDSwitcher
         public event SwitcherEventHandler UpstreamKeyCutChanged;
 
         public event SwitcherEventHandler UpstreamKeyMaskChanged;
-       
+
 
         void IBMDSwitcherKeyCallback.Notify(_BMDSwitcherKeyEventType eventType)
         {

@@ -24,6 +24,13 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 
         internal static void Render(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, AdvancedDrawingBoxLayout image, Image<Bgra32> src)
         {
+
+            if (image.ForceBasic)
+            {
+                CommonDrawingBoxRenderer.Render(ibmp, ikbmp, image, src);
+                return;
+            }
+
             // we're going to destroy/mutilate the pixel values if we color-replace/crop
             // work on a copy since we'll still need the original to start again on the key
 
@@ -55,9 +62,19 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                 for (int x = 0; x < srcpy.Width; x++)
                 {
                     var pix = srcpy[x, y];
-                    if (pix.R == 0 && pix.G == 0 && pix.B == 0)
+                    if (image.AlphaReplace)
                     {
-                        srcpy[x, y] = new Bgra32(pix.R, pix.G, pix.B, 0);
+                        if (pix.R == 0 && pix.G == 0 && pix.B == 0)
+                        {
+                            srcpy[x, y] = new Bgra32(pix.R, pix.G, pix.B, 0);
+                        }
+                    }
+                    if (image.AlphaToGrey)
+                    {
+                        if (pix.A < 255)
+                        {
+                            srcpy[x, y] = new Bgra32(pix.A, pix.A, pix.A, 255);
+                        }
                     }
                 }
             }
@@ -72,18 +89,20 @@ namespace Xenon.Renderer.Helpers.ImageSharp
             {
                 Mode = ResizeMode.Max,
                 Size = image.Box.Rectangle.Size,
-                
+
             };
             // I don't think we want modify the source image- we're not sure we actually own it here
             srcpy.Mutate(ctx => ctx.Resize(ropts));
 
-            Point coffset = new Point((image.Box.Size.Width - srcpy.Width)/2 + image.Box.Origin.Point.X, (image.Box.Size.Height - srcpy.Height)/2 + image.Box.Origin.Point.Y);
+            Point coffset = new Point((image.Box.Size.Width - srcpy.Width) / 2 + image.Box.Origin.Point.X, (image.Box.Size.Height - srcpy.Height) / 2 + image.Box.Origin.Point.Y);
 
             ibmp.Mutate_OverlayImage(srcpy, coffset);
 
             // draw key on directly
-            ikbmp.Mutate_OverlayImage(srcpy, coffset);
-
+            if (!image.ForceSolidKey)
+            {
+                ikbmp.Mutate_OverlayImage(srcpy, coffset);
+            }
         }
 
 

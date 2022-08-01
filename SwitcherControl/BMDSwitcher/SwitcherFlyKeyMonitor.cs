@@ -1,12 +1,13 @@
 ﻿using BMDSwitcherAPI;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IntegratedPresenter.BMDSwitcher
+namespace SwitcherControl.BMDSwitcher
 {
     public delegate void KeyFrameEventHandler(object sender, int keyframe);
-    class SwitcherFlyKeyMonitor: IBMDSwitcherKeyFlyParametersCallback
+    class SwitcherFlyKeyMonitor : IBMDSwitcherKeyFlyParametersCallback
     {
 
         public event KeyFrameEventHandler KeyFrameChanged;

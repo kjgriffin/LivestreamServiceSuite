@@ -14,7 +14,7 @@ namespace LutheRun
         [BoolSetting]
         public bool UseUpNextForHymns { get; set; } = true;
         [BoolSetting]
-        public bool UsePIPHymns { get; set; } = false;
+        public bool UsePIPHymns { get; set; } = true;
 
         public bool OnlyKnownCaptions { get; set; } = true;
         [BoolSetting]
@@ -23,6 +23,17 @@ namespace LutheRun
         public bool UseComplexIntroit { get; set; } = true;
         [BoolSetting]
         public bool UseComplexReading { get; set; } = true;
+        /// <summary>
+        /// Requires ComplexReadings. Used to bring the full text in, but does not force the whole package.
+        /// </summary>
+        [BoolSetting]
+        public bool FullTextReadings { get; set; } = false;
+        /// <summary>
+        /// Requires ComplexReadings. Will include the full reading text, but packaged (to handle titles/scripts) accordingly.
+        /// Will attempt to ignore introit/responsive psalms if InferResponsivePsalmReadingsAsTitledLiturgy is enabled
+        /// </summary>
+        [BoolSetting]
+        public bool FullPackageReadings { get; set; } = true;
         [BoolSetting]
         public bool InferResponsivePslamReadingsAsTitledLiturgy { get; set; } = true;
         [BoolSetting]
@@ -34,7 +45,7 @@ namespace LutheRun
         [BoolSetting]
         public bool UseThemedCreeds { get; set; } = true;
         [BoolSetting]
-        public bool UsePIPCreeds { get; set; } = false;
+        public bool UsePIPCreeds { get; set; } = true;
         [BoolSetting]
         public bool UseThemedHymns { get; set; } = true;
 

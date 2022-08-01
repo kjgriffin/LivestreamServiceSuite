@@ -1,0 +1,33 @@
+﻿#scripted
+{
+$>first=#script
+$>{
+$>$>#PIP Reading;
+$>$>!displaysrc='Resource_#_forslide_#.png';
+$>$>!keysrc='Resource_#_forkey_#.png';
+$>$>@arg0:DSK1Off[Kill Key];
+$>$>@arg1:PresetSelect(6)[Preset Lectern];
+$>$>@<2>arg0:USK1Off[Kill Key];
+$>$>@arg1:DelayMs(100);
+$>$>@<1>arg1:USK1Fill(6)[Fill PIP Lectern];
+$>$>@<2>argd8:PlacePIP(-6.4,0,1,1,6.4,6.4,0,0)[Setup PIP];
+$>$>@<2>arg0:USK1TieOn[Tie PIP];
+$>$>@arg0:DSK1TieOn[Tie DSK];
+$>$>arg1:DelayMs(100);
+$>$>arg0:AutoTrans[Take Reading];
+$>$>arg1:DelayMs(1100);
+$>$>arg0:DSK1TieOff[Un Tie];
+$>}
+
+$>duplast=#script
+$>{
+$>$>#PIP Teardown;
+$>$><2>arg1:ProgramSelect(6)[Force Lectern];
+$>$>arg0:USK1TieOff[Un Tie];
+$>$>arg0:USK1Off[Kill Key];
+$>$>arg0:DSK1FadeOff[Kill DSK];
+$>}
+
+$>$READING
+
+}

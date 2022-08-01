@@ -118,6 +118,7 @@ namespace Configurations.FeatureConfig
         public bool View_AdvancedDVE { get; set; }
         public bool View_DefaultOpenAdvancedPIPLocation { get; set; }
         public bool View_AuxOutput { get; set; }
+        public bool View_ProgramBusOverPresetBus { get; set; }
 
         public static IntegratedPresentationFeatures_View Default()
         {
@@ -130,9 +131,9 @@ namespace Configurations.FeatureConfig
                 View_AdvancedPresentation = false,
                 View_DefaultOpenAdvancedPIPLocation = false,
                 View_DefaultOpenAudioPlayer = false,
+                View_ProgramBusOverPresetBus = true, // legacy = false, but I think 'true' better represents what should happen
             };
         }
     }
-
 
 }

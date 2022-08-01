@@ -135,6 +135,9 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+            <MenuItem Header="Analyze">
+                <MenuItem Foreground="Black" Click="ClickAnalyzePilotPresetUse" Header="Compute Pilot Preset Use"></MenuItem>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem  Foreground="Black" Header="Commands" Click="ClickHelpCommands">
                     <MenuItem.Icon>

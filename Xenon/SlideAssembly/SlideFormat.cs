@@ -31,5 +31,6 @@ namespace Xenon.SlideAssembly
         CustomDraw,
         ResponsiveLiturgyTitledVerse,
         AdvancedImages,
+        ComplexText,
     }
 }

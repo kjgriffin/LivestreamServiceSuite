@@ -38,6 +38,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.Sermon] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "SermonLayoutInfo_Default.json"),
             [LanguageKeywordCommand.CustomText] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), ""),
             [LanguageKeywordCommand.CustomDraw] = (new ShapeImageAndTextLayoutInfo(), new ShapeImageAndTextRenderer(), ""),
+            [LanguageKeywordCommand.ComplexText] = (new ComplexShapeImageAndTextLayoutInfo(), new ComplexShapeImageAndTextRenderer(), ""),
             [LanguageKeywordCommand.TextHymn] = (new TextHymnLayoutInfo(), new HymnTextVerseRenderer(), ""),
             [LanguageKeywordCommand.LiturgyImage] = (new AdvancedImagesSlideLayoutInfo(), new AdvancedImageSlideRenderer(), ""),
         };
@@ -119,6 +120,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.UpNext] = "upnext",
             [LanguageKeywordCommand.CustomText] = "customtext",
             [LanguageKeywordCommand.CustomDraw] = "customdraw",
+            [LanguageKeywordCommand.ComplexText] = "complextext",
         };
 
         public static Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata>()
@@ -162,6 +164,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.UpNext] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTUpNext()),
             [LanguageKeywordCommand.CustomText] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTShapesAndText()),
             [LanguageKeywordCommand.CustomDraw] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTShapesImagesAndText()),
+            [LanguageKeywordCommand.ComplexText] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTShapesImagesAndTextComplex()),
         };
 
     }
@@ -233,6 +236,7 @@ namespace Xenon.Compiler
         CustomDraw,
         TitledLiturgyVerse2,
         ReStitchedHymn,
+        ComplexText,
     }
 
 }

@@ -36,6 +36,8 @@ namespace Xenon.Renderer.Helpers.ImageSharp
             var scpy = src.Clone();
             scpy.Mutate(ctx => ctx.Resize(ropts));
 
+            // apply image processing here
+
 
             //ibmp.Mutate(ctx => ctx.DrawImage(scpy, layout.Box.Origin.Point, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.Clear, 1f));
             ibmp.Mutate_OverlayImage(scpy, layout.Box.Origin.Point);

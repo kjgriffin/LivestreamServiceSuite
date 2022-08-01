@@ -1,9 +1,10 @@
 ﻿using BMDSwitcherAPI;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IntegratedPresenter
+namespace SwitcherControl.BMDSwitcher
 {
     public delegate void SwitcherEventHandler(object sender, object args);
     public class SwitcherMonitor : IBMDSwitcherCallback

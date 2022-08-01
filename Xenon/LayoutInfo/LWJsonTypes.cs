@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SixLabors.ImageSharp.Drawing.Processing;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -96,10 +98,50 @@ namespace Xenon.LayoutInfo
         public int BorderWidth { get; set; }
         public LWJColor FillColor { get; set; }
         public LWJColor KeyFillColor { get; set; }
+
+        public LWJFillBrush FillBrush { get; set; }
+        public LWJFillBrush KeyFillBrush { get; set; }
+
         public LWJColor BorderColor { get; set; }
         public LWJColor KeyBorderColor { get; set; }
 
+        public IBrush GetFillBrush()
+        {
+            if (FillBrush != null)
+            {
+                return FillBrush.GetBrush();
+            }
+            var col = FillColor?.ToColor() ?? SixLabors.ImageSharp.Color.Black;
+            return new SixLabors.ImageSharp.Drawing.Processing.SolidBrush(col);
+        }
+
+        public IBrush GetKeyFillBrush()
+        {
+            if (KeyFillBrush != null)
+            {
+                return KeyFillBrush.GetBrush();
+            }
+            var col = KeyFillColor?.ToColor() ?? SixLabors.ImageSharp.Color.Black;
+            return new SixLabors.ImageSharp.Drawing.Processing.SolidBrush(col);
+        }
+
+
     }
+
+    class LWJFillBrush
+    {
+        public string Mode { get; set; } = "linear";
+        public LWJColor Stop1 { get; set; } = new LWJColor();
+        public LWJColor Stop2 { get; set; } = new LWJColor();
+        public LWJPoint Point1 { get; set; } = new LWJPoint();
+        public LWJPoint Point2 { get; set; } = new LWJPoint();
+
+        public IBrush GetBrush()
+        {
+            return new SixLabors.ImageSharp.Drawing.Processing.LinearGradientBrush(Point1.PointF, Point2.PointF, GradientRepetitionMode.None, new ColorStop[] { new ColorStop(0, Stop1.ToColor()), new ColorStop(1, Stop2.ToColor()) });
+        }
+    }
+
 
     class LWJTransformSet
     {

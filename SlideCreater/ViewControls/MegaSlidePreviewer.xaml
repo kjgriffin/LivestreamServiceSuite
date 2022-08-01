@@ -12,7 +12,7 @@
             <RowDefinition Height="0.148*"></RowDefinition>
         </Grid.RowDefinitions>
         <Viewbox Stretch="Uniform" Grid.Row="0" HorizontalAlignment="Left">
-            <StackPanel Orientation="Horizontal" Width="4840" Height="1080">
+            <StackPanel Orientation="Horizontal" Width="5840" Height="1080">
                 <slidecreater:SlideContentPresenter x:Name="main"></slidecreater:SlideContentPresenter>
                 <slidecreater:SlideContentPresenter x:Name="key"></slidecreater:SlideContentPresenter>
                 <Border Width="1000" Background="White">
@@ -22,6 +22,14 @@
                         </Viewbox>
                     </ScrollViewer>
                 </Border>
+                <Border Width="1000" Background="White">
+                    <ScrollViewer HorizontalScrollBarVisibility="Visible" Width="1000">
+                        <Viewbox>
+                            <TextBlock Name="tbPilotText" Foreground="Black" FontSize="80" TextWrapping="NoWrap">Pilot Text</TextBlock>
+                        </Viewbox>
+                    </ScrollViewer>
+                </Border>
+
             </StackPanel>
         </Viewbox>
         <Grid Grid.Row="1" Background="#272727">
@@ -32,6 +40,9 @@
                     </Border>
                     <Border Name="bHasScriptTag" Background="Orange" Margin="0,0,0,0">
                         <Label FontSize="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">Has Script</Label>
+                    </Border>
+                    <Border Name="bHasPilotTag" Background="ForestGreen" Margin="0,0,0,0">
+                        <Label FontSize="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">Has Pilot</Label>
                     </Border>
                     <Label Foreground="White" FontWeight="Bold" VerticalAlignment="Center">Postset:</Label>
                     <Label Foreground="White" Name="postset" VerticalAlignment="Center"></Label>

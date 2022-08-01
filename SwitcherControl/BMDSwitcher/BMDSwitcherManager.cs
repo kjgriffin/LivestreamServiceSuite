@@ -14,7 +14,7 @@ using log4net;
 using System.IO;
 using System.Threading;
 
-namespace IntegratedPresenter
+namespace SwitcherControl.BMDSwitcher
 {
 
     public delegate void SwitcherStateChange(BMDSwitcherState args);
@@ -903,7 +903,7 @@ namespace IntegratedPresenter
                 long sourceid;
                 inputsource.GetInputId(out sourceid);
 
-                var map = _config.Routing.Where(r => (long)r.PhysicalInputId == sourceid);
+                var map = _config.Routing.Where(r => r.PhysicalInputId == sourceid);
                 if (map != null && map.Count() > 0)
                 {
                     var source = map.First();
@@ -1217,7 +1217,7 @@ namespace IntegratedPresenter
             _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {sourceID}");
             if (GoodConnection)
             {
-                _BMDSwitcherMixEffectBlock1.SetPreviewInput((long)sourceID);
+                _BMDSwitcherMixEffectBlock1.SetPreviewInput(sourceID);
             }
         }
 
@@ -1226,7 +1226,7 @@ namespace IntegratedPresenter
             _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {sourceID}");
             if (GoodConnection)
             {
-                _BMDSwitcherMixEffectBlock1.SetProgramInput((long)sourceID);
+                _BMDSwitcherMixEffectBlock1.SetProgramInput(sourceID);
             }
         }
 

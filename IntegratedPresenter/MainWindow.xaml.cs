@@ -26,6 +26,9 @@ using Configurations.FeatureConfig;
 using IntegratedPresenterAPIInterop;
 using Integrated_Presenter.ViewModels;
 using System.Windows.Controls;
+using CCUI_UI;
+using SwitcherControl.BMDSwitcher;
+using Integrated_Presenter.Presentation;
 
 namespace IntegratedPresenter.Main
 {
@@ -54,6 +57,8 @@ namespace IntegratedPresenter.Main
 
         System.Threading.ManualResetEvent autoTransMRE = new System.Threading.ManualResetEvent(true);
 
+
+        CCPUPresetMonitor _camMonitor;
 
         List<SlidePoolSource> SlidePoolButtons;
 
@@ -96,7 +101,11 @@ namespace IntegratedPresenter.Main
             Btn_Cond1.DataContext = _Cond1;
             Btn_Cond2.DataContext = _Cond2;
 
+            _logger.Info("Starting Camera Server");
 
+            ILog pilotLogger = LogManager.GetLogger("PilotLogger");
+            _camMonitor = new CCPUPresetMonitor(headless: true, pilotLogger);
+            _camMonitor.OnCommandUpdate += _camMonitor_OnCommandUpdate;
 
             // set a default config
             SetDefaultConfig();
@@ -161,6 +170,13 @@ namespace IntegratedPresenter.Main
             gp_timer_2.Interval = 1000;
             gp_timer_2.Elapsed += Gp_timer_2_Elapsed1;
             gp_timer_2.Start();
+
+            UpdatePilotUI();
+        }
+
+        private void _camMonitor_OnCommandUpdate(string cName, params string[] args)
+        {
+            UpdatePilotUIStatus(cName, args);
         }
 
         private void Gp_timer_2_Elapsed1(object sender, ElapsedEventArgs e)
@@ -281,6 +297,7 @@ namespace IntegratedPresenter.Main
             ResetSlideMediaTimes();
             UpdateSlideControls();
             UpdateMediaControls();
+            UpdatePilotUI();
         }
 
         IBMDSwitcherManager switcherManager;
@@ -569,6 +586,24 @@ namespace IntegratedPresenter.Main
             // optionally update previews
             CurrentPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
             NextPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
+
+
+            pilotUI?.FireOnSwitcherStateChangedForAutomation(_lastState, _config, PredictNextSlideTakesLiveCam());
+        }
+
+        private bool PredictNextSlideTakesLiveCam()
+        {
+            // liturgy does
+            // full does not (usually)
+            // video does not (usually)
+            // slide.... (perhaps we ought to read actions and see if any set the program source, or call an auto trans?)
+            // default to yes??
+            if (Presentation?.Next?.Type == SlideType.Liturgy || Presentation?.Next?.Type == SlideType.Action)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void UpdateUSK1Styles()
@@ -1257,6 +1292,8 @@ namespace IntegratedPresenter.Main
                     TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, true, SlidePoolSource0.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(1);
+                else if (Keyboard.IsKeyDown(Key.OemTilde))
+                    PilotFireLast(1);
                 else
                     ClickPreset(1);
             }
@@ -1272,6 +1309,8 @@ namespace IntegratedPresenter.Main
                     TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, true, SlidePoolSource1.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(2);
+                else if (Keyboard.IsKeyDown(Key.OemTilde))
+                    PilotFireLast(2);
                 else
                     ClickPreset(2);
             }
@@ -1287,6 +1326,8 @@ namespace IntegratedPresenter.Main
                     TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, true, SlidePoolSource2.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(3);
+                else if (Keyboard.IsKeyDown(Key.OemTilde))
+                    PilotFireLast(3);
                 else
                     ClickPreset(3);
             }
@@ -1440,6 +1481,22 @@ namespace IntegratedPresenter.Main
                 SetCondition2(!_Cond2.Value);
             }
 
+            // CCU
+            if (e.Key == Key.Y)
+            {
+                ToggleAutoPilot();
+            }
+            if (e.Key == Key.U)
+            {
+                _camMonitor?.ShowUI();
+            }
+
+            if (e.Key == Key.OemPipe)
+            {
+                TogglePilotMode();
+            }
+
+
 
             // numpad controls keyers
             #region keyers
@@ -1590,6 +1647,27 @@ namespace IntegratedPresenter.Main
                 OverrideSlideModeWithKey(1);
             }
 
+        }
+
+        private void PilotFireLast(int v)
+        {
+            //if (PilotMode == -1)
+            //{
+            pilotUI?.FireLast(v, _camMonitor);
+            //}
+            // let it re-fire existing slide
+        }
+
+        private void TogglePilotMode()
+        {
+            if (PilotMode == 0)
+            {
+                PilotMode = -1;
+            }
+            else
+            {
+                PilotMode = 0;
+            }
         }
 
         private void ToggleUSK1Type()
@@ -2484,6 +2562,8 @@ namespace IntegratedPresenter.Main
                 }
                 // At this point we've switched to the slide
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
+
+                PerformAutoPilotActions(Presentation.EffectiveCurrent.AutoPilotActions);
             }
         }
 
@@ -2675,6 +2755,9 @@ namespace IntegratedPresenter.Main
                 // At this point we've switched to the slide
                 _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {s.Type}. About to call SlideDriveVideo_Action() for slide {s.Title}");
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
+
+
+                PerformAutoPilotActions(Presentation.EffectiveCurrent.AutoPilotActions);
             }
 
         }
@@ -2851,6 +2934,9 @@ namespace IntegratedPresenter.Main
                 // Do Action on current slide
                 _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. About to call SlideDriveVideo_Action() for slide {Presentation.EffectiveCurrent.Title}");
                 SlideDriveVideo_Action(Presentation.EffectiveCurrent);
+
+
+                PerformAutoPilotActions(Presentation.EffectiveCurrent.AutoPilotActions);
             }
 
         }
@@ -2875,6 +2961,21 @@ namespace IntegratedPresenter.Main
                 if (_FeatureFlag_MRETransition)
                 {
                     autoTransMRE.Reset();
+                }
+            }
+        }
+
+        // TODO: add this to config....
+        private bool _FeatureFlag_EnableAutoPilot = true;
+        private void PerformAutoPilotActions(List<IPilotAction> actions)
+        {
+            if (_FeatureFlag_EnableAutoPilot)
+            {
+                _logger.Info($"Performing AutoPilotActions for slide.");
+                foreach (var preset in actions)
+                {
+                    _logger.Info($"Requesting execution of preset: {preset.DisplayInfo}");
+                    preset.Execute(_camMonitor, 8);
                 }
             }
         }
@@ -3414,7 +3515,7 @@ namespace IntegratedPresenter.Main
         private void ShowAdvancedPresControls()
         {
             Width = Width + Width / 4;
-            gcAdvancedPresentation.Width = new GridLength(1, GridUnitType.Star);
+            gcAdvancedPresentation.Width = new GridLength(1.2, GridUnitType.Star);
         }
 
         private void HideAdvancedPresControls()
@@ -3497,6 +3598,7 @@ namespace IntegratedPresenter.Main
             switcherManager?.Close();
             audioPlayer?.Close();
             pipctrl?.Close();
+            _camMonitor?.Shutdown();
             _logger.Info("Integrated Presenter requested to close by USER");
         }
 
@@ -3637,14 +3739,20 @@ namespace IntegratedPresenter.Main
 
         private void ShowAdvancedPIPControls()
         {
-            grAdvancedPIP.Height = new GridLength(1, GridUnitType.Star);
+            grd_advanced.Height = new GridLength(2.35, GridUnitType.Star);
+            gr_advanced_pip.Visibility = Visibility.Visible;
+            UpdateUIPIPPlaceKeys();
+            UpdateUIPIPPlaceKeysActiveState();
         }
 
         private void HideAdvancedPIPControls()
         {
             //var heightreduction = grAdvancedPIP.ActualHeight;
-            grAdvancedPIP.Height = new GridLength(0);
             //Height -= heightreduction;
+            grd_advanced.Height = new GridLength(0);
+            gr_advanced_pip.Visibility = Visibility.Collapsed;
+            UpdateUIPIPPlaceKeys();
+            UpdateUIPIPPlaceKeysActiveState();
         }
 
         private void ToggleTransBkgd()
@@ -3950,15 +4058,17 @@ namespace IntegratedPresenter.Main
         private void ShowAuxButtonControls()
         {
             _FeatureFlag_showAuxButons = true;
-            gridbtns.Width = 770;
-            gcAdvancedProjector.Width = new GridLength(1.2, GridUnitType.Star);
+            //gridbtns.Width = 770;
+            //gcAdvancedProjector.Width = new GridLength(1.2, GridUnitType.Star);
+            grd_aux.Height = new GridLength(1, GridUnitType.Star);
         }
 
         private void HideAuxButtonConrols()
         {
             _FeatureFlag_showAuxButons = false;
-            gridbtns.Width = 660;
-            gcAdvancedProjector.Width = new GridLength(0);
+            //gridbtns.Width = 660;
+            //gcAdvancedProjector.Width = new GridLength(0);
+            grd_aux.Height = new GridLength(0, GridUnitType.Star);
         }
 
 
@@ -4634,6 +4744,9 @@ namespace IntegratedPresenter.Main
         private void LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures config)
         {
             _m_integratedPresenterFeatures = config;
+
+            SetProgramPresetBusOrder(config.ViewSettings.View_ProgramBusOverPresetBus);
+
             SetViewPrevAfter(config.ViewSettings.View_PrevAfterPreviews);
             SetShowEffectiveCurrentPreview(config.ViewSettings.View_PreviewEffectiveCurrent);
             SetViewAdvancedPIP(config.ViewSettings.View_AdvancedDVE);
@@ -4913,6 +5026,86 @@ namespace IntegratedPresenter.Main
         {
             _logger.Debug($"Click: PIP Run to Preset 5");
             SetupPIPToPresetPosition(5);
+        }
+
+
+        private void ClickToggleProgramPresetBusSwap(object sender, RoutedEventArgs e)
+        {
+            SetProgramPresetBusOrder(cbViewProgramOverPresetBus.IsChecked);
+        }
+
+        bool _FeatureFlag_ViewProgramOverPresetBus = false;
+        private void SetProgramPresetBusOrder(bool programontop)
+        {
+            _FeatureFlag_ViewProgramOverPresetBus = programontop;
+            cbViewProgramOverPresetBus.IsChecked = _FeatureFlag_ViewProgramOverPresetBus;
+            const int top = 2;
+            const int bottom = 3;
+            if (_FeatureFlag_ViewProgramOverPresetBus)
+            {
+                gr_ProgramBus.SetValue(Grid.RowProperty, top);
+                gr_PresetBus.SetValue(Grid.RowProperty, bottom);
+            }
+            else
+            {
+                gr_PresetBus.SetValue(Grid.RowProperty, top);
+                gr_ProgramBus.SetValue(Grid.RowProperty, bottom);
+            }
+        }
+
+        private void ClickOpenCCUDriverUI(object sender, RoutedEventArgs e)
+        {
+            _camMonitor?.ShowUI();
+        }
+
+        private void ClickToggleAutoPilot(object sender, RoutedEventArgs e)
+        {
+            ToggleAutoPilot();
+        }
+
+        private void ToggleAutoPilot()
+        {
+            _FeatureFlag_EnableAutoPilot = !_FeatureFlag_EnableAutoPilot;
+            Dispatcher.Invoke(() =>
+            {
+                miCCUEnabled.IsChecked = _FeatureFlag_EnableAutoPilot;
+            });
+            UpdatePilotUI();
+        }
+
+        private void UpdatePilotUI()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                pilotUI.UpdateUI(_FeatureFlag_EnableAutoPilot, Presentation?.EffectiveCurrent?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.Next?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.CurrentSlide ?? 0, PilotMode);
+                pilotUI.FireOnSwitcherStateChangedForAutomation(_lastState, _config, PredictNextSlideTakesLiveCam());
+            });
+        }
+
+        /// <summary>
+        /// 0 = std, 1 = alt, -1 = last
+        /// </summary>
+        int PilotMode
+        {
+            get => _pilotMode;
+            set
+            {
+                _pilotMode = value;
+                UpdatePilotUI();
+            }
+        }
+
+        int _pilotMode = 0;
+
+        private void UpdatePilotUIStatus(string camName, params string[] args)
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => UpdatePilotUIStatus(camName, args));
+                return;
+            }
+
+            pilotUI.UpdateUIStatus(camName, args);
         }
     }
 }
