@@ -570,6 +570,46 @@ namespace Xenon.Compiler
             return res;
         }
 
+
+        public (Dictionary<string, Token> args, List<string> flags) ConsumeOptionalNamedArgsUnenclosed_WithFlags(params string[] paramnames)
+        {
+            Dictionary<string, Token> res = new Dictionary<string, Token>();
+            List<string> flags = new List<string>();
+            GobbleandLog(ConsumeArgList_StartSeq, $"Expected opening {ConsumeArgList_StartSeq} to begin parameter list.");
+
+            // inspect for each optional parameter until ending sequence
+            while (!Inspect(ConsumeArgList_EndSeq))
+            {
+                GobbleWhitespace();
+
+                // try a parameter
+                var name = Peek();
+                if (paramnames.Contains(name.tvalue))
+                {
+                    // eat it
+                    Consume();
+                    GobbleWhitespace();
+                    GobbleandLog("=", $"Expecting '=' before value of parameter {name}");
+                    var endtokens = new[] { ConsumeArgList_EndSeq, ConsumeArgList_SepSeq };
+                    string val = ConsumeUntil(endtokens, $"Expecting {endtokens} after value for parameter {name}.");
+                    GobbleWhitespace();
+                    Gobble(ConsumeArgList_SepSeq);
+                    res.Add(name.tvalue, val);
+                    GobbleWhitespace();
+                }
+                else // could be a flag
+                {
+                    Consume();
+                    GobbleWhitespace();
+                    Gobble(ConsumeArgList_SepSeq);
+                    flags.Add(name.tvalue);
+                }
+            }
+            Consume();
+            return (res, flags);
+        }
+
+
         /// <summary>
         /// Checks the current token matches 'text' and if so advances to next token. Logs messages on failure.
         /// </summary>

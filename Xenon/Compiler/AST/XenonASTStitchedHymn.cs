@@ -23,6 +23,10 @@ namespace Xenon.Compiler.AST
         public bool StitchAll { get; set; }
         public IXenonASTElement Parent { get; private set; }
 
+
+        public int MinMusicHeight { get; set; } = 95;
+        public int MaxWordHeight { get; set; } = 45;
+
         private string CopyrightTune
         {
             get
@@ -74,11 +78,22 @@ namespace Xenon.Compiler.AST
 
             if (Lexer.Inspect("("))
             {
-                var optionalparams = Lexer.ConsumeArgList(false, "stitchall");
-                if (optionalparams["stitchall"] == "stitchall")
+                var fargs = Lexer.ConsumeOptionalNamedArgsUnenclosed_WithFlags(new string[] { "minMusicHeight", "maxWordHeight" });
+
+                if (fargs.flags.Contains("stitchall"))
                 {
                     hymn.StitchAll = true;
                 }
+
+                if (fargs.args.TryGetValue("minMusicHeight", out var val) && int.TryParse(val.tvalue, out int mmh))
+                {
+                    hymn.MinMusicHeight = mmh;
+                }
+                if (fargs.args.TryGetValue("maxWordHeight", out val) && int.TryParse(val.tvalue, out int mwh))
+                {
+                    hymn.MaxWordHeight = mwh;
+                }
+
                 Lexer.GobbleWhitespace();
             }
 
@@ -215,13 +230,14 @@ namespace Xenon.Compiler.AST
             }
 
             bool unconfidentaboutlinetype = false;
+            List<string> badlines = new List<string>();
             LSBImageResource linemusic = null;
             List<LSBImageResource> linetexts = new List<LSBImageResource>();
             List<(LSBImageResource music, List<LSBImageResource> words)> CollatedLines = new List<(LSBImageResource music, List<LSBImageResource> words)>();
             for (int i = 0; i < ImageAssets.Count; i++)
             {
                 // check for new music line
-                if (ImageSizes[ImageAssets[i]].Height > 95)
+                if (ImageSizes[ImageAssets[i]].Height > MinMusicHeight)
                 {
                     if (ImageSizes[ImageAssets[i]].Height > 130 && i == 0)
                     {
@@ -237,13 +253,14 @@ namespace Xenon.Compiler.AST
                     linetexts = new List<LSBImageResource>();
                 }
                 // is text. attach to previous line
-                else if (ImageSizes[ImageAssets[i]].Height < 45)
+                else if (ImageSizes[ImageAssets[i]].Height < MaxWordHeight)
                 {
                     linetexts.Add(new LSBImageResource(ImageAssets[i], ImageSizes[ImageAssets[i]]));
                 }
                 else
                 {
                     unconfidentaboutlinetype = true;
+                    badlines.Add($"'{ImageAssets[i]}'[{i}]{ImageSizes[ImageAssets[i]].Height}h");
                 }
             }
             if (linemusic != null)
@@ -253,7 +270,7 @@ namespace Xenon.Compiler.AST
 
             if (unconfidentaboutlinetype)
             {
-                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Unconfident about linetype for hymn {HymnName}", ErrorName = "Autogen Unconfident", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
+                Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Unconfident about linetype of lines {string.Join(", ", badlines)} for hymn {HymnName}{Environment.NewLine}Consider providing optional param (minMusicHeight=XXX,maxWordHeight=XXX). Defaults to (95,45)", ErrorName = "Autogen Unconfident", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });
             }
             //if (unconfidentaboutlinetype)
             //{
@@ -370,14 +387,14 @@ namespace Xenon.Compiler.AST
             }
 
             // 2. add the height of all the images. if height > 1200??? then we'll do it by stanza
-            const int MaxHeightForImags = 1200;
+            const int MaxHeightForImages = 1200;
             int height = 0;
             foreach (var lineitem in ImageAssets)
             {
                 height += ImageSizes[lineitem].Height;
             }
 
-            if (height < MaxHeightForImags)
+            if (height < MaxHeightForImages)
             {
                 // do it all on one slide
                 Slide slide = new Slide();
