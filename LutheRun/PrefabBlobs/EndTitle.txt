@@ -2,23 +2,52 @@
 {
 $>#var("customdraw.Layout", "Xenon.CommonColored::EndPage")
 
-$>#customdraw
+$>#scripted
 $>{
-$>$>asset=("HCFront", "fg")
-$>$>asset=("HCLogo-white", "fg")
 
-$>/// </MANUAL_UPDATE name='EndPage Service Title'>
-$>$>text={$SERVICETITLE}
+$>$>first=#script
+$>$>{
+$>$>$>#PIP Postlude;
+$>$>$>!displaysrc='Resource_#_forslide_#.png';
+$>$>$>!keysrc='Resource_#_forkey_#.png';
+$>$>$>@arg0:DSK1Off[Kill Key];
+$>$>$>@arg0:USK1Off[Kill Key];
+$>$>$>@arg1:DelayMs(100);
+$>$>$>@<1>arg1:USK1Fill(5)[Fill PIP ORGAN];
+$>$>$>arg1:PresetSelect(4)[Preset Slide];
+$>$>$><2>argd8:PlacePIP(-4.8,-0.9,0.7,0.7,0,0,0,0)[Setup PIP];
+$>$>$><2>arg0:USK1TieOn[Tie PIP];
+$>$>$>arg1:DelayMs(100);
+$>$>$>arg0:AutoTrans[Take Hymn];
+$>$>}
+$>$>duplast=#script
+$>$>{
+$>$>$>#END;
+$>$>$>@<2>arg0:USK1TieOn[Tie PIP];
+$>$>$>@arg1:PresetSelect(4)[Preset Slide];
+$>$>$>@arg1:DelayMs(100);
+$>$>$>arg0:AutoTrans[Fade Off];
+$>$>}
 
-$>$>text={HOLY CROSS LUTHERAN CHURCH}
-$>$>text={KITCHENER ON.}
-$>$>text={Website}
-$>$>text={https:\//holycrosskitchener.org}
-$>$>text={Previous Services}
-$>$>text={https:\//holycrosskitchener.org/ worship-service-videos}
-$>$>text={YouTube}
-$>$>text={Holy Cross Audio Video}
+
+$>$>#customdraw
+$>$>{
+$>$>$>asset=("HCFront", "fg")
+$>$>$>asset=("HCLogo-white", "fg")
+
+$>$>$>/// </MANUAL_UPDATE name='EndPage Service Title'>
+$>$>$>text={$SERVICETITLE}
+
+$>$>$>text={HOLY CROSS LUTHERAN CHURCH}
+$>$>$>text={KITCHENER ON.}
+$>$>$>text={Website}
+$>$>$>text={https:\//holycrosskitchener.org}
+$>$>$>text={Previous Services}
+$>$>$>text={https:\//holycrosskitchener.org/ worship-service-videos}
+$>$>$>text={YouTube}
+$>$>$>text={Holy Cross Audio Video}
+$>$>}
+
 $>}
-
 
 }
