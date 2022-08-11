@@ -609,6 +609,64 @@ namespace Xenon.Compiler
             return (res, flags);
         }
 
+        /// <summary>
+        /// Consumes tokens, while keeping track of nesting. Reassembles all tokens to a raw string.
+        /// </summary>
+        /// <param name="nest_inc">Token that identifies new nested block</param>
+        /// <param name="nest_dec">Token that identifies end of nested block</param>
+        /// <param name="escape_inc">Token that identifes next token should be escaped for the purpose of nesting</param>
+        /// <param name="escape_dec">Token that identifes next token should be scaped for the purpose of nesting</param>
+        /// <returns></returns>
+        public string ConsumeNestedBlockAsRaw(string nest_inc = "{", string nest_dec = "}", string escape_inc = @"\", string escape_dec = @"\")
+        {
+            StringBuilder sb = new StringBuilder();
+
+            int depth = 0;
+
+            bool escapeinc = false;
+            bool escapedec = false;
+
+            do
+            {
+                var next = Consume();
+                if (next == escape_inc && PeekNext() == nest_inc)
+                {
+                    escapeinc = true;
+                }
+
+                if (escapeinc && next == nest_inc)
+                {
+                    escapeinc = false;
+                    continue;
+                }
+                else if (next == nest_inc)
+                {
+                    depth++;
+                }
+
+                if (next == escape_dec && PeekNext() == nest_dec)
+                {
+                    escapedec = true;
+                }
+
+                if (escapedec && next == nest_dec)
+                {
+                    escapeinc = false;
+                    continue;
+                }
+                else if (next == nest_dec)
+                {
+                    depth--;
+                }
+
+                sb.Append(next);
+            }
+            while (!InspectEOF() && depth > 0);
+
+
+            return sb.ToString();
+        }
+
 
         /// <summary>
         /// Checks the current token matches 'text' and if so advances to next token. Logs messages on failure.

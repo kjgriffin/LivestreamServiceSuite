@@ -20,6 +20,7 @@
     <None Remove="LayoutInfo\Defaults\AdvancedImagesSlideLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\AnthemTitleLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\ComplexShapeImageAndTextLayoutInfo_Default.json" />
+    <None Remove="LayoutInfo\Defaults\EngravingLayoutInfo_Default.json" />
     <None Remove="LayoutInfo\Defaults\LibBundles\Xenon.Green.lib.json" />
     <None Remove="LayoutInfo\Defaults\LibBundles\Xenon.Hymns.lib.json" />
     <None Remove="LayoutInfo\Defaults\LibBundles\Xenon.Purple.lib.json" />
@@ -50,6 +51,9 @@
     <EmbeddedResource Include="FontManagement\Fonts\lib\ARIALNI.TTF" />
     <EmbeddedResource Include="FontManagement\Fonts\lib\ariblk.ttf" />
     <EmbeddedResource Include="FontManagement\Fonts\lib\LSBSymbol.ttf" />
+    <EmbeddedResource Include="LayoutInfo\Defaults\EngravingLayoutInfo_Default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="LayoutInfo\Defaults\LibBundles\Xenon.Green.lib.json" />
     <EmbeddedResource Include="LayoutInfo\Defaults\LibBundles\Xenon.Purple.lib.json" />
     <EmbeddedResource Include="LayoutInfo\Defaults\NewLibBundles\Xenon.CommonColored.lib.json" />

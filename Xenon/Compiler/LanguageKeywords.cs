@@ -41,6 +41,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.ComplexText] = (new ComplexShapeImageAndTextLayoutInfo(), new ComplexShapeImageAndTextRenderer(), ""),
             [LanguageKeywordCommand.TextHymn] = (new TextHymnLayoutInfo(), new HymnTextVerseRenderer(), ""),
             [LanguageKeywordCommand.LiturgyImage] = (new AdvancedImagesSlideLayoutInfo(), new AdvancedImageSlideRenderer(), ""),
+            [LanguageKeywordCommand.Engraving] = (new EngravingLayoutInfo(), new EngravingRenderer(), ""),
         };
 
         public static List<string> WholeWords = new List<string>()
@@ -121,6 +122,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.CustomText] = "customtext",
             [LanguageKeywordCommand.CustomDraw] = "customdraw",
             [LanguageKeywordCommand.ComplexText] = "complextext",
+            [LanguageKeywordCommand.Engraving] = "engraving",
         };
 
         public static Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata>()
@@ -165,6 +167,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.CustomText] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTShapesAndText()),
             [LanguageKeywordCommand.CustomDraw] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTShapesImagesAndText()),
             [LanguageKeywordCommand.ComplexText] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTShapesImagesAndTextComplex()),
+            [LanguageKeywordCommand.Engraving] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTEngraving()),
         };
 
     }
@@ -237,6 +240,7 @@ namespace Xenon.Compiler
         TitledLiturgyVerse2,
         ReStitchedHymn,
         ComplexText,
+        Engraving,
     }
 
 }

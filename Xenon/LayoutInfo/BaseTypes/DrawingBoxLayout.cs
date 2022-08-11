@@ -26,4 +26,11 @@ namespace Xenon.LayoutInfo.BaseTypes
         public bool AlphaReplace { get; set; } = true;
         public bool AlphaToGrey { get; set; } = false;
     }
+
+    internal class EngravingDrawingBoxLayout : DrawingBoxLayout
+    {
+        public LWJColor NoteColor { get; set; } = new LWJColor(Color.Black);
+        public LWJColor TextColor { get; set; } = new LWJColor(Color.Black);
+        public LWJColor BasicColor { get; set; } = new LWJColor(Color.Black);
+    }
 }

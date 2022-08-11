@@ -1,0 +1,40 @@
+{
+  "Engraving": {
+    "Box": {
+      "Origin": {
+        "X": 27,
+        "Y": 120
+      },
+      "Size": {
+        "Width": 1862,
+        "Height": 930
+      }
+    },
+    "FillColor": {
+      "Hex": "#ffffffff"
+    },
+    "KeyColor": {
+      "Hex": "#ffffffff"
+    },
+    "NoteColor": {
+      "Hex": "#ff000000"
+    },
+    "TextColor": {
+      "Hex": "#ff000000"
+    },
+    "BasicColor": {
+      "Hex": "#ff000000"
+    }
+  },
+  "SlideSize": {
+    "Width": 1920,
+    "Height": 1080
+  },
+  "BackgroundColor": {
+    "Hex": "#00000000"
+  },
+  "KeyColor": {
+    "Hex": "#00000000"
+  },
+  "SlideType": ""
+}
