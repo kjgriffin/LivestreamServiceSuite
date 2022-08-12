@@ -200,8 +200,19 @@ namespace Xenon.Engraver.Visual
             EllipsePolygon nepoly = new EllipsePolygon(X + XOffset, Y + YOffset + yloff, Width * 1.2f, Width / 1.25f);
             ibmp.Mutate(ctx =>
             {
+                ctx.SetDrawingTransform(Matrix3x2Extensions.CreateRotationDegrees(-30));
                 ctx.DrawPolygon(Pens.Solid(Color.Black, 1), npoly.Points.ToArray());
                 ctx.DrawPolygon(Pens.Solid(Color.Black, 2), nepoly.Points.ToArray());
+                // fill ??
+                if (NValue.Length > NoteLength.HALF)
+                {
+                    ctx.FillPolygon(Brushes.Solid(Color.Black), nepoly.Points.ToArray());
+                }
+            });
+            ibmp.Mutate(ctx =>
+            {
+
+
                 // TODO: draw ledger
                 if (yloff < 0)
                 {
@@ -225,11 +236,6 @@ namespace Xenon.Engraver.Visual
                     }
                 }
 
-                // fill ??
-                if (NValue.Length > NoteLength.HALF)
-                {
-                    ctx.FillPolygon(Brushes.Solid(Color.Black), nepoly.Points.ToArray());
-                }
 
                 // draw tail
 
