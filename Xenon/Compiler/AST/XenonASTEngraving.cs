@@ -115,7 +115,7 @@ namespace Xenon.Compiler.AST
 
 
             // perform layout
-            var visobjs = EngravingLayoutEngine.TestLayout(MusicParts, layout);
+            var visobjs = SingleLineEngravingLayoutEngine.TestLayout(MusicParts, layout);
 
 
             Slide slide = new Slide

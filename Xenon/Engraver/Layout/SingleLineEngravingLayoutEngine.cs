@@ -10,7 +10,7 @@ using Xenon.LayoutInfo;
 
 namespace Xenon.Engraver.Layout
 {
-    internal class EngravingLayoutEngine
+    internal class SingleLineEngravingLayoutEngine
     {
 
         internal static List<IEngravingRenderable> TestLayout(List<MusicPart> musicParts, EngravingLayoutInfo layout)
@@ -34,7 +34,7 @@ namespace Xenon.Engraver.Layout
                     {
                         XOffset = 20,
                         YOffset = Yoff,
-                        Objects = new List<IEngravingRenderable>
+                        ChildObjs = new List<IEngravingRenderable>
                         {
                             new VisualStaff
                             {
@@ -44,7 +44,7 @@ namespace Xenon.Engraver.Layout
                     };
 
                     // add bars/notes to staff
-                    collection.Objects.AddRange(PlaceSimpleNotes(line));
+                    collection.ChildObjs.AddRange(PlaceSimpleNotes(line));
 
                     vobjs.Add(collection);
                     Yoff += InterStaffHeight + 100; // staff height TODO: make it computed

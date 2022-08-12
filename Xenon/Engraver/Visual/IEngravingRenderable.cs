@@ -13,7 +13,9 @@ namespace Xenon.Engraver.Visual
 {
     internal interface IEngravingRenderable
     {
-        void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout);
+        RectangleF ComputeMaxLayoutBounds();
+        void PerformLayout(float X, float Y, EngravingLayoutInfo layout);
+        void Render(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout);
     }
 
 
