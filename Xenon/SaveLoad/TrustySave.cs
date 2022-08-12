@@ -348,136 +348,150 @@ namespace Xenon.SaveLoad
         {
             return Task.Run(async () =>
             {
-                progress?.Report(0);
-
-                using FileStream ziptoopen = new FileStream(path, FileMode.Create);
-                using ZipArchive archive = new ZipArchive(ziptoopen, ZipArchiveMode.Update);
-
-                // setup readme with version
-                ZipArchiveEntry readme = archive.CreateEntry("Readme.txt");
-                using (StreamWriter writer = new StreamWriter(readme.Open()))
+                try
                 {
-                    await writer.WriteLineAsync("Trusty Save");
-                    await writer.WriteLineAsync($"Created with version {versioninfo}");
-                }
+                    progress?.Report(0);
 
-                progress?.Report(1);
-
-
-                // handle assets
-                string assetsfolderpath = $"assets{Path.DirectorySeparatorChar}";
-                var assetsfolder = archive.CreateEntry(assetsfolderpath);
-
-                progress?.Report(5);
-                int assetcount = proj.Assets.Count;
-                int completed = 0;
-
-                int nameid = 0;
-                Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
-                Dictionary<string, string> assetdisplaynamemap = new Dictionary<string, string>();
-                Dictionary<string, string> assetextensions = new Dictionary<string, string>();
-                Dictionary<string, string> assetgroups = new Dictionary<string, string>();
-                foreach (var asset in proj.Assets)
-                {
-                    string name = $"asset_{Interlocked.Increment(ref nameid)}{asset.Extension}";
-                    if (File.Exists(asset.CurrentPath))
+                    if (!Directory.Exists(Path.GetDirectoryName(path)))
                     {
-                        assetfilemap.TryAdd(asset.Name, Path.Combine(assetsfolderpath, name));
-                        assetdisplaynamemap.TryAdd(asset.Name, asset.DisplayName);
-                        assetextensions.TryAdd(asset.Name, asset.Extension);
-                        assetgroups.TryAdd(asset.Name, asset.Group);
-                        ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, name));
-                        double savepercent = (completed / (double)assetcount) * 100;
-                        progress?.Report(5 + 1 + (int)(savepercent) * (100 - 5 - 1 - 10));
+                        Directory.CreateDirectory(Path.GetDirectoryName(path));
                     }
-                    else
+
+                    using FileStream ziptoopen = new FileStream(path, FileMode.Create);
+                    using ZipArchive archive = new ZipArchive(ziptoopen, ZipArchiveMode.Update);
+
+                    // setup readme with version
+                    ZipArchiveEntry readme = archive.CreateEntry("Readme.txt");
+                    using (StreamWriter writer = new StreamWriter(readme.Open()))
                     {
-                        Debugger.Break();
+                        await writer.WriteLineAsync("Trusty Save");
+                        await writer.WriteLineAsync($"Created with version {versioninfo}");
                     }
-                }
 
-                progress?.Report(90);
-
-                // save assets json
-
-                string assetsjsonstr = JsonSerializer.Serialize(assetfilemap);
-                ZipArchiveEntry assetsjson = archive.CreateEntry("assets.json");
-                using (StreamWriter writer = new StreamWriter(assetsjson.Open()))
-                {
-                    await writer.WriteAsync(assetsjsonstr);
-                }
-
-                string assetsdisplaynamejsonstr = JsonSerializer.Serialize(assetdisplaynamemap);
-                ZipArchiveEntry assetsdisplaynamejson = archive.CreateEntry("assets_displaynames.json");
-                using (StreamWriter writer = new StreamWriter(assetsdisplaynamejson.Open()))
-                {
-                    await writer.WriteAsync(assetsdisplaynamejsonstr);
-                }
-
-                string assetsextensionsjsonstr = JsonSerializer.Serialize(assetextensions);
-                ZipArchiveEntry assetsextensionsjson = archive.CreateEntry("assets_extensions.json");
-                using (StreamWriter writer = new StreamWriter(assetsextensionsjson.Open()))
-                {
-                    await writer.WriteAsync(assetsextensionsjsonstr);
-                }
-
-                string assetsgroupsjsonstr = JsonSerializer.Serialize(assetgroups);
-                ZipArchiveEntry assetsgroupsjson = archive.CreateEntry("assets_groups.json");
-                using (StreamWriter writer = new StreamWriter(assetsgroupsjson.Open()))
-                {
-                    await writer.WriteAsync(assetsgroupsjsonstr);
-                }
+                    progress?.Report(1);
 
 
-                progress?.Report(95);
+                    // handle assets
+                    string assetsfolderpath = $"assets{Path.DirectorySeparatorChar}";
+                    var assetsfolder = archive.CreateEntry(assetsfolderpath);
 
+                    progress?.Report(5);
+                    int assetcount = proj.Assets.Count;
+                    int completed = 0;
 
-                // handle source code
-                ZipArchiveEntry sourcecode = archive.CreateEntry("sourcecode.txt");
-                using (StreamWriter writer = new StreamWriter(sourcecode.Open()))
-                {
-                    await writer.WriteAsync(proj.SourceCode);
-                }
-
-                // handle config
-                ZipArchiveEntry bmdconfigfile = archive.CreateEntry("bmdconfig.json");
-                using (StreamWriter writer = new StreamWriter(bmdconfigfile.Open()))
-                {
-                    await writer.WriteAsync(proj.SourceConfig);
-                }
-
-
-                // handle layouts
-
-                progress?.Report(97);
-
-                string layoutsfolderpath = $"layouts{Path.DirectorySeparatorChar}";
-                var layoutsfolder = archive.CreateEntry(layoutsfolderpath);
-                var libraries = proj.LayoutManager.AllLibraries();
-                Dictionary<string, string> layoutsmapdict = new Dictionary<string, string>();
-                foreach (var lib in libraries)
-                {
-                    ZipArchiveEntry layoutlib_entry = archive.CreateEntry(Path.Combine(layoutsfolderpath, lib.LibName + ".json"));
-                    //await ExportLibrary(versioninfo, lib, new StreamWriter(layoutlib_entry.Open()));
-                    string json = JsonSerializer.Serialize(lib);
-                    using (var writer = new StreamWriter(layoutlib_entry.Open()))
+                    int nameid = 0;
+                    Dictionary<string, string> assetfilemap = new Dictionary<string, string>();
+                    Dictionary<string, string> assetdisplaynamemap = new Dictionary<string, string>();
+                    Dictionary<string, string> assetextensions = new Dictionary<string, string>();
+                    Dictionary<string, string> assetgroups = new Dictionary<string, string>();
+                    foreach (var asset in proj.Assets)
                     {
-                        await writer.WriteAsync(json);
+                        string name = $"asset_{Interlocked.Increment(ref nameid)}{asset.Extension}";
+                        if (File.Exists(asset.CurrentPath))
+                        {
+                            assetfilemap.TryAdd(asset.Name, Path.Combine(assetsfolderpath, name));
+                            assetdisplaynamemap.TryAdd(asset.Name, asset.DisplayName);
+                            assetextensions.TryAdd(asset.Name, asset.Extension);
+                            assetgroups.TryAdd(asset.Name, asset.Group);
+                            ZipArchiveEntry zippedasset = archive.CreateEntryFromFile(asset.CurrentPath, Path.Combine(assetsfolderpath, name));
+                            double savepercent = (completed / (double)assetcount) * 100;
+                            progress?.Report(5 + 1 + (int)(savepercent) * (100 - 5 - 1 - 10));
+                        }
+                        else
+                        {
+                            Debugger.Break();
+                        }
                     }
-                    layoutsmapdict[lib.LibName] = Path.Combine(layoutsfolderpath, lib.LibName + ".json");
-                }
 
-                string layoutsmapjsonstr = JsonSerializer.Serialize(layoutsmapdict);
-                ZipArchiveEntry layoutsjson = archive.CreateEntry("layouts.json");
-                using (StreamWriter writer = new StreamWriter(layoutsjson.Open()))
+                    progress?.Report(90);
+
+                    // save assets json
+
+                    string assetsjsonstr = JsonSerializer.Serialize(assetfilemap);
+                    ZipArchiveEntry assetsjson = archive.CreateEntry("assets.json");
+                    using (StreamWriter writer = new StreamWriter(assetsjson.Open()))
+                    {
+                        await writer.WriteAsync(assetsjsonstr);
+                    }
+
+                    string assetsdisplaynamejsonstr = JsonSerializer.Serialize(assetdisplaynamemap);
+                    ZipArchiveEntry assetsdisplaynamejson = archive.CreateEntry("assets_displaynames.json");
+                    using (StreamWriter writer = new StreamWriter(assetsdisplaynamejson.Open()))
+                    {
+                        await writer.WriteAsync(assetsdisplaynamejsonstr);
+                    }
+
+                    string assetsextensionsjsonstr = JsonSerializer.Serialize(assetextensions);
+                    ZipArchiveEntry assetsextensionsjson = archive.CreateEntry("assets_extensions.json");
+                    using (StreamWriter writer = new StreamWriter(assetsextensionsjson.Open()))
+                    {
+                        await writer.WriteAsync(assetsextensionsjsonstr);
+                    }
+
+                    string assetsgroupsjsonstr = JsonSerializer.Serialize(assetgroups);
+                    ZipArchiveEntry assetsgroupsjson = archive.CreateEntry("assets_groups.json");
+                    using (StreamWriter writer = new StreamWriter(assetsgroupsjson.Open()))
+                    {
+                        await writer.WriteAsync(assetsgroupsjsonstr);
+                    }
+
+
+                    progress?.Report(95);
+
+
+                    // handle source code
+                    ZipArchiveEntry sourcecode = archive.CreateEntry("sourcecode.txt");
+                    using (StreamWriter writer = new StreamWriter(sourcecode.Open()))
+                    {
+                        await writer.WriteAsync(proj.SourceCode);
+                    }
+
+                    // handle config
+                    ZipArchiveEntry bmdconfigfile = archive.CreateEntry("bmdconfig.json");
+                    using (StreamWriter writer = new StreamWriter(bmdconfigfile.Open()))
+                    {
+                        await writer.WriteAsync(proj.SourceConfig);
+                    }
+
+
+                    // handle layouts
+
+                    progress?.Report(97);
+
+                    string layoutsfolderpath = $"layouts{Path.DirectorySeparatorChar}";
+                    var layoutsfolder = archive.CreateEntry(layoutsfolderpath);
+                    var libraries = proj.LayoutManager.AllLibraries();
+                    Dictionary<string, string> layoutsmapdict = new Dictionary<string, string>();
+                    foreach (var lib in libraries)
+                    {
+                        ZipArchiveEntry layoutlib_entry = archive.CreateEntry(Path.Combine(layoutsfolderpath, lib.LibName + ".json"));
+                        //await ExportLibrary(versioninfo, lib, new StreamWriter(layoutlib_entry.Open()));
+                        string json = JsonSerializer.Serialize(lib);
+                        using (var writer = new StreamWriter(layoutlib_entry.Open()))
+                        {
+                            await writer.WriteAsync(json);
+                        }
+                        layoutsmapdict[lib.LibName] = Path.Combine(layoutsfolderpath, lib.LibName + ".json");
+                    }
+
+                    string layoutsmapjsonstr = JsonSerializer.Serialize(layoutsmapdict);
+                    ZipArchiveEntry layoutsjson = archive.CreateEntry("layouts.json");
+                    using (StreamWriter writer = new StreamWriter(layoutsjson.Open()))
+                    {
+                        await writer.WriteAsync(layoutsmapjsonstr);
+                    }
+
+
+
+                    progress?.Report(100);
+
+                }
+                catch (Exception ex)
                 {
-                    await writer.WriteAsync(layoutsmapjsonstr);
+#if DEBUG
+                    Debugger.Break();
+#endif
                 }
-
-
-
-                progress?.Report(100);
-
             });
         }
 
