@@ -104,11 +104,28 @@ namespace Xenon.Engraver.Visual
         {
             get
             {
+                if (NValue?.Length == NoteLength.WHOLE)
+                {
+                    return 25;
+                }
+                else if (NValue?.Length == NoteLength.HALF)
+                {
+
+                    return 25;
+                }
                 return 20;
             }
         }
 
-        internal float Height
+        internal float NHeight
+        {
+            get
+            {
+                return 16f;
+            }
+        }
+
+        internal float StemHeight
         {
             get
             {
@@ -197,16 +214,32 @@ namespace Xenon.Engraver.Visual
         public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout)
         {
             var yloff = YCalc();
-            EllipsePolygon npoly = new EllipsePolygon(X + XOffset, Y + YOffset + yloff, Width, Width / 1.25f);
-            EllipsePolygon nepoly = new EllipsePolygon(X + XOffset, Y + YOffset + yloff, Width * 1.2f, Width / 1.25f);
+            EllipsePolygon npoly = new EllipsePolygon(X + XOffset, Y + YOffset + yloff, Width, NHeight);
+            EllipsePolygon nepoly = new EllipsePolygon(X + XOffset, Y + YOffset + yloff, Width * 1.35f, NHeight);
             ibmp.Mutate(ctx =>
             {
-                var pts = npoly.RotateDegree(-30).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
-                var pts2 = nepoly.RotateDegree(-30).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
-                ctx.DrawPolygon(Pens.Solid(Color.Black, 1), pts);
-                ctx.DrawPolygon(Pens.Solid(Color.Black, 2), pts2);
+                var pts = npoly.RotateDegree(-25).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
+                var pts2 = nepoly.RotateDegree(-25).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
 
-                if (NValue.Length > NoteLength.HALF)
+                if (NValue.Length == NoteLength.HALF)
+                {
+                    FillPathBuilderExtensions.Fill(ctx, Color.Black, (x) =>
+                       {
+                           x.AddLines(pts);
+                           x.AddLines(pts2);
+                           x.CloseFigure();
+                       });
+                }
+                else if (NValue.Length == NoteLength.WHOLE)
+                {
+                    FillPathBuilderExtensions.Fill(ctx, Color.Black, (x) =>
+                       {
+                           x.AddLines(npoly.Points.ToArray());
+                           x.AddLines(nepoly.Points.ToArray());
+                           x.CloseFigure();
+                       });
+                }
+                else
                 {
                     ctx.FillPolygon(Brushes.Solid(Color.Black), pts2);
                 }
@@ -228,18 +261,47 @@ namespace Xenon.Engraver.Visual
                 // draw handle
                 if (NValue.Length != NoteLength.WHOLE)
                 {
-                    if (SitsUp(yloff))
+                    const float TOFFSET = 2;
+                    float mod = SitsUp(yloff) ? 1 : -1;
+
+
+                    PointF p_note = new PointF(X + XOffset + ((Width / 2 + TOFFSET) * mod), Y + YOffset + yloff);
+                    PointF p_tip = new PointF(X + XOffset + ((Width / 2 + TOFFSET) * mod), Y + YOffset + yloff + (StemHeight * -mod));
+
+                    ctx.DrawLines(Pens.Solid(Color.Black, 1.2f), p_note, p_tip);
+
+                    // draw tail
+                    if (NValue.Length == NoteLength.EIGHTH)
                     {
-                        ctx.DrawLines(Pens.Solid(Color.Black, 1.2f), new PointF(X + XOffset + Width / 2 + 2, Y + YOffset + yloff), new PointF(X + XOffset + Width / 2 + 2, Y - Height + YOffset + yloff));
+                        float DSTSCALE = SitsUp(yloff) ? 1f : 0.8f;
+
+                        var pt1 = new PointF(p_tip.X, p_tip.Y + 12 * mod);
+                        var pt2 = new PointF(pt1.X + 10, pt1.Y + 5 * mod);
+                        var pt3 = new PointF(pt1.X + 25, pt1.Y + 18 * mod * DSTSCALE);
+                        var pt4 = new PointF(pt1.X + 12, pt1.Y + 40 * mod * DSTSCALE);
+                        //DrawBezierExtensions.DrawBeziers(ctx, Pens.Solid(Color.Black, 1.2f), pt1, pt2, pt3, pt4);
+
+                        var pp1 = p_tip;
+                        var pp2 = new PointF(pp1.X + 12, pp1.Y + 5 * mod);
+                        var pp3 = new PointF(pp1.X + 35, pp1.Y + 18 * mod * DSTSCALE);
+
+                        //DrawBezierExtensions.DrawBeziers(ctx, Pens.Solid(Color.Black, 1.2f), pp1, pp2, pp3, pt4);
+
+                        FillPathBuilderExtensions.Fill(ctx, Color.Black, (x) =>
+                        {
+                            x.AddLine(pp1, pt1);
+                            x.AddBezier(pt1, pt2, pt3, pt4);
+                            //x.AddBezier(pp1, pp2, pp3, pt4);
+                            x.AddBezier(pt4, pp3, pp2, pp1);
+                            x.CloseFigure();
+                        });
                     }
-                    else
-                    {
-                        ctx.DrawLines(Pens.Solid(Color.Black, 1.2f), new PointF(X + XOffset - Width / 2 - 2, Y + YOffset + yloff), new PointF(X + XOffset - Width / 2 - 2, Y + Height + YOffset + yloff));
-                    }
+
                 }
 
 
-                // draw tail
+
+
 
 
                 // dots?
