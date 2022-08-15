@@ -6,6 +6,7 @@ using SixLabors.ImageSharp.Processing;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Xenon.Engraver.DataModel;
 using Xenon.Engraver.Visual;
@@ -200,13 +201,14 @@ namespace Xenon.Engraver.Visual
             EllipsePolygon nepoly = new EllipsePolygon(X + XOffset, Y + YOffset + yloff, Width * 1.2f, Width / 1.25f);
             ibmp.Mutate(ctx =>
             {
-                ctx.SetDrawingTransform(Matrix3x2Extensions.CreateRotationDegrees(-30));
-                ctx.DrawPolygon(Pens.Solid(Color.Black, 1), npoly.Points.ToArray());
-                ctx.DrawPolygon(Pens.Solid(Color.Black, 2), nepoly.Points.ToArray());
-                // fill ??
+                var pts = npoly.RotateDegree(-30).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
+                var pts2 = nepoly.RotateDegree(-30).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
+                ctx.DrawPolygon(Pens.Solid(Color.Black, 1), pts);
+                ctx.DrawPolygon(Pens.Solid(Color.Black, 2), pts2);
+
                 if (NValue.Length > NoteLength.HALF)
                 {
-                    ctx.FillPolygon(Brushes.Solid(Color.Black), nepoly.Points.ToArray());
+                    ctx.FillPolygon(Brushes.Solid(Color.Black), pts2);
                 }
             });
             ibmp.Mutate(ctx =>
@@ -228,11 +230,11 @@ namespace Xenon.Engraver.Visual
                 {
                     if (SitsUp(yloff))
                     {
-                        ctx.DrawLines(Pens.Solid(Color.Black, 1.2f), new PointF(X + XOffset + Width / 2 + 3, Y + YOffset + yloff), new PointF(X + XOffset + Width / 2 + 3, Y - Height + YOffset + yloff));
+                        ctx.DrawLines(Pens.Solid(Color.Black, 1.2f), new PointF(X + XOffset + Width / 2 + 2, Y + YOffset + yloff), new PointF(X + XOffset + Width / 2 + 2, Y - Height + YOffset + yloff));
                     }
                     else
                     {
-                        ctx.DrawLines(Pens.Solid(Color.Black, 1.2f), new PointF(X + XOffset - Width / 2 - 3, Y + YOffset + yloff), new PointF(X + XOffset - Width / 2 - 3, Y + Height + YOffset + yloff));
+                        ctx.DrawLines(Pens.Solid(Color.Black, 1.2f), new PointF(X + XOffset - Width / 2 - 2, Y + YOffset + yloff), new PointF(X + XOffset - Width / 2 - 2, Y + Height + YOffset + yloff));
                     }
                 }
 
