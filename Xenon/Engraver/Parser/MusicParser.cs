@@ -137,8 +137,8 @@ namespace Xenon.Engraver.Parser
 
             List<MusicBar> bars = new List<MusicBar>();
 
-            var lbars = Regex.Split(nseq, @"(\|\||\|)");
-            var rbars = Regex.Split(rseq, @"(\|\||\|)");
+            var lbars = Regex.Split(nseq, @"(\|\||\|)").Where(x => !string.IsNullOrEmpty(x)).ToArray();
+            var rbars = Regex.Split(rseq, @"(\|\||\|)").Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
             if (lbars.Length != rbars.Length)
             {

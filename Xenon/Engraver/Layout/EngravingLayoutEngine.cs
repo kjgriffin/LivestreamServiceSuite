@@ -65,9 +65,11 @@ namespace Xenon.Engraver.Layout
         {
             List<IEngravingRenderable> lobjs = new List<IEngravingRenderable>();
 
-            float XLineOffset = 50;
+            float XLineOffset = 40;
 
             // TODO: clef/keysig/timesig
+
+            bool firstbar = true;
 
             foreach (var bar in line._ExtractNoteBars())
             {
@@ -76,15 +78,17 @@ namespace Xenon.Engraver.Layout
                 {
                     Type = bar.BeginBar,
                     Height = 80,
-                    XOffset = XLineOffset,
+                    XOffset = firstbar ? 0 : XLineOffset,
                     YOffset = 0
                 };
 
-                XLineOffset += preBar.Width;
                 if (preBar.Width > 0)
                 {
                     lobjs.Add(preBar);
+                    XLineOffset += preBar.Width;
                 }
+
+                firstbar = false;
 
                 // add contents
                 foreach (var note in bar.Notes)
@@ -116,7 +120,8 @@ namespace Xenon.Engraver.Layout
                 XOffset = Xoff,
                 YOffset = 0,
             };
-            Xoff += fig.Width + 40;
+            Xoff += fig.Width; // + 40;
+            Xoff += fig.LWidth;
             return fig;
         }
 

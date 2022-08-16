@@ -104,16 +104,70 @@ namespace Xenon.Engraver.Visual
         {
             get
             {
+                float w = 20;
                 if (NValue?.Length == NoteLength.WHOLE)
                 {
-                    return 25;
+                    w = 25;
                 }
                 else if (NValue?.Length == NoteLength.HALF)
                 {
 
-                    return 25;
+                    w = 25;
                 }
-                return 20;
+
+                if (NValue.Accidental == Accidental.Sharp)
+                {
+                    w += 30;
+                }
+                else if (NValue.Accidental == Accidental.Flat)
+                {
+                    w += 25;
+                }
+                else if (NValue.Accidental == Accidental.Natural)
+                {
+                    w += 28;
+                }
+
+                return w;
+            }
+        }
+
+        internal float LWidth
+        {
+            get
+            {
+                const float LSC = 0.2f;
+                float lv = 40 * 40;
+                float dval = 0;
+                switch (NValue.Length)
+                {
+                    case NoteLength.WHOLE:
+                        lv *= 4;
+                        dval = 2;
+                        break;
+                    case NoteLength.HALF:
+                        lv *= 2;
+                        dval = 1;
+                        break;
+                    case NoteLength.QUARTER:
+                        lv *= 1;
+                        dval = 0.5f;
+                        break;
+                    case NoteLength.EIGHTH:
+                        lv *= 0.5f;
+                        dval = 0.25f;
+                        break;
+                    case NoteLength.SIXTEENTH:
+                        lv *= 0.25f;
+                        dval = 0.125f;
+                        break;
+                }
+                for (int i = 0; i < NValue.LengthDots; i++)
+                {
+                    lv += dval;
+                    dval /= 2f;
+                }
+                return (float)Math.Sqrt(lv);
             }
         }
 
@@ -213,20 +267,26 @@ namespace Xenon.Engraver.Visual
 
         public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout)
         {
+            float XPrim = X + XOffset;
+            float YPrim = Y + YOffset;
+
             var yloff = YCalc();
-            EllipsePolygon npoly = new EllipsePolygon(X + XOffset, Y + YOffset + yloff, Width, NHeight);
-            EllipsePolygon nepoly = new EllipsePolygon(X + XOffset, Y + YOffset + yloff, Width * 1.35f, NHeight);
+            EllipsePolygon npoly = new EllipsePolygon(XPrim, YPrim, Width * 0.8f, NHeight * 0.8f);
+            EllipsePolygon nepoly = new EllipsePolygon(XPrim, YPrim, Width * 1.35f, NHeight);
+            EllipsePolygon nepoly1 = new EllipsePolygon(XPrim, YPrim, Width * 1.2f, NHeight);
             ibmp.Mutate(ctx =>
             {
-                var pts = npoly.RotateDegree(-25).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
+                var pts = nepoly.Scale(0.55f, 0.85f).RotateDegree(-38).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
                 var pts2 = nepoly.RotateDegree(-25).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
+
+                var pts2_narrow = nepoly.Scale(0.85f, 1).RotateDegree(-25).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
 
                 if (NValue.Length == NoteLength.HALF)
                 {
                     FillPathBuilderExtensions.Fill(ctx, Color.Black, (x) =>
                        {
                            x.AddLines(pts);
-                           x.AddLines(pts2);
+                           x.AddLines(pts2_narrow);
                            x.CloseFigure();
                        });
                 }
@@ -234,8 +294,8 @@ namespace Xenon.Engraver.Visual
                 {
                     FillPathBuilderExtensions.Fill(ctx, Color.Black, (x) =>
                        {
-                           x.AddLines(npoly.Points.ToArray());
-                           x.AddLines(nepoly.Points.ToArray());
+                           x.AddLines(npoly.RotateDegree(40).Flatten().FirstOrDefault().Points.ToArray());
+                           x.AddLines(nepoly1.Points.ToArray());
                            x.CloseFigure();
                        });
                 }
@@ -261,12 +321,23 @@ namespace Xenon.Engraver.Visual
                 // draw handle
                 if (NValue.Length != NoteLength.WHOLE)
                 {
-                    const float TOFFSET = 2;
+                    float TOFFSET = 3;
+                    TOFFSET += SitsUp(yloff) ? -1 : 0;
+
+                    if (NValue.Length == NoteLength.HALF && SitsUp(yloff))
+                    {
+                        TOFFSET -= 2.9f;
+                    }
+                    else if (NValue.Length == NoteLength.HALF)
+                    {
+                        TOFFSET -= 1.6f;
+                    }
+
                     float mod = SitsUp(yloff) ? 1 : -1;
 
 
-                    PointF p_note = new PointF(X + XOffset + ((Width / 2 + TOFFSET) * mod), Y + YOffset + yloff);
-                    PointF p_tip = new PointF(X + XOffset + ((Width / 2 + TOFFSET) * mod), Y + YOffset + yloff + (StemHeight * -mod));
+                    PointF p_note = new PointF(XPrim + ((Width / 2 + TOFFSET) * mod), YPrim + yloff);
+                    PointF p_tip = new PointF(XPrim + ((Width / 2 + TOFFSET) * mod), YPrim + yloff + (StemHeight * -mod));
 
                     ctx.DrawLines(Pens.Solid(Color.Black, 1.2f), p_note, p_tip);
 
@@ -275,23 +346,19 @@ namespace Xenon.Engraver.Visual
                     {
                         float DSTSCALE = SitsUp(yloff) ? 1f : 0.8f;
 
-                        var pt1 = new PointF(p_tip.X, p_tip.Y + 12 * mod);
-                        var pt2 = new PointF(pt1.X + 10, pt1.Y + 5 * mod);
-                        var pt3 = new PointF(pt1.X + 25, pt1.Y + 18 * mod * DSTSCALE);
-                        var pt4 = new PointF(pt1.X + 12, pt1.Y + 40 * mod * DSTSCALE);
-                        //DrawBezierExtensions.DrawBeziers(ctx, Pens.Solid(Color.Black, 1.2f), pt1, pt2, pt3, pt4);
+                        var pt1 = new PointF(p_tip.X, p_tip.Y + 18 * mod);
+                        var pt2 = new PointF(pt1.X + 3.5f, pt1.Y + 5.1f * mod);
+                        var pt3 = new PointF(pt1.X + 18, pt1.Y + 18 * mod * DSTSCALE);
+                        var pt4 = new PointF(pt1.X + 10, pt1.Y + 32 * mod * DSTSCALE);
 
-                        var pp1 = p_tip;
-                        var pp2 = new PointF(pp1.X + 12, pp1.Y + 5 * mod);
-                        var pp3 = new PointF(pp1.X + 35, pp1.Y + 18 * mod * DSTSCALE);
-
-                        //DrawBezierExtensions.DrawBeziers(ctx, Pens.Solid(Color.Black, 1.2f), pp1, pp2, pp3, pt4);
+                        var pp1 = new PointF(p_tip.X, p_tip.Y + 3 * mod);
+                        var pp2 = new PointF(pp1.X + 6, pp1.Y + 13 * mod);
+                        var pp3 = new PointF(pp1.X + 18, pp1.Y + 22 * mod * DSTSCALE);
 
                         FillPathBuilderExtensions.Fill(ctx, Color.Black, (x) =>
                         {
                             x.AddLine(pp1, pt1);
                             x.AddBezier(pt1, pt2, pt3, pt4);
-                            //x.AddBezier(pp1, pp2, pp3, pt4);
                             x.AddBezier(pt4, pp3, pp2, pp1);
                             x.CloseFigure();
                         });
