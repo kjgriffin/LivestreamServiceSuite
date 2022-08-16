@@ -120,7 +120,12 @@ namespace Xenon.Engraver.Layout
                 XOffset = Xoff,
                 YOffset = 0,
             };
-            Xoff += fig.Width; // + 40;
+            //Xoff += fig.Width; // + 40;
+
+
+            var bounds = fig.CalculateBounds(0, 0);
+            Xoff += bounds.NoteBounds.Width;
+
             Xoff += fig.LWidth;
             return fig;
         }
