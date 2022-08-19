@@ -109,6 +109,7 @@
                 <MenuItem Foreground="Black" Name="mipreviewslide" Click="ClickTogglePreviewSlide" Header="Preview Slides" IsChecked="true" IsCheckable="true">
                 </MenuItem>
                 <MenuItem  Foreground="Black" Name="mipreviewkey" Click="ClickTogglePreviewKey" Header="Preview Keys" IsCheckable="true"></MenuItem>
+                <MenuItem  Foreground="Black" Name="miOpenInspector" Click="ClickOpenInspector" Header="Open Detail View"></MenuItem>
                 <Separator></Separator>
                 <MenuItem  Foreground="Black" Name="openTmpFolder" Click="OpenTempFolder" Header="View Temp Folder"></MenuItem>
             </MenuItem>

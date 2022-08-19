@@ -470,6 +470,8 @@ namespace SlideCreater
             });
         }
 
+        Inspector _inspectorWindow = null;
+
         private void UpdatePreviews()
         {
             int oldSIndex = slidelist.SelectedIndex;
@@ -493,6 +495,7 @@ namespace SlideCreater
                 if (slides.Count > oldSIndex && oldSIndex >= 0)
                 {
                     // try and refocus on last inspected slide
+                    _inspectorWindow?.ShowSlide(slides[oldSIndex], previewkeys);
                     FocusSlide.Slide = slides[oldSIndex];
                     slidelist.SelectedIndex = oldSIndex;
                     slidelist.ScrollIntoView(slidelist.Items[oldSIndex]);
@@ -500,6 +503,7 @@ namespace SlideCreater
                 else
                 {
                     FocusSlide.Slide = slides.First();
+                    _inspectorWindow?.ShowSlide(slides.First(), previewkeys);
                     slidelist.SelectedIndex = 0;
                 }
                 FocusSlide.ShowSlide(previewkeys);
@@ -1767,6 +1771,16 @@ namespace SlideCreater
         {
             string report = Xenon.Analyzers.PilotReportGenerator.GeneratePilotPresetReport(_proj);
             MessageBox.Show(report, "Presets Used");
+        }
+
+        private void ClickOpenInspector(object sender, RoutedEventArgs e)
+        {
+            if (_inspectorWindow == null || _inspectorWindow?.WasClosed != true)
+            {
+                _inspectorWindow = new Inspector();
+                _inspectorWindow.ShowSlide(FocusSlide.Slide, previewkeys);
+                _inspectorWindow.Show();
+            }
         }
     }
 }
