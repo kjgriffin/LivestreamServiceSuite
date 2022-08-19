@@ -68,7 +68,7 @@ namespace Xenon.Renderer
                 HashSet<string> dflags = df as HashSet<string> ?? new HashSet<string>();
                 foreach (IEngravingRenderable item in (visuals as IEnumerable<IEngravingRenderable>))
                 {
-                    item.Render(layout.Engraving.Box.Origin.X, layout.Engraving.Box.Origin.Y, ibmp, ikbmp, layout, dflags.Contains("bounds"));
+                    item.Render(layout.Engraving.Box.Origin.X, layout.Engraving.Box.Origin.Y, ibmp, ikbmp, layout, dflags);
                 }
             }
 

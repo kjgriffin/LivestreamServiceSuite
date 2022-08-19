@@ -5,6 +5,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Xenon.Engraver.DataModel;
@@ -45,19 +46,7 @@ namespace Xenon.Engraver.Visual
         {
             get
             {
-                switch (NValue.Accidental)
-                {
-                    case Accidental.None:
-                        return 0;
-                    case Accidental.Sharp:
-                        return 20;
-                    case Accidental.Flat:
-                        return 50;
-                    case Accidental.Natural:
-                        return 50;
-                    default:
-                        return 0;
-                }
+                return VisualAccidental.CalculateWidth(NValue.Accidental);
             }
         }
 
@@ -220,13 +209,10 @@ namespace Xenon.Engraver.Visual
             return bounds;
         }
 
-        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, bool debug = false)
+        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, HashSet<string> debug = null)
         {
             var bounds = CalculateBounds(X, Y);
-            if (debug)
-            {
-                bounds.RenderBounds(ibmp, ikbmp, true);
-            }
+            bounds.RenderBounds(ibmp, ikbmp, true, debug);
 
             float XAcc = X + XOffset;
             float XPrim = X + XOffset + NoteAccidentalWidth;
@@ -329,17 +315,12 @@ namespace Xenon.Engraver.Visual
 
 
                 // accidentals
-                if (NValue.Accidental == Accidental.Sharp)
+                VisualAccidental acc = new VisualAccidental
                 {
-                    float id = NoteAccidentalWidth / 1.2f;
-                    float XAccTrue = XAcc - NoteAccidentalWidth + 5;// + debug.NoteBounds.Width / 2f;
-                    var _ = bounds;
-                    ctx.DrawLines(Pens.Solid(Color.Black, 2f), new PointF(XAccTrue + 5, YPrim - 25), new PointF(XAccTrue + 5, YPrim + 25));
-                    ctx.DrawLines(Pens.Solid(Color.Black, 2f), new PointF(XAccTrue - 5 + id, YPrim - 25 - 5), new PointF(XAccTrue - 5 + id, YPrim + 25 - 5));
-
-                    ctx.DrawLines(Pens.Solid(Color.Black, 6f), new PointF(XAccTrue, YPrim - 10), new PointF(XAccTrue + id, YPrim - 10 - 5));
-                    ctx.DrawLines(Pens.Solid(Color.Black, 6f), new PointF(XAccTrue, YPrim + 10), new PointF(XAccTrue + id, YPrim + 10 - 5));
-                }
+                    Width = NoteAccidentalWidth,
+                    Accidental = NValue.Accidental
+                };
+                acc.Render(XAcc, YPrim, ibmp, ikbmp, layout, debug);
 
 
                 // dots?
@@ -361,10 +342,7 @@ namespace Xenon.Engraver.Visual
 
             });
 
-            if (debug)
-            {
-                bounds.RenderBounds(ibmp, ikbmp, false);
-            }
+            bounds.RenderBounds(ibmp, ikbmp, false, debug);
         }
 
         private void ComputeStemPos(float XPrim, float yloff, float YPrim, out float mod, out PointF p_note, out PointF p_tip)
@@ -425,39 +403,45 @@ namespace Xenon.Engraver.Visual
         public RectangleF MaxBounds { get => new RectangleF(NoteBounds.X, NoteBounds.Y, NoteBounds.Width + TimeSpace.Width, NoteBounds.Height); }
 
 
-        public void RenderBounds(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, bool pre)
+        public void RenderBounds(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, bool pre, HashSet<string> debug = null)
         {
 
             ibmp.Mutate(ctx =>
             {
 
-                // origin
-                //ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(BodyOrigin, 5).Points.ToArray());
+                if (debug?.HasFlag(DebugEngravingRenderableExtensions.DFlags.Origin) == true)
+                {
+                    ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(BodyOrigin, 5).Points.ToArray());
+                }
 
                 // tail point
-                ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(StemTip, 5).Points.ToArray());
-
-
-                FillRectangleExtensions.Fill(ctx, Brushes.Solid(Color.FromRgba(255, 255, 0, 80)), TimeSpace);
-
-                if (pre)
+                if (debug?.HasFlag(DebugEngravingRenderableExtensions.DFlags.Points) == true)
                 {
-                    // max
-                    //FillRectangleExtensions.Fill(ctx, Brushes.Solid(Color.FromRgba(255, 0, 0, 100)), MaxBounds);
-                    DrawRectangleExtensions.Draw(ctx, Pens.Dash(Color.FromRgba(255, 0, 0, 100), 2), MaxBounds);
+                    ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(StemTip, 5).Points.ToArray());
+                }
 
-                    // timespace
+                if (debug?.HasFlag(DebugEngravingRenderableExtensions.DFlags.Bounds) == true)
+                {
                     FillRectangleExtensions.Fill(ctx, Brushes.Solid(Color.FromRgba(255, 255, 0, 80)), TimeSpace);
 
-                    // note
-                    FillRectangleExtensions.Fill(ctx, Brushes.Solid(Color.FromRgba(0, 255, 0, 100)), NoteBounds);
+                    if (pre)
+                    {
+                        // max
+                        DrawRectangleExtensions.Draw(ctx, Pens.Dash(Color.FromRgba(255, 0, 0, 100), 2), MaxBounds);
 
-                    // figure
-                    FillRectangleExtensions.Fill(ctx, Brushes.Solid(Color.FromRgba(80, 100, 100, 80)), FigureBounds);
+                        // timespace
+                        FillRectangleExtensions.Fill(ctx, Brushes.Solid(Color.FromRgba(255, 255, 0, 80)), TimeSpace);
 
-                    // body
-                    FillRectangleExtensions.Fill(ctx, Brushes.Solid(Color.FromRgba(55, 0, 200, 150)), BodyBounds);
+                        // note
+                        FillRectangleExtensions.Fill(ctx, Brushes.Solid(Color.FromRgba(0, 255, 0, 100)), NoteBounds);
 
+                        // figure
+                        FillRectangleExtensions.Fill(ctx, Brushes.Solid(Color.FromRgba(80, 100, 100, 80)), FigureBounds);
+
+                        // body
+                        FillRectangleExtensions.Fill(ctx, Brushes.Solid(Color.FromRgba(55, 0, 200, 150)), BodyBounds);
+
+                    }
                 }
             });
 

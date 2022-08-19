@@ -148,9 +148,13 @@ namespace Xenon.Engraver.Parser
 
 
             var clefs = ParseClefs();
+            var keys = ParseKeySignatures();
 
             var curentLineclef = clefs.First();
             int clefid = 0;
+
+            var curentKeySig = keys.First();
+            int keyid = 0;
 
             for (int i = 0; i + 1 < lbars.Length; i += 2)
             {
@@ -181,8 +185,23 @@ namespace Xenon.Engraver.Parser
                     bar.ShowClef = true;
                 }
 
+                if (bardata.Groups["ksig"].Success)
+                {
+                    if (keys.Count > keyid)
+                    {
+                        curentKeySig = keys[keyid++];
+                    }
+                    else
+                    {
+                        curentKeySig = keys.Last();
+                    }
+                    bar.ShowKeySig = true;
+                }
+
+
                 // get bar metadata
                 bar.Clef = curentLineclef;
+                bar.KeySig = curentKeySig;
 
                 // get contents
                 bar.Notes = ParseNoteNames(bardata.Groups["nv"].Value, curentLineclef);
@@ -246,7 +265,7 @@ namespace Xenon.Engraver.Parser
             foreach (var nstring in rstrings)
             {
                 // add the rhythm to the note
-                var nl = ParseNoteLengh(nstring);
+                var nl = ParseNoteLength(nstring);
                 notes[i].Length = nl.len;
                 notes[i].LengthDots = nl.dots;
                 i++;
@@ -254,7 +273,7 @@ namespace Xenon.Engraver.Parser
 
         }
 
-        private (NoteLength len, int dots) ParseNoteLengh(string val)
+        private (NoteLength len, int dots) ParseNoteLength(string val)
         {
             // 1 = quarter
             // %8 = eighth
@@ -324,6 +343,84 @@ namespace Xenon.Engraver.Parser
             }
             return new List<Clef> { Clef.Unkown };
         }
+
+        internal List<KeySignature> ParseKeySignatures()
+        {
+
+            if (Args.TryGetValue("key", out var skeys))
+            {
+
+                var keys = skeys.Split(";", StringSplitOptions.RemoveEmptyEntries);
+
+                List<KeySignature> result = new List<KeySignature>();
+                foreach (var key in keys)
+                {
+
+                    var kparts = Regex.Match(key, "(?<k>[cdefgabCDEFGAB])(?<a>[#b])?(?<m>[mM])");
+
+                    var kname = kparts.Groups["k"].Value.ToUpper();
+                    var acc = kparts.Groups["a"]?.Value ?? "";
+                    var mode = kparts.Groups["m"].Value;
+
+                    var kstr = kname + acc + mode;
+
+                    switch (kstr)
+                    {
+                        case "CM":
+                            result.Add(KeySignature.C_MAJOR);
+                            break;
+                        case "GM":
+                            result.Add(KeySignature.G_MAJOR);
+                            break;
+                        case "DM":
+                            result.Add(KeySignature.D_MAJOR);
+                            break;
+                        case "AM":
+                            result.Add(KeySignature.A_MAJOR);
+                            break;
+                        case "EM":
+                            result.Add(KeySignature.E_MAJOR);
+                            break;
+                        case "BM":
+                            result.Add(KeySignature.B_MAJOR);
+                            break;
+                        case "F#M":
+                            result.Add(KeySignature.F_SHARP_MAJOR);
+                            break;
+                        case "C#M":
+                            result.Add(KeySignature.C_SHARP_MAJOR);
+                            break;
+
+                        case "FM":
+                            result.Add(KeySignature.F_MAJOR);
+                            break;
+                        case "BbM":
+                            result.Add(KeySignature.B_FLAT_MAJOR);
+                            break;
+                        case "EbM":
+                            result.Add(KeySignature.E_FLAT_MAJOR);
+                            break;
+                        case "AbM":
+                            result.Add(KeySignature.A_FLAT_MAJOR);
+                            break;
+                        case "DbM":
+                            result.Add(KeySignature.D_FLAT_MAJOR);
+                            break;
+                        case "GbM":
+                            result.Add(KeySignature.G_FLAT_MAJOR);
+                            break;
+                        case "CbM":
+                            result.Add(KeySignature.C_FLAT_MAJOR);
+                            break;
+                            
+                    }
+
+                }
+                return result;
+            }
+            return new List<KeySignature> { KeySignature.NONE };
+        }
+
 
         private Note ParseNoteVal(string input, int basereg)
         {

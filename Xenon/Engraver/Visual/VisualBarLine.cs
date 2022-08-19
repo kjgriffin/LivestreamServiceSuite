@@ -3,6 +3,8 @@ using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
+using System.Collections.Generic;
+
 using Xenon.Engraver.DataModel;
 using Xenon.LayoutInfo;
 
@@ -34,7 +36,7 @@ namespace Xenon.Engraver.Visual
 
         internal BarType Type { get; set; } = BarType.None;
 
-        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, bool debug = false)
+        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, HashSet<string> debug = null)
         {
             if (Type == BarType.Single)
             {
@@ -52,11 +54,8 @@ namespace Xenon.Engraver.Visual
                 });
             }
 
-            if (debug)
-            {
-                var bounds = CalculateBounds(X, Y);
-                bounds.Render(ibmp, ikbmp);
-            }
+            var bounds = CalculateBounds(X, Y);
+            bounds.Render(ibmp, ikbmp, debug);
         }
 
         public VisualBarLineLayoutBounds CalculateBounds(float X, float Y)
@@ -79,12 +78,15 @@ namespace Xenon.Engraver.Visual
     {
         public RectangleF MaxBounds { get; set; }
 
-        public void Render(Image<Bgra32> ibmp, Image<Bgra32> ikbmp)
+        public void Render(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, HashSet<string> debug = null)
         {
-            ibmp.Mutate(ctx =>
+            if (debug?.HasFlag(DebugEngravingRenderableExtensions.DFlags.Bounds) == true)
             {
-                DrawRectangleExtensions.Draw(ctx, Pens.Dot(Color.Red, 1f), MaxBounds);
-            });
+                ibmp.Mutate(ctx =>
+                {
+                    DrawRectangleExtensions.Draw(ctx, Pens.Dot(Color.Red, 1f), MaxBounds);
+                });
+            }
         }
     }
 

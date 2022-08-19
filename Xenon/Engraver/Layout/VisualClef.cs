@@ -4,6 +4,8 @@ using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
+using System.Collections.Generic;
+
 using Xenon.Engraver.DataModel;
 using Xenon.Engraver.Visual;
 using Xenon.LayoutInfo;
@@ -19,7 +21,7 @@ namespace Xenon.Engraver.Layout
 
         internal Clef ClefType { get; set; }
 
-        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, bool debug = false)
+        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, HashSet<string> debug = null)
         {
             var bounds = CalculateBounds(X, Y);
 
@@ -36,10 +38,7 @@ namespace Xenon.Engraver.Layout
                     break;
             }
 
-            if (debug)
-            {
-                bounds.Render(ibmp, ikbmp);
-            }
+            bounds.Render(ibmp, ikbmp, debug);
         }
 
         private void Render_Trebble(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, VisualClefLayoutBounds bounds)
@@ -191,16 +190,20 @@ namespace Xenon.Engraver.Layout
         public PointF Origin { get; set; }
         public RectangleF MaxBounds { get; set; }
 
-        public void Render(Image<Bgra32> ibmp, Image<Bgra32> ikbmp)
+        public void Render(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, HashSet<string> debug = null)
         {
             ibmp.Mutate(ctx =>
             {
-                ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(Origin, 5).Points.ToArray());
-                DrawRectangleExtensions.Draw(ctx, Pens.Dot(Color.Red, 1f), MaxBounds);
+                if (debug?.HasFlag(DebugEngravingRenderableExtensions.DFlags.Origin) == true)
+                {
+                    ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(Origin, 5).Points.ToArray());
+                }
+                if (debug?.HasFlag(DebugEngravingRenderableExtensions.DFlags.Bounds) == true)
+                {
+                    DrawRectangleExtensions.Draw(ctx, Pens.Dot(Color.Red, 1f), MaxBounds);
+                }
             });
         }
-
-
     }
 
 }

@@ -105,6 +105,19 @@ namespace Xenon.Engraver.Layout
                     XLineOffset += cbounds.MaxBounds.Width;
                     lobjs.Add(vclef);
                 }
+                if (bar.ShowKeySig)
+                {
+                    VisualKeySignature key = new VisualKeySignature
+                    {
+                        XOffset = XLineOffset,
+                        YOffset = 0,
+                        Key = bar.KeySig,
+                        Clef = bar.Clef,
+                    };
+                    var kbounds = key.CalculateBounds(0, 0);
+                    XLineOffset += kbounds.MaxBounds.Width;
+                    lobjs.Add(key);
+                }
 
                 // add notes
                 foreach (var note in bar.Notes)

@@ -3,6 +3,8 @@ using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
+using System.Collections.Generic;
+
 using Xenon.LayoutInfo;
 
 namespace Xenon.Engraver.Visual
@@ -14,7 +16,7 @@ namespace Xenon.Engraver.Visual
 
         public float LineSpace { get; set; } = 20;
 
-        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, bool debug = false)
+        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, HashSet<string> debug = null)
         {
             for (int i = 0; i < Lines; i++)
             {
