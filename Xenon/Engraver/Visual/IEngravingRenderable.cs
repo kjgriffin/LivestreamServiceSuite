@@ -13,7 +13,7 @@ namespace Xenon.Engraver.Visual
 {
     internal interface IEngravingRenderable
     {
-        void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout);
+        void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, bool debug = false);
     }
 
 

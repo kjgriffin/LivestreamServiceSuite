@@ -29,22 +29,22 @@ namespace Xenon.Engraver.Layout
                 foreach (var line in part.Lines)
                 {
                     // try adding staves for each 'line'
-
+                    var staff = new VisualStaff
+                    {
+                        Width = layout.Engraving.Box.Size.Width,
+                    };
                     EngravingCollection collection = new EngravingCollection
                     {
                         XOffset = 20,
                         YOffset = Yoff,
                         Objects = new List<IEngravingRenderable>
                         {
-                            new VisualStaff
-                            {
-                                Width = layout.Engraving.Box.Size.Width,
-                            }
+                            staff,
                         }
                     };
 
                     // add bars/notes to staff
-                    collection.Objects.AddRange(PlaceSimpleNotes(line));
+                    collection.Objects.AddRange(PlaceSimpleNotes(line, staff));
 
                     vobjs.Add(collection);
                     Yoff += InterStaffHeight + 100; // staff height TODO: make it computed
@@ -61,11 +61,11 @@ namespace Xenon.Engraver.Layout
             return vobjs;
         }
 
-        private static List<IEngravingRenderable> PlaceSimpleNotes(MusicLine line)
+        private static List<IEngravingRenderable> PlaceSimpleNotes(MusicLine line, VisualStaff staff)
         {
             List<IEngravingRenderable> lobjs = new List<IEngravingRenderable>();
 
-            float XLineOffset = 40;
+            float XLineOffset = 0;
 
             // TODO: clef/keysig/timesig
 
@@ -91,9 +91,25 @@ namespace Xenon.Engraver.Layout
                 firstbar = false;
 
                 // add contents
+
+                // add metadata  (clef, tsig, ksig)
+                if (bar.ShowClef)
+                {
+                    VisualClef vclef = new VisualClef
+                    {
+                        XOffset = XLineOffset,
+                        ClefType = bar.Clef,
+                        YOffset = (float)Math.Round(staff.Lines / 2f) * staff.LineSpace,
+                    };
+                    var cbounds = vclef.CalculateBounds(0, 0);
+                    XLineOffset += cbounds.MaxBounds.Width;
+                    lobjs.Add(vclef);
+                }
+
+                // add notes
                 foreach (var note in bar.Notes)
                 {
-                    lobjs.Add(PlaceSimpleFigure(note, line.ParseClef(), ref XLineOffset));
+                    lobjs.Add(PlaceSimpleFigure(note, bar.Clef, ref XLineOffset));
                 }
 
                 // add end-bar
@@ -104,7 +120,7 @@ namespace Xenon.Engraver.Layout
                     XOffset = XLineOffset,
                     YOffset = 0
                 };
-                XLineOffset += postBar.Width + 40;
+                XLineOffset += postBar.Width;
                 lobjs.Add(postBar);
             }
 
@@ -120,13 +136,14 @@ namespace Xenon.Engraver.Layout
                 XOffset = Xoff,
                 YOffset = 0,
             };
-            //Xoff += fig.Width; // + 40;
-
 
             var bounds = fig.CalculateBounds(0, 0);
-            Xoff += bounds.NoteBounds.Width;
 
-            Xoff += fig.LWidth;
+            // adjust figure position based on size
+            fig.XOffset = fig.XOffset + (bounds.BodyOrigin.X - bounds.FigureBounds.Left);
+
+            Xoff += bounds.MaxBounds.Width;
+
             return fig;
         }
 

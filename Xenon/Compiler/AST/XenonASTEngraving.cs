@@ -25,6 +25,8 @@ namespace Xenon.Compiler.AST
         public string RawWords { get; private set; } = "";
         public string RawPackage { get; private set; } = "";
 
+        public HashSet<string> Flags { get; private set; } = new HashSet<string>();
+
         public List<MusicPart> MusicParts { get; set; } = new List<MusicPart>();
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
@@ -71,6 +73,16 @@ namespace Xenon.Compiler.AST
                     Lexer.Consume();
                     Lexer.GobbleWhitespace();
                     slide.RawPackage = Lexer.ConsumeNestedBlockAsRaw();
+                }
+                // parse debug flags
+                if (Lexer.Inspect("debug"))
+                {
+                    Lexer.Consume();
+                    Lexer.GobbleandLog("=");
+                    string args = Lexer.ConsumeUntil(";");
+                    var split = args.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                    slide.Flags = new HashSet<string>(split);
+                    Lexer.Consume();
                 }
 
             } while (!Lexer.Inspect("}"));
@@ -129,6 +141,7 @@ namespace Xenon.Compiler.AST
             };
 
             slide.Data[EngravingRenderer.DATAKEY_VISUALS] = visobjs;
+            slide.Data[EngravingRenderer.DATAKEY_DEBUG_FLAGS] = Flags;
 
 
             (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.Engraving);

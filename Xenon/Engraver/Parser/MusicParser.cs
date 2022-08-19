@@ -147,7 +147,10 @@ namespace Xenon.Engraver.Parser
             }
 
 
-            var clef = ParseClef();
+            var clefs = ParseClefs();
+
+            var curentLineclef = clefs.First();
+            int clefid = 0;
 
             for (int i = 0; i + 1 < lbars.Length; i += 2)
             {
@@ -162,14 +165,35 @@ namespace Xenon.Engraver.Parser
                         i++;
                     }
                 }
+
+                var bardata = Regex.Match(lbars[i], @"(?<clef>C)?(?<tsig>T)?(?<ksig>K)?,?(?<nv>.*)");
+
+                if (bardata.Groups["clef"].Success)
+                {
+                    if (clefs.Count > clefid)
+                    {
+                        curentLineclef = clefs[clefid++];
+                    }
+                    else
+                    {
+                        curentLineclef = clefs.Last();
+                    }
+                    bar.ShowClef = true;
+                }
+
+                // get bar metadata
+                bar.Clef = curentLineclef;
+
                 // get contents
-                bar.Notes = ParseNoteNames(lbars[i], clef);
+                bar.Notes = ParseNoteNames(bardata.Groups["nv"].Value, curentLineclef);
 
                 // attach rhythm values to notes
                 EvaluateRhythm_Mutate(rbars[i], bar.Notes);
 
                 // look for end
                 bar.EndBar = ParseBarType(lbars[i + 1]);
+
+
                 bars.Add(bar);
             }
 
@@ -274,17 +298,31 @@ namespace Xenon.Engraver.Parser
         }
 
 
-        internal Clef ParseClef()
+        internal List<Clef> ParseClefs()
         {
 
             if (Args.TryGetValue("clef", out var sclef))
             {
-                if (sclef == "trebble")
+
+                var clefs = sclef.Split(";", StringSplitOptions.RemoveEmptyEntries);
+
+                List<Clef> result = new List<Clef>();
+                foreach (var clef in clefs)
                 {
-                    return Clef.Trebble;
+                    switch (clef)
+                    {
+                        case "trebble":
+                            result.Add(Clef.Trebble);
+                            break;
+                        case "base":
+                            result.Add(Clef.Base);
+                            break;
+                    }
+
                 }
+                return result;
             }
-            return Clef.Unkown;
+            return new List<Clef> { Clef.Unkown };
         }
 
         private Note ParseNoteVal(string input, int basereg)

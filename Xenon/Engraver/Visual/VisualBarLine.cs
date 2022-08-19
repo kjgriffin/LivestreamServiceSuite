@@ -34,7 +34,7 @@ namespace Xenon.Engraver.Visual
 
         internal BarType Type { get; set; } = BarType.None;
 
-        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout)
+        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, bool debug = false)
         {
             if (Type == BarType.Single)
             {
@@ -51,9 +51,43 @@ namespace Xenon.Engraver.Visual
                     ctx.DrawLines(Pens.Solid(Color.Black, 8), new PointF(X + XOffset + 10, Y + YOffset), new PointF(X + XOffset + 10, Y + Height + YOffset));
                 });
             }
+
+            if (debug)
+            {
+                var bounds = CalculateBounds(X, Y);
+                bounds.Render(ibmp, ikbmp);
+            }
         }
 
+        public VisualBarLineLayoutBounds CalculateBounds(float X, float Y)
+        {
+            float xprim = X + XOffset;
+            float yprim = Y + YOffset;
+
+            VisualBarLineLayoutBounds bounds = new VisualBarLineLayoutBounds
+            {
+                MaxBounds = new RectangleF(xprim, yprim, Width, Height),
+            };
+
+            return bounds;
+        }
+
+
     }
+
+    internal class VisualBarLineLayoutBounds
+    {
+        public RectangleF MaxBounds { get; set; }
+
+        public void Render(Image<Bgra32> ibmp, Image<Bgra32> ikbmp)
+        {
+            ibmp.Mutate(ctx =>
+            {
+                DrawRectangleExtensions.Draw(ctx, Pens.Dot(Color.Red, 1f), MaxBounds);
+            });
+        }
+    }
+
 
 
 

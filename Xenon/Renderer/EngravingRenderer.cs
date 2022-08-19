@@ -22,6 +22,7 @@ namespace Xenon.Renderer
     {
 
         public static string DATAKEY_VISUALS { get => "visuals"; }
+        public static string DATAKEY_DEBUG_FLAGS { get => "debug-flags"; }
 
         public ILayoutInfoResolver<EngravingLayoutInfo> LayoutResolver { get => new EngravingLayoutInfo(); }
 
@@ -62,11 +63,12 @@ namespace Xenon.Renderer
 
             CommonDrawingBoxRenderer.Render(ibmp, ikbmp, layout.Engraving);
 
-            if (slide.Data.TryGetValue(DATAKEY_VISUALS, out var visuals))
+            if (slide.Data.TryGetValue(DATAKEY_VISUALS, out var visuals) && slide.Data.TryGetValue(DATAKEY_DEBUG_FLAGS, out var df))
             {
+                HashSet<string> dflags = df as HashSet<string> ?? new HashSet<string>();
                 foreach (IEngravingRenderable item in (visuals as IEnumerable<IEngravingRenderable>))
                 {
-                    item.Render(layout.Engraving.Box.Origin.X, layout.Engraving.Box.Origin.Y, ibmp, ikbmp, layout);
+                    item.Render(layout.Engraving.Box.Origin.X, layout.Engraving.Box.Origin.Y, ibmp, ikbmp, layout, dflags.Contains("bounds"));
                 }
             }
 

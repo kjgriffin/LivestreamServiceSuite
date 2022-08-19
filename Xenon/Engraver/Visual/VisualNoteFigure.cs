@@ -31,14 +31,14 @@ namespace Xenon.Engraver.Visual
             {
                 if (NValue?.Length == NoteLength.WHOLE)
                 {
-                    return 25;
+                    return 30;
                 }
                 else if (NValue?.Length == NoteLength.HALF)
                 {
 
                     return 25;
                 }
-                return 20;
+                return 27;
             }
         }
         private float NoteAccidentalWidth
@@ -50,7 +50,7 @@ namespace Xenon.Engraver.Visual
                     case Accidental.None:
                         return 0;
                     case Accidental.Sharp:
-                        return 50;
+                        return 20;
                     case Accidental.Flat:
                         return 50;
                     case Accidental.Natural:
@@ -66,7 +66,8 @@ namespace Xenon.Engraver.Visual
         {
             get
             {
-                float lv = 40 * 40;
+                float nval = 60;
+                float lv = nval * nval;
                 float dval = 0;
                 switch (NValue.Length)
                 {
@@ -93,7 +94,7 @@ namespace Xenon.Engraver.Visual
                 }
                 for (int i = 0; i < NValue.LengthDots; i++)
                 {
-                    lv += dval;
+                    lv += nval * nval * dval;
                     dval /= 2f;
                 }
                 return (float)Math.Sqrt(lv);
@@ -202,26 +203,30 @@ namespace Xenon.Engraver.Visual
 
             bool upstem = SitsUp(yloff);
 
+            float tlength = NValue.Length == NoteLength.EIGHTH && upstem ? 14 : 0;
+
             ComputeStemPos(xprim, yloff, yprim, out _, out _, out var p_tip);
 
             VisualNoteFigureLayoutBounds bounds = new VisualNoteFigureLayoutBounds
             {
                 BodyOrigin = new PointF(xprim, yprim),
                 BodyBounds = new EllipsePolygon(xprim, yprim, NoteBodyWidth, NHeight).Bounds,
-                FigureBounds = new RectangleF(xprim - NoteBodyWidth / 2f - 2, upstem ? yprim - NHeight / 2f - StemHeight : yprim - NHeight / 2, NoteBodyWidth + 20, StemHeight + NHeight),
+                FigureBounds = new RectangleF(xprim - NoteBodyWidth / 2f - 2, upstem ? yprim - NHeight / 2f - StemHeight : yprim - NHeight / 2, NoteBodyWidth + tlength, StemHeight + NHeight),
                 StemTip = p_tip,
-                //NoteBounds = new RectangleF(X + XOffset, yprim, NoteBodyWidth + NoteAccidentalWidth, StemHeight),
-                NoteBounds = new RectangleF(xprim - NoteBodyWidth / 2f - NoteAccidentalWidth - 2, upstem ? yprim - NHeight / 2f - StemHeight : yprim - NHeight / 2 + (NoteAccidentalWidth > 0 ? -30 : 0), NoteBodyWidth + 20 + NoteAccidentalWidth, StemHeight + NHeight + (NoteAccidentalWidth > 0 ? 30 : 0)),
-                TimeSpace = new RectangleF(X + XOffset + NoteAccidentalWidth + NoteBodyWidth, yprim - NHeight / 2f, LWidth, NHeight),
+                NoteBounds = new RectangleF(xprim - NoteBodyWidth / 2f - NoteAccidentalWidth - 2, upstem ? yprim - NHeight / 2f - StemHeight : yprim - NHeight / 2 + (NoteAccidentalWidth > 0 ? -30 : 0), NoteBodyWidth + tlength + NoteAccidentalWidth, StemHeight + NHeight + (NoteAccidentalWidth > 0 ? 30 : 0)),
+                TimeSpace = new RectangleF(xprim - NoteBodyWidth / 2f - 2 + NoteBodyWidth + tlength, yprim - NHeight / 2f, LWidth, NHeight),
             };
 
             return bounds;
         }
 
-        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout)
+        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, bool debug = false)
         {
-            var debug = CalculateBounds(X, Y);
-            debug.RenderBounds(ibmp, ikbmp, true);
+            var bounds = CalculateBounds(X, Y);
+            if (debug)
+            {
+                bounds.RenderBounds(ibmp, ikbmp, true);
+            }
 
             float XAcc = X + XOffset;
             float XPrim = X + XOffset + NoteAccidentalWidth;
@@ -230,22 +235,24 @@ namespace Xenon.Engraver.Visual
 
             float YPrim = Y + YOffset + yloff;
 
-            EllipsePolygon npoly = new EllipsePolygon(XPrim, YPrim, NoteBodyWidth * 0.8f, NHeight * 0.8f);
-            EllipsePolygon nepoly = new EllipsePolygon(XPrim, YPrim, NoteBodyWidth * 1.35f, NHeight);
-            EllipsePolygon nepoly1 = new EllipsePolygon(XPrim, YPrim, NoteBodyWidth * 1.2f, NHeight);
+            PointF[] whole_note = new EllipsePolygon(XPrim, YPrim, NoteBodyWidth, NHeight).Points.ToArray();
+            PointF[] whole_inner = new EllipsePolygon(XPrim, YPrim, NoteBodyWidth * 0.5f, NHeight * 0.8f).RotateDegree(40).Flatten().FirstOrDefault().Points.ToArray();
+
+            PointF[] half_note = new EllipsePolygon(XPrim, YPrim, NoteBodyWidth, NHeight).RotateDegree(-25).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
+            PointF[] half_inner = new EllipsePolygon(XPrim, YPrim, NoteBodyWidth * 0.75f, NHeight * 0.8f).RotateDegree(-38).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
+
+            EllipsePolygon std_note = new EllipsePolygon(XPrim, YPrim, NoteBodyWidth, NHeight);
+            var solid_note = std_note.RotateDegree(-25).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
+
             ibmp.Mutate(ctx =>
             {
-                var pts = nepoly.Scale(0.55f, 0.85f).RotateDegree(-38).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
-                var pts2 = nepoly.RotateDegree(-25).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
-
-                var pts2_narrow = nepoly.Scale(0.85f, 1).RotateDegree(-25).Flatten().FirstOrDefault()?.Points.ToArray() ?? new PointF[0];
 
                 if (NValue.Length == NoteLength.HALF)
                 {
                     FillPathBuilderExtensions.Fill(ctx, Color.Black, (x) =>
                        {
-                           x.AddLines(pts);
-                           x.AddLines(pts2_narrow);
+                           x.AddLines(half_inner);
+                           x.AddLines(half_note);
                            x.CloseFigure();
                        });
                 }
@@ -253,14 +260,14 @@ namespace Xenon.Engraver.Visual
                 {
                     FillPathBuilderExtensions.Fill(ctx, Color.Black, (x) =>
                        {
-                           x.AddLines(npoly.RotateDegree(40).Flatten().FirstOrDefault().Points.ToArray());
-                           x.AddLines(nepoly1.Points.ToArray());
+                           x.AddLines(whole_inner);
+                           x.AddLines(whole_note);
                            x.CloseFigure();
                        });
                 }
                 else
                 {
-                    ctx.FillPolygon(Brushes.Solid(Color.Black), pts2);
+                    ctx.FillPolygon(Brushes.Solid(Color.Black), solid_note);
                 }
             });
             ibmp.Mutate(ctx =>
@@ -268,13 +275,22 @@ namespace Xenon.Engraver.Visual
 
 
                 // TODO: draw ledger
+                float ledgerwidthextend = 20;
                 if (yloff < 0)
                 {
-
+                    var llines = Math.Abs(yloff / 20f);
+                    for (int i = 1; i <= llines; i++)
+                    {
+                        ctx.DrawLines(Pens.Solid(Color.Black, 1), new PointF(bounds.BodyOrigin.X - ledgerwidthextend, Y + YOffset - i * 20), new PointF(bounds.BodyOrigin.X + ledgerwidthextend, Y + YOffset - i * 20));
+                    }
                 }
                 if (yloff > 80)
                 {
-
+                    var llines = Math.Abs((yloff - 80) / 20f);
+                    for (int i = 1; i <= llines; i++)
+                    {
+                        ctx.DrawLines(Pens.Solid(Color.Black, 1), new PointF(bounds.BodyOrigin.X - ledgerwidthextend, Y + YOffset + 80 + i * 20), new PointF(bounds.BodyOrigin.X + ledgerwidthextend, Y + YOffset + 80 + i * 20));
+                    }
                 }
 
                 // draw handle
@@ -315,12 +331,14 @@ namespace Xenon.Engraver.Visual
                 // accidentals
                 if (NValue.Accidental == Accidental.Sharp)
                 {
-                    float id = NoteAccidentalWidth * 0.6f - NoteBodyWidth / 2f;
-                    ctx.DrawLines(Pens.Solid(Color.Black, 2f), new PointF(XAcc + 5, YPrim - 25), new PointF(XAcc + 5, YPrim + 25));
-                    ctx.DrawLines(Pens.Solid(Color.Black, 2f), new PointF(XAcc - 5 + id, YPrim - 25 - 5), new PointF(XAcc - 5 + id, YPrim + 25 - 5));
+                    float id = NoteAccidentalWidth / 1.2f;
+                    float XAccTrue = XAcc - NoteAccidentalWidth + 5;// + debug.NoteBounds.Width / 2f;
+                    var _ = bounds;
+                    ctx.DrawLines(Pens.Solid(Color.Black, 2f), new PointF(XAccTrue + 5, YPrim - 25), new PointF(XAccTrue + 5, YPrim + 25));
+                    ctx.DrawLines(Pens.Solid(Color.Black, 2f), new PointF(XAccTrue - 5 + id, YPrim - 25 - 5), new PointF(XAccTrue - 5 + id, YPrim + 25 - 5));
 
-                    ctx.DrawLines(Pens.Solid(Color.Black, 6f), new PointF(XAcc, YPrim - 10), new PointF(XAcc + id, YPrim - 10 - 5));
-                    ctx.DrawLines(Pens.Solid(Color.Black, 6f), new PointF(XAcc, YPrim + 10), new PointF(XAcc + id, YPrim + 10 - 5));
+                    ctx.DrawLines(Pens.Solid(Color.Black, 6f), new PointF(XAccTrue, YPrim - 10), new PointF(XAccTrue + id, YPrim - 10 - 5));
+                    ctx.DrawLines(Pens.Solid(Color.Black, 6f), new PointF(XAccTrue, YPrim + 10), new PointF(XAccTrue + id, YPrim + 10 - 5));
                 }
 
 
@@ -343,22 +361,24 @@ namespace Xenon.Engraver.Visual
 
             });
 
-            debug.RenderBounds(ibmp, ikbmp, false);
-
+            if (debug)
+            {
+                bounds.RenderBounds(ibmp, ikbmp, false);
+            }
         }
 
         private void ComputeStemPos(float XPrim, float yloff, float YPrim, out float mod, out PointF p_note, out PointF p_tip)
         {
-            float TOFFSET = 3;
+            float TOFFSET = -1.2f;
             TOFFSET += SitsUp(yloff) ? -1 : 0;
 
             if (NValue.Length == NoteLength.HALF && SitsUp(yloff))
             {
-                TOFFSET -= 2.9f;
+                TOFFSET -= -0.9f;
             }
             else if (NValue.Length == NoteLength.HALF)
             {
-                TOFFSET -= 1.6f;
+                TOFFSET -= -0.6f;
             }
 
             mod = SitsUp(yloff) ? 1 : -1;
@@ -402,7 +422,7 @@ namespace Xenon.Engraver.Visual
         /// <summary>
         /// Bounding rectangle that encompases the <see cref="NoteBounds"/> and the <see cref="TimeSpace"/>
         /// </summary>
-        public RectangleF MaxBounds { get => new RectangleF(NoteBounds.X, NoteBounds.Y, NoteBounds.Width + TimeSpace.Width - BodyBounds.Width, NoteBounds.Height); }
+        public RectangleF MaxBounds { get => new RectangleF(NoteBounds.X, NoteBounds.Y, NoteBounds.Width + TimeSpace.Width, NoteBounds.Height); }
 
 
         public void RenderBounds(Image<Bgra32> ibmp, Image<Bgra32> ikbmp, bool pre)
@@ -412,7 +432,7 @@ namespace Xenon.Engraver.Visual
             {
 
                 // origin
-                ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(BodyOrigin, 5).Points.ToArray());
+                //ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(BodyOrigin, 5).Points.ToArray());
 
                 // tail point
                 ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(StemTip, 5).Points.ToArray());

@@ -14,7 +14,7 @@ namespace Xenon.Engraver.Visual
 
         public float LineSpace { get; set; } = 20;
 
-        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout)
+        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, bool debug = false)
         {
             for (int i = 0; i < Lines; i++)
             {

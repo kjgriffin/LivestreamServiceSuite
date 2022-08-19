@@ -9,8 +9,9 @@ namespace Xenon.Engraver.DataModel
 
     enum Clef
     {
-        Trebble,
         Unkown,
+        Trebble,
+        Base,
     }
 
     enum KeySignature
@@ -87,7 +88,10 @@ namespace Xenon.Engraver.DataModel
         public BarType BeginBar { get; set; } = BarType.None;
         public BarType EndBar { get; set; } = BarType.Single;
         public List<Note> Notes { get; set; } = new List<Note>();
-
+        public Clef Clef { get; set; } = Clef.Unkown;
+        public bool ShowClef { get; set; } = false;
+        public KeySignature KeySig { get; set; } = KeySignature.NONE;
+        public bool ShowKeySig { get; set; } = false;
     }
 
     internal class Note

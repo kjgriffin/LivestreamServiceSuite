@@ -14,11 +14,11 @@ namespace Xenon.Engraver.Visual
         internal float YOffset { get; set; } = 0f;
         internal List<IEngravingRenderable> Objects { get; set; } = new List<IEngravingRenderable>();
 
-        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout)
+        public void Render(float X, float Y, Image<Bgra32> ibmp, Image<Bgra32> ikbmp, EngravingLayoutInfo layout, bool debug = false)
         {
             foreach (var obj in Objects)
             {
-                obj.Render(X + XOffset, Y + YOffset, ibmp, ikbmp, layout);
+                obj.Render(X + XOffset, Y + YOffset, ibmp, ikbmp, layout, debug);
             }
         }
     }
