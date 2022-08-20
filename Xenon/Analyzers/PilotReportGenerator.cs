@@ -17,7 +17,8 @@ namespace Xenon.Analyzers
         {
             StringBuilder sb = new StringBuilder();
 
-            Dictionary<string, HashSet<string>> usedPresets = new Dictionary<string, HashSet<string>>();
+            Dictionary<string, HashSet<string>> usedPosPresets = new Dictionary<string, HashSet<string>>();
+            Dictionary<string, HashSet<string>> usedZPresets = new Dictionary<string, HashSet<string>>();
 
             foreach (var slide in proj?.Slides)
             {
@@ -25,22 +26,34 @@ namespace Xenon.Analyzers
                 {
                     foreach (var line in ((string)pilot).Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
                     {
-                        var match = Regex.Match(line, @"\[(?<camname>.*)\]\((?<pstname>.*)\)");
+                        var match = Regex.Match(line, @"\[(?<camname>.*)\]\((?<pstname>.*)\).*?(<(?<zpst>.*)>)?");
                         var cname = match.Groups["camname"].Value;
                         var pname = match.Groups["pstname"].Value;
-                        if (usedPresets.TryGetValue(cname, out var presets))
+                        var zname = match.Groups["zpst"].Value;
+                        if (usedPosPresets.TryGetValue(cname, out var presets))
                         {
                             presets.Add(pname);
                         }
                         else
                         {
-                            usedPresets[cname] = new HashSet<string> { pname };
+                            usedPosPresets[cname] = new HashSet<string> { pname };
+                        }
+                        if (!string.IsNullOrEmpty(zname))
+                        {
+                            if (usedZPresets.TryGetValue(cname, out var zpresets))
+                            {
+                                zpresets.Add(zname);
+                            }
+                            else
+                            {
+                                usedZPresets[cname] = new HashSet<string> { zname };
+                            }
                         }
                     }
                 }
             }
 
-            return string.Join(Environment.NewLine, usedPresets.Select(kvp => $"{kvp.Key}\n\t{string.Join("\n\t", kvp.Value.ToList())}"));
+            return string.Join(Environment.NewLine, usedPosPresets.Select(kvp => $"{kvp.Key}\n\t{string.Join("\n\t", kvp.Value.ToList())}")) + Environment.NewLine + string.Join(Environment.NewLine, usedZPresets.Select(kvp => $"{kvp.Key}\n\t{string.Join("\n\t", kvp.Value.ToList())}"));
 
         }
 
