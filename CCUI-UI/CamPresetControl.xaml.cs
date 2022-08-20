@@ -1,8 +1,11 @@
-﻿using System;
+﻿using CameraDriver;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,8 +23,11 @@ namespace CCUI_UI
     internal delegate void OnRestartEvent(string cname, IPEndPoint endpoint);
     internal delegate void OnStopEvent(string cname);
     internal delegate void SavePresetEvent(string cname, string presetname);
+    internal delegate void SaveZoomEvent(string cname, string presetname, int zoom, string mode);
     internal delegate void FirePresetEvent(string cname, string presetname, int speed);
     internal delegate void DeletePresetEvent(string cname, string presetname);
+    internal delegate void FireZoomEvent(string cname, string presetname);
+    internal delegate void DeleteZoomEvent(string cname, string presetname);
 
     internal delegate void RunZoom(string cname, int direction);
     internal delegate void ChirpZoom(string cname, int direction, int chirps);
@@ -54,23 +60,31 @@ namespace CCUI_UI
         internal event OnRestartEvent OnRestartRequest;
         internal event OnStopEvent OnStopRequest;
         internal event SavePresetEvent OnSavePresetRequest;
+
+        internal event SaveZoomEvent OnSaveZoomRequest;
+        internal event DeleteZoomEvent OnDeleteZoomRequest;
+        internal event FireZoomEvent OnFireZoomRequest;
+
         internal event FirePresetEvent OnFirePresetRequest;
         internal event DeletePresetEvent OnDeletePresetRequest;
+
         internal event RunZoom OnRunZoomRequest;
         internal event ChirpZoom OnChirpZoomRequest;
 
         Dictionary<string, PresetControl> m_presets = new Dictionary<string, PresetControl>();
+
+        Dictionary<string, PresetControl> m_zooms = new Dictionary<string, PresetControl>();
 
         public CamPresetControl()
         {
             InitializeComponent();
         }
 
-        internal void Reconfigure(string name, string ip, string port, List<string> presets)
+        internal void Reconfigure(string name, string ip, string port, List<string> pos_presets, List<string> z_presets)
         {
             if (!CheckAccess())
             {
-                Dispatcher.Invoke(() => Reconfigure(name, ip, port, presets));
+                Dispatcher.Invoke(() => Reconfigure(name, ip, port, pos_presets, z_presets));
                 return;
             }
 
@@ -83,7 +97,7 @@ namespace CCUI_UI
             m_camPort = port;
             LockedSettings = true;
 
-            // reload any presets
+            // clear any presets
             foreach (var pst in m_presets.Values)
             {
                 pst.OnRemovePreset -= RemovePreset;
@@ -91,10 +105,24 @@ namespace CCUI_UI
             }
             lvPresets.Items.Clear();
             m_presets.Clear();
+            // clear any presets
+            foreach (var pst in m_zooms.Values)
+            {
+                pst.OnRemovePreset -= RemoveZPreset;
+                pst.OnRunPreset -= RunZPreset;
+            }
+            lvZoomPresets.Items.Clear();
+            m_zooms.Clear();
 
-            foreach (var preset in presets)
+
+            foreach (var preset in pos_presets)
             {
                 NewPresetAdded(preset);
+            }
+
+            foreach (var preset in z_presets)
+            {
+                NewZoomAdded(preset);
             }
         }
 
@@ -144,6 +172,19 @@ namespace CCUI_UI
                 OnSavePresetRequest?.Invoke(CamName, tbPresetName.Text);
             }
         }
+        private void btnSavePresetZoom_Click(object sender, RoutedEventArgs e)
+        {
+            if (LockedSettings && !string.IsNullOrWhiteSpace(tbPresetName.Text))
+            {
+                if (int.TryParse(tbChirps.Text, out var chirps))
+                {
+                    var pstMatch = Regex.Match(tbPresetName.Text, "(?<name>.*);(?<mode>.*)");
+
+                    OnSaveZoomRequest?.Invoke(CamName, pstMatch.Groups["name"].Value, chirps, pstMatch.Groups["mode"].Value);
+                }
+            }
+        }
+
 
         internal void NewPresetAdded(string presetName)
         {
@@ -160,6 +201,56 @@ namespace CCUI_UI
                 ctrl.OnPresetSelected += SelectPreset;
                 m_presets[presetName] = ctrl;
                 lvPresets.Items.Add(ctrl);
+            }
+        }
+
+        internal void NewZoomAdded(string presetName)
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => NewZoomAdded(presetName));
+                return;
+            }
+            if (!m_zooms.ContainsKey(presetName))
+            {
+                var ctrl = new PresetControl(presetName);
+                ctrl.OnRunPreset += RunZPreset;
+                ctrl.OnRemovePreset += RemoveZPreset;
+                ctrl.OnPresetSelected += SelectZPreset;
+                m_zooms[presetName] = ctrl;
+                lvZoomPresets.Items.Add(ctrl);
+            }
+        }
+
+        private void SelectZPreset(string pName)
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => SelectZPreset(pName));
+                return;
+            }
+            // TODO: get values...
+            tbPresetName.Text = pName;
+        }
+
+        private void RemoveZPreset(string pName)
+        {
+            OnDeletePresetRequest?.Invoke(CamName, pName);
+            if (m_zooms.TryGetValue(pName, out var ctrl))
+            {
+                ctrl.OnRemovePreset -= RemoveZPreset;
+                ctrl.OnRunPreset -= RunZPreset;
+                ctrl.OnPresetSelected -= SelectZPreset;
+                m_zooms.Remove(pName);
+                lvZoomPresets.Items.Remove(ctrl);
+            }
+        }
+
+        private void RunZPreset(string pName)
+        {
+            if (LockedSettings)
+            {
+                OnFireZoomRequest?.Invoke(CamName, pName);
             }
         }
 
@@ -243,7 +334,6 @@ namespace CCUI_UI
                 OnRunZoomRequest?.Invoke(CamName, -1);
             }
         }
-
 
     }
 }

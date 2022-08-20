@@ -39,7 +39,9 @@ namespace CCUI_UI
             cam1.OnRestartRequest += Cam_OnRestartRequest;
             cam1.OnStopRequest += Cam_OnStopRequest;
             cam1.OnSavePresetRequest += Cam_OnSavePresetRequest;
+            cam1.OnSaveZoomRequest += Cam_OnSaveZoomRequest;
             cam1.OnFirePresetRequest += Cam_OnFirePresetRequest;
+            cam1.OnFireZoomRequest += Cam_OnFireZoomRequest;
             cam1.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
             cam1.OnRunZoomRequest += Cam_OnRunZoomRequest;
             cam1.OnChirpZoomRequest += Cam_OnChripZoomRequest;
@@ -47,7 +49,9 @@ namespace CCUI_UI
             cam2.OnRestartRequest += Cam_OnRestartRequest;
             cam2.OnStopRequest += Cam_OnStopRequest;
             cam2.OnSavePresetRequest += Cam_OnSavePresetRequest;
+            cam2.OnSaveZoomRequest += Cam_OnSaveZoomRequest;
             cam2.OnFirePresetRequest += Cam_OnFirePresetRequest;
+            cam2.OnFireZoomRequest += Cam_OnFireZoomRequest;
             cam2.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
             cam2.OnRunZoomRequest += Cam_OnRunZoomRequest;
             cam2.OnChirpZoomRequest += Cam_OnChripZoomRequest;
@@ -55,7 +59,9 @@ namespace CCUI_UI
             cam3.OnRestartRequest += Cam_OnRestartRequest;
             cam3.OnStopRequest += Cam_OnStopRequest;
             cam3.OnSavePresetRequest += Cam_OnSavePresetRequest;
+            cam3.OnSaveZoomRequest += Cam_OnSaveZoomRequest;
             cam3.OnFirePresetRequest += Cam_OnFirePresetRequest;
+            cam3.OnFireZoomRequest += Cam_OnFireZoomRequest;
             cam3.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
             cam3.OnRunZoomRequest += Cam_OnRunZoomRequest;
             cam3.OnChirpZoomRequest += Cam_OnChripZoomRequest;
@@ -63,6 +69,11 @@ namespace CCUI_UI
             miFakeClients.IsChecked = m_monitor?.m_usingFake ?? false;
 
             ReConfigure();
+        }
+
+        private void Cam_OnSaveZoomRequest(string cname, string presetname, int zoom, string mode)
+        {
+            m_monitor?.SaveZoomLevel(cname, presetname, zoom, mode);
         }
 
         private void Cam_OnChripZoomRequest(string cname, int direction, int chirps)
@@ -106,17 +117,20 @@ namespace CCUI_UI
             if (c1 != null)
             {
                 cfg.KeyedPresets.TryGetValue(c1.Name, out var presets);
-                cam1.Reconfigure(c1.Name, c1.IPAddress, c1.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>());
+                cfg.KeyedZooms.TryGetValue(c1.Name, out var zpresets);
+                cam1.Reconfigure(c1.Name, c1.IPAddress, c1.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets?.Select(x => x.Key).ToList() ?? new List<string>());
             }
             if (c2 != null)
             {
                 cfg.KeyedPresets.TryGetValue(c2.Name, out var presets);
-                cam2.Reconfigure(c2.Name, c2.IPAddress, c2.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>());
+                cfg.KeyedZooms.TryGetValue(c2.Name, out var zpresets);
+                cam2.Reconfigure(c2.Name, c2.IPAddress, c2.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets?.Select(x => x.Key).ToList() ?? new List<string>());
             }
             if (c3 != null)
             {
                 cfg.KeyedPresets.TryGetValue(c3.Name, out var presets);
-                cam3.Reconfigure(c3.Name, c3.IPAddress, c3.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>());
+                cfg.KeyedZooms.TryGetValue(c3.Name, out var zpresets);
+                cam3.Reconfigure(c3.Name, c3.IPAddress, c3.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets?.Select(x => x.Key).ToList() ?? new List<string>());
             }
 
         }
@@ -146,12 +160,19 @@ namespace CCUI_UI
             m_monitor?.FirePreset(cname, presetname, speed);
         }
 
+        private void Cam_OnFireZoomRequest(string cname, string presetname)
+        {
+            m_monitor?.FireZoomLevel(cname, presetname);
+        }
+
         private void Window_Closed(object sender, EventArgs e)
         {
             cam1.OnRestartRequest -= Cam_OnRestartRequest;
             cam1.OnStopRequest -= Cam_OnStopRequest;
             cam1.OnSavePresetRequest -= Cam_OnSavePresetRequest;
+            cam1.OnSaveZoomRequest -= Cam_OnSaveZoomRequest;
             cam1.OnFirePresetRequest -= Cam_OnFirePresetRequest;
+            cam1.OnFireZoomRequest -= Cam_OnFireZoomRequest;
             cam1.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
             cam1.OnRunZoomRequest -= Cam_OnRunZoomRequest;
             cam1.OnChirpZoomRequest -= Cam_OnChripZoomRequest;
@@ -159,7 +180,9 @@ namespace CCUI_UI
             cam2.OnRestartRequest -= Cam_OnRestartRequest;
             cam2.OnStopRequest -= Cam_OnStopRequest;
             cam2.OnSavePresetRequest -= Cam_OnSavePresetRequest;
+            cam2.OnSaveZoomRequest -= Cam_OnSaveZoomRequest;
             cam2.OnFirePresetRequest -= Cam_OnFirePresetRequest;
+            cam2.OnFireZoomRequest -= Cam_OnFireZoomRequest;
             cam2.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
             cam2.OnRunZoomRequest -= Cam_OnRunZoomRequest;
             cam2.OnChirpZoomRequest -= Cam_OnChripZoomRequest;
@@ -167,7 +190,9 @@ namespace CCUI_UI
             cam3.OnRestartRequest -= Cam_OnRestartRequest;
             cam3.OnStopRequest -= Cam_OnStopRequest;
             cam3.OnSavePresetRequest -= Cam_OnSavePresetRequest;
+            cam3.OnSaveZoomRequest -= Cam_OnSaveZoomRequest;
             cam3.OnFirePresetRequest -= Cam_OnFirePresetRequest;
+            cam3.OnFireZoomRequest -= Cam_OnFireZoomRequest;
             cam3.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
             cam3.OnRunZoomRequest -= Cam_OnRunZoomRequest;
             cam3.OnChirpZoomRequest -= Cam_OnChripZoomRequest;
@@ -191,6 +216,26 @@ namespace CCUI_UI
             else if (cam3.LockedSettings && cam3.CamName == cname)
             {
                 cam3.NewPresetAdded(pname);
+            }
+        }
+        internal void AddKnownZoom(string cname, string pname)
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => AddKnownZoom(cname, pname));
+                return;
+            }
+            if (cam1.LockedSettings && cam1.CamName == cname)
+            {
+                cam1.NewZoomAdded(pname);
+            }
+            else if (cam2.LockedSettings && cam2.CamName == cname)
+            {
+                cam2.NewZoomAdded(pname);
+            }
+            else if (cam3.LockedSettings && cam3.CamName == cname)
+            {
+                cam3.NewZoomAdded(pname);
             }
         }
 
@@ -283,6 +328,11 @@ namespace CCUI_UI
             {
                 cam3.UpdateLastStatus(cmd, status, ok);
             }
+        }
+
+        private void ClickRefresh(object sender, RoutedEventArgs e)
+        {
+            ReConfigure();
         }
     }
 }

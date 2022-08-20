@@ -6,6 +6,7 @@
     <RootNamespace>CCUI_StandaloneUI</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <Configurations>Debug;Release;FullTest</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

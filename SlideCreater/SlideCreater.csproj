@@ -7,6 +7,7 @@
     <ApplicationIcon>icon2.ico</ApplicationIcon>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Configurations>Debug;Release;FullTest</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

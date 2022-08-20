@@ -30,6 +30,9 @@
                 <MenuItem Header="Connection" Background="#171717" Foreground="#efefef">
                     <MenuItem Name="miFakeClients" Click="ClickToggleMock" IsCheckable="True" IsChecked="False" Header="Fake Cameras" Background="#171717" Foreground="#efefef"></MenuItem>
                 </MenuItem>
+                <MenuItem Header="View" Background="#171717" Foreground="#efefef">
+                    <MenuItem Name="miRefresh" Click="ClickRefresh" Header="Refresh" Background="#171717" Foreground="#efefef"></MenuItem>
+                </MenuItem>
             </Menu>
 
             <Viewbox Grid.Row="1">

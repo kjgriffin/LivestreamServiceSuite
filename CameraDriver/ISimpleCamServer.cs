@@ -7,6 +7,7 @@ using System.Net;
 namespace CameraDriver
 {
     public delegate void CameraPresetSaved(string cname, string pname);
+    public delegate void CameraZoomSaved(string cname, string pname);
     public interface ISimpleCamServer
     {
         event CameraPresetSaved OnPresetSavedSuccess;
@@ -56,9 +57,14 @@ namespace CameraDriver
         event RobustReport OnWorkFailed;
         event RobustReport OnWorkStarted;
 
+        public event CameraZoomSaved OnZoomSavedSuccess;
+
         Guid Cam_RunZoomChrip(string cnameID, int direction, int duration);
         void Cam_RunZoomProgram(string cnameID, int direction);
         new Guid Cam_RecallPresetPosition(string cnameID, string presetName, byte speed = 0x10);
+        void Cam_SaveZoomPresetProgram(string cnameID, string presetName, int zlevel, string mode);
+        Guid Cam_RecallZoomPresetPosition(string cnameID, string presetName);
+        Dictionary<string, ZoomProgram> GetKnownZoomPresetsForClient(string cnameID);
     }
 
 

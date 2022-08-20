@@ -42,6 +42,7 @@ namespace CCUI_UI
             m_server = ISimpleCamServer.InstantiateRobust(m_log);
             m_server.Start();
             m_server.OnPresetSavedSuccess += m_server_OnPresetSavedSuccess;
+            m_server.OnZoomSavedSuccess += m_server_OnZoomSavedSuccess;
             m_server.OnWorkCompleted += m_server_OnWorkCompleted;
             m_server.OnWorkFailed += m_server_OnWorkFailed;
             m_server.OnWorkStarted += m_server_OnWorkStarted;
@@ -96,10 +97,16 @@ namespace CCUI_UI
         {
             m_UIWindow?.AddKnownPreset(cname, pname);
         }
+        private void m_server_OnZoomSavedSuccess(string cname, string pname)
+        {
+            m_UIWindow?.AddKnownZoom(cname, pname);
+        }
+
 
         public void Shutdown()
         {
             m_server.OnPresetSavedSuccess -= m_server_OnPresetSavedSuccess;
+            m_server.OnZoomSavedSuccess -= m_server_OnZoomSavedSuccess;
             m_server.OnWorkCompleted -= m_server_OnWorkCompleted;
             m_server.OnWorkFailed -= m_server_OnWorkFailed;
             m_server?.Shutdown();
@@ -136,15 +143,30 @@ namespace CCUI_UI
             m_server?.Cam_SaveCurentPosition(camname, presetname);
         }
 
+        public void SaveZoomLevel(string camname, string presetname, int zlevel, string mode)
+        {
+            m_server?.Cam_SaveZoomPresetProgram(camname, presetname, zlevel, mode);
+        }
+
         public void FirePreset(string camname, string presetname, int speed)
         {
             FirePreset_Internal(camname, presetname, (byte)speed);
+        }
+        public void FireZoomLevel(string camname, string presetname)
+        {
+            FireZoomLevel_Internal(camname, presetname);
         }
 
         internal Guid FirePreset_Internal(string camname, string presetname, int speed)
         {
             return m_server?.Cam_RecallPresetPosition(camname, presetname, (byte)speed) ?? Guid.Empty;
         }
+
+        internal Guid FireZoomLevel_Internal(string camname, string presetname)
+        {
+            return m_server?.Cam_RecallZoomPresetPosition(camname, presetname) ?? Guid.Empty;
+        }
+
 
         public void RemovePreset(string camname, string presetname)
         {
@@ -186,10 +208,13 @@ namespace CCUI_UI
         {
             var cams = m_server?.GetClientNamesWithPresets() ?? new List<string>();
             Dictionary<string, Dictionary<string, RESP_PanTilt_Position>> keyedPresets = new Dictionary<string, Dictionary<string, RESP_PanTilt_Position>>();
+            Dictionary<string, Dictionary<string, ZoomProgram>> keyedZooms = new Dictionary<string, Dictionary<string, ZoomProgram>>();
             foreach (var cam in cams)
             {
                 var presets = m_server?.GetKnownPresetsForClient(cam);
                 keyedPresets[cam] = presets ?? new Dictionary<string, RESP_PanTilt_Position>();
+                var zooms = m_server?.GetKnownZoomPresetsForClient(cam);
+                keyedZooms[cam] = zooms ?? new Dictionary<string, ZoomProgram>();
             }
             var clientscfg = m_server?.GetClientConfig() ?? new List<(string camName, IPEndPoint endpoint)>();
 
@@ -202,6 +227,7 @@ namespace CCUI_UI
                     Name = x.camName,
                 }).ToList(),
                 KeyedPresets = keyedPresets,
+                KeyedZooms = keyedZooms,
             };
             return cfg;
         }
@@ -229,11 +255,18 @@ namespace CCUI_UI
             // load all new presets
             foreach (var client in cfg.Clients)
             {
-                if (cfg.KeyedPresets.TryGetValue(client.Name, out var presets))
+                if (cfg.KeyedPresets?.TryGetValue(client.Name, out var presets) == true)
                 {
                     foreach (var preset in presets)
                     {
                         m_server?.Cam_SaveRawPosition(client.Name, preset.Key, preset.Value);
+                    }
+                }
+                if (cfg.KeyedZooms?.TryGetValue(client.Name, out var zooms) == true)
+                {
+                    foreach (var zoom in zooms)
+                    {
+                        m_server?.Cam_SaveZoomPresetProgram(client.Name, zoom.Key, zoom.Value.ZoomMS, zoom.Value.Mode);
                     }
                 }
             }
@@ -270,7 +303,7 @@ namespace CCUI_UI
         (Guid move, Guid zoom) ICCPUPresetMonitor_Executor.FirePresetWithZoom_Tracked(string camname, string presetname, int speed, int zoomdir, int msdur)
         {
             Guid m = FirePreset_Internal(camname, presetname, speed);
-            Guid z =  ChirpZoom_Internal(camname, zoomdir, msdur);
+            Guid z = ChirpZoom_Internal(camname, zoomdir, msdur);
             return (m, z);
         }
     }
@@ -287,6 +320,7 @@ namespace CCUI_UI
 
 
         public Dictionary<string, Dictionary<string, RESP_PanTilt_Position>> KeyedPresets { get; set; } = new Dictionary<string, Dictionary<string, RESP_PanTilt_Position>>();
+        public Dictionary<string, Dictionary<string, ZoomProgram>> KeyedZooms { get; set; } = new Dictionary<string, Dictionary<string, ZoomProgram>>();
         public List<ClientConfig> Clients { get; set; } = new List<ClientConfig>();
 
     }

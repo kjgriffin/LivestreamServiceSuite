@@ -18,6 +18,38 @@ using System.Threading.Tasks;
 
 namespace CameraDriver
 {
+
+    public class ZoomProgram
+    {
+
+        public ZoomProgram(int zlevel, string mode)
+        {
+            ZoomMS = zlevel;
+            Mode = mode;
+        }
+
+        public bool IsValid()
+        {
+            return ZoomMS > 0 && ZoomMS < 10000 && (Mode == "WIDE" || Mode == "TELE" || Mode == "STOP");
+        }
+
+        public int ZoomMS { get; set; } = 0;
+        public string Mode { get; set; } = "STOP";
+
+        internal int Direction()
+        {
+            switch (Mode.ToUpper())
+            {
+                case "WIDE":
+                    return -1;
+                case "TELE":
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
+    }
+
     internal class RobustCamServer : IRobustCamServer
     {
         private ConcurrentDictionary<string, IRobustClient> m_clients = new ConcurrentDictionary<string, IRobustClient>();
@@ -26,10 +58,12 @@ namespace CameraDriver
         private CancellationTokenSource m_cancel = new CancellationTokenSource();
         private Thread? m_workerThread;
         private ConcurrentDictionary<string, Dictionary<string, RESP_PanTilt_Position>> m_presets = new ConcurrentDictionary<string, Dictionary<string, RESP_PanTilt_Position>>();
+        private ConcurrentDictionary<string, Dictionary<string, ZoomProgram>> m_zooms = new ConcurrentDictionary<string, Dictionary<string, ZoomProgram>>();
 
         ILog? m_log;
 
         public event CameraPresetSaved OnPresetSavedSuccess;
+        public event CameraZoomSaved OnZoomSavedSuccess;
 
         public event RobustReport OnWorkStarted;
         public event RobustReport OnWorkCompleted;
@@ -213,7 +247,6 @@ namespace CameraDriver
                     {
                         if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
                         {
-                            m_log?.Info($"[{Thread.CurrentThread.Name}] requesting abs position [{presetName}] for camera {cnameID} {reqId}");
                             var cmd = CMD_PanTiltAbsPos.CMD_ABS_POS(preset.Pan, preset.Tilt, speed);
                             RobustCommand rcmd = new RobustCommand
                             {
@@ -222,7 +255,6 @@ namespace CameraDriver
                                 {
                                     Task.Run(() =>
                                     {
-                                        m_log?.Info($"[{Thread.CurrentThread.Name}] requesting abs position [{presetName}] for camera {cnameID} COMPLETED");
                                         OnWorkCompleted?.Invoke(cnameID, "DRIVE.ABSPOS", presetName, $"after {attempts} tries", reqId.ToString());
                                     });
                                 },
@@ -230,7 +262,6 @@ namespace CameraDriver
                                 {
                                     Task.Run(() =>
                                     {
-                                        m_log?.Info($"[{Thread.CurrentThread.Name}] requesting abs position [{presetName}] for camera {cnameID} FAILED");
                                         OnWorkFailed?.Invoke(cnameID, "DRIVE.ABSPOS", presetName, reqId.ToString());
                                     });
                                 },
@@ -238,6 +269,32 @@ namespace CameraDriver
                             };
                             OnWorkStarted?.Invoke(cnameID, "DRIVE.ABSPOS", presetName, reqId.ToString());
                             client?.DoRobustWork(rcmd);
+                        }
+                    }
+                }
+            });
+            m_workAvailable.Set();
+            return reqId;
+        }
+
+        public Guid Cam_RecallZoomPresetPosition(string cnameID, string presetName)
+        {
+            if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(presetName))
+            {
+                return Guid.Empty;
+            }
+            Guid reqId = Guid.NewGuid();
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing recall zoom preset job {reqId}");
+            m_dispatchCommands.Enqueue(() =>
+            {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] running recall zoom preset job {reqId}");
+                if (m_zooms.TryGetValue(cnameID, out var zooms))
+                {
+                    if (zooms?.TryGetValue(presetName, out var zoom) == true)
+                    {
+                        if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
+                        {
+                            Cam_RunZoomChrip(cnameID, zoom.Direction(), zoom.ZoomMS);
                         }
                     }
                 }
@@ -277,7 +334,7 @@ namespace CameraDriver
                                 {
                                     m_log?.Info($"[{Thread.CurrentThread.Name}] parsing pantilt position inquiry response");
                                     var preset = cmd.Parse(resp) as RESP_PanTilt_Position;
-                                    if (Internal_UpdatePreset(cnameID, presetName, preset))
+                                    if (Internal_UpdateCamPreset(cnameID, presetName, preset))
                                     {
                                         OnWorkCompleted?.Invoke(cnameID, "GET.ABSPOS", presetName, $"after {attempts} tries");
                                     }
@@ -307,14 +364,16 @@ namespace CameraDriver
             m_workAvailable.Set();
         }
 
+
+
         public void Cam_SaveRawPosition(string cnameID, string presetName, RESP_PanTilt_Position preset)
         {
             //m_dispatchCommands.Enqueue(() => Internal_UpdatePreset(cnameID, presetName, preset));
             //m_workAvailable.Set();
-            Internal_UpdatePreset(cnameID, presetName, preset);
+            Internal_UpdateCamPreset(cnameID, presetName, preset);
         }
 
-        private bool Internal_UpdatePreset(string cnameID, string presetName, RESP_PanTilt_Position pos)
+        private bool Internal_UpdateCamPreset(string cnameID, string presetName, RESP_PanTilt_Position pos)
         {
             // assign it
             if (pos.Valid)
@@ -326,6 +385,25 @@ namespace CameraDriver
                     return pdict;
                 });
                 OnPresetSavedSuccess?.Invoke(cnameID, presetName);
+                return true;
+            }
+            return false;
+        }
+        private bool Internal_UpdateZoomPreset(string cnameID, string presetName, int zlevel, string mode)
+        {
+            // assign it
+            string _mode = mode.ToUpper();
+            ZoomProgram pst = new ZoomProgram(zlevel, mode);
+            // validate the command
+            if (pst.IsValid())
+            {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] updating zoom position {presetName} for cam {cnameID}");
+                m_zooms.AddOrUpdate(cnameID, new Dictionary<string, ZoomProgram> { [presetName] = pst }, (cid, pdict) =>
+                {
+                    pdict[presetName] = pst;
+                    return pdict;
+                });
+                OnZoomSavedSuccess?.Invoke(cnameID, presetName);
                 return true;
             }
             return false;
@@ -449,6 +527,23 @@ namespace CameraDriver
             return new Dictionary<string, RESP_PanTilt_Position>();
         }
 
+        public Dictionary<string, ZoomProgram> GetKnownZoomPresetsForClient(string cnameID)
+        {
+            if (string.IsNullOrEmpty(cnameID))
+            {
+                return new Dictionary<string, ZoomProgram>();
+            }
+            if (m_zooms.TryGetValue(cnameID, out var presets))
+            {
+                if (presets != null)
+                {
+                    return new Dictionary<string, ZoomProgram>(presets);
+                }
+            }
+            return new Dictionary<string, ZoomProgram>();
+        }
+
+
         public List<(string camName, IPEndPoint endpoint)> GetClientConfig()
         {
             return m_clients?.Select(x => (x.Key, x.Value.Endpoint)).ToList() ?? new List<(string, IPEndPoint)>();
@@ -457,6 +552,27 @@ namespace CameraDriver
         void ISimpleCamServer.Cam_RecallPresetPosition(string cnameID, string presetName, byte speed)
         {
             Cam_RecallPresetPosition(cnameID, presetName, speed);
+        }
+
+        public void Cam_SaveZoomPresetProgram(string cnameID, string presetName, int zlevel, string mode)
+        {
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enquing save zoom job");
+            m_dispatchCommands.Enqueue(() =>
+            {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] running save zoom job");
+                if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
+                {
+                    if (Internal_UpdateZoomPreset(cnameID, presetName, zlevel, mode))
+                    {
+                        OnWorkCompleted?.Invoke(cnameID, "SAVE.ZOOM", presetName);
+                    }
+                    else
+                    {
+                        OnWorkFailed?.Invoke(cnameID, "SAVE.ZOOM", presetName);
+                    }
+                }
+            });
+            m_workAvailable.Set();
         }
     }
 

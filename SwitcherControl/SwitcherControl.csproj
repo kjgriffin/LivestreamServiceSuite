@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <Configurations>Debug;Release;FullTest</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

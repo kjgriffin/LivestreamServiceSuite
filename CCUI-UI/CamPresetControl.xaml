@@ -79,7 +79,10 @@
                             <TextBox Name="tbPresetName" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
                         </Grid>
                         <Grid Grid.Row="1">
-                            <Button Click="btnSavePreset_Click" x:Name="btnSavePreset" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">SAVE</Button>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Click="btnSavePreset_Click" x:Name="btnSavePreset" Width="80" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">SAVE PST</Button>
+                                <Button Click="btnSavePresetZoom_Click" x:Name="btnSaveZoom" Width="80" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">SAVE ZOOM</Button>
+                            </StackPanel>
                         </Grid>
                         <Grid Grid.Row="2" Background="#171717" Margin="10,0,10,0"></Grid>
                         <Grid Grid.Row="3">
@@ -126,8 +129,22 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
-                        <ListView Width="380" Name="lvPresets" Background="#171717" Margin="10" BorderBrush="#474747" HorizontalAlignment="Center" HorizontalContentAlignment="Stretch">
-                        </ListView>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="5"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <ScrollViewer Grid.Row="0">
+                                <ListView Name="lvPresets" Background="#171717" Margin="10" BorderBrush="#474747" HorizontalContentAlignment="Stretch">
+                                </ListView>
+                            </ScrollViewer>
+                            <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Background="#474747"></GridSplitter>
+                            <ScrollViewer Grid.Row="2">
+                                <ListView Name="lvZoomPresets" Background="#171717" Margin="10" BorderBrush="#474747" HorizontalContentAlignment="Stretch">
+                                </ListView>
+                            </ScrollViewer>
+                        </Grid>
                     </Grid>
 
                     <Grid Grid.Row="2">
