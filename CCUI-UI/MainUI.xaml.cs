@@ -79,9 +79,29 @@ namespace CCUI_UI
         {
             var cfg = m_monitor?.ExportStateToConfig() ?? new CCPUConfig();
 
-            var c1 = cfg.Clients.Count > 0 ? cfg.Clients[0] : null;
-            var c2 = cfg.Clients.Count > 1 ? cfg.Clients[1] : null;
-            var c3 = cfg.Clients.Count > 2 ? cfg.Clients[2] : null;
+            CCPUConfig.ClientConfig c1 = null;
+            CCPUConfig.ClientConfig c2 = null;
+            CCPUConfig.ClientConfig c3 = null;
+
+            var sorted = cfg.Clients.OrderBy(c => c.IPAddress).ToList();
+            for (int i = 0; i < 3; i++)
+            {
+                if (sorted.Count > i)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            c1 = sorted[i];
+                            break;
+                        case 1:
+                            c2 = sorted[i];
+                            break;
+                        case 2:
+                            c3 = sorted[i];
+                            break;
+                    }
+                }
+            }
 
             if (c1 != null)
             {
