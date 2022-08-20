@@ -167,13 +167,21 @@ namespace CameraDriver
         /// <param name="cnameID"></param>
         /// <param name="direction">-1 WIDE / 1 TELE / 0 STOP</param>
         /// <param name="duration">time in MS to run zoom for. Note: 200ms seems to be the smallest gauranteed interval</param>
-        public Guid Cam_RunZoomChrip(string cnameID, int direction, int duration)
+        public Guid Cam_RunZoomChrip(string cnameID, int direction, int duration, Guid _reqid = default(Guid))
         {
             if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(cnameID))
             {
                 return Guid.Empty;
             }
-            Guid reqId = Guid.NewGuid();
+            Guid reqId;
+            if (_reqid == Guid.Empty)
+            {
+                reqId = Guid.NewGuid();
+            }
+            else
+            {
+                reqId = _reqid;
+            }
             m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing zoom chrip job {reqId}");
             m_dispatchCommands.Enqueue(() =>
             {
@@ -294,7 +302,7 @@ namespace CameraDriver
                     {
                         if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
                         {
-                            Cam_RunZoomChrip(cnameID, zoom.Direction(), zoom.ZoomMS);
+                            Cam_RunZoomChrip(cnameID, zoom.Direction(), zoom.ZoomMS, reqId);
                         }
                     }
                 }

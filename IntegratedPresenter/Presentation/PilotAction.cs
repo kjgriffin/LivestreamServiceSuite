@@ -246,4 +246,127 @@ namespace Integrated_Presenter.Presentation
         }
     }
 
+    internal class PilotDriveNamedPresetWithNamedZoom : IPilotAction
+    {
+        string CamName;
+        string PresetName;
+        int Speed;
+        bool HasSpeed;
+        string ZName;
+        PilotActionState MoveState = PilotActionState.READY;
+        PilotActionState ZoomState = PilotActionState.READY;
+
+        string IPilotAction.DisplayInfo { get => $"ZOOM {ZName}"; }
+        string IPilotAction.CamName { get => CamName; }
+        string IPilotAction.PresetName { get => PresetName; }
+        string IPilotAction.AltName { get => $""; }
+
+        string IPilotAction.Status
+        {
+            get
+            {
+                if (ZoomState == MoveState)
+                {
+                    return ZoomState.ToString();
+                }
+                if (ZoomState == PilotActionState.FAILED || MoveState == PilotActionState.FAILED)
+                {
+                    return PilotActionState.FAILED.ToString();
+                }
+                if (ZoomState == PilotActionState.STARTED || MoveState == PilotActionState.STARTED)
+                {
+                    return PilotActionState.STARTED.ToString();
+                }
+                return "-----";
+            }
+        }
+
+
+        List<Guid> IPilotAction.ReqIds { get => new List<Guid> { moveReqId, zoomReqId }; }
+
+        Guid zoomReqId = Guid.Empty;
+        Guid moveReqId = Guid.Empty;
+
+
+        void IPilotAction.Execute(ICCPUPresetMonitor_Executor driverContext, int defaultSpeed)
+        {
+            moveReqId = driverContext?.FirePreset_Tracked(CamName, PresetName, HasSpeed ? Speed : defaultSpeed) ?? Guid.Empty;
+
+            zoomReqId = driverContext?.FireZoomLevel_Tracked(CamName, ZName) ?? Guid.Empty;
+        }
+
+        internal static bool TryParse(string cmd, out IPilotAction pilot)
+        {
+            var match = Regex.Match(cmd, @"^drive\[(?<cam>.*)\]\((?<pos>.*)\)(?<speed>@\d+):(?<zpst>.*);");
+            if (match.Success)
+            {
+                int speed = -1;
+                bool doSpeed = false;
+                int zdur = 0;
+                bool dozoom = false;
+                if (match.Groups.TryGetValue("speed", out var g))
+                {
+                    if (int.TryParse(g.Value.Substring(1), out int s))
+                    {
+                        speed = s;
+                        doSpeed = true;
+                    }
+                }
+                pilot = new PilotDriveNamedPresetWithNamedZoom
+                {
+                    CamName = match.Groups["cam"].Value,
+                    PresetName = match.Groups["pos"].Value,
+                    Speed = speed,
+                    HasSpeed = doSpeed,
+                    ZName = match.Groups["zpst"].Value,
+                };
+                return true;
+            }
+            pilot = null;
+            return false;
+        }
+
+        public void Reset()
+        {
+            moveReqId = Guid.Empty;
+            zoomReqId = Guid.Empty;
+            ZoomState = PilotActionState.READY;
+            MoveState = PilotActionState.READY;
+        }
+
+        public void StatusUpdate(string[] args)
+        {
+            if (args.Length > 1)
+            {
+                PilotActionState state = PilotActionState.READY;
+                switch (args.First())
+                {
+                    case "STARTED":
+                        state = PilotActionState.STARTED;
+                        break;
+                    case "COMPLETED":
+                        state = PilotActionState.DONE;
+                        break;
+                    case "FAILED":
+                        state = PilotActionState.FAILED;
+                        break;
+                }
+
+                if (Guid.TryParse(args.Last(), out Guid guid))
+                {
+                    if (guid == zoomReqId)
+                    {
+                        ZoomState = state;
+                    }
+                    if (guid == moveReqId)
+                    {
+                        MoveState = state;
+                    }
+                }
+            }
+
+        }
+    }
+
+
 }

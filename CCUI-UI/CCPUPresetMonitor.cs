@@ -299,6 +299,10 @@ namespace CCUI_UI
         {
             return ChirpZoom_Internal(camname, zoomdir, msdur);
         }
+        Guid ICCPUPresetMonitor_Executor.FireZoomLevel_Tracked(string camname, string presetname)
+        {
+            return FireZoomLevel_Internal(camname, presetname);
+        }
 
         (Guid move, Guid zoom) ICCPUPresetMonitor_Executor.FirePresetWithZoom_Tracked(string camname, string presetname, int speed, int zoomdir, int msdur)
         {

@@ -149,6 +149,10 @@ namespace IntegratedPresenter.Main
                                 {
                                     pilotActions.Add(pcmdwz);
                                 }
+                                else if (PilotDriveNamedPresetWithNamedZoom.TryParse(line, out var pcmdwnz))
+                                {
+                                    pilotActions.Add(pcmdwnz);
+                                }
                             }
 
                             Slides[snum].AutoPilotActions = pilotActions;
