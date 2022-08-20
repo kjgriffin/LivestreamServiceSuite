@@ -86,7 +86,7 @@ namespace Xenon.Compiler.SubParsers
 
         public void AddRule(string rule)
         {
-            if (!Rules.Contains(rule))
+            if (Rules?.Contains(rule) == false)
             {
                 if (string.IsNullOrEmpty(Rules))
                 {

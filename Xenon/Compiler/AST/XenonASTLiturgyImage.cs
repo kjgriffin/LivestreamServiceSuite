@@ -12,7 +12,7 @@ namespace Xenon.Compiler.AST
     class XenonASTLiturgyImage : IXenonASTCommand
     {
         public string AssetName { get; set; }
-        public IXenonASTElement Parent { get; }
+        public IXenonASTElement Parent { get; private set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
@@ -20,6 +20,7 @@ namespace Xenon.Compiler.AST
             Lexer.GobbleWhitespace();
             var args = Lexer.ConsumeArgList(false, "asset");
             litimage.AssetName = args["asset"];
+            litimage.Parent = Parent;
             return litimage;
 
         }
