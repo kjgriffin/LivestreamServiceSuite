@@ -108,6 +108,8 @@ namespace Xenon.Engraver.Visual
 
         internal Note NValue { get; set; } = new Note();
         internal Clef Clef { get; set; }
+        internal bool DrawTail { get; set; } = true;
+        internal bool DrawStem { get; set; } = true;
 
         private float YCalc()
         {
@@ -192,7 +194,7 @@ namespace Xenon.Engraver.Visual
 
             bool upstem = SitsUp(yloff);
 
-            float tlength = NValue.Length == NoteLength.EIGHTH && upstem ? 14 : 0;
+            float tlength = NValue.Length == NoteLength.EIGHTH && upstem && DrawTail ? 14 : 0;
 
             ComputeStemPos(xprim, yloff, yprim, out _, out _, out var p_tip);
 
@@ -286,10 +288,13 @@ namespace Xenon.Engraver.Visual
                     PointF p_note, p_tip;
                     ComputeStemPos(XPrim, yloff, YPrim, out mod, out p_note, out p_tip);
 
-                    ctx.DrawLines(Pens.Solid(Color.Black, 1.2f), p_note, p_tip);
+                    if (DrawStem)
+                    {
+                        ctx.DrawLines(Pens.Solid(Color.Black, 1.2f), p_note, p_tip);
+                    }
 
                     // draw tail
-                    if (NValue.Length == NoteLength.EIGHTH)
+                    if (NValue.Length == NoteLength.EIGHTH && DrawTail)
                     {
                         float DSTSCALE = SitsUp(yloff) ? 1f : 0.8f;
 

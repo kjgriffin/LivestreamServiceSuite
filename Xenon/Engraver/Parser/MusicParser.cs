@@ -149,12 +149,16 @@ namespace Xenon.Engraver.Parser
 
             var clefs = ParseClefs();
             var keys = ParseKeySignatures();
+            var times = ParseTimeSignatures();
 
             var curentLineclef = clefs.First();
             int clefid = 0;
 
             var curentKeySig = keys.First();
             int keyid = 0;
+
+            var curentTime = times.First();
+            int timeid = 0;
 
             for (int i = 0; i + 1 < lbars.Length; i += 2)
             {
@@ -185,6 +189,19 @@ namespace Xenon.Engraver.Parser
                     bar.ShowClef = true;
                 }
 
+                if (bardata.Groups["tsig"].Success)
+                {
+                    if (times.Count > timeid)
+                    {
+                        curentTime = times[timeid++];
+                    }
+                    else
+                    {
+                        curentTime = times.Last();
+                    }
+                    bar.ShowTime = true;
+                }
+
                 if (bardata.Groups["ksig"].Success)
                 {
                     if (keys.Count > keyid)
@@ -202,12 +219,15 @@ namespace Xenon.Engraver.Parser
                 // get bar metadata
                 bar.Clef = curentLineclef;
                 bar.KeySig = curentKeySig;
+                bar.Time = curentTime;
 
                 // get contents
-                bar.Notes = ParseNoteNames(bardata.Groups["nv"].Value, curentLineclef);
+                var notestream = ParseNoteNames(bardata.Groups["nv"].Value, curentLineclef);
 
-                // attach rhythm values to notes
-                EvaluateRhythm_Mutate(rbars[i], bar.Notes);
+                EvaluateRhythm_Mutate(rbars[i], notestream);
+
+                //bar.Notes = ParseNoteNames(bardata.Groups["nv"].Value, curentLineclef);
+                bar.Notes = Theory.TheoryRules.GroupifyNoteStream(notestream, curentTime);
 
                 // look for end
                 bar.EndBar = ParseBarType(lbars[i + 1]);
@@ -344,6 +364,53 @@ namespace Xenon.Engraver.Parser
             return new List<Clef> { Clef.Unkown };
         }
 
+        internal List<TimeSignatureMetadata> ParseTimeSignatures()
+        {
+            if (Args.TryGetValue("time", out var tstr))
+            {
+                var times = tstr.Split(";", StringSplitOptions.RemoveEmptyEntries);
+
+                List<TimeSignatureMetadata> result = new List<TimeSignatureMetadata>();
+                foreach (var time in times)
+                {
+                    var match = Regex.Match(time, @"(?<ctime>C)|(?<dnd>\d)/(?<dvs>\d)");
+
+                    if (match.Groups["ctime"].Success)
+                    {
+                        result.Add(new TimeSignatureMetadata
+                        {
+                            STimeDividend = "C",
+                            STimeDivisor = "C",
+                            TimeDividend = 4,
+                            TimeDivisor = 4,
+                            Type = TimeSignatureType.SIMPLE,
+                        });
+                    }
+                    else
+                    {
+                        var dividend = match.Groups["dnd"].Value;
+                        var divisor = match.Groups["dvs"].Value;
+
+                        int dnd = int.Parse(dividend);
+                        int div = int.Parse(divisor);
+
+                        result.Add(new TimeSignatureMetadata
+                        {
+                            STimeDividend = dividend,
+                            STimeDivisor = divisor,
+                            TimeDividend = dnd,
+                            TimeDivisor = div,
+                            Type = Theory.TheoryRules.TimeSignatureType(dnd, div),
+                        });
+
+                    }
+                }
+                return result;
+            }
+            return new List<TimeSignatureMetadata> { new TimeSignatureMetadata() };
+        }
+
+
         internal List<KeySignature> ParseKeySignatures()
         {
 
@@ -412,7 +479,7 @@ namespace Xenon.Engraver.Parser
                         case "CbM":
                             result.Add(KeySignature.C_FLAT_MAJOR);
                             break;
-                            
+
                     }
 
                 }

@@ -120,9 +120,9 @@ namespace Xenon.Engraver.Layout
                 }
 
                 // add notes
-                foreach (var note in bar.Notes)
+                foreach (var ngroup in bar.Notes)
                 {
-                    lobjs.Add(PlaceSimpleFigure(note, bar.Clef, ref XLineOffset));
+                    lobjs.Add(PlaceNoteGroups(ngroup, bar.Clef, ref XLineOffset));
                 }
 
                 // add end-bar
@@ -139,6 +139,37 @@ namespace Xenon.Engraver.Layout
 
             return lobjs;
         }
+
+        private static IEngravingRenderable PlaceNoteGroups(DataModel.NoteGroup ngroup, DataModel.Clef clef, ref float Xoff)
+        {
+            if (ngroup.Notes.Count == 1)
+            {
+                return PlaceSimpleFigure(ngroup.Notes.First(), clef, ref Xoff);
+            }
+
+            return PlaceSimpleBeamGroup(ngroup, clef, ref Xoff);
+        }
+
+        private static IEngravingRenderable PlaceSimpleBeamGroup(DataModel.NoteGroup ngroup, DataModel.Clef clef, ref float Xoff)
+        {
+            VisualNoteFigureBeamGroup fig = new VisualNoteFigureBeamGroup
+            {
+                Clef = clef,
+                ChildNotes = ngroup.Notes,
+                XOffset = Xoff,
+                YOffset = 0,
+            };
+
+            var bounds = fig.CalculateBounds(0, 0);
+
+            // adjust figure position based on size
+            //fig.XOffset = fig.XOffset + (bounds.BodyOrigin.X - bounds.FigureBounds.Left);
+
+            Xoff += bounds.MaxBounds.Width;
+
+            return fig;
+        }
+
 
         private static IEngravingRenderable PlaceSimpleFigure(DataModel.Note note, DataModel.Clef clef, ref float Xoff)
         {
