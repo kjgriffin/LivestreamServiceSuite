@@ -26,7 +26,7 @@ namespace Xenon.Analyzers
                 {
                     foreach (var line in ((string)pilot).Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
                     {
-                        var match = Regex.Match(line, @"\[(?<camname>.*)\]\((?<pstname>.*)\).*?(<(?<zpst>.*)>)?");
+                        var match = Regex.Match(line, @"\[(?<camname>.*)\]\((?<pstname>.*)\)@\d+((\|.*)|(<(?<zpst>.*))>)");
                         var cname = match.Groups["camname"].Value;
                         var pname = match.Groups["pstname"].Value;
                         var zname = match.Groups["zpst"].Value;
@@ -53,7 +53,7 @@ namespace Xenon.Analyzers
                 }
             }
 
-            return string.Join(Environment.NewLine, usedPosPresets.Select(kvp => $"{kvp.Key}\n\t{string.Join("\n\t", kvp.Value.ToList())}")) + Environment.NewLine + string.Join(Environment.NewLine, usedZPresets.Select(kvp => $"{kvp.Key}\n\t{string.Join("\n\t", kvp.Value.ToList())}"));
+            return "POS: { " + string.Join(Environment.NewLine, usedPosPresets.Select(kvp => $"{kvp.Key}\n\t{string.Join("\n\t", kvp.Value.ToList())}")) + "}" + Environment.NewLine + "ZOOM: { " + string.Join(Environment.NewLine, usedZPresets.Select(kvp => $"{kvp.Key}\n\t{string.Join("\n\t", kvp.Value.ToList())}")) + "}";
 
         }
 
