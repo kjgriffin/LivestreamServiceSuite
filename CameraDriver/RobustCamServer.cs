@@ -22,10 +22,11 @@ namespace CameraDriver
     public class ZoomProgram
     {
 
-        public ZoomProgram(int zlevel, string mode)
+        [System.Text.Json.Serialization.JsonConstructor]
+        public ZoomProgram(int ZoomMs, string Mode)
         {
-            ZoomMS = zlevel;
-            Mode = mode;
+            this.ZoomMS = ZoomMs;
+            this.Mode = Mode;
         }
 
         public bool IsValid()
