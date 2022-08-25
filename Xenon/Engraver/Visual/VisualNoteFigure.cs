@@ -55,17 +55,17 @@ namespace Xenon.Engraver.Visual
         {
             get
             {
-                float nval = 60;
+                float nval = 70;
                 float lv = nval * nval;
                 float dval = 0;
                 switch (NValue.Length)
                 {
                     case NoteLength.WHOLE:
-                        lv *= 4;
+                        lv *= 6;
                         dval = 2;
                         break;
                     case NoteLength.HALF:
-                        lv *= 2;
+                        lv *= 4;
                         dval = 1;
                         break;
                     case NoteLength.QUARTER:
@@ -73,11 +73,11 @@ namespace Xenon.Engraver.Visual
                         dval = 0.5f;
                         break;
                     case NoteLength.EIGHTH:
-                        lv *= 0.5f;
+                        lv *= 0.2f;
                         dval = 0.25f;
                         break;
                     case NoteLength.SIXTEENTH:
-                        lv *= 0.25f;
+                        lv *= 0.15f;
                         dval = 0.125f;
                         break;
                 }
@@ -98,7 +98,7 @@ namespace Xenon.Engraver.Visual
             }
         }
 
-        internal float StemHeight
+        internal static float StemHeight
         {
             get
             {
@@ -185,7 +185,12 @@ namespace Xenon.Engraver.Visual
             return true;
         }
 
-        public VisualNoteFigureLayoutBounds CalculateBounds(float X, float Y)
+        internal bool SitsUp()
+        {
+            return SitsUp(YCalc());
+        }
+
+        public VisualNoteFigureLayoutBounds CalculateBounds(float X, float Y, bool forceStemDir = false, bool beamUp = false)
         {
             float yloff = YCalc();
 
@@ -196,7 +201,16 @@ namespace Xenon.Engraver.Visual
 
             float tlength = NValue.Length == NoteLength.EIGHTH && upstem && DrawTail ? 14 : 0;
 
-            ComputeStemPos(xprim, yloff, yprim, out _, out _, out var p_tip);
+            PointF p_tip;
+            PointF p_org;
+            if (!forceStemDir)
+            {
+                ComputeStemPos(xprim, yloff, yprim, out _, out p_org, out p_tip);
+            }
+            else
+            {
+                ComputeForcedStemPos(xprim, yloff, yprim, beamUp, out _, out p_org, out p_tip);
+            }
 
             VisualNoteFigureLayoutBounds bounds = new VisualNoteFigureLayoutBounds
             {
@@ -204,6 +218,7 @@ namespace Xenon.Engraver.Visual
                 BodyBounds = new EllipsePolygon(xprim, yprim, NoteBodyWidth, NHeight).Bounds,
                 FigureBounds = new RectangleF(xprim - NoteBodyWidth / 2f - 2, upstem ? yprim - NHeight / 2f - StemHeight : yprim - NHeight / 2, NoteBodyWidth + tlength, StemHeight + NHeight),
                 StemTip = p_tip,
+                StemOrigin = p_org,
                 NoteBounds = new RectangleF(xprim - NoteBodyWidth / 2f - NoteAccidentalWidth - 2, upstem ? yprim - NHeight / 2f - StemHeight : yprim - NHeight / 2 + (NoteAccidentalWidth > 0 ? -30 : 0), NoteBodyWidth + tlength + NoteAccidentalWidth, StemHeight + NHeight + (NoteAccidentalWidth > 0 ? 30 : 0)),
                 TimeSpace = new RectangleF(xprim - NoteBodyWidth / 2f - 2 + NoteBodyWidth + tlength, yprim - NHeight / 2f, LWidth, NHeight),
             };
@@ -369,6 +384,28 @@ namespace Xenon.Engraver.Visual
             p_note = new PointF(XPrim + ((NoteBodyWidth / 2 + TOFFSET) * mod), YPrim);
             p_tip = new PointF(XPrim + ((NoteBodyWidth / 2 + TOFFSET) * mod), YPrim + (StemHeight * -mod));
         }
+
+        private void ComputeForcedStemPos(float XPrim, float yloff, float YPrim, bool forceUP, out float mod, out PointF p_note, out PointF p_tip)
+        {
+            float TOFFSET = -1.2f;
+            TOFFSET += forceUP ? -1 : 0;
+
+            if (NValue.Length == NoteLength.HALF && forceUP)
+            {
+                TOFFSET -= -0.9f;
+            }
+            else if (NValue.Length == NoteLength.HALF)
+            {
+                TOFFSET -= -0.6f;
+            }
+
+            mod = forceUP ? 1 : -1;
+
+            p_note = new PointF(XPrim + ((NoteBodyWidth / 2 + TOFFSET) * mod), YPrim);
+            p_tip = new PointF(XPrim + ((NoteBodyWidth / 2 + TOFFSET) * mod), YPrim + (StemHeight * -mod));
+        }
+
+
     }
 
 
@@ -386,6 +423,10 @@ namespace Xenon.Engraver.Visual
         /// Point describing the extreme tip (up/down) of the stem furthest from the <see cref="BodyOrigin"/>
         /// </summary>
         public PointF StemTip { get; set; }
+        /// <summary>
+        /// Point describing the connection of the stem to the <see cref="BodyBounds"/>
+        /// </summary>
+        public PointF StemOrigin { get; set; }
         /// <summary>
         /// Bounding rectangle that encompases the note body, stem, tail and dots.
         /// <para>Excludes accidentals, time leading</para>
@@ -422,7 +463,9 @@ namespace Xenon.Engraver.Visual
                 // tail point
                 if (debug?.HasFlag(DebugEngravingRenderableExtensions.DFlags.Points) == true)
                 {
-                    ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(StemTip, 5).Points.ToArray());
+                    ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(StemTip, 3).Points.ToArray());
+
+                    ctx.FillPolygon(Brushes.Solid(Color.Red), new EllipsePolygon(StemOrigin, 3).Points.ToArray());
                 }
 
                 if (debug?.HasFlag(DebugEngravingRenderableExtensions.DFlags.Bounds) == true)

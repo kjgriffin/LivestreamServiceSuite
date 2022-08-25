@@ -10,7 +10,7 @@ using Xenon.Engraver.DataModel;
 using Xenon.Engraver.Visual;
 using Xenon.LayoutInfo;
 
-namespace Xenon.Engraver.Layout
+namespace Xenon.Engraver.Visual
 {
     internal class VisualClef : IEngravingRenderable
     {

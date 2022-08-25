@@ -22,6 +22,7 @@ namespace Xenon.Engraver.Visual
         {
             [DFlags.Origin] = "origin",
             [DFlags.Points] = "points",
+            [DFlags.BPoints] = "beam-points",
             [DFlags.Bounds] = "bounds",
         };
 
@@ -29,6 +30,7 @@ namespace Xenon.Engraver.Visual
         {
             Origin,
             Points,
+            BPoints,
             Bounds,
         }
 

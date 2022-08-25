@@ -155,10 +155,26 @@ namespace Xenon.Engraver.Layout
             VisualNoteFigureBeamGroup fig = new VisualNoteFigureBeamGroup
             {
                 Clef = clef,
-                ChildNotes = ngroup.Notes,
+                ChildNotes = new List<VisualNoteFigure>(),
                 XOffset = Xoff,
                 YOffset = 0,
             };
+
+            foreach (var note in ngroup.Notes)
+            {
+                VisualNoteFigure nfig = new VisualNoteFigure
+                {
+                    Clef = clef,
+                    DrawStem = false,
+                    DrawTail = false,
+                    NValue = note,
+                    XOffset = Xoff,
+                    YOffset = 0,
+                };
+                fig.ChildNotes.Add(nfig);
+            }
+
+            fig.PlaceChildren(0, 0);
 
             var bounds = fig.CalculateBounds(0, 0);
 
