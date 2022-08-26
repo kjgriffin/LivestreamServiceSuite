@@ -34,6 +34,25 @@ namespace SlideCreater
             InitializeComponent();
         }
 
+        internal void HideBorder()
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(HideBorder);
+                return;
+            }
+            this.SelectionBorder.Margin = new Thickness(0, 0, 0, 0);
+        }
+        internal void ShowBorder()
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(ShowBorder);
+                return;
+            }
+            this.SelectionBorder.Margin = new Thickness(5, 5, 5, 5);
+        }
+
         private bool keydisplay = false;
         public void ShowSlide(bool showkey)
         {

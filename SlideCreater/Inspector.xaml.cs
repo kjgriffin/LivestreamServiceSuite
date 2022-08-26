@@ -24,6 +24,7 @@ namespace SlideCreater
         public Inspector()
         {
             InitializeComponent();
+            slideView.HideBorder();
         }
 
         private RenderedSlide _slide;
@@ -64,8 +65,8 @@ namespace SlideCreater
                 }
                 else
                 {
-                    WindowState = WindowState.Maximized;
                     WindowStyle = WindowStyle.None;
+                    WindowState = WindowState.Maximized;
                 }
             }
 

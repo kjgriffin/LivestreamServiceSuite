@@ -6,8 +6,10 @@
         xmlns:local="clr-namespace:SlideCreater"
         mc:Ignorable="d"
         PreviewKeyDown="Window_PreviewKeyDown"
-        Title="Detail View" Height="1130" Width="1930">
+        Title="Detail View">
     <Grid Background="#272727">
-        <local:SlideContentPresenter x:Name="slideView"></local:SlideContentPresenter>
+        <Viewbox>
+            <local:SlideContentPresenter x:Name="slideView" Width="1920" Height="1080"></local:SlideContentPresenter>
+        </Viewbox>
     </Grid>
 </Window>
