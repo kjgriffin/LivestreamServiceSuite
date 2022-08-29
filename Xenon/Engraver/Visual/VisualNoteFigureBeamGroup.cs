@@ -91,31 +91,85 @@ namespace Xenon.Engraver.Visual
             PointF Ymin = npts.MinBy(y => y.tpt.Y).tpt;
             PointF Ymax = npts.MaxBy(y => y.tpt.Y).tpt;
 
-            if (Math.Abs(Ymax.Y - Ymin.Y) > 10) // one line on a staff
-            {
+            PointF Lbound = npts.MinBy(x => x.tpt.X).tpt;
+            PointF Rbound = npts.MaxBy(x => x.tpt.X).tpt;
+            // solve this iteratively to bring the distance between all points down
+            float mdist = 8;
 
+            while (Math.Abs(Ymax.Y - Ymin.Y) > mdist) // one line on a staff
+            {
                 for (int i = 0; i < npts.Count; i++)
                 {
                     if (beamUp)
                     {
-                        if (npts[i].tpt.Y > Ymin.Y + 10)
+
+                        // ensure that one of the l/r bounds is maximal
+                        if ((Lbound.Y <= Ymin.Y && Lbound.X != Ymin.X) || (Rbound.Y <= Ymin.Y && Rbound.X != Ymin.X))
                         {
-                            npts[i] = new BeamNoteInfo(beamUp, npts[i].npt, new PointF(npts[i].tpt.X, Ymin.Y));
+                            if (Lbound.Y <= Ymin.Y)
+                            {
+                                // match the bound
+                                var j = npts.FindIndex(p => p.tpt.X == Lbound.X);
+                                npts[j] = new BeamNoteInfo(beamUp, npts[j].npt, new PointF(Lbound.X, Ymin.Y - mdist / 3));
+                            }
+                            else
+                            {
+                                var j = npts.FindIndex(p => p.tpt.X == Rbound.X);
+                                npts[j] = new BeamNoteInfo(beamUp, npts[j].npt, new PointF(Rbound.X, Ymin.Y - mdist / 3));
+                            }
+                        }
+
+
+                        if (npts[i].tpt.Y > Ymin.Y + mdist)
+                        {
+                            npts[i] = new BeamNoteInfo(beamUp, npts[i].npt, new PointF(npts[i].tpt.X, npts[i].tpt.Y - 1));
+                            break;
                         }
                     }
                     else
                     {
-                        if (npts[i].tpt.Y < Ymax.Y - 10)
+                        // ensure that one of the l/r bounds is maximal
+                        if (Ymax.X != Lbound.X && Ymax.X != Rbound.X)
                         {
-                            npts[i] = new BeamNoteInfo(beamUp, npts[i].npt, new PointF(npts[i].tpt.X, Ymax.Y));
+                            if (Math.Abs(Ymax.Y - Lbound.Y) < Math.Abs(Ymax.Y - Rbound.Y))
+                            {
+                                var j = npts.FindIndex(p => p.tpt.X == Lbound.X);
+                                npts[j] = new BeamNoteInfo(beamUp, npts[j].npt, new PointF(Lbound.X, Ymax.Y + mdist));
+                            }
+                            else
+                            {
+                                var j = npts.FindIndex(p => p.tpt.X == Rbound.X);
+                                npts[j] = new BeamNoteInfo(beamUp, npts[j].npt, new PointF(Rbound.X, Ymax.Y + mdist));
+                            }
+                        }
+                        // force a slant if needed
+                        else if (Lbound.Y < Rbound.Y && Rbound.Y < Ymax.Y)
+                        {
+                            var j = npts.FindIndex(p => p.tpt.X == Rbound.X);
+                            npts[j] = new BeamNoteInfo(beamUp, npts[j].npt, new PointF(Rbound.X, Ymax.Y + mdist));
+                        }
+                        else if (Lbound.Y > Rbound.Y && Lbound.Y < Ymax.Y)
+                        {
+                            var j = npts.FindIndex(p => p.tpt.X == Lbound.X);
+                            npts[j] = new BeamNoteInfo(beamUp, npts[j].npt, new PointF(Lbound.X, Ymax.Y + mdist));
+                        }
+
+                        if (npts[i].tpt.Y < Ymax.Y - mdist)
+                        {
+                            npts[i] = new BeamNoteInfo(beamUp, npts[i].npt, new PointF(npts[i].tpt.X, npts[i].tpt.Y + 1));
+                            break;
                         }
                     }
                 }
 
+                // re-calc
+                Ymin = npts.MinBy(y => y.tpt.Y).tpt;
+                Ymax = npts.MaxBy(y => y.tpt.Y).tpt;
+
+                Lbound = npts.MinBy(x => x.tpt.X).tpt;
+                Rbound = npts.MaxBy(x => x.tpt.X).tpt;
             }
 
-            PointF Lbound = npts.MinBy(x => x.tpt.X).tpt;
-            PointF Rbound = npts.MaxBy(x => x.tpt.X).tpt;
 
             if (debug?.HasFlag(DebugEngravingRenderableExtensions.DFlags.BPoints) == true)
             {
