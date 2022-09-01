@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CCUI_UI
 {
@@ -19,6 +20,7 @@ namespace CCUI_UI
     public class CCPUPresetMonitor : ICCPUPresetMonitor_Executor
     {
 
+        Window _parent = null;
         MainUI m_UIWindow;
         IRobustCamServer m_server;
         internal bool m_usingFake;
@@ -26,8 +28,9 @@ namespace CCUI_UI
 
         public event CCUEvent OnCommandUpdate;
 
-        public CCPUPresetMonitor(bool headless = false, ILog log = null)
+        public CCPUPresetMonitor(bool headless = false, ILog log = null, Window parent = null)
         {
+            _parent = parent;
             m_log = log;
             Spinup(headless);
         }
@@ -36,7 +39,7 @@ namespace CCUI_UI
         {
             if (!headless)
             {
-                m_UIWindow = new MainUI(this);
+                m_UIWindow = new MainUI(this, _parent);
                 m_UIWindow.Show();
             }
             m_server = ISimpleCamServer.InstantiateRobust(m_log);
@@ -117,13 +120,13 @@ namespace CCUI_UI
         {
             if (m_UIWindow == null)
             {
-                m_UIWindow = new MainUI(this);
+                m_UIWindow = new MainUI(this, _parent);
                 m_UIWindow.Show();
             }
             if (m_UIWindow?.IsVisible == false)
             {
                 m_UIWindow?.Close();
-                m_UIWindow = new MainUI(this);
+                m_UIWindow = new MainUI(this, _parent);
                 m_UIWindow.Show();
             }
         }

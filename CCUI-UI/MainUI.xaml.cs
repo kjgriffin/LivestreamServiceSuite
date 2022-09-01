@@ -26,11 +26,17 @@ namespace CCUI_UI
     {
 
         CCPUPresetMonitor m_monitor;
+        Window _parent = null;
 
-        public MainUI(CCPUPresetMonitor monitor)
+        public bool AlwaysOnTop = true;
+
+        public MainUI(CCPUPresetMonitor monitor, Window parent = null)
         {
             InitializeComponent();
+            _parent = parent;
             m_monitor = monitor;
+            this.Topmost = AlwaysOnTop;
+            this.miOnTop.IsChecked = AlwaysOnTop;
             Setup();
         }
 
@@ -333,6 +339,22 @@ namespace CCUI_UI
         private void ClickRefresh(object sender, RoutedEventArgs e)
         {
             ReConfigure();
+        }
+
+        private void ClickOnTop(object sender, RoutedEventArgs e)
+        {
+            AlwaysOnTop = !AlwaysOnTop;
+            
+            miOnTop.IsChecked = AlwaysOnTop;
+            this.Topmost = AlwaysOnTop;
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                _parent?.Focus();
+            }
         }
     }
 }

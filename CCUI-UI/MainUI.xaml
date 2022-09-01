@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:CCUI_UI"
         mc:Ignorable="d"
         Closed="Window_Closed"
+        PreviewKeyDown="Window_PreviewKeyDown"
         Title="DVIP-CCU" Height="1000" Width="1400">
     <Window.Resources>
         <ResourceDictionary>
@@ -32,6 +33,7 @@
                 </MenuItem>
                 <MenuItem Header="View" Background="#171717" Foreground="#efefef">
                     <MenuItem Name="miRefresh" Click="ClickRefresh" Header="Refresh" Background="#171717" Foreground="#efefef"></MenuItem>
+                    <MenuItem Name="miOnTop" Click="ClickOnTop" Header="Always On Top" Background="#171717" Foreground="#efefef" IsCheckable="True" IsChecked="True"></MenuItem>
                 </MenuItem>
             </Menu>
 
