@@ -21,6 +21,18 @@ using System.Windows.Shapes;
 
 namespace Integrated_Presenter.ViewModels
 {
+
+    public enum PilotMode
+    {
+        STD,
+        LAST,
+        ALT,
+        EMG,
+    }
+
+    public delegate void PilotModeChangedArgs(PilotMode newMode);
+    public delegate void TogglePilotModeArgs();
+
     /// <summary>
     /// Interaction logic for PilotUI.xaml
     /// </summary>
@@ -31,43 +43,81 @@ namespace Integrated_Presenter.ViewModels
             InitializeComponent();
         }
 
-        List<IPilotAction> _lastCache = new List<IPilotAction>();
+        public event PilotModeChangedArgs OnModeChanged;
+        public event TogglePilotModeArgs OnTogglePilotMode;
+
+        Dictionary<string, IPilotAction> _lastNamedCache = new Dictionary<string, IPilotAction>();
+        Dictionary<string, IPilotAction> _emergencyActions = new Dictionary<string, IPilotAction>();
+
         List<IPilotAction> _curentActions = new List<IPilotAction>();
         int _slideNum;
-        int mode = 0;
+        PilotMode mode = PilotMode.STD;
 
-        public void UpdateUI(bool PilotEnabled, List<IPilotAction> currentSlideActions, List<IPilotAction> nextSlideActions, int cSlideNum, int mode)
+
+        private string GetSubInfoForCam(string camName, PilotMode mode)
         {
+            switch (mode)
+            {
+                case PilotMode.STD:
+                    _emergencyActions.TryGetValue(camName, out var a);
+                    return a?.PresetName ?? "";
+                case PilotMode.LAST:
+                    string x = "";
+                    x += _curentActions?.FirstOrDefault(x => x.CamName == camName)?.PresetName + "\n" ?? "-\n";
+                    _emergencyActions.TryGetValue(camName, out var e);
+                    x += e?.PresetName ?? "-";
+                    return x;
+                case PilotMode.EMG:
+                    return _curentActions?.FirstOrDefault(x => x.CamName == camName)?.PresetName ?? "-";
+            }
+            return "";
+        }
+
+
+        public void UpdateUI(bool PilotEnabled, List<IPilotAction> currentSlideActions, List<IPilotAction> nextSlideActions, List<IPilotAction> emergencyActions, int cSlideNum, PilotMode mode)
+        {
+
+            foreach (var ea in emergencyActions)
+            {
+                _emergencyActions[ea.CamName] = ea;
+            }
+
             this.mode = mode;
             ellipseState.Fill = PilotEnabled ? Brushes.LimeGreen : Brushes.Red;
 
-            if (mode == 0)
+            if (mode == PilotMode.STD)
             {
                 tbSTDmode.FontWeight = FontWeights.Bold;
                 tbSTDmode.Foreground = Brushes.White;
 
                 tbLASTmode.FontWeight = FontWeights.Regular;
                 tbLASTmode.Foreground = Brushes.Gray;
+
+                tbEMGmode.FontWeight = FontWeights.Regular;
+                tbEMGmode.Foreground = Brushes.Gray;
             }
-            else if (mode == -1)
+            else if (mode == PilotMode.LAST)
             {
                 tbSTDmode.FontWeight = FontWeights.Regular;
                 tbSTDmode.Foreground = Brushes.Gray;
 
                 tbLASTmode.FontWeight = FontWeights.Bold;
                 tbLASTmode.Foreground = Brushes.Orange;
+
+                tbEMGmode.FontWeight = FontWeights.Regular;
+                tbEMGmode.Foreground = Brushes.Gray;
             }
+            else if (mode == PilotMode.EMG)
+            {
+                tbSTDmode.FontWeight = FontWeights.Regular;
+                tbSTDmode.Foreground = Brushes.Gray;
 
-            List<IPilotAction> displayActions = mode == 0 ? currentSlideActions : _lastCache;
+                tbLASTmode.FontWeight = FontWeights.Regular;
+                tbLASTmode.Foreground = Brushes.Gray;
 
-            UpdateForCam("pulpit", pvCurrent_plt, displayActions);
-            UpdateForCam("center", pvCurrent_ctr, displayActions);
-            UpdateForCam("lectern", pvCurrent_lec, displayActions);
-
-            UpdateForCam("pulpit", pvNext_plt, nextSlideActions);
-            UpdateForCam("center", pvNext_ctr, nextSlideActions);
-            UpdateForCam("lectern", pvNext_lec, nextSlideActions);
-
+                tbEMGmode.FontWeight = FontWeights.Bold;
+                tbEMGmode.Foreground = Brushes.OrangeRed;
+            }
 
             // if we get an update that invalidates the slide number for the curent slide, then we should change the curent cache
             // and reset all the status
@@ -76,7 +126,10 @@ namespace Integrated_Presenter.ViewModels
                 if (_curentActions.Any())
                 {
                     // replace them
-                    _lastCache = _curentActions;
+                    foreach (var a in _curentActions)
+                    {
+                        _lastNamedCache[a.CamName] = a;
+                    }
                 }
                 _curentActions = currentSlideActions;
                 _slideNum = cSlideNum;
@@ -86,18 +139,44 @@ namespace Integrated_Presenter.ViewModels
                     action.Reset();
                 }
             }
+
+            List<IPilotAction> displayActions = new List<IPilotAction>();
+            switch (mode)
+            {
+                case PilotMode.STD:
+                    displayActions = _curentActions;
+                    break;
+                case PilotMode.LAST:
+                    displayActions = _lastNamedCache.Values.ToList();
+                    break;
+                case PilotMode.ALT:
+                    break;
+                case PilotMode.EMG:
+                    displayActions = _emergencyActions.Values.ToList();
+                    break;
+            }
+
+
+            UpdateForCam("pulpit", pvCurrent_plt, displayActions, GetSubInfoForCam("pulpit", mode), true);
+            UpdateForCam("center", pvCurrent_ctr, displayActions, GetSubInfoForCam("center", mode), true);
+            UpdateForCam("lectern", pvCurrent_lec, displayActions, GetSubInfoForCam("lectern", mode), true);
+
+            UpdateForCam("pulpit", pvNext_plt, nextSlideActions, "", false);
+            UpdateForCam("center", pvNext_ctr, nextSlideActions, "", false);
+            UpdateForCam("lectern", pvNext_lec, nextSlideActions, "", false);
+
         }
 
-        private void UpdateForCam(string cam, PilotCamPreview ctrl, List<IPilotAction> actions)
+        private void UpdateForCam(string cam, PilotCamPreview ctrl, List<IPilotAction> actions, string subInfo, bool showSubInfo)
         {
             var action = actions.FirstOrDefault(x => x.CamName == cam);
             if (action != null)
             {
-                ctrl.UpdateUI(action);
+                ctrl.UpdateUI(action, mode, subInfo, showSubInfo);
             }
             else
             {
-                ctrl.ClearUI(cam);
+                ctrl.ClearUI(cam, mode, subInfo, showSubInfo);
             }
         }
 
@@ -110,7 +189,7 @@ namespace Integrated_Presenter.ViewModels
                 // it may be the result of a stale command...
                 return;
             }
-            var action = _curentActions.Concat(_lastCache).FirstOrDefault(x => x.CamName == camName && x.ReqIds.Contains(guid));
+            var action = _curentActions.Concat(_lastNamedCache.Values).FirstOrDefault(x => x.CamName == camName && x.ReqIds.Contains(guid));
             if (action == null)
             {
                 return;
@@ -120,15 +199,15 @@ namespace Integrated_Presenter.ViewModels
 
             if (camName == "pulpit")
             {
-                pvCurrent_plt.UpdateUI(action);
+                pvCurrent_plt.UpdateUI(action, mode, GetSubInfoForCam(camName, mode), true);
             }
             if (camName == "center")
             {
-                pvCurrent_ctr.UpdateUI(action);
+                pvCurrent_ctr.UpdateUI(action, mode, GetSubInfoForCam(camName, mode), true);
             }
             if (camName == "lectern")
             {
-                pvCurrent_lec.UpdateUI(action);
+                pvCurrent_lec.UpdateUI(action, mode, GetSubInfoForCam(camName, mode), true);
             }
         }
 
@@ -144,9 +223,13 @@ namespace Integrated_Presenter.ViewModels
                     {
                         action = _curentActions.FirstOrDefault(x => x.CamName == camName);
                     }
-                    else if (mode == -1)
+                    else if (mode == PilotMode.LAST)
                     {
-                        action = _lastCache.FirstOrDefault(x => x.CamName == camName);
+                        _lastNamedCache.TryGetValue(camName, out action);
+                    }
+                    else if (mode == PilotMode.EMG)
+                    {
+                        _emergencyActions.TryGetValue(camName, out action);
                     }
                     action?.Reset();
                     action?.Execute(driver, 15);
@@ -160,7 +243,7 @@ namespace Integrated_Presenter.ViewModels
 
         internal void FireOnSwitcherStateChangedForAutomation(BMDSwitcherState state, BMDSwitcherConfigSettings config, bool nextSlideGoesLive)
         {
-            if (mode == -1)
+            if (mode == PilotMode.LAST || mode == PilotMode.EMG)
             {
                 pvCurrent_plt.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "left").First().PhysicalInputId);
                 pvCurrent_ctr.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "center").First().PhysicalInputId);
@@ -177,6 +260,26 @@ namespace Integrated_Presenter.ViewModels
             pvNext_plt.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "left").First().PhysicalInputId && nextSlideGoesLive);
             pvNext_ctr.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "center").First().PhysicalInputId && nextSlideGoesLive);
             pvNext_lec.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "right").First().PhysicalInputId && nextSlideGoesLive);
+        }
+
+        private void ellipseState_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            OnTogglePilotMode?.Invoke();
+        }
+
+        private void tbSTDmode_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            OnModeChanged?.Invoke(PilotMode.STD);
+        }
+
+        private void tbEMGmode_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            OnModeChanged?.Invoke(PilotMode.EMG);
+        }
+
+        private void tbLASTmode_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            OnModeChanged?.Invoke(PilotMode.LAST);
         }
     }
 }

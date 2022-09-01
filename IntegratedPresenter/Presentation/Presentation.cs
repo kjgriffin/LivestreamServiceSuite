@@ -139,9 +139,16 @@ namespace IntegratedPresenter.Main
                             // load the pilot actions...
                             var src = sr.ReadToEnd();
                             List<IPilotAction> pilotActions = new List<IPilotAction>();
+                            List<IPilotAction> emgActions = new List<IPilotAction>();
                             foreach (var line in src.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
                             {
-                                if (PilotDriveNamedPreset.TryParse(line, out var pcmd))
+                                // load emergency actions
+                                if (line.StartsWith("emg") && PilotDriveNamedPresetWithNamedZoom.TryParse(line.Substring(3, line.Length - 3), out var emgpa))
+                                {
+                                    emgActions.Add(emgpa);
+                                }
+                                // load as regular actions
+                                else if (PilotDriveNamedPreset.TryParse(line, out var pcmd))
                                 {
                                     pilotActions.Add(pcmd);
                                 }
@@ -156,6 +163,7 @@ namespace IntegratedPresenter.Main
                             }
 
                             Slides[snum].AutoPilotActions = pilotActions;
+                            Slides[snum].EmergencyActions = emgActions;
                         }
                     }
                     catch (Exception)

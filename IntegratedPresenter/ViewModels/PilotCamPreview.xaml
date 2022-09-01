@@ -26,14 +26,14 @@
 
                 </Viewbox>
                 <Viewbox Grid.Row="2" Margin="5,0,5,0">
-                    <TextBlock FontSize="40" FontWeight="Bold" Name="tbPstName" Foreground="#efefef" VerticalAlignment="Center" HorizontalAlignment="Center">PRESET-Name</TextBlock>
+                    <TextBlock FontSize="40" FontWeight="Bold" Name="tbPstName" Foreground="#efefef" VerticalAlignment="Center" HorizontalAlignment="Center">SEVENLT</TextBlock>
                 </Viewbox>
                 <TextBlock Grid.Row="3" FontSize="35" Name="tbPstInfo" Foreground="#cfcfcf" VerticalAlignment="Center" HorizontalAlignment="Center">Description/info<LineBreak/>more info here</TextBlock>
                 <TextBlock Grid.Row="4" FontSize="40" Name="tbStatus" Foreground="Orange" VerticalAlignment="Center" HorizontalAlignment="Center">STATUS</TextBlock>
 
                 <Grid Grid.Row="6">
-                    <TextBlock FontSize="20" Name="tbaltstd" Foreground="#a7a7a7" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0">ALT/STD</TextBlock>
-                    <TextBlock FontSize="30" Name="tbPstAlt" Foreground="#a7a7a7" VerticalAlignment="Center" HorizontalAlignment="Center">ALT-PREST</TextBlock>
+                    <TextBlock FontSize="20" Name="tbSubTitle" Foreground="#a7a7a7" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0">STD/EMG</TextBlock>
+                    <TextBlock FontSize="30" Name="tbSubContent" Foreground="#a7a7a7" VerticalAlignment="Center" HorizontalAlignment="Center">EMG-EMG</TextBlock>
                 </Grid>
             </Grid>
         </Border>

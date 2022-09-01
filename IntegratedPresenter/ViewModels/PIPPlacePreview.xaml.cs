@@ -100,6 +100,5 @@ namespace Integrated_Presenter.ViewModels
             }
         }
 
-
     }
 }

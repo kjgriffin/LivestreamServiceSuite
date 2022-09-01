@@ -107,6 +107,9 @@ namespace IntegratedPresenter.Main
             _camMonitor = new CCPUPresetMonitor(headless: true, pilotLogger);
             _camMonitor.OnCommandUpdate += _camMonitor_OnCommandUpdate;
 
+            pilotUI.OnModeChanged += PilotUI_OnModeChanged;
+            pilotUI.OnTogglePilotMode += PilotUI_OnTogglePilotMode;
+
             // set a default config
             SetDefaultConfig();
             LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures.Default());
@@ -172,6 +175,16 @@ namespace IntegratedPresenter.Main
             gp_timer_2.Start();
 
             UpdatePilotUI();
+        }
+
+        private void PilotUI_OnTogglePilotMode()
+        {
+            ToggleAutoPilot();
+        }
+
+        private void PilotUI_OnModeChanged(PilotMode newMode)
+        {
+            PilotMode = newMode;
         }
 
         private void _camMonitor_OnCommandUpdate(string cName, params string[] args)
@@ -1660,13 +1673,17 @@ namespace IntegratedPresenter.Main
 
         private void TogglePilotMode()
         {
-            if (PilotMode == 0)
+            if (PilotMode == PilotMode.STD)
             {
-                PilotMode = -1;
+                PilotMode = PilotMode.LAST;
+            }
+            else if (PilotMode == PilotMode.LAST)
+            {
+                PilotMode = PilotMode.EMG;
             }
             else
             {
-                PilotMode = 0;
+                PilotMode = PilotMode.STD;
             }
         }
 
@@ -5077,15 +5094,18 @@ namespace IntegratedPresenter.Main
         {
             Dispatcher.Invoke(() =>
             {
-                pilotUI.UpdateUI(_FeatureFlag_EnableAutoPilot, Presentation?.EffectiveCurrent?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.Next?.AutoPilotActions ?? new List<IPilotAction>(), Presentation?.CurrentSlide ?? 0, PilotMode);
+                pilotUI.UpdateUI(_FeatureFlag_EnableAutoPilot,
+                                 Presentation?.EffectiveCurrent?.AutoPilotActions ?? new List<IPilotAction>(),
+                                 Presentation?.Next?.AutoPilotActions ?? new List<IPilotAction>(),
+                                 Presentation?.EffectiveCurrent?.EmergencyActions ?? new List<IPilotAction>(),
+                                 Presentation?.CurrentSlide ?? 0,
+                                 PilotMode);
                 pilotUI.FireOnSwitcherStateChangedForAutomation(_lastState, _config, PredictNextSlideTakesLiveCam());
             });
         }
 
-        /// <summary>
-        /// 0 = std, 1 = alt, -1 = last
-        /// </summary>
-        int PilotMode
+        
+        PilotMode PilotMode
         {
             get => _pilotMode;
             set
@@ -5095,7 +5115,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        int _pilotMode = 0;
+        PilotMode _pilotMode = PilotMode.STD;
 
         private void UpdatePilotUIStatus(string camName, params string[] args)
         {

@@ -27,6 +27,7 @@ namespace IntegratedPresenter.Main
         public List<TrackedAutomationAction> SetupActions { get; set; } = new List<TrackedAutomationAction>();
         public List<TrackedAutomationAction> Actions { get; set; } = new List<TrackedAutomationAction>();
         public List<IPilotAction> AutoPilotActions { get; set; } = new List<IPilotAction>();
+        public List<IPilotAction> EmergencyActions { get; set; } = new List<IPilotAction>();
         public string Title { get; set; } = "";
         public bool AutoOnly { get; set; } = false;
 

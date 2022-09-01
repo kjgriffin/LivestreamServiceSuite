@@ -17,12 +17,14 @@
                 </Grid.RowDefinitions>
                 <Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock Name="tbLASTmode" Foreground="#a0a0a0" VerticalAlignment="Center" FontSize="50" Margin="50,0,150,0">LAST</TextBlock>
+                        <TextBlock Cursor="Hand" MouseDown="tbLASTmode_MouseDown" Name="tbLASTmode" Foreground="#a0a0a0" VerticalAlignment="Center" FontSize="50" Margin="50,0,150,0">LAST</TextBlock>
 
-                        <TextBlock Name="tbALTmode" Foreground="#a0a0a0" VerticalAlignment="Center" FontSize="50" Margin="50,0,0,0">ALT</TextBlock>
+                        <TextBlock Cursor="Hand" MouseDown="tbEMGmode_MouseDown" Name="tbEMGmode" Foreground="#a0a0a0" VerticalAlignment="Center" FontSize="50" Margin="0,0,10,0">EMG</TextBlock>
+
+                        <TextBlock Name="tbALTmode" Foreground="#3f3f3f" VerticalAlignment="Center" FontSize="50" FontWeight="Bold" FontStyle="Oblique" Margin="50,0,0,0">ALT</TextBlock>
                         <TextBlock VerticalAlignment="Center" Foreground="#808080" FontSize="50" Margin="10,0,10,0">/</TextBlock>
-                        <TextBlock Name="tbSTDmode" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" FontSize="50" Margin="0,0,150,0">STD</TextBlock>
-                        <Ellipse Name="ellipseState" Width="50" Height="50" HorizontalAlignment="Right" Margin="10" Fill="Red"></Ellipse>
+                        <TextBlock Cursor="Hand" MouseDown="tbSTDmode_MouseDown" Name="tbSTDmode" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" FontSize="50" Margin="0,0,60,0">STD</TextBlock>
+                        <Ellipse Cursor="Hand" MouseDown="ellipseState_MouseDown" Name="ellipseState" Width="50" Height="50" HorizontalAlignment="Right" Margin="10" Fill="Red"></Ellipse>
                     </StackPanel>
                 </Grid>
                 <Border Grid.Row="1" Background="#918d8d" CornerRadius="30" Padding="10">
