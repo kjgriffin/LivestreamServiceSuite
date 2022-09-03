@@ -55,7 +55,7 @@ namespace CCUI_UI
         {
             if (args.Length > 1)
             {
-                m_UIWindow.UpdateCamStatus(cnameID, getDetails(args), getStatus("STARTED", args), true);
+                m_UIWindow?.UpdateCamStatus(cnameID, getDetails(args), getStatus("STARTED", args), true);
             }
             OnCommandUpdate?.Invoke(cnameID, new string[] { "STARTED" }.Concat(args).ToArray());
         }
@@ -64,7 +64,7 @@ namespace CCUI_UI
         {
             if (args.Length > 1)
             {
-                m_UIWindow.UpdateCamStatus(cnameID, getDetails(args), getStatus("FAILED", args), false);
+                m_UIWindow?.UpdateCamStatus(cnameID, getDetails(args), getStatus("FAILED", args), false);
             }
             OnCommandUpdate?.Invoke(cnameID, new string[] { "FAILED" }.Concat(args).ToArray());
         }
@@ -73,7 +73,7 @@ namespace CCUI_UI
         {
             if (args.Length > 1)
             {
-                m_UIWindow.UpdateCamStatus(cnameID, getDetails(args), getStatus("COMPLETED", args), true);
+                m_UIWindow?.UpdateCamStatus(cnameID, getDetails(args), getStatus("COMPLETED", args), true);
             }
             OnCommandUpdate?.Invoke(cnameID, new string[] { "COMPLETED" }.Concat(args).ToArray());
         }
@@ -313,23 +313,6 @@ namespace CCUI_UI
             Guid z = ChirpZoom_Internal(camname, zoomdir, msdur);
             return (m, z);
         }
-    }
-
-    public class CCPUConfig
-    {
-
-        public class ClientConfig
-        {
-            public string IPAddress { get; set; } = "";
-            public int Port { get; set; } = 0;
-            public string Name { get; set; } = "";
-        }
-
-
-        public Dictionary<string, Dictionary<string, RESP_PanTilt_Position>> KeyedPresets { get; set; } = new Dictionary<string, Dictionary<string, RESP_PanTilt_Position>>();
-        public Dictionary<string, Dictionary<string, ZoomProgram>> KeyedZooms { get; set; } = new Dictionary<string, Dictionary<string, ZoomProgram>>();
-        public List<ClientConfig> Clients { get; set; } = new List<ClientConfig>();
-
     }
 
 

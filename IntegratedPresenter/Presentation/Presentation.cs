@@ -1,4 +1,6 @@
-﻿using Integrated_Presenter.Presentation;
+﻿using CCUI_UI;
+
+using Integrated_Presenter.Presentation;
 
 using IntegratedPresenter.BMDSwitcher.Config;
 
@@ -20,6 +22,9 @@ namespace IntegratedPresenter.Main
 
         public bool HasUserConfig { get; private set; } = false;
         public Configurations.FeatureConfig.IntegratedPresenterFeatures UserConfig { get; private set; }
+
+        public bool HasCCUConfig { get; private set; } = false;
+        public CCPUConfig CCPUConfig { get; private set; }
 
         public string Folder { get; set; }
 
@@ -194,6 +199,24 @@ namespace IntegratedPresenter.Main
                 }
             }
 
+            // find ccpu config file
+            configfile = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"CCU-Config").Success).FirstOrDefault();
+
+            if (File.Exists(configfile))
+            {
+                using (StreamReader sr = new StreamReader(configfile))
+                {
+                    var cfg = sr.ReadToEnd();
+                    try
+                    {
+                        CCPUConfig = JsonSerializer.Deserialize<CCUI_UI.CCPUConfig>(cfg);
+                        HasCCUConfig = true;
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+            }
 
             return false;
         }

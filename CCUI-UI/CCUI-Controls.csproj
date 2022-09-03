@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CameraDriver\CameraDriver.csproj" />
     <ProjectReference Include="..\CommonIcons\CommonIcons.csproj" />
+    <ProjectReference Include="..\Configurations\Configurations.csproj" />
   </ItemGroup>
 
 </Project>

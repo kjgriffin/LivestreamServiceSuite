@@ -3037,6 +3037,11 @@ namespace IntegratedPresenter.Main
                     _logger.Info($"Presentation loading specified setting user settings. Re-configuring now.");
                     LoadUserSettings(pres.UserConfig);
                 }
+                if (pres.HasCCUConfig)
+                {
+                    _logger.Info($"Presentation loading specified ccu config settings. Re-configuring now.");
+                    _camMonitor?.LoadConfig(pres.CCPUConfig);
+                }
 
                 // overwrite display of old presentation if already open
                 if (_display != null && _display.IsWindowVisilbe)
