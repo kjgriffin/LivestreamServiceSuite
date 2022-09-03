@@ -26,7 +26,7 @@ namespace Xenon.Analyzers
                 {
                     foreach (var line in ((string)pilot).Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
                     {
-                        var match = Regex.Match(line, @"\[(?<camname>.*)\]\((?<pstname>.*)\)@\d+((\|.*)|(<(?<zpst>.*))>)");
+                        var match = Regex.Match(line, @"\[(?<camname>.*)\]\((?<pstname>.*)\)@\d+((\|.*)|((?<zpst>.*)))");
                         var cname = match.Groups["camname"].Value;
                         var pname = match.Groups["pstname"].Value;
                         var zname = match.Groups["zpst"].Value;
