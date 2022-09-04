@@ -189,7 +189,9 @@ namespace Integrated_Presenter.ViewModels
                 // it may be the result of a stale command...
                 return;
             }
-            var action = _curentActions.Concat(_lastNamedCache.Values).FirstOrDefault(x => x.CamName == camName && x.ReqIds.Contains(guid));
+            var allactions = _curentActions.Concat(_lastNamedCache.Values)
+                                           .Concat(_emergencyActions.Values);
+            var action = allactions.FirstOrDefault(x => x.CamName == camName && x.ReqIds.Contains(guid));
             if (action == null)
             {
                 return;
