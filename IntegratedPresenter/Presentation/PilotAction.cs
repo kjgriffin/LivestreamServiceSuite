@@ -297,7 +297,7 @@ namespace Integrated_Presenter.Presentation
 
         internal static bool TryParse(string cmd, out IPilotAction pilot)
         {
-            var match = Regex.Match(cmd, @"^run\[(?<cam>.*)\]\((?<pos>.*)\)(?<speed>@\d+)<?(?<zpst>.*)>?;");
+            var match = Regex.Match(cmd, @"^run\[(?<cam>.*)\]\((?<pos>.*)\)(?<speed>@\d+)<?:?(?<zpst>.*)>?;");
             if (match.Success)
             {
                 int speed = -1;
