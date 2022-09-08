@@ -37,6 +37,8 @@ namespace LutheRun
         [BoolSetting]
         public bool InferResponsivePslamReadingsAsTitledLiturgy { get; set; } = true;
         [BoolSetting]
+        public bool ForcePsalmsAsTitledLiturgy { get; set; } = false;
+        [BoolSetting]
         public bool PullAllReadingContentAsTitledLiturgy { get; set; } = false;
         [BoolSetting]
         public bool UseCopyTitle { get; set; } = true;

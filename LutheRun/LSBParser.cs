@@ -173,7 +173,7 @@ namespace LutheRun
                 {
                     if (LSBImportOptions.UseComplexReading)
                     {
-                        ServiceElements.Add(LSBElementReadingComplex.Parse(element));
+                        ServiceElements.Add(LSBElementReadingComplex.Parse(element, LSBImportOptions));
                     }
                     else
                     {
@@ -274,7 +274,7 @@ namespace LutheRun
             {
                 if (LSBImportOptions.UseComplexReading)
                 {
-                    ServiceElements.Add(LSBElementReadingComplex.Parse(element));
+                    ServiceElements.Add(LSBElementReadingComplex.Parse(element, LSBImportOptions));
                 }
                 else
                 {

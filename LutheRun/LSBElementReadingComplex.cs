@@ -409,7 +409,7 @@ namespace LutheRun
             Unknown,
         }
 
-        public static ILSBElement Parse(IElement element)
+        public static ILSBElement Parse(IElement element, LSBImportOptions options)
         {
             LSBElementReadingComplex reading = new LSBElementReadingComplex();
             var caption = LSBElementCaption.Parse(element.Children.First(e => e.ClassList.Contains("lsb-caption"))) as LSBElementCaption;
@@ -419,6 +419,15 @@ namespace LutheRun
             var content = element.Children.FirstOrDefault(e => e.LocalName == "lsb-content");
             if (content != null)
             {
+                if (content.Children.Where(c => c.LocalName == "p").All(c => c.ClassList.Any(x => x.StartsWith("lsb-responsorial"))))
+                {
+                    if (options.ForcePsalmsAsTitledLiturgy)
+                    {
+                        // parse content
+                        return LSBElementIntroit.Parse(element);
+                    }
+                }
+
                 bool pre = true;
                 ReadingResponsePart lasttype = ReadingResponsePart.Unknown;
                 List<IElement> egroup = null;
