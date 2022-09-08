@@ -259,7 +259,7 @@ namespace LutheRun
                     sb.AppendLine();
                     sb.AppendLine("content={".Indent(indentDepth, indentSpaces));
                     indentDepth++;
-                    sb.AppendLine(LSBResponsorialExtractor.ExtractResponsivePoetry(ReadingContent.FirstOrDefault().Elements, ref indentDepth, indentSpaces));
+                    sb.AppendLine(LSBResponsorialExtractor.ExtractResponsivePoetry(ReadingContent.FirstOrDefault()?.Elements ?? new List<IElement>(), ref indentDepth, indentSpaces));
                     indentDepth--;
                     sb.AppendLine("}".Indent(indentDepth, indentSpaces));
                     indentDepth--;
