@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 
 using Xenon.Compiler.SubParsers;
 using Xenon.Helpers;
@@ -49,12 +50,28 @@ namespace Xenon.LayoutEngine.L2
 
             internal List<SizedTextBlurb> PlaceLines(ComplexTextboxLayout layout)
             {
+                float yoff = 0;
+                float vspace = layout.MinInterLineSpace;
+
+                if (layout.VAlign == LWJVAlign.Equidistant)
+                {
+                    vspace = Math.Min(Math.Max((layout.Textbox.Size.Height - Lines.Sum(x => x.MaxHeight)) / Math.Max(Lines.Count - 1, 1), layout.MinInterLineSpace), layout.MaxInterLineSpace);
+                }
+                else if (layout.VAlign == LWJVAlign.Bottom)
+                {
+                    yoff = layout.Textbox.Size.Height - Lines.Sum(x => x.MaxHeight + layout.LineSpacing * vspace);
+                }
+                else if (layout.VAlign == LWJVAlign.Center)
+                {
+                    yoff = (layout.Textbox.Size.Height - Lines.Sum(x => x.MaxHeight + layout.LineSpacing * vspace)) / 2;
+                }
+
                 List<SizedTextBlurb> lines = new List<SizedTextBlurb>();
-                float y = layout.Textbox.Rectangle.Y;
+                float y = layout.Textbox.Rectangle.Y + yoff;
                 foreach (var line in Lines)
                 {
                     lines.AddRange(line.PlaceLine(layout, y));
-                    y += line.MaxHeight + layout.LineSpacing * layout.MinInterLineSpace;
+                    y += line.MaxHeight + layout.LineSpacing * vspace;
                 }
                 return lines;
             }
@@ -151,17 +168,47 @@ namespace Xenon.LayoutEngine.L2
             List<LayoutBox> filledboxes = new List<LayoutBox>();
             List<LayoutLine> cbox = new List<LayoutLine>();
 
+            // perhaps some consideration should be paid
+            // such that we don't put an unbalanced number of lines on each slide
+            // i.e. if possible avoid having less than a 30% difference between the fullest/emptiest slide
+
+            // compute rough avg line height
+            float avgLineHeight = filledLines.Average(x => x.MaxHeight + layout.MinInterLineSpace);
+            // compute rough approx max lines/slide
+            int approxMaxLinesPerSlide = (int)Math.Floor(layout.Textbox.Size.Height / avgLineHeight);
+            // figure out how many slides are needed
+            int expectedSlides = (int)Math.Ceiling(filledLines.Count / (double)approxMaxLinesPerSlide);
+            // figure out how many leftover lines would be on the last slide
+            int expectedLastSlideLines = filledLines.Count % approxMaxLinesPerSlide;
+
+            bool adjustRequired = false;
+            var targetLines = -1;
+
+            double PercentDiff = 0.3;
+
+            if ((approxMaxLinesPerSlide - expectedLastSlideLines) / approxMaxLinesPerSlide < PercentDiff)
+            {
+                adjustRequired = layout.EvenSpill;
+                // compute how to adjust based on max number of slides needed
+                // then re-balance against this higher number
+                targetLines = (int)Math.Ceiling(filledLines.Count / (double)expectedSlides);// still bias against earlier slides
+            }
+
+
             double yheight = 0;
+            int slines = 0;
             foreach (var line in filledLines)
             {
-                if (yheight + line.MaxHeight > layout.Textbox.Size.Height)
+                if (yheight + line.MaxHeight > layout.Textbox.Size.Height || (adjustRequired && slines > targetLines))
                 {
                     filledboxes.Add(new LayoutBox(cbox));
                     cbox = new List<LayoutLine>();
                     yheight = 0;
+                    slines = 0;
                 }
-                yheight += line.MaxHeight + layout.MinInterLineSpace;
+                yheight += line.MaxHeight + layout.MinInterLineSpace; // NOTE: adjustRequired should force this to work in other modes since the PlaceLines call will actually figure stuff out
                 cbox.Add(line);
+                slines++;
             }
             if (cbox.Any())
             {
