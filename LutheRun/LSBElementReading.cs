@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Navigation;
 
 namespace LutheRun
 {
@@ -16,6 +17,11 @@ namespace LutheRun
         public string PostLiturgy { get; private set; } = "";
 
         public IElement SourceHTML { get; private set; }
+
+        public BlockType BlockType()
+        {
+            return LutheRun.BlockType.READING;
+        }
 
         public static ILSBElement Parse(IElement element)
         {

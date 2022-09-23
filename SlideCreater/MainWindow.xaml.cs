@@ -1159,6 +1159,12 @@ namespace SlideCreater
                 }
                 await parser.ParseHTML(ofd.FileName);
                 parser.Serviceify(options);
+
+                if (options.FlightPlanning)
+                {
+                    parser.FlightPlan(options);
+                }
+
                 parser.CompileToXenon();
                 ActionState = ActionState.Downloading;
                 await parser.LoadWebAssets(_proj.CreateImageAsset);

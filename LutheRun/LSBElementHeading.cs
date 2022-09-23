@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Dom;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,5 +33,11 @@ namespace LutheRun
             //return $"/// <XENON_AUTO_GEN>\r\n/// Heading: {Heading.Replace('\"', '\'')}\r\n/// </XENON_AUTO_GEN>";
             return $"// Heading: {Heading.Replace('\"', '\'')}";
         }
+
+        public BlockType BlockType()
+        {
+            return LutheRun.BlockType.UNKNOWN;
+        }
+
     }
 }

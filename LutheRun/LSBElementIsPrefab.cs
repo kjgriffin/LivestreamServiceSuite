@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Dom;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,11 +14,14 @@ namespace LutheRun
 
         public IElement SourceHTML { get; private set; }
 
-        public LSBElementIsPrefab(string command, string elementtext, IElement source)
+        internal BlockType BType { get; private set; } = LutheRun.BlockType.UNKNOWN;
+
+        public LSBElementIsPrefab(string command, string elementtext, IElement source, BlockType bType)
         {
             Prefab = command;
             SourceText = elementtext;
             SourceHTML = source;
+            BType = bType;
         }
 
         public string DebugString()
@@ -28,6 +32,11 @@ namespace LutheRun
         public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
             return $"#{Prefab}".Indent(indentDepth, indentSpaces);
+        }
+
+        public BlockType BlockType()
+        {
+            return BType;
         }
     }
 }

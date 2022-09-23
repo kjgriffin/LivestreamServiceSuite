@@ -27,5 +27,10 @@ namespace LutheRun
         {
             return "";
         }
+
+        public BlockType BlockType()
+        {
+            return LutheRun.BlockType.UNKNOWN;
+        }
     }
 }

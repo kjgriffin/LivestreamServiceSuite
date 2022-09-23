@@ -15,6 +15,6 @@ namespace LutheRun
 
         public IElement SourceHTML { get; }
 
-
+        internal BlockType BlockType();
     }
 }

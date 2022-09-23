@@ -35,10 +35,16 @@ namespace LutheRun
 
         public void Serviceify(LSBImportOptions options)
         {
-            //ServiceElements = Serviceifier.Filter(Serviceifier.AddAdditionalInferedElements(Serviceifier.RemoveUnusedElement(ServiceElements, options), options), options);
-            ServiceElements = Serviceifier.Filter(Serviceifier.AddAdditionalInferedElements(ServiceElements, options), options);
+            ServiceElements = Serviceifier.NormalizeHeaddingsToCaptions(ServiceElements, options)
+                                          .AddAdditionalInferedElements(options)
+                                          .Filter(options);
         }
 
+
+        public void FlightPlan(LSBImportOptions options)
+        {
+            FlightPlanner.PlanFlight(options, ServiceElements);
+        }
 
         public string XenonDebug()
         {
@@ -549,7 +555,7 @@ namespace LutheRun
                     if (prefabs.Keys.Contains(ctext))
                     {
                         // use a prefab instead
-                        ServiceElements.Add(new LSBElementIsPrefab(prefabs[ctext], element.StrippedText(), element));
+                        ServiceElements.Add(new LSBElementIsPrefab(prefabs[ctext], element.StrippedText(), element, BlockType.CREED));
                         return true;
                     }
                 }

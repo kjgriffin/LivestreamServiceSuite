@@ -38,7 +38,11 @@ namespace SlideCreater.ViewControls
                     main.ShowSlide(false);
                     key.Slide = value;
                     key.ShowSlide(true);
+
+
+                    bHasPostsetTag.Visibility = value.IsPostset ? Visibility.Visible : Visibility.Hidden;
                     postset.Content = value.IsPostset ? value.Postset.ToString() : "none";
+
                     number.Content = value.Number;
                     string tmp = string.Join(", ", Xenon.Renderer.SlideExporter.WillCreate(value));
                     creates.Text = tmp;

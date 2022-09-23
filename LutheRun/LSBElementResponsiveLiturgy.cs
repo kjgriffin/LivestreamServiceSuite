@@ -24,6 +24,11 @@ namespace LutheRun
 
         }
 
+        public BlockType BlockType()
+        {
+            return LutheRun.BlockType.LITURGY_CORPERATE;
+        }
+
         public string DebugString()
         {
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_RESPONSIVE_LITURGY.";

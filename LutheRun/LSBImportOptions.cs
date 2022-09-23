@@ -51,6 +51,11 @@ namespace LutheRun
         [BoolSetting]
         public bool UseThemedHymns { get; set; } = true;
 
+
+        [BoolSetting]
+        public bool FlightPlanning { get; set; } = true;
+
+
         public string ServiceThemeLib { get; set; } = "Xenon.CommonColored";
 
         public Dictionary<string, string> Macros { get; set; } = new Dictionary<string, string>();

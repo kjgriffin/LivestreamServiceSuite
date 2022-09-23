@@ -14,6 +14,11 @@ namespace LutheRun
 
         public IElement SourceHTML { get; private set; }
 
+        public BlockType BlockType()
+        {
+            return LutheRun.BlockType.LITURGY_CORPERATE;
+        }
+
         public static ILSBElement Parse(IElement element)
         {
             // process liturgy text

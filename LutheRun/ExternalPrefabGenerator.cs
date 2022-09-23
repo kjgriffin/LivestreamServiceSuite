@@ -20,15 +20,15 @@ namespace LutheRun
             string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
             if (!string.IsNullOrWhiteSpace(number) && useUpNextForHymns)
             {
-                return new ExternalPrefab(UpNextCommand("UpNext_Numbered", name, number, ""), "upnext") { IndentReplacementIndentifier = "$>" };
+                return new ExternalPrefab(UpNextCommand("UpNext_Numbered", name, number, ""), "upnext", BlockType.HYMN) { IndentReplacementIndentifier = "$>" };
             }
             else if (!string.IsNullOrWhiteSpace(name) && useUpNextForHymns)
             {
-                return new ExternalPrefab(UpNextCommand("UpNext_UnNumbered", name, number, ""), "upnext") { IndentReplacementIndentifier = "$>" };
+                return new ExternalPrefab(UpNextCommand("UpNext_UnNumbered", name, number, ""), "upnext", BlockType.HYMN) { IndentReplacementIndentifier = "$>" };
             }
             else
             {
-                return new ExternalPrefab("#organintro", "organintro");
+                return new ExternalPrefab("#organintro", "organintro", BlockType.HYMN);
             }
 
 
@@ -86,7 +86,7 @@ namespace LutheRun
                 if (!string.IsNullOrWhiteSpace(serviceTitle) || !string.IsNullOrWhiteSpace(serviceDate))
                 {
                     // Since the external prefab is wrapped inside a scripted block, let the tile generate genrate the postset explicitly
-                    return new ExternalPrefab(CopyTitleCommand(serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ, options.InferPostset, options.ServiceThemeLib), "copytitle") { IndentReplacementIndentifier = "$>" };
+                    return new ExternalPrefab(CopyTitleCommand(serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ, options.InferPostset, options.ServiceThemeLib), "copytitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
 
                 }
             }
@@ -107,7 +107,7 @@ namespace LutheRun
                 if (!string.IsNullOrWhiteSpace(serviceTitle) || !string.IsNullOrWhiteSpace(serviceDate))
                 {
                     // Since the external prefab is wrapped inside a scripted block, let the tile generate genrate the postset explicitly
-                    return new ExternalPrefab(EndPageCommand(serviceTitle), "endtitle") { IndentReplacementIndentifier = "$>" };
+                    return new ExternalPrefab(EndPageCommand(serviceTitle), "endtitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
 
                 }
             }
@@ -167,7 +167,7 @@ namespace LutheRun
                 txtcmd = sb.ToString();
             }
 
-            return new ExternalPrefab(txtcmd, "creed") { PostsetReplacementIdentifier = postsetReplacementIdentifier, IndentReplacementIndentifier = "$>" };
+            return new ExternalPrefab(txtcmd, "creed", BlockType.CREED) { PostsetReplacementIdentifier = postsetReplacementIdentifier, IndentReplacementIndentifier = "$>" };
 
         }
 
