@@ -1,20 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Configurations>Debug;Release;FullTest</Configurations>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Configurations>Debug;Release;FullTest</Configurations>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <COMReference Include="BMDSwitcherAPI">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>0</VersionMinor>
-      <VersionMajor>1</VersionMajor>
-      <Guid>8a92b919-156c-4d61-94ef-03f9be4004b0</Guid>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="BMDSwitcherAPI">
+			<HintPath>..\lib\include\BMDSwitcherAPI.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
 
 </Project>
