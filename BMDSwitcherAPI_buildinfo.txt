@@ -1,0 +1,13 @@
+I didn't really like having to install the ATEM software, and then having to manually update each project COM reference to point at the BMDSwitcherAPI com object.
+
+I've instead included the ATEM SDK include files directly, from which I've build a dll that is then referenced
+(yes this may not be ideal having committed binary files... but we don't really want to change them too often, and its not sooo huge)
+
+STEPS to generate the dll:
+
+- download (or find/use the local copy) ATEM SDK
+
+in the 'include' folder run:
+1. `MIDL ./BMDSwitcherAPI.dll` (which sould generate a .tlb from the .idl)
+2. `tlbimp.exe ./BMDSwitcherAPI.tlb` (which will turn the created .tlb into a .dll we can use)
+3. manually edit the .csproj for all projects that need a reference. Set the <HintPath>../relative/sln/path</HintPath> for the reference

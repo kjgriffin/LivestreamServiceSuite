@@ -1,246 +1,245 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <RootNamespace>Integrated_Presenter</RootNamespace>
-    <UseWPF>true</UseWPF>
-    <ApplicationIcon>AppIcons/picon_RWa_icon.ico</ApplicationIcon>
-    <!--<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>-->
-    <!--<PublishSingleFile>True</PublishSingleFile>-->
-    <!--<PublishReadyToRun>True</PublishReadyToRun>-->
-    <!--<SelfContained>True</SelfContained>-->
-    <!--<IsPortable>True</IsPortable>-->
-    <!--<RuntimeIdentifier>win-x64-aot</RuntimeIdentifier>-->
-    <!--<RuntimeIdentifiers>win-x64-aot</RuntimeIdentifiers>-->
-    <UseWindowsForms>true</UseWindowsForms>
-    <Configurations>Debug;Release;FullTest</Configurations>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<RootNamespace>Integrated_Presenter</RootNamespace>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>AppIcons/picon_RWa_icon.ico</ApplicationIcon>
+		<!--<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>-->
+		<!--<PublishSingleFile>True</PublishSingleFile>-->
+		<!--<PublishReadyToRun>True</PublishReadyToRun>-->
+		<!--<SelfContained>True</SelfContained>-->
+		<!--<IsPortable>True</IsPortable>-->
+		<!--<RuntimeIdentifier>win-x64-aot</RuntimeIdentifier>-->
+		<!--<RuntimeIdentifiers>win-x64-aot</RuntimeIdentifiers>-->
+		<UseWindowsForms>true</UseWindowsForms>
+		<Configurations>Debug;Release;FullTest</Configurations>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Views\**" />
-    <EmbeddedResource Remove="Views\**" />
-    <None Remove="Views\**" />
-    <Page Remove="Views\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Views\**" />
+		<EmbeddedResource Remove="Views\**" />
+		<None Remove="Views\**" />
+		<Page Remove="Views\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="BMDSwitcher\Mock\Images\backcam.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\black.png" />
-    <None Remove="BMDSwitcher\Mock\Images\cbars.png" />
-    <None Remove="BMDSwitcher\Mock\Images\centercam.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\centershot.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\greenscreen1.png" />
-    <None Remove="BMDSwitcher\Mock\Images\leftcam.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\leftshot.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\leftshot1.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\organcam.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\organshot.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\powerpoint.png" />
-    <None Remove="BMDSwitcher\Mock\Images\rightcam.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\rightshot.PNG" />
-    <None Remove="BMDSwitcher\Mock\Images\videofile.png" />
-    <None Remove="Icons\BClassPIP.png" />
-    <None Remove="Icons\BlueBefore.png" />
-    <None Remove="Icons\BlueTimer.png" />
-    <None Remove="Icons\GreenCheck.png" />
-    <None Remove="Icons\GreenPlay.png" />
-    <None Remove="Icons\GreyPlay.png" />
-    <None Remove="Icons\GreyTimer.png" />
-    <None Remove="Icons\GreyTransArrows.png" />
-    <None Remove="Icons\HymnPIP.png" />
-    <None Remove="Icons\keyframepushleft.png" />
-    <None Remove="Icons\keyframepushright.png" />
-    <None Remove="Icons\keyframetobox.png" />
-    <None Remove="Icons\keyframetofill.png" />
-    <None Remove="Icons\KeyGrey.png" />
-    <None Remove="Icons\KeyRed.png" />
-    <None Remove="Icons\LeftSplitPIP.png" />
-    <None Remove="Icons\LightBlueBefore.png" />
-    <None Remove="Icons\Mute2.png" />
-    <None Remove="Icons\OrangeSandTimer.png" />
-    <None Remove="Icons\OrangeSkip.png" />
-    <None Remove="Icons\RedNoEntry.png" />
-    <None Remove="Icons\RedTransArrows.png" />
-    <None Remove="Icons\RedVideoCam.png" />
-    <None Remove="Icons\RightPIP.png" />
-    <None Remove="Icons\RightSplitPIP.png" />
-    <None Remove="Icons\YellowBolt.png" />
-    <None Remove="Icons\YellowSkip.png" />
-    <None Remove="Icons\YellowWarn.png" />
-    <None Remove="Keys\WhiteKey.png" />
-    <None Remove="Log4Net.config" />
-    <None Remove="version.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="BMDSwitcher\Mock\Images\backcam.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\black.png" />
+		<None Remove="BMDSwitcher\Mock\Images\cbars.png" />
+		<None Remove="BMDSwitcher\Mock\Images\centercam.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\centershot.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\greenscreen1.png" />
+		<None Remove="BMDSwitcher\Mock\Images\leftcam.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\leftshot.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\leftshot1.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\organcam.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\organshot.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\powerpoint.png" />
+		<None Remove="BMDSwitcher\Mock\Images\rightcam.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\rightshot.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\videofile.png" />
+		<None Remove="Icons\BClassPIP.png" />
+		<None Remove="Icons\BlueBefore.png" />
+		<None Remove="Icons\BlueTimer.png" />
+		<None Remove="Icons\GreenCheck.png" />
+		<None Remove="Icons\GreenPlay.png" />
+		<None Remove="Icons\GreyPlay.png" />
+		<None Remove="Icons\GreyTimer.png" />
+		<None Remove="Icons\GreyTransArrows.png" />
+		<None Remove="Icons\HymnPIP.png" />
+		<None Remove="Icons\keyframepushleft.png" />
+		<None Remove="Icons\keyframepushright.png" />
+		<None Remove="Icons\keyframetobox.png" />
+		<None Remove="Icons\keyframetofill.png" />
+		<None Remove="Icons\KeyGrey.png" />
+		<None Remove="Icons\KeyRed.png" />
+		<None Remove="Icons\LeftSplitPIP.png" />
+		<None Remove="Icons\LightBlueBefore.png" />
+		<None Remove="Icons\Mute2.png" />
+		<None Remove="Icons\OrangeSandTimer.png" />
+		<None Remove="Icons\OrangeSkip.png" />
+		<None Remove="Icons\RedNoEntry.png" />
+		<None Remove="Icons\RedTransArrows.png" />
+		<None Remove="Icons\RedVideoCam.png" />
+		<None Remove="Icons\RightPIP.png" />
+		<None Remove="Icons\RightSplitPIP.png" />
+		<None Remove="Icons\YellowBolt.png" />
+		<None Remove="Icons\YellowSkip.png" />
+		<None Remove="Icons\YellowWarn.png" />
+		<None Remove="Keys\WhiteKey.png" />
+		<None Remove="Log4Net.config" />
+		<None Remove="version.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <COMReference Include="BMDSwitcherAPI">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>0</VersionMinor>
-      <VersionMajor>1</VersionMajor>
-      <Guid>8a92b919-156c-4d61-94ef-03f9be4004b0</Guid>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="AppIcons\picon_RWa_icon.ico" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="AppIcons\picon_RWa_icon.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Log4Net.config">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<Resource Include="BMDSwitcher\Mock\Images\backcam.PNG" />
+		<Resource Include="BMDSwitcher\Mock\Images\black.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\cbars.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\centercam.PNG">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\centershot.PNG">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\greenscreen1.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\leftcam.PNG">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\leftshot.PNG">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\leftshot1.PNG">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\organcam.PNG">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\organshot.PNG">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\powerpoint.png" />
+		<Resource Include="BMDSwitcher\Mock\Images\rightcam.PNG">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\rightshot.PNG">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\videofile.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\BClassPIP.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\BlueBefore.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\BlueTimer.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\GreenCheck.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\GreenPlay.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\GreyPlay.png" />
+		<Resource Include="Icons\GreyTimer.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\GreyTransArrows.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\HymnPIP.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\keyframepushleft.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\keyframepushright.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\keyframetobox.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\keyframetofill.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\KeyGrey.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\KeyRed.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\LeftSplitPIP.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\LightBlueBefore.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\Mute2.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\OrangeSandTimer.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\OrangeSkip.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\RedNoEntry.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\RedTransArrows.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\RedVideoCam.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\RightPIP.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\RightSplitPIP.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\YellowBolt.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\YellowSkip.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\YellowWarn.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Keys\WhiteKey.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<EmbeddedResource Include="version.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Log4Net.config">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <Resource Include="BMDSwitcher\Mock\Images\backcam.PNG" />
-    <Resource Include="BMDSwitcher\Mock\Images\black.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\cbars.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\centercam.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\centershot.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\greenscreen1.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\leftcam.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\leftshot.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\leftshot1.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\organcam.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\organshot.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\powerpoint.png" />
-    <Resource Include="BMDSwitcher\Mock\Images\rightcam.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\rightshot.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BMDSwitcher\Mock\Images\videofile.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\BClassPIP.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\BlueBefore.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\BlueTimer.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\GreenCheck.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\GreenPlay.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\GreyPlay.png" />
-    <Resource Include="Icons\GreyTimer.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\GreyTransArrows.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\HymnPIP.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\keyframepushleft.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\keyframepushright.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\keyframetobox.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\keyframetofill.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\KeyGrey.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\KeyRed.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\LeftSplitPIP.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\LightBlueBefore.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\Mute2.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\OrangeSandTimer.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\OrangeSkip.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\RedNoEntry.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\RedTransArrows.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\RedVideoCam.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\RightPIP.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\RightSplitPIP.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\YellowBolt.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\YellowSkip.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\YellowWarn.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Keys\WhiteKey.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <EmbeddedResource Include="version.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="log4net" Version="2.0.14" />
+		<PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+		<PackageReference Include="System.IO.Ports" Version="4.7.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="log4net" Version="2.0.14" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-    <PackageReference Include="System.IO.Ports" Version="4.7.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CCUI-UI\CCUI-Controls.csproj" />
+		<ProjectReference Include="..\CommonVersionInfo\CommonVersionInfo.csproj" />
+		<ProjectReference Include="..\IntegratedPresenterAPIInterop\IntegratedPresenterAPIInterop.csproj" />
+		<ProjectReference Include="..\SwitcherControl\SwitcherControl.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CCUI-UI\CCUI-Controls.csproj" />
-    <ProjectReference Include="..\CommonVersionInfo\CommonVersionInfo.csproj" />
-    <ProjectReference Include="..\IntegratedPresenterAPIInterop\IntegratedPresenterAPIInterop.csproj" />
-    <ProjectReference Include="..\SwitcherControl\SwitcherControl.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="BMDSwitcherAPI">
+			<HintPath>..\lib\include\BMDSwitcherAPI.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Automation\" />
-  </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties version_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+	<ItemGroup>
+		<Folder Include="Automation\" />
+	</ItemGroup>
+
+	<ProjectExtensions>
+		<VisualStudio>
+			<UserProperties version_1json__JsonSchema="" />
+		</VisualStudio>
+	</ProjectExtensions>
 
 </Project>
