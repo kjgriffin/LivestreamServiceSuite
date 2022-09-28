@@ -350,6 +350,11 @@ namespace Xenon.SaveLoad
             {
                 progress?.Report(0);
 
+                if (!Directory.Exists(Path.GetDirectoryName(path)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+                }
+
                 using FileStream ziptoopen = new FileStream(path, FileMode.Create);
                 using ZipArchive archive = new ZipArchive(ziptoopen, ZipArchiveMode.Update);
 
