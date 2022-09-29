@@ -657,7 +657,7 @@ namespace SlideCreater
                     assetItemCtrl.OnFitInsertRequest += AssetItemCtrl_OnFitInsertRequest;
                     assetItemCtrl.OnDeleteAssetRequest += AssetItemCtrl_OnDeleteAssetRequest;
                     assetItemCtrl.OnAutoFitInsertRequest += AssetItemCtrl_OnAutoFitInsertRequest;
-                    assetItemCtrl.OnInsertBellsRequest += AssetItemCtrl_OnInsertBellsRequest;
+                    assetItemCtrl.OnInsertResourceRequest += AssetItemCtrl_OnInsertResourceRequest;
                     assetItemCtrl.OnLiturgyInsertRequest += AssetItemCtrl_OnLiturgyInsertRequest;
                     assetItemCtrl.OnRenameAssetRequest += AssetItemCtrl_OnRenameAssetRequest;
                     //AssetList.Children.Add(assetItemCtrl);
@@ -749,10 +749,13 @@ namespace SlideCreater
             TryAutoSave();
         }
 
-        private void AssetItemCtrl_OnInsertBellsRequest(object sender, ProjectAsset asset)
+        private void AssetItemCtrl_OnInsertResourceRequest(object sender, ProjectAsset asset)
         {
             string InsertCommand = $"\r\n#resource(\"{asset.Name}\", \"audio\")\r\n\r\n#script {{\r\n#Worship Bells;\r\n@arg0:DSK1FadeOff[Kill Liturgy];\r\n@arg0:OpenAudioPlayer;\r\n@arg1:LoadAudioFile(Resource_{asset.OriginalFilename})[Load Bells];\r\n@arg1:PresetSelect(7)[Preset Center];\r\n@arg1:DelayMs(100);\r\n@arg0:AutoTrans[Take Center];\r\n@arg1:DelayMs(2000);\r\n@arg0:PlayAuxAudio[Play Bells];\r\narg1:PresetSelect(8)[Preset Pulpit];\r\n}}\r\n";
-            InsertTextCommand(InsertCommand);
+
+            string InsertResourceCommand = $"#resource(\"{asset.Name}\",\"{asset.KindString}\")";
+
+            InsertTextCommand(InsertResourceCommand);
         }
 
         private void AssetItemCtrl_OnLiturgyInsertRequest(object sender, ProjectAsset asset)

@@ -236,6 +236,28 @@ namespace LutheRun
         }
 
 
+        internal static string BellsCommand(int indentSpaces)
+        {
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                  .GetManifestResourceNames()
+                                  .FirstOrDefault(x => x.Contains("Bells"));
+
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                .GetManifestResourceStream(name);
+
+            // wrap it into a scripted block
+            var prefabblob = "";
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                prefabblob = sr.ReadToEnd();
+            }
+
+            // handle this here
+            var cmd = Regex.Replace(prefabblob, Regex.Escape("$>"), "".PadLeft(indentSpaces));
+
+            return cmd;
+        }
+
 
     }
 }

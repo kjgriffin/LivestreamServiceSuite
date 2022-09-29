@@ -1,4 +1,5 @@
 ﻿using SlideCreater.ViewControls;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +31,7 @@ namespace SlideCreater
         public event InsertAssetEvent OnFitInsertRequest;
         public event InsertAssetEvent OnAutoFitInsertRequest;
         public event InsertAssetEvent OnLiturgyInsertRequest;
-        public event InsertAssetEvent OnInsertBellsRequest;
+        public event InsertAssetEvent OnInsertResourceRequest;
         public event DeleteAssetEvent OnDeleteAssetRequest;
         public event RenameAssetEvent OnRenameAssetRequest;
 
@@ -53,12 +54,12 @@ namespace SlideCreater
             // load image/video
             ImgAsset.Source = null;
             VideoAsset.Source = null;
+            lbresource.Visibility = Visibility.Visible;
             if (Asset.Type == AssetType.Image)
             {
                 ImgAsset.Source = new BitmapImage(new Uri(Asset.CurrentPath));
                 lbhymn.Visibility = Visibility.Visible;
                 lbliturgy.Visibility = Visibility.Visible;
-                lbbells.Visibility = Visibility.Hidden;
                 tbunloaded.Visibility = Visibility.Hidden;
             }
             if (Asset.Type == AssetType.Video)
@@ -69,7 +70,6 @@ namespace SlideCreater
                 VideoAsset.Play();
                 lbhymn.Visibility = Visibility.Hidden;
                 lbliturgy.Visibility = Visibility.Hidden;
-                lbbells.Visibility = Visibility.Hidden;
                 tbunloaded.Visibility = Visibility.Hidden;
             }
             if (Asset.Type == AssetType.Audio)
@@ -78,7 +78,6 @@ namespace SlideCreater
                 lbhymn.Visibility = Visibility.Hidden;
                 lbliturgy.Visibility = Visibility.Hidden;
                 lbinsert.Visibility = Visibility.Hidden;
-                lbbells.Visibility = Visibility.Visible;
                 tbunloaded.Visibility = Visibility.Hidden;
             }
 
@@ -110,9 +109,9 @@ namespace SlideCreater
             Dispatcher.Invoke(() => OnLiturgyInsertRequest?.Invoke(this, Asset));
         }
 
-        private void ClickAddAsBells(object sender, RoutedEventArgs e)
+        private void ClickAddAsResource(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() => OnInsertBellsRequest?.Invoke(this, Asset));
+            Dispatcher.Invoke(() => OnInsertResourceRequest?.Invoke(this, Asset));
         }
 
         private void ClickRenameAsset(object sender, RoutedEventArgs e)

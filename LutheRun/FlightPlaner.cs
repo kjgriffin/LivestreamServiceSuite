@@ -54,7 +54,8 @@ namespace LutheRun
                 sb.AppendLine($"[{block.BlockType}] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
                 foreach (var elem in block.Elements)
                 {
-                    sb.AppendLine(elem.XenonAutoGen(options, ref indent, 4));
+                    //sb.AppendLine(elem.XenonAutoGen(options, ref indent, 4));
+                    sb.AppendLine(elem.GetType().ToString());
                 }
                 sb.AppendLine($"[{block.BlockType}] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             }

@@ -61,8 +61,10 @@ namespace LutheRun
 
             if (ctest.Contains("bells"))
             {
-                sb.AppendLine("/// </MANUAL_UPDATE name='bells'>".Indent(indentDepth, indentSpace));
-                sb.AppendLine("//> INSERTION POINT: bells".Indent(indentDepth, indentSpace));
+                foreach (var line in ExternalPrefabGenerator.BellsCommand(indentSpace).Split(Environment.NewLine))
+                {
+                    sb.AppendLine(line.Indent(indentDepth, indentSpace));
+                }
             }
             else if (ctest.Contains("prelude"))
             {
