@@ -1755,7 +1755,7 @@ namespace SlideCreater
             renderclean = miRenderClean.IsChecked;
         }
 
-        private async void FormatCode(object sender, RoutedEventArgs e)
+        private void FormatCode(object sender, RoutedEventArgs e)
         {
 #if DEBUG
             // not quite production ready :(
@@ -1763,8 +1763,12 @@ namespace SlideCreater
             try
             {
                 //string formatted = await XenonFastFormatter.CompileReformat(TbInput.Text, 4);
-                string formatted = XenonSimpleFormatter.Format(TbInput.Text);
-                Dispatcher.Invoke(() => TbInput.Text = formatted);
+                //string formatted = XenonSimpleFormatter.Format(TbInput.Text);
+                Task.Run(() =>
+                {
+                    string formatted = XenonTopLevelFormatter.FormatTopLevel(TbInput.Text);
+                    Dispatcher.Invoke(() => TbInput.Text = formatted);
+                });
             }
             catch (Exception)
             {
