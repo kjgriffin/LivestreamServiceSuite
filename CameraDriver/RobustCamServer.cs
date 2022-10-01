@@ -1,5 +1,6 @@
 ﻿using DVIPProtocol.Clients.Advanced;
 using DVIPProtocol.Clients.Execution;
+using DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive;
 using DVIPProtocol.Protocol.Lib.Command.CamCTRL;
 using DVIPProtocol.Protocol.Lib.Command.PTDrive;
 using DVIPProtocol.Protocol.Lib.Inquiry;
@@ -107,6 +108,60 @@ namespace CameraDriver
             // cleanup
             m_cancel.Dispose();
             m_workAvailable.Dispose();
+        }
+
+
+        public Guid Cam_RunDriveProgram(string cnameID, PanTiltDirection dir, byte speed, uint msDriveTime)
+        {
+            if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(cnameID))
+            {
+                return Guid.Empty;
+            }
+            Guid reqId = Guid.NewGuid();
+
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing cam drive job {reqId}");
+            m_dispatchCommands.Enqueue(() =>
+            {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] running cam drive job {reqId}");
+                if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
+                {
+                    m_log?.Info($"[{Thread.CurrentThread.Name}] requesting drive [{dir}] for camera {cnameID}");
+
+                    var drive = CMD_PanTiltDrive.UpDownLeftRight(dir, speed);
+                    var stop = CMD_Zoom_Std.Create(ZoomDir.STOP);
+
+                    RobustSequence rcmd = new RobustSequence
+                    {
+                        First = drive.PackagePayload(),
+                        Second = stop.PackagePayload(),
+                        DelayMS = (int)msDriveTime,
+
+                        OnCompleted = (int attempts, byte[] resp) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting drive ({msDriveTime}ms) [{dir}] for camera {cnameID} COMPLETED");
+                                OnWorkCompleted?.Invoke(cnameID, "DRIVE", $"{dir} @{msDriveTime}ms", $"after {attempts} tries", reqId.ToString());
+                            });
+                        },
+                        OnFail = (int attempts) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting drive [{dir}] for camera {cnameID} of {msDriveTime}ms FAILED");
+                                OnWorkFailed?.Invoke(cnameID, "DRIVE", $"{dir} @{msDriveTime}ms", $"of {msDriveTime}ms", reqId.ToString());
+                            });
+                        },
+                        RetryAttempts = 1,
+                    };
+
+                    OnWorkStarted?.Invoke(cnameID, "DRIVE", dir.ToString(), reqId.ToString());
+
+                    client?.DoRobustWork(rcmd);
+                }
+            });
+            m_workAvailable.Set();
+            return reqId;
         }
 
 
