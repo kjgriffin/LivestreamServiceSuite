@@ -134,7 +134,7 @@ namespace CameraDriver
                     {
                         First = drive.PackagePayload(),
                         Second = stop.PackagePayload(),
-                        DelayMS = (int)msDriveTime,
+                        DelayMS = (int)Math.Clamp(msDriveTime, 0, TimeSpan.FromSeconds(10).Milliseconds),
 
                         OnCompleted = (int attempts, byte[] resp) =>
                         {
