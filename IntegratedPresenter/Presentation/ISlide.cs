@@ -1,5 +1,7 @@
 ﻿using Integrated_Presenter.Presentation;
 
+using IntegratedPresenterAPIInterop;
+
 using System;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
@@ -30,7 +32,7 @@ namespace IntegratedPresenter.Main
         bool PostsetEnabled { get; set; }
         int PostsetId { get; set; }
         string PreAction { get; set; }
-        int PresetId { get; set; }
+        //int PresetId { get; set; }
         List<TrackedAutomationAction> SetupActions { get; set; }
         //string Source { get; set; }
         string Title { get; set; }
@@ -39,8 +41,8 @@ namespace IntegratedPresenter.Main
         event AutomationActionUpdateEventArgs OnActionUpdated;
 
         void FireOnActionStateChange(Guid ActionID, TrackedActionState newState);
-        void LoadActions(string folder);
-        void LoadActions_Common(string folder);
+        //void LoadActions(string folder);
+        //void LoadActions_Common(string folder);
         void ResetAllActionsState();
     }
 

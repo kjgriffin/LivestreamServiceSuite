@@ -2,6 +2,8 @@
 
 using IntegratedPresenter.BMDSwitcher.Config;
 
+using IntegratedPresenterAPIInterop;
+
 using SwitcherControl.BMDSwitcher;
 
 using System;
@@ -425,7 +427,7 @@ namespace IntegratedPresenter.Main
                 {
                     SetMedia(key, slide.Type);
                 }
-                else if (slide.TryGetPrimaryImage(out var img))
+                else if (!asKey && slide.TryGetPrimaryImage(out var img))
                 {
                     SetMedia(img, slide.Type);
                 }

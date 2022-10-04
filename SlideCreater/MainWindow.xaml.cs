@@ -35,6 +35,7 @@ using System.Net.Http;
 using LutheRun;
 using Xenon.Compiler.Formatter;
 using System.IO.MemoryMappedFiles;
+using IntegratedPresenterAPIInterop;
 
 namespace SlideCreater
 {
@@ -923,6 +924,7 @@ namespace SlideCreater
                     return;
                 }
             }
+            m_hotreloadSyncFile.Dispose();
             // close everything else too
             Application.Current.Shutdown();
         }
@@ -1783,14 +1785,38 @@ namespace SlideCreater
             MessageBox.Show(report, "Presets Used");
         }
 
-        List<MemoryMappedFile> sharedFiles = new List<MemoryMappedFile>();
-        private void ClickHotProvide(object sender, RoutedEventArgs e)
+
+        SharedMemoryRenderer.SharedMemoryPresentation mpres;
+
+        private void HotReload(object sender, RoutedEventArgs e)
         {
-            foreach (var file in sharedFiles)
+            PublishHotReload();
+        }
+
+        MemoryMappedFile m_hotreloadSyncFile;
+        private void PublishHotReload()
+        {
+            foreach (var file in mpres?.MFiles ?? new List<MemoryMappedFile>())
             {
                 file.Dispose();
             }
-            sharedFiles = SharedMemoryRenderer.ExportSlides("", slides);
+
+            mpres = SharedMemoryRenderer.ExportSlides("", slides);
+
+            if (m_hotreloadSyncFile == null)
+            {
+                m_hotreloadSyncFile = MemoryMappedFile.CreateOrOpen(CommonAPINames.HotReloadSyncFile, 1024, MemoryMappedFileAccess.ReadWrite);
+            }
+
+            if (mpres.Info.Slides.Count > 0)
+            {
+                using (var view = m_hotreloadSyncFile.CreateViewAccessor())
+                {
+                    view.Write(0, true);
+                }
+            }
+
         }
+
     }
 }

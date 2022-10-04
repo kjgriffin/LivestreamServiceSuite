@@ -31,6 +31,8 @@
                 <MenuItem Header="Presentation" IsTabStop="False" Focusable="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False" Focusable="False" ></MenuItem>
                     <Separator></Separator>
+                    <MenuItem Name="miHotReloadPres" Header="Enable Hot Reload Presentation" Click="ClickToggleHotReloadPresentation" IsTabStop="False" Focusable="False" IsCheckable="True" IsChecked="False"></MenuItem>
+                    <Separator></Separator>
                     <MenuItem Name="miMute" Header="Mute [M]" Click="ToggleMutePres" IsTabStop="False" IsCheckable="True" IsChecked="False" Focusable="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="View" IsTabStop="False" Focusable="False">

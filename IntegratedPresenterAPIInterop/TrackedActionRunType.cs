@@ -1,4 +1,4 @@
-﻿namespace IntegratedPresenter.Main
+﻿namespace IntegratedPresenterAPIInterop
 {
     public enum TrackedActionRunType
     {

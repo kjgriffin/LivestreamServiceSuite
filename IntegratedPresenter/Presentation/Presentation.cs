@@ -4,6 +4,8 @@ using Integrated_Presenter.Presentation;
 
 using IntegratedPresenter.BMDSwitcher.Config;
 
+using IntegratedPresenterAPIInterop;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -95,7 +97,27 @@ namespace IntegratedPresenter.Main
                 }
                 if (s.Type == SlideType.Action)
                 {
-                    s.LoadActions(folder);
+                    try
+                    {
+                        using (StreamReader sr = new StreamReader(Path.Combine(folder, s.Source)))
+                        {
+                            var text = sr.ReadToEnd();
+                            if (ActionLoader.TryLoadActions(text, folder, out var res))
+                            {
+                                s.Actions = res.Actions;
+                                s.SetupActions = res.SetupActions;
+                                s.Title = res.Title;
+                                s.AltSources = res.AltSources;
+                                s.AltSource = res.AltSource;
+                                s.AltKeySource = res.AltKeySource;
+                                s.AutoOnly = res.AutoOnly;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+
                 }
                 Slides.Add(s);
             }

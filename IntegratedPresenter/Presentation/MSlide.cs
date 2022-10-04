@@ -1,21 +1,23 @@
 ﻿
 using BMDSwitcherAPI;
 
+using CommonGraphics;
+
 using Integrated_Presenter.Presentation;
 
 using IntegratedPresenterAPIInterop;
 
 using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 
 namespace IntegratedPresenter.Main
 {
-    public class Slide : ISlide
+    public class MSlide : ISlide
     {
         public SlideType Type { get; set; }
         public bool AutomationEnabled { get; set; } = true;
@@ -35,44 +37,74 @@ namespace IntegratedPresenter.Main
         public string Title { get; set; } = "";
         public bool AutoOnly { get; set; } = false;
 
-        public int PresetId { get; set; }
+        //public int PresetId { get; set; }
         public bool PostsetEnabled { get; set; } = false;
         public int PostsetId { get; set; }
 
         public bool TryGetPrimaryImage(out BitmapImage img)
         {
-            img = null;
+            img = new BitmapImage();
             if (AltSources)
             {
                 if (!string.IsNullOrEmpty(AltSource))
                 {
-                    img = new BitmapImage(new Uri(AltSource));
+                    MemoryStream bs = new MemoryStream();
+                    using (var f = MemoryMappedFile.OpenExisting(AltSource))
+                    using (var stream = f.CreateViewStream())
+                    {
+                        stream.CopyTo(bs);
+                        img = bs.ToBitmapImage();
+                    }
+
                     return true;
                 }
             }
-            if (!string.IsNullOrEmpty(Source) && HasPrimaryImage())
+            if (!string.IsNullOrEmpty(Source))
             {
-                img = new BitmapImage(new Uri(Source));
+                MemoryStream bs = new MemoryStream();
+                using (var f = MemoryMappedFile.OpenExisting(Source))
+                using (var stream = f.CreateViewStream())
+                {
+                    stream.CopyTo(bs);
+                    img = bs.ToBitmapImage();
+                }
+
                 return true;
             }
+            img = null;
             return false;
         }
         public bool TryGetKeyImage(out BitmapImage img)
         {
-            img = null;
+            img = new BitmapImage();
             if (AltSources)
             {
                 if (!string.IsNullOrEmpty(AltKeySource))
                 {
-                    img = new BitmapImage(new Uri(AltKeySource));
+                    MemoryStream bs = new MemoryStream();
+                    using (var f = MemoryMappedFile.OpenExisting(AltKeySource))
+                    using (var stream = f.CreateViewStream())
+                    {
+                        stream.CopyTo(bs);
+                        img = bs.ToBitmapImage();
+                    }
+
                     return true;
                 }
             }
             if (!string.IsNullOrEmpty(KeySource))
             {
-                img = new BitmapImage(new Uri(KeySource));
+                MemoryStream bs = new MemoryStream();
+                using (var f = MemoryMappedFile.OpenExisting(KeySource))
+                using (var stream = f.CreateViewStream())
+                {
+                    stream.CopyTo(bs);
+                    img = bs.ToBitmapImage();
+                }
+
                 return true;
             }
+            img = null;
             return false;
         }
 
@@ -120,7 +152,7 @@ namespace IntegratedPresenter.Main
                     return true;
                 }
             }
-            if (!string.IsNullOrEmpty(Source) && Type != SlideType.Action)
+            if (!string.IsNullOrEmpty(Source))
             {
                 return true;
             }
@@ -168,60 +200,74 @@ namespace IntegratedPresenter.Main
 
         public event AutomationActionUpdateEventArgs OnActionUpdated;
 
-
-        public void LoadActions_Common(string folder)
+        public void LoadActions(string folder)
         {
             if (Type == SlideType.Action)
             {
                 try
                 {
-                    string text;
+                    List<string> parts = new List<string>();
                     using (StreamReader sr = new StreamReader(Source))
                     {
-                        text = sr.ReadToEnd();
+                        string text = sr.ReadToEnd();
+                        var commands = text.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(s => (s + ";").Trim());
+                        parts = commands.ToList();
                     }
-                    if (!string.IsNullOrEmpty(text))
+                    Title = "AUTO SEQ";
+                    foreach (var part in parts)
                     {
-                        var loaded = ActionLoader.LoadActions(text);
-                        Title = loaded.Title;
-                        AutoOnly = loaded.AutoOnly;
-                        if (loaded.AltSources)
+                        // parse into commands
+                        if (part == ";")
                         {
-                            bool srcoverrideError = false;
-                            string srcfilename = "";
-                            if (!string.IsNullOrEmpty(loaded.AltSourceFileName))
+
+                        }
+                        else if (part.StartsWith("!"))
+                        {
+                            if (part == "!fullauto;")
                             {
-                                srcfilename = Path.Combine(folder, loaded.AltSourceFileName);
-                                if (!File.Exists(srcfilename))
+                                AutoOnly = true;
+                            }
+                            else if (part.StartsWith("!displaysrc="))
+                            {
+                                var m = Regex.Match(part, "!displaysrc='(?<fname>.*)';");
+                                if (m.Success)
                                 {
-                                    srcoverrideError = true;
+                                    if (File.Exists(Path.Combine(folder, m.Groups["fname"].Value)))
+                                    {
+                                        AltSources = true;
+                                        AltSource = Path.Combine(folder, m.Groups["fname"].Value);
+                                    }
                                 }
                             }
-                            string keyfilename = "";
-                            if (!string.IsNullOrEmpty(loaded.AltKeySourceFileName))
+                            else if (part.StartsWith("!keysrc="))
                             {
-                                keyfilename = Path.Combine(folder, loaded.AltKeySourceFileName);
-                                if (File.Exists(keyfilename))
+                                var m = Regex.Match(part, "!keysrc='(?<fname>.*)';");
+                                if (m.Success)
                                 {
-                                    srcoverrideError = true;
+                                    if (File.Exists(Path.Combine(folder, m.Groups["fname"].Value)))
+                                    {
+                                        AltSources = true;
+                                        AltKeySource = Path.Combine(folder, m.Groups["fname"].Value);
+                                    }
                                 }
                             }
-                            if (!srcoverrideError)
-                            {
-                                AltSources = true;
-                                AltSource = srcfilename;
-                                AltKeySource = keyfilename;
-                            }
                         }
-                        foreach (var action in loaded.SetupActions)
+                        else if (part.StartsWith("@"))
                         {
-                            var runType = action.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
-                            SetupActions.Add(new TrackedAutomationAction(action, runType));
+                            var a = AutomationAction.Parse(part.Remove(0, 1));
+                            var runType = a.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
+                            SetupActions.Add(new TrackedAutomationAction(a, runType));
                         }
-                        foreach (var action in loaded.MainActions)
+                        else if (part.StartsWith("#"))
                         {
-                            var runType = action.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
-                            Actions.Add(new TrackedAutomationAction(action, runType));
+                            var title = Regex.Match(part, @"#(?<title>.*);").Groups["title"].Value;
+                            Title = title;
+                        }
+                        else
+                        {
+                            var a = AutomationAction.Parse(part);
+                            var runType = a.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
+                            Actions.Add(new TrackedAutomationAction(a, runType));
                         }
                     }
                 }
@@ -230,9 +276,6 @@ namespace IntegratedPresenter.Main
                 }
             }
         }
-
-        
-
 
     }
 

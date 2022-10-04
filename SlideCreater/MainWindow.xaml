@@ -93,8 +93,8 @@
                         <Image Source="/ViewControls/Images/Save.png"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
-                <Separator></Separator>
-                <MenuItem IsEnabled="true" Click="ClickHotProvide" Header="Test Memory File"></MenuItem>
+                <!--<Separator></Separator>-->
+                <!--<MenuItem IsEnabled="true" Click="ClickHotProvide" Header="Test Memory File"></MenuItem>-->
                 <!--<MenuItem IsEnabled="false" Click="ClickOpenJSON" Header="Open from JSON"></MenuItem>-->
                 <!--<MenuItem IsEnabled="false" Click="ClickSave" Header="Save"></MenuItem>-->
                 <!--<MenuItem IsEnabled="false" Click="ClickSaveJSON" Header="Save JSON"></MenuItem>-->
@@ -164,6 +164,14 @@
                         <StackPanel Orientation="Horizontal">
                             <Image Source="/ViewControls/Images/PublishPurple.png" Width="40" Height="40" Margin="0,-1,0,0"></Image>
                             <TextBlock VerticalAlignment="Center" Foreground="White">Publish</TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+                <Button Style="{StaticResource DarkBtn}" Click="HotReload" Width="115" Padding="10,0,10,0" Margin="10,5,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/ViewControls/Images/OrangeFlame.png" Width="40" Height="30" Margin="0,-1,0,0"></Image>
+                            <TextBlock VerticalAlignment="Center" Foreground="White">Hot Reload</TextBlock>
                         </StackPanel>
                     </Grid>
                 </Button>

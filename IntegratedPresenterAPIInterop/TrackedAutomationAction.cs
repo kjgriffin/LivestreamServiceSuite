@@ -1,9 +1,6 @@
-﻿
-using IntegratedPresenterAPIInterop;
+﻿using System;
 
-using System;
-
-namespace IntegratedPresenter.Main
+namespace IntegratedPresenterAPIInterop
 {
 
     public delegate void AutomationActionUpdateEventArgs(TrackedAutomationAction updatedAction);
@@ -23,5 +20,4 @@ namespace IntegratedPresenter.Main
         }
 
     }
-
 }

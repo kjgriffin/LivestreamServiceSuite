@@ -1,12 +1,19 @@
-﻿using SixLabors.ImageSharp;
+﻿using IntegratedPresenterAPIInterop;
+
+using SixLabors.ImageSharp;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Markup;
+using System.Xaml;
 
 using Xenon.Compiler;
 using Xenon.SlideAssembly;
@@ -16,41 +23,197 @@ namespace Xenon.Renderer
     public class SharedMemoryRenderer
     {
 
-        public static List<MemoryMappedFile> ExportSlides(string sharedLocation, List<RenderedSlide> slides)
+        public class SharedMemoryPresentation
         {
-            //MemoryMappedFile mstream = MemoryMappedFile.CreateOrOpen()
+            public MirrorPresentationDescription Info { get; set; }
+            public List<MemoryMappedFile> MFiles { get; set; }
+        }
 
-            // compute approx memory needs...
+        public static SharedMemoryPresentation ExportSlides(string resourceRoot, List<RenderedSlide> slides)
+        {
+            MirrorPresentationDescription presDescription = new MirrorPresentationDescription();
+            List<MemoryMappedFile> mfiles = new List<MemoryMappedFile>();
 
-            //int memEstimate = slides.Count(s => s.MediaType == MediaType.Image) * 
-
-            List<MemoryMappedFile> result = new List<MemoryMappedFile>();
-
-            int id = 0;
-            foreach (var rs in slides)
+            foreach (var rs in slides.Where(x => x.Number >= 0).OrderBy(x => x.Number))
             {
+                MirrorSlide sinfo = new MirrorSlide();
+                sinfo.Num = rs.Number;
                 if (rs.MediaType == MediaType.Image)
                 {
-                    var mfile = MemoryMappedFile.CreateNew($"SC-hotreload-{id++}", 1920 * 1080 * 4 + 10 * 1000);
-                    result.Add(mfile);
+                    string fname = $"SC-Pres-{rs.Number}_{rs.RenderedAs}-png";
+                    string kname = $"SC-Pres-Key_{rs.Number}-png";
+                    sinfo.PrimaryResource = fname;
+                    sinfo.KeyResource = kname;
+                    sinfo.HasKey = true;
+                    // type here is liturgy/full/ override type
+                    var nmatch = Regex.Match(rs.RenderedAs, "(?<type>\\w+)(-(?<action>\\w+))?");
+                    string type = nmatch.Groups["type"].Value;
 
+                    if (nmatch.Groups["action"].Success)
+                    {
+                        sinfo.PreAction = nmatch.Groups["action"].Value;
+                    }
+
+                    if (rs.OverridingBehaviour?.ForceOverrideExport == true)
+                    {
+                        type = rs.OverridingBehaviour.OverrideExportName;
+                    }
+                    if (type == "Liturgy")
+                    {
+                        sinfo.SlideType = SlideType.Liturgy;
+                    }
+                    else if (type == "Full")
+                    {
+                        sinfo.SlideType = SlideType.Full;
+                    }
+                    else
+                    {
+                        sinfo.SlideType = SlideType.Full; // perhaps?
+                    }
+
+                    var mfile = MemoryMappedFile.CreateNew(fname, rs.BitmapPNGMS.Length);
+                    mfiles.Add(mfile);
                     using (var stream = mfile.CreateViewStream())
                     {
                         // this will probably be slow and use oodles of memory
-                        rs.Bitmap.SaveAsBmp(stream);
+                        stream.Seek(0, SeekOrigin.Begin);
+                        stream.Write(rs.BitmapPNGMS.GetBuffer(), 0, (int)rs.BitmapPNGMS.Length);
                     }
 
-                    if (rs.MediaType == MediaType.Text)
+                    var kfile = MemoryMappedFile.CreateNew(kname, rs.KeyPNGMS.Length);
+                    mfiles.Add(kfile);
+                    using (var stream = kfile.CreateViewStream())
                     {
+                        // this will probably be slow and use oodles of memory
+                        stream.Seek(0, SeekOrigin.Begin);
+                        stream.Write(rs.KeyPNGMS.GetBuffer(), 0, (int)rs.KeyPNGMS.Length);
+                    }
+                }
+                else if (rs.MediaType == MediaType.Text)
+                {
+                    string aname = $"SC-Pres-{rs.Number}_{rs.RenderedAs}-txt";
+                    var afile = MemoryMappedFile.CreateNew(aname, rs.Text.Length * 8 + 1024);
+                    mfiles.Add(afile);
+                    using (var stream = afile.CreateViewStream())
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.Write(rs.Text);
+                    }
 
+                    sinfo.ActionInfo = aname;
+                    sinfo.SlideType = SlideType.Action;
+
+                    // urrrg... need to peek it here and pull out the resources
+                    // orrrrrrrrr when we use the resource file just attach it then...?
+
+                    // for action files that have referenced real slides then we've got work to do here
+                    if (ActionLoader.TryLoadActions(rs.Text, "", out var lres, checkRealMedia: false))
+                    {
+                        if (lres.AltSources)
+                        {
+
+                            var match = Regex.Match(lres.AltSource, "^(?<num>\\d+)_Liturgy\\.png$");
+                            if (match.Success)
+                            {
+                                sinfo.HasOverridePrimary = true;
+                                sinfo.PrimaryResource = $"SC-Pres-{match.Groups["num"].Value}_Liturgy-png";
+                            }
+                            match = Regex.Match(lres.AltSource, "^Key_(?<num>\\d+)\\.png$");
+                            if (match.Success)
+                            {
+                                sinfo.HasOverridePrimary = true;
+                                sinfo.KeyResource = $"SC-Pres-Key_{match.Groups["num"].Value}-png";
+                            }
+                        }
                     }
 
                 }
 
+
+                if (rs.IsPostset)
+                {
+                    sinfo.HasPostset = true;
+                    sinfo.PostsetInfo = rs.Postset;
+                }
+
+                if (rs.HasPilot)
+                {
+                    string pname = $"SC-Pres-Pilot_{rs.Number}-txt";
+                    var pfile = MemoryMappedFile.CreateNew(pname, rs.Pilot.Length * 8 + 1024);
+                    mfiles.Add(pfile);
+                    using (var stream = pfile.CreateViewStream())
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.Write(rs.Pilot);
+                    }
+
+                    sinfo.HasPilot = true;
+                    sinfo.PilotInfo = pname;
+
+                }
+
+                // drive?
+                sinfo.AutomationEnabled = true;
+
+
+                presDescription.Slides.Add(sinfo);
             }
 
-            return result;
+            foreach (var rs in slides.Where(x => x.Number == -1))
+            {
+                // create a ref for it and attach to slides as needed
+                if (rs.MediaType == MediaType.Image && rs.OverridingBehaviour?.ForceOverrideExport == true)
+                {
+                    string sname = $"SC-Res-{rs.OverridingBehaviour.OverrideExportName}-png";
+                    string kname = $"SC-Res-{rs.OverridingBehaviour.OverrideExportKeyName}-png";
 
+                    var mnum = Regex.Match(sname, "Resource_\\d+_forslide_(?<place>\\d+)").Groups["place"].Value;
+                    var snum = int.Parse(mnum);
+
+                    var sfile = MemoryMappedFile.CreateNew(sname, rs.BitmapPNGMS.Length);
+                    mfiles.Add(sfile);
+                    using (var stream = sfile.CreateViewStream())
+                    {
+                        // this will probably be slow and use oodles of memory
+                        stream.Seek(0, SeekOrigin.Begin);
+                        stream.Write(rs.BitmapPNGMS.GetBuffer(), 0, (int)rs.BitmapPNGMS.Length);
+                    }
+                    var kfile = MemoryMappedFile.CreateNew(kname, rs.KeyPNGMS.Length);
+                    mfiles.Add(kfile);
+                    using (var stream = kfile.CreateViewStream())
+                    {
+                        // this will probably be slow and use oodles of memory
+                        stream.Seek(0, SeekOrigin.Begin);
+                        stream.Write(rs.KeyPNGMS.GetBuffer(), 0, (int)rs.KeyPNGMS.Length);
+                    }
+                    if (presDescription.Slides.Count > snum)
+                    {
+                        presDescription.Slides[snum].HasOverridePrimary = true;
+                        presDescription.Slides[snum].PrimaryResource = sname;
+                        presDescription.Slides[snum].HasOverrideKey = true;
+                        presDescription.Slides[snum].KeyResource = kname;
+                    }
+
+                }
+            }
+
+            presDescription.HeavyResourcePath = resourceRoot;
+
+            var dtext = JsonSerializer.Serialize(presDescription);
+
+            var dfile = MemoryMappedFile.CreateNew(CommonAPINames.HotReloadPresentationDescriptionFile, dtext.Length * 8 + 1024);
+            mfiles.Add(dfile);
+            using (var stream = dfile.CreateViewStream())
+            using (var writer = new StreamWriter(stream))
+            {
+                writer.Write(dtext);
+            }
+
+            return new SharedMemoryPresentation
+            {
+                Info = presDescription,
+                MFiles = mfiles,
+            };
         }
     }
 }

@@ -79,7 +79,9 @@ namespace IntegratedPresenter.Main
                 VersionInfo = JsonSerializer.Deserialize<BuildVersion>(json);
             }
             // Set title
-            Title = $"Integrated Presenter - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
+            _nominalTitle = $"Integrated Presenter - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
+
+            Title = _nominalTitle;
 
 
             // set size
@@ -176,6 +178,8 @@ namespace IntegratedPresenter.Main
 
             UpdatePilotUI();
         }
+
+        string _nominalTitle = "";
 
         private void PilotUI_OnTogglePilotMode()
         {
@@ -3017,6 +3021,11 @@ namespace IntegratedPresenter.Main
             if (ofd.ShowDialog() == true)
             {
                 string path = System.IO.Path.GetDirectoryName(ofd.FileName);
+
+                // change title?
+                string pname = path;
+                Title = $"{_nominalTitle} ({pname})";
+
                 // create new presentation
                 Presentation pres = new Presentation();
                 pres.Create(path);
@@ -5109,7 +5118,7 @@ namespace IntegratedPresenter.Main
             });
         }
 
-        
+
         PilotMode PilotMode
         {
             get => _pilotMode;
@@ -5131,6 +5140,112 @@ namespace IntegratedPresenter.Main
             }
 
             pilotUI.UpdateUIStatus(camName, args);
+        }
+
+
+
+        bool m_hotreloadpresentation = false;
+        PresentationHotReloadService hotReloadService;
+        private void ClickToggleHotReloadPresentation(object sender, RoutedEventArgs e)
+        {
+            ToggleHotReloadPres();
+        }
+
+        private void ToggleHotReloadPres()
+        {
+            m_hotreloadpresentation = !m_hotreloadpresentation;
+            miHotReloadPres.IsChecked = m_hotreloadpresentation;
+
+            if (m_hotreloadpresentation)
+            {
+                Title = $"{_nominalTitle} (Hot Load Presentation Mode)";
+
+                hotReloadService = new PresentationHotReloadService();
+                hotReloadService.OnHotReloadReady += HotReloadService_OnHotReloadReady;
+                hotReloadService.StartListening();
+            }
+            else
+            {
+                Title = $"{_nominalTitle}";
+
+                hotReloadService.OnHotReloadReady -= HotReloadService_OnHotReloadReady;
+                hotReloadService.StopListening();
+            }
+        }
+
+        private void HotReloadService_OnHotReloadReady(object sender, EventArgs e)
+        {
+            LoadHotPresentation();
+        }
+
+        private void LoadHotPresentation()
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => LoadHotPresentation());
+                return;
+            }
+
+            // create new presentation
+            IPresentation pres = MirroredPresentationBuilder.Create();
+
+
+            pres.StartPres();
+            _pres = pres;
+            activepresentation = true;
+            _logger.Info($"Hot Loaded Presentation from memory files");
+
+            // apply config if required
+            if (pres.HasSwitcherConfig)
+            {
+                _logger.Info($"Presentation loading specified switcher configuration. Re-configuring now.");
+                _config = pres.SwitcherConfig;
+                SetSwitcherSettings();
+            }
+            if (pres.HasUserConfig)
+            {
+                _logger.Info($"Presentation loading specified setting user settings. Re-configuring now.");
+                LoadUserSettings(pres.UserConfig);
+            }
+            if (pres.HasCCUConfig)
+            {
+                _logger.Info($"Presentation loading specified ccu config settings. Re-configuring now.");
+                _camMonitor?.LoadConfig(pres.CCPUConfig);
+            }
+
+            // overwrite display of old presentation if already open
+            if (_display != null && _display.IsWindowVisilbe)
+            {
+            }
+            else
+            {
+                _logger.Info($"Graphics Engine has no active display window. Creating window now.");
+                _display = new PresenterDisplay(this, false);
+                _display.OnMediaPlaybackTimeUpdated += _display_OnMediaPlaybackTimeUpdated;
+                // start display
+                _display.Show();
+            }
+
+            if (_keydisplay == null || _keydisplay?.IsWindowVisilbe == false)
+            {
+                _logger.Info($"Graphics Engine has no active key window. Creating window now.");
+                _keydisplay = new PresenterDisplay(this, true);
+                // no need to get playback event info
+                _keydisplay.Show();
+            }
+
+            DisableSlidePoolOverrides();
+            slidesUpdated();
+
+            FireOnConditionalsUpdated();
+
+            PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+            // preserve mute status
+            if (MediaMuted)
+            {
+                muteMedia();
+            }
+
         }
     }
 }

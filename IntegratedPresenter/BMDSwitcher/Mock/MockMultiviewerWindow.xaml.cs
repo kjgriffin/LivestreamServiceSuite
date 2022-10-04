@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 
 using IntegratedPresenter.Main;
 
+using IntegratedPresenterAPIInterop;
+
 using SwitcherControl.BMDSwitcher;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
@@ -154,17 +156,17 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             {
                 control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
             }
-            else if (slide.Type == SlideType.Action)
-            {
-                if (slide.TryGetPrimaryImage(out var img))
-                {
-                    control.Source = img;
-                }
-                else
-                {
-                    control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
-                }
-            }
+            //else if (slide.Type == SlideType.Action)
+            //{
+            //    if (slide.TryGetKeyImage(out var img))
+            //    {
+            //        control.Source = img;
+            //    }
+            //    else
+            //    {
+            //        control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+            //    }
+            //}
             else
             {
                 if (slide.TryGetKeyImage(out var img))

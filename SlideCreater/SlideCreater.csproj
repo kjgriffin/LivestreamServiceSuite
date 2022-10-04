@@ -37,6 +37,7 @@
     <None Remove="ViewControls\Images\musicnote.png" />
     <None Remove="ViewControls\Images\NewGreen.png" />
     <None Remove="ViewControls\Images\OpenFolderWhite.png" />
+    <None Remove="ViewControls\Images\OrangeFlame.png" />
     <None Remove="ViewControls\Images\PaintBrush.png" />
     <None Remove="ViewControls\Images\PaintGreen.png" />
     <None Remove="ViewControls\Images\PaintWhite.png" />
@@ -64,6 +65,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CommonGraphics\CommonGraphics.csproj" />
     <ProjectReference Include="..\CommonVersionInfo\CommonVersionInfo.csproj" />
     <ProjectReference Include="..\LutheRun\LutheRun.csproj" />
     <ProjectReference Include="..\UIControls\UIControls.csproj" />
@@ -94,6 +96,9 @@
     <Resource Include="ViewControls\Images\Mop.png" />
     <Resource Include="ViewControls\Images\NewGreen.png" />
     <Resource Include="ViewControls\Images\OpenFolderWhite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ViewControls\Images\OrangeFlame.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="ViewControls\Images\PaintGreen.png" />
