@@ -34,6 +34,7 @@ using CommonVersionInfo;
 using System.Net.Http;
 using LutheRun;
 using Xenon.Compiler.Formatter;
+using System.IO.MemoryMappedFiles;
 
 namespace SlideCreater
 {
@@ -1780,6 +1781,16 @@ namespace SlideCreater
         {
             string report = Xenon.Analyzers.PilotReportGenerator.GeneratePilotPresetReport(_proj);
             MessageBox.Show(report, "Presets Used");
+        }
+
+        List<MemoryMappedFile> sharedFiles = new List<MemoryMappedFile>();
+        private void ClickHotProvide(object sender, RoutedEventArgs e)
+        {
+            foreach (var file in sharedFiles)
+            {
+                file.Dispose();
+            }
+            sharedFiles = SharedMemoryRenderer.ExportSlides("", slides);
         }
     }
 }

@@ -33,7 +33,7 @@ using Integrated_Presenter.Presentation;
 namespace IntegratedPresenter.Main
 {
 
-    public delegate void PresentationStateUpdate(Slide currentslide);
+    public delegate void PresentationStateUpdate(ISlide currentslide);
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -303,7 +303,7 @@ namespace IntegratedPresenter.Main
             TbTime.Text = DateTime.Now.ToString("hh:mm:ss");
         }
 
-        private void MainWindow_PresentationStateUpdated(Slide currentslide)
+        private void MainWindow_PresentationStateUpdated(ISlide currentslide)
         {
             UpdateSlideNums();
             UpdateSlidePreviewControls();
@@ -1862,7 +1862,7 @@ namespace IntegratedPresenter.Main
 
         private bool _FeatureFlag_MRETransition = true; // This should be safe enough
 
-        private async Task ExecuteSetupActions(Slide s)
+        private async Task ExecuteSetupActions(ISlide s)
         {
             _logger.Debug($"Begin Execution of setup actions for slide {s.Title}");
             await Task.Run(async () =>
@@ -1877,7 +1877,7 @@ namespace IntegratedPresenter.Main
             _logger.Debug($"Completed Execution of setup actions for slide {s.Title}");
         }
 
-        private async Task ExecuteActionSlide(Slide s)
+        private async Task ExecuteActionSlide(ISlide s)
         {
             _logger.Debug($"Begin Execution of actions for slide {s.Title}");
             await Task.Run(async () =>
@@ -2779,7 +2779,7 @@ namespace IntegratedPresenter.Main
 
         }
 
-        private void SlideDriveVideo_Action(Slide s)
+        private void SlideDriveVideo_Action(ISlide s)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             switch (s.PreAction)
@@ -3002,8 +3002,8 @@ namespace IntegratedPresenter.Main
 
 
         bool activepresentation = false;
-        Presentation _pres;
-        public Presentation Presentation { get => _pres; }
+        IPresentation _pres;
+        public IPresentation Presentation { get => _pres; }
 
         public event PresentationStateUpdate PresentationStateUpdated;
 
@@ -3169,7 +3169,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        private void UpdatePostsetUi(MediaPlayer2 preview, Slide slide)
+        private void UpdatePostsetUi(MediaPlayer2 preview, ISlide slide)
         {
             if (slide.PostsetEnabled && _FeatureFlag_PostsetShot)
             {

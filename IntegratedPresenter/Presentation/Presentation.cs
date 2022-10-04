@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 
 namespace IntegratedPresenter.Main
 {
-    public class Presentation
+    public class Presentation : IPresentation
     {
 
         public bool HasSwitcherConfig { get; private set; } = false;
@@ -28,9 +28,9 @@ namespace IntegratedPresenter.Main
 
         public string Folder { get; set; }
 
-        public List<Slide> Slides { get; set; } = new List<Slide>();
+        public List<ISlide> Slides { get; set; } = new List<ISlide>();
 
-        public static Slide EmptySlide = new Slide() { Source = "", Type = SlideType.Empty };
+        public static ISlide EmptySlide = new Slide() { Source = "", Type = SlideType.Empty };
 
         public bool Create(string folder)
         {
@@ -106,7 +106,11 @@ namespace IntegratedPresenter.Main
             {
                 var num = Regex.Match(file, @"Key_(?<num>\d+)").Groups["num"].Value;
                 int snum = Convert.ToInt32(num);
-                Slides[snum].KeySource = file;
+                var slide = Slides[snum] as Slide;
+                if (slide != null)
+                {
+                    slide.KeySource = file;
+                }
             }
 
             // attach postshot to slides
@@ -229,7 +233,7 @@ namespace IntegratedPresenter.Main
         private int _currentSlide = 0;
         private int _virtualCurrentSlide = 0;
 
-        public Slide Prev
+        public ISlide Prev
         {
             get
             {
@@ -245,10 +249,10 @@ namespace IntegratedPresenter.Main
         }
 
 
-        public Slide Override { get; set; }
+        public ISlide Override { get; set; }
         public bool OverridePres { get; set; } = false;
 
-        public Slide EffectiveCurrent
+        public ISlide EffectiveCurrent
         {
             get
             {
@@ -260,8 +264,8 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        public Slide Current { get => Slides[_currentSlide]; }
-        public Slide Next
+        public ISlide Current { get => Slides[_currentSlide]; }
+        public ISlide Next
         {
             get
             {
@@ -275,7 +279,7 @@ namespace IntegratedPresenter.Main
                 }
             }
         }
-        public Slide After
+        public ISlide After
         {
             get
             {

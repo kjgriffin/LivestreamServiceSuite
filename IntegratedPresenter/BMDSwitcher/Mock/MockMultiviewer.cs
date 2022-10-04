@@ -31,7 +31,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             OnMockWindowClosed?.Invoke();
         }
 
-        public void UpdateSlideInput(Slide s)
+        public void UpdateSlideInput(ISlide s)
         {
             multiviewerWindow.UpdateAuxSource(s);
         }

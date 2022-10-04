@@ -66,7 +66,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             OnSwitcherDisconnected?.Invoke();
         }
 
-        private void Parent_PresentationStateUpdated(Slide currentslide)
+        private void Parent_PresentationStateUpdated(ISlide currentslide)
         {
             _logger.Info($"[Mock SW] Presentation State was updated");
             mockMultiviewer.UpdateSlideInput(currentslide);

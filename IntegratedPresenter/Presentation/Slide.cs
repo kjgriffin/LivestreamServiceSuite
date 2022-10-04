@@ -1,4 +1,6 @@
 ﻿
+using BMDSwitcherAPI;
+
 using Integrated_Presenter.Presentation;
 
 using IntegratedPresenterAPIInterop;
@@ -8,10 +10,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Media.Imaging;
 
 namespace IntegratedPresenter.Main
 {
-    public class Slide
+    public class Slide : ISlide
     {
         public SlideType Type { get; set; }
         public bool AutomationEnabled { get; set; } = true;
@@ -34,6 +37,109 @@ namespace IntegratedPresenter.Main
         public int PresetId { get; set; }
         public bool PostsetEnabled { get; set; } = false;
         public int PostsetId { get; set; }
+
+        public bool TryGetPrimaryImage(out BitmapImage img)
+        {
+            img = null;
+            if (AltSources)
+            {
+                if (!string.IsNullOrEmpty(AltSource))
+                {
+                    img = new BitmapImage(new Uri(AltSource));
+                    return true;
+                }
+            }
+            if (!string.IsNullOrEmpty(Source))
+            {
+                img = new BitmapImage(new Uri(Source));
+                return true;
+            }
+            return false;
+        }
+        public bool TryGetKeyImage(out BitmapImage img)
+        {
+            img = null;
+            if (AltSources)
+            {
+                if (!string.IsNullOrEmpty(AltKeySource))
+                {
+                    img = new BitmapImage(new Uri(AltKeySource));
+                    return true;
+                }
+            }
+            if (!string.IsNullOrEmpty(KeySource))
+            {
+                img = new BitmapImage(new Uri(KeySource));
+                return true;
+            }
+            return false;
+        }
+
+        public bool TryGetPrimaryVideoPath(out string path)
+        {
+            if (Type == SlideType.ChromaKeyVideo || Type == SlideType.Video)
+            {
+                path = Source;
+                return true;
+            }
+            else if (Type == SlideType.Action && AltSources)
+            {
+                if (AltSource?.EndsWith(".mp4") == true)
+                {
+                    path = AltSource;
+                    return true;
+                }
+            }
+            path = string.Empty;
+            return false;
+        }
+        public bool TryGetKeyVideoPath(out string path)
+        {
+            if (KeySource?.EndsWith(".mp4") == true)
+            {
+                path = AltSource;
+                return true;
+            }
+            else if (AltKeySource?.EndsWith(".mp4") == true)
+            {
+                path = AltKeySource;
+                return true;
+            }
+            path = string.Empty;
+            return false;
+        }
+
+
+        public bool HasPrimaryImage()
+        {
+            if (AltSources)
+            {
+                if (!string.IsNullOrEmpty(AltSource))
+                {
+                    return true;
+                }
+            }
+            if (!string.IsNullOrEmpty(Source))
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool HasKeyImage()
+        {
+            if (AltSources)
+            {
+                if (!string.IsNullOrEmpty(AltKeySource))
+                {
+                    return true;
+                }
+            }
+            if (!string.IsNullOrEmpty(KeySource))
+            {
+                return true;
+            }
+            return false;
+        }
 
 
         public void FireOnActionStateChange(Guid ActionID, TrackedActionState newState)

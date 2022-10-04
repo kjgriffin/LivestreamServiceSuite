@@ -209,7 +209,7 @@ namespace IntegratedPresenter.Main
 
         public void ShowSlide(bool asKey)
         {
-            Slide slidetoshow = _control.Presentation.EffectiveCurrent;
+            ISlide slidetoshow = _control.Presentation.EffectiveCurrent;
 
             if (slidetoshow.Guid == curentslide)
             {
@@ -290,7 +290,7 @@ namespace IntegratedPresenter.Main
         }
 
 
-        private void SetSlideForPlayer(int player, Slide slide)
+        private void SetSlideForPlayer(int player, ISlide slide)
         {
             switch (player)
             {

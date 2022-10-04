@@ -94,6 +94,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator></Separator>
+                <MenuItem IsEnabled="true" Click="ClickHotProvide" Header="Test Memory File"></MenuItem>
                 <!--<MenuItem IsEnabled="false" Click="ClickOpenJSON" Header="Open from JSON"></MenuItem>-->
                 <!--<MenuItem IsEnabled="false" Click="ClickSave" Header="Save"></MenuItem>-->
                 <!--<MenuItem IsEnabled="false" Click="ClickSaveJSON" Header="Save JSON"></MenuItem>-->

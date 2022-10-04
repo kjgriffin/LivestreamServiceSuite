@@ -113,7 +113,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             ImgPreset_pgmbgnd.Source = InputSourceToImage(inputID);
         }
 
-        public void UpdateAuxSource(Slide slide)
+        public void UpdateAuxSource(ISlide slide)
         {
             UpdateSourceFromAux(ImgSlide, slide);
             UpdateSourceFromKey(ImgKey, slide);
@@ -148,7 +148,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         }
 
-        private void UpdateSourceFromKey(Image control, Slide slide)
+        private void UpdateSourceFromKey(Image control, ISlide slide)
         {
             if (slide.Type == SlideType.Empty)
             {
@@ -156,9 +156,9 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             }
             else if (slide.Type == SlideType.Action)
             {
-                if (slide.AltSources)
+                if (slide.TryGetPrimaryImage(out var img))
                 {
-                    control.Source = new BitmapImage(new Uri(slide.AltKeySource));
+                    control.Source = img;
                 }
                 else
                 {
@@ -167,9 +167,9 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             }
             else
             {
-                if (slide.KeySource != null && slide.KeySource != "" && !slide.KeySource.EndsWith(".mp4"))
+                if (slide.TryGetKeyImage(out var img))
                 {
-                    control.Source = new BitmapImage(new Uri(slide.KeySource));
+                    control.Source = img;
                 }
                 else
                 {
@@ -178,41 +178,32 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             }
         }
 
-        private void UpdateSourceFromAux(Image control, Slide slide)
+        private void UpdateSourceFromAux(Image control, ISlide slide)
         {
             if (slide.Type == SlideType.Video)
             {
                 control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/videofile.png"));
             }
-            else if (slide.Type == SlideType.Empty)
-            {
-                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
-            }
-            else if (slide.Type == SlideType.ChromaKeyStill)
-            {
-                control.Source = new BitmapImage(new Uri(slide.Source));
-            }
+            //else if (slide.Type == SlideType.Empty)
+            //{
+            //    control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
+            //}
+            //else if (slide.Type == SlideType.ChromaKeyStill)
+            //{
+            //    control.Source = slide.GetPrimaryImage();
+            //}
             else if (slide.Type == SlideType.ChromaKeyVideo)
             {
                 control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/greenscreen1.png"));
             }
-            else if (slide.Type == SlideType.Action)
+            else if (slide.TryGetPrimaryImage(out var img))
             {
-                if (slide.AltSources)
-                {
-                    control.Source = new BitmapImage(new Uri(slide.AltSource));
-                }
-                else
-                {
-                    control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
-                }
+                control.Source = img;
             }
             else
             {
-                control.Source = new BitmapImage(new Uri(slide.Source));
+                control.Source = new BitmapImage(new Uri("pack://application:,,,/BMDSwitcher/Mock/Images/black.png"));
             }
-
-
         }
 
         internal void SetPIPFillSource(int sourceID)
