@@ -5,6 +5,7 @@ using Configurations.FeatureConfig;
 using IntegratedPresenter.BMDSwitcher.Config;
 
 using System.Collections.Generic;
+using System.Drawing.Text;
 
 namespace IntegratedPresenter.Main
 {
@@ -33,6 +34,6 @@ namespace IntegratedPresenter.Main
         void PrevSlide();
         void SkipNextSlide();
         void SkipPrevSlide();
-        void StartPres();
+        void StartPres(int snum = 0);
     }
 }

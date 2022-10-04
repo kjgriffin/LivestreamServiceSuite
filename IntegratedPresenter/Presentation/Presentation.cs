@@ -373,7 +373,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        public void StartPres()
+        public void StartPres(int snum = 0)
         {
             // need to reset all slides
             foreach (var s in Slides)
@@ -381,8 +381,13 @@ namespace IntegratedPresenter.Main
                 s?.ResetAllActionsState();
             }
             //EffectiveCurrent?.ResetAllActionsState();
-            _currentSlide = 0;
-            _virtualCurrentSlide = 0;
+            if (snum > Slides.Count && snum > 0)
+            {
+                snum = Slides.Count - 1;
+            }
+
+            _currentSlide = snum;
+            _virtualCurrentSlide = snum;
         }
 
     }

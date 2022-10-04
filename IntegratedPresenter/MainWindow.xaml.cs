@@ -5180,6 +5180,8 @@ namespace IntegratedPresenter.Main
 
         private void LoadHotPresentation()
         {
+            int lastSlide = Presentation?.CurrentSlide - 1 ?? 0;
+
             if (!CheckAccess())
             {
                 Dispatcher.Invoke(() => LoadHotPresentation());
@@ -5190,7 +5192,7 @@ namespace IntegratedPresenter.Main
             IPresentation pres = MirroredPresentationBuilder.Create();
 
 
-            pres.StartPres();
+            pres.StartPres(lastSlide);
             _pres = pres;
             activepresentation = true;
             _logger.Info($"Hot Loaded Presentation from memory files");
