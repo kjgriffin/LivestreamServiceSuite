@@ -1801,7 +1801,7 @@ namespace SlideCreater
                 file.Dispose();
             }
 
-            mpres = SharedMemoryRenderer.ExportSlides(_proj.LoadTmpPath, slides);
+            mpres = SharedMemoryRenderer.ExportSlides(_proj, slides);
 
             if (m_hotreloadSyncFile == null)
             {

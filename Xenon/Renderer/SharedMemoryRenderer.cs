@@ -29,7 +29,7 @@ namespace Xenon.Renderer
             public List<MemoryMappedFile> MFiles { get; set; }
         }
 
-        public static SharedMemoryPresentation ExportSlides(string resourceRoot, List<RenderedSlide> slides)
+        public static SharedMemoryPresentation ExportSlides(Project proj, List<RenderedSlide> slides)
         {
             MirrorPresentationDescription presDescription = new MirrorPresentationDescription();
             List<MemoryMappedFile> mfiles = new List<MemoryMappedFile>();
@@ -119,21 +119,24 @@ namespace Xenon.Renderer
                         }
                     }
 
+                    string ctext = rs.Text;
                     // replace audio file references to proj temp folder since they aren't rendered out to memeory
-                    var fmatch = Regex.Match(rs.Text, @"arg1:LoadAudio\((?<file>.*)\)");
+                    var fmatch = Regex.Match(ctext, @"arg1:LoadAudioFile\((?<file>.*)\)");
                     while (fmatch.Success)
                     {
-                        rs.Text = Regex.Replace(rs.Text, @"arg1:LoadAudio\(.*\)", $"arg1:LoadAudio\\({Path.Combine(resourceRoot, fmatch.Groups["file"].Value)}\\)");
+                        var fname = proj.Assets.FirstOrDefault(x => $"Resource_{x.Name}{x.Extension}" == fmatch.Groups["file"].Value);
+                        var file = fname?.CurrentPath ?? "";
+                        ctext = Regex.Replace(ctext, @"arg1:LoadAudioFile\(.*\)", $"arg1:LoadAudioFile({file})");
 
-                        fmatch = Regex.Match(rs.Text, @"arg1:LoadAudio\((?<file>.*)\)");
+                        fmatch = Regex.Match(ctext, @"arg1:LoadAudio\((?<file>.*)\)");
                     }
 
-                    var afile = MemoryMappedFile.CreateNew(aname, rs.Text.Length * 8 + 1024);
+                    var afile = MemoryMappedFile.CreateNew(aname, ctext.Length * 8 + 1024);
                     mfiles.Add(afile);
                     using (var stream = afile.CreateViewStream())
                     using (var writer = new StreamWriter(stream))
                     {
-                        writer.Write(rs.Text);
+                        writer.Write(ctext);
                     }
                 }
 
@@ -205,7 +208,7 @@ namespace Xenon.Renderer
                 }
             }
 
-            presDescription.HeavyResourcePath = resourceRoot;
+            presDescription.HeavyResourcePath = proj.LoadTmpPath;
 
             var dtext = JsonSerializer.Serialize(presDescription);
 
