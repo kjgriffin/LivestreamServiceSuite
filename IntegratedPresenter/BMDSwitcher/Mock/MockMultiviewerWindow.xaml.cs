@@ -228,6 +228,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             if (!DSK1 && tie)
             {
                 ImgPresetLowerThird.Source = ImgSlide.Source;
+                ImgPresetLowerThird.Opacity = dskliturgyopacity;
             }
             else
             {

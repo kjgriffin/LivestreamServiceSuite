@@ -27,13 +27,13 @@
                         <Image Name="ImgPreset_pgmbgnd" Panel.ZIndex="1"></Image>
                         <Rectangle Name="PreviewChromaKey" Opacity="0.2" Fill="#00FF00" Panel.ZIndex="3"></Rectangle>
                         <Viewbox Panel.ZIndex="4">
-                            <Image Name="ImgPresetLowerThird" Stretch="None" Opacity="0.63">
-                                <Image.RenderTransform>
+                            <Image Name="ImgPresetLowerThird" Stretch="None" Opacity="1">
+                                <!--<Image.RenderTransform>
                                     <TranslateTransform X="0" Y="0"></TranslateTransform>
                                 </Image.RenderTransform>
                                 <Image.Clip>
                                     <RectangleGeometry Rect="0 864 1920 1296"></RectangleGeometry>
-                                </Image.Clip>
+                                </Image.Clip>-->
                             </Image>
                         </Viewbox>
                         <Viewbox Panel.ZIndex="5">
