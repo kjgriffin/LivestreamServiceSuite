@@ -101,11 +101,11 @@ namespace Integrated_Presenter.Presentation
                     Title = "",
                     Type = _s.SlideType,
                     AutomationEnabled = _s.AutomationEnabled,
-                    Actions = new List<TrackedAutomationAction>(),// do this later
-                    SetupActions = new List<TrackedAutomationAction>(), // do this later
+                    Actions = new List<TrackedAutomationAction>(),
+                    SetupActions = new List<TrackedAutomationAction>(),
                     Guid = Guid.NewGuid(),
-                    AutoPilotActions = new List<IPilotAction>(), // do this later
-                    EmergencyActions = new List<IPilotAction>(), // do this later
+                    AutoPilotActions = new List<IPilotAction>(),
+                    EmergencyActions = new List<IPilotAction>(),
                     PostsetEnabled = _s.HasPostset,
                     PostsetId = _s.PostsetInfo,
                     AutoOnly = _s.IsFullAuto,
@@ -130,7 +130,6 @@ namespace Integrated_Presenter.Presentation
                             slide.SetupActions = loaded.SetupActions;
                             slide.Actions = loaded.Actions;
                             slide.AutoOnly = loaded.AutoOnly;
-                            // think we'll leave getting overrides from metadata
                         }
                     }
                 }
@@ -141,8 +140,10 @@ namespace Integrated_Presenter.Presentation
                     using (var stream = file.CreateViewStream())
                     using (var reader = new StreamReader(stream))
                     {
-                        var text = reader.ReadToEnd();
-
+                        var text = reader.ReadToEnd().Trim().TrimEnd('\0');
+                        PilotActionBuilder.BuildPilotActions(text, out var act, out var emg);
+                        slide.AutoPilotActions = act;
+                        slide.EmergencyActions = emg;
                     }
                 }
 

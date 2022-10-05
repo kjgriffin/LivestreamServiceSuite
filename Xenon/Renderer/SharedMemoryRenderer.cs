@@ -92,14 +92,6 @@ namespace Xenon.Renderer
                 else if (rs.MediaType == MediaType.Text)
                 {
                     string aname = $"SC-Pres-{rs.Number}_{rs.RenderedAs}-txt";
-                    var afile = MemoryMappedFile.CreateNew(aname, rs.Text.Length * 8 + 1024);
-                    mfiles.Add(afile);
-                    using (var stream = afile.CreateViewStream())
-                    using (var writer = new StreamWriter(stream))
-                    {
-                        writer.Write(rs.Text);
-                    }
-
                     sinfo.ActionInfo = aname;
                     sinfo.SlideType = SlideType.Action;
 
@@ -127,6 +119,22 @@ namespace Xenon.Renderer
                         }
                     }
 
+                    // replace audio file references to proj temp folder since they aren't rendered out to memeory
+                    var fmatch = Regex.Match(rs.Text, @"arg1:LoadAudio\((?<file>.*)\)");
+                    while (fmatch.Success)
+                    {
+                        rs.Text = Regex.Replace(rs.Text, @"arg1:LoadAudio\(.*\)", $"arg1:LoadAudio\\({Path.Combine(resourceRoot, fmatch.Groups["file"].Value)}\\)");
+
+                        fmatch = Regex.Match(rs.Text, @"arg1:LoadAudio\((?<file>.*)\)");
+                    }
+
+                    var afile = MemoryMappedFile.CreateNew(aname, rs.Text.Length * 8 + 1024);
+                    mfiles.Add(afile);
+                    using (var stream = afile.CreateViewStream())
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.Write(rs.Text);
+                    }
                 }
 
 
