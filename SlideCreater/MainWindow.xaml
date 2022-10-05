@@ -159,6 +159,14 @@
                         </StackPanel>
                     </Grid>
                 </Button>
+                <Button Style="{StaticResource DarkBtn}" Click="CleanSlides" Width="80" Padding="10,0,10,0" Margin="10,5,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/ViewControls/Images/BlueRecycle.png" Width="40" Height="40" Margin="0,-1,0,0"></Image>
+                            <TextBlock VerticalAlignment="Center" Foreground="White">Clean</TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Button>
                 <Button Style="{StaticResource DarkBtn}" Click="ExportSlides" Width="100" Padding="10,0,10,0" Margin="10,5,0,0">
                     <Grid>
                         <StackPanel Orientation="Horizontal">
@@ -170,7 +178,7 @@
                 <Button Style="{StaticResource DarkBtn}" Click="HotReload" Width="115" Padding="10,0,10,0" Margin="10,5,0,0">
                     <Grid>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="/ViewControls/Images/OrangeFlame.png" Width="40" Height="30" Margin="0,-1,0,0"></Image>
+                            <Image Name="btnImgHotReload" Source="/ViewControls/Images/GreyFlame.png" Width="40" Height="30" Margin="0,-1,0,0"></Image>
                             <TextBlock VerticalAlignment="Center" Foreground="White">Hot Reload</TextBlock>
                         </StackPanel>
                     </Grid>

@@ -61,7 +61,7 @@ namespace SlideCreater
         ErrorExporting,
         Saving,
         Downloading,
-
+        SuccessBuilding_HotReloading,
     }
 
 
@@ -135,6 +135,11 @@ namespace SlideCreater
                     tbActionStatus.Text = "Project Rendered";
                     tbSubActionStatus.Text = "";
                     sbStatus.Background = System.Windows.Media.Brushes.Green;
+                    break;
+                case ActionState.SuccessBuilding_HotReloading:
+                    tbActionStatus.Text = "Project Rendered";
+                    tbSubActionStatus.Text = "Hot Reload Made Available";
+                    sbStatus.Background = System.Windows.Media.Brushes.Teal;
                     break;
                 case ActionState.ErrorBuilding:
                     tbActionStatus.Text = "Render Failed";
@@ -387,6 +392,11 @@ namespace SlideCreater
                            ActionState = ActionState.SuccessBuilding;
                            UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = $"Slides built!", ErrorName = $"Render Success ({timestr})s", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
                        });
+
+            if (hotReloadEnabled)
+            {
+                PublishHotReload();
+            }
         }
 
         private void ApplyDisplayOverridesOnSlides(List<RenderedSlide> slides)
@@ -924,7 +934,8 @@ namespace SlideCreater
                     return;
                 }
             }
-            m_hotreloadSyncFile.Dispose();
+            hotReloadServer?.StopListening();
+            hotReloadServer?.Release();
             // close everything else too
             Application.Current.Shutdown();
         }
@@ -1786,37 +1797,64 @@ namespace SlideCreater
         }
 
 
-        SharedMemoryRenderer.SharedMemoryPresentation mpres;
 
         private void HotReload(object sender, RoutedEventArgs e)
         {
-            PublishHotReload();
-        }
+            //PublishHotReload();
+            hotReloadEnabled = !hotReloadEnabled;
 
-        MemoryMappedFile m_hotreloadSyncFile;
-        private void PublishHotReload()
-        {
-            foreach (var file in mpres?.MFiles ?? new List<MemoryMappedFile>())
+            if (hotReloadEnabled)
             {
-                file.Dispose();
+                btnImgHotReload.Source = new BitmapImage(new Uri("pack://application:,,,/ViewControls/Images/OrangeFlame.png"));
+
+                hotReloadServer = new HotReloadMonitor();
+                hotReloadServer.StartListening();
+                hotReloadServer.OnHotReloadConsumed += HotReloadServer_OnHotReloadConsumed;
+
+                PublishHotReload();
             }
-
-            mpres = SharedMemoryRenderer.ExportSlides(_proj, slides);
-
-            if (m_hotreloadSyncFile == null)
+            else
             {
-                m_hotreloadSyncFile = MemoryMappedFile.CreateOrOpen(CommonAPINames.HotReloadSyncFile, 1024, MemoryMappedFileAccess.ReadWrite);
-            }
+                btnImgHotReload.Source = new BitmapImage(new Uri("pack://application:,,,/ViewControls/Images/GreyFlame.png"));
 
-            if (mpres.Info.Slides.Count > 0)
-            {
-                using (var view = m_hotreloadSyncFile.CreateViewAccessor())
+                hotReloadServer?.StopListening();
+                hotReloadServer?.Release();
+                if (hotReloadServer != null)
                 {
-                    view.Write(0, true);
+                    hotReloadServer.OnHotReloadConsumed -= HotReloadServer_OnHotReloadConsumed;
+                    hotReloadServer = null;
                 }
             }
+        }
+
+        private void HotReloadServer_OnHotReloadConsumed(object sender, EventArgs e)
+        {
+            sbStatus.Dispatcher.Invoke(() =>
+                                               {
+                                                   ActionState = ActionState.SuccessBuilding;
+                                               });
 
         }
 
+        bool hotReloadEnabled = false;
+
+        HotReloadMonitor hotReloadServer;
+
+        private void PublishHotReload()
+        {
+            if (hotReloadServer?.PublishReload(_proj, slides) == true)
+            {
+                sbStatus.Dispatcher.Invoke(() =>
+                                       {
+                                           UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = $"Presentation Pushed to Hot Reload", ErrorName = $"Hot Reload Requested", Generator = "Hot Reloader", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
+                                           ActionState = ActionState.SuccessBuilding_HotReloading;
+                                       });
+            }
+        }
+
+        private void CleanSlides(object sender, RoutedEventArgs e)
+        {
+            builder.CleanSlides();
+        }
     }
 }

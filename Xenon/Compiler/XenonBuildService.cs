@@ -29,6 +29,12 @@ namespace Xenon.Compiler
         private ConcurrentDictionary<int, RenderedSlide> hashedOldSlides = new ConcurrentDictionary<int, RenderedSlide>();
         private ConcurrentDictionary<int, RenderedSlide> hashedNewSlides = new ConcurrentDictionary<int, RenderedSlide>();
 
+        public void CleanSlides()
+        {
+            hashedNewSlides.Clear();
+            hashedOldSlides.Clear();
+        }
+
         public async Task<(bool success, Project project)> CompileProjectAsync(Project proj, IProgress<int> progress = null)
         {
             compiler.Logger.ClearErrors();

@@ -15,6 +15,7 @@
     <None Remove="ViewControls\Images\Artist.png" />
     <None Remove="ViewControls\Images\ArtistBlue.png" />
     <None Remove="ViewControls\Images\ArtistWhite.png" />
+    <None Remove="ViewControls\Images\BlueRecycle.png" />
     <None Remove="ViewControls\Images\BoxOrange.png" />
     <None Remove="ViewControls\Images\BoxShutOrange.png" />
     <None Remove="ViewControls\Images\Cardio.png" />
@@ -29,6 +30,7 @@
     <None Remove="ViewControls\Images\Folder.png" />
     <None Remove="ViewControls\Images\FolderGold.png" />
     <None Remove="ViewControls\Images\Folder_light.png" />
+    <None Remove="ViewControls\Images\GreyFlame.png" />
     <None Remove="ViewControls\Images\Layout2Blue.png" />
     <None Remove="ViewControls\Images\LayoutBlue.png" />
     <None Remove="ViewControls\Images\LayoutGray.png" />
@@ -80,6 +82,9 @@
     <Resource Include="ViewControls\Images\ArtistWhite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="ViewControls\Images\BlueRecycle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="ViewControls\Images\BoxOrange.png" />
     <Resource Include="ViewControls\Images\BoxShutOrange.png" />
     <Resource Include="ViewControls\Images\DeleteWhite.png">
@@ -89,6 +94,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="ViewControls\Images\FolderGold.png" />
+    <Resource Include="ViewControls\Images\GreyFlame.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="ViewControls\Images\Layout2Blue.png" />
     <Resource Include="ViewControls\Images\LayoutBlue.png" />
     <Resource Include="ViewControls\Images\LayoutGray.png" />
