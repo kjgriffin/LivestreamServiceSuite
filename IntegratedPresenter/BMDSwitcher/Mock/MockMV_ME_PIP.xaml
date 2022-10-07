@@ -11,11 +11,20 @@
             <Viewbox>
                 <Grid Width="1920" Height="1080">
                     <Rectangle Fill="Black"></Rectangle>
+
                     <Rectangle x:Name="lBKGD_A" Fill="Transparent"></Rectangle>
+                    <Rectangle x:Name="lBKGD_B" Fill="Transparent"></Rectangle>
+
+                    <Rectangle x:Name="lUSK1_A" Fill="Transparent"></Rectangle>
+
+                    <Rectangle x:Name="lDSK1_A" Fill="Transparent"></Rectangle>
+                    <Rectangle x:Name="lDSK2_A" Fill="Transparent"></Rectangle>
+                    
+
                 </Grid>
             </Viewbox>
             <Grid Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                <Border Background="Gray" Opacity="0.3" BorderThickness="2" BorderBrush="#f0ffffff" CornerRadius="4"></Border>
+                <Border Background="#303030" Opacity="0.8" BorderThickness="2" BorderBrush="#f0ffffff" CornerRadius="4"></Border>
                 <TextBlock FontSize="20" Name="tbPIPName" Foreground="White" Opacity="1" Padding="10,5,10,5">PROGRAM</TextBlock>
             </Grid>
             <Border BorderBrush="LightGray" BorderThickness="5">

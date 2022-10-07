@@ -17,6 +17,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         void FadeDSK1(bool onair);
         void FadeDSK2(bool onair);
         BMDSwitcherState PerformAutoTransition(BMDSwitcherState state);
+        BMDSwitcherState PerformCutTransition(BMDSwitcherState state);
         void SetDSK1(bool onair);
         void SetDSK2(bool onair);
         void SetFTB(bool onair);

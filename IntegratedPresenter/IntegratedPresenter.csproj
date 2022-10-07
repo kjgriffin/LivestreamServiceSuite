@@ -36,6 +36,7 @@
 		<None Remove="BMDSwitcher\Mock\Images\leftshot1.PNG" />
 		<None Remove="BMDSwitcher\Mock\Images\organcam.PNG" />
 		<None Remove="BMDSwitcher\Mock\Images\organshot.PNG" />
+		<None Remove="BMDSwitcher\Mock\Images\organshot1.png" />
 		<None Remove="BMDSwitcher\Mock\Images\powerpoint.png" />
 		<None Remove="BMDSwitcher\Mock\Images\rightcam.PNG" />
 		<None Remove="BMDSwitcher\Mock\Images\rightshot.PNG" />
@@ -78,6 +79,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="BMDSwitcher\Mock\Images\organshot1.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
 		<EmbeddedResource Include="Log4Net.config">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>

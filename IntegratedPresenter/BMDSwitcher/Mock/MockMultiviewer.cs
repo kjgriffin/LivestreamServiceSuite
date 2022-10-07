@@ -236,5 +236,11 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             multiviewerWindow.UpdateMockCameraMovement(e);
         }
+
+        public BMDSwitcherState PerformCutTransition(BMDSwitcherState state)
+        {
+            // NOTE: here we won't really do much for now...
+            throw new NotImplementedException();
+        }
     }
 }

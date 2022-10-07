@@ -65,9 +65,10 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 #if DEBUG
             mockMultiviewer = new BetterMockDriver(mapping, parent.Config, _state);
             SwitcherStateChanged += MockBMDSwitcherManager_SwitcherStateChanged;
+            (mockMultiviewer as BetterMockDriver).OnSwitcherStateUpdated += MockBMDSwitcherManager_OnSwitcherStateUpdated;
 
             // not too sure about this one...
-            parent.OnPlaybackStateChanged += Parent_OnPlaybackStateChanged; ;
+            parent.OnPlaybackStateChanged += Parent_OnPlaybackStateChanged;
 
 #else
             mockMultiviewer = new MockMultiviewer(mapping, parent.Config);
@@ -75,6 +76,12 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
             mockMultiviewer.OnMockWindowClosed += MockMultiviewer_OnMockWindowClosed;
             parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
+        }
+
+        private void MockBMDSwitcherManager_OnSwitcherStateUpdated(object sender, BMDSwitcherState e)
+        {
+            _state = e;
+            SwitcherStateChanged?.Invoke(_state);
         }
 
         private void Parent_OnPlaybackStateChanged(object sender, MainWindow.MediaPlaybackEventArgs e)
@@ -115,16 +122,23 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state = mockMultiviewer.PerformAutoTransition(_state);
+            // the newer mock should handle all state with it's own driver
+#if !DEBUG
             if (_state.TransNextKey1)
             {
                 _state.USK1OnAir = !_state.USK1OnAir;
             }
+#endif
             SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformCutTransition()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            // the newer mock should handle all state with it's own driver
+#if DEBUG
+            _state = mockMultiviewer.PerformCutTransition(_state);
+#else
             // take all layers
             if (_state.TransNextKey1)
             {
@@ -160,6 +174,8 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 mockMultiviewer.SetPresetInput((int)_state.PresetID);
                 mockMultiviewer.SetProgramInput((int)_state.ProgramID);
             }
+#endif
+
             SwitcherStateChanged?.Invoke(_state);
         }
 
@@ -208,26 +224,53 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void PerformAutoOffAirDSK2()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if DEBUG
+            mockMultiviewer.FadeDSK1(false);
+#else
             _state.DSK2OnAir = false;
             mockMultiviewer.FadeDSK2(false);
             SwitcherStateChanged?.Invoke(_state);
+#endif
         }
 
         public void PerformAutoOnAirDSK2()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if DEBUG
+            mockMultiviewer.FadeDSK1(false);
+#else
             _state.DSK2OnAir = true;
             mockMultiviewer.FadeDSK2(true);
             SwitcherStateChanged?.Invoke(_state);
+#endif
         }
 
+#if DEBUG
+        public void PerformTakeAutoDSK1()
+#else
         public async void PerformTakeAutoDSK1()
+#endif
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if DEBUG
+            // I belive this is technically correct
+            // ATEM seems to think key is immediately on air once it begins transition
+            // which I suppose makes sense
+            // since we dont track transition state of dsk on the _state we don't need to update when transition is done
+            //_state.DSK1OnAir = !_state.DSK1OnAir;
+            // let the mock handle source switching
+            //SwitcherStateChanged?.Invoke(_state);
+            // now it's got an active target begin fade
+
+            // exclusively let the driver handle this
+            // driver can now fire events that we handle here for when the key goes on/off air
+            mockMultiviewer.FadeDSK1(!_state.DSK1OnAir);
+#else
             _state.DSK1OnAir = !_state.DSK1OnAir;
             mockMultiviewer.FadeDSK1(_state.DSK1OnAir);
             await Task.Delay(1000);
             SwitcherStateChanged?.Invoke(_state);
+#endif
         }
 
         public async void PerformTakeAutoDSK2()

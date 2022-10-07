@@ -5,6 +5,7 @@ using IntegratedPresenter.Main;
 
 using System;
 using System.Collections.Generic;
+using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -38,6 +40,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         }
 
         #endregion
+
 
         BMDSwitcherConfigSettings _cfg;
 
@@ -105,6 +108,8 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         private void Internal_RefreshUI(ICameraSourceProvider cameras, ISwitcherStateProvider switcher)
         {
+            var state = switcher.GetState();
+
             // for now we'll just work on the simple pips
             for (int i = 0; i < 8; i++)
             {
@@ -121,17 +126,69 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                     // load black
                     m_simplePIPS[i].UpdateSource("");
                 }
+
+                // update on-air state
+                int pipSID = m_pipWindowSourceRouting[i + 1];
+                // for now assumes hard-coded DSK1 fill source
+                // ignore DSK2 for now
+                if (state.ProgramID == pipSID
+                    || (state.DSK1OnAir && pipSID == _cfg.DownstreamKey1Config.InputFill)
+                    || (state.USK1OnAir && state.USK1FillSource == pipSID))
+                {
+                    m_simplePIPS[i].bdr.BorderBrush = Brushes.Red;
+                }
+                else if (state.PresetID == pipSID
+                         || (state.DSK1Tie && pipSID == _cfg.DownstreamKey1Config.InputFill)
+                         || (state.TransNextKey1 && state.USK1FillSource == pipSID))
+                {
+                    m_simplePIPS[i].bdr.BorderBrush = Brushes.LimeGreen;
+                }
+                else
+                {
+                    m_simplePIPS[i].bdr.BorderBrush = Brushes.LightGray;
+                }
             }
 
             // TODO: update me/pv
 
             // build preview/me bkgd layers
 
-            var state = switcher.GetState();
 
             pip_PV_preset.pvBKDG.Fill = GetGeneratedSourceById((int)state.PresetID, cameras);
-
             pip_ME_program.lBKGD_A.Fill = GetGeneratedSourceById((int)state.ProgramID, cameras);
+
+            // handle usk1 layer
+
+            // handle dsk1 layer
+            if (state.DSK1OnAir)
+            {
+                // TODO: figure out if in transition...
+
+                // show it
+                pip_ME_program.lDSK1_A.Fill = GetGeneratedSourceById(GetSlideSourceID(), cameras);
+
+                // hide it for preview
+                pip_PV_preset.pvDSK1.Fill = Brushes.Transparent;
+            }
+            else
+            {
+                // TODO: handle in transition
+                pip_ME_program.lDSK1_A.Fill = Brushes.Transparent;
+
+                // try tie?
+                if (state.DSK1Tie)
+                {
+                    // show it
+                    pip_PV_preset.pvDSK1.Fill = GetGeneratedSourceById(GetSlideSourceID(), cameras);
+                }
+                else
+                {
+                    pip_PV_preset.pvDSK1.Fill = Brushes.Transparent;
+                }
+            }
+
+            // handle dsk2 layer
+
         }
 
         private Brush GetGeneratedSourceById(int id, ICameraSourceProvider cams)
@@ -153,6 +210,12 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 return new ImageBrush(img);
             }
         }
+
+        private int GetSlideSourceID()
+        {
+            return _cfg.Routing.FirstOrDefault(x => x.KeyName == "slide").PhysicalInputId;
+        }
+
         internal void SlideVideoPlaybackUpdate(MainWindow.MediaPlaybackEventArgs e)
         {
             RunOnUI(() => Internal_SlideVideoPlaybackUpdate(e));
@@ -167,5 +230,42 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
             m_simplePIPS[sid - 1].UpdatePlaybackState(e);
         }
+
+        /// <summary>
+        /// Start a fade in/out
+        /// </summary>
+        /// <param name="dir">1 = in , -1 = out</param>
+        internal void StartDSK1Fade(int dir, ISwitcherStateProvider switcher)
+        {
+            RunOnUI(() => Internal_StartDSK1Fade(dir, switcher));
+        }
+
+        private void Internal_StartDSK1Fade(int dir, ISwitcherStateProvider switcher)
+        {
+            var dur = TimeSpan.FromSeconds(_cfg.DownstreamKey1Config.Rate / _cfg.VideoSettings.VideoFPS);
+            var fade = new DoubleAnimation()
+            {
+                From = dir == 1 ? 0 : 1.0,
+                To = dir == 1 ? 1.0 : 0,
+                Duration = dur,
+            };
+            Storyboard.SetTarget(fade, pip_ME_program.lDSK1_A);
+            Storyboard.SetTargetProperty(fade, new PropertyPath(Rectangle.OpacityProperty));
+            var sb = new Storyboard();
+            sb.Children.Add(fade);
+            sb.Begin();
+            Task.Run(async () =>
+            {
+                await Task.Delay((int)dur.TotalMilliseconds);
+                RunOnUI(() =>
+                {
+                    pip_ME_program.lUSK1_A.Opacity = dir == 1 ? 1 : 0;
+                    sb.Stop();
+                    switcher.ReportDSKFadeComplete(1, dir == 1 ? 1 : 0);
+                });
+            });
+
+        }
+
     }
 }
