@@ -10,9 +10,11 @@
         <Grid>
             <Viewbox>
                 <Grid Width="1920" Height="1080">
-                    <Rectangle Fill="Black"></Rectangle>
-                    <Image Name="imagePlayerA"></Image>
-                    <MediaElement Name="videoPlayerA"></MediaElement>
+                    <Rectangle Fill="Black" Panel.ZIndex="0"></Rectangle>
+                    <Rectangle Name="pvBKDG" Fill="Transparent" Panel.ZIndex="1"></Rectangle>
+                    <Rectangle Name="pvUSK1" Fill="Transparent" Panel.ZIndex="2"></Rectangle>
+                    <Rectangle Name="pvDSK1" Fill="Transparent" Panel.ZIndex="3"></Rectangle>
+                    <Rectangle Name="pvDSK2" Fill="Transparent" Panel.ZIndex="4"></Rectangle>
                 </Grid>
             </Viewbox>
             <Grid>

@@ -21,6 +21,12 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
     {
         //public bool TryGetSource(int PhysicalInputID, out string source);
         public bool TryGetSourceImage(int PhysicalInputID, out BitmapImage image);
+        bool TryGetSourceVideo(int PhysicalInputID, out string source);
+    }
+
+    public interface ISwitcherStateProvider
+    {
+        public BMDSwitcherState GetState();
     }
 
 
@@ -77,10 +83,26 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
             return false;
         }
+
+        public bool TryGetSourceVideo(int PhysicalInputID, out string source)
+        {
+            source = null;
+
+            if (PhysicalInputID == SlideID)
+            {
+                return m_slideSource?.TryGetPrimaryVideoPath(out source) ?? false;
+            }
+            else if (PhysicalInputID == AKeyID)
+            {
+                return m_slideSource?.TryGetKeyVideoPath(out source) ?? false;
+            }
+
+            return false;
+        }
     }
 
 
-    public class BetterMockDriver : IMockMultiviewerDriver
+    public class BetterMockDriver : IMockMultiviewerDriver, ISwitcherStateProvider
     {
 
         BetterMockMVUI multiviewerWindow;
@@ -88,18 +110,23 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         CameraSourceDriver _camDriver;
 
+        BMDSwitcherState _state;
+
         public event SwitcherDisconnectedEvent OnMockWindowClosed;
 
-        public BetterMockDriver(Dictionary<int, string> sourcemap, BMDSwitcherConfigSettings config)
+        public BetterMockDriver(Dictionary<int, string> sourcemap, BMDSwitcherConfigSettings config, BMDSwitcherState startupState)
         {
             _camDriver = new CameraSourceDriver();
             multiviewerWindow = new BetterMockMVUI();
             _config = config;
+
+            _state = startupState;
+
             multiviewerWindow.Show();
             multiviewerWindow.Closed += MultiviewerWindow_Closed;
             multiviewerWindow.ReConfigure(config);
 
-            multiviewerWindow.RefreshUI(_camDriver);
+            multiviewerWindow.RefreshUI(_camDriver, this);
         }
 
         private void MultiviewerWindow_Closed(object sender, EventArgs e)
@@ -109,10 +136,8 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         public void UpdateSlideInput(ISlide s)
         {
-            //var src = s.tryget
-            //_camDriver.UpdateSource(_config.Routing.FirstOrDefault(x => x.KeyName == "slide").PhysicalInputId,
             _camDriver.UpdateSlideSource(s);
-            multiviewerWindow.RefreshUI(_camDriver);
+            multiviewerWindow.RefreshUI(_camDriver, this);
         }
 
         public void SetProgramInput(int inputID)
@@ -185,7 +210,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         public BMDSwitcherState PerformAutoTransition(BMDSwitcherState state)
         {
-            return null;
+            return _state;
 
             // take selected layers
 
@@ -321,6 +346,23 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void UpdateMockCameraMovement(CameraMotionEventArgs e)
         {
             //multiviewerWindow.UpdateMockCameraMovement(e);
+        }
+
+        internal void HandleStateUpdate(BMDSwitcherState args)
+        {
+            _state = args;
+            // probably need to refresh
+            multiviewerWindow.RefreshUI(_camDriver, this);
+        }
+
+        BMDSwitcherState ISwitcherStateProvider.GetState()
+        {
+            return _state;
+        }
+
+        internal void HandlePlaybackStateUpdate(MainWindow.MediaPlaybackEventArgs e)
+        {
+            multiviewerWindow.SlideVideoPlaybackUpdate(e);
         }
     }
 }

@@ -44,6 +44,10 @@ namespace IntegratedPresenter.Main
         public bool TryGetPrimaryImage(out BitmapImage img)
         {
             img = new BitmapImage();
+            if (Type == SlideType.Video)
+            {
+                return false;
+            }
             if (AltSources)
             {
                 if (!string.IsNullOrEmpty(AltSource))

@@ -63,13 +63,28 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
 
 #if DEBUG
-            mockMultiviewer = new BetterMockDriver(mapping, parent.Config);
+            mockMultiviewer = new BetterMockDriver(mapping, parent.Config, _state);
+            SwitcherStateChanged += MockBMDSwitcherManager_SwitcherStateChanged;
+
+            // not too sure about this one...
+            parent.OnPlaybackStateChanged += Parent_OnPlaybackStateChanged; ;
+
 #else
             mockMultiviewer = new MockMultiviewer(mapping, parent.Config);
 #endif
 
             mockMultiviewer.OnMockWindowClosed += MockMultiviewer_OnMockWindowClosed;
             parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
+        }
+
+        private void Parent_OnPlaybackStateChanged(object sender, MainWindow.MediaPlaybackEventArgs e)
+        {
+            (mockMultiviewer as BetterMockDriver)?.HandlePlaybackStateUpdate(e);
+        }
+
+        private void MockBMDSwitcherManager_SwitcherStateChanged(BMDSwitcherState args)
+        {
+            (mockMultiviewer as BetterMockDriver)?.HandleStateUpdate(args);
         }
 
         private void MockMultiviewer_OnMockWindowClosed()

@@ -139,6 +139,40 @@ namespace Xenon.Renderer
                         writer.Write(ctext);
                     }
                 }
+                else if (rs.MediaType == MediaType.Video)
+                {
+                    string fname = rs.AssetPath;
+                    string kname = $"SC-Pres-Key_{rs.Number}-png";
+                    sinfo.PrimaryResource = fname;
+                    sinfo.KeyResource = kname;
+                    sinfo.HasKey = true;
+                    // type here is liturgy/full/ override type
+                    var nmatch = Regex.Match(rs.RenderedAs, "(?<type>\\w+)(-(?<action>\\w+))?");
+                    string type = nmatch.Groups["type"].Value;
+
+                    if (nmatch.Groups["action"].Success)
+                    {
+                        sinfo.PreAction = nmatch.Groups["action"].Value;
+                    }
+
+                    if (rs.OverridingBehaviour?.ForceOverrideExport == true)
+                    {
+                        type = rs.OverridingBehaviour.OverrideExportName;
+                    }
+                    else
+                    {
+                        sinfo.SlideType = SlideType.Video;
+                    }
+
+                    var kfile = MemoryMappedFile.CreateNew(kname, rs.KeyPNGMS.Length);
+                    mfiles.Add(kfile);
+                    using (var stream = kfile.CreateViewStream())
+                    {
+                        // this will probably be slow and use oodles of memory
+                        stream.Seek(0, SeekOrigin.Begin);
+                        stream.Write(rs.KeyPNGMS.GetBuffer(), 0, (int)rs.KeyPNGMS.Length);
+                    }
+                }
 
 
                 if (rs.IsPostset)

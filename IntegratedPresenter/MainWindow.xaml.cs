@@ -3296,6 +3296,7 @@ namespace IntegratedPresenter.Main
                     }
                 });
             }
+            OnPlaybackStateChanged?.Invoke(this, new MediaPlaybackEventArgs(MediaPlaybackEventArgs.State.Play));
         }
         private void pauseMedia()
         {
@@ -3313,6 +3314,7 @@ namespace IntegratedPresenter.Main
                     currentpoolsource.PauseMedia();
                 }
             }
+            OnPlaybackStateChanged?.Invoke(this, new MediaPlaybackEventArgs(MediaPlaybackEventArgs.State.Pause));
         }
         private void stopMedia()
         {
@@ -3330,6 +3332,7 @@ namespace IntegratedPresenter.Main
                     currentpoolsource.StopMedia();
                 }
             }
+            OnPlaybackStateChanged?.Invoke(this, new MediaPlaybackEventArgs(MediaPlaybackEventArgs.State.Stop));
         }
         private void restartMedia()
         {
@@ -3347,7 +3350,29 @@ namespace IntegratedPresenter.Main
                     currentpoolsource.RestartMedia();
                 }
             }
+            OnPlaybackStateChanged?.Invoke(this, new MediaPlaybackEventArgs(MediaPlaybackEventArgs.State.Restart));
         }
+
+        public event EventHandler<MediaPlaybackEventArgs> OnPlaybackStateChanged;
+
+        public class MediaPlaybackEventArgs : EventArgs
+        {
+            public MediaPlaybackEventArgs(State state)
+            {
+                PlaybackState = state;
+            }
+            public enum State
+            {
+                Play,
+                Stop,
+                Pause,
+                Restart,
+            }
+
+            public State PlaybackState { get; set; }
+            
+        }
+
 
         #endregion
 

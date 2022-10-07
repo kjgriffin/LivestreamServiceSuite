@@ -11,8 +11,7 @@
             <Viewbox>
                 <Grid Width="1920" Height="1080">
                     <Rectangle Fill="Black"></Rectangle>
-                    <Image Name="imagePlayerA"></Image>
-                    <MediaElement Name="videoPlayerA"></MediaElement>
+                    <Rectangle x:Name="lBKGD_A" Fill="Transparent"></Rectangle>
                 </Grid>
             </Viewbox>
             <Grid Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom">

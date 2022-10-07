@@ -423,17 +423,35 @@ namespace IntegratedPresenter.Main
             }
             else
             {
-                if (asKey && slide.TryGetKeyImage(out var key))
+                if (asKey)
                 {
-                    SetMedia(key, slide.Type);
-                }
-                else if (!asKey && slide.TryGetPrimaryImage(out var img))
-                {
-                    SetMedia(img, slide.Type);
+                    if (slide.TryGetKeyImage(out var key))
+                    {
+                        SetMedia(key, slide.Type);
+                    }
+                    else if (slide.TryGetKeyVideoPath(out var path))
+                    {
+                        SetMedia(new Uri(path), slide.Type);
+                    }
+                    else
+                    {
+                        ShowBlackSource();
+                    }
                 }
                 else
                 {
-                    ShowBlackSource();
+                    if (slide.TryGetPrimaryImage(out var key))
+                    {
+                        SetMedia(key, slide.Type);
+                    }
+                    else if (slide.TryGetPrimaryVideoPath(out var path))
+                    {
+                        SetMedia(new Uri(path), slide.Type);
+                    }
+                    else
+                    {
+                        ShowBlackSource();
+                    }
                 }
             }
         }

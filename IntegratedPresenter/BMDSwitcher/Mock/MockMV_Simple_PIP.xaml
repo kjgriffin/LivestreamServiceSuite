@@ -9,7 +9,7 @@
     <Grid>
         <Grid>
             <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Grid Width="1920" Height="1080">
+                <Grid Name="displaySum" Width="1920" Height="1080">
                     <Rectangle Fill="Black"></Rectangle>
                     <Image Name="imagePlayerA"></Image>
                     <MediaElement Name="videoPlayerA"></MediaElement>
