@@ -350,8 +350,11 @@
                         <TabItem Header="Source" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
                             <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
                         </TabItem>
-                        <TabItem Header="Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
+                        <TabItem Header="Switcher Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
                             <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfig" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
+                        </TabItem>
+                        <TabItem Header="CCU Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
+                            <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfigCCU" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
                         </TabItem>
                     </TabControl>
 

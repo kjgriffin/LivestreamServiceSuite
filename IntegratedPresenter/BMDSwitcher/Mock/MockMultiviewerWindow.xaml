@@ -101,7 +101,7 @@
                     <Image Name="ImgCenter" Grid.ColumnSpan="1" Source="/BMDSwitcher/Mock/Images/centershot.png"></Image>
                 </Border>
                 <Border Background="Black" Grid.Row="1" Grid.Column="2" BorderBrush="Gray" BorderThickness="2,2,2,2">
-                    <Image Name="Imgcenter" Grid.ColumnSpan="1" Source="/BMDSwitcher/Mock/Images/rightshot.png"></Image>
+                    <Image Name="ImgLectern" Grid.ColumnSpan="1" Source="/BMDSwitcher/Mock/Images/rightshot.png"></Image>
                 </Border>
                 <Border Background="Black" Grid.Row="1" Grid.Column="3" BorderBrush="Gray" BorderThickness="2,2,2,2">
                     <Image Name="ImgOrgan" Grid.ColumnSpan="1" Source="/BMDSwitcher/Mock/Images/organshot.png"></Image>
@@ -113,10 +113,10 @@
                     <Image Name="ImgKey" Grid.ColumnSpan="1"></Image>
                 </Border>
                 <Border Background="Black" Grid.Row="2" Grid.Column="2" BorderBrush="Gray" BorderThickness="2,2,2,2">
-                    <Image Grid.ColumnSpan="1" Source="/BMDSwitcher/Mock/Images/powerpoint.png"></Image>
+                    <Image Name="ImgProj" Grid.ColumnSpan="1" Source="/BMDSwitcher/Mock/Images/powerpoint.png"></Image>
                 </Border>
                 <Border Background="Black" Grid.Row="2" Grid.Column="3" BorderBrush="Gray" BorderThickness="2,2,2,2">
-                    <Image Grid.ColumnSpan="1" Source="/BmdSwitcher/Mock/Images/backcam.png"></Image>
+                    <Image Name="ImgBack" Grid.ColumnSpan="1" Source="/BmdSwitcher/Mock/Images/backcam.png"></Image>
                 </Border>
 
             </Grid>

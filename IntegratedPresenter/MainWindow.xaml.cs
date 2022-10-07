@@ -58,7 +58,7 @@ namespace IntegratedPresenter.Main
         System.Threading.ManualResetEvent autoTransMRE = new System.Threading.ManualResetEvent(true);
 
 
-        CCPUPresetMonitor _camMonitor;
+        ICCPUPresetMonitor _camMonitor;
 
         List<SlidePoolSource> SlidePoolButtons;
 
@@ -106,6 +106,8 @@ namespace IntegratedPresenter.Main
             _logger.Info("Starting Camera Server");
 
             ILog pilotLogger = LogManager.GetLogger("PilotLogger");
+
+            // by default start real server
             _camMonitor = new CCPUPresetMonitor(headless: true, pilotLogger, this);
             _camMonitor.OnCommandUpdate += _camMonitor_OnCommandUpdate;
 
@@ -5248,6 +5250,52 @@ namespace IntegratedPresenter.Main
                 muteMedia();
             }
 
+        }
+
+        bool m_mockCameras = false;
+        private void ClickConnectMockCameras(object sender, RoutedEventArgs e)
+        {
+            m_mockCameras = !m_mockCameras;
+            miConnectMockCameras.IsChecked = m_mockCameras;
+            ToggleMockCameras();
+        }
+
+        private void ToggleMockCameras()
+        {
+            _camMonitor?.Shutdown();
+            if (_camMonitor != null)
+            {
+                _camMonitor.OnCommandUpdate -= _camMonitor_OnCommandUpdate;
+
+                var mock = _camMonitor as MockCCUMonitor;
+                if (mock != null)
+                {
+                    mock.OnCameraMoved -= Mock_OnCameraMoved;
+                }
+            }
+
+            if (m_mockCameras)
+            {
+                MockCCUMonitor mon = new MockCCUMonitor();
+                _camMonitor = mon;
+
+                mon.OnCameraMoved += Mock_OnCameraMoved;
+            }
+            else
+            {
+                _camMonitor = new CCPUPresetMonitor(true, _logger, this);
+            }
+
+            _camMonitor.OnCommandUpdate += _camMonitor_OnCommandUpdate;
+        }
+
+        private void Mock_OnCameraMoved(object sender, CameraMotionEventArgs e)
+        {
+            var mock = switcherManager as MockBMDSwitcherManager;
+            if (mock != null)
+            {
+                mock.UpdateMockCameraMovement(e);
+            }
         }
     }
 }

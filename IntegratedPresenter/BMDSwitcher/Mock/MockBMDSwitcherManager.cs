@@ -1,5 +1,9 @@
 ﻿using BMDSwitcherAPI;
 
+using CCUI_UI;
+
+using Integrated_Presenter.BMDSwitcher.Mock;
+
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
@@ -22,7 +26,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         BMDSwitcherState _state;
 
-        MockMultiviewer mockMultiviewer;
+        IMockMultiviewerDriver mockMultiviewer;
 
         public event SwitcherStateChange SwitcherStateChanged;
         public event SwitcherDisconnectedEvent OnSwitcherDisconnected;
@@ -55,7 +59,15 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 [7] = "center",
                 [8] = "left"
             };
+
+
+
+#if DEBUG
+            mockMultiviewer = new BetterMockDriver(mapping, parent.Config);
+#else
             mockMultiviewer = new MockMultiviewer(mapping, parent.Config);
+#endif
+
             mockMultiviewer.OnMockWindowClosed += MockMultiviewer_OnMockWindowClosed;
             parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
         }
@@ -503,6 +515,11 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()} {sourceID}");
             _state.AuxID = sourceID;
             SwitcherStateChanged?.Invoke(_state);
+        }
+
+        public void UpdateMockCameraMovement(CameraMotionEventArgs e)
+        {
+            mockMultiviewer.UpdateMockCameraMovement(e);
         }
     }
 }

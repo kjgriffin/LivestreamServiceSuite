@@ -1,0 +1,41 @@
+﻿<Window x:Class="Integrated_Presenter.BMDSwitcher.Mock.BetterMockMVUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Integrated_Presenter.BMDSwitcher.Mock"
+        mc:Ignorable="d"
+        Title="Mock Multiviewer" Height="1080" Width="1920">
+    <Grid>
+        <Grid Background="#272727">
+            <Viewbox>
+                <Grid Width="1920" Height="1080">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <local:MockMV_ME_PIP x:Name="pip_ME_program" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0"></local:MockMV_ME_PIP>
+                    <local:MockMV_PV_PIP x:Name="pip_PV_preset" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0"></local:MockMV_PV_PIP>
+
+                    <local:MockMV_Simple_PIP x:Name="pip_1" Grid.Column="0" Grid.Row="1"></local:MockMV_Simple_PIP>
+                    <local:MockMV_Simple_PIP x:Name="pip_2" Grid.Column="1" Grid.Row="1"></local:MockMV_Simple_PIP>
+                    <local:MockMV_Simple_PIP x:Name="pip_3" Grid.Column="2" Grid.Row="1"></local:MockMV_Simple_PIP>
+                    <local:MockMV_Simple_PIP x:Name="pip_4" Grid.Column="3" Grid.Row="1"></local:MockMV_Simple_PIP>
+                    <local:MockMV_Simple_PIP x:Name="pip_5" Grid.Column="0" Grid.Row="2"></local:MockMV_Simple_PIP>
+                    <local:MockMV_Simple_PIP x:Name="pip_6" Grid.Column="1" Grid.Row="2"></local:MockMV_Simple_PIP>
+                    <local:MockMV_Simple_PIP x:Name="pip_7" Grid.Column="2" Grid.Row="2"></local:MockMV_Simple_PIP>
+                    <local:MockMV_Simple_PIP x:Name="pip_8" Grid.Column="3" Grid.Row="2"></local:MockMV_Simple_PIP>
+
+                </Grid>
+            </Viewbox>
+        </Grid>
+    </Grid>
+</Window>

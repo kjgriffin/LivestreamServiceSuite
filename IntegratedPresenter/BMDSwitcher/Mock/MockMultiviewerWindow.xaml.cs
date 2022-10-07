@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+
+using CCUI_UI;
 
 using IntegratedPresenter.Main;
 
@@ -27,6 +30,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
     public partial class MockMultiviewerWindow : Window
     {
         private Dictionary<int, string> SourceMap;
+        Dictionary<string, Image> CameraPIPs = new Dictionary<string, Image>();
         public MockMultiviewerWindow(Dictionary<int, string> sourcemap)
         {
             InitializeComponent();
@@ -41,6 +45,15 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             USK1KeyType = 1;
             PreviewChromaKey.Visibility = Visibility.Hidden;
             ProgramChromaKey.Visibility = Visibility.Hidden;
+
+            CameraPIPs["pulpit"] = ImgPulpit;
+            CameraPIPs["center"] = ImgCenter;
+            CameraPIPs["lectern"] = ImgLectern;
+            CameraPIPs["organ"] = ImgOrgan;
+            CameraPIPs["slide"] = ImgSlide;
+            CameraPIPs["akey"] = ImgKey;
+            CameraPIPs["proj"] = ImgProj;
+            CameraPIPs["back"] = ImgBack;
         }
 
 
@@ -546,6 +559,23 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             imgprog_uskpipclip.Rect = new Rect(ATEM_TO_WPF_X * state.MaskLeft, ATEM_TO_WPF_Y * state.MaskTop, 1280 - ((state.MaskRight + state.MaskLeft) * ATEM_TO_WPF_X), 720 - ((state.MaskBottom + state.MaskTop) * ATEM_TO_WPF_Y));
 
         }
+
+        internal void UpdateMockCameraMovement(CameraMotionEventArgs e)
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => UpdateMockCameraMovement(e));
+                return;
+            }
+            // figure out what to do here
+
+            // for now just change the color of something??
+            if (CameraPIPs.TryGetValue(e.CameraName, out var pip))
+            {
+                pip.Source = new BitmapImage(new Uri(e.Thumbnail));
+            }
+        }
+
 
     }
 }

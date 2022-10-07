@@ -226,6 +226,7 @@ namespace SlideCreater
             TbInput.TextArea.TextView.LinkTextForegroundBrush = System.Windows.Media.Brushes.LawnGreen;
 
             TbConfig.LoadLanguage_JSON();
+            TbConfigCCU.LoadLanguage_JSON();
             // load default config file
 
             // setup indentation
@@ -235,6 +236,9 @@ namespace SlideCreater
             //TbInput.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
             TbConfig.Options.IndentationSize = 4;
             TbConfig.Options.ConvertTabsToSpaces = true;
+
+            TbConfigCCU.Options.IndentationSize = 4;
+            TbConfigCCU.Options.ConvertTabsToSpaces = true;
 
             // Load Version Number
             var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SlideCreater.version.json");

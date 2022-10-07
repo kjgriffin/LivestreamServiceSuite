@@ -17,7 +17,7 @@ namespace CCUI_UI
 
     public delegate void CCUEvent(string cName, params string[] args);
 
-    public class CCPUPresetMonitor : ICCPUPresetMonitor_Executor
+    public class CCPUPresetMonitor : ICCPUPresetMonitor
     {
 
         Window _parent = null;
