@@ -33,7 +33,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         /// <param name="keyerID">Id of keyer: 1 = DSK1, 2 = DSK2</param>
         /// <param name="endState">State of keyer after animation. 1 = OnAir, 0 = OffAir</param>
         public void ReportDSKFadeComplete(int keyerID, int endState);
-        void ReportMETransitionComplete(int activeProgram, int activePreset);
+        void ReportMETransitionComplete(int activeProgram, int activePreset, bool usk1State);
     }
 
 
@@ -258,10 +258,22 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             _state = state;
 
+            int key1Dir = 0; // 0- no change, 1 -> on, -1 -> off
             // take all active layers
             if (_state.TransNextKey1)
             {
-                //_state.USK1OnAir = !_state.USK1OnAir; // fade it!
+                // the ME animation will actually take care of animating and it can pick that up via the transnextkey1 that's still true
+                if (!_state.USK1OnAir)
+                {
+                    // technically at this point we've started a transition with USK1 tied to it...
+                    // so it's now 'on air'
+                    _state.USK1OnAir = true;
+                    key1Dir = 1;
+                }
+                else
+                {
+                    key1Dir = -1;
+                }
             }
             if (_state.DSK1Tie)
             {
@@ -272,7 +284,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             {
                 // copy whatever works for DSK!
             }
-            if (_state.TransNextBackground)
+            if (_state.TransNextBackground | _state.TransNextKey1)
             {
                 // atem switcher causes preset immediately on air
                 // keeps original onair
@@ -285,7 +297,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 OnSwitcherStateUpdated?.Invoke(this, _state);
 
                 // fade it!
-                multiviewerWindow.StartBKGDFade(this, _camDriver);
+                multiviewerWindow.StartMEFade(this, _camDriver, key1Dir);
             }
 
             return _state;
@@ -444,11 +456,12 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             OnSwitcherStateUpdated?.Invoke(this, _state);
         }
 
-        void ISwitcherStateProvider.ReportMETransitionComplete(int activeProgram, int activePreset)
+        void ISwitcherStateProvider.ReportMETransitionComplete(int activeProgram, int activePreset, bool usk1State)
         {
             _state.InTransition = false;
             _state.ProgramID = activeProgram;
             _state.PresetID = activePreset;
+            _state.USK1OnAir = usk1State;
             OnSwitcherStateUpdated?.Invoke(this, _state);
         }
     }

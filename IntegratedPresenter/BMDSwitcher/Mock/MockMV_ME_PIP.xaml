@@ -9,13 +9,26 @@
     <Grid>
         <Grid>
             <Viewbox>
-                <Grid Width="1920" Height="1080">
+                <Grid Name="gdisplay" Width="1920" Height="1080">
                     <Rectangle Fill="Black" Panel.ZIndex="0"></Rectangle>
 
                     <Rectangle x:Name="lBKGD_A" Fill="Transparent" Panel.ZIndex="1"></Rectangle>
                     <Rectangle x:Name="lBKGD_B" Fill="Transparent" Panel.ZIndex="2"></Rectangle>
 
-                    <Rectangle x:Name="lUSK1_A" Fill="Transparent" Panel.ZIndex="10"></Rectangle>
+                    <Rectangle x:Name="lUSK1_A" Fill="Transparent" Panel.ZIndex="10">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform x:Name="lUSK1_A_scale" ScaleX="0.5" ScaleY="0.5"></ScaleTransform>
+                                <TranslateTransform x:Name="lUSK1_A_pos" X="0" Y="0"></TranslateTransform>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                        <Rectangle.Clip>
+                            <RectangleGeometry x:Name="lUSK1_A_clip" Rect="0, 0, 1920, 1080"></RectangleGeometry>
+                        </Rectangle.Clip>
+                        <Rectangle.RenderTransformOrigin>
+                            <Point X="0.5" Y="0.5"></Point>
+                        </Rectangle.RenderTransformOrigin>
+                    </Rectangle>
 
                     <Rectangle x:Name="lDSK1_A" Fill="Transparent" Panel.ZIndex="20"></Rectangle>
                     <Rectangle x:Name="lDSK2_A" Fill="Transparent" Panel.ZIndex="30"></Rectangle>

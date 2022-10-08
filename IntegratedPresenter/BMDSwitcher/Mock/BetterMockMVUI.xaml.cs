@@ -1,4 +1,6 @@
-﻿using IntegratedPresenter.BMDSwitcher;
+﻿using BMDSwitcherAPI;
+
+using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.BMDSwitcher.Mock;
 using IntegratedPresenter.Main;
@@ -173,6 +175,29 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
 
             // handle usk1 layer
+            // here we can handle non-fade's (fades are handled by ME animation Fade request)
+
+            // it can be the fill source changes even while fading
+            if (state.USK1OnAir) // goes on-air immediately upon animation
+            {
+                pip_ME_program.lUSK1_A.Fill = GetGeneratedSourceById((int)state.USK1FillSource, cameras);
+                pip_PV_preset.pvUSK1.Fill = Brushes.Transparent;
+            }
+            else
+            {
+                pip_ME_program.lUSK1_A.Fill = Brushes.Transparent;
+                if (state.TransNextKey1)
+                {
+                    pip_PV_preset.pvUSK1.Fill = GetGeneratedSourceById((int)state.USK1FillSource, cameras);
+                }
+                else
+                {
+                    pip_PV_preset.pvUSK1.Fill = Brushes.Transparent;
+                }
+            }
+            // always update pip position
+            pip_ME_program.SetPIPPosition(state.DVESettings);
+            pip_PV_preset.SetPIPPosition(state.DVESettings);
 
             // handle dsk1 layer
             if (state.DSK1OnAir)
@@ -281,12 +306,12 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             });
 
         }
-        internal void StartBKGDFade(ISwitcherStateProvider switcher, ICameraSourceProvider cameras)
+        internal void StartMEFade(ISwitcherStateProvider switcher, ICameraSourceProvider cameras, int key1Dir)
         {
-            RunOnUI(() => Internal_StartBKGDFade(switcher, cameras));
+            RunOnUI(() => Internal_StartMEFade(switcher, cameras, key1Dir));
         }
 
-        private void Internal_StartBKGDFade(ISwitcherStateProvider switcher, ICameraSourceProvider cameras)
+        private void Internal_StartMEFade(ISwitcherStateProvider switcher, ICameraSourceProvider cameras, int key1Dir)
         {
 
             var origState = switcher.GetState();
@@ -296,59 +321,79 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
 
             var dur = TimeSpan.FromSeconds(_cfg.MixEffectSettings.Rate / _cfg.VideoSettings.VideoFPS);
-
-            // find the inactive bus and set it to the origPresetSource
-            if (MEpvBKGDBus == "A")
-            {
-                pip_ME_program.lBKGD_B.Opacity = 0;
-                pip_ME_program.lBKGD_B.Fill = GetGeneratedSourceById(ToSID, cameras);
-            }
-            else if (MEpvBKGDBus == "B")
-            {
-                pip_ME_program.lBKGD_A.Opacity = 0;
-                pip_ME_program.lBKGD_A.Fill = GetGeneratedSourceById(ToSID, cameras);
-            }
-
-
-            var fadein = new DoubleAnimation()
-            {
-                From = 0,
-                To = 1,
-                Duration = dur,
-            };
-            var fadeout = new DoubleAnimation()
-            {
-                From = 1,
-                To = 0,
-                Duration = dur,
-            };
-
-            // build a fade animation for them to swap between
-            if (MEpvBKGDBus == "A")
-            {
-                Storyboard.SetTarget(fadeout, pip_ME_program.lBKGD_A);
-                Storyboard.SetTargetProperty(fadeout, new PropertyPath(Rectangle.OpacityProperty));
-
-                Storyboard.SetTarget(fadein, pip_ME_program.lBKGD_B);
-                Storyboard.SetTargetProperty(fadein, new PropertyPath(Rectangle.OpacityProperty));
-            }
-            else if (MEpvBKGDBus == "B")
-            {
-                Storyboard.SetTarget(fadeout, pip_ME_program.lBKGD_B);
-                Storyboard.SetTargetProperty(fadeout, new PropertyPath(Rectangle.OpacityProperty));
-
-                Storyboard.SetTarget(fadein, pip_ME_program.lBKGD_A);
-                Storyboard.SetTargetProperty(fadein, new PropertyPath(Rectangle.OpacityProperty));
-            }
-
             var sb = new Storyboard();
-            sb.Children.Add(fadein);
-            sb.Children.Add(fadeout);
 
-            if (FromSID != ToSID)
+
+            if (origState.TransNextBackground && FromSID != ToSID)
             {
-                sb.Begin();
+                // find the inactive bus and set it to the origPresetSource
+                if (MEpvBKGDBus == "A")
+                {
+                    pip_ME_program.lBKGD_B.Opacity = 0;
+                    pip_ME_program.lBKGD_B.Fill = GetGeneratedSourceById(ToSID, cameras);
+                }
+                else if (MEpvBKGDBus == "B")
+                {
+                    pip_ME_program.lBKGD_A.Opacity = 0;
+                    pip_ME_program.lBKGD_A.Fill = GetGeneratedSourceById(ToSID, cameras);
+                }
+
+
+                var fadein = new DoubleAnimation()
+                {
+                    From = 0,
+                    To = 1,
+                    Duration = dur,
+                };
+                var fadeout = new DoubleAnimation()
+                {
+                    From = 1,
+                    To = 0,
+                    Duration = dur,
+                };
+
+                // build a fade animation for them to swap between
+                if (MEpvBKGDBus == "A")
+                {
+                    Storyboard.SetTarget(fadeout, pip_ME_program.lBKGD_A);
+                    Storyboard.SetTargetProperty(fadeout, new PropertyPath(Rectangle.OpacityProperty));
+
+                    Storyboard.SetTarget(fadein, pip_ME_program.lBKGD_B);
+                    Storyboard.SetTargetProperty(fadein, new PropertyPath(Rectangle.OpacityProperty));
+                }
+                else if (MEpvBKGDBus == "B")
+                {
+                    Storyboard.SetTarget(fadeout, pip_ME_program.lBKGD_B);
+                    Storyboard.SetTargetProperty(fadeout, new PropertyPath(Rectangle.OpacityProperty));
+
+                    Storyboard.SetTarget(fadein, pip_ME_program.lBKGD_A);
+                    Storyboard.SetTargetProperty(fadein, new PropertyPath(Rectangle.OpacityProperty));
+                }
+
+                sb.Children.Add(fadein);
+                sb.Children.Add(fadeout);
             }
+
+
+
+            // usk1 goes through the ME engine, so any animations should be done here
+            if (origState.TransNextKey1 && key1Dir != 0)
+            {
+                var usk1Animation = new DoubleAnimation()
+                {
+                    From = key1Dir == 1 ? 0 : 1,
+                    To = key1Dir == 1 ? 1 : 0,
+                    Duration = dur,
+                };
+
+                Storyboard.SetTarget(usk1Animation, pip_ME_program.lUSK1_A);
+                Storyboard.SetTargetProperty(usk1Animation, new PropertyPath(Rectangle.OpacityProperty));
+                sb.Children.Add(usk1Animation);
+            }
+
+
+            sb.Begin();
+
             Task.Run(async () =>
             {
                 await Task.Delay((int)dur.TotalMilliseconds);
@@ -357,30 +402,55 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                     // cleanup and report state of everything done
                     sb.Stop();
 
-                    if (MEpvBKGDBus == "A")
+                    if (origState.TransNextBackground && FromSID != ToSID)
                     {
-                        pip_ME_program.lBKGD_B.Opacity = 1;
-                        pip_ME_program.lBKGD_A.Opacity = 0;
-                        pip_ME_program.lBKGD_A.Fill = Brushes.Transparent;
-                        MEpvBKGDBus = "B";
+                        if (MEpvBKGDBus == "A")
+                        {
+                            pip_ME_program.lBKGD_B.Opacity = 1;
+                            pip_ME_program.lBKGD_A.Opacity = 0;
+                            pip_ME_program.lBKGD_A.Fill = Brushes.Transparent;
+                            MEpvBKGDBus = "B";
 
-                        // setup z-ordering so we always do transitions with the right source on top
-                        Panel.SetZIndex(pip_ME_program.lBKGD_A, 1);
-                        Panel.SetZIndex(pip_ME_program.lBKGD_B, 2);
+                            // setup z-ordering so we always do transitions with the right source on top
+                            Panel.SetZIndex(pip_ME_program.lBKGD_A, 1);
+                            Panel.SetZIndex(pip_ME_program.lBKGD_B, 2);
+                        }
+                        else if (MEpvBKGDBus == "B")
+                        {
+                            pip_ME_program.lBKGD_A.Opacity = 1;
+                            pip_ME_program.lBKGD_B.Opacity = 0;
+                            pip_ME_program.lBKGD_B.Fill = Brushes.Transparent;
+                            MEpvBKGDBus = "A";
+
+                            // setup z-ordering so we always do transitions with the right source on top
+                            Panel.SetZIndex(pip_ME_program.lBKGD_A, 2);
+                            Panel.SetZIndex(pip_ME_program.lBKGD_B, 1);
+                        }
                     }
-                    else if (MEpvBKGDBus == "B")
+
+                    bool newUSKstate = origState.USK1OnAir;
+                    var newPGM = (int)origState.ProgramID;
+                    var newPST = (int)origState.PresetID;
+                    if (origState.TransNextKey1)
                     {
-                        pip_ME_program.lBKGD_A.Opacity = 1;
-                        pip_ME_program.lBKGD_B.Opacity = 0;
-                        pip_ME_program.lBKGD_B.Fill = Brushes.Transparent;
-                        MEpvBKGDBus = "A";
-
-                        // setup z-ordering so we always do transitions with the right source on top
-                        Panel.SetZIndex(pip_ME_program.lBKGD_A, 2);
-                        Panel.SetZIndex(pip_ME_program.lBKGD_B, 1);
+                        // report usk1 state
+                        if (key1Dir == 1)
+                        {
+                            newUSKstate = true;
+                            pip_ME_program.lUSK1_A.Opacity = 1;
+                        }
+                        else if (key1Dir == -1)
+                        {
+                            newUSKstate = false;
+                            pip_ME_program.lUSK1_A.Opacity = 0;
+                        }
                     }
-
-                    switcher.ReportMETransitionComplete(ToSID, FromSID);
+                    if (origState.TransNextBackground)
+                    {
+                        newPGM = ToSID;
+                        newPST = FromSID;
+                    }
+                    switcher.ReportMETransitionComplete(newPGM, newPST, newUSKstate);
                 });
             });
 
