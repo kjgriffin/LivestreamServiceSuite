@@ -123,7 +123,7 @@ namespace Integrated_Presenter.Presentation
                     using (var stream = file.CreateViewStream())
                     using (var reader = new StreamReader(stream))
                     {
-                        var text = reader.ReadToEnd();
+                        var text = reader.ReadToEnd().Trim().TrimEnd('\0');
                         if (ActionLoader.TryLoadActions(text, "", out var loaded, checkRealMedia: false))
                         {
                             slide.Title = loaded.Title;
