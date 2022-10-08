@@ -78,6 +78,12 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 pip_8,
             };
 
+            // turn off audio
+            for (int i = 0; i < 8; i++)
+            {
+                m_simplePIPS[i].videoPlayerA.Volume = 0;
+            }
+
         }
 
 
