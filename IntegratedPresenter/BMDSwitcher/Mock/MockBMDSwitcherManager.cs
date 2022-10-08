@@ -335,7 +335,9 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void PerformAutoOffAirDSK1()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if !DEBUG
             _state.DSK1OnAir = false;
+#endif
             mockMultiviewer.FadeDSK1(false);
             SwitcherStateChanged?.Invoke(_state);
         }
@@ -343,7 +345,9 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void PerformAutoOnAirDSK1()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if !DEBUG
             _state.DSK1OnAir = true;
+#endif
             mockMultiviewer.FadeDSK1(true);
             SwitcherStateChanged?.Invoke(_state);
         }

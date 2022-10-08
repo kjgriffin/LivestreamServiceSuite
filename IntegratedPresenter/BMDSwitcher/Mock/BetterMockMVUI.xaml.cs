@@ -44,6 +44,8 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         BMDSwitcherConfigSettings _cfg;
 
+        string MEpvBKGDBus = "A";
+
         MockMV_Simple_PIP[] m_simplePIPS;
         Dictionary<int, int> m_pipWindowSourceRouting = new Dictionary<int, int>
         {
@@ -153,9 +155,22 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
             // build preview/me bkgd layers
 
-
             pip_PV_preset.pvBKDG.Fill = GetGeneratedSourceById((int)state.PresetID, cameras);
-            pip_ME_program.lBKGD_A.Fill = GetGeneratedSourceById((int)state.ProgramID, cameras);
+
+            if (!state.InTransition) // else?? probably doing stuff somewhere else
+            {
+                if (MEpvBKGDBus == "A")
+                {
+                    pip_ME_program.lBKGD_A.Fill = GetGeneratedSourceById((int)state.ProgramID, cameras);
+                    pip_ME_program.lBKGD_B.Fill = Brushes.Transparent;
+                }
+                else if (MEpvBKGDBus == "B")
+                {
+                    pip_ME_program.lBKGD_B.Fill = GetGeneratedSourceById((int)state.ProgramID, cameras);
+                    pip_ME_program.lBKGD_A.Fill = Brushes.Transparent;
+                }
+            }
+
 
             // handle usk1 layer
 
@@ -266,6 +281,109 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             });
 
         }
+        internal void StartBKGDFade(ISwitcherStateProvider switcher, ICameraSourceProvider cameras)
+        {
+            RunOnUI(() => Internal_StartBKGDFade(switcher, cameras));
+        }
 
+        private void Internal_StartBKGDFade(ISwitcherStateProvider switcher, ICameraSourceProvider cameras)
+        {
+
+            var origState = switcher.GetState();
+
+            int FromSID = (int)origState.ProgramID;
+            int ToSID = (int)origState.PresetID;
+
+
+            var dur = TimeSpan.FromSeconds(_cfg.MixEffectSettings.Rate / _cfg.VideoSettings.VideoFPS);
+
+            // find the inactive bus and set it to the origPresetSource
+            if (MEpvBKGDBus == "A")
+            {
+                pip_ME_program.lBKGD_B.Opacity = 0;
+                pip_ME_program.lBKGD_B.Fill = GetGeneratedSourceById(ToSID, cameras);
+            }
+            else if (MEpvBKGDBus == "B")
+            {
+                pip_ME_program.lBKGD_A.Opacity = 0;
+                pip_ME_program.lBKGD_A.Fill = GetGeneratedSourceById(ToSID, cameras);
+            }
+
+
+            var fadein = new DoubleAnimation()
+            {
+                From = 0,
+                To = 1,
+                Duration = dur,
+            };
+            var fadeout = new DoubleAnimation()
+            {
+                From = 1,
+                To = 0,
+                Duration = dur,
+            };
+
+            // build a fade animation for them to swap between
+            if (MEpvBKGDBus == "A")
+            {
+                Storyboard.SetTarget(fadeout, pip_ME_program.lBKGD_A);
+                Storyboard.SetTargetProperty(fadeout, new PropertyPath(Rectangle.OpacityProperty));
+
+                Storyboard.SetTarget(fadein, pip_ME_program.lBKGD_B);
+                Storyboard.SetTargetProperty(fadein, new PropertyPath(Rectangle.OpacityProperty));
+            }
+            else if (MEpvBKGDBus == "B")
+            {
+                Storyboard.SetTarget(fadeout, pip_ME_program.lBKGD_B);
+                Storyboard.SetTargetProperty(fadeout, new PropertyPath(Rectangle.OpacityProperty));
+
+                Storyboard.SetTarget(fadein, pip_ME_program.lBKGD_A);
+                Storyboard.SetTargetProperty(fadein, new PropertyPath(Rectangle.OpacityProperty));
+            }
+
+            var sb = new Storyboard();
+            sb.Children.Add(fadein);
+            sb.Children.Add(fadeout);
+
+            if (FromSID != ToSID)
+            {
+                sb.Begin();
+            }
+            Task.Run(async () =>
+            {
+                await Task.Delay((int)dur.TotalMilliseconds);
+                RunOnUI(() =>
+                {
+                    // cleanup and report state of everything done
+                    sb.Stop();
+
+                    if (MEpvBKGDBus == "A")
+                    {
+                        pip_ME_program.lBKGD_B.Opacity = 1;
+                        pip_ME_program.lBKGD_A.Opacity = 0;
+                        pip_ME_program.lBKGD_A.Fill = Brushes.Transparent;
+                        MEpvBKGDBus = "B";
+
+                        // setup z-ordering so we always do transitions with the right source on top
+                        Panel.SetZIndex(pip_ME_program.lBKGD_A, 1);
+                        Panel.SetZIndex(pip_ME_program.lBKGD_B, 2);
+                    }
+                    else if (MEpvBKGDBus == "B")
+                    {
+                        pip_ME_program.lBKGD_A.Opacity = 1;
+                        pip_ME_program.lBKGD_B.Opacity = 0;
+                        pip_ME_program.lBKGD_B.Fill = Brushes.Transparent;
+                        MEpvBKGDBus = "A";
+
+                        // setup z-ordering so we always do transitions with the right source on top
+                        Panel.SetZIndex(pip_ME_program.lBKGD_A, 2);
+                        Panel.SetZIndex(pip_ME_program.lBKGD_B, 1);
+                    }
+
+                    switcher.ReportMETransitionComplete(ToSID, FromSID);
+                });
+            });
+
+        }
     }
 }

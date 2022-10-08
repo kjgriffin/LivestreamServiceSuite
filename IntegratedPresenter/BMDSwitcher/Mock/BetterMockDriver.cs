@@ -33,6 +33,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         /// <param name="keyerID">Id of keyer: 1 = DSK1, 2 = DSK2</param>
         /// <param name="endState">State of keyer after animation. 1 = OnAir, 0 = OffAir</param>
         public void ReportDSKFadeComplete(int keyerID, int endState);
+        void ReportMETransitionComplete(int activeProgram, int activePreset);
     }
 
 
@@ -204,7 +205,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 return;
             }
 
-            if (onair)
+            if (onair && _state.DSK1OnAir != onair)
             {
                 // fade it on
 
@@ -217,7 +218,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 // start the transition
                 multiviewerWindow.StartDSK1Fade(1, this);
             }
-            else
+            else if (!onair && _state.DSK1OnAir != onair)
             {
                 // fade 'er off
                 _stateDSK1InFade = true;
@@ -255,53 +256,39 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         public BMDSwitcherState PerformAutoTransition(BMDSwitcherState state)
         {
+            _state = state;
+
+            // take all active layers
+            if (_state.TransNextKey1)
+            {
+                //_state.USK1OnAir = !_state.USK1OnAir; // fade it!
+            }
+            if (_state.DSK1Tie)
+            {
+                // hmmmm this ain't quite right... :(
+                FadeDSK1(!_state.DSK1OnAir);
+            }
+            if (_state.DSK2Tie)
+            {
+                // copy whatever works for DSK!
+            }
+            if (_state.TransNextBackground)
+            {
+                // atem switcher causes preset immediately on air
+                // keeps original onair
+                // new programid is technically the new one immediately ??
+
+                // start a fade transition for BKGD layer
+
+                // let animation complete it and clean up the state
+                _state.InTransition = true;
+                OnSwitcherStateUpdated?.Invoke(this, _state);
+
+                // fade it!
+                multiviewerWindow.StartBKGDFade(this, _camDriver);
+            }
+
             return _state;
-
-            // take selected layers
-
-            /*
-            if (state.TransNextKey1)
-            {
-                if (state.USK1OnAir)
-                {
-                    multiviewerWindow.SetUSK1ProgramOff();
-                    multiviewerWindow.SetUSK1PreviewOn();
-                }
-                else
-                {
-                    multiviewerWindow.SetUSK1ProgramOn();
-                    multiviewerWindow.SetUSK1PreviewOff();
-                }
-            }
-
-            // take all tied keyers
-            if (state.DSK1Tie)
-            {
-                state.DSK1OnAir = !state.DSK1OnAir;
-                FadeDSK1(state.DSK1OnAir);
-                multiviewerWindow.ForcePresetTieDSK1(state.DSK1Tie && !state.DSK1OnAir);
-            }
-            if (state.DSK2Tie)
-            {
-                state.DSK2OnAir = !state.DSK2OnAir;
-                FadeDSK2(state.DSK2OnAir);
-                multiviewerWindow.ForcePresetTieDSK2(state.DSK2Tie && !state.DSK2OnAir);
-            }
-
-            // swap sources
-            if (state.TransNextBackground)
-            {
-                long programID = state.ProgramID;
-                long presetID = state.PresetID;
-
-                state.ProgramID = presetID;
-                state.PresetID = programID;
-
-                multiviewerWindow.CrossFadeTransition(state);
-            }
-
-            return state;
-            */
         }
 
         public BMDSwitcherState PerformCutTransition(BMDSwitcherState state)
@@ -454,6 +441,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 _stateDSK2InFade = false;
                 _state.DSK2OnAir = endState == 1;
             }
+            OnSwitcherStateUpdated?.Invoke(this, _state);
+        }
+
+        void ISwitcherStateProvider.ReportMETransitionComplete(int activeProgram, int activePreset)
+        {
+            _state.InTransition = false;
+            _state.ProgramID = activeProgram;
+            _state.PresetID = activePreset;
             OnSwitcherStateUpdated?.Invoke(this, _state);
         }
     }

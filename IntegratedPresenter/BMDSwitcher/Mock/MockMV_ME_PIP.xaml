@@ -10,15 +10,15 @@
         <Grid>
             <Viewbox>
                 <Grid Width="1920" Height="1080">
-                    <Rectangle Fill="Black"></Rectangle>
+                    <Rectangle Fill="Black" Panel.ZIndex="0"></Rectangle>
 
-                    <Rectangle x:Name="lBKGD_A" Fill="Transparent"></Rectangle>
-                    <Rectangle x:Name="lBKGD_B" Fill="Transparent"></Rectangle>
+                    <Rectangle x:Name="lBKGD_A" Fill="Transparent" Panel.ZIndex="1"></Rectangle>
+                    <Rectangle x:Name="lBKGD_B" Fill="Transparent" Panel.ZIndex="2"></Rectangle>
 
-                    <Rectangle x:Name="lUSK1_A" Fill="Transparent"></Rectangle>
+                    <Rectangle x:Name="lUSK1_A" Fill="Transparent" Panel.ZIndex="10"></Rectangle>
 
-                    <Rectangle x:Name="lDSK1_A" Fill="Transparent"></Rectangle>
-                    <Rectangle x:Name="lDSK2_A" Fill="Transparent"></Rectangle>
+                    <Rectangle x:Name="lDSK1_A" Fill="Transparent" Panel.ZIndex="20"></Rectangle>
+                    <Rectangle x:Name="lDSK2_A" Fill="Transparent" Panel.ZIndex="30"></Rectangle>
                     
 
                 </Grid>

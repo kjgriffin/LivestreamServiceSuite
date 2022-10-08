@@ -53,6 +53,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
                 videoPlayerA.LoadedBehavior = MediaState.Manual;
                 videoPlayerA.Stop();
+                videoPlayerA.Source = null;
                 m_activeVideo = false;
                 m_playbackState = MainWindow.MediaPlaybackEventArgs.State.Stop;
 
@@ -100,6 +101,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
             videoPlayerA.LoadedBehavior = MediaState.Manual;
             videoPlayerA.Stop();
+            videoPlayerA.Source = null;
             m_activeVideo = false;
             m_playbackState = MainWindow.MediaPlaybackEventArgs.State.Stop;
 
