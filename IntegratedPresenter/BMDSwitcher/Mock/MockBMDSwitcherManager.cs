@@ -1,4 +1,7 @@
-﻿using BMDSwitcherAPI;
+﻿#define USE_BETTER_MOCK_MV // leaving this for now in-case I've screwed up something critical/ want to factor this into an option rather than strictly deprecate it
+// though I belive its curently feature pair with the old one (technically better since it's more acurate with ME's)
+
+using BMDSwitcherAPI;
 
 using CCUI_UI;
 
@@ -20,6 +23,7 @@ using System.Threading.Tasks;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {
+
     class MockBMDSwitcherManager : IBMDSwitcherManager
     {
         public bool GoodConnection { get; set; } = false;
@@ -62,7 +66,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
 
 
-#if DEBUG
+#if USE_BETTER_MOCK_MV
             mockMultiviewer = new BetterMockDriver(mapping, parent.Config, _state);
             SwitcherStateChanged += MockBMDSwitcherManager_SwitcherStateChanged;
             (mockMultiviewer as BetterMockDriver).OnSwitcherStateUpdated += MockBMDSwitcherManager_OnSwitcherStateUpdated;
@@ -123,7 +127,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state = mockMultiviewer.PerformAutoTransition(_state);
             // the newer mock should handle all state with it's own driver
-#if !DEBUG
+#if !USE_BETTER_MOCK_MV
             if (_state.TransNextKey1)
             {
                 _state.USK1OnAir = !_state.USK1OnAir;
@@ -136,7 +140,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // the newer mock should handle all state with it's own driver
-#if DEBUG
+#if USE_BETTER_MOCK_MV
             _state = mockMultiviewer.PerformCutTransition(_state);
 #else
             // take all layers
@@ -224,7 +228,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void PerformAutoOffAirDSK2()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-#if DEBUG
+#if USE_BETTER_MOCK_MV
             mockMultiviewer.FadeDSK1(false);
 #else
             _state.DSK2OnAir = false;
@@ -236,7 +240,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void PerformAutoOnAirDSK2()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-#if DEBUG
+#if USE_BETTER_MOCK_MV
             mockMultiviewer.FadeDSK1(false);
 #else
             _state.DSK2OnAir = true;
@@ -245,14 +249,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 #endif
         }
 
-#if DEBUG
+#if USE_BETTER_MOCK_MV
         public void PerformTakeAutoDSK1()
 #else
         public async void PerformTakeAutoDSK1()
 #endif
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-#if DEBUG
+#if USE_BETTER_MOCK_MV
             // I belive this is technically correct
             // ATEM seems to think key is immediately on air once it begins transition
             // which I suppose makes sense
@@ -335,7 +339,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void PerformAutoOffAirDSK1()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-#if !DEBUG
+#if !USE_BETTER_MOCK_MV
             _state.DSK1OnAir = false;
 #endif
             mockMultiviewer.FadeDSK1(false);
@@ -345,7 +349,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void PerformAutoOnAirDSK1()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-#if !DEBUG
+#if !USE_BETTER_MOCK_MV
             _state.DSK1OnAir = true;
 #endif
             mockMultiviewer.FadeDSK1(true);
