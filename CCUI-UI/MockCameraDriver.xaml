@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="MockCameraDriver" Height="450" Width="800">
     <Grid>
-        
+        <Button Click="click_LoadConfig" Width="100" Height="30">Load Config</Button>
     </Grid>
 </Window>

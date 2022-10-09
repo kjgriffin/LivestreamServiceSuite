@@ -31,7 +31,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         void setUSK1KeyType(int v);
         void SetUSK1OffAir(BMDSwitcherState state);
         void SetUSK1OnAir(BMDSwitcherState state);
-        void UpdateMockCameraMovement(CameraMotionEventArgs e);
+        void UpdateMockCameraMovement(CameraUpdateEventArgs e);
         void UpdateSlideInput(ISlide s);
     }
 }

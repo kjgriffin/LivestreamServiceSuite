@@ -327,13 +327,21 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             SwitcherStateChanged?.Invoke(_state);
         }
 
+#if !USE_BETTER_MOCK_MV
         public async void PerformToggleFTB()
+#else
+        public void PerformToggleFTB()
+#endif
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if USE_BETTER_MOCK_MV
+            mockMultiviewer.FadeDSK1(!_state.FTB);
+#else
             _state.FTB = !_state.FTB;
             mockMultiviewer.SetFTB(_state.FTB);
             await Task.Delay(1000);
             SwitcherStateChanged?.Invoke(_state);
+#endif
         }
 
         public void PerformAutoOffAirDSK1()
@@ -583,7 +591,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             SwitcherStateChanged?.Invoke(_state);
         }
 
-        public void UpdateMockCameraMovement(CameraMotionEventArgs e)
+        public void UpdateMockCameraMovement(CameraUpdateEventArgs e)
         {
             mockMultiviewer.UpdateMockCameraMovement(e);
         }

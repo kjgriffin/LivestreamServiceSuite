@@ -6,6 +6,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
+using static CCUI_UI.CCPUConfig_Extended;
+
 namespace CCUI_UI
 {
 
@@ -22,44 +24,71 @@ namespace CCUI_UI
 
     }
 
+    [Flags]
     public enum CameraMoveState
     {
-        Moving,
-        Arrived,
+        Arrived = 0,
+        Moving = 1,
+        Zomming = 2,
     }
 
-    public class CameraMotionEventArgs : EventArgs
+    public abstract class CameraUpdateEventArgs : EventArgs
     {
-        public string CameraName { get; set; }
-        public string Thumbnail { get; set; }
-        public CameraMoveState CamState { get; set; }
+        protected CameraUpdateEventArgs(string cameraName, CameraMoveState camState)
+        {
+            CameraName = cameraName;
+            CamState = camState;
+        }
+
+        public string CameraName { get; private set; }
+        public CameraMoveState CamState { get; private set; }
     }
+
+    public class CameraDriveEventArgs : CameraUpdateEventArgs
+    {
+        public CameraDriveEventArgs(string cameraName, CameraMoveState camState, string thumbnail, int runTimeMs) : base(cameraName, camState)
+        {
+            Thumbnail = thumbnail;
+            RunTimeMS = runTimeMs;
+        }
+
+        public string Thumbnail { get; private set; }
+        public int RunTimeMS { get; private set; }
+    }
+
+    public class CameraZoomEventArgs : CameraUpdateEventArgs
+    {
+        public CameraZoomEventArgs(string cameraName, CameraMoveState camState, ZDir zoomDirection, int zSetupDur, int zDriveDur) : base(cameraName, camState)
+        {
+            ZoomDirection = zoomDirection;
+            ZSetupDur = zSetupDur;
+            ZDriveDur = zDriveDur;
+        }
+
+        public enum ZDir
+        {
+            WIDE,
+            TELE
+        }
+        public ZDir ZoomDirection { get; private set; }
+
+        public int ZSetupDur { get; private set; }
+        public int ZDriveDur { get; private set; }
+    }
+
 
 
 
     public class MockCCUMonitor : ICCPUPresetMonitor
     {
         public event CCUEvent OnCommandUpdate;
-        public event EventHandler<CameraMotionEventArgs> OnCameraMoved;
+        public event EventHandler<CameraUpdateEventArgs> OnCameraMoved;
 
 
         MockCameraDriver UiWindow;
 
-        List<MockPreset> _knownPresets = new List<MockPreset>()
-        {
-            new MockPreset
-            {
-                CameraName = "center",
-                AssociatedCamera = "center",
-                PresetName = "FRONT",
-                RunTimeMS = 5000,
-                ThumbnailFile = "",
-                ThumbnailPath = "",
-                ZoomName = "zfront",
-            },
-        };
 
-
+        CCPUConfig_Extended m_presetConfig;
 
 
         public void ChirpZoom(string camname, int direction, int duration)
@@ -85,27 +114,29 @@ namespace CCUI_UI
         public Guid FirePreset_Tracked(string camname, string presetname, int speed)
         {
             Guid reqid = Guid.NewGuid();
-            var pst = _knownPresets.FirstOrDefault(x => x.AssociatedCamera == camname && x.PresetName == presetname);
+            //var pst = _knownPresets.FirstOrDefault(x => x.AssociatedCamera == camname && x.PresetName == presetname);
+
+            PresetMockInfo pst = null;
+            m_presetConfig.CameraAssociations.TryGetValue(camname, out var associatedCam);
+
+            if (!(m_presetConfig.KeyedPresets.TryGetValue(camname, out var camPresets) && camPresets.TryGetValue(presetname, out _)))
+            {
+                return Guid.Empty;
+            }
+            if (!(m_presetConfig.MockPresetInfo.TryGetValue(camname, out var mockPreset) && mockPreset.TryGetValue(presetname, out pst)))
+            {
+                return Guid.Empty;
+            }
+
             if (pst != null)
             {
                 Task.Run(async () =>
                 {
                     OnCommandUpdate?.Invoke(camname, "STARTED", "DRIVE.ABSPOS", presetname, reqid.ToString());
-                    OnCameraMoved?.Invoke(this, new CameraMotionEventArgs
-                    {
-                        CameraName = pst.AssociatedCamera,
-                        CamState = CameraMoveState.Moving,
-                        Thumbnail = Path.Combine(pst.ThumbnailPath, pst.ThumbnailFile), // perhaps we should have a moving icon? or just let a consumer ignore the thumbnail here
-                        // or it could use it in some sort of blend???
-                    });
-                    await Task.Delay(pst.RunTimeMS);
+                    OnCameraMoved?.Invoke(this, new CameraDriveEventArgs(associatedCam ?? camname, CameraMoveState.Moving, pst.Thumbnail, pst.RuntimeMS));
+                    await Task.Delay(pst.RuntimeMS);
                     OnCommandUpdate?.Invoke(camname, "COMPLETED", "DRIVE.ABSPOS", presetname, "after 1 tries", reqid.ToString());
-                    OnCameraMoved?.Invoke(this, new CameraMotionEventArgs
-                    {
-                        CameraName = pst.AssociatedCamera,
-                        CamState = CameraMoveState.Arrived,
-                        Thumbnail = Path.Combine(pst.ThumbnailPath, pst.ThumbnailFile),
-                    });
+                    OnCameraMoved?.Invoke(this, new CameraDriveEventArgs(associatedCam ?? camname, CameraMoveState.Arrived, pst.Thumbnail, pst.RuntimeMS));
                 });
             }
             return reqid;
@@ -119,28 +150,28 @@ namespace CCUI_UI
         public Guid FireZoomLevel_Tracked(string camname, string presetname)
         {
             Guid reqid = Guid.NewGuid();
-            var pst = _knownPresets.FirstOrDefault(x => x.AssociatedCamera == camname && x.ZoomName == presetname);
+
+            m_presetConfig.CameraAssociations.TryGetValue(camname, out var associatedCam);
+
+            if (!(m_presetConfig.KeyedZooms.TryGetValue(camname, out var camPresets) && camPresets.TryGetValue(presetname, out var pst)))
+            {
+                return Guid.Empty;
+            }
+
+
+            CameraZoomEventArgs.ZDir zdir = pst.Mode == "WIDE" ? CameraZoomEventArgs.ZDir.WIDE : CameraZoomEventArgs.ZDir.TELE;
+            const int ZSETUP_MS = 3800;
+
             if (pst != null)
             {
                 Task.Run(async () =>
                 {
-                    OnCommandUpdate?.Invoke(camname, "STARTED", "CHIRP", "duration ms", "ZDIR-here", reqid.ToString());
+                    OnCommandUpdate?.Invoke(camname, "STARTED", "CHIRP", "duration ms", pst.Mode, reqid.ToString());
 
-                    OnCameraMoved?.Invoke(this, new CameraMotionEventArgs
-                    {
-                        CameraName = camname,
-                        CamState = CameraMoveState.Moving,
-                        Thumbnail = Path.Combine(pst.ThumbnailPath, pst.ThumbnailFile), // perhaps we should have a moving icon? or just let a consumer ignore the thumbnail here
-                        // or it could use it in some sort of blend???
-                    });
-                    await Task.Delay(pst.RunTimeMS);
-                    OnCommandUpdate?.Invoke(camname, "COMPLETED", "CHIRP", "ZDIR-here", "after 1 tries", reqid.ToString());
-                    OnCameraMoved?.Invoke(this, new CameraMotionEventArgs
-                    {
-                        CameraName = camname,
-                        CamState = CameraMoveState.Arrived,
-                        Thumbnail = Path.Combine(pst.ThumbnailPath, pst.ThumbnailFile),
-                    });
+                    OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Zomming, zdir, ZSETUP_MS, pst.ZoomMS));
+                    await Task.Delay(pst.ZoomMS + ZSETUP_MS);
+                    OnCommandUpdate?.Invoke(camname, "COMPLETED", "CHIRP", pst.Mode, "after 1 tries", reqid.ToString());
+                    OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Arrived, zdir, ZSETUP_MS, pst.ZoomMS));
                 });
             }
             return reqid;
@@ -153,7 +184,12 @@ namespace CCUI_UI
 
         public void LoadConfig(CCPUConfig? cfg)
         {
-            throw new NotImplementedException();
+            var ecfg = cfg as CCPUConfig_Extended;
+            if (ecfg == null)
+            {
+                throw new Exception("FIX THIS!!!");
+            }
+            m_presetConfig = ecfg;
         }
 
         public void RemovePreset(string camname, string presetname)
@@ -180,7 +216,7 @@ namespace CCUI_UI
         {
             if (UiWindow == null)
             {
-                UiWindow = new MockCameraDriver();
+                UiWindow = new MockCameraDriver(this);
             }
             UiWindow.Show();
         }

@@ -5314,7 +5314,7 @@ namespace IntegratedPresenter.Main
             _camMonitor.OnCommandUpdate += _camMonitor_OnCommandUpdate;
         }
 
-        private void Mock_OnCameraMoved(object sender, CameraMotionEventArgs e)
+        private void Mock_OnCameraMoved(object sender, CameraUpdateEventArgs e)
         {
             var mock = switcherManager as MockBMDSwitcherManager;
             if (mock != null)

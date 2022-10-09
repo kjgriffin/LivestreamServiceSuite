@@ -560,7 +560,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         }
 
-        internal void UpdateMockCameraMovement(CameraMotionEventArgs e)
+        internal void UpdateMockCameraMovement(CameraUpdateEventArgs e)
         {
             if (!CheckAccess())
             {
@@ -570,10 +570,10 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             // figure out what to do here
 
             // for now just change the color of something??
-            if (CameraPIPs.TryGetValue(e.CameraName, out var pip))
-            {
-                pip.Source = new BitmapImage(new Uri(e.Thumbnail));
-            }
+            //if (CameraPIPs.TryGetValue(e.CameraName, out var pip))
+            //{
+            //    pip.Source = new BitmapImage(new Uri(e.Thumbnail));
+            //}
         }
 
 

@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,9 +23,40 @@ namespace CCUI_UI
     /// </summary>
     public partial class MockCameraDriver : Window
     {
-        public MockCameraDriver()
+        ICCPUPresetMonitor m_monitor;
+
+        public MockCameraDriver(ICCPUPresetMonitor monitor)
         {
             InitializeComponent();
+
+            m_monitor = monitor;
+        }
+
+        private void click_LoadConfig(object sender, RoutedEventArgs e)
+        {
+
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Load CCPU Config - Extended";
+            ofd.AddExtension = true;
+            ofd.DefaultExt = ".json";
+            if (ofd.ShowDialog() == true)
+            {
+                try
+                {
+                    using (var reader = new StreamReader(ofd.FileName))
+                    {
+                        var json = reader.ReadToEnd();
+                        var cfg = JsonSerializer.Deserialize<CCPUConfig_Extended>(json);
+                        m_monitor?.LoadConfig(cfg);
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+
+
+
         }
     }
 }

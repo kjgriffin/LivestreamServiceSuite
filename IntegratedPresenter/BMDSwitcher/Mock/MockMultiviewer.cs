@@ -232,9 +232,9 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             multiviewerWindow.SetPIPFillSource(sourceID);
         }
 
-        public void UpdateMockCameraMovement(CameraMotionEventArgs e)
+        public void UpdateMockCameraMovement(CameraUpdateEventArgs e)
         {
-            multiviewerWindow.UpdateMockCameraMovement(e);
+            //multiviewerWindow.UpdateMockCameraMovement(e);
         }
 
         public BMDSwitcherState PerformCutTransition(BMDSwitcherState state)

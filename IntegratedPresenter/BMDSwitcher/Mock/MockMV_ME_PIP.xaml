@@ -32,7 +32,8 @@
 
                     <Rectangle x:Name="lDSK1_A" Fill="Transparent" Panel.ZIndex="20"></Rectangle>
                     <Rectangle x:Name="lDSK2_A" Fill="Transparent" Panel.ZIndex="30"></Rectangle>
-                    
+
+                    <Rectangle x:Name="lFTB" Fill="Black" Opacity="0" Panel.ZIndex="100"></Rectangle>
 
                 </Grid>
             </Viewbox>

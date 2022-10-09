@@ -1,4 +1,6 @@
-﻿using CCUI_UI;
+﻿using BMDSwitcherAPI;
+
+using CCUI_UI;
 
 using Integrated_Presenter.BMDSwitcher.Mock;
 
@@ -32,8 +34,9 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         /// </summary>
         /// <param name="keyerID">Id of keyer: 1 = DSK1, 2 = DSK2</param>
         /// <param name="endState">State of keyer after animation. 1 = OnAir, 0 = OffAir</param>
-        public void ReportDSKFadeComplete(int keyerID, int endState);
+        void ReportDSKFadeComplete(int keyerID, int endState);
         void ReportMETransitionComplete(int activeProgram, int activePreset, bool usk1State);
+        void ReportFTBComplete(bool endState);
     }
 
 
@@ -123,6 +126,8 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         bool _stateDSK1InFade = false;
         bool _stateDSK2InFade = false;
 
+        bool _stateFTBInFade = false;
+
         public event SwitcherDisconnectedEvent OnMockWindowClosed;
 
         public event EventHandler<BMDSwitcherState> OnSwitcherStateUpdated;
@@ -153,45 +158,51 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             multiviewerWindow.RefreshUI(_camDriver, this);
         }
 
-        public void SetProgramInput(int inputID)
+        #region AtomicStateUpdate
+
+        // all these are handled elsewhere and we simply rely upon refreshing the UI in response to the generated state update event
+
+        public void SetProgramInput(int inputID) { }
+        public void SetPresetInput(int inputID) { }
+        public void SetTieDSK1(bool tie) { }
+        public void SetTieDSK2(bool tie) { }
+        public void SetDSK1(bool onair) { }
+        public void SetDSK2(bool onair) { }
+        public void FadeDSK2(bool onair) { }
+        public void SetUSK1ForNextTrans(bool v, BMDSwitcherState state) { }
+        public void setUSK1KeyType(int v) { }
+        public void SetUSK1OffAir(BMDSwitcherState state) { }
+        public void SetUSK1OnAir(BMDSwitcherState state) { }
+        public void SetPIPPosition(BMDUSKDVESettings state) { }
+        public void SetUSK1FillSource(int sourceID) { }
+
+
+        #endregion
+
+        public void SetFTB(bool onair)
         {
-            //multiviewerWindow.SetProgramSource(inputID);
+            // assume that we're always toggling
+
+
+            if (!_stateFTBInFade)
+            {
+                _stateFTBInFade = true;
+                if (_state.FTB)
+                {
+                    // ftb always on air until done
+                    //OnSwitcherStateUpdated?.Invoke(this, _state);
+                    multiviewerWindow.StartFTB(this, onair);
+                }
+                else
+                {
+                    // ftb immediately on air
+                    _state.FTB = true;
+                    OnSwitcherStateUpdated?.Invoke(this, _state);
+                    multiviewerWindow.StartFTB(this, onair);
+                }
+            }
         }
 
-        public void SetPresetInput(int inputID)
-        {
-            //multiviewerWindow.SetPreviewSource(inputID);
-        }
-
-        public void SetTieDSK1(bool tie)
-        {
-            //multiviewerWindow.ShowPresetTieDSK1(tie);
-        }
-
-        public void SetTieDSK2(bool tie)
-        {
-            //multiviewerWindow.ShowPresetTieDSK2(tie);
-        }
-
-        public void SetDSK1(bool onair)
-        {
-            //if (onair)
-            //{
-            //    if (!_state.DSK1OnAir && !_stateDSK1InFade)
-            //    {
-            //        _stateDSK1InFade = true;
-            //        multiviewerWindow.StartDSK1Fade(1, this);
-            //    }
-            //}
-            //else
-            //{
-            //    if (_state.DSK1OnAir && !_stateDSK1InFade)
-            //    {
-            //        _stateDSK1InFade = true;
-            //        multiviewerWindow.StartDSK1Fade(-1, this);
-            //    }
-            //}
-        }
 
         public void FadeDSK1(bool onair)
         {
@@ -228,30 +239,6 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 multiviewerWindow.StartDSK1Fade(-1, this);
             }
 
-        }
-
-        public void SetDSK2(bool onair)
-        {
-            if (onair)
-            {
-                //multiviewerWindow.ShowProgramDSK2();
-            }
-            else
-            {
-                //multiviewerWindow.HideProgramDSK2();
-            }
-        }
-
-        public void FadeDSK2(bool onair)
-        {
-            if (onair)
-            {
-                //multiviewerWindow.FadeInProgramDSK2();
-            }
-            else
-            {
-                //multiviewerWindow.FadeOutProgramDSK2();
-            }
         }
 
         public BMDSwitcherState PerformAutoTransition(BMDSwitcherState state)
@@ -335,91 +322,13 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         }
 
 
-        public void SetFTB(bool onair)
-        {
-            //multiviewerWindow.SetFTB(onair);
-        }
-
         public void Close()
         {
             multiviewerWindow?.Close();
         }
 
-        public void SetUSK1ForNextTrans(bool v, BMDSwitcherState state)
-        {
-            /*
-            if (v)
-            {
-                if (state.USK1OnAir)
-                {
-                    multiviewerWindow?.SetUSK1PreviewOff();
-                }
-                else
-                {
-                    multiviewerWindow?.SetUSK1PreviewOn();
-                }
-            }
-            else
-            {
-                if (state.USK1OnAir)
-                {
-                    multiviewerWindow?.SetUSK1PreviewOn();
-                }
-                else
-                {
-                    multiviewerWindow?.SetUSK1PreviewOff();
-                }
-            }
-            */
-        }
 
-        public void setUSK1KeyType(int v)
-        {
-            //multiviewerWindow?.SetUSK1Type(v);
-        }
-
-        public void SetUSK1OffAir(BMDSwitcherState state)
-        {
-            /*
-            if (state.TransNextKey1)
-            {
-                multiviewerWindow.SetUSK1PreviewOn();
-            }
-            else
-            {
-                multiviewerWindow.SetUSK1PreviewOff();
-            }
-            multiviewerWindow?.SetUSK1ProgramOff();
-            */
-        }
-
-        public void SetUSK1OnAir(BMDSwitcherState state)
-        {
-            /*
-            if (state.TransNextKey1)
-            {
-                multiviewerWindow.SetUSK1PreviewOff();
-            }
-            else
-            {
-                multiviewerWindow.SetUSK1PreviewOn();
-            }
-            multiviewerWindow?.SetUSK1ProgramOn();
-            */
-        }
-
-
-        public void SetPIPPosition(BMDUSKDVESettings state)
-        {
-            //multiviewerWindow.SetPIPPosition(state);
-        }
-
-        public void SetUSK1FillSource(int sourceID)
-        {
-            //multiviewerWindow.SetPIPFillSource(sourceID);
-        }
-
-        public void UpdateMockCameraMovement(CameraMotionEventArgs e)
+        public void UpdateMockCameraMovement(CameraUpdateEventArgs e)
         {
             //multiviewerWindow.UpdateMockCameraMovement(e);
         }
@@ -462,6 +371,13 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _state.ProgramID = activeProgram;
             _state.PresetID = activePreset;
             _state.USK1OnAir = usk1State;
+            OnSwitcherStateUpdated?.Invoke(this, _state);
+        }
+
+        void ISwitcherStateProvider.ReportFTBComplete(bool endState)
+        {
+            _state.FTB = endState;
+            _stateFTBInFade = false;
             OnSwitcherStateUpdated?.Invoke(this, _state);
         }
     }

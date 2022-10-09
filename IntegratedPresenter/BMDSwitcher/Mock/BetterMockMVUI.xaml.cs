@@ -461,5 +461,40 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             });
 
         }
+
+        internal void StartFTB(ISwitcherStateProvider switcher, bool onair)
+        {
+            RunOnUI(() => Internal_StartFTB(switcher, onair));
+        }
+
+        private void Internal_StartFTB(ISwitcherStateProvider switcher, bool onair)
+        {
+            var origState = switcher.GetState();
+
+            var dur = TimeSpan.FromSeconds(_cfg.MixEffectSettings.Rate / _cfg.VideoSettings.VideoFPS);
+            var fade = new DoubleAnimation()
+            {
+                From = origState.FTB ? 1.0 : 0,
+                To = onair ? 1.0 : 0,
+                Duration = dur,
+            };
+            Storyboard.SetTarget(fade, pip_ME_program.lFTB);
+            Storyboard.SetTargetProperty(fade, new PropertyPath(Rectangle.OpacityProperty));
+            var sb = new Storyboard();
+            sb.Children.Add(fade);
+            sb.Begin();
+            Task.Run(async () =>
+            {
+                await Task.Delay((int)dur.TotalMilliseconds);
+                RunOnUI(() =>
+                {
+                    pip_ME_program.lUSK1_A.Opacity = onair ? 1 : 0;
+                    sb.Stop();
+                    switcher.ReportFTBComplete(onair);
+                });
+            });
+
+        }
+
     }
 }

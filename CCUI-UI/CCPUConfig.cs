@@ -24,4 +24,19 @@ namespace CCUI_UI
     }
 
 
+    public class CCPUConfig_Extended : CCPUConfig
+    {
+
+        public class PresetMockInfo
+        {
+            public string Thumbnail { get; set; }
+            public int RuntimeMS { get; set; }
+        }
+
+
+
+        public Dictionary<string, Dictionary<string, PresetMockInfo>> MockPresetInfo { get; set; } = new Dictionary<string, Dictionary<string, PresetMockInfo>>();
+        public Dictionary<string, string> CameraAssociations { get; set; } = new Dictionary<string, string>();
+    }
+
 }
