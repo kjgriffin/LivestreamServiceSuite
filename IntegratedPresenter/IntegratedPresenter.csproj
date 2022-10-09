@@ -35,6 +35,7 @@
 		<None Remove="BMDSwitcher\Mock\Images\leftshot.PNG" />
 		<None Remove="BMDSwitcher\Mock\Images\leftshot1.PNG" />
 		<None Remove="BMDSwitcher\Mock\Images\noise1.png" />
+		<None Remove="BMDSwitcher\Mock\Images\noise2.png" />
 		<None Remove="BMDSwitcher\Mock\Images\organcam.PNG" />
 		<None Remove="BMDSwitcher\Mock\Images\organshot.PNG" />
 		<None Remove="BMDSwitcher\Mock\Images\organshot1.png" />
@@ -81,6 +82,9 @@
 
 	<ItemGroup>
 		<Resource Include="BMDSwitcher\Mock\Images\noise1.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="BMDSwitcher\Mock\Images\noise2.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="BMDSwitcher\Mock\Images\organshot1.png">

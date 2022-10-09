@@ -488,7 +488,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 await Task.Delay((int)dur.TotalMilliseconds);
                 RunOnUI(() =>
                 {
-                    pip_ME_program.lUSK1_A.Opacity = onair ? 1 : 0;
+                    pip_ME_program.lFTB.Opacity = onair ? 1 : 0;
                     sb.Stop();
                     switcher.ReportFTBComplete(onair);
                 });
@@ -516,6 +516,52 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
                         // setup and begin the zoom animation
 
+                        double setupStart = 1;
+                        double setupEnd = 1;
+
+                        if (live.ZDir == -1)
+                        {
+                            setupStart = 1;
+                            setupEnd = 4;
+                        }
+                        else if (live.ZDir == 1)
+                        {
+                            setupStart = 1;
+                            setupEnd = 0;
+                        }
+
+                        var zXAnim_setup = new DoubleAnimation()
+                        {
+                            From = setupStart,
+                            To = setupEnd,
+                            Duration = TimeSpan.FromMilliseconds(live.ZSetupMS),
+                        };
+                        var zYAnim_setup = new DoubleAnimation()
+                        {
+                            From = setupStart,
+                            To = setupEnd,
+                            Duration = TimeSpan.FromMilliseconds(live.ZSetupMS),
+                        };
+
+                        Storyboard.SetTarget(zXAnim_setup, m_simplePIPS[i].bkgdSrc);
+                        Storyboard.SetTargetProperty(zXAnim_setup, new PropertyPath("RenderTransform.ScaleX"));
+                        Storyboard.SetTarget(zYAnim_setup, m_simplePIPS[i].bkgdSrc);
+                        Storyboard.SetTargetProperty(zYAnim_setup, new PropertyPath("RenderTransform.ScaleY"));
+                        var sb = new Storyboard();
+                        sb.Children.Add(zXAnim_setup);
+                        sb.Children.Add(zYAnim_setup);
+                        m_simplePIPS[i].bkgdSrcZoomScale.ScaleX = 0;
+                        m_simplePIPS[i].bkgdSrcZoomScale.ScaleY = 0;
+                        sb.Begin();
+
+                        // keep going
+                        Internal_FinishZoomTask(i, live.ZDir, live.ZRunMS);
+
+                    }
+                    else if (!live.Zooming)
+                    {
+                        m_simplePIPS[i].bkgdSrcZoomScale.ScaleX = 1;
+                        m_simplePIPS[i].bkgdSrcZoomScale.ScaleY = 1;
                     }
 
                     if (live.ReqMove)
@@ -525,6 +571,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                         // setup and begin the move animation
 
                         // this is simple- just animate the opacity of the fill from 0 to 1 over the course of the run 
+                        /*
                         var fade = new DoubleAnimation()
                         {
                             From = 0,
@@ -538,6 +585,13 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                         m_simplePIPS[i].bkgdSrc.Opacity = 0;
                         m_simplePIPS[i].bkgdNoise.Opacity = 1;
                         sb.Begin();
+                        */
+
+                        // since we're using 'run' actions that have a zoom program with the preset move
+                        // I think we can show 'movement' by a slight overlay of stuff
+                        // TODO::: just got idea: add a 'camera shake!!!!!' (probably use some sort of repeating animation for duration that does a translate transform x)
+                        m_simplePIPS[i].bkgdSrc.Opacity = 1;
+                        m_simplePIPS[i].bkgdNoise.Opacity = 0.4;
                     }
                     else if (!live.Moving)
                     {
@@ -548,6 +602,58 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
                 }
             }
+        }
+
+        private void Internal_FinishZoomTask(int iPIP, int zDir, int zMS)
+        {
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(zMS));
+                RunOnUI(() => Internal_FinishZoomAnimation(zDir, zMS, iPIP));
+            });
+        }
+
+        private void Internal_FinishZoomAnimation(int zDir, int zMS, int iPIP)
+        {
+            double zoomStart = 1;
+            double zoomEnd = 1;
+
+            if (zDir == -1)
+            {
+                zoomStart = 4;
+                zoomEnd = 1;
+            }
+            else if (zDir == 1)
+            {
+                zoomStart = 0;
+                zoomEnd = 1;
+            }
+
+            var zXAnim_run = new DoubleAnimation()
+            {
+                From = zoomStart,
+                To = zoomEnd,
+                Duration = TimeSpan.FromMilliseconds(zMS),
+            };
+            var zYAnim_run = new DoubleAnimation()
+            {
+                From = zoomStart,
+                To = zoomEnd,
+                Duration = TimeSpan.FromMilliseconds(zMS),
+            };
+
+            var sb = new Storyboard();
+            Storyboard.SetTarget(zXAnim_run, m_simplePIPS[iPIP].bkgdSrc);
+            Storyboard.SetTargetProperty(zXAnim_run, new PropertyPath("RenderTransform.ScaleX"));
+            Storyboard.SetTarget(zYAnim_run, m_simplePIPS[iPIP].bkgdSrc);
+            Storyboard.SetTargetProperty(zYAnim_run, new PropertyPath("RenderTransform.ScaleY"));
+
+            sb.Children.Add(zXAnim_run);
+            sb.Children.Add(zYAnim_run);
+            m_simplePIPS[iPIP].bkgdSrcZoomScale.ScaleX = zoomStart;
+            m_simplePIPS[iPIP].bkgdSrcZoomScale.ScaleY = zoomStart;
+
+            sb.Begin();
         }
     }
 }

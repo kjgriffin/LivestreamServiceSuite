@@ -98,7 +98,7 @@ namespace CCUI_UI
 
         public CCPUConfig ExportStateToConfig()
         {
-            throw new NotImplementedException();
+            return m_presetConfig;
         }
 
         public void FirePreset(string camname, string presetname, int speed)

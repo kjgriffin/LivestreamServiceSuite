@@ -177,6 +177,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                         live.ReqMove = false;
                         live.Moving = false;
                         live.MRunMS = 0;
+                        live.Thumbnail = driveargs.Thumbnail; // todo? is this necessary
                     }
                 }
                 else if (driveargs.CamState == CameraMoveState.Moving)
@@ -186,6 +187,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                         live.ReqMove = true;
                         live.Moving = true;
                         live.MRunMS = driveargs.RunTimeMS;
+                        live.Thumbnail = driveargs.Thumbnail;
                     }
                 }
             }

@@ -101,9 +101,9 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 else
                 {
                     // ftb immediately on air
+                    multiviewerWindow.StartFTB(this, onair);
                     _state.FTB = true;
                     OnSwitcherStateUpdated?.Invoke(this, _state);
-                    multiviewerWindow.StartFTB(this, onair);
                 }
             }
         }

@@ -335,7 +335,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
 #if USE_BETTER_MOCK_MV
-            mockMultiviewer.FadeDSK1(!_state.FTB);
+            mockMultiviewer.SetFTB(!_state.FTB);
 #else
             _state.FTB = !_state.FTB;
             mockMultiviewer.SetFTB(_state.FTB);
