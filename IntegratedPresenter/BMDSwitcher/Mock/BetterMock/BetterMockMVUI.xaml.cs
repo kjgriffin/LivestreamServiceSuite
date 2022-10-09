@@ -496,5 +496,58 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         }
 
+        internal void UpdatePIPAnimations(ICameraSourceProvider camDriver)
+        {
+            RunOnUI(() => Internal_UpdatePIPAnimations(camDriver));
+        }
+        private void Internal_UpdatePIPAnimations(ICameraSourceProvider camDriver)
+        {
+            // find all the live cameras
+            // update the pip's as requested by the state for animation
+
+            for (int i = 0; i < 8; i++)
+            {
+                if (camDriver.TryGetLiveCamState(m_pipWindowSourceRouting[i + 1], out var live))
+                {
+
+                    if (live.ReqZoom)
+                    {
+                        live.ReqZoom = false;
+
+                        // setup and begin the zoom animation
+
+                    }
+
+                    if (live.ReqMove)
+                    {
+                        live.ReqMove = false;
+
+                        // setup and begin the move animation
+
+                        // this is simple- just animate the opacity of the fill from 0 to 1 over the course of the run 
+                        var fade = new DoubleAnimation()
+                        {
+                            From = 0,
+                            To = 1,
+                            Duration = TimeSpan.FromMilliseconds(live.MRunMS),
+                        };
+                        Storyboard.SetTarget(fade, m_simplePIPS[i].bkgdSrc);
+                        Storyboard.SetTargetProperty(fade, new PropertyPath(Grid.OpacityProperty));
+                        var sb = new Storyboard();
+                        sb.Children.Add(fade);
+                        m_simplePIPS[i].bkgdSrc.Opacity = 0;
+                        m_simplePIPS[i].bkgdNoise.Opacity = 1;
+                        sb.Begin();
+                    }
+                    else if (!live.Moving)
+                    {
+                        // park the shot with full opacity
+                        m_simplePIPS[i].bkgdNoise.Opacity = 0;
+                        m_simplePIPS[i].bkgdSrc.Opacity = 1;
+                    }
+
+                }
+            }
+        }
     }
 }

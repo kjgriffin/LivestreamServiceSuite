@@ -14,104 +14,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {
-
-    public interface ICameraSourceProvider
-    {
-        //public bool TryGetSource(int PhysicalInputID, out string source);
-        public bool TryGetSourceImage(int PhysicalInputID, out BitmapImage image);
-        bool TryGetSourceVideo(int PhysicalInputID, out string source);
-    }
-
-    public interface ISwitcherStateProvider
-    {
-        public BMDSwitcherState GetState();
-        /// <summary>
-        /// Reports when a animation has completed
-        /// </summary>
-        /// <param name="keyerID">Id of keyer: 1 = DSK1, 2 = DSK2</param>
-        /// <param name="endState">State of keyer after animation. 1 = OnAir, 0 = OffAir</param>
-        void ReportDSKFadeComplete(int keyerID, int endState);
-        void ReportMETransitionComplete(int activeProgram, int activePreset, bool usk1State);
-        void ReportFTBComplete(bool endState);
-    }
-
-
-    class CameraSourceDriver : ICameraSourceProvider
-    {
-
-        const string DEFAULT_SOURCE = "pack://application:,,,/BMDSwitcher/Mock/Images/black.png";
-        Dictionary<int, string> m_sourceMap = new Dictionary<int, string>()
-        {
-            [0] = "pack://application:,,,/BMDSwitcher/Mock/Images/black.png", // always black
-            [1] = "pack://application:,,,/BMDSwitcher/Mock/Images/backcam.PNG",
-            [2] = "pack://application:,,,/BMDSwitcher/Mock/Images/powerpoint.png",
-            [3] = "pack://application:,,,/BMDSwitcher/Mock/Images/black.png",
-            [4] = "pack://application:,,,/BMDSwitcher/Mock/Images/black.png",
-            [5] = "pack://application:,,,/BMDSwitcher/Mock/Images/organshot1.PNG",
-            [6] = "pack://application:,,,/BMDSwitcher/Mock/Images/rightshot.PNG",
-            [7] = "pack://application:,,,/BMDSwitcher/Mock/Images/centershot.PNG",
-            [8] = "pack://application:,,,/BMDSwitcher/Mock/Images/leftshot1.PNG",
-            [(int)BMDSwitcherVideoSources.ColorBars] = "pack://application:,,,/BMDSwitcher/Mock/Images/cbars.png",
-        };
-
-
-        public int SlideID { get; set; } = 4;
-        public int AKeyID { get; set; } = 3;
-
-        public void UpdateLiveCameraSource(int PhysicalInputID, string source)
-        {
-            m_sourceMap[PhysicalInputID] = source;
-        }
-
-        ISlide m_slideSource;
-        public void UpdateSlideSource(ISlide slide)
-        {
-            m_slideSource = slide;
-        }
-
-        public bool TryGetSourceImage(int PhysicalInputID, out BitmapImage source)
-        {
-            source = null;
-
-            if (PhysicalInputID == SlideID)
-            {
-                return m_slideSource?.TryGetPrimaryImage(out source) ?? false;
-            }
-            else if (PhysicalInputID == AKeyID)
-            {
-                return m_slideSource?.TryGetKeyImage(out source) ?? false;
-            }
-            else if (m_sourceMap.TryGetValue(PhysicalInputID, out string spath))
-            {
-                source = new BitmapImage(new Uri(spath));
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool TryGetSourceVideo(int PhysicalInputID, out string source)
-        {
-            source = null;
-
-            if (PhysicalInputID == SlideID)
-            {
-                return m_slideSource?.TryGetPrimaryVideoPath(out source) ?? false;
-            }
-            else if (PhysicalInputID == AKeyID)
-            {
-                return m_slideSource?.TryGetKeyVideoPath(out source) ?? false;
-            }
-
-            return false;
-        }
-    }
-
-
     public class BetterMockDriver : IMockMultiviewerDriver, ISwitcherStateProvider
     {
 
@@ -330,7 +235,18 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         public void UpdateMockCameraMovement(CameraUpdateEventArgs e)
         {
-            //multiviewerWindow.UpdateMockCameraMovement(e);
+            // update the cam driver appropriately
+
+            // need to translate cam-name to input id
+            int sid = _config.Routing.FirstOrDefault(x => x.KeyName == e.CameraName).PhysicalInputId;
+            _camDriver.UpdateLiveCamera(sid, e);
+
+
+            // explicitliy have the UI update animations for PIPS
+            multiviewerWindow.UpdatePIPAnimations(_camDriver);
+
+            // have the UI update sources
+            multiviewerWindow.RefreshUI(_camDriver, this);
         }
 
         internal void HandleStateUpdate(BMDSwitcherState args)

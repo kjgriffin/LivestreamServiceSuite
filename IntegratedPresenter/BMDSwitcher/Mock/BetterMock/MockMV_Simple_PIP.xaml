@@ -10,10 +10,13 @@
         <Grid>
             <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid>
-                    <Rectangle Fill="Black"></Rectangle>
-                    <Grid Name="displaySum" Width="1920" Height="1080">
-                        <Image Name="imagePlayerA"></Image>
-                        <MediaElement Name="videoPlayerA"></MediaElement>
+                    <Rectangle Fill="Black" Panel.ZIndex="0"></Rectangle>
+                    <Grid Name="displaySum" Panel.ZIndex="1">
+                        <Image Name="bkgdNoise" Panel.ZIndex="0" Source="../Images/noise1.png" Opacity="0"></Image>
+                        <Grid Name="bkgdSrc" Width="1920" Height="1080" Panel.ZIndex="2" Opacity="1">
+                            <Image Name="imagePlayerA" Panel.ZIndex="1"></Image>
+                            <MediaElement Name="videoPlayerA" Panel.ZIndex="1"></MediaElement>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Viewbox>
