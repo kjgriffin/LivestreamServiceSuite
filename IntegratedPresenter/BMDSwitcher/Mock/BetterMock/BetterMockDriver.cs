@@ -17,7 +17,13 @@ using System.Threading.Tasks;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {
-    public class BetterMockDriver : IMockMultiviewerDriver, ISwitcherStateProvider
+
+    internal interface IResetCameraState
+    {
+        void ResetCamerasToDefaults();
+    }
+
+    public class BetterMockDriver : IMockMultiviewerDriver, ISwitcherStateProvider, IResetCameraState
     {
 
         BetterMockMVUI multiviewerWindow;
@@ -40,7 +46,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public BetterMockDriver(Dictionary<int, string> sourcemap, BMDSwitcherConfigSettings config, BMDSwitcherState startupState)
         {
             _camDriver = new CameraSourceDriver();
-            multiviewerWindow = new BetterMockMVUI();
+            multiviewerWindow = new BetterMockMVUI(this);
             _config = config;
 
             _state = startupState;
@@ -295,6 +301,12 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _state.FTB = endState;
             _stateFTBInFade = false;
             OnSwitcherStateUpdated?.Invoke(this, _state);
+        }
+
+        void IResetCameraState.ResetCamerasToDefaults()
+        {
+            (_camDriver as IResetCameraState).ResetCamerasToDefaults();
+            multiviewerWindow.RefreshUI(_camDriver, this);
         }
     }
 }

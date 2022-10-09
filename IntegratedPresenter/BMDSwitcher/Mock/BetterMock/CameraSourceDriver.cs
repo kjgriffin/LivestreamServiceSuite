@@ -31,7 +31,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
     }
 
 
-    class CameraSourceDriver : ICameraSourceProvider
+    class CameraSourceDriver : ICameraSourceProvider, IResetCameraState
     {
 
         const string DEFAULT_SOURCE = "pack://application:,,,/BMDSwitcher/Mock/Images/black.png";
@@ -192,6 +192,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 }
             }
 
+        }
+
+        void IResetCameraState.ResetCamerasToDefaults()
+        {
+            foreach (var lcam in m_liveCameras.Keys)
+            {
+                m_liveCameras[lcam] = new LiveCameraState();
+            }
         }
     }
 }

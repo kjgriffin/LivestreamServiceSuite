@@ -62,9 +62,13 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         };
 
 
-        public BetterMockMVUI()
+        IResetCameraState _camReset;
+
+        internal BetterMockMVUI(IResetCameraState camReset)
         {
             InitializeComponent();
+
+            _camReset = camReset;
 
             m_simplePIPS = new MockMV_Simple_PIP[8]
             {
@@ -654,6 +658,14 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             m_simplePIPS[iPIP].bkgdSrcZoomScale.ScaleY = zoomStart;
 
             sb.Begin();
+        }
+
+
+
+
+        private void ClickResetCameras(object sender, RoutedEventArgs e)
+        {
+            _camReset.ResetCamerasToDefaults();
         }
     }
 }
