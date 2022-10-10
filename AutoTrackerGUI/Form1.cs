@@ -135,7 +135,7 @@ namespace AutoTrackerGUI
                 ticks = 0;
             }
             lastSec = now;
-            ticks ++;
+            ticks++;
 
             using (Graphics g = CreateGraphics())
             using (Bitmap b = new Bitmap(Size.Width, Size.Height))
@@ -151,6 +151,12 @@ namespace AutoTrackerGUI
                     gfx.DrawRectangle(track.Stale ? Pens.Red : Pens.Green, new System.Drawing.Rectangle(track.Centroid.Bounds.X, track.Centroid.Bounds.Y, track.Centroid.Bounds.Width, track.Centroid.Bounds.Height));
                     gfx.FillRectangle(Brushes.Black, (int)track.Centroid.Center.X, (int)track.Centroid.Center.Y, 150, 25);
                     gfx.DrawString(track.Name, DefaultFont, Brushes.White, new System.Drawing.Point((int)track.Centroid.Center.X, (int)track.Centroid.Center.Y));
+
+                    int scalar = 20;
+                    int x1 = (int)(track.Centroid.Center.X + track.XVel * scalar);
+                    int y1 = (int)(track.Centroid.Center.Y + track.YVel * scalar);
+                    gfx.DrawLine(new Pen(Color.Green, 5), (int)track.Centroid.Center.X, (int)track.Centroid.Center.Y, x1, y1);
+
                 }
 
                 gfx.FillRectangle(Brushes.White, 10, 10, 150, 20);
@@ -217,40 +223,46 @@ namespace AutoTrackerGUI
                 var track = _tracker.GetTracks().FirstOrDefault(t => Math.Abs(t.Centroid.Center.X - _validX) < _rangeX && Math.Abs(t.Centroid.Center.Y - _validY) < _rangeY);
                 _cmdID++;
 
-                if (track != null && !track.Stale)
+                if (track != null)
                 {
                     // compute direction
+                    if (!checkBox1.Checked && !track.Stale)
+                    {
 
-                    PanTiltDirection dir = PanTiltDirection.STOP;
-                    string dcmd = "";
+                    }
+                    {
 
-                    if (track.Centroid.Center.X < _tgtX - _mX)
-                    {
-                        dir = PanTiltDirection.LEFT;
-                        dcmd = "LEFT";
-                    }
-                    else if (track.Centroid.Center.X > _tgtX + _mX)
-                    {
-                        dir = PanTiltDirection.RIGHT;
-                        dcmd = "RIGHT";
-                    }
-                    else if (track.Centroid.Center.Y < _tgtY - _mY)
-                    {
-                        dir = PanTiltDirection.UP;
-                        dcmd = "UP";
-                    }
-                    else if (track.Centroid.Center.Y > _tgtY + _mY)
-                    {
-                        dir = PanTiltDirection.DOWN;
-                        dcmd = "DOWN";
-                    }
+                        PanTiltDirection dir = PanTiltDirection.STOP;
+                        string dcmd = "";
 
-                    if (_last != dir)
-                    {
-                        _camServer.Cam_RunDriveProgram("test", dir, 2, 0);
-                        _trackCMD = dcmd;
+                        if (track.Centroid.Center.X < _tgtX - _mX)
+                        {
+                            dir = PanTiltDirection.LEFT;
+                            dcmd = "LEFT";
+                        }
+                        else if (track.Centroid.Center.X > _tgtX + _mX)
+                        {
+                            dir = PanTiltDirection.RIGHT;
+                            dcmd = "RIGHT";
+                        }
+                        else if (track.Centroid.Center.Y < _tgtY - _mY)
+                        {
+                            dir = PanTiltDirection.UP;
+                            dcmd = "UP";
+                        }
+                        else if (track.Centroid.Center.Y > _tgtY + _mY)
+                        {
+                            dir = PanTiltDirection.DOWN;
+                            dcmd = "DOWN";
+                        }
+
+                        if (_last != dir)
+                        {
+                            _camServer.Cam_RunDriveProgram("test", dir, 2, 0);
+                            _trackCMD = dcmd;
+                        }
+                        _last = dir;
                     }
-                    _last = dir;
                 }
                 else
                 {
