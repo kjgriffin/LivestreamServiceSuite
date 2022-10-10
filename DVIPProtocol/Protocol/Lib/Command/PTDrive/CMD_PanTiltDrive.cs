@@ -34,6 +34,11 @@ namespace DVIPProtocol.Protocol.Lib.Command.PTDrive
                 case PanTiltDirection.RIGHT:
                     panCode = 0x02;
                     break;
+                case PanTiltDirection.STOP:
+                default:
+                    panCode = 0x03;
+                    tiltCode = 0x03;
+                    break;
             }
 
             // pan/tilt at same speed for now
@@ -53,5 +58,6 @@ namespace DVIPProtocol.Protocol.Lib.Command.PTDrive
         DOWN,
         LEFT,
         RIGHT,
+        STOP,
     }
 }

@@ -13,6 +13,22 @@ namespace DVIPProtocol.Servers.Mock
 {
 
 
+    public abstract class DVIPEventArgs : EventArgs
+    {
+
+    }
+
+    public class DVIPPanTiltDriveEventArgs : DVIPEventArgs
+    {
+        public int PanSpeed { get; set; }
+        public int TiltSpeed { get; set; }
+        public bool Up { get; set; }
+        public bool Down { get; set; }
+        public bool Left { get; set; }
+        public bool Right { get; set; }
+    }
+
+
     enum ZoomState
     {
         STOP,
@@ -37,6 +53,8 @@ namespace DVIPProtocol.Servers.Mock
         int zoomSpeed = 0; // 1-8
         ZoomState zoomState = ZoomState.STOP;
         bool _zoomUpdate = false;
+
+        public event EventHandler<DVIPEventArgs> OnStateChange;
 
 
         Stopwatch cmdTimer = new Stopwatch();
@@ -235,7 +253,50 @@ namespace DVIPProtocol.Servers.Mock
                     };
                 }
             }
+            if (msg.Length == 9)
+            {
+                if (msg[0] == 0x81 && msg[1] == 0x01 && msg[2] == 0x06 && msg[3] == 0x01 && msg[8] == 0xFF)
+                {
+                    Console.WriteLine($"[{Thread.CurrentThread.Name}] recieved Drive command. Responding with OK.");
+                }
 
+                // parse it
+                byte panSpeed = msg[4];
+                byte tiltSpeed = msg[5];
+
+                byte panDir = msg[6];
+                byte tiltDir = msg[7];
+
+                bool left = panDir == 0x01;
+                bool right = panDir == 0x02;
+                bool up = tiltDir == 0x01;
+                bool down = tiltDir == 0x02;
+
+
+                // fire event
+                Task.Run(() =>
+                {
+                    OnStateChange?.Invoke(this, new DVIPPanTiltDriveEventArgs
+                    {
+                        Down = down,
+                        Left = left,
+                        Right = right,
+                        Up = up,
+                        PanSpeed = panSpeed,
+                        TiltSpeed = tiltSpeed,
+                    });
+                });
+
+                return new byte[]
+                {
+                        0x00,
+                        0x05,
+                        0x90,
+                        0x50,
+                        0xFF,
+                };
+
+            }
 
             Console.WriteLine($"[{Thread.CurrentThread.Name}] recieved invalid command: {BitConverter.ToString(msg)}. Responding with Syntax Error");
             return new byte[6]
