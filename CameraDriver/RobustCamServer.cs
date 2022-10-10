@@ -130,6 +130,30 @@ namespace CameraDriver
                     var drive = CMD_PanTiltDrive.UpDownLeftRight(dir, speed);
                     var stop = CMD_Zoom_Std.Create(ZoomDir.STOP);
 
+                    RobustCommand rcmd = new RobustCommand
+                    {
+                        Data = drive.PackagePayload(),
+                        OnCompleted = (x, y) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting drive ({msDriveTime}ms) [{dir}] for camera {cnameID} COMPLETED");
+                                OnWorkCompleted?.Invoke(cnameID, "DRIVE", $"{dir} @{msDriveTime}ms", $"after 1 tries", reqId.ToString());
+                            });
+                        },
+                        OnFail = (x) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting drive [{dir}] for camera {cnameID} of {msDriveTime}ms FAILED");
+                                OnWorkFailed?.Invoke(cnameID, "DRIVE", $"{dir} @{msDriveTime}ms", $"of {msDriveTime}ms", reqId.ToString());
+                            });
+                        },
+                        RetryAttempts = 1,
+                        IgnoreResponse = true,
+                    };
+
+                    /*
                     RobustSequence rcmd = new RobustSequence
                     {
                         First = drive.PackagePayload(),
@@ -154,10 +178,13 @@ namespace CameraDriver
                         },
                         RetryAttempts = 1,
                     };
+                    */
+
 
                     OnWorkStarted?.Invoke(cnameID, "DRIVE", dir.ToString(), reqId.ToString());
 
                     client?.DoRobustWork(rcmd);
+
                 }
             });
             m_workAvailable.Set();
@@ -254,11 +281,11 @@ namespace CameraDriver
                         First = zoom.PackagePayload(),
                         Second = stop.PackagePayload(),
                         DelayMS = duration, // note it seems that 200ms is about the smallest time we can gaurantee reliably
-                        // Setup full program sequence
-                        // automatically determine the setup sequence required
-                        // if we're going in, then the only initial state that makes sense is from full wide
-                        // likewise going out you need to start all the way in
-                        // use the stop command as a reset.....
+                                            // Setup full program sequence
+                                            // automatically determine the setup sequence required
+                                            // if we're going in, then the only initial state that makes sense is from full wide
+                                            // likewise going out you need to start all the way in
+                                            // use the stop command as a reset.....
                         Setup = setup.PackagePayload(),
                         SetupDelayMS = 3500,
                         // TODO: do we *really* need to stop the zoom in once we're maxed in, or can we let it just change direction?
