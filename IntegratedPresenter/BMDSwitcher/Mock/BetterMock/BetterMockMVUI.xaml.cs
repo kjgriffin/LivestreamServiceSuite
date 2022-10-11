@@ -6,6 +6,7 @@ using IntegratedPresenter.BMDSwitcher.Mock;
 using IntegratedPresenter.Main;
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Linq;
@@ -63,6 +64,9 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
 
         IResetCameraState _camReset;
+
+        ConcurrentDictionary<int, List<Storyboard>> _camZAnimations = new ConcurrentDictionary<int, List<Storyboard>>();
+        ConcurrentDictionary<int, List<Storyboard>> _camMAnimations = new ConcurrentDictionary<int, List<Storyboard>>();
 
         internal BetterMockMVUI(IResetCameraState camReset)
         {
@@ -548,15 +552,37 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                         };
 
                         Storyboard.SetTarget(zXAnim_setup, m_simplePIPS[i].bkgdSrc);
-                        Storyboard.SetTargetProperty(zXAnim_setup, new PropertyPath("RenderTransform.ScaleX"));
+                        Storyboard.SetTargetProperty(zXAnim_setup, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"));
                         Storyboard.SetTarget(zYAnim_setup, m_simplePIPS[i].bkgdSrc);
-                        Storyboard.SetTargetProperty(zYAnim_setup, new PropertyPath("RenderTransform.ScaleY"));
+                        Storyboard.SetTargetProperty(zYAnim_setup, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"));
                         var sb = new Storyboard();
                         sb.Children.Add(zXAnim_setup);
                         sb.Children.Add(zYAnim_setup);
+
+                        // cancel any previous animations for this pip
+                        if (_camZAnimations.TryGetValue(i, out var anms))
+                        {
+                            foreach (var anim in anms)
+                            {
+                                anim.Stop();
+                                foreach (var canim in anim.Children)
+                                {
+                                    canim.Duration = TimeSpan.Zero;
+                                }
+                                anim.Children.Clear();
+                            }
+                            anms.Clear();
+                            _camZAnimations[i].Add(sb);
+                        }
+                        else
+                        {
+                            _camZAnimations[i] = new List<Storyboard> { sb };
+                        }
+
                         m_simplePIPS[i].bkgdSrcZoomScale.ScaleX = 0;
                         m_simplePIPS[i].bkgdSrcZoomScale.ScaleY = 0;
                         sb.Begin();
+
 
                         // keep going
                         Internal_FinishZoomTask(i, live.ZDir, live.ZRunMS);
@@ -596,12 +622,76 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                         // TODO::: just got idea: add a 'camera shake!!!!!' (probably use some sort of repeating animation for duration that does a translate transform x)
                         m_simplePIPS[i].bkgdSrc.Opacity = 1;
                         m_simplePIPS[i].bkgdNoise.Opacity = 0.4;
+
+                        var sXAnim_setup = new DoubleAnimation()
+                        {
+                            From = -500,
+                            To = 500,
+                            Duration = TimeSpan.FromMilliseconds(1000),
+                            RepeatBehavior = RepeatBehavior.Forever,
+                            AutoReverse = true,
+                        };
+                        var sYAnim_setup = new DoubleAnimation()
+                        {
+                            From = -40,
+                            To = 40,
+                            Duration = TimeSpan.FromMilliseconds(50),
+                        };
+
+                        Storyboard.SetTarget(sXAnim_setup, m_simplePIPS[i].bkgdSrc);
+                        Storyboard.SetTargetProperty(sXAnim_setup, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"));
+                        //Storyboard.SetTarget(zYAnim_setup, m_simplePIPS[i].bkgdSrc);
+                        //Storyboard.SetTargetProperty(zYAnim_setup, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"));
+                        var sb = new Storyboard();
+                        sb.Children.Add(sXAnim_setup);
+                        //sb.Children.Add(sYAnim_setup);
+
+                        if (_camMAnimations.TryGetValue(i, out var anms))
+                        {
+                            foreach (var anim in anms)
+                            {
+                                anim.Stop();
+                                foreach (var canim in anim.Children)
+                                {
+                                    canim.Duration = TimeSpan.Zero;
+                                    canim.RepeatBehavior = new RepeatBehavior(0);
+                                }
+                                anim.Children.Clear();
+                            }
+                            anms.Clear();
+                            _camMAnimations[i].Add(sb);
+                        }
+                        else
+                        {
+                            _camMAnimations[i] = new List<Storyboard> { sb };
+                        }
+
+                        sb.Begin();
                     }
                     else if (!live.Moving)
                     {
+                        if (_camMAnimations.TryGetValue(i, out var anms))
+                        {
+                            foreach (var anim in anms)
+                            {
+                                anim.Stop();
+                                foreach (var canim in anim.Children)
+                                {
+                                    canim.Duration = TimeSpan.Zero;
+                                    canim.RepeatBehavior = new RepeatBehavior(0);
+                                }
+                                anim.Children.Clear();
+                            }
+                            anms.Clear();
+                        }
+
+
                         // park the shot with full opacity
                         m_simplePIPS[i].bkgdNoise.Opacity = 0;
                         m_simplePIPS[i].bkgdSrc.Opacity = 1;
+
+                        m_simplePIPS[i].bkgdSrcTranslate.X = 0;
+                        m_simplePIPS[i].bkgdSrcTranslate.Y = 0;
                     }
 
                 }
@@ -610,14 +700,25 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         private void Internal_FinishZoomTask(int iPIP, int zDir, int zMS)
         {
+            // build the animations now... but don't use them just yet
+            var animation = Internal_BuildFinalZoomAimation(zDir, zMS, iPIP);
+            if (_camZAnimations.TryGetValue(iPIP, out var animations))
+            {
+                animations.Add(animation);
+            }
+            else
+            {
+                _camZAnimations[iPIP] = new List<Storyboard> { animation };
+            }
+
             Task.Run(async () =>
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(zMS));
-                RunOnUI(() => Internal_FinishZoomAnimation(zDir, zMS, iPIP));
+                RunOnUI(() => Internal_FinishZoomAnimation(zDir, iPIP, animation));
             });
         }
 
-        private void Internal_FinishZoomAnimation(int zDir, int zMS, int iPIP)
+        private Storyboard Internal_BuildFinalZoomAimation(int zDir, int zMS, int iPIP)
         {
             double zoomStart = 1;
             double zoomEnd = 1;
@@ -648,15 +749,32 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
             var sb = new Storyboard();
             Storyboard.SetTarget(zXAnim_run, m_simplePIPS[iPIP].bkgdSrc);
-            Storyboard.SetTargetProperty(zXAnim_run, new PropertyPath("RenderTransform.ScaleX"));
+            Storyboard.SetTargetProperty(zXAnim_run, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"));
             Storyboard.SetTarget(zYAnim_run, m_simplePIPS[iPIP].bkgdSrc);
-            Storyboard.SetTargetProperty(zYAnim_run, new PropertyPath("RenderTransform.ScaleY"));
+            Storyboard.SetTargetProperty(zYAnim_run, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"));
 
             sb.Children.Add(zXAnim_run);
             sb.Children.Add(zYAnim_run);
+
+            return sb;
+        }
+
+
+        private void Internal_FinishZoomAnimation(int zDir, int iPIP, Storyboard sb)
+        {
+            double zoomStart = 1;
+
+            if (zDir == -1)
+            {
+                zoomStart = 4;
+            }
+            else if (zDir == 1)
+            {
+                zoomStart = 0;
+            }
+
             m_simplePIPS[iPIP].bkgdSrcZoomScale.ScaleX = zoomStart;
             m_simplePIPS[iPIP].bkgdSrcZoomScale.ScaleY = zoomStart;
-
             sb.Begin();
         }
 

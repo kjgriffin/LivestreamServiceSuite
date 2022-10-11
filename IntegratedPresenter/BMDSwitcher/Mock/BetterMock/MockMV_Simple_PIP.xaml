@@ -15,7 +15,10 @@
                         <Image Name="bkgdNoise" Panel.ZIndex="2" Source="../Images/noise2.png" Opacity="0"></Image>
                         <Grid Name="bkgdSrc" Width="1920" Height="1080" Panel.ZIndex="1" Opacity="1">
                             <Grid.RenderTransform>
-                                <ScaleTransform x:Name="bkgdSrcZoomScale" ScaleX="1" ScaleY="1"></ScaleTransform>
+                                <TransformGroup x:Name="bkgdTransforms">
+                                    <ScaleTransform x:Name="bkgdSrcZoomScale" ScaleX="1" ScaleY="1"></ScaleTransform>
+                                    <TranslateTransform x:Name="bkgdSrcTranslate" X="0" Y="0"></TranslateTransform>
+                                </TransformGroup>
                             </Grid.RenderTransform>
                             <Grid.RenderTransformOrigin>
                                 <Point X="0.5" Y="0.5"></Point>
