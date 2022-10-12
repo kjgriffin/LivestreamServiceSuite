@@ -1,5 +1,7 @@
 ﻿using CameraDriver;
 
+using CCU.Config;
+
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
 using log4net;

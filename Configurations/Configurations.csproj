@@ -6,6 +6,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\CameraDriver\CameraDriver.csproj" />
+	  <ProjectReference Include="..\DVIPProtocol\DVIPProtocol.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Reference Include="BMDSwitcherAPI">
 			<HintPath>..\lib\include\BMDSwitcherAPI.dll</HintPath>
 		</Reference>

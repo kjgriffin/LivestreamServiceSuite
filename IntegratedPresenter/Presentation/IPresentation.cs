@@ -1,4 +1,4 @@
-﻿using CCUI_UI;
+﻿using CCU.Config;
 
 using Configurations.FeatureConfig;
 

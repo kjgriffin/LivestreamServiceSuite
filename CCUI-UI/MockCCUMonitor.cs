@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CCU.Config;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,7 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-using static CCUI_UI.CCPUConfig_Extended;
+using static CCU.Config.CCPUConfig_Extended;
 
 namespace CCUI_UI
 {

@@ -1,10 +1,8 @@
 ﻿using CameraDriver;
-
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
-
 using System.Collections.Generic;
 
-namespace CCUI_UI
+namespace CCU.Config
 {
     public class CCPUConfig
     {
@@ -22,7 +20,6 @@ namespace CCUI_UI
         public List<ClientConfig> Clients { get; set; } = new List<ClientConfig>();
 
     }
-
 
     public class CCPUConfig_Extended : CCPUConfig
     {

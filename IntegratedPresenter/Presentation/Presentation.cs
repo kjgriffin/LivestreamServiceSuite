@@ -1,4 +1,4 @@
-﻿using CCUI_UI;
+﻿using CCU.Config;
 
 using Integrated_Presenter.Presentation;
 
@@ -214,7 +214,7 @@ namespace IntegratedPresenter.Main
                     var cfg = sr.ReadToEnd();
                     try
                     {
-                        CCPUConfig = JsonSerializer.Deserialize<CCUI_UI.CCPUConfig>(cfg);
+                        CCPUConfig = JsonSerializer.Deserialize<CCPUConfig>(cfg);
                         HasCCUConfig = true;
                     }
                     catch (Exception ex)

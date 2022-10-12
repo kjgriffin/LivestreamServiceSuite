@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using CCU.Config;
+
+using System.Net;
 
 namespace CCUI_UI
 {
