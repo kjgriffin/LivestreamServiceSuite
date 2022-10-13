@@ -3,6 +3,8 @@
 
 using BMDSwitcherAPI;
 
+using CCU.Config;
+
 using CCUI_UI;
 
 using Integrated_Presenter.BMDSwitcher.Mock;
@@ -70,6 +72,10 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             mockMultiviewer = new BetterMockDriver(mapping, parent.Config, _state);
             SwitcherStateChanged += MockBMDSwitcherManager_SwitcherStateChanged;
             (mockMultiviewer as BetterMockDriver).OnSwitcherStateUpdated += MockBMDSwitcherManager_OnSwitcherStateUpdated;
+            if (parent?.Presentation?.HasCCUConfig == true)
+            {
+                (mockMultiviewer as BetterMockDriver).UpdateCCUConfig(parent.Presentation.CCPUConfig as CCPUConfig_Extended);
+            }
 
             // not too sure about this one...
             parent.OnPlaybackStateChanged += Parent_OnPlaybackStateChanged;
@@ -595,5 +601,11 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             mockMultiviewer.UpdateMockCameraMovement(e);
         }
+
+        public void UpdateCCUConfig(CCPUConfig_Extended cfg)
+        {
+            (mockMultiviewer as BetterMockDriver)?.UpdateCCUConfig(cfg);
+        }
+
     }
 }

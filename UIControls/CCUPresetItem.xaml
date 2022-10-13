@@ -58,31 +58,31 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Foreground="White" Grid.Column="0" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Camera</TextBlock>
-                <TextBox Name="tbCamName" Width="200" Grid.Column="1" Margin="5" Height="20" TextChanged="OnTextChanged"></TextBox>
+                <TextBox Name="tbCamName" Width="200" Grid.Column="1" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Preset Name (position)</TextBlock>
-                <TextBox Name="tbPstName" Width="200" Grid.Row="2" Grid.Column="1" Margin="5" Height="20" TextChanged="OnTextChanged"></TextBox>
+                <TextBox Name="tbPstName" Width="200" Grid.Row="2" Grid.Column="1" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Pan</TextBlock>
-                <TextBox x:Name="tbPan" Width="200" Grid.Column="1" Grid.Row="3" Margin="5" Height="20" IsReadOnly="true" TextChanged="OnTextChanged"></TextBox>
+                <TextBox x:Name="tbPan" Width="200" Grid.Column="1" Grid.Row="3" Margin="5" Height="20" IsReadOnly="true" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Tilt</TextBlock>
-                <TextBox Name="tbTilt" Width="200" Grid.Column="1" Grid.Row="4" Margin="5" Height="20" IsReadOnly="true" TextChanged="OnTextChanged"></TextBox>
+                <TextBox Name="tbTilt" Width="200" Grid.Column="1" Grid.Row="4" Margin="5" Height="20" IsReadOnly="true" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Valid</TextBlock>
-                <TextBox Name="tbValid" Width="200" Grid.Column="1" Grid.Row="5" Margin="5" Height="20" IsReadOnly="True" TextChanged="OnTextChanged"></TextBox>
+                <TextBox Name="tbValid" Width="200" Grid.Column="1" Grid.Row="5" Margin="5" Height="20" IsReadOnly="True" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="6" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Move MS (mock runtime)</TextBlock>
-                <TextBox Name="tbMoveMS" Width="200" Grid.Column="1" Grid.Row="6" Margin="5" Height="20" TextChanged="OnTextChanged"></TextBox>
+                <TextBox Name="tbMoveMS" Width="200" Grid.Column="1" Grid.Row="6" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="8" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Zoom Association</TextBlock>
-                <TextBox Name="tbZoomPst" Width="200" Grid.Column="1" Grid.Row="8" Margin="5" Height="20" TextChanged="OnTextChanged"></TextBox>
+                <TextBox Name="tbZoomPst" Width="200" Grid.Column="1" Grid.Row="8" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="9" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Zoom Mode</TextBlock>
-                <TextBox Name="tbZoomMode" Width="200" Grid.Column="1" Grid.Row="9" Margin="5" Height="20" TextChanged="OnTextChanged"></TextBox>
+                <TextBox Name="tbZoomMode" Width="200" Grid.Column="1" Grid.Row="9" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="10" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Zoom MS (runtime)</TextBlock>
-                <TextBox Name="tbZoomMS" Width="200" Grid.Column="1" Grid.Row="10" Margin="5" Height="20" TextChanged="OnTextChanged"></TextBox>
+                <TextBox Name="tbZoomMS" Width="200" Grid.Column="1" Grid.Row="10" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
             </Grid>
 
         </Grid>

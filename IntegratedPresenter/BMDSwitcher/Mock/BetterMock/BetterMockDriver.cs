@@ -1,6 +1,10 @@
 ﻿using BMDSwitcherAPI;
 
+using CCU.Config;
+
 using CCUI_UI;
+
+using CommonGraphics;
 
 using Integrated_Presenter.BMDSwitcher.Mock;
 
@@ -14,16 +18,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {
 
-    internal interface IResetCameraState
+    internal interface IManualMoveCameraDriver
     {
         void ResetCamerasToDefaults();
+        void ManualMoveCamera(int camPhyID, string base64png);
+        List<BitmapImage> GetCamChoices();
     }
 
-    public class BetterMockDriver : IMockMultiviewerDriver, ISwitcherStateProvider, IResetCameraState
+    public class BetterMockDriver : IMockMultiviewerDriver, ISwitcherStateProvider, IManualMoveCameraDriver
     {
 
         BetterMockMVUI multiviewerWindow;
@@ -32,6 +39,8 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         CameraSourceDriver _camDriver;
 
         BMDSwitcherState _state;
+
+        CCPUConfig_Extended _ccuConfig;
 
         // TODO: perhaps this isn't best
         bool _stateDSK1InFade = false;
@@ -303,10 +312,40 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             OnSwitcherStateUpdated?.Invoke(this, _state);
         }
 
-        void IResetCameraState.ResetCamerasToDefaults()
+        void IManualMoveCameraDriver.ResetCamerasToDefaults()
         {
-            (_camDriver as IResetCameraState).ResetCamerasToDefaults();
+            (_camDriver as IManualMoveCameraDriver).ResetCamerasToDefaults();
             multiviewerWindow.RefreshUI(_camDriver, this);
+        }
+
+        void IManualMoveCameraDriver.ManualMoveCamera(int camPhyID, string base64png)
+        {
+            (_camDriver as IManualMoveCameraDriver).ManualMoveCamera(camPhyID, base64png);
+            multiviewerWindow.RefreshUI(_camDriver, this);
+        }
+
+        List<BitmapImage> IManualMoveCameraDriver.GetCamChoices()
+        {
+            List<BitmapImage> choices = new List<BitmapImage>();
+
+            // get the default & lives from the driver
+            choices.AddRange((_camDriver as IManualMoveCameraDriver).GetCamChoices());
+
+            // add all the available presets from config
+            foreach (var cam in _ccuConfig.MockPresetInfo.Values)
+            {
+                foreach (var pst in cam.Values.Where(x => !string.IsNullOrEmpty(x.Thumbnail)))
+                {
+                    choices.Add(pst.Thumbnail.ToBitmapImage());
+                }
+            }
+
+            return choices;
+        }
+
+        public void UpdateCCUConfig(CCPUConfig_Extended cfg)
+        {
+            _ccuConfig = cfg;
         }
     }
 }

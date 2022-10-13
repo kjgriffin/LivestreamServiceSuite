@@ -7,6 +7,7 @@ using IntegratedPresenter.Main;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Media.Imaging;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
@@ -33,7 +34,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
     }
 
 
-    class CameraSourceDriver : ICameraSourceProvider, IResetCameraState
+    class CameraSourceDriver : ICameraSourceProvider, IManualMoveCameraDriver
     {
 
         const string DEFAULT_SOURCE = "pack://application:,,,/BMDSwitcher/Mock/Images/black.png";
@@ -211,12 +212,53 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         }
 
-        void IResetCameraState.ResetCamerasToDefaults()
+        void IManualMoveCameraDriver.ResetCamerasToDefaults()
         {
             foreach (var lcam in m_liveCameras.Keys)
             {
                 m_liveCameras[lcam] = new LiveCameraState();
             }
+        }
+
+        public void ManualMoveCamera(int camPhyID, string base64png)
+        {
+            if (m_liveCameras.TryGetValue(camPhyID, out var live))
+            {
+
+                live.Thumbnail = base64png;
+            }
+            else
+            {
+                // make it live now???
+                m_liveCameras[camPhyID] = new LiveCameraState()
+                {
+                    Thumbnail = base64png
+                };
+            }
+        }
+
+        public List<BitmapImage> GetCamChoices()
+        {
+            // pick up all defaults
+            List<BitmapImage> choices = new List<BitmapImage>();
+
+            foreach (var img in m_defaultSourceMap.GroupBy(x => x.Value).Select(x => x.First()))
+            {
+                choices.Add(new BitmapImage(new Uri(img.Value)));
+            }
+
+            // driver has config so we'll get 'em all here
+
+            //// add any curent live sources
+            //foreach (var live in m_liveCameras)
+            //{
+            //    if (!string.IsNullOrEmpty(live.Value.Thumbnail))
+            //    {
+            //        choices.Add(live.Value.Thumbnail.ToBitmapImage());
+            //    }
+            //}
+
+            return choices;
         }
     }
 }

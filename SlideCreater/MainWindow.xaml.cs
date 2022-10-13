@@ -1875,13 +1875,13 @@ namespace SlideCreater
         private void ClickOpenCCUConfigEditor(object sender, RoutedEventArgs e)
         {
             CCPUConfig_Extended cfg = null;
-            if (string.IsNullOrEmpty(TbConfigCCU.Text))
+            if (string.IsNullOrEmpty(_proj.SourceCCPUConfigFull))
             {
                 cfg = new CCPUConfig_Extended();
             }
             else
             {
-                cfg = JsonSerializer.Deserialize<CCPUConfig_Extended>(TbConfigCCU.Text);
+                cfg = JsonSerializer.Deserialize<CCPUConfig_Extended>(_proj.SourceCCPUConfigFull);
             }
 
             if (m_ccueditor == null || m_ccueditor?.WasClosed == true)
@@ -1901,8 +1901,15 @@ namespace SlideCreater
                 using (StreamReader sr = new StreamReader(ofd.FileName))
                 {
                     string jsonTxt = sr.ReadToEnd();
-                    TbConfigCCU.Text = jsonTxt;
+
+                    _proj.SourceCCPUConfigFull = jsonTxt;
                 }
+
+                var fullCFG = JsonSerializer.Deserialize<CCPUConfig_Extended>(_proj.SourceCCPUConfigFull);
+                _proj.CCPUConfig = fullCFG;
+
+                var fakeCFG = SanatizePNGsFromCfg(fullCFG);
+                TbConfigCCU.Text = fakeCFG;
             }
         }
 

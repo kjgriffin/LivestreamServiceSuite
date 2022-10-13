@@ -56,6 +56,12 @@ namespace UIControls
             tbMoveMS.Text = cfg.MoveMS.ToString();
 
             _thumbnail = cfg.Thumbnail;
+
+            if (!string.IsNullOrEmpty(_thumbnail))
+            {
+                imgThumbnail.Source = _thumbnail.ToBitmapImage();
+            }
+            /*
             try
             {
                 imgThumbnail.Source = new BitmapImage(new Uri(cfg.Thumbnail));
@@ -63,6 +69,7 @@ namespace UIControls
             catch (Exception)
             {
             }
+            */
 
             _isInit = true;
         }

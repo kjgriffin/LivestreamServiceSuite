@@ -159,7 +159,7 @@ namespace Xenon.Renderer
                 if (rs.HasPilot)
                 {
                     string filename = Path.Join(directory, $"Pilot_{slide.Number}.txt");
-                    using(StreamWriter sw = new StreamWriter(filename, false))
+                    using (StreamWriter sw = new StreamWriter(filename, false))
                     {
                         sw.Write(rs.Pilot);
                     }
@@ -202,6 +202,12 @@ namespace Xenon.Renderer
             using (StreamWriter sw = new StreamWriter(configfilename, false))
             {
                 sw.Write(json);
+            }
+
+            string ccuconfigfilename = Path.Join(directory, $"CCU-Config.json");
+            using (StreamWriter sw = new StreamWriter(ccuconfigfilename, false))
+            {
+                sw.Write(proj.SourceCCPUConfigFull);
             }
 
 

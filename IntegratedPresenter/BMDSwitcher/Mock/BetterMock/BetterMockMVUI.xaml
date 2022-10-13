@@ -14,22 +14,38 @@
             </Grid.RowDefinitions>
 
             <Grid>
-                <Button HorizontalAlignment="Left" Margin="20,0,0,0" Width="300" Height="90" Focusable="False" Click="ClickResetCameras" IsTabStop="False">
-                    <Button.Template> <ControlTemplate>
-                            <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="2">
-                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke" FontSize="30">RESET CAMERAS</ContentControl>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Cursor" Value="Hand"></Setter>
-                                    <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
-
+                <StackPanel Orientation="Horizontal">
+                    <Button Margin="20,0,0,0" Width="300" Height="90" Focusable="False" Click="ClickResetCameras" IsTabStop="False">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="2">
+                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke" FontSize="30">RESET CAMERAS</ContentControl>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Cursor" Value="Hand"></Setter>
+                                        <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <Button Margin="20,0,0,0" Width="300" Height="90" Focusable="False" Click="ClickMoveCamera" IsTabStop="False">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="Yellow" Margin="3" BorderThickness="2">
+                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke" FontSize="30">MOVE CAMERA</ContentControl>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Cursor" Value="Hand"></Setter>
+                                        <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
             </Grid>
 
             <Grid Grid.Row="1">

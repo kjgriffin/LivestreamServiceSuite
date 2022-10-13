@@ -1,4 +1,6 @@
-﻿using CCUI_UI;
+﻿using CCU.Config;
+
+using CCUI_UI;
 
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
@@ -32,6 +34,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         void SetUSK1OffAir(BMDSwitcherState state);
         void SetUSK1OnAir(BMDSwitcherState state);
         void UpdateMockCameraMovement(CameraUpdateEventArgs e);
+        void UpdateCCUConfig(CCPUConfig_Extended cfg);
         void UpdateSlideInput(ISlide s);
     }
 }

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UIControls"
         mc:Ignorable="d"
         Closed="Window_Closed"
-        Title="CCUConfigEditor" Height="450" Width="800">
+        Title="CCUConfigEditor" Height="800" Width="1200">
     <Window.Resources>
         <Style TargetType="Button" x:Name="DarkBtn" x:Key="DarkBtn">
             <Setter Property="Template">
@@ -30,6 +30,32 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style TargetType="TabItem" x:Name="DarkTab" x:Key="DarkTab">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border BorderThickness="1" BorderBrush="#373737">
+                            <Grid Name="TabPanel">
+                                <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="10,2"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="TabPanel" Property="Background" Value="#474747" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="TabPanel" Property="Background" Value="#171717" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
     </Window.Resources>
     <Grid Background="#171717">
@@ -41,14 +67,41 @@
             <Button Margin="10" Click="ClickCreateNewPreset" Width="150" Height="30" Style="{StaticResource DarkBtn}" Foreground="SkyBlue">Create Preset Placeholder</Button>
             <Button Name="btnSave" Margin="10" Click="ClickSaveChanges" Width="150" Height="30" Style="{StaticResource DarkBtn}" Foreground="Orange">Save Changes</Button>
         </StackPanel>
-        <ScrollViewer Grid.Row="1">
-            <WrapPanel Name="lvItems" Background="#171717" HorizontalAlignment="Center">
-                <WrapPanel.Resources>
-                    <Style TargetType="{x:Type local:CCUPresetItem}">
-                        <Setter Property="Margin" Value="10"></Setter>
-                    </Style>
-                </WrapPanel.Resources>
-            </WrapPanel>
-        </ScrollViewer>
+        <Grid Grid.Row="1" Background="#171717">
+
+            <TabControl Background="#272727" BorderBrush="#373737" BorderThickness="3">
+                <TabItem Header="Presets" Style="{StaticResource DarkTab}" Foreground="White" Background="#474747">
+                    <ScrollViewer Background="#171717">
+                        <WrapPanel Name="lvItems" HorizontalAlignment="Center">
+                            <WrapPanel.Resources>
+                                <Style TargetType="{x:Type local:CCUPresetItem}">
+                                    <Setter Property="Margin" Value="10"></Setter>
+                                </Style>
+                            </WrapPanel.Resources>
+                        </WrapPanel>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem Header="Clients" Style="{StaticResource DarkTab}" Foreground="White" Background="#474747">
+                    <Grid Background="#272727">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Button Style="{StaticResource DarkBtn}" Foreground="Orange" FontSize="20" FontWeight="Regular" Height="30" Width="100" Click="AddClient">Add</Button>
+                        <ScrollViewer Background="#171717" Grid.Row="1">
+                            <WrapPanel Name="wpClients" HorizontalAlignment="Center">
+                                <WrapPanel.Resources>
+                                    <Style TargetType="{x:Type local:CCUClientItem}">
+                                        <Setter Property="Margin" Value="10"></Setter>
+                                    </Style>
+                                </WrapPanel.Resources>
+                            </WrapPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+
+
+        </Grid>
     </Grid>
 </Window>

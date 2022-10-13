@@ -1,4 +1,6 @@
-﻿using CCUI_UI;
+﻿using CCU.Config;
+
+using CCUI_UI;
 
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
@@ -241,6 +243,10 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             // NOTE: here we won't really do much for now...
             throw new NotImplementedException();
+        }
+
+        public void UpdateCCUConfig(CCPUConfig_Extended cfg)
+        {
         }
     }
 }

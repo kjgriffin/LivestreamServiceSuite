@@ -29,6 +29,7 @@ using System.Windows.Controls;
 using CCUI_UI;
 using SwitcherControl.BMDSwitcher;
 using Integrated_Presenter.Presentation;
+using CCU.Config;
 
 namespace IntegratedPresenter.Main
 {
@@ -408,6 +409,7 @@ namespace IntegratedPresenter.Main
             switcherManager = new MockBMDSwitcherManager(this);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
+            (switcherManager as MockBMDSwitcherManager)?.UpdateCCUConfig(Presentation?.CCPUConfig as CCPUConfig_Extended);
             switcherManager.TryConnect("localhost");
             _logger.Debug("MockConnectSwitcher() initialized switcherManger with mock switcher.");
             SwitcherConnectedUiUpdate(true);
@@ -3370,7 +3372,7 @@ namespace IntegratedPresenter.Main
             }
 
             public State PlaybackState { get; set; }
-            
+
         }
 
 
@@ -5240,6 +5242,7 @@ namespace IntegratedPresenter.Main
             {
                 _logger.Info($"Presentation loading specified ccu config settings. Re-configuring now.");
                 _camMonitor?.LoadConfig(pres.CCPUConfig);
+                (switcherManager as MockBMDSwitcherManager)?.UpdateCCUConfig(pres.CCPUConfig as CCPUConfig_Extended);
             }
 
             // overwrite display of old presentation if already open
@@ -5314,6 +5317,11 @@ namespace IntegratedPresenter.Main
             else
             {
                 _camMonitor = new CCPUPresetMonitor(true, _logger, this);
+            }
+
+            if (Presentation?.HasCCUConfig == true)
+            {
+                _camMonitor.LoadConfig(Presentation.CCPUConfig);
             }
 
             _camMonitor.OnCommandUpdate += _camMonitor_OnCommandUpdate;

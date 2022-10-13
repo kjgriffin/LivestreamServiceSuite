@@ -63,7 +63,37 @@ namespace UIControls
                 lvItems.Children.Add(ctrl);
             }
 
+            foreach (var client in cfg.Clients)
+            {
+                string cass = "";
+                if (!cfg.CameraAssociations.TryGetValue(client.Name, out cass))
+                {
+                    cass = "NO ASSOCIATED CAMERA";
+                }
+
+                var ctrl = new CCUClientItem(client.Name, client.IPAddress, client.Port.ToString(), cass);
+                ctrl.OnDeleteRequest += Ctrl_OnDeleteRequest_client;
+                ctrl.OnEditsMade += Ctrl_OnEditsMade;
+                wpClients.Children.Add(ctrl);
+            }
+
+
+
             NewChanges = false;
+        }
+
+        private void Ctrl_OnEditsMade(object sender, EventArgs e)
+        {
+            NewChanges = true;
+        }
+
+        private void Ctrl_OnDeleteRequest_client(object sender, EventArgs e)
+        {
+            NewChanges = true;
+            var ctrl = sender as CCUClientItem;
+            ctrl.OnDeleteRequest -= Ctrl_OnDeleteRequest_client;
+            ctrl.OnEditsMade -= Ctrl_OnEditsMade;
+            wpClients.Children.Remove(ctrl);
         }
 
         private void Ctrl_OnDeleteRequest(object sender, CCUPresetItem e)
@@ -159,21 +189,35 @@ namespace UIControls
 
             }
 
-            // for now just copy
-            newCFG.Clients = _cfgOrig.Clients;
-            newCFG.CameraAssociations = _cfgOrig.CameraAssociations;
 
-            // TODO: camera associations
-
-            // TODO: clients
-
-
-            // jsonify
-            //string json = JsonSerializer.Serialize(newCFG, new JsonSerializerOptions { WriteIndented = true });
+            foreach (var ictrl in wpClients.Children)
+            {
+                var ctrl = ictrl as CCUClientItem;
+                if (ctrl != null)
+                {
+                    var client = new CCPUConfig.ClientConfig();
+                    client.Name = ctrl.tbName.Text;
+                    client.IPAddress = ctrl.tbIP.Text;
+                    if (int.TryParse(ctrl.tbPort.Text, out var p))
+                    {
+                        client.Port = p;
+                    }
+                    newCFG.Clients.Add(client);
+                    newCFG.CameraAssociations[client.Name] = ctrl.tbAssociation.Text;
+                }
+            }
 
             _saveChanges?.Invoke(newCFG);
 
             NewChanges = false;
+        }
+
+        private void AddClient(object sender, RoutedEventArgs e)
+        {
+            var ctrl = new CCUClientItem("NEW CAMERA", "172.0.0.1", "5002", "NEW CAMERA ASSOCIATION");
+            ctrl.OnDeleteRequest += Ctrl_OnDeleteRequest_client;
+            ctrl.OnEditsMade += Ctrl_OnEditsMade;
+            wpClients.Children.Add(ctrl);
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using BMDSwitcherAPI;
 
+using Integrated_Presenter.BMDSwitcher.Mock.BetterMock.Dialogs;
+
 using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.BMDSwitcher.Mock;
@@ -63,16 +65,16 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         };
 
 
-        IResetCameraState _camReset;
+        IManualMoveCameraDriver _camManualDriver;
 
         ConcurrentDictionary<int, List<Storyboard>> _camZAnimations = new ConcurrentDictionary<int, List<Storyboard>>();
         ConcurrentDictionary<int, List<Storyboard>> _camMAnimations = new ConcurrentDictionary<int, List<Storyboard>>();
 
-        internal BetterMockMVUI(IResetCameraState camReset)
+        internal BetterMockMVUI(IManualMoveCameraDriver camManualDriver)
         {
             InitializeComponent();
 
-            _camReset = camReset;
+            _camManualDriver = camManualDriver;
 
             m_simplePIPS = new MockMV_Simple_PIP[8]
             {
@@ -783,7 +785,22 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         private void ClickResetCameras(object sender, RoutedEventArgs e)
         {
-            _camReset.ResetCamerasToDefaults();
+            _camManualDriver.ResetCamerasToDefaults();
+        }
+
+        private void ClickMoveCamera(object sender, RoutedEventArgs e)
+        {
+
+            MoveCameraUI ui = new MoveCameraUI(_cfg.Routing.Where(x => ((x.PhysicalInputId < 9 && x.PhysicalInputId > 0) || x.PhysicalInputId == (int)BMDSwitcherVideoSources.ColorBars) && x.KeyName != "slide" && x.KeyName != "key")
+                .Select(x => (x.LongName, x.PhysicalInputId))
+                .ToList(), _camManualDriver.GetCamChoices());
+            ui.ShowDialog();
+            if (ui.Valid)
+            {
+                var res = ui.Result;
+                _camManualDriver.ManualMoveCamera(res.cid, res.img);
+            }
+
         }
     }
 }
