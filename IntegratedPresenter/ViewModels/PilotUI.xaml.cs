@@ -54,10 +54,12 @@ namespace Integrated_Presenter.ViewModels
         PilotMode mode = PilotMode.STD;
 
 
-        internal void ClearState()
+        internal void ClearState(Dictionary<string, IPilotAction> calculatedLast, Dictionary<string, IPilotAction> calculatedEmg)
         {
-            _lastNamedCache?.Clear();
-            _emergencyActions?.Clear();
+            //_lastNamedCache?.Clear();
+            //_emergencyActions?.Clear();
+            _lastNamedCache = calculatedLast;
+            _emergencyActions = calculatedEmg;
             _curentActions?.Clear();
             _slideNum = -1;
         }

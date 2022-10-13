@@ -5274,7 +5274,24 @@ namespace IntegratedPresenter.Main
             // clears all emg/last and curent actions...
             // if we're hotreload into the pres we may want a way to 'clear' just the curent so it gets going again
             // then if we get real fancy we can try and figure out what the 'last' and 'emg' should be based on previous slides
-            pilotUI.ClearState();
+            Dictionary<string, IPilotAction> calculatedLast = new Dictionary<string, IPilotAction>();
+            Dictionary<string, IPilotAction> calculatedEmg = new Dictionary<string, IPilotAction>();
+
+            // based on curent slide num...
+            // 'run' each slide up to curent slide and have it overwrite into the calculations
+            for (int i = 0; i < pres.CurrentSlide; i++)
+            {
+                foreach (var act in pres.Slides[i].AutoPilotActions)
+                {
+                    calculatedLast[act.CamName] = act;
+                }
+                foreach (var act in pres.Slides[i].EmergencyActions)
+                {
+                    calculatedEmg[act.CamName] = act;
+                }
+            }
+
+            pilotUI.ClearState(calculatedLast, calculatedEmg);
 
             PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
             // preserve mute status
