@@ -78,14 +78,17 @@ namespace UIControls
         {
             int.TryParse(tbZoomMS.Text, out int zms);
             int.TryParse(tbMoveMS.Text, out int rms);
+            long.TryParse(tbPan.Text, out long pan);
+            int.TryParse(tbTilt.Text, out int tilt);
+            bool.TryParse(tbValid.Text, out bool valid);
 
             return new CombinedPresetInfo
             {
                 CamName = tbCamName.Text,
                 PresetPosName = tbPstName.Text,
-                Pan = m_cfgOrig.Pan,
-                Tilt = m_cfgOrig.Tilt,
-                Valid = m_cfgOrig.Valid,
+                Pan = pan,
+                Tilt = tilt,
+                Valid = valid,
                 ZoomPresetName = tbZoomPst.Text,
                 ZoomMode = tbZoomMode.Text,
                 ZoomMS = zms,

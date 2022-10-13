@@ -883,6 +883,7 @@ namespace SlideCreater
             _proj = new Project(true);
 
             TbConfig.Text = _proj.SourceConfig;
+            TbConfigCCU.Text = SanatizePNGsFromCfg(_proj.CCPUConfig);
 
             ShowProjectAssets();
             SetupLayoutsTreeVew();

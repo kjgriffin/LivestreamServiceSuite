@@ -118,9 +118,9 @@ namespace CCU.Config
             {
                 CamName = "UNNAMED CAMERA",
                 PresetPosName = "NEW PRESET",
-                Pan = 0,
-                Tilt = 0,
-                Valid = false,
+                Pan = 1040000, // maybe centered? for some??
+                Tilt = 64500, // this seems to be about level
+                Valid = true, // or-else a server won't load the preset
                 MoveMS = 10000,
                 ZoomPresetName = "NEW PRESET",
                 ZoomMode = "WIDE",

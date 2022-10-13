@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UIControls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="500">
+             d:DesignHeight="300" d:DesignWidth="520">
     <Grid>
         <Grid Background="#272727">
             <Grid.RowDefinitions>
@@ -13,7 +13,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"></ColumnDefinition>
-                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="320"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <Grid VerticalAlignment="Top">
@@ -36,6 +36,10 @@
                     </Grid>
                 </Viewbox>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Background="#d0272727" Padding="10">Mock Thumbnail <LineBreak></LineBreak> (click to change)</TextBlock>
+            </Grid>
+
+            <Grid VerticalAlignment="Bottom">
+                <TextBlock Margin="10" Foreground="#aeaeae" TextWrapping="WrapWithOverflow">*Note Pan/Tilt values:<LineBreak></LineBreak>Pan [1020000-1050000] or [7000-20000]<LineBreak></LineBreak>Tilt [62000-65000]</TextBlock>
             </Grid>
 
             <Grid Grid.Row="0" Grid.Column="1">
@@ -64,13 +68,13 @@
                 <TextBox Name="tbPstName" Width="200" Grid.Row="2" Grid.Column="1" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Pan</TextBlock>
-                <TextBox x:Name="tbPan" Width="200" Grid.Column="1" Grid.Row="3" Margin="5" Height="20" IsReadOnly="true" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
+                <TextBox x:Name="tbPan" Width="200" Grid.Column="1" Grid.Row="3" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Tilt</TextBlock>
-                <TextBox Name="tbTilt" Width="200" Grid.Column="1" Grid.Row="4" Margin="5" Height="20" IsReadOnly="true" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
+                <TextBox Name="tbTilt" Width="200" Grid.Column="1" Grid.Row="4" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Valid</TextBlock>
-                <TextBox Name="tbValid" Width="200" Grid.Column="1" Grid.Row="5" Margin="5" Height="20" IsReadOnly="True" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
+                <TextBox Name="tbValid" Width="200" Grid.Column="1" Grid.Row="5" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
 
                 <TextBlock Foreground="White" Grid.Column="0" Grid.Row="6" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Right">Move MS (mock runtime)</TextBlock>
                 <TextBox Name="tbMoveMS" Width="200" Grid.Column="1" Grid.Row="6" Margin="5" Height="20" TextChanged="OnTextChanged" FontWeight="Regular"></TextBox>
