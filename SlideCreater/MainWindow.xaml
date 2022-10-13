@@ -354,7 +354,18 @@
                             <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfig" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
                         </TabItem>
                         <TabItem Header="CCU Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
-                            <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfigCCU" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource DarkBtn}" Foreground="White" Margin="5" Width="100" Height="30" VerticalAlignment="Top" Click="ClickLoadCCUFile">Load CCU Config</Button>
+                                    <Button Style="{StaticResource DarkBtn}" Foreground="White" Margin="5" Width="100" Height="30" VerticalAlignment="Top" Click="ClickOpenCCUConfigEditor">Open Editor</Button>
+                                </StackPanel>
+                                <AvalonEdit:TextEditor Grid.Row="1" IsReadOnly="true" Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfigCCU" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
+                                <!--<TextBlock Grid.Row="1" Name="TbConfigCCU" Background="#272727" Foreground="#eaeaea" FontFamily="cascadia" FontSize="14" TextWrapping="Wrap"></TextBlock>-->
+                            </Grid>
                         </TabItem>
                     </TabControl>
 

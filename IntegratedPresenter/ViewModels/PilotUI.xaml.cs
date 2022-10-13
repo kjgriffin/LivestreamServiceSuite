@@ -54,6 +54,15 @@ namespace Integrated_Presenter.ViewModels
         PilotMode mode = PilotMode.STD;
 
 
+        internal void ClearState()
+        {
+            _lastNamedCache?.Clear();
+            _emergencyActions?.Clear();
+            _curentActions?.Clear();
+            _slideNum = -1;
+        }
+
+
         private string GetSubInfoForCam(string camName, PilotMode mode)
         {
             switch (mode)

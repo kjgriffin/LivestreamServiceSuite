@@ -1,5 +1,7 @@
 ﻿using CCUI_UI;
 
+using CommonGraphics;
+
 using IntegratedPresenter.Main;
 
 using System;
@@ -80,16 +82,31 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             }
             else if (m_liveCameras.TryGetValue(PhysicalInputID, out var cam))
             {
+                /*
                 if (File.Exists(cam.Thumbnail))
                 {
                     source = new BitmapImage(new Uri(cam.Thumbnail));
                     return true;
+                }
+                */
+                if (!string.IsNullOrWhiteSpace(cam.Thumbnail))
+                {
+                    try
+                    {
+                        source = CommonGraphicsHelpers.ToBitmapImage(cam.Thumbnail);
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
                 else if (m_defaultSourceMap.TryGetValue(PhysicalInputID, out string spath))
                 {
                     source = new BitmapImage(new Uri(spath));
                     return true;
                 }
+
+
             }
             else if (m_defaultSourceMap.TryGetValue(PhysicalInputID, out string spath))
             {

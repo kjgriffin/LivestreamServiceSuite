@@ -1,4 +1,6 @@
-﻿using CCUI_UI;
+﻿using CCU.Config;
+
+using CCUI_UI;
 
 using Configurations.FeatureConfig;
 
@@ -150,12 +152,36 @@ namespace Integrated_Presenter.Presentation
                 pres.Slides.Add(slide);
             }
 
-            // ignore bmd config
+
+            if (!string.IsNullOrEmpty(presPackage.BMDCfgFile))
+            {
+                // load 'er up
+                using (var file = MemoryMappedFile.OpenExisting(presPackage.BMDCfgFile))
+                using (var stream = file.CreateViewStream())
+                using (var reader = new StreamReader(stream))
+                {
+                    var text = reader.ReadToEnd().Trim().TrimEnd('\0');
+                    var cfg = JsonSerializer.Deserialize<BMDSwitcherConfigSettings>(text);
+                    pres.HasSwitcherConfig = true;
+                    pres.SwitcherConfig = cfg;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(presPackage.CCUCfgFile))
+            {
+                // load 'er up
+                using (var file = MemoryMappedFile.OpenExisting(presPackage.CCUCfgFile))
+                using (var stream = file.CreateViewStream())
+                using (var reader = new StreamReader(stream))
+                {
+                    var text = reader.ReadToEnd().Trim().TrimEnd('\0');
+                    var cfg = JsonSerializer.Deserialize<CCPUConfig_Extended>(text);
+                    pres.HasCCUConfig = true;
+                    pres.CCPUConfig = cfg;
+                }
+            }
+
             // ignore user config
-            // ignore ccu config
-
-
-
 
 
 

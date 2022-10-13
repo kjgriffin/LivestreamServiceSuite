@@ -19,14 +19,14 @@ namespace IntegratedPresenter.Main
     public class Presentation : IPresentation
     {
 
-        public bool HasSwitcherConfig { get; private set; } = false;
-        public BMDSwitcher.Config.BMDSwitcherConfigSettings SwitcherConfig { get; private set; }
+        public bool HasSwitcherConfig { get; internal set; } = false;
+        public BMDSwitcher.Config.BMDSwitcherConfigSettings SwitcherConfig { get; internal set; }
 
         public bool HasUserConfig { get; private set; } = false;
         public Configurations.FeatureConfig.IntegratedPresenterFeatures UserConfig { get; private set; }
 
-        public bool HasCCUConfig { get; private set; } = false;
-        public CCPUConfig CCPUConfig { get; private set; }
+        public bool HasCCUConfig { get; internal set; } = false;
+        public CCPUConfig CCPUConfig { get; internal set; }
 
         public string Folder { get; set; }
 

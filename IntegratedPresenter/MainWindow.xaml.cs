@@ -5268,6 +5268,11 @@ namespace IntegratedPresenter.Main
 
             FireOnConditionalsUpdated();
 
+            // clears all emg/last and curent actions...
+            // if we're hotreload into the pres we may want a way to 'clear' just the curent so it gets going again
+            // then if we get real fancy we can try and figure out what the 'last' and 'emg' should be based on previous slides
+            pilotUI.ClearState();
+
             PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
             // preserve mute status
             if (MediaMuted)

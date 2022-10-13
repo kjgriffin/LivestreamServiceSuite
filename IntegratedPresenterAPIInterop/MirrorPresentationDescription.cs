@@ -20,7 +20,8 @@ namespace IntegratedPresenterAPIInterop
         public List<MirrorSlide> Slides { get; set; } = new List<MirrorSlide>();
         public string HeavyResourcePath { get; set; } = "";
 
-
+        public string BMDCfgFile { get; set; } = "";
+        public string CCUCfgFile { get; set; } = "";
     }
 
     public class MirrorSlide

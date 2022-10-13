@@ -242,6 +242,28 @@ namespace Xenon.Renderer
                 }
             }
 
+            // include configs
+            var bmdcfgFile = MemoryMappedFile.CreateNew("SC-cfg-bmd", proj.SourceConfig.Length * 8 + 1024);
+            mfiles.Add(bmdcfgFile);
+            presDescription.BMDCfgFile = "SC-cfg-bmd";
+            using (var stream = bmdcfgFile.CreateViewStream())
+            using (var writer = new StreamWriter(stream))
+            {
+                writer.Write(proj.SourceConfig);
+            }
+
+            var ccucfgFile = MemoryMappedFile.CreateNew("SC-cfg-ccu", proj.SourceCCPUConfigFull.Length * 8 + 1024);
+            mfiles.Add(ccucfgFile);
+            presDescription.CCUCfgFile = "SC-cfg-ccu";
+            using (var stream = ccucfgFile.CreateViewStream())
+            using (var writer = new StreamWriter(stream))
+            {
+                writer.Write(proj.SourceCCPUConfigFull);
+            }
+
+
+
+
             presDescription.HeavyResourcePath = proj.LoadTmpPath;
 
             var dtext = JsonSerializer.Serialize(presDescription);

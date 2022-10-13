@@ -1,4 +1,6 @@
-﻿using CommonVersionInfo;
+﻿using CCU.Config;
+
+using CommonVersionInfo;
 
 using System;
 using System.Collections.Concurrent;
@@ -27,7 +29,7 @@ namespace Xenon.SaveLoad
     {
 
 
-        public static async Task<(Project project, Dictionary<string, string> assetfilemap, Dictionary<string, string> assetdisplaynames, Dictionary<string, string> assetextensions, Dictionary<string, string> assetgroups)> OpenTrustily(BuildVersion currentVersion, string filename, CodePreviewUpdateFunc preloadcode)
+        public static async Task<(Project project, Dictionary<string, string> assetfilemap, Dictionary<string, string> assetdisplaynames, Dictionary<string, string> assetextensions, Dictionary<string, string> assetgroups)> OpenTrustily(BuildVersion currentVersion, string filename, CodePreviewUpdateFunc preloadcode, Action<string, CCPUConfig_Extended> preloadCfg)
         {
             var proj = new Project(true, false);
 
@@ -89,8 +91,35 @@ namespace Xenon.SaveLoad
                     }
                 }
 
+                // get configuration
+                string ccucfgstr = "";
+                if (originalVersion.MeetsMinimumVersion(1, 9, 0, 0))
+                {
+                    var configsourcefile = archive.GetEntry("ccuconfig.json");
+                    if (configsourcefile != null)
+                    {
+                        using (StreamReader sr = new StreamReader(configsourcefile.Open()))
+                        {
+                            ccucfgstr = sr.ReadToEnd();
+                            // try and parse it
+                            try
+                            {
+                                var config = JsonSerializer.Deserialize<CCPUConfig_Extended>(ccucfgstr);
+                                proj.CCPUConfig = config;
+                            }
+                            catch
+                            {
+                            }
+                            // always recover the source though
+                            proj.SourceCCPUConfigFull = ccucfgstr;
+                        }
+                    }
+                }
+
+
                 // in case a UI want's to be responsive and show text before we finish extracting/copying all assets out to the project directory
                 preloadcode?.Invoke(sourcecode);
+                preloadCfg?.Invoke(ccucfgstr, proj.CCPUConfig);
 
                 var assetfilemapfile = archive.GetEntry("assets.json");
                 if (assetfilemapfile != null)
@@ -450,6 +479,13 @@ namespace Xenon.SaveLoad
                 {
                     await writer.WriteAsync(proj.SourceConfig);
                 }
+
+                ZipArchiveEntry ccuconfig = archive.CreateEntry("ccuconfig.json");
+                using (StreamWriter writer = new StreamWriter(ccuconfig.Open()))
+                {
+                    await writer.WriteAsync(proj.SourceCCPUConfigFull);
+                }
+
 
 
                 // handle layouts
