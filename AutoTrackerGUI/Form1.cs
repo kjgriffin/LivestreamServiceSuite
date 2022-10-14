@@ -159,12 +159,12 @@ namespace AutoTrackerGUI
 
                 }
 
-                gfx.FillRectangle(Brushes.White, 10, 10, 150, 20);
+                gfx.FillRectangle(Brushes.White, 10, 10, 150, 30);
                 gfx.DrawString($"FPS {fps}", DefaultFont, Brushes.Black, new System.Drawing.Point(10, 10));
 
                 for (int i = 0; i < tracks.Count; i++)
                 {
-                    gfx.FillRectangle(Brushes.White, 10, 23 + 20 * i, 150, 40);
+                    gfx.FillRectangle(Brushes.White, 10, 40 + 20 * i, 150, 40);
                     gfx.DrawString(tracks[i].Name, DefaultFont, Brushes.Black, new System.Drawing.Point(10, 40 + i * 20));
                 }
 
@@ -175,11 +175,11 @@ namespace AutoTrackerGUI
                 // draw tracking bounds
                 gfx.DrawRectangle(new Pen(Color.Blue, 4), _validX - _rangeX, _validY - _rangeY, _rangeX * 2, _rangeY * 2);
 
-                g.FillRectangle(Brushes.White, 700, 200, 200, 40);
-                g.DrawString($"{_trackCMD} [{_cmdID}]", DefaultFont, Brushes.Blue, 700, 200);
+                g.FillRectangle(Brushes.White, 100, 70, 200, 30);
+                g.DrawString($"{_trackCMD} [{_cmdID}]", DefaultFont, Brushes.Blue, 100, 70);
 
                 //g.DrawImage(b, new RectangleF(10, 80, 1280, 720), new RectangleF(0, 0, 640, 480), GraphicsUnit.Pixel);
-                g.DrawImage(b, 10, 240);
+                g.DrawImage(b, 10, 100);
             }
         }
 

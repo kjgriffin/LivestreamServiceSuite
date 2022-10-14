@@ -32,6 +32,9 @@ namespace TestScreenshot
         internal int TTL { get; private set; } = 50;
         internal int ID { get; private set; }
         internal string Name { get => $"ID: {ID:00} -- TTL:{TTL}"; }
+
+        internal long Hits { get; private set; } = 0;
+
         internal void Update(Centroid newTroid)
         {
             // compute velocity
@@ -54,6 +57,7 @@ namespace TestScreenshot
 
             Centroid = newTroid;
             TTL = 50;
+            Hits++;
         }
         internal void UpdateLifetime()
         {
@@ -81,6 +85,8 @@ namespace TestScreenshot
     internal class CentroidTracker
     {
         List<CentroidTrack> Tracks { get; set; } = new List<CentroidTrack>();
+
+        List<CentroidTrack> CandidateTracks = new List<CentroidTrack>();
 
         private int m_nextID = 1;
 
@@ -121,10 +127,34 @@ namespace TestScreenshot
             // remove expired tracks
             Tracks.RemoveAll(t => t.TTL < 0);
 
+            foreach (var candidate in CandidateTracks)
+            {
+                var closest = newTroids.OrderBy(c => Math.Pow(c.Center.X - candidate.Centroid.Center.X, 2) + Math.Pow(c.Center.Y - candidate.Centroid.Center.Y, 2)).FirstOrDefault();
+                if (closest != null)
+                {
+                    // use it!
+                    newTroids.Remove(closest);
+                    candidate.Update(closest);
+                }
+
+                // always update lifes
+                candidate.UpdateLifetime();
+            }
+            // remove stale candidate tracks
+            CandidateTracks.RemoveAll(t => t.TTL < 0);
+
+            // promote tracks with high confidence
+            var promoted = CandidateTracks.Where(t => t.Hits > 10).ToList();
+            foreach (var track in promoted)
+            {
+                CandidateTracks.Remove(track);
+                Tracks.Add(track);
+            }
+
             // create new tracks for remaining objects
             foreach (var newObj in newTroids)
             {
-                Tracks.Add(new CentroidTrack(newObj, 50, m_nextID++));
+                CandidateTracks.Add(new CentroidTrack(newObj, 50, m_nextID++));
             }
         }
 
