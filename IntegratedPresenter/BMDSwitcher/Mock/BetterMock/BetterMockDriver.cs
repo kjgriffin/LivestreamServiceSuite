@@ -332,11 +332,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             choices.AddRange((_camDriver as IManualMoveCameraDriver).GetCamChoices());
 
             // add all the available presets from config
-            foreach (var cam in _ccuConfig.MockPresetInfo.Values)
+            if (_ccuConfig != null)
             {
-                foreach (var pst in cam.Values.Where(x => !string.IsNullOrEmpty(x.Thumbnail)))
+                foreach (var cam in _ccuConfig?.MockPresetInfo)
                 {
-                    choices.Add(pst.Thumbnail.ToBitmapImage());
+                    foreach (var pst in cam.Value?.Values?.Where(x => !string.IsNullOrEmpty(x.Thumbnail)))
+                    {
+                        choices.Add(pst.Thumbnail.ToBitmapImage());
+                    }
                 }
             }
 

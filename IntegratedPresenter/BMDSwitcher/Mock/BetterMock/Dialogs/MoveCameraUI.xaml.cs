@@ -1,4 +1,8 @@
-﻿using System;
+﻿using CommonGraphics;
+
+using Microsoft.Win32;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +31,8 @@ namespace Integrated_Presenter.BMDSwitcher.Mock.BetterMock.Dialogs
         public (int cid, string img) Result = (-1, "");
         public bool Valid = false;
 
+        int cid = 0;
+
         public MoveCameraUI(List<(string, int)> cams, List<BitmapImage> options)
         {
             InitializeComponent();
@@ -40,7 +46,6 @@ namespace Integrated_Presenter.BMDSwitcher.Mock.BetterMock.Dialogs
             cbCams.SelectedIndex = 0;
 
 
-            int cid = 0;
             foreach (var choice in options)
             {
                 var ctrl = new CameraThumbnailOptionItem(choice, cid);
@@ -90,6 +95,26 @@ namespace Integrated_Presenter.BMDSwitcher.Mock.BetterMock.Dialogs
             }
 
             Close();
+        }
+
+        private void LoadCustom(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Load Custom Image";
+            ofd.Filter = "Images (*.png)|*.png";
+            if (ofd.ShowDialog() == true)
+            {
+
+                BitmapImage img = new BitmapImage(new Uri(ofd.FileName));
+
+                var ctrl = new CameraThumbnailOptionItem(img, cid);
+                ctrl.OnRequestSelection += Ctrl_OnRequestSelection;
+
+                wpOptions.Children.Add(ctrl);
+
+                SelectedChoiceChanged(cid);
+                cid++;
+            }
         }
     }
 }

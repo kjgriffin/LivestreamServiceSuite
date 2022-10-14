@@ -32,6 +32,23 @@
                     </Button.Template>
                 </Button>
 
+                <Button Click="LoadCustom" Margin="20,0,0,0" Width="250" Height="80" Focusable="False" IsTabStop="False">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="2">
+                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke" FontSize="30">LOAD CUSTOM</ContentControl>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                    <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+
             </StackPanel>
         </Grid>
 

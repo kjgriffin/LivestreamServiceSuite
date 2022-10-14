@@ -175,9 +175,12 @@ namespace Integrated_Presenter.Presentation
                 using (var reader = new StreamReader(stream))
                 {
                     var text = reader.ReadToEnd().Trim().TrimEnd('\0');
-                    var cfg = JsonSerializer.Deserialize<CCPUConfig_Extended>(text);
-                    pres.HasCCUConfig = true;
-                    pres.CCPUConfig = cfg;
+                    if (!string.IsNullOrWhiteSpace(text))
+                    {
+                        var cfg = JsonSerializer.Deserialize<CCPUConfig_Extended>(text);
+                        pres.HasCCUConfig = true;
+                        pres.CCPUConfig = cfg;
+                    }
                 }
             }
 

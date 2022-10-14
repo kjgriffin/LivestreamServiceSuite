@@ -41,14 +41,32 @@ namespace CommonGraphics
         /// </summary>
         /// <param name="image"></param>
         /// <returns></returns>
+        //public static string ToBase64PngString(this BitmapImage image)
+        //{
+        //    byte[] buffer = new byte[image.StreamSource.Length];
+        //    image.StreamSource.Seek(0, SeekOrigin.Begin);
+        //    image.StreamSource.Read(buffer, 0, buffer.Length);
+
+        //    return Convert.ToBase64String(buffer);
+        //}
+
         public static string ToBase64PngString(this BitmapImage image)
         {
-            byte[] buffer = new byte[image.StreamSource.Length];
-            image.StreamSource.Seek(0, SeekOrigin.Begin);
-            image.StreamSource.Read(buffer, 0, buffer.Length);
+            string str64 = "";
+            var frame = BitmapFrame.Create(image);
 
-            return Convert.ToBase64String(buffer);
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(frame);
+
+            using (var ms = new MemoryStream())
+            {
+                encoder.Save(ms);
+                str64 = ms.ToBase64PngString();
+            }
+
+            return str64;
         }
+
 
         public static string ToBase64PngString(this Stream stream)
         {

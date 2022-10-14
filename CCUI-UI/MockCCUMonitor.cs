@@ -225,7 +225,7 @@ namespace CCUI_UI
 
         public void Shutdown()
         {
-            UiWindow.Close();
+            UiWindow?.Close();
         }
 
         public void StartCamera(string name, IPEndPoint endpoint)
