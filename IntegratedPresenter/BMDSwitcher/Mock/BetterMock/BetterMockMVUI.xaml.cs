@@ -798,6 +798,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             if (ui.Valid)
             {
                 var res = ui.Result;
+                _camManualDriver.AddLocalThumbnails(ui.AddedLocally);
                 _camManualDriver.ManualMoveCamera(res.cid, res.img);
             }
 

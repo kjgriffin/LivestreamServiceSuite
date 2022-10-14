@@ -27,6 +27,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
     {
         void ResetCamerasToDefaults();
         void ManualMoveCamera(int camPhyID, string base64png);
+        void AddLocalThumbnails(List<BitmapImage> thumbnails);
         List<BitmapImage> GetCamChoices();
     }
 
@@ -349,6 +350,11 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void UpdateCCUConfig(CCPUConfig_Extended cfg)
         {
             _ccuConfig = cfg;
+        }
+
+        void IManualMoveCameraDriver.AddLocalThumbnails(List<BitmapImage> thumbnails)
+        {
+            ((IManualMoveCameraDriver)_camDriver).AddLocalThumbnails(thumbnails);
         }
     }
 }

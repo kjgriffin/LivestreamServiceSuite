@@ -59,6 +59,8 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             [6] = new LiveCameraState(),
         };
 
+        List<BitmapImage> _customThumbnails = new List<BitmapImage>();
+
 
         public int SlideID { get; set; } = 4;
         public int AKeyID { get; set; } = 3;
@@ -247,18 +249,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 choices.Add(new BitmapImage(new Uri(img.Value)));
             }
 
-            // driver has config so we'll get 'em all here
-
-            //// add any curent live sources
-            //foreach (var live in m_liveCameras)
-            //{
-            //    if (!string.IsNullOrEmpty(live.Value.Thumbnail))
-            //    {
-            //        choices.Add(live.Value.Thumbnail.ToBitmapImage());
-            //    }
-            //}
+            choices.AddRange(_customThumbnails);
 
             return choices;
+        }
+
+        void IManualMoveCameraDriver.AddLocalThumbnails(List<BitmapImage> thumbnails)
+        {
+            _customThumbnails.AddRange(thumbnails);
         }
     }
 }

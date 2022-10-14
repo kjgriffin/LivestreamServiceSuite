@@ -29,6 +29,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock.BetterMock.Dialogs
         int selectedChoice = 0;
 
         public (int cid, string img) Result = (-1, "");
+        public List<BitmapImage> AddedLocally = new List<BitmapImage>();
         public bool Valid = false;
 
         int cid = 0;
@@ -106,6 +107,8 @@ namespace Integrated_Presenter.BMDSwitcher.Mock.BetterMock.Dialogs
             {
 
                 BitmapImage img = new BitmapImage(new Uri(ofd.FileName));
+
+                AddedLocally.Add(img);
 
                 var ctrl = new CameraThumbnailOptionItem(img, cid);
                 ctrl.OnRequestSelection += Ctrl_OnRequestSelection;
