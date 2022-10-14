@@ -161,7 +161,8 @@ namespace Integrated_Presenter.Presentation
                 using (var reader = new StreamReader(stream))
                 {
                     var text = reader.ReadToEnd().Trim().TrimEnd('\0');
-                    var cfg = JsonSerializer.Deserialize<BMDSwitcherConfigSettings>(text);
+                    var cfg = BMDSwitcherConfigSettings.LoadJson(text);
+
                     pres.HasSwitcherConfig = true;
                     pres.SwitcherConfig = cfg;
                 }
