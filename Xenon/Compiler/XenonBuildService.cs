@@ -41,6 +41,7 @@ namespace Xenon.Compiler
             try
             {
                 var res = await Task.Run(() => compiler.Compile(proj, progress));
+                PilotReportGenerator.YellAboutUnkownPilotCommands(proj, compiler.Logger);
                 Messages.AddRange(compiler.Logger.AllErrors);
 
                 return (true, res);
@@ -103,6 +104,7 @@ namespace Xenon.Compiler
                     Messages.Add(new XenonCompilerMessage() { ErrorMessage = $"Rendering failed to render {failedslides} slides.", ErrorName = "Failed to Render Slides", Level = XenonCompilerMessageType.Error });
                 }
 
+                /*
                 var report = PilotReportGenerator.GeneratePilotPresetReport(proj);
                 Messages.Add(new XenonCompilerMessage()
                 {
@@ -113,6 +115,7 @@ namespace Xenon.Compiler
                     Level = XenonCompilerMessageType.Message,
                     Token = "",
                 });
+                */
 
                 return slides;
             }
