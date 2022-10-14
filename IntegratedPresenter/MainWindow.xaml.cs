@@ -5209,7 +5209,7 @@ namespace IntegratedPresenter.Main
 
         private void LoadHotPresentation()
         {
-            int lastSlide = Presentation?.CurrentSlide - 1 ?? 0;
+            int lastSlide = Math.Max(Presentation?.CurrentSlide - 1 ?? 0, 0);
 
             if (!CheckAccess())
             {
@@ -5279,7 +5279,7 @@ namespace IntegratedPresenter.Main
 
             // based on curent slide num...
             // 'run' each slide up to curent slide and have it overwrite into the calculations
-            for (int i = 0; i < pres.CurrentSlide; i++)
+            for (int i = 0; i < lastSlide; i++)
             {
                 foreach (var act in pres.Slides[i].AutoPilotActions)
                 {
