@@ -587,7 +587,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
 
                         // keep going
-                        Internal_FinishZoomTask(i, live.ZDir, live.ZRunMS);
+                        Internal_FinishZoomTask(i, live.ZDir, live.ZRunMS, live.ZSetupMS);
 
                     }
                     else if (!live.Zooming)
@@ -700,7 +700,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             }
         }
 
-        private void Internal_FinishZoomTask(int iPIP, int zDir, int zMS)
+        private void Internal_FinishZoomTask(int iPIP, int zDir, int zMS, int zSetupMS)
         {
             // build the animations now... but don't use them just yet
             var animation = Internal_BuildFinalZoomAimation(zDir, zMS, iPIP);
@@ -715,7 +715,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
             Task.Run(async () =>
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(zMS));
+                await Task.Delay(TimeSpan.FromMilliseconds(zSetupMS));
                 RunOnUI(() => Internal_FinishZoomAnimation(zDir, iPIP, animation));
             });
         }
