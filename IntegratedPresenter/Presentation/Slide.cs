@@ -120,7 +120,7 @@ namespace IntegratedPresenter.Main
                     return true;
                 }
             }
-            if (!string.IsNullOrEmpty(Source) && Type != SlideType.Action)
+            if (!string.IsNullOrEmpty(Source) && (Type == SlideType.Full || Type == SlideType.Liturgy))
             {
                 return true;
             }
@@ -231,7 +231,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        
+
 
 
     }
