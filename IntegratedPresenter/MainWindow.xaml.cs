@@ -114,6 +114,7 @@ namespace IntegratedPresenter.Main
 
             pilotUI.OnModeChanged += PilotUI_OnModeChanged;
             pilotUI.OnTogglePilotMode += PilotUI_OnTogglePilotMode;
+            pilotUI.OnUserRequestForManualReRun += PilotUI_OnUserRequestForManualReRun;
 
             // set a default config
             SetDefaultConfig();
@@ -180,6 +181,11 @@ namespace IntegratedPresenter.Main
             gp_timer_2.Start();
 
             UpdatePilotUI();
+        }
+
+        private void PilotUI_OnUserRequestForManualReRun(object sender, int e)
+        {
+            PilotFireLast(e);
         }
 
         string _nominalTitle = "";

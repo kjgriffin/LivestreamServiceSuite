@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -189,7 +190,10 @@ namespace CCUI_UI
             var ecfg = cfg as CCPUConfig_Extended;
             if (ecfg == null)
             {
-                throw new Exception("FIX THIS!!!");
+                ecfg = new CCPUConfig_Extended();
+#if DEBUG
+                Debugger.Break();
+#endif
             }
             m_presetConfig = ecfg;
         }
