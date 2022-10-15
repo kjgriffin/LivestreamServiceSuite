@@ -110,7 +110,7 @@ namespace Xenon.Renderer
                                 sinfo.HasOverridePrimary = true;
                                 sinfo.PrimaryResource = $"SC-Pres-{match.Groups["num"].Value}_Liturgy-png";
                             }
-                            match = Regex.Match(lres.AltSource, "^Key_(?<num>\\d+)\\.png$");
+                            match = Regex.Match(lres.AltKeySource, "^Key_(?<num>\\d+)\\.png$");
                             if (match.Success)
                             {
                                 sinfo.HasOverridePrimary = true;
