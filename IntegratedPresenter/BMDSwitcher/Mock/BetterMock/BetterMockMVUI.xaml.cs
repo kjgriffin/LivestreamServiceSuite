@@ -48,6 +48,8 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         #endregion
 
+        Random rnd = new Random(DateTime.UtcNow.Millisecond);
+
 
         BMDSwitcherConfigSettings _cfg;
 
@@ -643,7 +645,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                         {
                             From = -500,
                             To = 500,
-                            Duration = TimeSpan.FromMilliseconds(1000),
+                            Duration = TimeSpan.FromMilliseconds(rnd.Next(800, 1200)),
                             RepeatBehavior = RepeatBehavior.Forever,
                             AutoReverse = true,
                         };
