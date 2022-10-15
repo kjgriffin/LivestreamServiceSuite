@@ -7,6 +7,8 @@ using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.BMDSwitcher.Mock;
 using IntegratedPresenter.Main;
 
+using SwitcherControl.BMDSwitcher;
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -151,7 +153,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 int pipSID = m_pipWindowSourceRouting[i + 1];
                 // for now assumes hard-coded DSK1 fill source
                 // ignore DSK2 for now
-                if (state.ProgramID == pipSID
+                if (state.ProgramID == pipSID || (state.InTransition && state.PresetID == pipSID && state.TransNextBackground)
                     || (state.DSK1OnAir && pipSID == _cfg.DownstreamKey1Config.InputFill)
                     || (state.USK1OnAir && state.USK1FillSource == pipSID))
                 {
@@ -173,7 +175,15 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
             // build preview/me bkgd layers
 
-            pip_PV_preset.pvBKDG.Fill = GetGeneratedSourceById((int)state.PresetID, cameras);
+            if (state.TransNextBackground)
+            {
+                pip_PV_preset.pvBKDG.Fill = GetGeneratedSourceById((int)state.PresetID, cameras);
+            }
+            else
+            {
+                // think this is correct???
+                pip_PV_preset.pvBKDG.Fill = GetGeneratedSourceById((int)state.ProgramID, cameras);
+            }
 
             if (!state.InTransition) // else?? probably doing stuff somewhere else
             {
@@ -197,7 +207,11 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             if (state.USK1OnAir) // goes on-air immediately upon animation
             {
                 pip_ME_program.lUSK1_A.Fill = GetGeneratedSourceById((int)state.USK1FillSource, cameras);
-                pip_PV_preset.pvUSK1.Fill = Brushes.Transparent;
+                if (!state.InTransition)
+                {
+                    pip_ME_program.lUSK1_A.Opacity = 1;
+                    pip_PV_preset.pvUSK1.Fill = Brushes.Transparent;
+                }
             }
             else
             {
@@ -206,7 +220,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                 {
                     pip_PV_preset.pvUSK1.Fill = GetGeneratedSourceById((int)state.USK1FillSource, cameras);
                 }
-                else
+                else if (!state.InTransition)
                 {
                     pip_PV_preset.pvUSK1.Fill = Brushes.Transparent;
                 }
@@ -335,7 +349,6 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             int FromSID = (int)origState.ProgramID;
             int ToSID = (int)origState.PresetID;
 
-
             var dur = TimeSpan.FromSeconds(_cfg.MixEffectSettings.Rate / _cfg.VideoSettings.VideoFPS);
             var sb = new Storyboard();
 
@@ -454,6 +467,7 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
                         {
                             newUSKstate = true;
                             pip_ME_program.lUSK1_A.Opacity = 1;
+                            pip_PV_preset.pvUSK1.Fill = Brushes.Transparent;
                         }
                         else if (key1Dir == -1)
                         {
