@@ -392,20 +392,23 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             mockMultiviewer.Close();
         }
 
-        public void ConfigureSwitcher(BMDSwitcherConfigSettings config)
+        public void ConfigureSwitcher(BMDSwitcherConfigSettings config, bool hardUpdate = true)
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-            _state.USK1KeyType = config.USKSettings.IsChroma == 1 ? 2 : 1;
-            if (config.USKSettings.IsChroma == 1)
+            if (hardUpdate)
             {
-                _state.USK1FillSource = config.USKSettings.ChromaSettings.FillSource;
+                _state.USK1KeyType = config.USKSettings.IsChroma == 1 ? 2 : 1;
+                if (config.USKSettings.IsChroma == 1)
+                {
+                    _state.USK1FillSource = config.USKSettings.ChromaSettings.FillSource;
+                }
+                else
+                {
+                    _state.USK1FillSource = config.USKSettings.PIPSettings.DefaultFillSource;
+                }
+                _state.DVESettings = config.USKSettings.PIPSettings;
+                _state.ChromaSettings = config.USKSettings.ChromaSettings;
             }
-            else
-            {
-                _state.USK1FillSource = config.USKSettings.PIPSettings.DefaultFillSource;
-            }
-            _state.DVESettings = config.USKSettings.PIPSettings;
-            _state.ChromaSettings = config.USKSettings.ChromaSettings;
 
             ForceStateUpdate();
         }

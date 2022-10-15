@@ -3043,7 +3043,7 @@ namespace IntegratedPresenter.Main
                 {
                     _logger.Info($"Presentation loading specified switcher configuration. Re-configuring now.");
                     _config = pres.SwitcherConfig;
-                    SetSwitcherSettings();
+                    SetSwitcherSettings(false);
                 }
                 if (pres.HasUserConfig)
                 {
@@ -3863,7 +3863,7 @@ namespace IntegratedPresenter.Main
             SetSwitcherSettings();
         }
 
-        private void SetSwitcherSettings()
+        private void SetSwitcherSettings(bool resetPIPPositions = true)
         {
             // update UI
             UpdateUIButtonLabels();
@@ -3878,7 +3878,7 @@ namespace IntegratedPresenter.Main
             UpdateUIPIPPlaceKeys();
 
             // config switcher
-            switcherManager?.ConfigureSwitcher(_config);
+            switcherManager?.ConfigureSwitcher(_config, resetPIPPositions);
         }
 
         private void UpdateUIButtonLabels()
@@ -5231,7 +5231,7 @@ namespace IntegratedPresenter.Main
             {
                 _logger.Info($"Presentation loading specified switcher configuration. Re-configuring now.");
                 _config = pres.SwitcherConfig;
-                SetSwitcherSettings();
+                SetSwitcherSettings(false);
             }
             if (pres.HasUserConfig)
             {
@@ -5279,7 +5279,7 @@ namespace IntegratedPresenter.Main
 
             // based on curent slide num...
             // 'run' each slide up to curent slide and have it overwrite into the calculations
-            for (int i = 0; i < lastSlide; i++)
+            for (int i = 0; i < Math.Min(lastSlide, pres.SlideCount - 1); i++)
             {
                 foreach (var act in pres.Slides[i].AutoPilotActions)
                 {
