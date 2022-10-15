@@ -1,4 +1,13 @@
-﻿using BMDSwitcherAPI;
+﻿#define USE_BETTER_MOCK_MV // leaving this for now in-case I've screwed up something critical/ want to factor this into an option rather than strictly deprecate it
+// though I belive its curently feature pair with the old one (technically better since it's more acurate with ME's)
+
+using BMDSwitcherAPI;
+
+using CCU.Config;
+
+using CCUI_UI;
+
+using Integrated_Presenter.BMDSwitcher.Mock;
 
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
@@ -16,13 +25,14 @@ using System.Threading.Tasks;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {
+
     class MockBMDSwitcherManager : IBMDSwitcherManager
     {
         public bool GoodConnection { get; set; } = false;
 
         BMDSwitcherState _state;
 
-        MockMultiviewer mockMultiviewer;
+        IMockMultiviewerDriver mockMultiviewer;
 
         public event SwitcherStateChange SwitcherStateChanged;
         public event SwitcherDisconnectedEvent OnSwitcherDisconnected;
@@ -55,9 +65,43 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 [7] = "center",
                 [8] = "left"
             };
+
+
+
+#if USE_BETTER_MOCK_MV
+            mockMultiviewer = new BetterMockDriver(mapping, parent.Config, _state);
+            SwitcherStateChanged += MockBMDSwitcherManager_SwitcherStateChanged;
+            (mockMultiviewer as BetterMockDriver).OnSwitcherStateUpdated += MockBMDSwitcherManager_OnSwitcherStateUpdated;
+            if (parent?.Presentation?.HasCCUConfig == true)
+            {
+                (mockMultiviewer as BetterMockDriver).UpdateCCUConfig(parent.Presentation.CCPUConfig as CCPUConfig_Extended);
+            }
+
+            // not too sure about this one...
+            parent.OnPlaybackStateChanged += Parent_OnPlaybackStateChanged;
+
+#else
             mockMultiviewer = new MockMultiviewer(mapping, parent.Config);
+#endif
+
             mockMultiviewer.OnMockWindowClosed += MockMultiviewer_OnMockWindowClosed;
             parent.PresentationStateUpdated += Parent_PresentationStateUpdated;
+        }
+
+        private void MockBMDSwitcherManager_OnSwitcherStateUpdated(object sender, BMDSwitcherState e)
+        {
+            _state = e;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        private void Parent_OnPlaybackStateChanged(object sender, MainWindow.MediaPlaybackEventArgs e)
+        {
+            (mockMultiviewer as BetterMockDriver)?.HandlePlaybackStateUpdate(e);
+        }
+
+        private void MockBMDSwitcherManager_SwitcherStateChanged(BMDSwitcherState args)
+        {
+            (mockMultiviewer as BetterMockDriver)?.HandleStateUpdate(args);
         }
 
         private void MockMultiviewer_OnMockWindowClosed()
@@ -66,7 +110,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             OnSwitcherDisconnected?.Invoke();
         }
 
-        private void Parent_PresentationStateUpdated(Slide currentslide)
+        private void Parent_PresentationStateUpdated(ISlide currentslide)
         {
             _logger.Info($"[Mock SW] Presentation State was updated");
             mockMultiviewer.UpdateSlideInput(currentslide);
@@ -88,16 +132,23 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state = mockMultiviewer.PerformAutoTransition(_state);
+            // the newer mock should handle all state with it's own driver
+#if !USE_BETTER_MOCK_MV
             if (_state.TransNextKey1)
             {
                 _state.USK1OnAir = !_state.USK1OnAir;
             }
+#endif
             SwitcherStateChanged?.Invoke(_state);
         }
 
         public void PerformCutTransition()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            // the newer mock should handle all state with it's own driver
+#if USE_BETTER_MOCK_MV
+            _state = mockMultiviewer.PerformCutTransition(_state);
+#else
             // take all layers
             if (_state.TransNextKey1)
             {
@@ -133,6 +184,8 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
                 mockMultiviewer.SetPresetInput((int)_state.PresetID);
                 mockMultiviewer.SetProgramInput((int)_state.ProgramID);
             }
+#endif
+
             SwitcherStateChanged?.Invoke(_state);
         }
 
@@ -181,26 +234,53 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void PerformAutoOffAirDSK2()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if USE_BETTER_MOCK_MV
+            mockMultiviewer.FadeDSK1(false);
+#else
             _state.DSK2OnAir = false;
             mockMultiviewer.FadeDSK2(false);
             SwitcherStateChanged?.Invoke(_state);
+#endif
         }
 
         public void PerformAutoOnAirDSK2()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if USE_BETTER_MOCK_MV
+            mockMultiviewer.FadeDSK1(false);
+#else
             _state.DSK2OnAir = true;
             mockMultiviewer.FadeDSK2(true);
             SwitcherStateChanged?.Invoke(_state);
+#endif
         }
 
+#if USE_BETTER_MOCK_MV
+        public void PerformTakeAutoDSK1()
+#else
         public async void PerformTakeAutoDSK1()
+#endif
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if USE_BETTER_MOCK_MV
+            // I belive this is technically correct
+            // ATEM seems to think key is immediately on air once it begins transition
+            // which I suppose makes sense
+            // since we dont track transition state of dsk on the _state we don't need to update when transition is done
+            //_state.DSK1OnAir = !_state.DSK1OnAir;
+            // let the mock handle source switching
+            //SwitcherStateChanged?.Invoke(_state);
+            // now it's got an active target begin fade
+
+            // exclusively let the driver handle this
+            // driver can now fire events that we handle here for when the key goes on/off air
+            mockMultiviewer.FadeDSK1(!_state.DSK1OnAir);
+#else
             _state.DSK1OnAir = !_state.DSK1OnAir;
             mockMultiviewer.FadeDSK1(_state.DSK1OnAir);
             await Task.Delay(1000);
             SwitcherStateChanged?.Invoke(_state);
+#endif
         }
 
         public async void PerformTakeAutoDSK2()
@@ -253,19 +333,29 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             SwitcherStateChanged?.Invoke(_state);
         }
 
+#if !USE_BETTER_MOCK_MV
         public async void PerformToggleFTB()
+#else
+        public void PerformToggleFTB()
+#endif
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if USE_BETTER_MOCK_MV
+            mockMultiviewer.SetFTB(!_state.FTB);
+#else
             _state.FTB = !_state.FTB;
             mockMultiviewer.SetFTB(_state.FTB);
             await Task.Delay(1000);
             SwitcherStateChanged?.Invoke(_state);
+#endif
         }
 
         public void PerformAutoOffAirDSK1()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if !USE_BETTER_MOCK_MV
             _state.DSK1OnAir = false;
+#endif
             mockMultiviewer.FadeDSK1(false);
             SwitcherStateChanged?.Invoke(_state);
         }
@@ -273,7 +363,9 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         public void PerformAutoOnAirDSK1()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+#if !USE_BETTER_MOCK_MV
             _state.DSK1OnAir = true;
+#endif
             mockMultiviewer.FadeDSK1(true);
             SwitcherStateChanged?.Invoke(_state);
         }
@@ -300,20 +392,23 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             mockMultiviewer.Close();
         }
 
-        public void ConfigureSwitcher(BMDSwitcherConfigSettings config)
+        public void ConfigureSwitcher(BMDSwitcherConfigSettings config, bool hardUpdate = true)
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-            _state.USK1KeyType = config.USKSettings.IsChroma == 1 ? 2 : 1;
-            if (config.USKSettings.IsChroma == 1)
+            if (hardUpdate)
             {
-                _state.USK1FillSource = config.USKSettings.ChromaSettings.FillSource;
+                _state.USK1KeyType = config.USKSettings.IsChroma == 1 ? 2 : 1;
+                if (config.USKSettings.IsChroma == 1)
+                {
+                    _state.USK1FillSource = config.USKSettings.ChromaSettings.FillSource;
+                }
+                else
+                {
+                    _state.USK1FillSource = config.USKSettings.PIPSettings.DefaultFillSource;
+                }
+                _state.DVESettings = config.USKSettings.PIPSettings;
+                _state.ChromaSettings = config.USKSettings.ChromaSettings;
             }
-            else
-            {
-                _state.USK1FillSource = config.USKSettings.PIPSettings.DefaultFillSource;
-            }
-            _state.DVESettings = config.USKSettings.PIPSettings;
-            _state.ChromaSettings = config.USKSettings.ChromaSettings;
 
             ForceStateUpdate();
         }
@@ -504,5 +599,16 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _state.AuxID = sourceID;
             SwitcherStateChanged?.Invoke(_state);
         }
+
+        public void UpdateMockCameraMovement(CameraUpdateEventArgs e)
+        {
+            mockMultiviewer.UpdateMockCameraMovement(e);
+        }
+
+        public void UpdateCCUConfig(CCPUConfig_Extended cfg)
+        {
+            (mockMultiviewer as BetterMockDriver)?.UpdateCCUConfig(cfg);
+        }
+
     }
 }

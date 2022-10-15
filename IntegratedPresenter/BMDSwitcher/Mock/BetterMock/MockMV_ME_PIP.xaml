@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="Integrated_Presenter.BMDSwitcher.Mock.MockMV_ME_PIP"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Integrated_Presenter.BMDSwitcher.Mock"
+             mc:Ignorable="d" 
+             d:DesignHeight="540" d:DesignWidth="960">
+    <Grid>
+        <Grid>
+            <Viewbox>
+                <Grid Name="gdisplay" Width="1920" Height="1080">
+                    <Rectangle Fill="Black" Panel.ZIndex="0"></Rectangle>
+
+                    <Rectangle x:Name="lBKGD_A" Fill="Transparent" Panel.ZIndex="1"></Rectangle>
+                    <Rectangle x:Name="lBKGD_B" Fill="Transparent" Panel.ZIndex="2"></Rectangle>
+
+                    <Rectangle x:Name="lUSK1_A" Fill="Transparent" Panel.ZIndex="10">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform x:Name="lUSK1_A_scale" ScaleX="0.5" ScaleY="0.5"></ScaleTransform>
+                                <TranslateTransform x:Name="lUSK1_A_pos" X="0" Y="0"></TranslateTransform>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                        <Rectangle.Clip>
+                            <RectangleGeometry x:Name="lUSK1_A_clip" Rect="0, 0, 1920, 1080"></RectangleGeometry>
+                        </Rectangle.Clip>
+                        <Rectangle.RenderTransformOrigin>
+                            <Point X="0.5" Y="0.5"></Point>
+                        </Rectangle.RenderTransformOrigin>
+                    </Rectangle>
+
+                    <Rectangle x:Name="lDSK1_A" Fill="Transparent" Panel.ZIndex="20"></Rectangle>
+                    <Rectangle x:Name="lDSK2_A" Fill="Transparent" Panel.ZIndex="30"></Rectangle>
+
+                    <Rectangle x:Name="lFTB" Fill="Black" Opacity="0" Panel.ZIndex="100"></Rectangle>
+
+                </Grid>
+            </Viewbox>
+            <Grid Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                <Border Background="#303030" Opacity="0.8" BorderThickness="2" BorderBrush="#f0ffffff" CornerRadius="4"></Border>
+                <TextBlock FontSize="20" Name="tbPIPName" Foreground="White" Opacity="1" Padding="10,5,10,5">PROGRAM</TextBlock>
+            </Grid>
+            <Border BorderBrush="LightGray" BorderThickness="5">
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

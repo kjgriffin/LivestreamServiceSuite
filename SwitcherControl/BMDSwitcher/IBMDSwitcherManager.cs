@@ -55,6 +55,6 @@ namespace SwitcherControl.BMDSwitcher
         void ConfigureUSK1Chroma(BMDUSKChromaSettings settings);
 
         void Close();
-        void ConfigureSwitcher(BMDSwitcherConfigSettings config);
+        void ConfigureSwitcher(BMDSwitcherConfigSettings config, bool hardUpdate = true);
     }
 }

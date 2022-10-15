@@ -1,5 +1,6 @@
 ﻿using IntegratedPresenter.BMDSwitcher.Config;
-using IntegratedPresenter.Main;
+
+using IntegratedPresenterAPIInterop;
 
 using SwitcherControl.BMDSwitcher;
 

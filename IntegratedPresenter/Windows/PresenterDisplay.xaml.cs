@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IntegratedPresenterAPIInterop;
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -115,7 +117,7 @@ namespace IntegratedPresenter.Main
         public void StartMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == IntegratedPresenter.Main.SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+            if (_control.Presentation.EffectiveCurrent.Type == SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -135,7 +137,7 @@ namespace IntegratedPresenter.Main
         public void PauseMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == IntegratedPresenter.Main.SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+            if (_control.Presentation.EffectiveCurrent.Type == SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -155,7 +157,7 @@ namespace IntegratedPresenter.Main
         public void RestartMediaPlayback()
         {
             StopNonActiveMedia();
-            if (_control.Presentation.EffectiveCurrent.Type == IntegratedPresenter.Main.SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+            if (_control.Presentation.EffectiveCurrent.Type == SlideType.Video || _control.Presentation.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
             {
                 switch (activeplayer)
                 {
@@ -209,7 +211,7 @@ namespace IntegratedPresenter.Main
 
         public void ShowSlide(bool asKey)
         {
-            Slide slidetoshow = _control.Presentation.EffectiveCurrent;
+            ISlide slidetoshow = _control.Presentation.EffectiveCurrent;
 
             if (slidetoshow.Guid == curentslide)
             {
@@ -290,7 +292,7 @@ namespace IntegratedPresenter.Main
         }
 
 
-        private void SetSlideForPlayer(int player, Slide slide)
+        private void SetSlideForPlayer(int player, ISlide slide)
         {
             switch (player)
             {

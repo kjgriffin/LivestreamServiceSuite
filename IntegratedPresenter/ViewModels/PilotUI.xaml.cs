@@ -38,13 +38,38 @@ namespace Integrated_Presenter.ViewModels
     /// </summary>
     public partial class PilotUI : UserControl
     {
+
+
         public PilotUI()
         {
             InitializeComponent();
+            pvCurrent_plt.OnUserRequestForManualReRun += PvCurrent_plt_OnUserRequestForManualReRun;
+            pvCurrent_ctr.OnUserRequestForManualReRun += PvCurrent_ctr_OnUserRequestForManualReRun;
+            pvCurrent_lec.OnUserRequestForManualReRun += PvCurrent_lec_OnUserRequestForManualReRun;
+
+            pvNext_plt.HideManualReRun();
+            pvNext_ctr.HideManualReRun();
+            pvNext_lec.HideManualReRun();
+        }
+
+        private void PvCurrent_lec_OnUserRequestForManualReRun(object sender, EventArgs e)
+        {
+            OnUserRequestForManualReRun?.Invoke(this, 3);
+        }
+
+        private void PvCurrent_ctr_OnUserRequestForManualReRun(object sender, EventArgs e)
+        {
+            OnUserRequestForManualReRun?.Invoke(this, 2);
+        }
+
+        private void PvCurrent_plt_OnUserRequestForManualReRun(object sender, EventArgs e)
+        {
+            OnUserRequestForManualReRun?.Invoke(this, 1);
         }
 
         public event PilotModeChangedArgs OnModeChanged;
         public event TogglePilotModeArgs OnTogglePilotMode;
+        public event EventHandler<int> OnUserRequestForManualReRun;
 
         Dictionary<string, IPilotAction> _lastNamedCache = new Dictionary<string, IPilotAction>();
         Dictionary<string, IPilotAction> _emergencyActions = new Dictionary<string, IPilotAction>();
@@ -52,6 +77,17 @@ namespace Integrated_Presenter.ViewModels
         List<IPilotAction> _curentActions = new List<IPilotAction>();
         int _slideNum;
         PilotMode mode = PilotMode.STD;
+
+
+        internal void ClearState(Dictionary<string, IPilotAction> calculatedLast, Dictionary<string, IPilotAction> calculatedEmg)
+        {
+            //_lastNamedCache?.Clear();
+            //_emergencyActions?.Clear();
+            _lastNamedCache = calculatedLast;
+            _emergencyActions = calculatedEmg;
+            _curentActions?.Clear();
+            _slideNum = -1;
+        }
 
 
         private string GetSubInfoForCam(string camName, PilotMode mode)

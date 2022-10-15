@@ -23,6 +23,7 @@ namespace DVIPProtocol.Clients.Execution
         public RobustFail OnFail { get; set; }
         public Completed OnCompleted { get; set; }
         public int RetryAttempts { get; set; }
+        public bool IgnoreResponse { get; set; } = false;
     }
 
     public class RobustSequence : IRobustWork

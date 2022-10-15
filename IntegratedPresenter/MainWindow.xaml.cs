@@ -29,11 +29,12 @@ using System.Windows.Controls;
 using CCUI_UI;
 using SwitcherControl.BMDSwitcher;
 using Integrated_Presenter.Presentation;
+using CCU.Config;
 
 namespace IntegratedPresenter.Main
 {
 
-    public delegate void PresentationStateUpdate(Slide currentslide);
+    public delegate void PresentationStateUpdate(ISlide currentslide);
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -58,7 +59,7 @@ namespace IntegratedPresenter.Main
         System.Threading.ManualResetEvent autoTransMRE = new System.Threading.ManualResetEvent(true);
 
 
-        CCPUPresetMonitor _camMonitor;
+        ICCPUPresetMonitor _camMonitor;
 
         List<SlidePoolSource> SlidePoolButtons;
 
@@ -79,7 +80,9 @@ namespace IntegratedPresenter.Main
                 VersionInfo = JsonSerializer.Deserialize<BuildVersion>(json);
             }
             // Set title
-            Title = $"Integrated Presenter - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
+            _nominalTitle = $"Integrated Presenter - {VersionInfo.MajorVersion}.{VersionInfo.MinorVersion}.{VersionInfo.Revision}.{VersionInfo.Build}-{VersionInfo.Mode}";
+
+            Title = _nominalTitle;
 
 
             // set size
@@ -104,11 +107,14 @@ namespace IntegratedPresenter.Main
             _logger.Info("Starting Camera Server");
 
             ILog pilotLogger = LogManager.GetLogger("PilotLogger");
+
+            // by default start real server
             _camMonitor = new CCPUPresetMonitor(headless: true, pilotLogger, this);
             _camMonitor.OnCommandUpdate += _camMonitor_OnCommandUpdate;
 
             pilotUI.OnModeChanged += PilotUI_OnModeChanged;
             pilotUI.OnTogglePilotMode += PilotUI_OnTogglePilotMode;
+            pilotUI.OnUserRequestForManualReRun += PilotUI_OnUserRequestForManualReRun;
 
             // set a default config
             SetDefaultConfig();
@@ -176,6 +182,13 @@ namespace IntegratedPresenter.Main
 
             UpdatePilotUI();
         }
+
+        private void PilotUI_OnUserRequestForManualReRun(object sender, int e)
+        {
+            PilotFireLast(e);
+        }
+
+        string _nominalTitle = "";
 
         private void PilotUI_OnTogglePilotMode()
         {
@@ -303,7 +316,7 @@ namespace IntegratedPresenter.Main
             TbTime.Text = DateTime.Now.ToString("hh:mm:ss");
         }
 
-        private void MainWindow_PresentationStateUpdated(Slide currentslide)
+        private void MainWindow_PresentationStateUpdated(ISlide currentslide)
         {
             UpdateSlideNums();
             UpdateSlidePreviewControls();
@@ -402,6 +415,7 @@ namespace IntegratedPresenter.Main
             switcherManager = new MockBMDSwitcherManager(this);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
+            (switcherManager as MockBMDSwitcherManager)?.UpdateCCUConfig(Presentation?.CCPUConfig as CCPUConfig_Extended);
             switcherManager.TryConnect("localhost");
             _logger.Debug("MockConnectSwitcher() initialized switcherManger with mock switcher.");
             SwitcherConnectedUiUpdate(true);
@@ -1862,7 +1876,7 @@ namespace IntegratedPresenter.Main
 
         private bool _FeatureFlag_MRETransition = true; // This should be safe enough
 
-        private async Task ExecuteSetupActions(Slide s)
+        private async Task ExecuteSetupActions(ISlide s)
         {
             _logger.Debug($"Begin Execution of setup actions for slide {s.Title}");
             await Task.Run(async () =>
@@ -1877,7 +1891,7 @@ namespace IntegratedPresenter.Main
             _logger.Debug($"Completed Execution of setup actions for slide {s.Title}");
         }
 
-        private async Task ExecuteActionSlide(Slide s)
+        private async Task ExecuteActionSlide(ISlide s)
         {
             _logger.Debug($"Begin Execution of actions for slide {s.Title}");
             await Task.Run(async () =>
@@ -2779,7 +2793,7 @@ namespace IntegratedPresenter.Main
 
         }
 
-        private void SlideDriveVideo_Action(Slide s)
+        private void SlideDriveVideo_Action(ISlide s)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             switch (s.PreAction)
@@ -3002,8 +3016,8 @@ namespace IntegratedPresenter.Main
 
 
         bool activepresentation = false;
-        Presentation _pres;
-        public Presentation Presentation { get => _pres; }
+        IPresentation _pres;
+        public IPresentation Presentation { get => _pres; }
 
         public event PresentationStateUpdate PresentationStateUpdated;
 
@@ -3017,6 +3031,11 @@ namespace IntegratedPresenter.Main
             if (ofd.ShowDialog() == true)
             {
                 string path = System.IO.Path.GetDirectoryName(ofd.FileName);
+
+                // change title?
+                string pname = path;
+                Title = $"{_nominalTitle} ({pname})";
+
                 // create new presentation
                 Presentation pres = new Presentation();
                 pres.Create(path);
@@ -3030,7 +3049,7 @@ namespace IntegratedPresenter.Main
                 {
                     _logger.Info($"Presentation loading specified switcher configuration. Re-configuring now.");
                     _config = pres.SwitcherConfig;
-                    SetSwitcherSettings();
+                    SetSwitcherSettings(false);
                 }
                 if (pres.HasUserConfig)
                 {
@@ -3169,7 +3188,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        private void UpdatePostsetUi(MediaPlayer2 preview, Slide slide)
+        private void UpdatePostsetUi(MediaPlayer2 preview, ISlide slide)
         {
             if (slide.PostsetEnabled && _FeatureFlag_PostsetShot)
             {
@@ -3285,6 +3304,7 @@ namespace IntegratedPresenter.Main
                     }
                 });
             }
+            OnPlaybackStateChanged?.Invoke(this, new MediaPlaybackEventArgs(MediaPlaybackEventArgs.State.Play));
         }
         private void pauseMedia()
         {
@@ -3302,6 +3322,7 @@ namespace IntegratedPresenter.Main
                     currentpoolsource.PauseMedia();
                 }
             }
+            OnPlaybackStateChanged?.Invoke(this, new MediaPlaybackEventArgs(MediaPlaybackEventArgs.State.Pause));
         }
         private void stopMedia()
         {
@@ -3319,6 +3340,7 @@ namespace IntegratedPresenter.Main
                     currentpoolsource.StopMedia();
                 }
             }
+            OnPlaybackStateChanged?.Invoke(this, new MediaPlaybackEventArgs(MediaPlaybackEventArgs.State.Stop));
         }
         private void restartMedia()
         {
@@ -3336,7 +3358,29 @@ namespace IntegratedPresenter.Main
                     currentpoolsource.RestartMedia();
                 }
             }
+            OnPlaybackStateChanged?.Invoke(this, new MediaPlaybackEventArgs(MediaPlaybackEventArgs.State.Restart));
         }
+
+        public event EventHandler<MediaPlaybackEventArgs> OnPlaybackStateChanged;
+
+        public class MediaPlaybackEventArgs : EventArgs
+        {
+            public MediaPlaybackEventArgs(State state)
+            {
+                PlaybackState = state;
+            }
+            public enum State
+            {
+                Play,
+                Stop,
+                Pause,
+                Restart,
+            }
+
+            public State PlaybackState { get; set; }
+
+        }
+
 
         #endregion
 
@@ -3825,7 +3869,7 @@ namespace IntegratedPresenter.Main
             SetSwitcherSettings();
         }
 
-        private void SetSwitcherSettings()
+        private void SetSwitcherSettings(bool resetPIPPositions = true)
         {
             // update UI
             UpdateUIButtonLabels();
@@ -3840,7 +3884,7 @@ namespace IntegratedPresenter.Main
             UpdateUIPIPPlaceKeys();
 
             // config switcher
-            switcherManager?.ConfigureSwitcher(_config);
+            switcherManager?.ConfigureSwitcher(_config, resetPIPPositions);
         }
 
         private void UpdateUIButtonLabels()
@@ -5109,7 +5153,7 @@ namespace IntegratedPresenter.Main
             });
         }
 
-        
+
         PilotMode PilotMode
         {
             get => _pilotMode;
@@ -5131,6 +5175,188 @@ namespace IntegratedPresenter.Main
             }
 
             pilotUI.UpdateUIStatus(camName, args);
+        }
+
+
+
+        bool m_hotreloadpresentation = false;
+        PresentationHotReloadService hotReloadService;
+        private void ClickToggleHotReloadPresentation(object sender, RoutedEventArgs e)
+        {
+            ToggleHotReloadPres();
+        }
+
+        private void ToggleHotReloadPres()
+        {
+            m_hotreloadpresentation = !m_hotreloadpresentation;
+            miHotReloadPres.IsChecked = m_hotreloadpresentation;
+
+            if (m_hotreloadpresentation)
+            {
+                Title = $"{_nominalTitle} (Hot Load Presentation Mode)";
+
+                hotReloadService = new PresentationHotReloadService();
+                hotReloadService.OnHotReloadReady += HotReloadService_OnHotReloadReady;
+                hotReloadService.StartListening();
+            }
+            else
+            {
+                Title = $"{_nominalTitle}";
+
+                hotReloadService.OnHotReloadReady -= HotReloadService_OnHotReloadReady;
+                hotReloadService.StopListening();
+            }
+        }
+
+        private void HotReloadService_OnHotReloadReady(object sender, EventArgs e)
+        {
+            LoadHotPresentation();
+        }
+
+        private void LoadHotPresentation()
+        {
+            int lastSlide = Math.Max(Presentation?.CurrentSlide - 1 ?? 0, 0);
+
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => LoadHotPresentation());
+                return;
+            }
+
+            // create new presentation
+            IPresentation pres = MirroredPresentationBuilder.Create();
+
+
+            pres.StartPres(lastSlide);
+            _pres = pres;
+            activepresentation = true;
+            _logger.Info($"Hot Loaded Presentation from memory files");
+
+            // apply config if required
+            if (pres.HasSwitcherConfig)
+            {
+                _logger.Info($"Presentation loading specified switcher configuration. Re-configuring now.");
+                _config = pres.SwitcherConfig;
+                SetSwitcherSettings(false);
+            }
+            if (pres.HasUserConfig)
+            {
+                _logger.Info($"Presentation loading specified setting user settings. Re-configuring now.");
+                LoadUserSettings(pres.UserConfig);
+            }
+            if (pres.HasCCUConfig)
+            {
+                _logger.Info($"Presentation loading specified ccu config settings. Re-configuring now.");
+                _camMonitor?.LoadConfig(pres.CCPUConfig);
+                (switcherManager as MockBMDSwitcherManager)?.UpdateCCUConfig(pres.CCPUConfig as CCPUConfig_Extended);
+            }
+
+            // overwrite display of old presentation if already open
+            if (_display != null && _display.IsWindowVisilbe)
+            {
+            }
+            else
+            {
+                _logger.Info($"Graphics Engine has no active display window. Creating window now.");
+                _display = new PresenterDisplay(this, false);
+                _display.OnMediaPlaybackTimeUpdated += _display_OnMediaPlaybackTimeUpdated;
+                // start display
+                _display.Show();
+            }
+
+            if (_keydisplay == null || _keydisplay?.IsWindowVisilbe == false)
+            {
+                _logger.Info($"Graphics Engine has no active key window. Creating window now.");
+                _keydisplay = new PresenterDisplay(this, true);
+                // no need to get playback event info
+                _keydisplay.Show();
+            }
+
+            DisableSlidePoolOverrides();
+            slidesUpdated();
+
+            FireOnConditionalsUpdated();
+
+            // clears all emg/last and curent actions...
+            // if we're hotreload into the pres we may want a way to 'clear' just the curent so it gets going again
+            // then if we get real fancy we can try and figure out what the 'last' and 'emg' should be based on previous slides
+            Dictionary<string, IPilotAction> calculatedLast = new Dictionary<string, IPilotAction>();
+            Dictionary<string, IPilotAction> calculatedEmg = new Dictionary<string, IPilotAction>();
+
+            // based on curent slide num...
+            // 'run' each slide up to curent slide and have it overwrite into the calculations
+            for (int i = 0; i < Math.Min(lastSlide, pres.SlideCount - 1); i++)
+            {
+                foreach (var act in pres.Slides[i].AutoPilotActions)
+                {
+                    calculatedLast[act.CamName] = act;
+                }
+                foreach (var act in pres.Slides[i].EmergencyActions)
+                {
+                    calculatedEmg[act.CamName] = act;
+                }
+            }
+
+            pilotUI.ClearState(calculatedLast, calculatedEmg);
+
+            PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+            // preserve mute status
+            if (MediaMuted)
+            {
+                muteMedia();
+            }
+
+        }
+
+        bool m_mockCameras = false;
+        private void ClickConnectMockCameras(object sender, RoutedEventArgs e)
+        {
+            m_mockCameras = !m_mockCameras;
+            miConnectMockCameras.IsChecked = m_mockCameras;
+            ToggleMockCameras();
+        }
+
+        private void ToggleMockCameras()
+        {
+            _camMonitor?.Shutdown();
+            if (_camMonitor != null)
+            {
+                _camMonitor.OnCommandUpdate -= _camMonitor_OnCommandUpdate;
+
+                var mock = _camMonitor as MockCCUMonitor;
+                if (mock != null)
+                {
+                    mock.OnCameraMoved -= Mock_OnCameraMoved;
+                }
+            }
+
+            if (m_mockCameras)
+            {
+                MockCCUMonitor mon = new MockCCUMonitor();
+                _camMonitor = mon;
+
+                mon.OnCameraMoved += Mock_OnCameraMoved;
+            }
+            else
+            {
+                _camMonitor = new CCPUPresetMonitor(true, _logger, this);
+            }
+
+            if (Presentation?.HasCCUConfig == true)
+            {
+                _camMonitor.LoadConfig(Presentation.CCPUConfig);
+            }
+
+            _camMonitor.OnCommandUpdate += _camMonitor_OnCommandUpdate;
+        }
+
+        private void Mock_OnCameraMoved(object sender, CameraUpdateEventArgs e)
+        {
+            var mock = switcherManager as MockBMDSwitcherManager;
+            if (mock != null)
+            {
+                mock.UpdateMockCameraMovement(e);
+            }
         }
     }
 }

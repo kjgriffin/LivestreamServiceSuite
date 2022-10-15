@@ -32,6 +32,11 @@ namespace LutheRun
 
         public IElement SourceHTML { get; private set; }
 
+        public BlockType BlockType()
+        {
+            return LutheRun.BlockType.HYMN;
+        }
+
 
         public int Lines
         {

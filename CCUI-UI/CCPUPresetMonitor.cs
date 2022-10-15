@@ -1,5 +1,7 @@
 ﻿using CameraDriver;
 
+using CCU.Config;
+
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
 using log4net;
@@ -11,13 +13,14 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace CCUI_UI
 {
 
     public delegate void CCUEvent(string cName, params string[] args);
 
-    public class CCPUPresetMonitor : ICCPUPresetMonitor_Executor
+    public class CCPUPresetMonitor : ICCPUPresetMonitor
     {
 
         Window _parent = null;
@@ -276,6 +279,13 @@ namespace CCUI_UI
 
             // any UI's should be re-created
             m_UIWindow?.ReConfigure();
+
+            // hack to auto-refresh the ui after we're pretty sure all cfg got loaded
+            Task.Run(async () =>
+            {
+                await Task.Delay(5000);
+                m_UIWindow?.ReConfigure();
+            });
         }
 
         internal void ReSpinWithReal()

@@ -93,7 +93,8 @@
                         <Image Source="/ViewControls/Images/Save.png"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
-                <Separator></Separator>
+                <!--<Separator></Separator>-->
+                <!--<MenuItem IsEnabled="true" Click="ClickHotProvide" Header="Test Memory File"></MenuItem>-->
                 <!--<MenuItem IsEnabled="false" Click="ClickOpenJSON" Header="Open from JSON"></MenuItem>-->
                 <!--<MenuItem IsEnabled="false" Click="ClickSave" Header="Save"></MenuItem>-->
                 <!--<MenuItem IsEnabled="false" Click="ClickSaveJSON" Header="Save JSON"></MenuItem>-->
@@ -158,11 +159,27 @@
                         </StackPanel>
                     </Grid>
                 </Button>
+                <Button Style="{StaticResource DarkBtn}" Click="CleanSlides" Width="80" Padding="10,0,10,0" Margin="10,5,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/ViewControls/Images/BlueRecycle.png" Width="40" Height="40" Margin="0,-1,0,0"></Image>
+                            <TextBlock VerticalAlignment="Center" Foreground="White">Clean</TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Button>
                 <Button Style="{StaticResource DarkBtn}" Click="ExportSlides" Width="100" Padding="10,0,10,0" Margin="10,5,0,0">
                     <Grid>
                         <StackPanel Orientation="Horizontal">
                             <Image Source="/ViewControls/Images/PublishPurple.png" Width="40" Height="40" Margin="0,-1,0,0"></Image>
                             <TextBlock VerticalAlignment="Center" Foreground="White">Publish</TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+                <Button Style="{StaticResource DarkBtn}" Click="HotReload" Width="115" Padding="10,0,10,0" Margin="10,5,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Name="btnImgHotReload" Source="/ViewControls/Images/GreyFlame.png" Width="40" Height="30" Margin="0,-1,0,0"></Image>
+                            <TextBlock VerticalAlignment="Center" Foreground="White">Hot Reload</TextBlock>
                         </StackPanel>
                     </Grid>
                 </Button>
@@ -333,8 +350,22 @@
                         <TabItem Header="Source" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
                             <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
                         </TabItem>
-                        <TabItem Header="Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
+                        <TabItem Header="Switcher Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
                             <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfig" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
+                        </TabItem>
+                        <TabItem Header="CCU Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource DarkBtn}" Foreground="White" Margin="5" Width="100" Height="30" VerticalAlignment="Top" Click="ClickLoadCCUFile">Load CCU Config</Button>
+                                    <Button Style="{StaticResource DarkBtn}" Foreground="White" Margin="5" Width="100" Height="30" VerticalAlignment="Top" Click="ClickOpenCCUConfigEditor">Open Editor</Button>
+                                </StackPanel>
+                                <AvalonEdit:TextEditor Grid.Row="1" IsReadOnly="true" Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfigCCU" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
+                                <!--<TextBlock Grid.Row="1" Name="TbConfigCCU" Background="#272727" Foreground="#eaeaea" FontFamily="cascadia" FontSize="14" TextWrapping="Wrap"></TextBlock>-->
+                            </Grid>
                         </TabItem>
                     </TabControl>
 

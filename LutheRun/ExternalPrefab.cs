@@ -8,6 +8,14 @@ namespace LutheRun
     class ExternalPrefab : ExternalElement
     {
 
+
+        public override BlockType BlockType()
+        {
+            return this.btype;
+        }
+
+        private BlockType btype { get; set; } 
+
         public string TypeIdentifier { get; private set; }
 
         public string PrefabCommand { get; private set; }
@@ -45,18 +53,20 @@ namespace LutheRun
         public string PostsetReplacementIdentifier { get; set; } = "";
         public string IndentReplacementIndentifier { get; set; } = "";
 
-        public ExternalPrefab(string command, string typeID)
+        public ExternalPrefab(string command, string typeID, BlockType bType)
         {
             TypeIdentifier = typeID;
             PrefabCommand = command;
+            this.btype = bType;
         }
 
-        public ExternalPrefab(string command, int postset, bool usePostset, string typeID)
+        public ExternalPrefab(string command, int postset, bool usePostset, string typeID, BlockType btype)
         {
             TypeIdentifier = typeID;
             PrefabCommand = command;
             isPostset = usePostset;
             Postset = postset;
+            this.btype = btype;
         }
 
         public override string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)

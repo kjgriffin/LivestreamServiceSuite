@@ -15,6 +15,11 @@ namespace LutheRun
 
         public string Text { get; private set; }
 
+        public BlockType BlockType()
+        {
+            return LutheRun.BlockType.IGNORED;
+        }
+
         public string DebugString()
         {
             return "";

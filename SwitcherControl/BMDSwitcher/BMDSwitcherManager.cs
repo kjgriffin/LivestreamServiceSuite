@@ -861,7 +861,7 @@ namespace SwitcherControl.BMDSwitcher
 
 
 
-        public void ConfigureSwitcher(BMDSwitcherConfigSettings config)
+        public void ConfigureSwitcher(BMDSwitcherConfigSettings config, bool hardUpdate = true)
         {
             _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _config = config;
@@ -870,7 +870,11 @@ namespace SwitcherControl.BMDSwitcher
             ConfigureCameraSources();
             ConfigureDownstreamKeys();
             ConfigureMultiviewer();
-            ConfigureUpstreamKey();
+
+            if (hardUpdate)
+            {
+                ConfigureUpstreamKey();
+            }
             // disable for now - doesn't work
             //ConfigureMediaPool();
             ConfigureAudioLevels();
@@ -989,7 +993,7 @@ namespace SwitcherControl.BMDSwitcher
             else if (_config.USKSettings.IsDVE == 1)
             {
                 ConfigureUSKforPictureInPicture();
-                ConfigureUSK1ChromaSettings();
+                //ConfigureUSK1ChromaSettings();
             }
         }
 

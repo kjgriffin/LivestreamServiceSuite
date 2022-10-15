@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿using CCU.Config;
+
+using Microsoft.Win32;
 
 using System;
 using System.Collections.Generic;
@@ -94,6 +96,12 @@ namespace CCUI_UI
 
         internal void ReConfigure()
         {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(ReConfigure);
+                return;
+            }
+
             var cfg = m_monitor?.ExportStateToConfig() ?? new CCPUConfig();
 
             CCPUConfig.ClientConfig c1 = null;
@@ -344,7 +352,7 @@ namespace CCUI_UI
         private void ClickOnTop(object sender, RoutedEventArgs e)
         {
             AlwaysOnTop = !AlwaysOnTop;
-            
+
             miOnTop.IsChecked = AlwaysOnTop;
             this.Topmost = AlwaysOnTop;
         }

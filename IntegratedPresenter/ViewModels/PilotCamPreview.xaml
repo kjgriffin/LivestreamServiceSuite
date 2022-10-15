@@ -31,6 +31,28 @@
                 <TextBlock Grid.Row="3" FontSize="35" Name="tbPstInfo" Foreground="#cfcfcf" VerticalAlignment="Center" HorizontalAlignment="Center">Description/info<LineBreak/>more info here</TextBlock>
                 <TextBlock Grid.Row="4" FontSize="40" Name="tbStatus" Foreground="Orange" VerticalAlignment="Center" HorizontalAlignment="Center">STATUS</TextBlock>
 
+                <Grid Grid.Row="5">
+
+                    <Button Name="btnReFire" Focusable="False" Click="ClickReRun" IsTabStop="False">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <!--<Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">-->
+                                <ContentControl Name="tgt" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#7f7f7f" FontSize="35">Re-Run</ContentControl>
+                                <!--</Border>-->
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Cursor" Value="Hand"></Setter>
+                                        <Setter Property="Foreground" Value="Orange" TargetName="tgt"></Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+
+                </Grid>
+
+
                 <Grid Grid.Row="6">
                     <TextBlock FontSize="20" Name="tbSubTitle" Foreground="#a7a7a7" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0">STD/EMG</TextBlock>
                     <TextBlock FontSize="30" Name="tbSubContent" Foreground="#a7a7a7" VerticalAlignment="Center" HorizontalAlignment="Center">EMG-EMG</TextBlock>

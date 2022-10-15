@@ -22,6 +22,11 @@ namespace LutheRun
 
         public IElement SourceHTML { get; private set; }
 
+        public BlockType BlockType()
+        {
+            return LutheRun.BlockType.LITURGY_CORPERATE;
+        }
+
         public static LSBElementLiturgySung Parse(IElement element)
         {
             LSBElementLiturgySung res = new LSBElementLiturgySung();

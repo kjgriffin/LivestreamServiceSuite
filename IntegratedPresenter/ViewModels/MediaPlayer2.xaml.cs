@@ -2,6 +2,8 @@
 
 using IntegratedPresenter.BMDSwitcher.Config;
 
+using IntegratedPresenterAPIInterop;
+
 using SwitcherControl.BMDSwitcher;
 
 using System;
@@ -302,31 +304,29 @@ namespace IntegratedPresenter.Main
         }
 
 
-        Uri _source;
         SlideType _type;
 
         Timer _playbacktimer;
 
         public void SetMedia(Uri source, SlideType type)
         {
-            _source = source;
             _type = type;
             switch (type)
             {
                 case SlideType.Video:
-                    ShowVideo();
+                    ShowVideo(source);
                     break;
                 case SlideType.ChromaKeyVideo:
-                    ShowVideo();
+                    ShowVideo(source);
                     break;
                 case SlideType.ChromaKeyStill:
-                    ShowImage();
+                    ShowImage(source);
                     break;
                 case SlideType.Full:
-                    ShowImage();
+                    ShowImage(source);
                     break;
                 case SlideType.Liturgy:
-                    ShowImage();
+                    ShowImage(source);
                     break;
                 case SlideType.Empty:
                     ShowBlackSource();
@@ -336,7 +336,13 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        Slide _curentSlide = null;
+        public void SetMedia(BitmapImage img, SlideType type)
+        {
+            _type = type;
+            ShowImage(img);
+        }
+
+        ISlide _curentSlide = null;
         bool _asKey = false;
 
         public void ChangeShowAutomationPreviews()
@@ -371,7 +377,7 @@ namespace IntegratedPresenter.Main
             });
         }
 
-        private void ChangeSlide(Slide newSlide, bool asKey)
+        private void ChangeSlide(ISlide newSlide, bool asKey)
         {
             ClearActionPreviews();
             _asKey = asKey;
@@ -408,20 +414,24 @@ namespace IntegratedPresenter.Main
             });
         }
 
-        public void SetMedia(Slide slide, bool asKey)
+        public void SetMedia(ISlide slide, bool asKey)
         {
             ChangeSlide(slide, asKey);
             if (slide.Type == SlideType.Action)
             {
                 ShowActionCommands(slide, asKey);
             }
-            else if (slide.Source != string.Empty)
+            else
             {
                 if (asKey)
                 {
-                    if (slide.KeySource != null && slide.KeySource != "")
+                    if (slide.TryGetKeyImage(out var key))
                     {
-                        SetMedia(new Uri(slide.KeySource), slide.Type);
+                        SetMedia(key, slide.Type);
+                    }
+                    else if (slide.TryGetKeyVideoPath(out var path))
+                    {
+                        SetMedia(new Uri(path), slide.Type);
                     }
                     else
                     {
@@ -430,49 +440,51 @@ namespace IntegratedPresenter.Main
                 }
                 else
                 {
-                    SetMedia(new Uri(slide.Source), slide.Type);
-                }
-            }
-            else
-            {
-                ShowBlackSource();
-            }
-        }
-
-        private void ShowActionCommands(Slide slide, bool asKey)
-        {
-            // check action slide listed an alternate display/key source (other than black)
-            bool validaltsource = false;
-            if (slide.AltSources)
-            {
-                // load them
-                if (File.Exists(slide.AltSource) && File.Exists(slide.AltKeySource))
-                {
-                    if (asKey)
+                    if (slide.TryGetPrimaryImage(out var key))
                     {
-                        if (slide.AltKeySource.EndsWith(".png"))
-                        {
-                            SetMedia(new Uri(slide.AltKeySource), SlideType.Full);
-                        }
-                        else if (slide.AltKeySource.EndsWith(".mp4"))
-                        {
-                            SetMedia(new Uri(slide.AltKeySource), SlideType.Video);
-                        }
+                        SetMedia(key, slide.Type);
+                    }
+                    else if (slide.TryGetPrimaryVideoPath(out var path))
+                    {
+                        SetMedia(new Uri(path), slide.Type);
                     }
                     else
                     {
-                        if (slide.AltSource.EndsWith(".png"))
-                        {
-                            SetMedia(new Uri(slide.AltSource), SlideType.Full);
-                        }
-                        else if (slide.AltKeySource.EndsWith(".mp4"))
-                        {
-                            SetMedia(new Uri(slide.AltSource), SlideType.Video);
-                        }
+                        ShowBlackSource();
                     }
+                }
+            }
+        }
+
+        private void ShowActionCommands(ISlide slide, bool asKey)
+        {
+            // check action slide listed an alternate display/key source (other than black)
+            bool validaltsource = false;
+
+            if (asKey)
+            {
+                if (slide.TryGetKeyImage(out var key))
+                {
+                    SetMedia(key, SlideType.Full);
+                    validaltsource = true;
+                }
+                else if (slide.TryGetKeyVideoPath(out var path))
+                {
+                    SetMedia(new Uri(path), SlideType.Video);
                     validaltsource = true;
                 }
             }
+            else if (slide.TryGetPrimaryImage(out var img))
+            {
+                SetMedia(img, SlideType.Full);
+                validaltsource = true;
+            }
+            else if (slide.TryGetPrimaryVideoPath(out var path))
+            {
+                SetMedia(new Uri(path), SlideType.Video);
+                validaltsource = true;
+            }
+
             if (!validaltsource)
             {
                 ShowBlackSource();
@@ -492,7 +504,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        private void ShowActionsText(Slide slide)
+        private void ShowActionsText(ISlide slide)
         {
             if (!ShowBlackForActions)
             {
@@ -550,7 +562,7 @@ namespace IntegratedPresenter.Main
             });
         }
 
-        private void ShowImage()
+        private void ShowImage(Uri source)
         {
             SequenceLabel.Visibility = Visibility.Hidden;
             SeqType.Visibility = Visibility.Hidden;
@@ -565,7 +577,7 @@ namespace IntegratedPresenter.Main
             imagePlayer.Visibility = Visibility.Visible;
             try
             {
-                imagePlayer.Source = new BitmapImage(_source);
+                imagePlayer.Source = new BitmapImage(source);
             }
             catch (Exception)
             {
@@ -573,7 +585,31 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        private void ShowVideo()
+        private void ShowImage(BitmapImage img)
+        {
+            SequenceLabel.Visibility = Visibility.Hidden;
+            SeqType.Visibility = Visibility.Hidden;
+            ActionIndicator.Visibility = Visibility.Hidden;
+            MainMessages.Visibility = Visibility.Hidden;
+            SetupMessages.Visibility = Visibility.Hidden;
+            BlackSource.Visibility = Visibility.Hidden;
+            _playbacktimer.Stop();
+            videoPlayer.Stop();
+            videoPlayer.Visibility = Visibility.Hidden;
+
+            imagePlayer.Visibility = Visibility.Visible;
+            try
+            {
+                imagePlayer.Source = img;
+            }
+            catch (Exception)
+            {
+                ShowBlackSource();
+            }
+        }
+
+
+        private void ShowVideo(Uri source)
         {
             SequenceLabel.Visibility = Visibility.Hidden;
             SeqType.Visibility = Visibility.Hidden;
@@ -589,7 +625,7 @@ namespace IntegratedPresenter.Main
             try
             {
 
-                videoPlayer.Source = _source;
+                videoPlayer.Source = source;
             }
             catch (Exception)
             {

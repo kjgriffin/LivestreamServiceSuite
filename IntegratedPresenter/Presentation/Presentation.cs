@@ -1,8 +1,10 @@
-﻿using CCUI_UI;
+﻿using CCU.Config;
 
 using Integrated_Presenter.Presentation;
 
 using IntegratedPresenter.BMDSwitcher.Config;
+
+using IntegratedPresenterAPIInterop;
 
 using System;
 using System.Collections.Generic;
@@ -14,23 +16,23 @@ using System.Text.RegularExpressions;
 
 namespace IntegratedPresenter.Main
 {
-    public class Presentation
+    public class Presentation : IPresentation
     {
 
-        public bool HasSwitcherConfig { get; private set; } = false;
-        public BMDSwitcher.Config.BMDSwitcherConfigSettings SwitcherConfig { get; private set; }
+        public bool HasSwitcherConfig { get; internal set; } = false;
+        public BMDSwitcher.Config.BMDSwitcherConfigSettings SwitcherConfig { get; internal set; }
 
         public bool HasUserConfig { get; private set; } = false;
         public Configurations.FeatureConfig.IntegratedPresenterFeatures UserConfig { get; private set; }
 
-        public bool HasCCUConfig { get; private set; } = false;
-        public CCPUConfig CCPUConfig { get; private set; }
+        public bool HasCCUConfig { get; internal set; } = false;
+        public CCPUConfig CCPUConfig { get; internal set; }
 
         public string Folder { get; set; }
 
-        public List<Slide> Slides { get; set; } = new List<Slide>();
+        public List<ISlide> Slides { get; set; } = new List<ISlide>();
 
-        public static Slide EmptySlide = new Slide() { Source = "", Type = SlideType.Empty };
+        public static ISlide EmptySlide = new Slide() { Source = "", Type = SlideType.Empty };
 
         public bool Create(string folder)
         {
@@ -95,7 +97,27 @@ namespace IntegratedPresenter.Main
                 }
                 if (s.Type == SlideType.Action)
                 {
-                    s.LoadActions(folder);
+                    try
+                    {
+                        using (StreamReader sr = new StreamReader(Path.Combine(folder, s.Source)))
+                        {
+                            var text = sr.ReadToEnd();
+                            if (ActionLoader.TryLoadActions(text, folder, out var res))
+                            {
+                                s.Actions = res.Actions;
+                                s.SetupActions = res.SetupActions;
+                                s.Title = res.Title;
+                                s.AltSources = res.AltSources;
+                                s.AltSource = res.AltSource;
+                                s.AltKeySource = res.AltKeySource;
+                                s.AutoOnly = res.AutoOnly;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+
                 }
                 Slides.Add(s);
             }
@@ -106,7 +128,11 @@ namespace IntegratedPresenter.Main
             {
                 var num = Regex.Match(file, @"Key_(?<num>\d+)").Groups["num"].Value;
                 int snum = Convert.ToInt32(num);
-                Slides[snum].KeySource = file;
+                var slide = Slides[snum] as Slide;
+                if (slide != null)
+                {
+                    slide.KeySource = file;
+                }
             }
 
             // attach postshot to slides
@@ -143,29 +169,8 @@ namespace IntegratedPresenter.Main
                         {
                             // load the pilot actions...
                             var src = sr.ReadToEnd();
-                            List<IPilotAction> pilotActions = new List<IPilotAction>();
-                            List<IPilotAction> emgActions = new List<IPilotAction>();
-                            foreach (var line in src.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
-                            {
-                                // load emergency actions
-                                if (line.StartsWith("emg") && PilotDriveNamedPresetWithNamedZoom.TryParse(line.Substring(3, line.Length - 3), out var emgpa))
-                                {
-                                    emgActions.Add(emgpa);
-                                }
-                                // load as regular actions
-                                else if (PilotDriveNamedPreset.TryParse(line, out var pcmd))
-                                {
-                                    pilotActions.Add(pcmd);
-                                }
-                                else if (PilotDriveNamedPresetWithZoom.TryParse(line, out var pcmdwz))
-                                {
-                                    pilotActions.Add(pcmdwz);
-                                }
-                                else if (PilotDriveNamedPresetWithNamedZoom.TryParse(line, out var pcmdwnz))
-                                {
-                                    pilotActions.Add(pcmdwnz);
-                                }
-                            }
+                            List<IPilotAction> pilotActions, emgActions;
+                            PilotActionBuilder.BuildPilotActions(src, out pilotActions, out emgActions);
 
                             Slides[snum].AutoPilotActions = pilotActions;
                             Slides[snum].EmergencyActions = emgActions;
@@ -209,7 +214,7 @@ namespace IntegratedPresenter.Main
                     var cfg = sr.ReadToEnd();
                     try
                     {
-                        CCPUConfig = JsonSerializer.Deserialize<CCUI_UI.CCPUConfig>(cfg);
+                        CCPUConfig = JsonSerializer.Deserialize<CCPUConfig>(cfg);
                         HasCCUConfig = true;
                     }
                     catch (Exception ex)
@@ -221,7 +226,6 @@ namespace IntegratedPresenter.Main
             return false;
         }
 
-
         public int SlideCount { get => Slides.Count; }
 
         public int CurrentSlide { get => _currentSlide + 1; }
@@ -229,7 +233,7 @@ namespace IntegratedPresenter.Main
         private int _currentSlide = 0;
         private int _virtualCurrentSlide = 0;
 
-        public Slide Prev
+        public ISlide Prev
         {
             get
             {
@@ -245,10 +249,10 @@ namespace IntegratedPresenter.Main
         }
 
 
-        public Slide Override { get; set; }
+        public ISlide Override { get; set; }
         public bool OverridePres { get; set; } = false;
 
-        public Slide EffectiveCurrent
+        public ISlide EffectiveCurrent
         {
             get
             {
@@ -260,8 +264,8 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        public Slide Current { get => Slides[_currentSlide]; }
-        public Slide Next
+        public ISlide Current { get => Slides[_currentSlide]; }
+        public ISlide Next
         {
             get
             {
@@ -275,7 +279,7 @@ namespace IntegratedPresenter.Main
                 }
             }
         }
-        public Slide After
+        public ISlide After
         {
             get
             {
@@ -347,7 +351,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        public void StartPres()
+        public void StartPres(int snum = 0)
         {
             // need to reset all slides
             foreach (var s in Slides)
@@ -355,8 +359,13 @@ namespace IntegratedPresenter.Main
                 s?.ResetAllActionsState();
             }
             //EffectiveCurrent?.ResetAllActionsState();
-            _currentSlide = 0;
-            _virtualCurrentSlide = 0;
+            if (snum > Slides.Count && snum > 0)
+            {
+                snum = Slides.Count - 1;
+            }
+
+            _currentSlide = snum;
+            _virtualCurrentSlide = snum;
         }
 
     }

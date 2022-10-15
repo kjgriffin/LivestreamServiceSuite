@@ -29,12 +29,19 @@ namespace Xenon.Compiler
         private ConcurrentDictionary<int, RenderedSlide> hashedOldSlides = new ConcurrentDictionary<int, RenderedSlide>();
         private ConcurrentDictionary<int, RenderedSlide> hashedNewSlides = new ConcurrentDictionary<int, RenderedSlide>();
 
+        public void CleanSlides()
+        {
+            hashedNewSlides.Clear();
+            hashedOldSlides.Clear();
+        }
+
         public async Task<(bool success, Project project)> CompileProjectAsync(Project proj, IProgress<int> progress = null)
         {
             compiler.Logger.ClearErrors();
             try
             {
                 var res = await Task.Run(() => compiler.Compile(proj, progress));
+                PilotReportGenerator.YellAboutUnkownPilotCommands(proj, compiler.Logger);
                 Messages.AddRange(compiler.Logger.AllErrors);
 
                 return (true, res);
@@ -97,6 +104,7 @@ namespace Xenon.Compiler
                     Messages.Add(new XenonCompilerMessage() { ErrorMessage = $"Rendering failed to render {failedslides} slides.", ErrorName = "Failed to Render Slides", Level = XenonCompilerMessageType.Error });
                 }
 
+                /*
                 var report = PilotReportGenerator.GeneratePilotPresetReport(proj);
                 Messages.Add(new XenonCompilerMessage()
                 {
@@ -107,6 +115,7 @@ namespace Xenon.Compiler
                     Level = XenonCompilerMessageType.Message,
                     Token = "",
                 });
+                */
 
                 return slides;
             }

@@ -25,6 +25,22 @@ namespace LutheRun
 
         }
 
+        internal LSBElementCaption()
+        {
+
+        }
+
+        internal static LSBElementCaption FromHeading(LSBElementHeading hdg)
+        {
+            return new LSBElementCaption
+            {
+                Caption = hdg.Heading,
+                PostsetCmd = hdg.PostsetCmd,
+                SourceHTML = hdg.SourceHTML,
+                SubCaption = "",
+            };
+        }
+
         public string DebugString()
         {
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_CAPTION. Caption:'{Caption}' SubCaption:'{SubCaption}'";
@@ -45,8 +61,10 @@ namespace LutheRun
 
             if (ctest.Contains("bells"))
             {
-                sb.AppendLine("/// </MANUAL_UPDATE name='bells'>".Indent(indentDepth, indentSpace));
-                sb.AppendLine("//> INSERTION POINT: bells".Indent(indentDepth, indentSpace));
+                foreach (var line in ExternalPrefabGenerator.BellsCommand(indentSpace).Split(Environment.NewLine))
+                {
+                    sb.AppendLine(line.Indent(indentDepth, indentSpace));
+                }
             }
             else if (ctest.Contains("prelude"))
             {
@@ -81,5 +99,34 @@ namespace LutheRun
 
             return sb.ToString();
         }
+
+        public BlockType BlockType()
+        {
+            string ctest = $"{Caption.ToLower()} {SubCaption.ToLower()}";
+
+            if (ctest.Contains("bells"))
+            {
+                return LutheRun.BlockType.OPENING;
+            }
+            else if (ctest.Contains("prelude"))
+            {
+                return LutheRun.BlockType.PRELUDE;
+            }
+            else if (ctest.Contains("postlude"))
+            {
+                return LutheRun.BlockType.POSTLUDE;
+            }
+            else if (ctest.Contains("anthem"))
+            {
+                return LutheRun.BlockType.ANTHEM;
+            }
+            else if (ctest.Contains("sermon"))
+            {
+                return LutheRun.BlockType.SERMON;
+            }
+
+            return LutheRun.BlockType.UNKNOWN;
+        }
+
     }
 }

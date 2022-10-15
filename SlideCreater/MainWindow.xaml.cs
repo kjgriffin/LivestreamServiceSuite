@@ -34,6 +34,9 @@ using CommonVersionInfo;
 using System.Net.Http;
 using LutheRun;
 using Xenon.Compiler.Formatter;
+using System.IO.MemoryMappedFiles;
+using IntegratedPresenterAPIInterop;
+using CCU.Config;
 
 namespace SlideCreater
 {
@@ -59,7 +62,7 @@ namespace SlideCreater
         ErrorExporting,
         Saving,
         Downloading,
-
+        SuccessBuilding_HotReloading,
     }
 
 
@@ -133,6 +136,11 @@ namespace SlideCreater
                     tbActionStatus.Text = "Project Rendered";
                     tbSubActionStatus.Text = "";
                     sbStatus.Background = System.Windows.Media.Brushes.Green;
+                    break;
+                case ActionState.SuccessBuilding_HotReloading:
+                    tbActionStatus.Text = "Project Rendered";
+                    tbSubActionStatus.Text = "Hot Reload Made Available";
+                    sbStatus.Background = System.Windows.Media.Brushes.Teal;
                     break;
                 case ActionState.ErrorBuilding:
                     tbActionStatus.Text = "Render Failed";
@@ -219,6 +227,7 @@ namespace SlideCreater
             TbInput.TextArea.TextView.LinkTextForegroundBrush = System.Windows.Media.Brushes.LawnGreen;
 
             TbConfig.LoadLanguage_JSON();
+            TbConfigCCU.LoadLanguage_JSON();
             // load default config file
 
             // setup indentation
@@ -228,6 +237,9 @@ namespace SlideCreater
             //TbInput.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
             TbConfig.Options.IndentationSize = 4;
             TbConfig.Options.ConvertTabsToSpaces = true;
+
+            TbConfigCCU.Options.IndentationSize = 4;
+            TbConfigCCU.Options.ConvertTabsToSpaces = true;
 
             // Load Version Number
             var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SlideCreater.version.json");
@@ -385,6 +397,11 @@ namespace SlideCreater
                            ActionState = ActionState.SuccessBuilding;
                            UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = $"Slides built!", ErrorName = $"Render Success ({timestr})s", Generator = "Main Rendering", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
                        });
+
+            if (hotReloadEnabled)
+            {
+                PublishHotReload();
+            }
         }
 
         private void ApplyDisplayOverridesOnSlides(List<RenderedSlide> slides)
@@ -562,7 +579,7 @@ namespace SlideCreater
 
         private void AddAssetsFromPaths(IEnumerable<string> filenames, string group)
         {
-            AssetsChanged();
+            MarkDirty();
             // add assets
             foreach (var file in filenames)
             {
@@ -605,7 +622,7 @@ namespace SlideCreater
 
         private void AddNamedAssetsFromPaths(IEnumerable<(string path, string name)> assets)
         {
-            AssetsChanged();
+            MarkDirty();
             // add assets
             foreach (var (path, name) in assets)
             {
@@ -657,7 +674,7 @@ namespace SlideCreater
                     assetItemCtrl.OnFitInsertRequest += AssetItemCtrl_OnFitInsertRequest;
                     assetItemCtrl.OnDeleteAssetRequest += AssetItemCtrl_OnDeleteAssetRequest;
                     assetItemCtrl.OnAutoFitInsertRequest += AssetItemCtrl_OnAutoFitInsertRequest;
-                    assetItemCtrl.OnInsertBellsRequest += AssetItemCtrl_OnInsertBellsRequest;
+                    assetItemCtrl.OnInsertResourceRequest += AssetItemCtrl_OnInsertResourceRequest;
                     assetItemCtrl.OnLiturgyInsertRequest += AssetItemCtrl_OnLiturgyInsertRequest;
                     assetItemCtrl.OnRenameAssetRequest += AssetItemCtrl_OnRenameAssetRequest;
                     //AssetList.Children.Add(assetItemCtrl);
@@ -742,17 +759,20 @@ namespace SlideCreater
 
         private void AssetItemCtrl_OnRenameAssetRequest(object sender, ProjectAsset asset, string newname)
         {
-            AssetsChanged();
+            MarkDirty();
             asset.Name = newname;
 
             ShowProjectAssets();
             TryAutoSave();
         }
 
-        private void AssetItemCtrl_OnInsertBellsRequest(object sender, ProjectAsset asset)
+        private void AssetItemCtrl_OnInsertResourceRequest(object sender, ProjectAsset asset)
         {
             string InsertCommand = $"\r\n#resource(\"{asset.Name}\", \"audio\")\r\n\r\n#script {{\r\n#Worship Bells;\r\n@arg0:DSK1FadeOff[Kill Liturgy];\r\n@arg0:OpenAudioPlayer;\r\n@arg1:LoadAudioFile(Resource_{asset.OriginalFilename})[Load Bells];\r\n@arg1:PresetSelect(7)[Preset Center];\r\n@arg1:DelayMs(100);\r\n@arg0:AutoTrans[Take Center];\r\n@arg1:DelayMs(2000);\r\n@arg0:PlayAuxAudio[Play Bells];\r\narg1:PresetSelect(8)[Preset Pulpit];\r\n}}\r\n";
-            InsertTextCommand(InsertCommand);
+
+            string InsertResourceCommand = $"#resource(\"{asset.Name}\",\"{asset.KindString}\")";
+
+            InsertTextCommand(InsertResourceCommand);
         }
 
         private void AssetItemCtrl_OnLiturgyInsertRequest(object sender, ProjectAsset asset)
@@ -784,7 +804,7 @@ namespace SlideCreater
 
         private void AssetItemCtrl_OnDeleteAssetRequest(object sender, ProjectAsset asset)
         {
-            AssetsChanged();
+            MarkDirty();
             //Assets.Remove(asset);
             _proj.Assets.Remove(asset);
             ShowProjectAssets();
@@ -863,6 +883,7 @@ namespace SlideCreater
             _proj = new Project(true);
 
             TbConfig.Text = _proj.SourceConfig;
+            TbConfigCCU.Text = SanatizePNGsFromCfg(_proj.CCPUConfig);
 
             ShowProjectAssets();
             SetupLayoutsTreeVew();
@@ -901,7 +922,7 @@ namespace SlideCreater
 
         private bool dirty = false;
 
-        private void AssetsChanged()
+        private void MarkDirty()
         {
             dirty = true;
             ProjectState = ProjectState.Dirty;
@@ -919,6 +940,8 @@ namespace SlideCreater
                     return;
                 }
             }
+            hotReloadServer?.StopListening();
+            hotReloadServer?.Release();
             // close everything else too
             Application.Current.Shutdown();
         }
@@ -927,7 +950,7 @@ namespace SlideCreater
         {
             _proj.Assets.Clear();
             ShowProjectAssets();
-            AssetsChanged();
+            MarkDirty();
             FocusSlide.Clear();
             //slidepreviews.Clear();
             previews.Clear();
@@ -1159,10 +1182,16 @@ namespace SlideCreater
                 }
                 await parser.ParseHTML(ofd.FileName);
                 parser.Serviceify(options);
+
+                if (options.FlightPlanning)
+                {
+                    parser.FlightPlan(options);
+                }
+
                 parser.CompileToXenon();
                 ActionState = ActionState.Downloading;
                 await parser.LoadWebAssets(_proj.CreateImageAsset);
-                AssetsChanged();
+                MarkDirty();
                 ShowProjectAssets();
                 ActionState = ActionState.Ready;
                 TbInput.Text = parser.XenonText;
@@ -1300,8 +1329,16 @@ namespace SlideCreater
                 });
             };
 
+            Action<string, CCPUConfig_Extended> updateccu = (string raw, CCPUConfig_Extended cfg) =>
+            {
+                var fakeJson = SanatizePNGsFromCfg(cfg);
+                Dispatcher.Invoke(() =>
+                {
+                    TbConfigCCU.Text = fakeJson;
+                });
+            };
 
-            var opened = await Xenon.SaveLoad.TrustySave.OpenTrustily(VersionInfo, filename, updatecode);
+            var opened = await Xenon.SaveLoad.TrustySave.OpenTrustily(VersionInfo, filename, updatecode, updateccu);
             _proj = opened.project;
 
 
@@ -1309,8 +1346,9 @@ namespace SlideCreater
             // add assets
             Dispatcher.Invoke(() =>
             {
-                AssetsChanged();
+                MarkDirty();
                 ActionState = ActionState.Downloading;
+                TbConfig.Text = _proj.SourceConfig;
             });
             double percent = 0;
             int total = opened.assetfilemap.Count;
@@ -1746,7 +1784,7 @@ namespace SlideCreater
             renderclean = miRenderClean.IsChecked;
         }
 
-        private async void FormatCode(object sender, RoutedEventArgs e)
+        private void FormatCode(object sender, RoutedEventArgs e)
         {
 #if DEBUG
             // not quite production ready :(
@@ -1754,8 +1792,12 @@ namespace SlideCreater
             try
             {
                 //string formatted = await XenonFastFormatter.CompileReformat(TbInput.Text, 4);
-                string formatted = XenonSimpleFormatter.Format(TbInput.Text);
-                Dispatcher.Invoke(() => TbInput.Text = formatted);
+                //string formatted = XenonSimpleFormatter.Format(TbInput.Text);
+                Task.Run(() =>
+                {
+                    string formatted = XenonTopLevelFormatter.FormatTopLevel(TbInput.Text);
+                    Dispatcher.Invoke(() => TbInput.Text = formatted);
+                });
             }
             catch (Exception)
             {
@@ -1768,5 +1810,143 @@ namespace SlideCreater
             string report = Xenon.Analyzers.PilotReportGenerator.GeneratePilotPresetReport(_proj);
             MessageBox.Show(report, "Presets Used");
         }
+
+
+
+        private void HotReload(object sender, RoutedEventArgs e)
+        {
+            //PublishHotReload();
+            hotReloadEnabled = !hotReloadEnabled;
+
+            if (hotReloadEnabled)
+            {
+                btnImgHotReload.Source = new BitmapImage(new Uri("pack://application:,,,/ViewControls/Images/OrangeFlame.png"));
+
+                hotReloadServer = new HotReloadMonitor();
+                hotReloadServer.StartListening();
+                hotReloadServer.OnHotReloadConsumed += HotReloadServer_OnHotReloadConsumed;
+
+                PublishHotReload();
+            }
+            else
+            {
+                btnImgHotReload.Source = new BitmapImage(new Uri("pack://application:,,,/ViewControls/Images/GreyFlame.png"));
+
+                hotReloadServer?.StopListening();
+                hotReloadServer?.Release();
+                if (hotReloadServer != null)
+                {
+                    hotReloadServer.OnHotReloadConsumed -= HotReloadServer_OnHotReloadConsumed;
+                    hotReloadServer = null;
+                }
+            }
+        }
+
+        private void HotReloadServer_OnHotReloadConsumed(object sender, EventArgs e)
+        {
+            sbStatus.Dispatcher.Invoke(() =>
+                                               {
+                                                   ActionState = ActionState.SuccessBuilding;
+                                               });
+
+        }
+
+        bool hotReloadEnabled = false;
+
+        HotReloadMonitor hotReloadServer;
+
+        private void PublishHotReload()
+        {
+            if (hotReloadServer?.PublishReload(_proj, slides) == true)
+            {
+                sbStatus.Dispatcher.Invoke(() =>
+                                       {
+                                           UpdateErrorReport(alllogs, new XenonCompilerMessage() { ErrorMessage = $"Presentation Pushed to Hot Reload", ErrorName = $"Hot Reload Requested", Generator = "Hot Reloader", Inner = "", Level = XenonCompilerMessageType.Message, Token = "" });
+                                           ActionState = ActionState.SuccessBuilding_HotReloading;
+                                       });
+            }
+        }
+
+        private void CleanSlides(object sender, RoutedEventArgs e)
+        {
+            builder.CleanSlides();
+        }
+
+        CCUConfigEditor m_ccueditor;
+        private void ClickOpenCCUConfigEditor(object sender, RoutedEventArgs e)
+        {
+            CCPUConfig_Extended cfg = null;
+            if (string.IsNullOrEmpty(_proj.SourceCCPUConfigFull))
+            {
+                cfg = new CCPUConfig_Extended();
+            }
+            else
+            {
+                cfg = JsonSerializer.Deserialize<CCPUConfig_Extended>(_proj.SourceCCPUConfigFull);
+            }
+
+            if (m_ccueditor == null || m_ccueditor?.WasClosed == true)
+            {
+                m_ccueditor = new CCUConfigEditor(cfg, SaveCCUConfigChanges);
+            }
+            m_ccueditor.Show();
+        }
+
+        private void ClickLoadCCUFile(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Open CCU Config File";
+            ofd.Filter = "json (*.json)|*.json";
+            if (ofd.ShowDialog() == true)
+            {
+                using (StreamReader sr = new StreamReader(ofd.FileName))
+                {
+                    string jsonTxt = sr.ReadToEnd();
+
+                    _proj.SourceCCPUConfigFull = jsonTxt;
+                }
+
+                var fullCFG = JsonSerializer.Deserialize<CCPUConfig_Extended>(_proj.SourceCCPUConfigFull);
+                _proj.CCPUConfig = fullCFG;
+
+                var fakeCFG = SanatizePNGsFromCfg(fullCFG);
+                TbConfigCCU.Text = fakeCFG;
+            }
+        }
+
+        private void SaveCCUConfigChanges(CCPUConfig_Extended cfg)
+        {
+            // build 2 copies of the JSON file...
+            // 1 to display that will ignore the images to improve text loading...
+            // 1 true copy to stuff into the project for rendering
+
+            MarkDirty();
+
+            var fakeJsonString = SanatizePNGsFromCfg(cfg);
+
+            Dispatcher.Invoke(() =>
+            {
+                TbConfigCCU.Text = fakeJsonString;
+            });
+        }
+
+        private string SanatizePNGsFromCfg(CCPUConfig_Extended cfg)
+        {
+            var trueCFG = JsonSerializer.Serialize(cfg);
+            _proj.SourceCCPUConfigFull = trueCFG;
+
+            var fakeCFG = JsonSerializer.Deserialize<CCPUConfig_Extended>(trueCFG);
+
+            foreach (var mock in fakeCFG.MockPresetInfo)
+            {
+                foreach (var mockpst in mock.Value)
+                {
+                    mockpst.Value.Thumbnail = "(base64encoded png)";
+                }
+            }
+
+            return JsonSerializer.Serialize(fakeCFG, new JsonSerializerOptions { WriteIndented = true });
+        }
+
     }
 }

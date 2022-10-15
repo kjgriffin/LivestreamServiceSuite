@@ -23,12 +23,20 @@ namespace Integrated_Presenter.ViewModels
     public partial class PilotCamPreview : UserControl
     {
 
+        public event EventHandler OnUserRequestForManualReRun;
+
         bool hasAction = false;
 
         public PilotCamPreview()
         {
             InitializeComponent();
             UpdateOnAirWarning(false);
+        }
+
+        public void HideManualReRun()
+        {
+            btnReFire.IsEnabled = false;
+            btnReFire.Visibility = Visibility.Hidden;
         }
 
         string splitify(string input)
@@ -175,6 +183,11 @@ namespace Integrated_Presenter.ViewModels
             }
 
 
+        }
+
+        private void ClickReRun(object sender, RoutedEventArgs e)
+        {
+            OnUserRequestForManualReRun?.Invoke(this, new EventArgs());
         }
     }
 }

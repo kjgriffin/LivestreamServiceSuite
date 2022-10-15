@@ -206,7 +206,7 @@ namespace DVIPProtocol.Clients.Advanced
         {
             for (int i = 0; i < cmd.RetryAttempts; i++)
             {
-                var attempt = DoTCPTimed(cmd.Data, 0);
+                var attempt = DoTCPTimed(cmd.Data, 0, cmd.IgnoreResponse);
                 if (attempt.success)
                 {
                     cmd.OnCompleted(i + 1, attempt.resp);
@@ -216,7 +216,7 @@ namespace DVIPProtocol.Clients.Advanced
             cmd.OnFail(cmd.RetryAttempts);
         }
 
-        private (bool success, byte[] resp) DoTCPTimed(byte[] msg, int msTime)
+        private (bool success, byte[] resp) DoTCPTimed(byte[] msg, int msTime, bool ignoreRESP = false)
         {
             NetworkStream stream = null;
             try
@@ -268,6 +268,12 @@ namespace DVIPProtocol.Clients.Advanced
                 int sizehigh = 0;
                 int sizelow = 0;
                 uint dataSize = 0;
+
+                if (ignoreRESP)
+                {
+                    return (false, new byte[0]);
+                }
+
                 m_log?.Info($"[{m_endpoint.ToString()}] reading size highbyte.");
                 sizehigh = stream.ReadByte();
                 m_log?.Info($"[{m_endpoint.ToString()}] reading size lowbyte.");

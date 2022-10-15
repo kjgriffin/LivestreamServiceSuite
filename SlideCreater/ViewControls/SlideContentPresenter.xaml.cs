@@ -16,6 +16,7 @@ using Xenon.Renderer;
 using Xenon.SlideAssembly;
 using Xenon.Helpers;
 using System.Text.RegularExpressions;
+using CommonGraphics;
 
 namespace SlideCreater
 {

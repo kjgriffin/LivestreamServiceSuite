@@ -166,6 +166,12 @@ namespace LutheRun
         private List<ReadingPartElementCollection> ReadingContent { get; set; } = new List<ReadingPartElementCollection>();
         private List<ReadingPartElementCollection> PostTitle { get; set; } = new List<ReadingPartElementCollection>();
 
+
+        public BlockType BlockType()
+        {
+            return LutheRun.BlockType.READING;
+        }
+
         public string DebugString()
         {
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_READING_COMPLEX.";

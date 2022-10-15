@@ -87,9 +87,9 @@
                     <Grid Grid.Row="1" Grid.Column="1">
                         <Viewbox Grid.Row="1" Stretch="Uniform">
                             <StackPanel Grid.Row="1" Orientation="Vertical">
-                                <Label Name="lbbells" FontSize="10">
-                                    <Hyperlink Click="ClickAddAsBells">
-                                        Add Bells
+                                <Label Name="lbresource" FontSize="10">
+                                    <Hyperlink Click="ClickAddAsResource">
+                                        Add Resource
                                     </Hyperlink>
                                 </Label>
                                 <Label Name="lbinsert" FontSize="10">

@@ -1,4 +1,6 @@
-﻿using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
+﻿using DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive;
+using DVIPProtocol.Protocol.Lib.Command.PTDrive;
+using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
 using log4net;
 
@@ -51,7 +53,7 @@ namespace CameraDriver
 
     public delegate void RobustReport(string cnameID, params string[] args);
 
-    public interface IRobustCamServer : ISimpleCamServer
+    public interface IRobustCamServer : ISimpleCamServer, IMotionCameraDriver
     {
         event RobustReport OnWorkCompleted;
         event RobustReport OnWorkFailed;
@@ -65,6 +67,11 @@ namespace CameraDriver
         void Cam_SaveZoomPresetProgram(string cnameID, string presetName, int zlevel, string mode);
         Guid Cam_RecallZoomPresetPosition(string cnameID, string presetName);
         Dictionary<string, ZoomProgram> GetKnownZoomPresetsForClient(string cnameID);
+    }
+
+    public interface IMotionCameraDriver
+    {
+        Guid Cam_RunDriveProgram(string cnameID, PanTiltDirection dir, byte speed, uint msDriveTime);
     }
 
 

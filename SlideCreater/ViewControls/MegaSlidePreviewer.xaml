@@ -44,8 +44,12 @@
                     <Border Name="bHasPilotTag" Background="ForestGreen" Margin="0,0,0,0">
                         <Label FontSize="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">Has Pilot</Label>
                     </Border>
-                    <Label Foreground="White" FontWeight="Bold" VerticalAlignment="Center">Postset:</Label>
-                    <Label Foreground="White" Name="postset" VerticalAlignment="Center"></Label>
+                    <Border Name="bHasPostsetTag" Background="Blue" Margin="0,0,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Foreground="White" FontWeight="Bold" VerticalAlignment="Center">Postset:</Label>
+                            <Label Foreground="White" Name="postset" VerticalAlignment="Center"></Label>
+                        </StackPanel>
+                    </Border>
                     <Label Foreground="White" FontWeight="Bold" Margin="10,0,0,0" VerticalAlignment="Center">Number:</Label>
                     <Label Foreground="White" Name="number" VerticalAlignment="Center"></Label>
                     <Label Foreground="White" FontWeight="Bold" Margin="0,0,0,0" VerticalAlignment="Center">Creates:</Label>

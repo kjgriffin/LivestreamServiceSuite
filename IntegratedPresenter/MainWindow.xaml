@@ -25,11 +25,14 @@
                     <MenuItem Click="ClickConnect" Header="Switcher" Focusable="False" IsTabStop="False"></MenuItem>
                     <Separator></Separator>
                     <MenuItem Click="ClickConnectMock" Header="Mock Switcher" Focusable="False" IsTabStop="False"></MenuItem>
+                    <MenuItem Name="miConnectMockCameras" Click="ClickConnectMockCameras" Header="Mock Cameras" Focusable="False" IsTabStop="False" IsCheckable="True" IsChecked="False"></MenuItem>
                     <Separator></Separator>
                     <MenuItem Click="ClickDisconnectSwitcher" Header="Disconnect" Focusable="False" IsTabStop="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Presentation" IsTabStop="False" Focusable="False">
                     <MenuItem Header="Open" Click="OpenPresentation" IsTabStop="False" Focusable="False" ></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Name="miHotReloadPres" Header="Enable Hot Reload Presentation" Click="ClickToggleHotReloadPresentation" IsTabStop="False" Focusable="False" IsCheckable="True" IsChecked="False"></MenuItem>
                     <Separator></Separator>
                     <MenuItem Name="miMute" Header="Mute [M]" Click="ToggleMutePres" IsTabStop="False" IsCheckable="True" IsChecked="False" Focusable="False"></MenuItem>
                 </MenuItem>

@@ -10,6 +10,10 @@ $>$>{
 $>$>$>#PIP Postlude;
 $>$>$>!displaysrc='Resource_#_forslide_#.png';
 $>$>$>!keysrc='Resource_#_forkey_#.png';
+$>$>$>@arg1:PresetSelect(5)[Preset Organ];
+$>$>$>@arg1:DelayMs(100);
+$>$>$>@arg0:AutoTrans[Take Organ];
+$>$>$>@arg1:DelayMs(1200);
 $>$>$>@arg0:DSK1Off[Kill Key];
 $>$>$>@arg0:USK1Off[Kill Key];
 $>$>$>@arg1:DelayMs(100);

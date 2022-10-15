@@ -17,6 +17,7 @@ using System.Collections;
 using IntegratedPresenter.BMDSwitcher.Config;
 using Configurations.SwitcherConfig;
 using Xenon.SlideAssembly.LayoutManagement;
+using CCU.Config;
 
 namespace Xenon.SlideAssembly
 {
@@ -34,6 +35,9 @@ namespace Xenon.SlideAssembly
         public List<ProjectAsset> Assets { get; set; } = new List<ProjectAsset>();
         public string SourceCode { get; set; } = string.Empty;
         public string SourceConfig { get; set; } = string.Empty;
+
+        public string SourceCCPUConfigFull { get; set; } = string.Empty;
+        public CCPUConfig_Extended CCPUConfig { get; set; } = new CCPUConfig_Extended();
 
 
         private int slidenum = 0;

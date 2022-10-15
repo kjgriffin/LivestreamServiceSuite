@@ -1,5 +1,6 @@
 ﻿using DVIPProtocol.Clients.Advanced;
 using DVIPProtocol.Clients.Execution;
+using DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive;
 using DVIPProtocol.Protocol.Lib.Command.CamCTRL;
 using DVIPProtocol.Protocol.Lib.Command.PTDrive;
 using DVIPProtocol.Protocol.Lib.Inquiry;
@@ -110,6 +111,87 @@ namespace CameraDriver
         }
 
 
+        public Guid Cam_RunDriveProgram(string cnameID, PanTiltDirection dir, byte speed, uint msDriveTime)
+        {
+            if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(cnameID))
+            {
+                return Guid.Empty;
+            }
+            Guid reqId = Guid.NewGuid();
+
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing cam drive job {reqId}");
+            m_dispatchCommands.Enqueue(() =>
+            {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] running cam drive job {reqId}");
+                if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
+                {
+                    m_log?.Info($"[{Thread.CurrentThread.Name}] requesting drive [{dir}] for camera {cnameID}");
+
+                    var drive = CMD_PanTiltDrive.UpDownLeftRight(dir, speed);
+                    var stop = CMD_Zoom_Std.Create(ZoomDir.STOP);
+
+                    RobustCommand rcmd = new RobustCommand
+                    {
+                        Data = drive.PackagePayload(),
+                        OnCompleted = (x, y) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting drive ({msDriveTime}ms) [{dir}] for camera {cnameID} COMPLETED");
+                                OnWorkCompleted?.Invoke(cnameID, "DRIVE", $"{dir} @{msDriveTime}ms", $"after 1 tries", reqId.ToString());
+                            });
+                        },
+                        OnFail = (x) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting drive [{dir}] for camera {cnameID} of {msDriveTime}ms FAILED");
+                                OnWorkFailed?.Invoke(cnameID, "DRIVE", $"{dir} @{msDriveTime}ms", $"of {msDriveTime}ms", reqId.ToString());
+                            });
+                        },
+                        RetryAttempts = 1,
+                        IgnoreResponse = true,
+                    };
+
+                    /*
+                    RobustSequence rcmd = new RobustSequence
+                    {
+                        First = drive.PackagePayload(),
+                        Second = stop.PackagePayload(),
+                        DelayMS = (int)Math.Clamp(msDriveTime, 0, TimeSpan.FromSeconds(10).Milliseconds),
+
+                        OnCompleted = (int attempts, byte[] resp) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting drive ({msDriveTime}ms) [{dir}] for camera {cnameID} COMPLETED");
+                                OnWorkCompleted?.Invoke(cnameID, "DRIVE", $"{dir} @{msDriveTime}ms", $"after {attempts} tries", reqId.ToString());
+                            });
+                        },
+                        OnFail = (int attempts) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting drive [{dir}] for camera {cnameID} of {msDriveTime}ms FAILED");
+                                OnWorkFailed?.Invoke(cnameID, "DRIVE", $"{dir} @{msDriveTime}ms", $"of {msDriveTime}ms", reqId.ToString());
+                            });
+                        },
+                        RetryAttempts = 1,
+                    };
+                    */
+
+
+                    OnWorkStarted?.Invoke(cnameID, "DRIVE", dir.ToString(), reqId.ToString());
+
+                    client?.DoRobustWork(rcmd);
+
+                }
+            });
+            m_workAvailable.Set();
+            return reqId;
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -199,11 +281,11 @@ namespace CameraDriver
                         First = zoom.PackagePayload(),
                         Second = stop.PackagePayload(),
                         DelayMS = duration, // note it seems that 200ms is about the smallest time we can gaurantee reliably
-                        // Setup full program sequence
-                        // automatically determine the setup sequence required
-                        // if we're going in, then the only initial state that makes sense is from full wide
-                        // likewise going out you need to start all the way in
-                        // use the stop command as a reset.....
+                                            // Setup full program sequence
+                                            // automatically determine the setup sequence required
+                                            // if we're going in, then the only initial state that makes sense is from full wide
+                                            // likewise going out you need to start all the way in
+                                            // use the stop command as a reset.....
                         Setup = setup.PackagePayload(),
                         SetupDelayMS = 3500,
                         // TODO: do we *really* need to stop the zoom in once we're maxed in, or can we let it just change direction?

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Xenon.Compiler
 {
-    class XenonErrorLogger : ILexerLogger
+    internal class XenonErrorLogger : ILexerLogger
     {
 
         List<XenonCompilerMessage> messages = new List<XenonCompilerMessage>();

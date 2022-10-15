@@ -31,6 +31,24 @@ namespace Xenon.AssetManagment
         public string OriginalFilename { get => Path.GetFileName(CurrentPath); }
         public AssetType Type { get; set; }
 
+        public string KindString
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case AssetType.Image:
+                        return "image";
+                    case AssetType.Video:
+                        return "video";
+                    case AssetType.Audio:
+                        return "audio";
+                    default:
+                        return "";
+                }
+            }
+        }
+
         public string Extension { get; set; }
 
         public string InternalDisplayName { get; set; }

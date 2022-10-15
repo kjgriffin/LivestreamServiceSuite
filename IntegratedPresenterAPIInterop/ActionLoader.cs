@@ -143,6 +143,103 @@ namespace IntegratedPresenterAPIInterop
             }
             return result;
         }
+
+
+        public class LoadActionsResult
+        {
+            public string Title { get; set; } = "";
+            public bool AutoOnly { get; set; } = false;
+            public bool AltSources { get; set; } = false;
+            public string AltSource { get; set; } = "";
+            public string AltKeySource { get; set; } = "";
+            public List<TrackedAutomationAction> SetupActions { get; set; } = new List<TrackedAutomationAction>();
+            public List<TrackedAutomationAction> Actions { get; set; } = new List<TrackedAutomationAction>();
+        }
+
+
+        public static bool TryLoadActions(string actionText, string presFolder, out LoadActionsResult loaded, bool checkRealMedia = true)
+        {
+            loaded = null;
+            var slide = new LoadActionsResult();
+            try
+            {
+                var commands = actionText.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(s => (s + ";").Trim());
+                var parts = commands.ToList();
+                slide.Title = "AUTO SEQ";
+                foreach (var part in parts)
+                {
+                    // parse into commands
+                    if (part == ";")
+                    {
+
+                    }
+                    else if (part.StartsWith("!"))
+                    {
+                        if (part == "!fullauto;")
+                        {
+                            slide.AutoOnly = true;
+                        }
+                        else if (part.StartsWith("!displaysrc="))
+                        {
+                            var m = Regex.Match(part, "!displaysrc='(?<fname>.*)';");
+                            if (m.Success)
+                            {
+                                if (File.Exists(Path.Combine(presFolder, m.Groups["fname"].Value)) && checkRealMedia)
+                                {
+                                    slide.AltSources = true;
+                                    slide.AltSource = Path.Combine(presFolder, m.Groups["fname"].Value);
+                                }
+                                else if (!checkRealMedia)
+                                {
+                                    slide.AltSources = true;
+                                    slide.AltSource = m.Groups["fname"].Value;
+                                }
+                            }
+                        }
+                        else if (part.StartsWith("!keysrc="))
+                        {
+                            var m = Regex.Match(part, "!keysrc='(?<fname>.*)';");
+                            if (m.Success)
+                            {
+                                if (File.Exists(Path.Combine(presFolder, m.Groups["fname"].Value)) && checkRealMedia)
+                                {
+                                    slide.AltSources = true;
+                                    slide.AltKeySource = Path.Combine(presFolder, m.Groups["fname"].Value);
+                                }
+                                else if (!checkRealMedia)
+                                {
+                                    slide.AltSources = true;
+                                    slide.AltKeySource = m.Groups["fname"].Value;
+                                }
+                            }
+                        }
+                    }
+                    else if (part.StartsWith("@"))
+                    {
+                        var a = AutomationAction.Parse(part.Remove(0, 1));
+                        var runType = a.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
+                        slide.SetupActions.Add(new TrackedAutomationAction(a, runType));
+                    }
+                    else if (part.StartsWith("#"))
+                    {
+                        var title = Regex.Match(part, @"#(?<title>.*);").Groups["title"].Value;
+                        slide.Title = title;
+                    }
+                    else
+                    {
+                        var a = AutomationAction.Parse(part);
+                        var runType = a.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
+                        slide.Actions.Add(new TrackedAutomationAction(a, runType));
+                    }
+                }
+                loaded = slide;
+                return true;
+            }
+            catch (Exception)
+            {
+            }
+            return false;
+        }
     }
 
 }

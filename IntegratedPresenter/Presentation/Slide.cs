@@ -1,17 +1,21 @@
 ﻿
+using BMDSwitcherAPI;
+
 using Integrated_Presenter.Presentation;
 
 using IntegratedPresenterAPIInterop;
 
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Media.Imaging;
 
 namespace IntegratedPresenter.Main
 {
-    public class Slide
+    public class Slide : ISlide
     {
         public SlideType Type { get; set; }
         public bool AutomationEnabled { get; set; } = true;
@@ -34,6 +38,109 @@ namespace IntegratedPresenter.Main
         public int PresetId { get; set; }
         public bool PostsetEnabled { get; set; } = false;
         public int PostsetId { get; set; }
+
+        public bool TryGetPrimaryImage(out BitmapImage img)
+        {
+            img = null;
+            if (AltSources)
+            {
+                if (!string.IsNullOrEmpty(AltSource))
+                {
+                    img = new BitmapImage(new Uri(AltSource));
+                    return true;
+                }
+            }
+            if (!string.IsNullOrEmpty(Source) && HasPrimaryImage())
+            {
+                img = new BitmapImage(new Uri(Source));
+                return true;
+            }
+            return false;
+        }
+        public bool TryGetKeyImage(out BitmapImage img)
+        {
+            img = null;
+            if (AltSources)
+            {
+                if (!string.IsNullOrEmpty(AltKeySource))
+                {
+                    img = new BitmapImage(new Uri(AltKeySource));
+                    return true;
+                }
+            }
+            if (!string.IsNullOrEmpty(KeySource))
+            {
+                img = new BitmapImage(new Uri(KeySource));
+                return true;
+            }
+            return false;
+        }
+
+        public bool TryGetPrimaryVideoPath(out string path)
+        {
+            if (Type == SlideType.ChromaKeyVideo || Type == SlideType.Video)
+            {
+                path = Source;
+                return true;
+            }
+            else if (Type == SlideType.Action && AltSources)
+            {
+                if (AltSource?.EndsWith(".mp4") == true)
+                {
+                    path = AltSource;
+                    return true;
+                }
+            }
+            path = string.Empty;
+            return false;
+        }
+        public bool TryGetKeyVideoPath(out string path)
+        {
+            if (KeySource?.EndsWith(".mp4") == true)
+            {
+                path = AltSource;
+                return true;
+            }
+            else if (AltKeySource?.EndsWith(".mp4") == true)
+            {
+                path = AltKeySource;
+                return true;
+            }
+            path = string.Empty;
+            return false;
+        }
+
+
+        public bool HasPrimaryImage()
+        {
+            if (AltSources)
+            {
+                if (!string.IsNullOrEmpty(AltSource))
+                {
+                    return true;
+                }
+            }
+            if (!string.IsNullOrEmpty(Source) && Type != SlideType.Action)
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool HasKeyImage()
+        {
+            if (AltSources)
+            {
+                if (!string.IsNullOrEmpty(AltKeySource))
+                {
+                    return true;
+                }
+            }
+            if (!string.IsNullOrEmpty(KeySource))
+            {
+                return true;
+            }
+            return false;
+        }
 
 
         public void FireOnActionStateChange(Guid ActionID, TrackedActionState newState)
@@ -124,82 +231,8 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        public void LoadActions(string folder)
-        {
-            if (Type == SlideType.Action)
-            {
-                try
-                {
-                    List<string> parts = new List<string>();
-                    using (StreamReader sr = new StreamReader(Source))
-                    {
-                        string text = sr.ReadToEnd();
-                        var commands = text.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(s => (s + ";").Trim());
-                        parts = commands.ToList();
-                    }
-                    Title = "AUTO SEQ";
-                    foreach (var part in parts)
-                    {
-                        // parse into commands
-                        if (part == ";")
-                        {
+        
 
-                        }
-                        else if (part.StartsWith("!"))
-                        {
-                            if (part == "!fullauto;")
-                            {
-                                AutoOnly = true;
-                            }
-                            else if (part.StartsWith("!displaysrc="))
-                            {
-                                var m = Regex.Match(part, "!displaysrc='(?<fname>.*)';");
-                                if (m.Success)
-                                {
-                                    if (File.Exists(Path.Combine(folder, m.Groups["fname"].Value)))
-                                    {
-                                        AltSources = true;
-                                        AltSource = Path.Combine(folder, m.Groups["fname"].Value);
-                                    }
-                                }
-                            }
-                            else if (part.StartsWith("!keysrc="))
-                            {
-                                var m = Regex.Match(part, "!keysrc='(?<fname>.*)';");
-                                if (m.Success)
-                                {
-                                    if (File.Exists(Path.Combine(folder, m.Groups["fname"].Value)))
-                                    {
-                                        AltSources = true;
-                                        AltKeySource = Path.Combine(folder, m.Groups["fname"].Value);
-                                    }
-                                }
-                            }
-                        }
-                        else if (part.StartsWith("@"))
-                        {
-                            var a = AutomationAction.Parse(part.Remove(0, 1));
-                            var runType = a.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
-                            SetupActions.Add(new TrackedAutomationAction(a, runType));
-                        }
-                        else if (part.StartsWith("#"))
-                        {
-                            var title = Regex.Match(part, @"#(?<title>.*);").Groups["title"].Value;
-                            Title = title;
-                        }
-                        else
-                        {
-                            var a = AutomationAction.Parse(part);
-                            var runType = a.Action == AutomationActions.OpsNote ? TrackedActionRunType.Note : TrackedActionRunType.Setup;
-                            Actions.Add(new TrackedAutomationAction(a, runType));
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
-        }
 
     }
 

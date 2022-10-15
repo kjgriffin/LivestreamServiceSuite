@@ -50,6 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CommonGraphics\CommonGraphics.csproj" />
     <ProjectReference Include="..\Xenon\Xenon.csproj" />
   </ItemGroup>
 

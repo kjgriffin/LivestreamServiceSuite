@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace LutheRun
 {
-    class Serviceifier
+    static class Serviceifier
     {
 
         /*
@@ -46,12 +46,28 @@ namespace LutheRun
         };
 
 
-        public static List<ILSBElement> Filter(List<ILSBElement> service, LSBImportOptions options)
+        public static List<ILSBElement> Filter(this List<ILSBElement> service, LSBImportOptions options)
         {
             return service.Where(x => options.Filter.FilteredTypes.Contains(x.GetType())).ToList();
         }
 
-        public static List<ILSBElement> RemoveUnusedElement(List<ILSBElement> service, LSBImportOptions options)
+        public static List<ILSBElement> NormalizeHeaddingsToCaptions(this List<ILSBElement> service, LSBImportOptions options)
+        {
+            return service.Select(x =>
+            {
+                var y = x as LSBElementHeading;
+                if (y != null)
+                {
+                    return LSBElementCaption.FromHeading(y);
+                }
+                else
+                {
+                    return x;
+                }
+            }).ToList();
+        }
+
+        public static List<ILSBElement> RemoveUnusedElement(this List<ILSBElement> service, LSBImportOptions options)
         {
             List<ILSBElement> trimmed = new List<ILSBElement>();
 
@@ -86,7 +102,7 @@ namespace LutheRun
             return trimmed;
         }
 
-        public static List<ILSBElement> AddAdditionalInferedElements(List<ILSBElement> service, LSBImportOptions options)
+        public static List<ILSBElement> AddAdditionalInferedElements(this List<ILSBElement> service, LSBImportOptions options)
         {
             List<ILSBElement> servicetoparse = null;
             List<ILSBElement> newservice = new List<ILSBElement>();
@@ -100,7 +116,7 @@ namespace LutheRun
                 // always start with copyright
                 // default to preset center after copyright (though bells would handle this...)
                 // may want to be smart too-> if there's a prelude we could do soemthing else
-                newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Organ, options.InferPostset, "copyright"));
+                newservice.Add(new ExternalPrefab("#copyright", (int)Camera.Organ, options.InferPostset, "copyright", BlockType.TITLEPAGE));
 
                 servicetoparse = service;
             }
@@ -294,7 +310,7 @@ namespace LutheRun
                         // get rid of liturgy
                         if (!skip)
                         {
-                            newservice.Add(new ExternalPrefab("#liturgyoff", "liturgyoff"));
+                            newservice.Add(new ExternalPrefab("#liturgyoff", "liturgyoff", BlockType.MISC_CORPERATE));
                         }
                         // we'll assume the bell's script turns it off
                         inliturgy = false;
@@ -316,7 +332,7 @@ namespace LutheRun
             // add endservice slide
             if (end == null)
             {
-                newservice.Add(new ExternalPrefab("#viewservices", "viewservices"));
+                newservice.Add(new ExternalPrefab("#viewservices", "viewservices", BlockType.UNKNOWN));
             }
             else
             {
