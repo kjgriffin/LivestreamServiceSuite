@@ -103,20 +103,23 @@ namespace Integrated_Presenter.BMDSwitcher.Mock.BetterMock.Dialogs
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Load Custom Image";
             ofd.Filter = "Images (*.png)|*.png";
+            ofd.Multiselect = true;
             if (ofd.ShowDialog() == true)
             {
+                foreach (var file in ofd.FileNames)
+                {
+                    BitmapImage img = new BitmapImage(new Uri(file));
 
-                BitmapImage img = new BitmapImage(new Uri(ofd.FileName));
+                    AddedLocally.Add(img);
 
-                AddedLocally.Add(img);
+                    var ctrl = new CameraThumbnailOptionItem(img, cid);
+                    ctrl.OnRequestSelection += Ctrl_OnRequestSelection;
 
-                var ctrl = new CameraThumbnailOptionItem(img, cid);
-                ctrl.OnRequestSelection += Ctrl_OnRequestSelection;
+                    wpOptions.Children.Add(ctrl);
 
-                wpOptions.Children.Add(ctrl);
-
-                SelectedChoiceChanged(cid);
-                cid++;
+                    SelectedChoiceChanged(cid);
+                    cid++;
+                }
             }
         }
     }
