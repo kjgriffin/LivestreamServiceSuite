@@ -31,6 +31,7 @@ namespace AutoTrackerGUI
             }
 
             SetTrackParams();
+            _camServer.Start();
         }
 
         private void _trackTimer_Tick(object? sender, EventArgs e)
@@ -175,11 +176,18 @@ namespace AutoTrackerGUI
                 // draw tracking bounds
                 gfx.DrawRectangle(new Pen(Color.Blue, 4), _validX - _rangeX, _validY - _rangeY, _rangeX * 2, _rangeY * 2);
 
+
+                // stracks
+                gfx.FillEllipse(Brushes.HotPink, _stX - 5, _stY - 5, 10, 10);
+                gfx.DrawRectangle(Pens.HotPink, _stX - _smX, _stY - _smY, _smX * 2, _smY * 2);
+                gfx.DrawRectangle(new Pen(Color.Purple, 4), _svX - _srX, _svY - _srY, _srX * 2, _srY * 2);
+
+
                 g.FillRectangle(Brushes.White, 100, 70, 200, 30);
                 g.DrawString($"{_trackCMD} [{_cmdID}]", DefaultFont, Brushes.Blue, 100, 70);
 
                 //g.DrawImage(b, new RectangleF(10, 80, 1280, 720), new RectangleF(0, 0, 640, 480), GraphicsUnit.Pixel);
-                g.DrawImage(b, 10, 100);
+                g.DrawImage(b, 10, 100, 1280, 720);
             }
         }
 
@@ -189,13 +197,12 @@ namespace AutoTrackerGUI
 
         private void button3_Click(object sender, EventArgs e)
         {
-            _camServer.Start();
-            _camServer.StartCamClient("test", new System.Net.IPEndPoint(IPAddress.Parse(tbCamIP.Text), int.Parse(tbCamPort.Text)));
+            _camServer.StartCamClient("pcam", new System.Net.IPEndPoint(IPAddress.Parse(tbCamIP.Text), int.Parse(tbCamPort.Text)));
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            _camServer.Cam_RunDriveProgram("test", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.STOP, 0, 0);
+            _camServer.Cam_RunDriveProgram("pcam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.STOP, 0, 0);
             _trackEnabled = false;
         }
 
@@ -212,17 +219,83 @@ namespace AutoTrackerGUI
         int _rangeX = 0;
         int _rangeY = 0;
 
+        bool _strackEnabled = false;
+
+        int _stX = 0;
+        int _stY = 0;
+        int _smX = 0;
+        int _smY = 0;
+
+        int _svX = 0;
+        int _svY = 0;
+        int _srX = 0;
+        int _srY = 0;
+
         string _trackCMD = "NO TRACK";
         long _cmdID = 0;
 
         PanTiltDirection _last = PanTiltDirection.STOP;
+        PanTiltDirection _slast = PanTiltDirection.STOP;
+        PanTiltDirection _sslast = PanTiltDirection.STOP;
         private void DoTrack()
         {
+            var track = _tracker.GetTracks().FirstOrDefault(t => Math.Abs(t.Centroid.Center.X - _validX) < _rangeX && Math.Abs(t.Centroid.Center.Y - _validY) < _rangeY);
+            _cmdID++;
+            var strack = _tracker.GetTracks().FirstOrDefault(t => Math.Abs(t.Centroid.Center.X - _svX) < _srX && Math.Abs(t.Centroid.Center.Y - _svY) < _srY);
+            if (_strackEnabled)
+            {
+                // expectation is that if possible to track, strack will have it
+                PanTiltDirection sdir = PanTiltDirection.STOP;
+                if (strack != null)
+                {
+                    // compute direction
+                    PanTiltDirection dir = PanTiltDirection.STOP;
+                    string dcmd = "";
+
+                    if (strack.Centroid.Center.X < _stX - _smX)
+                    {
+                        dir = PanTiltDirection.LEFT;
+                        dcmd = "LEFT";
+                        _sslast = dir;
+                    }
+                    else if (strack.Centroid.Center.X > _stX + _smX)
+                    {
+                        dir = PanTiltDirection.RIGHT;
+                        dcmd = "RIGHT";
+                        _sslast = dir;
+                    }
+                    else if (strack.Centroid.Center.Y < _stY - _smY)
+                    {
+                        dir = PanTiltDirection.UP;
+                        dcmd = "UP";
+                        _sslast = dir;
+                    }
+                    else if (strack.Centroid.Center.Y > _stY + _smY)
+                    {
+                        dir = PanTiltDirection.DOWN;
+                        dcmd = "DOWN";
+                        _sslast = dir;
+                    }
+
+                    if (_slast != dir)
+                    {
+                        _camServer.Cam_RunDriveProgram("scam", dir, 2, 0);
+                        _trackCMD = dcmd;
+                    }
+                    _slast = dir;
+                    sdir = dir;
+                }
+                else
+                {
+                    _camServer.Cam_RunDriveProgram("scam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.STOP, 0, 100);
+                    _slast = PanTiltDirection.STOP;
+                    _sslast = PanTiltDirection.STOP;
+                }
+
+
+            }
             if (_trackEnabled)
             {
-                var track = _tracker.GetTracks().FirstOrDefault(t => Math.Abs(t.Centroid.Center.X - _validX) < _rangeX && Math.Abs(t.Centroid.Center.Y - _validY) < _rangeY);
-                _cmdID++;
-
                 if (track != null)
                 {
                     // compute direction
@@ -258,15 +331,21 @@ namespace AutoTrackerGUI
 
                         if (_last != dir)
                         {
-                            _camServer.Cam_RunDriveProgram("test", dir, 2, 0);
+                            _camServer.Cam_RunDriveProgram("pcam", dir, 2, 0);
                             _trackCMD = dcmd;
                         }
                         _last = dir;
                     }
                 }
+                else if (strack != null)
+                {
+                    // figure out how to take advantage...
+                    // for now try running in the same direction
+                    _camServer.Cam_RunDriveProgram("scam", _sslast, 5, 0);
+                }
                 else
                 {
-                    _camServer.Cam_RunDriveProgram("test", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.STOP, 0, 100);
+                    _camServer.Cam_RunDriveProgram("pcam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.STOP, 0, 100);
                     _trackCMD = "STABLE (stop)";
                     _last = PanTiltDirection.STOP;
                 }
@@ -285,7 +364,7 @@ namespace AutoTrackerGUI
         private void button6_Click(object sender, EventArgs e)
         {
             _trackEnabled = false;
-            _camServer.Cam_RunDriveProgram("test", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.STOP, 0, 100);
+            _camServer.Cam_RunDriveProgram("pcam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.STOP, 0, 100);
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -313,22 +392,22 @@ namespace AutoTrackerGUI
 
         private void button11_Click(object sender, EventArgs e)
         {
-            _camServer.Cam_RunDriveProgram("test", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.LEFT, 5, 0);
+            _camServer.Cam_RunDriveProgram("pcam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.LEFT, 5, 0);
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
-            _camServer.Cam_RunDriveProgram("test", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.RIGHT, 5, 0);
+            _camServer.Cam_RunDriveProgram("pcam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.RIGHT, 5, 0);
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            _camServer.Cam_RunDriveProgram("test", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.UP, 5, 0);
+            _camServer.Cam_RunDriveProgram("pcam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.UP, 5, 0);
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            _camServer.Cam_RunDriveProgram("test", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.DOWN, 5, 0);
+            _camServer.Cam_RunDriveProgram("pcam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.DOWN, 5, 0);
         }
 
         private void button12_Click(object sender, EventArgs e)
@@ -337,6 +416,63 @@ namespace AutoTrackerGUI
             _validY = int.Parse(tbValidY.Text);
             _rangeX = int.Parse(tbRangeX.Text);
             _rangeY = int.Parse(tbRangeY.Text);
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            _svX = int.Parse(tbvalidX_2.Text);
+            _svY = int.Parse(tbValidY_2.Text);
+            _srX = int.Parse(tbRangeX_2.Text);
+            _srY = int.Parse(tbRangeY_2.Text);
+        }
+
+        private void button22_Click(object sender, EventArgs e)
+        {
+            _stX = int.Parse(tbTGTX_2.Text);
+            _stY = int.Parse(tbTGTY_2.Text);
+            _smX = int.Parse(tbMargX_2.Text);
+            _smY = int.Parse(tbMargY_2.Text);
+        }
+
+        private void button21_Click(object sender, EventArgs e)
+        {
+            _camServer.StartCamClient("scam", new System.Net.IPEndPoint(IPAddress.Parse(tbIP_2.Text), int.Parse(tbPort_2.Text)));
+        }
+
+        private void button20_Click(object sender, EventArgs e)
+        {
+            _strackEnabled = true;
+        }
+
+        private void button19_Click(object sender, EventArgs e)
+        {
+            _strackEnabled = false;
+            _camServer.Cam_RunDriveProgram("scam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.STOP, 0, 100);
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            _camServer.Cam_RunDriveProgram("scam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.STOP, 0, 100);
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            _camServer.Cam_RunDriveProgram("scam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.LEFT, 5, 0);
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+            _camServer.Cam_RunDriveProgram("scam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.UP, 5, 0);
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            _camServer.Cam_RunDriveProgram("scam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.RIGHT, 5, 0);
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            _camServer.Cam_RunDriveProgram("scam", DVIPProtocol.Protocol.Lib.Command.PTDrive.PanTiltDirection.DOWN, 5, 0);
         }
     }
 }
