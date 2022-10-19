@@ -33,6 +33,12 @@ namespace LutheRun
         public LSBImportOptions LSBImportOptions { get; set; }
 
 
+        internal void Clear()
+        {
+            stringBuilder.Clear();
+            ServiceElements.Clear();
+        }
+
         public void Serviceify(LSBImportOptions options)
         {
             ServiceElements = Serviceifier.NormalizeHeaddingsToCaptions(ServiceElements, options)
@@ -259,7 +265,7 @@ namespace LutheRun
 
 
 
-        private bool _ParseLSBServiceElement(IElement element)
+        internal bool _ParseLSBServiceElement(IElement element)
         {
             if (element.ClassList.Contains("caption"))
             {

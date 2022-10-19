@@ -1223,14 +1223,18 @@ namespace SlideCreater
 
         private void ClickImportServiceAdv(object sender, RoutedEventArgs e)
         {
-            //OpenFileDialog ofd = new OpenFileDialog();
-            //ofd.Title = "Import from save of Lutheran Service Bulletin";
-            //ofd.Filter = "LSB Service (*.html)|*.html";
-            //if (ofd.ShowDialog() == true)
-            //{
-            //    //WebViewUI webViewUI = new WebViewUI(ofd.FileName, CreateProjectFromImportWizard);
-            //    //webViewUI.Show();
-            //}
+#if DEBUG
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Import from save of Lutheran Service Bulletin";
+            ofd.Filter = "LSB Service (*.html)|*.html";
+            if (ofd.ShowDialog() == true)
+            {
+                //WebViewUI webViewUI = new WebViewUI(ofd.FileName, CreateProjectFromImportWizard);
+                //webViewUI.Show();
+                LSBImportWizardUI ui = new LSBImportWizardUI(ofd.FileName);
+                ui.ShowDialog();
+            }
+#endif
         }
 
         private async void CreateProjectFromImportWizard(List<(string, string)> assets, string text)
