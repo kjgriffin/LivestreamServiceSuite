@@ -20,7 +20,7 @@ namespace LutheRun
 
             TODO: should require some sort of info about what cameras/presets are available/to use
          */
-        internal static void PlanFlight(LSBImportOptions options, List<ILSBElement> serviceElements)
+        internal static void PlanFlight(LSBImportOptions options, List<ParsedLSBElement> serviceElements)
         {
 
             // track some state about where our cameras are
@@ -28,7 +28,7 @@ namespace LutheRun
             // TODO- may need to double iterate the service to figure out what's happening
             // then once we know we can better plan based on a lookahead
 
-            SmoothFlight(serviceElements, options);
+            SmoothFlight(serviceElements.Select(x => x.LSBElement).ToList(), options);
 
 
         }

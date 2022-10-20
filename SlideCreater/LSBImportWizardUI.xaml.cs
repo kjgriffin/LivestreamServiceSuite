@@ -45,12 +45,14 @@ namespace SlideCreater
             LSBParser parser = new LSBParser();
             parser.LSBImportOptions = new LSBImportOptions();
             await parser.ParseHTML(m_serviceFilename);
+            parser.Serviceify(parser.LSBImportOptions);
 
             var rc = new LSBReCompiler();
-
             string tmpFile = System.IO.Path.GetTempFileName() + "lsbrecompile.html" + Guid.NewGuid().ToString() + ".html";
 
-            await File.WriteAllTextAsync(tmpFile, rc.Re_HTMLify(parser.TopLevelServiceElements));
+            rc.CompileToXenonMappedToSource(m_serviceFilename, parser.LSBImportOptions, parser.ServiceElements);
+
+            await File.WriteAllTextAsync(tmpFile, rc.GenerateHTMLReport(parser.ServiceElements));
 
             Dispatcher.Invoke(() =>
             {
