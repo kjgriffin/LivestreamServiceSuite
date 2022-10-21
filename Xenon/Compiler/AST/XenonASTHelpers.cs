@@ -24,23 +24,25 @@ namespace Xenon.Compiler.AST
                 // can't do it.
                 return;
             }
-            // check for first/last
+
+            // let them overwrite in order
+
+            // postset precedence (in order of most important to least)
+            // 1. LAST
+            // 2. FIRST
+            // 3. ALL
+
+            if (parent.Postset_forAll)
+            {
+                slide.Data[DATAKEY_POSTSET] = parent.Postset_All;
+            }
             if (isfirst && parent.Postset_forFirst)
             {
                 slide.Data[DATAKEY_POSTSET] = parent.Postset_First;
             }
-            else if (islast && parent.Postset_forLast)
+            if (islast && parent.Postset_forLast)
             {
-                // last will overwrite first request if only one slide.
                 slide.Data[DATAKEY_POSTSET] = parent.Postset_Last;
-            }
-            else
-            {
-                // use the all if it exists
-                if (parent.Postset_forAll)
-                {
-                    slide.Data[DATAKEY_POSTSET] = parent.Postset_All;
-                }
             }
         }
 
