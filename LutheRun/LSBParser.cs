@@ -446,7 +446,7 @@ namespace LutheRun
         private bool _ParseLSBPrayerElement(IElement element, string parGen, IElement parent)
         {
             // capture known prayers we have prefab slides for
-            if (ParseAsPrefab(element, "", parent))
+            if (ParseAsPrefab(element, parGen, parent))
             {
                 return true;
             }

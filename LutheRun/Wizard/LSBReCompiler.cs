@@ -43,7 +43,7 @@ namespace LutheRun.Wizard
         //    return sb.ToString();
         //}
 
-        public string GenerateHTMLReport(List<ParsedLSBElement> fullservice, string cssloc)
+        public string GenerateHTMLReport(List<ParsedLSBElement> fullservice, params string[] cssfiles)
         {
             LSBParser parser = new LSBParser();
             parser.LSBImportOptions = new LSBImportOptions();
@@ -52,9 +52,10 @@ namespace LutheRun.Wizard
 
             sb.Append("<!DOCTYPE HTML>");
             sb.Append("<html><head></head>");
-            sb.Append($"<link href=\"{cssloc}\" rel=\"stylesheet\">");
-            //sb.Append($"<link rel=\"stylesheet\" href=\"{cssloc}\">");
-            //sb.Append($"<link rel=\"stylesheet\" href=\"{cssloc}\">");
+            foreach (var css in cssfiles)
+            {
+                sb.Append($"<link href=\"{css}\" rel=\"stylesheet\">");
+            }
             sb.Append("</head><body>");
 
             foreach (var elem in fullservice)
@@ -63,7 +64,7 @@ namespace LutheRun.Wizard
 
                 if (elem.SourceElements?.Any() == true)
                 {
-                    sb.Append($"<div style='border-color: {(elem.FilterFromOutput ? "red" : elem.AddedByInference ? "blue" : "green")}; border-style: solid; border-width: 5px; width: 600px; min-width: 600px;'>");
+                    sb.Append($"<div style='border-color: {(elem.FilterFromOutput ? "red" : elem.AddedByInference ? "blue" : "green")}; border-style: solid; border-width: 5px; width: 650px; min-width: 650px; padding: 10px;'>");
                     foreach (var se in elem.SourceElements)
                     {
                         sb.Append($"<div>{se.OuterHtml}</div>");
@@ -72,10 +73,10 @@ namespace LutheRun.Wizard
                 }
                 else
                 {
-                    sb.Append($"<div style='border-color: blue; border-style: solid; width: 600px; min-width: 600px;'>NO LSB SOURCE</div>");
+                    sb.Append($"<div style='border-color: blue; border-style: solid; width: 650px; min-width: 650px; color: red; padding: 10px;'>NO LSB SOURCE</div>");
                 }
 
-                sb.Append($"<div style='border-color: black; border-style: solid; width: 200px;'>{elem.Generator}</div>");
+                sb.Append($"<div style='border-color: black; border-style: solid; width: 250px; min-width: 250px; padding: 10px;'>{EscapeXenonTextInHTML(elem.Generator, false)}</div>");
                 sb.Append($"<div style='line-height: 1px; padding-top: 10px; white-space: nowrap;'>{EscapeXenonTextInHTML(elem.XenonCode)}</div>");
 
                 sb.Append("</div>");
@@ -158,19 +159,20 @@ namespace LutheRun.Wizard
         }
 
 
-        public string EscapeXenonTextInHTML(string source)
+        public string EscapeXenonTextInHTML(string source, bool fixWhitespace = true)
         {
-
             // whitespace gets destroyed
             // replace new-lines with <p>
             // replace spaces with nbsp
             var res = source.Replace($"<", "&lt;");
             res = res.Replace($">", "&gt;");
-            res = res.Replace($" ", "&nbsp;");
-            res = res.Replace($"{Environment.NewLine}", "</p>");
+            if (fixWhitespace)
+            {
+                res = res.Replace($" ", "&nbsp;");
+                res = res.Replace($"{Environment.NewLine}", "</p>");
+            }
 
             return res;
-
         }
 
 

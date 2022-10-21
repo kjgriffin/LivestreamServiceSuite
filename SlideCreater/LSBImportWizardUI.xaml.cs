@@ -59,7 +59,7 @@ namespace SlideCreater
 
             rc.CompileToXenonMappedToSource(m_serviceFilename, parser.LSBImportOptions, parser.ServiceElements);
 
-            var tmpCss = IO.Path.GetTempFileName() + "lsbrecompile.css" + Guid.NewGuid().ToString() + ".css";
+            List<string> cssFiles = new List<string>();
             try
             {
                 var path = IO.Path.GetDirectoryName(m_serviceFilename);
@@ -67,16 +67,23 @@ namespace SlideCreater
 
                 var files = IO.Directory.GetFiles(chromeDownload);
                 // find the app-guid.css file
-                var file = files.First(f => IO.Path.GetFileName(f).StartsWith("app-") && f.EndsWith(".css"));
+                //var file = files.First(f => IO.Path.GetFileName(f).StartsWith("app-") && f.EndsWith(".css"));
+                var cssfiles = files.Where(f => IO.Path.GetExtension(f) == ".css");
 
-                File.Copy(file, tmpCss);
+                foreach (var file in cssfiles)
+                {
+                    var tmpCss = IO.Path.GetTempFileName() + "lsbrecompile.css" + Guid.NewGuid().ToString() + ".css";
+                    File.Copy(file, tmpCss);
+                    cssFiles.Add(tmpCss);
+                }
+
             }
             catch (Exception ex)
             {
                 throw;
             }
 
-            await File.WriteAllTextAsync(tmpFile, rc.GenerateHTMLReport(parser.ServiceElements, tmpCss));
+            await File.WriteAllTextAsync(tmpFile, rc.GenerateHTMLReport(parser.ServiceElements, cssFiles.ToArray()));
 
 
             Dispatcher.Invoke(() =>

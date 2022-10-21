@@ -341,7 +341,7 @@ namespace LutheRun
 
 
 
-                if (LiturgyElements.Contains(element.GetType()))
+                if (LiturgyElements.Contains(element.LSBElement?.GetType()))
                 {
                     inliturgy = true;
                     // also skip if its a full-package reading, since they're considered responsible for their own teardown
