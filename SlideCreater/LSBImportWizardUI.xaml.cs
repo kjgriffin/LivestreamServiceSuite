@@ -23,6 +23,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using Xenon.SlideAssembly;
+
+using IO = System.IO;
+
 namespace SlideCreater
 {
     /// <summary>
@@ -48,15 +52,35 @@ namespace SlideCreater
             parser.Serviceify(parser.LSBImportOptions);
 
             var rc = new LSBReCompiler();
-            string tmpFile = System.IO.Path.GetTempFileName() + "lsbrecompile.html" + Guid.NewGuid().ToString() + ".html";
+            string tmpFile = IO.Path.GetTempFileName() + "lsbrecompile.html" + Guid.NewGuid().ToString() + ".html";
+
+
+            parser.LSBImportOptions.Macros = IProjectLayoutLibraryManager.GetDefaultBundledLibraries().FirstOrDefault(x => x.LibName == "Xenon.CommonColored")?.Macros ?? new Dictionary<string, string>();
 
             rc.CompileToXenonMappedToSource(m_serviceFilename, parser.LSBImportOptions, parser.ServiceElements);
 
-            await File.WriteAllTextAsync(tmpFile, rc.GenerateHTMLReport(parser.ServiceElements));
+            var tmpCss = IO.Path.GetTempFileName() + "lsbrecompile.css" + Guid.NewGuid().ToString() + ".css";
+            try
+            {
+                var path = IO.Path.GetDirectoryName(m_serviceFilename);
+                var chromeDownload = IO.Path.Combine(path, IO.Path.GetFileNameWithoutExtension(m_serviceFilename) + "_files");
+
+                var files = IO.Directory.GetFiles(chromeDownload);
+                // find the app-guid.css file
+                var file = files.First(f => IO.Path.GetFileName(f).StartsWith("app-") && f.EndsWith(".css"));
+
+                File.Copy(file, tmpCss);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            await File.WriteAllTextAsync(tmpFile, rc.GenerateHTMLReport(parser.ServiceElements, tmpCss));
+
 
             Dispatcher.Invoke(() =>
             {
-
                 browser.Source = new Uri(tmpFile);
             });
         }

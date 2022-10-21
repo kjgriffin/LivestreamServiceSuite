@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Navigation;
 
@@ -42,14 +43,19 @@ namespace LutheRun.Wizard
         //    return sb.ToString();
         //}
 
-        public string GenerateHTMLReport(List<ParsedLSBElement> fullservice)
+        public string GenerateHTMLReport(List<ParsedLSBElement> fullservice, string cssloc)
         {
             LSBParser parser = new LSBParser();
             parser.LSBImportOptions = new LSBImportOptions();
 
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("<html><head></head><body>");
+            sb.Append("<!DOCTYPE HTML>");
+            sb.Append("<html><head></head>");
+            sb.Append($"<link href=\"{cssloc}\" rel=\"stylesheet\">");
+            //sb.Append($"<link rel=\"stylesheet\" href=\"{cssloc}\">");
+            //sb.Append($"<link rel=\"stylesheet\" href=\"{cssloc}\">");
+            sb.Append("</head><body>");
 
             foreach (var elem in fullservice)
             {
@@ -57,7 +63,7 @@ namespace LutheRun.Wizard
 
                 if (elem.SourceElements?.Any() == true)
                 {
-                    sb.Append($"<div style='border-color: {(elem.FilterFromOutput ? "red" : elem.AddedByInference ? "blue" : "green")}; border-style: solid'>");
+                    sb.Append($"<div style='border-color: {(elem.FilterFromOutput ? "red" : elem.AddedByInference ? "blue" : "green")}; border-style: solid; border-width: 5px; width: 600px; min-width: 600px;'>");
                     foreach (var se in elem.SourceElements)
                     {
                         sb.Append($"<div>{se.OuterHtml}</div>");
@@ -66,11 +72,11 @@ namespace LutheRun.Wizard
                 }
                 else
                 {
-                    sb.Append($"<div style='border-color: blue; border-style: solid'>NO LSB SOURCE</div>");
+                    sb.Append($"<div style='border-color: blue; border-style: solid; width: 600px; min-width: 600px;'>NO LSB SOURCE</div>");
                 }
 
-                sb.Append($"<div style='border-color: gray; border-style: solid'>{elem.XenonCode}</div>");
-                sb.Append($"<div style='border-color: black; border-style: solid'>{elem.Generator}</div>");
+                sb.Append($"<div style='border-color: black; border-style: solid; width: 200px;'>{elem.Generator}</div>");
+                sb.Append($"<div style='line-height: 1px; padding-top: 10px; white-space: nowrap;'>{EscapeXenonTextInHTML(elem.XenonCode)}</div>");
 
                 sb.Append("</div>");
                 sb.AppendLine();
@@ -121,6 +127,7 @@ namespace LutheRun.Wizard
                 Generator = "XenonAutoGen",
                 AddedByInference = true,
                 XenonCode = sb.ToString(),
+                FilterFromOutput = false,
             });
             sb.Clear();
 
@@ -128,7 +135,7 @@ namespace LutheRun.Wizard
             {
                 if (!se.FilterFromOutput)
                 {
-                    sb.AppendLine(se.LSBElement?.XenonAutoGen(options, ref indentDepth, indentSpace) ?? "");
+                    sb.AppendLine(se.LSBElement?.XenonAutoGen(options, ref indentDepth, indentSpace) ?? se.XenonCode ?? "");
                     se.XenonCode = sb.ToString();
                 }
 
@@ -149,6 +156,25 @@ namespace LutheRun.Wizard
             }
             sb.Clear();
         }
+
+
+        public string EscapeXenonTextInHTML(string source)
+        {
+
+            // whitespace gets destroyed
+            // replace new-lines with <p>
+            // replace spaces with nbsp
+            var res = source.Replace($"<", "&lt;");
+            res = res.Replace($">", "&gt;");
+            res = res.Replace($" ", "&nbsp;");
+            res = res.Replace($"{Environment.NewLine}", "</p>");
+
+            return res;
+
+        }
+
+
+
 
     }
 
