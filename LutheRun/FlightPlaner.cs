@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LutheRun
 {
-    internal class FlightPlanner
+    internal static class FlightPlanner
     {
 
         /*
@@ -20,7 +20,7 @@ namespace LutheRun
 
             TODO: should require some sort of info about what cameras/presets are available/to use
          */
-        internal static void PlanFlight(LSBImportOptions options, List<ParsedLSBElement> serviceElements)
+        public static List<ParsedLSBElement> PlanFlight(this List<ParsedLSBElement> serviceElements, LSBImportOptions options)
         {
 
             // track some state about where our cameras are
@@ -28,12 +28,15 @@ namespace LutheRun
             // TODO- may need to double iterate the service to figure out what's happening
             // then once we know we can better plan based on a lookahead
 
-            SmoothFlight(serviceElements.Select(x => x.LSBElement).ToList(), options);
+            if (options.FlightPlanning)
+            {
+                SmoothFlight(serviceElements, options);
+            }
 
-
+            return serviceElements;
         }
 
-        private static void SmoothFlight(List<ILSBElement> service, LSBImportOptions options)
+        private static void SmoothFlight(List<ParsedLSBElement> service, LSBImportOptions options)
         {
 
             StringBuilder sb = new StringBuilder();
@@ -41,65 +44,27 @@ namespace LutheRun
 
             // general idea is to chunk the service into logical blocks of content
             // that we know how to schedule cameras for (eg. lituryg-corperate, hymn, sermon, announcment, reading etc.)
-            var blocks = Blockify(service);
+
+            // mutating call that will attach block info to service
+            Blockify(service);
 
             // once blocked we'll assign cameras
             // for the blocks
             // then we need to schedule transitions on block boundaries
             // once we have a plan we can then attach the pilot actions
 
-            foreach (var block in blocks)
-            {
-                int indent = 10;
-                sb.AppendLine($"[{block.BlockType}] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                foreach (var elem in block.Elements)
-                {
-                    //sb.AppendLine(elem.XenonAutoGen(options, ref indent, 4));
-                    sb.AppendLine(elem.GetType().ToString());
-                }
-                sb.AppendLine($"[{block.BlockType}] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-            }
 
-            var x = sb.ToString();
-            Debug.WriteLine("OUTPUT:");
-            Debug.WriteLine(x);
 
         }
 
 
-        private static List<BlockedServiceElement> Blockify(List<ILSBElement> service)
+        private static void Blockify(List<ParsedLSBElement> service)
         {
-            List<BlockedServiceElement> result = new List<BlockedServiceElement>();
-
-            BlockType lastType = BlockType.UNKNOWN;
-            BlockedServiceElement cBlock = new BlockedServiceElement();
-
             foreach (var element in service)
             {
-                var cType = element.BlockType() ;
-                if (cType == lastType)
-                {
-                    cBlock.Elements.Add(element);
-                }
-                else
-                {
-                    if (cBlock.Elements.Any())
-                    {
-                        result.Add(cBlock);
-                    }
-                    cBlock = new BlockedServiceElement();
-                    cBlock.BlockType = cType;
-                    cBlock.Elements.Add(element);
-                }
-
-                lastType = cType;
+                var cType = element.LSBElement?.BlockType();
+                element.BlockType = cType ?? BlockType.UNKNOWN;
             }
-            if (cBlock.Elements.Any())
-            {
-                result.Add(cBlock);
-            }
-
-            return result;
         }
 
 

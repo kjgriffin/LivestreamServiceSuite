@@ -23,6 +23,7 @@ namespace LutheRun
         public IElement ParentSourceElement { get; set; } = null;
         public bool FilterFromOutput { get; set; } = false;
         public bool AddedByInference { get; set; } = false;
+        internal BlockType BlockType { get; set; } = BlockType.UNKNOWN;
     }
 
 
@@ -60,13 +61,8 @@ namespace LutheRun
         {
             ServiceElements = Serviceifier.NormalizeHeaddingsToCaptions(ServiceElements, options)
                                           .AddAdditionalInferedElements(options)
-                                          .Filter(options);
-        }
-
-
-        public void FlightPlan(LSBImportOptions options)
-        {
-            FlightPlanner.PlanFlight(options, ServiceElements);
+                                          .Filter(options)
+                                          .PlanFlight(options);
         }
 
         public string XenonDebug()

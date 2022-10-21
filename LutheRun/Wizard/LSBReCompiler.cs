@@ -76,7 +76,11 @@ namespace LutheRun.Wizard
                     sb.Append($"<div style='border-color: blue; border-style: solid; width: 650px; min-width: 650px; color: red; padding: 10px;'>NO LSB SOURCE</div>");
                 }
 
-                sb.Append($"<div style='border-color: black; border-style: solid; width: 250px; min-width: 250px; padding: 10px;'>{EscapeXenonTextInHTML(elem.Generator, false)}</div>");
+                sb.Append($"<div style='border-color: black; border-style: solid; width: 250px; min-width: 250px; padding: 10px;'>");
+                sb.Append($"<div>{EscapeXenonTextInHTML(elem.Generator, false)}</div>");
+                sb.Append($"<div>{EscapeXenonTextInHTML($"Block Type: [{elem.BlockType}]", false)}</div>");
+                sb.Append($"</div>");
+
                 sb.Append($"<div style='line-height: 1px; padding-top: 10px; white-space: nowrap;'>{EscapeXenonTextInHTML(elem.XenonCode)}</div>");
 
                 sb.Append("</div>");
