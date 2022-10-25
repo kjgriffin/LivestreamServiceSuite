@@ -341,6 +341,8 @@ namespace LutheRun
 
         internal bool _ParseLSBServiceElement(IElement element, IElement parent = null, string parGen = "[Top LSB Element]")
         {
+            var parsed = false;
+            List<string> rejected = new List<string>();
             if (element.ClassList.Contains("caption"))
             {
                 ServiceElements.Add(new ParsedLSBElement
@@ -400,40 +402,72 @@ namespace LutheRun
             }
             else if (element.ClassList.Contains("prayer"))
             {
-                return _ParseLSBPrayerElement(element, $"{parGen}; (E) => E.C:prayer", parent);
+                parsed = _ParseLSBPrayerElement(element, $"{parGen}; (E) => E.C:prayer", parent);
+                if (!parsed)
+                {
+                    rejected.Add("(E) => E.C:prayer | REJECTED");
+                }
             }
             else if (element.ClassList.Contains("proper"))
             {
-                return _ParseLSBProperElement(element, $"{parGen}; (E) => E.C:proper", parent);
+                parsed = _ParseLSBProperElement(element, $"{parGen}; (E) => E.C:proper", parent);
+                if (!parsed)
+                {
+                    rejected.Add("(E) => E.C:proper | REJECTED");
+                }
             }
             else if (element.ClassList.Contains("static"))
             {
-                return _ParseLSBStaticElement(element, $"{parGen}; (E) => E.C:static", parent);
+                parsed = _ParseLSBStaticElement(element, $"{parGen}; (E) => E.C:static", parent);
+                if (!parsed)
+                {
+                    rejected.Add("(E) => E.C:static | REJECTED");
+                }
             }
             else if (element.ClassList.Contains("shared-role"))
             {
-                return _ParseLSBStaticElement(element, $"{parGen}; (E) => E.C:shared-role", parent);
+                parsed = _ParseLSBStaticElement(element, $"{parGen}; (E) => E.C:shared-role", parent);
+                if (!parsed)
+                {
+                    rejected.Add("(E) => E.C:shared-role | REJECTED");
+                }
             }
             else if (element.ClassList.Contains("option-group"))
             {
-                return _ParseLSBOptionGroupElement(element, $"{parGen}; (E) => E.C:option-group", parent);
+                parsed = _ParseLSBOptionGroupElement(element, $"{parGen}; (E) => E.C:option-group", parent);
+                if (!parsed)
+                {
+                    rejected.Add("(E) => E.C:option-group | REJECTED");
+                }
             }
             else if (element.ClassList.Contains("group"))
             {
-                return _ParseLSBGroupElement(element, $"{parGen}; (E) => E.C:group", parent);
+                parsed = _ParseLSBGroupElement(element, $"{parGen}; (E) => E.C:group", parent);
+                if (!parsed)
+                {
+                    rejected.Add("(E) => E.C:group | REJECTED");
+                }
             }
             else if (element.ClassList.Contains("rite-like-group"))
             {
-                return _ParseLSBRiteLikeGroupElement(element, $"{parGen}; (E) => E.C:rite-like-group", parent);
+                parsed = _ParseLSBRiteLikeGroupElement(element, $"{parGen}; (E) => E.C:rite-like-group", parent);
+                if (!parsed)
+                {
+                    rejected.Add("(E) => E.C:rite-like-group | REJECTED");
+                }
             }
-            ServiceElements.Add(new ParsedLSBElement
+            // capture it as unknown
+            if (!parsed)
             {
-                LSBElement = LSBElementUnknown.Parse(element),
-                Generator = "(E) => E.C disptach fell through to default",
-                SourceElements = element.ItemAsEnumerable(),
-                ParentSourceElement = parent,
-            });
-            return false;
+                ServiceElements.Add(new ParsedLSBElement
+                {
+                    LSBElement = LSBElementUnknown.Parse(element),
+                    Generator = $"(E) => E.C disptach fell through to default after :: {string.Join(',', rejected)}",
+                    SourceElements = element.ItemAsEnumerable(),
+                    ParentSourceElement = parent,
+                });
+            }
+            return parsed;
         }
 
         private bool _ParseLSBRiteLikeGroupElement(IElement element, string parGen, IElement parent)
@@ -509,11 +543,13 @@ namespace LutheRun
 
         private bool _ParseLSBElementIntoLiturgy(IElement element, string parGen, IElement parent)
         {
+            var anySuccess = false;
             foreach (var content in element.Children.Where(x => x.LocalName == "lsb-content"))
             {
-                _ParseLSBContentIntoLiturgy(content, $"{parGen}; (E) => E.Children.Where(c=>c.LN=lsb-content) => c", parent);
+                var parsed = _ParseLSBContentIntoLiturgy(content, $"{parGen}; (E) => E.Children.Where(c=>c.LN=lsb-content) => c", parent);
+                anySuccess |= parsed;
             }
-            return true;
+            return anySuccess;
         }
 
 
@@ -576,6 +612,7 @@ namespace LutheRun
             // but collect all groups together
 
             List<IElement> liturgyelements = new List<IElement>();
+            bool anySuccess = false;
 
             void AddChunkOfLiturgy()
             {
@@ -588,6 +625,7 @@ namespace LutheRun
                         SourceElements = new List<IElement>(liturgyelements),
                         ParentSourceElement = parent,
                     });
+                    anySuccess |= liturgyelements.Any();
                 }
                 liturgyelements.Clear();
             }
@@ -608,11 +646,12 @@ namespace LutheRun
                         SourceElements = child.ItemAsEnumerable(),
                         ParentSourceElement = parent,
                     });
+                    anySuccess |= liturgyelements.Any();
                 }
             }
             AddChunkOfLiturgy();
 
-            return true;
+            return anySuccess;
         }
 
 
@@ -752,6 +791,11 @@ namespace LutheRun
 
             // try and find a caption/heading the looks like a date (this may not be the strongest way to do it...)
             var candidateStrings = service.Select(x => (x.LSBElement as LSBElementCaption)?.Caption).Where(x => !string.IsNullOrEmpty(x)).ToList();
+
+            // clean up 'date' strings to remove times
+            // it seems that Pastor likes to include '-- time' after for some services...
+            // this doesn't parse, so we'll remove that. I think this will also give us the time too (bonus!)
+            candidateStrings = candidateStrings.Select(x => x.Replace("-", "")).ToList();
 
             var candidateDates = new List<DateTime>();
 
