@@ -123,8 +123,15 @@ namespace LutheRun.Wizard
                 sb.AppendLine($"/// </MANUAL_UPDATE name='Theme Colors'>".Indent(indentDepth, indentSpace));
                 sb.AppendLine($"// See: https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Themes".Indent(indentDepth, indentSpace));
 
+                Dictionary<string, string> macros = options.Macros;
+
+                if (options.InferSeason)
+                {
+                    macros = LSBParser.ApplySeasonalMacroText(fullservice, macros);
+                }
+
                 // macros!
-                foreach (var macro in options.Macros)
+                foreach (var macro in macros)
                 {
                     sb.AppendLine($"#var(\"{options.ServiceThemeLib}@{macro.Key}\", ```{macro.Value}```)".Indent(indentDepth, indentSpace));
                 }

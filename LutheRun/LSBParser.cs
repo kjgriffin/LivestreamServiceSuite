@@ -3,14 +3,19 @@ using AngleSharp.Html.Parser;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+
+using Xenon.Helpers;
 
 namespace LutheRun
 {
@@ -740,6 +745,91 @@ namespace LutheRun
             return false;
         }
 
+        internal static Dictionary<string, string> ApplySeasonalMacroText(List<ParsedLSBElement> service, Dictionary<string, string> macros)
+        {
+            Dictionary<string, string> newmacros = new Dictionary<string, string>(macros);
+            // determine service date
+
+            // try and find a caption/heading the looks like a date (this may not be the strongest way to do it...)
+            var candidateStrings = service.Select(x => (x.LSBElement as LSBElementCaption)?.Caption).Where(x => !string.IsNullOrEmpty(x)).ToList();
+
+            var candidateDates = new List<DateTime>();
+
+            foreach (var cdstring in candidateStrings)
+            {
+                if (DateTime.TryParse(cdstring, out var date))
+                {
+                    candidateDates.Add(date);
+                }
+            }
+
+            var ldate = candidateDates.FirstOrDefault();
+            if (ldate != null)
+            {
+                var keydates = GetKeySeasonDatesAsync();
+
+
+                // try and find the 'most relevant' key date
+                // this will be the earliest date that's equal to or later than the service
+                var sdate = keydates.OrderBy(x => x.StartDate).FirstOrDefault(x => x.StartDate >= ldate);
+
+                if (sdate != null)
+                {
+                    // add all macros
+                    foreach (var macro in sdate.macros)
+                    {
+                        newmacros[macro.Key] = macro.Value;
+                    }
+                }
+
+            }
+
+            return newmacros;
+        }
+
+        class SeasonKeyDefinition
+        {
+            public string start { get; set; } = "";
+            public string note { get; set; } = "";
+            public Dictionary<string, string> macros { get; set; } = new Dictionary<string, string>();
+
+            [JsonIgnore]
+            public DateTime? StartDate
+            {
+                get
+                {
+                    if (DateTime.TryParse(start, out var date))
+                    {
+                        return date;
+                    }
+                    return null;
+                }
+            }
+        }
+
+        private static List<SeasonKeyDefinition> GetKeySeasonDatesAsync()
+        {
+            // try and find info for this date
+            const string dateLookupURL = "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/seasons/BlobData/seasons.json";
+
+            List<SeasonKeyDefinition> res = new List<SeasonKeyDefinition>();
+
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"Fetching image {dateLookupURL} from web.");
+                var resp = WebHelpers.httpClient.GetAsync(dateLookupURL).Result?.Content;
+                var json = resp.ReadAsStringAsync().Result;
+                res = JsonSerializer.Deserialize<List<SeasonKeyDefinition>>(json);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed trying to download: {dateLookupURL}\r\n{ex}");
+            }
+
+            return res;
+        }
+
+
         public void CompileToXenon()
         {
             int indentDepth = 0;
@@ -762,8 +852,15 @@ namespace LutheRun
                 stringBuilder.AppendLine($"/// </MANUAL_UPDATE name='Theme Colors'>".Indent(indentDepth, indentSpace));
                 stringBuilder.AppendLine($"// See: https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Themes".Indent(indentDepth, indentSpace));
 
+                Dictionary<string, string> macros = LSBImportOptions.Macros;
+
+                if (LSBImportOptions.InferSeason)
+                {
+                    macros = LSBParser.ApplySeasonalMacroText(ServiceElements, macros);
+                }
+
                 // macros!
-                foreach (var macro in LSBImportOptions.Macros)
+                foreach (var macro in macros)
                 {
                     stringBuilder.AppendLine($"#var(\"{LSBImportOptions.ServiceThemeLib}@{macro.Key}\", ```{macro.Value}```)".Indent(indentDepth, indentSpace));
                 }

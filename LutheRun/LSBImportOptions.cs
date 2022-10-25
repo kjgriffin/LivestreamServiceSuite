@@ -51,6 +51,9 @@ namespace LutheRun
         [BoolSetting]
         public bool UseThemedHymns { get; set; } = true;
 
+        [BoolSetting]
+        public bool InferSeason { get; set; } = true;
+
 
         [BoolSetting]
         public bool FlightPlanning { get; set; } = true;
