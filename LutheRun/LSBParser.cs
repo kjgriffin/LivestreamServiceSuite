@@ -771,7 +771,7 @@ namespace LutheRun
 
                 // try and find the 'most relevant' key date
                 // this will be the earliest date that's equal to or later than the service
-                var sdate = keydates.OrderBy(x => x.StartDate).FirstOrDefault(x => x.StartDate >= ldate);
+                var sdate = keydates.OrderByDescending(x => x.StartDate).FirstOrDefault(x => x.StartDate <= ldate);
 
                 if (sdate != null)
                 {
