@@ -81,6 +81,11 @@ namespace LutheRun.Wizard
                 sb.Append($"<div>{EscapeXenonTextInHTML($"Block Type: [{elem.BlockType}]", false)}</div>");
                 sb.Append($"</div>");
 
+
+                sb.Append($"<div style='border-color: black; border-style: solid; width: 250px; min-width: 250px; padding: 10px; white-space: break-spaces;'>");
+                sb.Append($"<div>{EscapeXenonTextInHTML(elem.CameraUse.Format(), false)}</div>");
+                sb.Append($"</div>");
+
                 sb.Append($"<div style='line-height: 1px; padding-top: 10px; white-space: nowrap;'>{EscapeXenonTextInHTML(elem.XenonCode)}</div>");
 
                 sb.Append("</div>");

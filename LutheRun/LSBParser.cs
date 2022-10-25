@@ -24,6 +24,7 @@ namespace LutheRun
         public bool FilterFromOutput { get; set; } = false;
         public bool AddedByInference { get; set; } = false;
         internal BlockType BlockType { get; set; } = BlockType.UNKNOWN;
+        internal CameraUsage CameraUse { get; set; } = new CameraUsage();
     }
 
 
