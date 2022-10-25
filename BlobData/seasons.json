@@ -1,0 +1,18 @@
+[
+    {
+        "start": "2022-10-28",
+        "note": "pentecost",
+        "macros": {
+            "test1": "#ffffffff",
+            "test2": "something else"
+        }
+    },
+    {
+        "start": "2022-12-24",
+        "note": "christmas-eve",
+        "macros": {
+            "test1": "#ffffffff",
+            "test2": "something else"
+        }
+    }
+]
