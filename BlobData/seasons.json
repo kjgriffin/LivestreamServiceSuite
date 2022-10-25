@@ -3,27 +3,27 @@
         "start": "2022-06-19",
         "note": "pentecost",
         "macros": {
-            "color-main": "#ff452351",
-            "text-alt": "#ff452351"
+            "color-main": "\"#ff298f45\"",
+            "text-alt": "\"#ff298f45\""
         }
     },
     {
         "start": "2022-11-27",
         "note": "advent",
         "macros": {
-            "color-main": "#ff1A3268",
-            "text-alt": "#ff1A3268"
+            "color-main": "\"#ff1A3268\"",
+            "text-alt": "\"#ff1A3268\""
         }
     },
     {
         "start": "2022-12-24",
         "note": "christmas",
         "macros": {
-            "color-main": "#ffffebaf",
-            "color-sub": "#ffcedef9",
-            "text-main": "#ff474747",
-            "text-alt": "#ffcedef9",
-            "text-sub": "#ff474747"
+            "color-main": "\"#ffffebaf\"",
+            "color-sub": "\"#ffcedef9\"",
+            "text-main": "\"#ff474747\"",
+            "text-alt": "\"#ffcedef9\"",
+            "text-sub": "\"#ff474747\""
         }
     }
 ]
