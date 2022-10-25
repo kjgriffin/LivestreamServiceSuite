@@ -1,18 +1,29 @@
 [
     {
-        "start": "2022-10-28",
+        "start": "2022-06-19",
         "note": "pentecost",
         "macros": {
-            "test1": "#ffffffff",
-            "test2": "something else"
+            "color-main": "#ff452351",
+            "text-alt": "#ff452351"
+        }
+    },
+    {
+        "start": "2022-11-27",
+        "note": "advent",
+        "macros": {
+            "color-main": "#ff1A3268",
+            "text-alt": "#ff1A3268"
         }
     },
     {
         "start": "2022-12-24",
-        "note": "christmas-eve",
+        "note": "christmas",
         "macros": {
-            "test1": "#ffffffff",
-            "test2": "something else"
+            "color-main": "#ffffebaf",
+            "color-sub": "#ffcedef9",
+            "text-main": "#ff474747",
+            "text-alt": "#ffcedef9",
+            "text-sub": "#ff474747"
         }
     }
 ]
