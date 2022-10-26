@@ -1226,7 +1226,7 @@ namespace SlideCreater
             {
                 //WebViewUI webViewUI = new WebViewUI(ofd.FileName, CreateProjectFromImportWizard);
                 //webViewUI.Show();
-                LSBImportWizardUI ui = new LSBImportWizardUI(ofd.FileName);
+                LSBImportWizardUI ui = new LSBImportWizardUI(ofd.FileName, options);
                 ui.ShowDialog();
             }
 #endif

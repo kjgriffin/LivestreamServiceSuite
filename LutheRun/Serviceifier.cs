@@ -240,7 +240,7 @@ namespace LutheRun
                 {
                     // ignore unknown elements while parsing next element...
                     //nextelement = servicetoparse[i + 1];
-                    nextelement = servicetoparse.Skip(i + 1).SkipWhile(x => x.LSBElement is LSBElementUnknown || x.FilterFromOutput).FirstOrDefault();
+                    nextelement = servicetoparse.Skip(i + 1).SkipWhile(x => x.LSBElement is LSBElementUnknown || x.FilterFromOutput || !x.ConsiderForServicification).FirstOrDefault();
                 }
 
 
@@ -341,7 +341,7 @@ namespace LutheRun
 
 
 
-                if (LiturgyElements.Contains(element.LSBElement?.GetType()))
+                if (element.ConsiderForServicification && LiturgyElements.Contains(element.LSBElement?.GetType()))
                 {
                     inliturgy = true;
                     // also skip if its a full-package reading, since they're considered responsible for their own teardown
@@ -351,7 +351,7 @@ namespace LutheRun
                         inliturgy = false;
                     }
                 }
-                else
+                else if (element.ConsiderForServicification)
                 {
                     if (inliturgy)
                     {

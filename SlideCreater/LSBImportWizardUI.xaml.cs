@@ -34,20 +34,22 @@ namespace SlideCreater
     /// </summary>
     public partial class LSBImportWizardUI : Window
     {
+        LSBImportOptions options;
         string m_serviceFilename;
-        public LSBImportWizardUI(string filename)
+        public LSBImportWizardUI(string filename, LSBImportOptions options)
         {
             InitializeComponent();
             m_serviceFilename = filename;
 
             Task.Run(LoadAndBuild);
+            this.options = options;
         }
 
         List<IElement> elems = new List<IElement>();
         private async Task LoadAndBuild()
         {
             LSBParser parser = new LSBParser();
-            parser.LSBImportOptions = new LSBImportOptions();
+            parser.LSBImportOptions = options;
             await parser.ParseHTML(m_serviceFilename);
             parser.Serviceify(parser.LSBImportOptions);
 

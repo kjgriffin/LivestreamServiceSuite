@@ -50,11 +50,10 @@ namespace LutheRun
         public bool UsePIPCreeds { get; set; } = true;
         [BoolSetting]
         public bool UseThemedHymns { get; set; } = true;
-
         [BoolSetting]
         public bool InferSeason { get; set; } = true;
-
-
+        [BoolSetting]
+        public bool AggressivelyParseInsideLSBContent { get; set; } = false;
         [BoolSetting]
         public bool FlightPlanning { get; set; } = true;
 
@@ -96,6 +95,8 @@ namespace LutheRun
         [BoolSetting]
         public bool ExternalPrefab { get; set; } = true;
         [BoolSetting]
+        public bool ContentFromUnknown { get; set; } = false;
+        [BoolSetting]
         public bool Unknown { get; set; } = false;
         [BoolSetting]
         public bool Acknowledgments { get; set; } = false;
@@ -129,6 +130,8 @@ namespace LutheRun
                     elements.Add(typeof(ExternalPrefab));
                 if (Unknown)
                     elements.Add(typeof(LSBElementUnknown));
+                if (ContentFromUnknown)
+                    elements.Add(typeof(LSBElementUnknownFromContent));
                 if (Acknowledgments)
                     elements.Add(typeof(LSBElementAcknowledments));
 

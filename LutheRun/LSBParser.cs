@@ -28,6 +28,7 @@ namespace LutheRun
         public IElement ParentSourceElement { get; set; } = null;
         public bool FilterFromOutput { get; set; } = false;
         public bool AddedByInference { get; set; } = false;
+        public bool ConsiderForServicification { get; set; } = true;
         internal BlockType BlockType { get; set; } = BlockType.UNKNOWN;
         internal CameraUsage CameraUse { get; set; } = new CameraUsage();
     }
@@ -630,7 +631,7 @@ namespace LutheRun
                 liturgyelements.Clear();
             }
 
-            foreach (var child in contentelement.Children.Where(c => c.ClassList.Contains("lsb-responsorial") || c.ClassList.Contains("lsb-responsorial-continued") || c.ClassList.Contains("image")))
+            foreach (var child in contentelement.Children)
             {
                 if (child.ClassList.Contains("lsb-responsorial") || child.ClassList.Contains("lsb-responsorial-continued"))
                 {
@@ -647,6 +648,21 @@ namespace LutheRun
                         ParentSourceElement = parent,
                     });
                     anySuccess |= liturgyelements.Any();
+                }
+                else if (LSBImportOptions.AggressivelyParseInsideLSBContent)
+                {
+                    // handle it with the unknown block
+                    AddChunkOfLiturgy();
+                    ServiceElements.Add(new ParsedLSBElement
+                    {
+                        LSBElement = LSBElementUnknownFromContent.Create(child, child.TextContent),
+                        Generator = $"{parGen}; (E) => E.Children.where(c=>c.C:UNKNOWN) [Flags=AggressivelyParseInsideLSBContent] c.C:'{child.ClassList}' => c",
+                        SourceElements = child.ItemAsEnumerable(),
+                        ParentSourceElement = parent,
+                        ConsiderForServicification = false,
+                    });
+                    // don't mark a successful parse by this item alone
+                    //anySuccess |= liturgyelements.Any();
                 }
             }
             AddChunkOfLiturgy();
