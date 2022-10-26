@@ -1,11 +1,14 @@
 ﻿using AngleSharp.Dom;
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Navigation;
 
-namespace LutheRun
+namespace LutheRun.Elements.LSB
 {
     class LSBElementReading : ILSBElement
     {
@@ -20,7 +23,7 @@ namespace LutheRun
 
         public BlockType BlockType()
         {
-            return LutheRun.BlockType.READING;
+            return Pilot.BlockType.READING;
         }
 
         public static ILSBElement Parse(IElement element)

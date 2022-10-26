@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 
 using AngleSharp.Dom;
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
+using static LutheRun.Parsers.LSBResponsorialExtractor;
 
-using static LutheRun.LSBResponsorialExtractor;
-
-namespace LutheRun
+namespace LutheRun.Elements.LSB
 {
     class LSBElementIntroit : ILSBElement
     {
@@ -21,7 +23,7 @@ namespace LutheRun
 
         public BlockType BlockType()
         {
-            return LutheRun.BlockType.LITURGY_CORPERATE;
+            return Pilot.BlockType.LITURGY_CORPERATE;
         }
 
         public static ILSBElement Parse(IElement element)

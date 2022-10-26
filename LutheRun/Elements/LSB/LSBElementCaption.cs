@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using AngleSharp.Dom;
 using System.Linq;
+using LutheRun.Elements;
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 
-namespace LutheRun
+namespace LutheRun.Elements.LSB
 {
     class LSBElementCaption : ILSBElement
     {
@@ -106,26 +110,26 @@ namespace LutheRun
 
             if (ctest.Contains("bells"))
             {
-                return LutheRun.BlockType.OPENING;
+                return Pilot.BlockType.OPENING;
             }
             else if (ctest.Contains("prelude"))
             {
-                return LutheRun.BlockType.PRELUDE;
+                return Pilot.BlockType.PRELUDE;
             }
             else if (ctest.Contains("postlude"))
             {
-                return LutheRun.BlockType.POSTLUDE;
+                return Pilot.BlockType.POSTLUDE;
             }
             else if (ctest.Contains("anthem"))
             {
-                return LutheRun.BlockType.ANTHEM;
+                return Pilot.BlockType.ANTHEM;
             }
             else if (ctest.Contains("sermon"))
             {
-                return LutheRun.BlockType.SERMON;
+                return Pilot.BlockType.SERMON;
             }
 
-            return LutheRun.BlockType.UNKNOWN;
+            return Pilot.BlockType.UNKNOWN;
         }
 
     }

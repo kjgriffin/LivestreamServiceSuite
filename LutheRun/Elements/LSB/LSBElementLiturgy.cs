@@ -1,10 +1,12 @@
 ﻿using AngleSharp.Dom;
-
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LutheRun
+namespace LutheRun.Elements.LSB
 {
     class LSBElementLiturgy : ILSBElement
     {
@@ -16,7 +18,7 @@ namespace LutheRun
 
         public BlockType BlockType()
         {
-            return LutheRun.BlockType.LITURGY_CORPERATE;
+            return Pilot.BlockType.LITURGY_CORPERATE;
         }
 
         public static ILSBElement Parse(IElement element)
@@ -63,7 +65,7 @@ namespace LutheRun
 
             string litcontent = LSBResponsorialExtractor.ExtractResponsiveLiturgy(SourceHTML, ref indentDepth, indentSpaces);
 
-            if (LiturgyText.Trim() != String.Empty)
+            if (LiturgyText.Trim() != string.Empty)
             {
                 //return "/// <XENON_AUTO_GEN>\r\n#liturgy{\r\n" + LiturgyText + "\r\n}\r\n/// </XENON_AUTO_GEN>";
                 if (lSBImportOptions.UseResponsiveLiturgy)

@@ -1,5 +1,8 @@
 ﻿using AngleSharp.Dom;
-
+using LutheRun.Elements;
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +15,7 @@ using System.Threading.Tasks;
 
 using Xenon.Helpers;
 
-namespace LutheRun
+namespace LutheRun.Elements.LSB
 {
     class LSBElementHymn : ILSBElement, IDownloadWebResource
     {
@@ -34,7 +37,7 @@ namespace LutheRun
 
         public BlockType BlockType()
         {
-            return LutheRun.BlockType.HYMN;
+            return Pilot.BlockType.HYMN;
         }
 
 
@@ -80,7 +83,7 @@ namespace LutheRun
                 {
                     //int iwidth = Xenon.Helpers.GraphicsHelper.TrimBitmap(image.Bitmap, Color.FromArgb(230, 230, 230)).Width;
                     //var nb = Xenon.Helpers.GraphicsHelper.Rescale(image.Bitmap, 2);
-                    var iwidth = Xenon.Helpers.GraphicsHelper.TrimBitmap(image.Bitmap, Color.FromArgb(0, 0, 0, 0), false).Width;
+                    var iwidth = image.Bitmap.TrimBitmap(Color.FromArgb(0, 0, 0, 0), false).Width;
                     // resize image here?
                     //image.Bitmap = tb;
                     //var iwidth = image.Bitmap.Width;
@@ -314,7 +317,7 @@ namespace LutheRun
                 var match = Regex.Match(Caption, @"(?<number>\d+)?(?<name>.*)");
                 string title = "Hymn";
                 string name = match.Groups["name"]?.Value.Trim() ?? "";
-                string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
+                string number = match.Groups["number"]?.Value.Trim().Length > 0 ? "LSB " + match.Groups["number"]?.Value.Trim() : "";
                 string tune = "";
                 string copyright = Copyright;
                 sb.AppendLine($"#texthymn(\"{title}\", \"{name}\", \"{tune}\", \"{number}\", \"{copyright}\")".Indent(indentDepth, indentSpaces));
@@ -347,7 +350,7 @@ namespace LutheRun
                 var match = Regex.Match(Caption, @"(?<number>\d+)?(?<name>.*)");
                 string title = "Hymn";
                 string name = match.Groups["name"]?.Value.Trim() ?? "";
-                string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
+                string number = match.Groups["number"]?.Value.Trim().Length > 0 ? "LSB " + match.Groups["number"]?.Value.Trim() : "";
                 string copyright = Copyright;
 
                 sb.AppendLine($"#stitchedimage(\"{title}\", \"{name}\", \"{number}\", \"{copyright}\")".Indent(indentDepth, indentSpaces));
@@ -444,22 +447,22 @@ namespace LutheRun
                                {
                                    try
                                    {
-                                       System.Diagnostics.Debug.WriteLine($"Loading image from local file {path}.");
+                                       Debug.WriteLine($"Loading image from local file {path}.");
                                        b = new Bitmap(file);
                                        foundlocal = true;
                                    }
                                    catch (Exception ex)
                                    {
-                                       System.Diagnostics.Debug.WriteLine($"Failed to load local file {path} because {ex}. Falling back to web.");
+                                       Debug.WriteLine($"Failed to load local file {path} because {ex}. Falling back to web.");
                                    }
                                }
                                if (!foundlocal)
                                {
-                                   System.Diagnostics.Debug.WriteLine($"Failed to load local file {path} since it does not exist. Falling back to web.");
+                                   Debug.WriteLine($"Failed to load local file {path} since it does not exist. Falling back to web.");
                                    // use screenurls
                                    try
                                    {
-                                       System.Diagnostics.Debug.WriteLine($"Fetching image {ScreenURL} from web.");
+                                       Debug.WriteLine($"Fetching image {ScreenURL} from web.");
 
                                        using (Stream rstream = await WebHelpers.httpClient.GetStreamAsync(ScreenURL))
                                        {

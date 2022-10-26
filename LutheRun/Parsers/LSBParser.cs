@@ -1,6 +1,11 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 
+using LutheRun.Elements;
+using LutheRun.Elements.Interface;
+using LutheRun.Elements.LSB;
+using LutheRun.Parsers.DataModel;
+using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,21 +22,8 @@ using System.Xml.Serialization;
 
 using Xenon.Helpers;
 
-namespace LutheRun
+namespace LutheRun.Parsers
 {
-    public class ParsedLSBElement
-    {
-        public ILSBElement LSBElement { get; set; } = null;
-        public string Generator { get; set; } = "";
-        public string XenonCode { get; set; } = "";
-        public IEnumerable<IElement> SourceElements { get; set; } = null;
-        public IElement ParentSourceElement { get; set; } = null;
-        public bool FilterFromOutput { get; set; } = false;
-        public bool AddedByInference { get; set; } = false;
-        public bool ConsiderForServicification { get; set; } = true;
-        internal BlockType BlockType { get; set; } = BlockType.UNKNOWN;
-        internal CameraUsage CameraUse { get; set; } = new CameraUsage();
-    }
 
 
     public class LSBParser
@@ -119,7 +111,7 @@ namespace LutheRun
 
         }
 
-        private void ParseDOMElements(List<AngleSharp.Dom.IElement> dom, IElement ack)
+        private void ParseDOMElements(List<IElement> dom, IElement ack)
         {
             List<ILSBElement> elements = new List<ILSBElement>();
             ServiceElements.Clear();
@@ -876,7 +868,7 @@ namespace LutheRun
 
             try
             {
-                System.Diagnostics.Debug.WriteLine($"Fetching image {dateLookupURL} from web.");
+                Debug.WriteLine($"Fetching image {dateLookupURL} from web.");
                 var resp = WebHelpers.httpClient.GetAsync(dateLookupURL).Result?.Content;
                 var json = resp.ReadAsStringAsync().Result;
                 res = JsonSerializer.Deserialize<List<SeasonKeyDefinition>>(json);
@@ -895,7 +887,7 @@ namespace LutheRun
             int indentDepth = 0;
             int indentSpace = 4;
             stringBuilder.Clear();
-            stringBuilder.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{System.IO.Path.GetFileName(ServiceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
+            stringBuilder.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{Path.GetFileName(ServiceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
 
             if (LSBImportOptions.UseThemedHymns || LSBImportOptions.UseThemedCreeds)
             {
@@ -916,7 +908,7 @@ namespace LutheRun
 
                 if (LSBImportOptions.InferSeason)
                 {
-                    macros = LSBParser.ApplySeasonalMacroText(ServiceElements, macros);
+                    macros = ApplySeasonalMacroText(ServiceElements, macros);
                 }
 
                 // macros!

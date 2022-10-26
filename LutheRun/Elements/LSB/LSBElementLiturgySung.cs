@@ -1,5 +1,7 @@
 ﻿using AngleSharp.Dom;
-
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,9 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using static LutheRun.LSBElementHymn;
+using static LutheRun.Elements.LSB.LSBElementHymn;
 
-namespace LutheRun
+namespace LutheRun.Elements.LSB
 {
     class LSBElementLiturgySung : ILSBElement, IDownloadWebResource
     {
@@ -24,7 +26,7 @@ namespace LutheRun
 
         public BlockType BlockType()
         {
-            return LutheRun.BlockType.LITURGY_CORPERATE;
+            return Pilot.BlockType.LITURGY_CORPERATE;
         }
 
         public static LSBElementLiturgySung Parse(IElement element)

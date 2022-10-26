@@ -1,5 +1,8 @@
 ﻿using AngleSharp.Dom;
-
+using LutheRun.Elements;
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,9 +11,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-using static LutheRun.LSBElementHymn;
+using static LutheRun.Elements.LSB.LSBElementHymn;
 
-namespace LutheRun
+namespace LutheRun.Elements.LSB
 {
 
     class LSBElementReadingComplex : ILSBElement, IDownloadWebResource
@@ -108,7 +111,7 @@ namespace LutheRun
                 int i = 0;
                 foreach (var image in _imagelines)
                 {
-                    if ((asfirst && i == 0) || (!asfirst && i == _imagelines.Count - 1))
+                    if (asfirst && i == 0 || !asfirst && i == _imagelines.Count - 1)
                     {
                         sb.AppendLine($"#litimage({image.InferedName}){postset}".Indent(indentDepth, indentSpaces));
                     }
@@ -169,7 +172,7 @@ namespace LutheRun
 
         public BlockType BlockType()
         {
-            return LutheRun.BlockType.READING;
+            return Pilot.BlockType.READING;
         }
 
         public string DebugString()

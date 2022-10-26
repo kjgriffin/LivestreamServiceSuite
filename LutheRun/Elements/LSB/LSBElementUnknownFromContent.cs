@@ -1,10 +1,12 @@
 ﻿using AngleSharp.Dom;
-
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LutheRun
+namespace LutheRun.Elements.LSB
 {
     internal class LSBElementUnknownFromContent : ILSBElement
     {
@@ -25,7 +27,7 @@ namespace LutheRun
 
         public BlockType BlockType()
         {
-            return LutheRun.BlockType.LITURGY_CORPERATE;
+            return Pilot.BlockType.LITURGY_CORPERATE;
         }
 
         public string DebugString()

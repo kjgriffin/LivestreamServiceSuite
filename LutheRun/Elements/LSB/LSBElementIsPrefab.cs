@@ -1,10 +1,12 @@
 ﻿using AngleSharp.Dom;
-
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LutheRun
+namespace LutheRun.Elements.LSB
 {
     class LSBElementIsPrefab : ILSBElement
     {
@@ -14,7 +16,7 @@ namespace LutheRun
 
         public IElement SourceHTML { get; private set; }
 
-        internal BlockType BType { get; private set; } = LutheRun.BlockType.UNKNOWN;
+        internal BlockType BType { get; private set; } = Pilot.BlockType.UNKNOWN;
 
         public LSBElementIsPrefab(string command, string elementtext, IElement source, BlockType bType)
         {

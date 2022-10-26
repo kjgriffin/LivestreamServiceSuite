@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 
-namespace LutheRun
+namespace LutheRun.Elements
 {
     class ExternalPrefab : ExternalElement
     {
@@ -11,10 +13,10 @@ namespace LutheRun
 
         public override BlockType BlockType()
         {
-            return this.btype;
+            return btype;
         }
 
-        private BlockType btype { get; set; } 
+        private BlockType btype { get; set; }
 
         public string TypeIdentifier { get; private set; }
 
@@ -57,7 +59,7 @@ namespace LutheRun
         {
             TypeIdentifier = typeID;
             PrefabCommand = command;
-            this.btype = bType;
+            btype = bType;
         }
 
         public ExternalPrefab(string command, int postset, bool usePostset, string typeID, BlockType btype)

@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LutheRun.Elements;
+using LutheRun.Elements.LSB;
 
-namespace LutheRun
+namespace LutheRun.Parsers
 {
     public class LSBImportOptions
     {

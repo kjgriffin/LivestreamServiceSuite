@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using LutheRun.Parsers;
 
-namespace LutheRun
+namespace LutheRun.Elements
 {
     class InsertTitlepage : ExternalElement
     {

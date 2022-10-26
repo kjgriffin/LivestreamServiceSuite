@@ -1,5 +1,6 @@
 ﻿using AngleSharp.Dom;
-
+using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

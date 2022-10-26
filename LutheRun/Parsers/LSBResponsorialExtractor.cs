@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace LutheRun
+namespace LutheRun.Parsers
 {
     internal static class LSBResponsorialExtractor
     {

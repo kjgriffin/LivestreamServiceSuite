@@ -1,9 +1,11 @@
 ﻿using AngleSharp.Dom;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LutheRun
+namespace LutheRun.Elements.Interface
 {
     public interface ILSBElement
     {

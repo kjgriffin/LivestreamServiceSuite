@@ -1,11 +1,13 @@
 ﻿using AngleSharp.Dom;
-
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LutheRun
+namespace LutheRun.Elements.LSB
 {
     class LSBElementHeading : ILSBElement
     {
@@ -15,7 +17,7 @@ namespace LutheRun
 
         public IElement SourceHTML { get; private set; }
 
-        public static ILSBElement Parse(AngleSharp.Dom.IElement element)
+        public static ILSBElement Parse(IElement element)
         {
             var res = new LSBElementHeading();
             res.SourceHTML = element;
@@ -36,7 +38,7 @@ namespace LutheRun
 
         public BlockType BlockType()
         {
-            return LutheRun.BlockType.UNKNOWN;
+            return Pilot.BlockType.UNKNOWN;
         }
 
     }

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
+using LutheRun.Elements.LSB;
 
-namespace LutheRun
+namespace LutheRun.Elements.Interface
 {
 
     public interface ILoadResourceAsync

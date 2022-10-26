@@ -5,8 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using LutheRun.Elements.Interface;
+using LutheRun.Elements.LSB;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 
-namespace LutheRun
+namespace LutheRun.Elements
 {
     internal static class ExternalPrefabGenerator
     {
@@ -17,7 +21,7 @@ namespace LutheRun
             // we can use the new up-next tabs if we have a hymn #
             var match = Regex.Match(hymn.Caption, @"(?<number>\d+)?(?<name>.*)");
             string name = match.Groups["name"]?.Value.Trim() ?? "";
-            string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
+            string number = match.Groups["number"]?.Value.Trim().Length > 0 ? "LSB " + match.Groups["number"]?.Value.Trim() : "";
             if (!string.IsNullOrWhiteSpace(number) && useUpNextForHymns)
             {
                 return new ExternalPrefab(UpNextCommand("UpNext_Numbered", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };

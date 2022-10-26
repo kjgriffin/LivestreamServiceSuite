@@ -32,11 +32,11 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using Xenon.Compiler.Suggestions;
 using CommonVersionInfo;
 using System.Net.Http;
-using LutheRun;
 using Xenon.Compiler.Formatter;
 using System.IO.MemoryMappedFiles;
 using IntegratedPresenterAPIInterop;
 using CCU.Config;
+using LutheRun.Parsers;
 
 namespace SlideCreater
 {
@@ -1158,7 +1158,7 @@ namespace SlideCreater
             TbInput.Text = save.SourceCode;
         }
 
-        LutheRun.LSBImportOptions options = new LutheRun.LSBImportOptions();
+        LSBImportOptions options = new LSBImportOptions();
 
         private async void ClickImportService(object sender, RoutedEventArgs e)
         {
@@ -1168,7 +1168,7 @@ namespace SlideCreater
             if (ofd.ShowDialog() == true)
             {
                 ActionState = ActionState.Building;
-                LutheRun.LSBParser parser = new LutheRun.LSBParser();
+                LSBParser parser = new LSBParser();
                 parser.LSBImportOptions = options;
                 if (options.UseThemedCreeds || options.UseThemedHymns)
                 {

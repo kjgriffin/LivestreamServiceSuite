@@ -1,9 +1,12 @@
 ﻿using AngleSharp.Dom;
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LutheRun
+namespace LutheRun.Elements
 {
     abstract class ExternalElement : ILSBElement
     {
@@ -23,7 +26,7 @@ namespace LutheRun
 
         public virtual BlockType BlockType()
         {
-            return LutheRun.BlockType.UNKNOWN;
+            return Pilot.BlockType.UNKNOWN;
         }
     }
 }
