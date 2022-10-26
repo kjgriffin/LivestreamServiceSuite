@@ -111,6 +111,10 @@ namespace LutheRun
         internal Dictionary<CameraID, List<string>> UnResolvedConflicts { get; set; } = new Dictionary<CameraID, List<string>>();
         internal Dictionary<CameraID, List<string>> AllConflicts { get; set; } = new Dictionary<CameraID, List<string>>();
 
+        internal Dictionary<CameraID, string> SafeActions { get; set; } = new Dictionary<CameraID, string>();
+        internal Dictionary<CameraID, string> Actions { get; set; } = new Dictionary<CameraID, string>();
+        internal Dictionary<CameraID, string> Available { get; set; } = new Dictionary<CameraID, string>();
+
         internal void AddRequirement(CameraID cam, string preset)
         {
             RequiredCameras.Require(cam, preset);
@@ -124,7 +128,19 @@ namespace LutheRun
 
         internal string Format()
         {
-            return $"Required:{Environment.NewLine}{RequiredCameras.Format()}{Environment.NewLine}Freed:{Environment.NewLine}    {string.Join($"{Environment.NewLine}    ", FreedCameras)}{Environment.NewLine}InUse:{Environment.NewLine}{InUse.Format()}{Environment.NewLine}Un-Resolved-Conflicts:{Environment.NewLine}    {string.Join($"{Environment.NewLine}    ", UnResolvedConflicts.Select(x => $"{x.Key}{{{(string.Join(",", x.Value))}}}"))}{Environment.NewLine}All-Conflicts:{Environment.NewLine}    {string.Join($"{Environment.NewLine}    ", AllConflicts.Select(x => $"{x.Key}{{{(string.Join(",", x.Value))}}}"))}";
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Required:");
+            sb.AppendLine(RequiredCameras.Format().IndentBlock(1, 4));
+            sb.AppendLine("Freed:");
+            sb.AppendLine(string.Join(Environment.NewLine, FreedCameras).IndentBlock(1, 4));
+            sb.AppendLine("InUse:");
+            sb.AppendLine(InUse.Format().IndentBlock(1, 4));
+            sb.AppendLine("Un-Resolved-Conflicts:");
+            sb.AppendLine(string.Join(Environment.NewLine, UnResolvedConflicts.Select(x => $"{x.Key}{{{(string.Join(",", x.Value))}}}")).IndentBlock(1, 4));
+            sb.AppendLine("All-Conflicts");
+            sb.AppendLine(string.Join(Environment.NewLine, AllConflicts.Select(x => $"{x.Key}{{{(string.Join(",", x.Value))}}}")).IndentBlock(1, 4));
+
+            return sb.ToString();
         }
     }
 
@@ -166,14 +182,12 @@ namespace LutheRun
             Blockify(service);
 
             // once blocked we'll analyze for camera usage requirements based on blocks
-
-
-            // then we need to schedule transitions on block boundaries based on where cameras are req/freed
-            // once we have a plan we can then attach the pilot actions
             AsignCameraUseage(service);
 
+            // then we need to schedule transitions on block boundaries based on where cameras are req/freed
             AsignSequencialStateBasedConflicts(service);
 
+            // once we have a plan we can then attach the pilot actions
 
         }
 
@@ -264,6 +278,9 @@ namespace LutheRun
                         cams.FreeCamera(CameraID.CENTER);
                         cams.FreeCamera(CameraID.LECTERN);
                         break;
+                    case BlockType.HYMN_INTRO:
+                        cams.AddRequirement(CameraID.ORGAN, "organ");
+                        break;
                     case BlockType.IGNORED:
                         break;
                     case BlockType.PRELUDE:
@@ -346,6 +363,7 @@ namespace LutheRun
         HYMN,
         HYMN_ORGAN,
         HYMN_OTHER,
+        HYMN_INTRO,
         IGNORED,
         PRELUDE,
         POSTLUDE,

@@ -20,15 +20,15 @@ namespace LutheRun
             string number = match.Groups["number"]?.Value.Trim().Length > 0 ? ("LSB " + match.Groups["number"]?.Value.Trim()) : "";
             if (!string.IsNullOrWhiteSpace(number) && useUpNextForHymns)
             {
-                return new ExternalPrefab(UpNextCommand("UpNext_Numbered", name, number, ""), "upnext", BlockType.HYMN) { IndentReplacementIndentifier = "$>" };
+                return new ExternalPrefab(UpNextCommand("UpNext_Numbered", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
             }
             else if (!string.IsNullOrWhiteSpace(name) && useUpNextForHymns)
             {
-                return new ExternalPrefab(UpNextCommand("UpNext_UnNumbered", name, number, ""), "upnext", BlockType.HYMN) { IndentReplacementIndentifier = "$>" };
+                return new ExternalPrefab(UpNextCommand("UpNext_UnNumbered", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
             }
             else
             {
-                return new ExternalPrefab("#organintro", "organintro", BlockType.HYMN);
+                return new ExternalPrefab("#organintro", "organintro", BlockType.HYMN_INTRO);
             }
 
 

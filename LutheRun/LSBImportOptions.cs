@@ -53,7 +53,7 @@ namespace LutheRun
         [BoolSetting]
         public bool InferSeason { get; set; } = true;
         [BoolSetting]
-        public bool AggressivelyParseInsideLSBContent { get; set; } = false;
+        public bool AggressivelyParseInsideLSBContent { get; set; } = true;
         [BoolSetting]
         public bool FlightPlanning { get; set; } = true;
 
@@ -95,7 +95,7 @@ namespace LutheRun
         [BoolSetting]
         public bool ExternalPrefab { get; set; } = true;
         [BoolSetting]
-        public bool ContentFromUnknown { get; set; } = false;
+        public bool ContentFromUnknown { get; set; } = true;
         [BoolSetting]
         public bool Unknown { get; set; } = false;
         [BoolSetting]

@@ -43,7 +43,7 @@ namespace LutheRun
 
             if (!string.IsNullOrWhiteSpace(TextContent))
             {
-                sb.AppendLine("// Found extra content that's not quite liturgy...".Indent(indentDepth, indentSpaces));
+                //sb.AppendLine("// Found extra content that's not quite liturgy...".Indent(indentDepth, indentSpaces));
                 sb.AppendLine($"// {TextContent}".Indent(indentDepth, indentSpaces));
             }
 
