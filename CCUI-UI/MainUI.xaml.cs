@@ -27,12 +27,12 @@ namespace CCUI_UI
     public partial class MainUI : Window
     {
 
-        CCPUPresetMonitor m_monitor;
+        ICCPUPresetMonitor m_monitor;
         Window _parent = null;
 
         public bool AlwaysOnTop = true;
 
-        public MainUI(CCPUPresetMonitor monitor, Window parent = null)
+        public MainUI(ICCPUPresetMonitor monitor, Window parent = null)
         {
             InitializeComponent();
             _parent = parent;
@@ -51,8 +51,7 @@ namespace CCUI_UI
             cam1.OnFirePresetRequest += Cam_OnFirePresetRequest;
             cam1.OnFireZoomRequest += Cam_OnFireZoomRequest;
             cam1.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
-            cam1.OnRunZoomRequest += Cam_OnRunZoomRequest;
-            cam1.OnChirpZoomRequest += Cam_OnChripZoomRequest;
+            cam1.OnRunZoomProgramRequest += Cam_OnChripZoomRequest;
 
             cam2.OnRestartRequest += Cam_OnRestartRequest;
             cam2.OnStopRequest += Cam_OnStopRequest;
@@ -61,8 +60,7 @@ namespace CCUI_UI
             cam2.OnFirePresetRequest += Cam_OnFirePresetRequest;
             cam2.OnFireZoomRequest += Cam_OnFireZoomRequest;
             cam2.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
-            cam2.OnRunZoomRequest += Cam_OnRunZoomRequest;
-            cam2.OnChirpZoomRequest += Cam_OnChripZoomRequest;
+            cam2.OnRunZoomProgramRequest += Cam_OnChripZoomRequest;
 
             cam3.OnRestartRequest += Cam_OnRestartRequest;
             cam3.OnStopRequest += Cam_OnStopRequest;
@@ -71,10 +69,9 @@ namespace CCUI_UI
             cam3.OnFirePresetRequest += Cam_OnFirePresetRequest;
             cam3.OnFireZoomRequest += Cam_OnFireZoomRequest;
             cam3.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
-            cam3.OnRunZoomRequest += Cam_OnRunZoomRequest;
-            cam3.OnChirpZoomRequest += Cam_OnChripZoomRequest;
+            cam3.OnRunZoomProgramRequest += Cam_OnChripZoomRequest;
 
-            miFakeClients.IsChecked = m_monitor?.m_usingFake ?? false;
+            miFakeClients.IsChecked = (m_monitor as CCPUPresetMonitor)?.m_usingFake ?? false;
 
             ReConfigure();
         }
@@ -87,11 +84,6 @@ namespace CCUI_UI
         private void Cam_OnChripZoomRequest(string cname, int direction, int chirps)
         {
             m_monitor?.ChirpZoom(cname, direction, chirps);
-        }
-
-        private void Cam_OnRunZoomRequest(string cname, int direction)
-        {
-            m_monitor?.RunZoom(cname, direction);
         }
 
         internal void ReConfigure()
@@ -132,19 +124,19 @@ namespace CCUI_UI
             {
                 cfg.KeyedPresets.TryGetValue(c1.Name, out var presets);
                 cfg.KeyedZooms.TryGetValue(c1.Name, out var zpresets);
-                cam1.Reconfigure(c1.Name, c1.IPAddress, c1.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets?.Select(x => x.Key).ToList() ?? new List<string>());
+                cam1.Reconfigure(c1.Name, c1.IPAddress, c1.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets ?? new Dictionary<string, CameraDriver.ZoomProgram>());
             }
             if (c2 != null)
             {
                 cfg.KeyedPresets.TryGetValue(c2.Name, out var presets);
                 cfg.KeyedZooms.TryGetValue(c2.Name, out var zpresets);
-                cam2.Reconfigure(c2.Name, c2.IPAddress, c2.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets?.Select(x => x.Key).ToList() ?? new List<string>());
+                cam2.Reconfigure(c2.Name, c2.IPAddress, c2.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets ?? new Dictionary<string, CameraDriver.ZoomProgram>());
             }
             if (c3 != null)
             {
                 cfg.KeyedPresets.TryGetValue(c3.Name, out var presets);
                 cfg.KeyedZooms.TryGetValue(c3.Name, out var zpresets);
-                cam3.Reconfigure(c3.Name, c3.IPAddress, c3.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets?.Select(x => x.Key).ToList() ?? new List<string>());
+                cam3.Reconfigure(c3.Name, c3.IPAddress, c3.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets ?? new Dictionary<string, CameraDriver.ZoomProgram>());
             }
 
         }
@@ -188,8 +180,7 @@ namespace CCUI_UI
             cam1.OnFirePresetRequest -= Cam_OnFirePresetRequest;
             cam1.OnFireZoomRequest -= Cam_OnFireZoomRequest;
             cam1.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
-            cam1.OnRunZoomRequest -= Cam_OnRunZoomRequest;
-            cam1.OnChirpZoomRequest -= Cam_OnChripZoomRequest;
+            cam1.OnRunZoomProgramRequest -= Cam_OnChripZoomRequest;
 
             cam2.OnRestartRequest -= Cam_OnRestartRequest;
             cam2.OnStopRequest -= Cam_OnStopRequest;
@@ -198,8 +189,7 @@ namespace CCUI_UI
             cam2.OnFirePresetRequest -= Cam_OnFirePresetRequest;
             cam2.OnFireZoomRequest -= Cam_OnFireZoomRequest;
             cam2.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
-            cam2.OnRunZoomRequest -= Cam_OnRunZoomRequest;
-            cam2.OnChirpZoomRequest -= Cam_OnChripZoomRequest;
+            cam2.OnRunZoomProgramRequest -= Cam_OnChripZoomRequest;
 
             cam3.OnRestartRequest -= Cam_OnRestartRequest;
             cam3.OnStopRequest -= Cam_OnStopRequest;
@@ -208,8 +198,7 @@ namespace CCUI_UI
             cam3.OnFirePresetRequest -= Cam_OnFirePresetRequest;
             cam3.OnFireZoomRequest -= Cam_OnFireZoomRequest;
             cam3.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
-            cam3.OnRunZoomRequest -= Cam_OnRunZoomRequest;
-            cam3.OnChirpZoomRequest -= Cam_OnChripZoomRequest;
+            cam3.OnRunZoomProgramRequest -= Cam_OnChripZoomRequest;
         }
 
         internal void AddKnownPreset(string cname, string pname)
@@ -316,15 +305,19 @@ namespace CCUI_UI
 
         private void ClickToggleMock(object sender, RoutedEventArgs e)
         {
-            if (m_monitor?.m_usingFake == true)
+            var fullMonitor = m_monitor as CCPUPresetMonitor;
+            if (fullMonitor != null)
             {
-                m_monitor?.ReSpinWithReal();
-                miFakeClients.IsChecked = false;
-            }
-            else
-            {
-                //m_monitor?.ReSpinWithFake();
-                //miFakeClients.IsChecked = true;
+                if (fullMonitor?.m_usingFake == true)
+                {
+                    fullMonitor?.ReSpinWithReal();
+                    miFakeClients.IsChecked = false;
+                }
+                else
+                {
+                    //m_monitor?.ReSpinWithFake();
+                    //miFakeClients.IsChecked = true;
+                }
             }
         }
 

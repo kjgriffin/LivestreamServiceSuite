@@ -88,15 +88,20 @@ namespace CCUI_UI
         public event EventHandler<CameraUpdateEventArgs> OnCameraMoved;
 
 
-        MockCameraDriver UiWindow;
-
+        //MockCameraDriver UiWindow;
+        MainUI UiWindow;
 
         CCPUConfig_Extended m_presetConfig;
 
 
         public void ChirpZoom(string camname, int direction, int duration)
         {
-            throw new NotImplementedException();
+            // reject invalid duration, or greater than 10 sec
+            if (duration < 0 || duration > 10000)
+            {
+                return;
+            }
+            _ = FireZoom_Tracked(camname, direction, duration);
         }
 
         public CCPUConfig ExportStateToConfig()
@@ -106,7 +111,7 @@ namespace CCUI_UI
 
         public void FirePreset(string camname, string presetname, int speed)
         {
-            throw new NotImplementedException();
+            _ = FirePreset_Tracked(camname, presetname, speed);
         }
 
         public (Guid move, Guid zoom) FirePresetWithZoom_Tracked(string camname, string presetname, int speed, int zoomdir, int msdur)
@@ -147,7 +152,7 @@ namespace CCUI_UI
 
         public void FireZoomLevel(string camname, string presetname)
         {
-            throw new NotImplementedException();
+            _ = FireZoomLevel_Tracked(camname, presetname);
         }
 
         public Guid FireZoomLevel_Tracked(string camname, string presetname)
@@ -182,7 +187,23 @@ namespace CCUI_UI
 
         public Guid FireZoom_Tracked(string camname, int zoomdir, int msdur)
         {
-            throw new NotImplementedException();
+            Guid reqid = Guid.NewGuid();
+
+            m_presetConfig.CameraAssociations.TryGetValue(camname, out var associatedCam);
+
+            CameraZoomEventArgs.ZDir zdir = zoomdir == -1 ? CameraZoomEventArgs.ZDir.WIDE : CameraZoomEventArgs.ZDir.TELE;
+            const int ZSETUP_MS = 3800;
+
+            Task.Run(async () =>
+            {
+                OnCommandUpdate?.Invoke(camname, "STARTED", "CHIRP", "duration ms", zoomdir == -1 ? "WIDE" : "TELE", reqid.ToString());
+
+                OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Zomming, zdir, ZSETUP_MS, msdur));
+                await Task.Delay(msdur + ZSETUP_MS);
+                OnCommandUpdate?.Invoke(camname, "COMPLETED", "CHIRP", zoomdir == -1 ? "WIDE" : "TELE", "after 1 tries", reqid.ToString());
+                OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Arrived, zdir, ZSETUP_MS, msdur));
+            });
+            return reqid;
         }
 
         public void LoadConfig(CCPUConfig? cfg)
@@ -200,29 +221,78 @@ namespace CCUI_UI
 
         public void RemovePreset(string camname, string presetname)
         {
-            throw new NotImplementedException();
+            if (m_presetConfig.KeyedPresets.TryGetValue(camname, out var presets))
+            {
+                presets?.Remove(presetname);
+            }
         }
 
         public void RunZoom(string camname, int direction)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void SavePreset(string camname, string presetname)
         {
-            throw new NotImplementedException();
+            // silenetly allow it... perhaps ?? won't allow new ones though....
+            if (m_presetConfig.KeyedPresets.TryGetValue(camname, out var presets))
+            {
+                if (presets.TryGetValue(presetname, out var pst))
+                {
+                    // don't touch it...
+                    // this IS a mock device so just- like - pretend it got updated
+                    // TODO: perhaps this should somehow allow updating a thumbnail
+                    // but that's way out of scope for now
+                }
+                else
+                {
+                    // need to invent a preset I guess...
+                    presets[presetname] = new DVIPProtocol.Protocol.Lib.Inquiry.PTDrive.RESP_PanTilt_Position
+                    {
+                        Pan = 0, // this is probably not best...
+                        Tilt = 0, // this is probably not best...
+                        Valid = true,
+                    };
+                }
+            }
+            else
+            {
+                m_presetConfig.KeyedPresets[camname] = new Dictionary<string, DVIPProtocol.Protocol.Lib.Inquiry.PTDrive.RESP_PanTilt_Position>
+                {
+                    [presetname] = new DVIPProtocol.Protocol.Lib.Inquiry.PTDrive.RESP_PanTilt_Position
+                    {
+                        Pan = 0, // this is probably not best...
+                        Tilt = 0, // this is probably not best...
+                        Valid = true,
+                    }
+                };
+            }
+            UiWindow?.AddKnownPreset(camname, presetname);
         }
 
         public void SaveZoomLevel(string camname, string presetname, int zlevel, string mode)
         {
-            throw new NotImplementedException();
+            if (m_presetConfig.KeyedZooms.TryGetValue(camname, out var zooms))
+            {
+                // need to invent a preset I guess...
+                zooms[presetname] = new CameraDriver.ZoomProgram(zlevel, mode);
+            }
+            else
+            {
+                m_presetConfig.KeyedZooms[camname] = new Dictionary<string, CameraDriver.ZoomProgram>()
+                {
+                    [presetname] = new CameraDriver.ZoomProgram(zlevel, mode),
+                };
+            }
+            UiWindow?.AddKnownZoom(camname, presetname);
+
         }
 
         public void ShowUI()
         {
             if (UiWindow == null)
             {
-                UiWindow = new MockCameraDriver(this);
+                UiWindow = new MainUI(this);
             }
             UiWindow.Show();
         }
@@ -234,12 +304,12 @@ namespace CCUI_UI
 
         public void StartCamera(string name, IPEndPoint endpoint)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void StopCamera(string name)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

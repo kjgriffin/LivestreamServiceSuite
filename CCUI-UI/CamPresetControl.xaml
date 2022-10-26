@@ -59,50 +59,60 @@
                     <Grid>
 
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="50"></RowDefinition>
-                            <RowDefinition Height="50"></RowDefinition>
+                            <RowDefinition Height="1*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
                             <RowDefinition Height="5"></RowDefinition>
-                            <RowDefinition Height="50"></RowDefinition>
+                            <RowDefinition Height="1*"></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
                             <ColumnDefinition Width="5"></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Name</TextBlock>
-                            <TextBox Name="tbPresetName" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
+                            <!--<Grid.ColumnDefinitions>-->
+                            <!--<ColumnDefinition Width="60"></ColumnDefinition>-->
+                            <!--<ColumnDefinition></ColumnDefinition>-->
+                            <!--</Grid.ColumnDefinitions>-->
+                            <StackPanel>
+                                <TextBlock Margin="0" HorizontalAlignment="Center" Style="{StaticResource DarkTextblock}">Pos Preset Name</TextBlock>
+                                <TextBox Margin="5,0,5,0" VerticalAlignment="Top" Name="tbPresetName" Style="{StaticResource DarkTextbox}"></TextBox>
+                            </StackPanel>
                         </Grid>
                         <Grid Grid.Row="1">
                             <StackPanel Orientation="Horizontal">
                                 <Button Click="btnSavePreset_Click" x:Name="btnSavePreset" Width="80" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">SAVE PST</Button>
-                                <Button Click="btnSavePresetZoom_Click" x:Name="btnSaveZoom" Width="80" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">SAVE ZOOM</Button>
                             </StackPanel>
                         </Grid>
                         <Grid Grid.Row="2" Background="#171717" Margin="10,0,10,0"></Grid>
                         <Grid Grid.Row="3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Recall Speed</TextBlock>
-                            <TextBox Name="tbPresetSpeed" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}">15</TextBox>
+                            <StackPanel>
+                                <TextBlock Margin="0" HorizontalAlignment="Center" Style="{StaticResource DarkTextblock}">Recall Speed</TextBlock>
+                                <TextBox Margin="5,0,5,0" Name="tbPresetSpeed" Style="{StaticResource DarkTextbox}">15</TextBox>
+                            </StackPanel>
                         </Grid>
 
                         <Grid Grid.Row="0" Grid.RowSpan="4" Grid.Column="1" Background="#171717"></Grid>
 
                         <Grid Grid.Row="0" Grid.Column="2">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Duration</TextBlock>
-                            <TextBox Name="tbChirps" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}">200</TextBox>
+                            <Grid Grid.Column="0">
+                                <StackPanel>
+                                    <TextBlock Margin="0" HorizontalAlignment="Center" Style="{StaticResource DarkTextblock}">Zoom Preset Name</TextBlock>
+                                    <TextBox Margin="5,0,5,0" Name="tbZPstName" Style="{StaticResource DarkTextbox}"></TextBox>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid Grid.Column="1">
+                                <StackPanel>
+                                    <TextBlock HorizontalAlignment="Center" Margin="0" Style="{StaticResource DarkTextblock}">Duration (ms)</TextBlock>
+                                    <TextBox Margin="5,0,5,0" Name="tbZProgDurMs" Style="{StaticResource DarkTextbox}">200</TextBox>
+                                </StackPanel>
+                            </Grid>
                         </Grid>
 
                         <Grid Grid.Row="1" Grid.Column="2">
@@ -110,19 +120,26 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Button Click="btnChirpTele_Click" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">TELE</Button>
-                            <Button Click="btnChirpWide_Click" Width="100" Grid.Column="1" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">WIDE</Button>
+                            <Button x:Name="btnZoomModeTELE" Click="bntSetZoomModeTELE" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">TELE</Button>
+                            <Button x:Name="btnZoomModeWIDE" Click="btnSetZoomModeWIDE" Width="100" Grid.Column="1" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">WIDE</Button>
                         </Grid>
 
                         <Grid Grid.Row="2" Grid.Column="2" Background="#171717" Margin="10,0,10,0"></Grid>
 
+                        <!--<Grid Grid.Row="3" Grid.Column="2">-->
+                        <!--<Grid.ColumnDefinitions>-->
+                        <!--<ColumnDefinition></ColumnDefinition>-->
+                        <!--<ColumnDefinition></ColumnDefinition>-->
+                        <!--</Grid.ColumnDefinitions>-->
+                        <!--<Button Click="btnRunTele_Click" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">ZOOM IN</Button>-->
+                        <!--<Button Click="btnRunWide_Click" Width="100" Grid.Column="1" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">ZOOM OUT</Button>-->
+                        <!--</Grid>-->
+
                         <Grid Grid.Row="3" Grid.Column="2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Button Click="btnRunTele_Click" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">ZOOM IN</Button>
-                            <Button Click="btnRunWide_Click" Width="100" Grid.Column="1" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">ZOOM OUT</Button>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Click="btnSavePresetZoom_Click" x:Name="btnSaveZoom" Width="100" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">SAVE ZOOM</Button>
+                                <Button Click="btnRunZoom_Click" x:Name="btnRunZoom" Width="100" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="Orange" FontSize="15" HorizontalAlignment="Center">RUN ZOOM</Button>
+                            </StackPanel>
                         </Grid>
 
 

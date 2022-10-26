@@ -29,8 +29,8 @@ namespace CCUI_UI
     internal delegate void FireZoomEvent(string cname, string presetname);
     internal delegate void DeleteZoomEvent(string cname, string presetname);
 
-    internal delegate void RunZoom(string cname, int direction);
-    internal delegate void ChirpZoom(string cname, int direction, int chirps);
+    //internal delegate void RunZoom(string cname, int direction);
+    internal delegate void RunZoomProgram(string cname, int direction, int chirps);
 
     /// <summary>
     /// Interaction logic for CamPresetControl.xaml
@@ -56,6 +56,38 @@ namespace CCUI_UI
         private string m_camIP;
         private string m_camPort;
 
+        private int m_zmode = 0;
+        /// <summary>
+        /// 1 = TELE, -1 = WIDE, 0 = STOP
+        /// </summary>
+        private int ZoomMode
+        {
+            get => m_zmode;
+            set
+            {
+                m_zmode = value;
+                Dispatcher.Invoke(() =>
+                {
+                    switch (m_zmode)
+                    {
+                        case -1:
+                            btnZoomModeTELE.Foreground = Brushes.CornflowerBlue;
+                            btnZoomModeWIDE.Foreground = Brushes.Orange;
+                            break;
+                        case 1:
+                            btnZoomModeTELE.Foreground = Brushes.Orange;
+                            btnZoomModeWIDE.Foreground = Brushes.CornflowerBlue;
+                            break;
+                        default:
+                            btnZoomModeTELE.Foreground = Brushes.CornflowerBlue;
+                            btnZoomModeWIDE.Foreground = Brushes.CornflowerBlue;
+                            break;
+                    }
+                });
+            }
+        }
+        private string ZoomModeSTR => ZoomMode == 0 ? "STOP" : ZoomMode == -1 ? "WIDE" : "TELE";
+
 
         internal event OnRestartEvent OnRestartRequest;
         internal event OnStopEvent OnStopRequest;
@@ -68,19 +100,21 @@ namespace CCUI_UI
         internal event FirePresetEvent OnFirePresetRequest;
         internal event DeletePresetEvent OnDeletePresetRequest;
 
-        internal event RunZoom OnRunZoomRequest;
-        internal event ChirpZoom OnChirpZoomRequest;
+        //internal event RunZoom OnRunZoomRequest;
+        internal event RunZoomProgram OnRunZoomProgramRequest;
 
         Dictionary<string, PresetControl> m_presets = new Dictionary<string, PresetControl>();
-
         Dictionary<string, PresetControl> m_zooms = new Dictionary<string, PresetControl>();
+
+        Dictionary<string, ZoomProgram> m_zoomprograms = new Dictionary<string, ZoomProgram>();
 
         public CamPresetControl()
         {
             InitializeComponent();
+            ZoomMode = 0;
         }
 
-        internal void Reconfigure(string name, string ip, string port, List<string> pos_presets, List<string> z_presets)
+        internal void Reconfigure(string name, string ip, string port, List<string> pos_presets, Dictionary<string, ZoomProgram> z_presets)
         {
             if (!CheckAccess())
             {
@@ -95,6 +129,9 @@ namespace CCUI_UI
             CamName = name;
             m_camIP = ip;
             m_camPort = port;
+
+            ZoomMode = -1; // seems to be a nice default??
+
             LockedSettings = true;
 
             // clear any presets
@@ -120,10 +157,11 @@ namespace CCUI_UI
                 NewPresetAdded(preset);
             }
 
-            foreach (var preset in z_presets)
+            foreach (var preset in z_presets.Keys)
             {
                 NewZoomAdded(preset);
             }
+            m_zoomprograms = z_presets;
         }
 
         private void btnReStart_Click(object sender, RoutedEventArgs e)
@@ -174,13 +212,13 @@ namespace CCUI_UI
         }
         private void btnSavePresetZoom_Click(object sender, RoutedEventArgs e)
         {
-            if (LockedSettings && !string.IsNullOrWhiteSpace(tbPresetName.Text))
+            if (LockedSettings && !string.IsNullOrWhiteSpace(tbZPstName.Text))
             {
-                if (int.TryParse(tbChirps.Text, out var chirps))
+                if (int.TryParse(tbZProgDurMs.Text, out var zrunms))
                 {
-                    var pstMatch = Regex.Match(tbPresetName.Text, "(?<name>.*);(?<mode>.*)");
-
-                    OnSaveZoomRequest?.Invoke(CamName, pstMatch.Groups["name"].Value, chirps, pstMatch.Groups["mode"].Value);
+                    //var pstMatch = Regex.Match(tbPresetName.Text, "(?<name>.*);(?<mode>.*)");
+                    //OnSaveZoomRequest?.Invoke(CamName, pstMatch.Groups["name"].Value, zrunms, pstMatch.Groups["mode"].Value);
+                    OnSaveZoomRequest?.Invoke(CamName, tbZPstName.Text, zrunms, ZoomModeSTR);
                 }
             }
         }
@@ -229,8 +267,20 @@ namespace CCUI_UI
                 Dispatcher.Invoke(() => SelectZPreset(pName));
                 return;
             }
-            // TODO: get values...
-            tbPresetName.Text = pName;
+            tbZPstName.Text = pName;
+            if (m_zoomprograms.TryGetValue(pName, out var zprog))
+            {
+                switch (zprog.Mode)
+                {
+                    case "WIDE":
+                        ZoomMode = -1;
+                        break;
+                    case "TELE":
+                        ZoomMode = 1;
+                        break;
+                }
+                tbZProgDurMs.Text = zprog.ZoomMS.ToString();
+            }
         }
 
         private void RemoveZPreset(string pName)
@@ -305,35 +355,40 @@ namespace CCUI_UI
 
         private void btnChirpTele_Click(object sender, RoutedEventArgs e)
         {
-            if (LockedSettings && int.TryParse(tbChirps.Text, out int chirps) && chirps > 0)
+            if (LockedSettings && int.TryParse(tbZProgDurMs.Text, out int chirps) && chirps > 0)
             {
-                OnChirpZoomRequest?.Invoke(CamName, 1, chirps);
+                OnRunZoomProgramRequest?.Invoke(CamName, 1, chirps);
             }
         }
 
         private void btnChirpWide_Click(object sender, RoutedEventArgs e)
         {
-            if (LockedSettings && int.TryParse(tbChirps.Text, out int chirps) && chirps > 0)
+            if (LockedSettings && int.TryParse(tbZProgDurMs.Text, out int chirps) && chirps > 0)
             {
-                OnChirpZoomRequest?.Invoke(CamName, -1, chirps);
+                OnRunZoomProgramRequest?.Invoke(CamName, -1, chirps);
             }
         }
 
-        private void btnRunTele_Click(object sender, RoutedEventArgs e)
+        private void btnSetZoomModeWIDE(object sender, RoutedEventArgs e)
         {
-            if (LockedSettings)
-            {
-                OnRunZoomRequest?.Invoke(CamName, 1);
-            }
+            ZoomMode = -1;
         }
 
-        private void btnRunWide_Click(object sender, RoutedEventArgs e)
+        private void bntSetZoomModeTELE(object sender, RoutedEventArgs e)
         {
-            if (LockedSettings)
-            {
-                OnRunZoomRequest?.Invoke(CamName, -1);
-            }
+            ZoomMode = 1;
         }
 
+        private void btnRunZoom_Click(object sender, RoutedEventArgs e)
+        {
+            if (LockedSettings && !string.IsNullOrWhiteSpace(tbZPstName.Text))
+            {
+                if (int.TryParse(tbZProgDurMs.Text, out var zrunms))
+                {
+                    OnRunZoomProgramRequest?.Invoke(CamName, ZoomMode, zrunms);
+                }
+            }
+
+        }
     }
 }
