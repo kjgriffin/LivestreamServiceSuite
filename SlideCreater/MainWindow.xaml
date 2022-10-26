@@ -127,7 +127,7 @@
                 <MenuItem  Foreground="Black" Name="mi_importoptions_chooseelements" Header="Filter Elements..." Click="mi_importoptions_chooseelements_Click"></MenuItem>
                 <MenuItem  Foreground="Black" Name="mi_importoptions_choosebehaviour" Header="Import Options..." Click="mi_importoptions_choosebehaviour_Click"></MenuItem>
                 <Separator></Separator>
-                <MenuItem  Foreground="Black" Name="miimport_adv" Click="ClickImportServiceAdv" Header="Import Wizard"></MenuItem>
+                <MenuItem  Foreground="Black" Name="miimport_adv" Click="ClickImportServiceAdv" Header="Import Debugger"></MenuItem>
             </MenuItem>
             <MenuItem Header="Recovery">
                 <MenuItem  Foreground="Black" Click="RecoverAutoSave" Header="Recover Auto Save">

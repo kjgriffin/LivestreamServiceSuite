@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SlideCreater" xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
-        Title="LSBImportWizardUI" Height="450" Width="800">
+        Title="LSBImportDebugger" Height="450" Width="800">
     <Grid>
         <wpf:WebView2 Name="browser"></wpf:WebView2>
     </Grid>

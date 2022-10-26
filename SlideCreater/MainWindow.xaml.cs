@@ -1218,7 +1218,7 @@ namespace SlideCreater
 
         private void ClickImportServiceAdv(object sender, RoutedEventArgs e)
         {
-#if DEBUG
+//#if DEBUG
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Import from save of Lutheran Service Bulletin";
             ofd.Filter = "LSB Service (*.html)|*.html";
@@ -1229,7 +1229,7 @@ namespace SlideCreater
                 LSBImportWizardUI ui = new LSBImportWizardUI(ofd.FileName, options);
                 ui.ShowDialog();
             }
-#endif
+//#endif
         }
 
         private async void CreateProjectFromImportWizard(List<(string, string)> assets, string text)
