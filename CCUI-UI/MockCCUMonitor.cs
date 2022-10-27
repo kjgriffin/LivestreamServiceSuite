@@ -294,7 +294,12 @@ namespace CCUI_UI
             {
                 UiWindow = new MainUI(this);
             }
-            UiWindow.Show();
+            if (UiWindow?.IsVisible == false)
+            {
+                UiWindow?.Close();
+                UiWindow = new MainUI(this);
+                UiWindow.Show();
+            }
         }
 
         public void Shutdown()
