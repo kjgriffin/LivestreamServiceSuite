@@ -883,7 +883,7 @@ namespace SlideCreater
             _proj = new Project(true);
 
             TbConfig.Text = _proj.SourceConfig;
-            TbConfigCCU.Text = SanatizePNGsFromCfg(_proj.CCPUConfig);
+            TbConfigCCU.Text = SanatizePNGsFromCfg(_proj.CCPUConfig).fake;
 
             ShowProjectAssets();
             SetupLayoutsTreeVew();
@@ -1330,10 +1330,10 @@ namespace SlideCreater
 
             Action<string, CCPUConfig_Extended> updateccu = (string raw, CCPUConfig_Extended cfg) =>
             {
-                var fakeJson = SanatizePNGsFromCfg(cfg);
+                var res = SanatizePNGsFromCfg(cfg);
                 Dispatcher.Invoke(() =>
                 {
-                    TbConfigCCU.Text = fakeJson;
+                    TbConfigCCU.Text = res.fake;
                 });
             };
 
@@ -1908,8 +1908,8 @@ namespace SlideCreater
                 var fullCFG = JsonSerializer.Deserialize<CCPUConfig_Extended>(_proj.SourceCCPUConfigFull);
                 _proj.CCPUConfig = fullCFG;
 
-                var fakeCFG = SanatizePNGsFromCfg(fullCFG);
-                TbConfigCCU.Text = fakeCFG;
+                var res = SanatizePNGsFromCfg(fullCFG);
+                TbConfigCCU.Text = res.fake;
             }
         }
 
@@ -1921,15 +1921,17 @@ namespace SlideCreater
 
             MarkDirty();
 
-            var fakeJsonString = SanatizePNGsFromCfg(cfg);
+            var res = SanatizePNGsFromCfg(cfg);
 
+            _proj.CCPUConfig = cfg;
+            _proj.SourceCCPUConfigFull = res.full;
             Dispatcher.Invoke(() =>
             {
-                TbConfigCCU.Text = fakeJsonString;
+                TbConfigCCU.Text = res.fake;
             });
         }
 
-        private string SanatizePNGsFromCfg(CCPUConfig_Extended cfg)
+        private (string fake, string full) SanatizePNGsFromCfg(CCPUConfig_Extended cfg)
         {
             var trueCFG = JsonSerializer.Serialize(cfg);
             _proj.SourceCCPUConfigFull = trueCFG;
@@ -1944,7 +1946,7 @@ namespace SlideCreater
                 }
             }
 
-            return JsonSerializer.Serialize(fakeCFG, new JsonSerializerOptions { WriteIndented = true });
+            return (JsonSerializer.Serialize(fakeCFG, new JsonSerializerOptions { WriteIndented = true }), trueCFG);
         }
 
     }
