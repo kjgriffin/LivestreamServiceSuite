@@ -293,8 +293,17 @@ namespace CCUI_UI
                     using (var reader = new StreamReader(sfd.FileName))
                     {
                         var json = reader.ReadToEnd();
-                        var cfg = JsonSerializer.Deserialize<CCPUConfig>(json);
-                        m_monitor?.LoadConfig(cfg);
+
+                        var ecfg = JsonSerializer.Deserialize<CCPUConfig_Extended>(json);
+                        if (ecfg != null)
+                        {
+                            m_monitor?.LoadConfig(ecfg);
+                        }
+                        else
+                        {
+                            var cfg = JsonSerializer.Deserialize<CCPUConfig>(json);
+                            m_monitor?.LoadConfig(cfg);
+                        }
                     }
                 }
                 catch (Exception ex)
