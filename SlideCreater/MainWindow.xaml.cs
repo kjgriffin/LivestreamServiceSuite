@@ -213,12 +213,6 @@ namespace SlideCreater
         {
             InitializeComponent();
 
-#if ! DEBUG
-            miEdit.Visibility = Visibility.Collapsed;        
-            miFormatSource.Visibility = Visibility.Collapsed;
-#endif
-
-
             TbInput.LoadLanguage_XENON();
             TbInput.TextArea.TextEntered += TextArea_TextEntered;
             TbInput.TextArea.TextEntering += TextArea_TextEntering;
