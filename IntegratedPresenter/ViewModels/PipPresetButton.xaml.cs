@@ -57,6 +57,10 @@ namespace Integrated_Presenter.ViewModels
                 {
                     b.PIPPlace = value;
                 }
+                else
+                {
+                    UpdateLayout();
+                }
                 OnPropertyChanged();
             }
         }
@@ -72,6 +76,10 @@ namespace Integrated_Presenter.ViewModels
                 if (b != null)
                 {
                     b.PlaceName = value;
+                }
+                else
+                {
+                    UpdateLayout();
                 }
                 OnPropertyChanged();
             }

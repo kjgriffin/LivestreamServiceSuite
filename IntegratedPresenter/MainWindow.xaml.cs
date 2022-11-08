@@ -104,11 +104,15 @@ namespace IntegratedPresenter.Main
             InitActionAutomater();
 
             // initialize conditionals
-            _Cond1.Value = true;
+            _Cond1.Value = false;
             _Cond2.Value = false;
+            _Cond3.Value = false;
+            _Cond4.Value = false;
 
             Btn_Cond1.DataContext = _Cond1;
             Btn_Cond2.DataContext = _Cond2;
+            Btn_Cond3.DataContext = _Cond3;
+            Btn_Cond4.DataContext = _Cond4;
 
             _logger.Info("Starting Camera Server");
 
@@ -1538,13 +1542,29 @@ namespace IntegratedPresenter.Main
             // automation
             if (e.Key == Key.PageUp)
             {
-                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Toggle State of Conditional 1");
-                SetCondition1(!_Cond1.Value);
+                if (Keyboard.IsKeyDown(Key.RightCtrl))
+                {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Toggle State of Conditional 3");
+                    SetCondition3(!_Cond3.Value);
+                }
+                else
+                {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Toggle State of Conditional 1");
+                    SetCondition1(!_Cond1.Value);
+                }
             }
             if (e.Key == Key.PageDown)
             {
-                _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Toggle State of Conditional 2");
-                SetCondition2(!_Cond2.Value);
+                if (Keyboard.IsKeyDown(Key.RightCtrl))
+                {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Toggle State of Conditional 4");
+                    SetCondition4(!_Cond4.Value);
+                }
+                else
+                {
+                    _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Toggle State of Conditional 2");
+                    SetCondition2(!_Cond2.Value);
+                }
             }
 
             // CCU
@@ -4156,6 +4176,8 @@ namespace IntegratedPresenter.Main
 
             ksc_cond1.Visibility = ShortcutVisibility;
             ksc_cond2.Visibility = ShortcutVisibility;
+            ksc_cond3.Visibility = ShortcutVisibility;
+            ksc_cond4.Visibility = ShortcutVisibility;
 
             ksc_pl.Visibility = ShortcutVisibility;
 
@@ -4611,6 +4633,8 @@ namespace IntegratedPresenter.Main
 
         UIValue<bool> _Cond1 = new UIValue<bool>();
         UIValue<bool> _Cond2 = new UIValue<bool>();
+        UIValue<bool> _Cond3 = new UIValue<bool>();
+        UIValue<bool> _Cond4 = new UIValue<bool>();
 
         private Dictionary<string, bool> GetCurrentConditionStatus()
         {
@@ -4618,6 +4642,8 @@ namespace IntegratedPresenter.Main
             {
                 ["1"] = _Cond1.Value,
                 ["2"] = _Cond2.Value,
+                ["3"] = _Cond3.Value,
+                ["4"] = _Cond4.Value,
             };
         }
 
@@ -4644,6 +4670,21 @@ namespace IntegratedPresenter.Main
             FireOnConditionalsUpdated();
         }
 
+        private void SetCondition3(bool value)
+        {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
+            _Cond3.Value = value;
+            FireOnConditionalsUpdated();
+        }
+
+        private void SetCondition4(bool value)
+        {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
+            _Cond4.Value = value;
+            FireOnConditionalsUpdated();
+        }
+
+
         private void ClickToggleCond1(object sender, RoutedEventArgs e)
         {
             _logger.Debug($"Click: Toggle Cond 1");
@@ -4655,12 +4696,23 @@ namespace IntegratedPresenter.Main
             _logger.Debug($"Click: Toggle Cond 2");
             SetCondition2(!_Cond2.Value);
         }
+        private void ClickToggleCond3(object sender, RoutedEventArgs e)
+        {
+            _logger.Debug($"Click: Toggle Cond 3");
+            SetCondition3(!_Cond3.Value);
+        }
+
+        private void ClickToggleCond4(object sender, RoutedEventArgs e)
+        {
+            _logger.Debug($"Click: Toggle Cond 4");
+            SetCondition4(!_Cond4.Value);
+        }
+
 
         private void ClickToggleShowAutomationPreviews(object sender, RoutedEventArgs e)
         {
             SetShowAutomationPreviews(!_FeatureFlag_AutomationPreview);
         }
-
 
         private void UpdateUIPIPPlaceKeys()
         {
