@@ -507,6 +507,12 @@ namespace IntegratedPresenter.Main
         BMDSwitcherState _lastState = new BMDSwitcherState();
         private void SwitcherManager_SwitcherStateChanged(BMDSwitcherState args)
         {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => SwitcherManager_SwitcherStateChanged(args));
+                return;
+            }
+
             if (args == null)
             {
                 return;
@@ -625,6 +631,11 @@ namespace IntegratedPresenter.Main
 
         private void UpdateSwitcherUI()
         {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(UpdateSwitcherUI);
+                return;
+            }
             UpdatePresetButtonStyles();
             UpdateProgramButtonStyles();
             UpdateAuxButtonStyles();
