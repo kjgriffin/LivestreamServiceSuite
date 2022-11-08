@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using LutheRun.Elements;
 using LutheRun.Elements.LSB;
+using LutheRun.Pilot;
 
 namespace LutheRun.Parsers
 {
@@ -65,11 +67,90 @@ namespace LutheRun.Parsers
         public Dictionary<string, string> Macros { get; set; } = new Dictionary<string, string>();
 
         public LSBElementFilter Filter { get; set; } = new LSBElementFilter();
+
+        public FlightPlanCameras PlannedCameras { get; set; } = new FlightPlanCameras();
+        public Dictionary<CameraID, string> PilotCamIdMap { get; set; } = CameraIDHelpers.DefaultMappings;
+        public Dictionary<string, string> PilotPresetMap { get; set; } = new Dictionary<string, string>
+        {
+            ["center:front"] = "FRONT",
+            ["center:sermon"] = "SERMON",
+            ["center:anthem"] = "ANTHEM",
+
+            ["pulpit:sermon"] = "JESUS",
+            ["pulpit:anthem"] = "ANTHEM",
+            ["pulpit:opening"] = "OPENING",
+
+            ["lectern:reading"] = "READING",
+            ["lectern:sermon"] = "SERMON",
+            ["lectern:anthem"] = "ANTHEM",
+            ["lectern:opening"] = "OPENING",
+
+            ["organ:organ"] = "ORGAN",
+            ["organ:piano?"] = "PIANO",
+            ["organ:prelude"] = "ORGAN",
+            ["organ:postlude"] = "ORGAN",
+            ["organ:anthem"] = "ANTHEM",
+
+            ["back:wide"] = "WIDE",
+        };
+
+        public Dictionary<string, string> PilotZoomMap { get; set; } = new Dictionary<string, string>
+        {
+            ["center:front"] = "FRONT",
+            ["center:sermon"] = "SERMON",
+            ["center:anthem"] = "ANTHEM",
+
+            ["pulpit:sermon"] = "JESUS",
+            ["pulpit:anthem"] = "ANTHEM",
+            ["pulpit:opening"] = "OPENING",
+
+            ["lectern:reading"] = "READING",
+            ["lectern:sermon"] = "SERMON",
+            ["lectern:anthem"] = "ANTHEM",
+            ["lectern:opening"] = "OPENING",
+
+            ["organ:organ"] = "ORGAN",
+            ["organ:piano?"] = "PIANO",
+            ["organ:prelude"] = "ORGAN",
+            ["organ:postlude"] = "ORGAN",
+            ["organ:anthem"] = "ANTHEM",
+
+            ["back:wide"] = "WIDE",
+        };
+
     }
 
     public class BoolSettingAttribute : Attribute
     {
 
+    }
+
+    public class PilotEnumMap : Attribute
+    {
+        internal CameraID ID { get; set; }
+        public PilotEnumMap(CameraID cam)
+        {
+            ID = cam;
+        }
+    }
+
+    public class FlightPlanCameras
+    {
+        [BoolSetting]
+        [PilotEnumMap(CameraID.PULPIT)]
+        public bool Pulpit { get; set; } = true;
+        [BoolSetting]
+        [PilotEnumMap(CameraID.CENTER)]
+        public bool Center { get; set; } = true;
+        [BoolSetting]
+        [PilotEnumMap(CameraID.LECTERN)]
+        public bool Lectern { get; set; } = true;
+        [BoolSetting]
+        [PilotEnumMap(CameraID.ORGAN)]
+        public bool Organ { get; set; } = false;
+        [BoolSetting]
+        [PilotEnumMap(CameraID.BACK)]
+        public bool Back { get; set; } = false;
     }
 
     public class LSBElementFilter

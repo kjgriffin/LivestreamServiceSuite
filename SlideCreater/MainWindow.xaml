@@ -126,6 +126,7 @@
                 <Separator></Separator>
                 <MenuItem  Foreground="Black" Name="mi_importoptions_chooseelements" Header="Filter Elements..." Click="mi_importoptions_chooseelements_Click"></MenuItem>
                 <MenuItem  Foreground="Black" Name="mi_importoptions_choosebehaviour" Header="Import Options..." Click="mi_importoptions_choosebehaviour_Click"></MenuItem>
+                <MenuItem  Foreground="Black" Name="mi_importoptions_plannedcameras" Header="Planned Cameras..." Click="mi_importoptions_plancameras_Click"></MenuItem>
                 <Separator></Separator>
                 <MenuItem  Foreground="Black" Name="miimport_adv" Click="ClickImportServiceAdv" Header="Import Debugger"></MenuItem>
             </MenuItem>

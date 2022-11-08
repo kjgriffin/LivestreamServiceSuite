@@ -8,6 +8,7 @@ namespace LutheRun.Parsers.DataModel
 {
     public class ParsedLSBElement
     {
+        public int ElementOrder { get; set; } = -1;
         public ILSBElement LSBElement { get; set; } = null;
         public string Generator { get; set; } = "";
         public string XenonCode { get; set; } = "";

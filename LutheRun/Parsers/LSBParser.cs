@@ -4,8 +4,10 @@ using AngleSharp.Html.Parser;
 using LutheRun.Elements;
 using LutheRun.Elements.Interface;
 using LutheRun.Elements.LSB;
+using LutheRun.Generators;
 using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -40,7 +42,7 @@ namespace LutheRun.Parsers
 
         public IElement HTMLHead { get; private set; }
 
-        public string XenonText { get => stringBuilder.ToString(); }
+        public string XenonText { get; private set; }
 
         private string ServiceFileName;
 
@@ -58,9 +60,16 @@ namespace LutheRun.Parsers
 
         public void Serviceify(LSBImportOptions options)
         {
+            int i = 0;
             ServiceElements = Serviceifier.NormalizeHeaddingsToCaptions(ServiceElements, options)
                                           .AddAdditionalInferedElements(options)
                                           .Filter(options)
+                                          .Select(x =>
+                                          {
+                                              x.ElementOrder = i++;
+                                              return x;
+                                          })
+                                          .ToList()
                                           .PlanFlight(options);
         }
 
@@ -792,147 +801,10 @@ namespace LutheRun.Parsers
             return false;
         }
 
-        internal static Dictionary<string, string> ApplySeasonalMacroText(List<ParsedLSBElement> service, Dictionary<string, string> macros)
-        {
-            Dictionary<string, string> newmacros = new Dictionary<string, string>(macros);
-            // determine service date
-
-            // try and find a caption/heading the looks like a date (this may not be the strongest way to do it...)
-            var candidateStrings = service.Select(x => (x.LSBElement as LSBElementCaption)?.Caption).Where(x => !string.IsNullOrEmpty(x)).ToList();
-
-            // clean up 'date' strings to remove times
-            // it seems that Pastor likes to include '-- time' after for some services...
-            // this doesn't parse, so we'll remove that. I think this will also give us the time too (bonus!)
-            candidateStrings = candidateStrings.Select(x => x.Replace("-", "")).ToList();
-
-            var candidateDates = new List<DateTime>();
-
-            foreach (var cdstring in candidateStrings)
-            {
-                if (DateTime.TryParse(cdstring, out var date))
-                {
-                    candidateDates.Add(date);
-                }
-            }
-
-            var ldate = candidateDates.FirstOrDefault();
-            if (ldate != null)
-            {
-                var keydates = GetKeySeasonDatesAsync();
-
-
-                // try and find the 'most relevant' key date
-                // this will be the earliest date that's equal to or later than the service
-                var sdate = keydates.OrderByDescending(x => x.StartDate).FirstOrDefault(x => x.StartDate <= ldate);
-
-                if (sdate != null)
-                {
-                    // add all macros
-                    foreach (var macro in sdate.macros)
-                    {
-                        newmacros[macro.Key] = macro.Value;
-                    }
-                }
-
-            }
-
-            return newmacros;
-        }
-
-        class SeasonKeyDefinition
-        {
-            public string start { get; set; } = "";
-            public string note { get; set; } = "";
-            public Dictionary<string, string> macros { get; set; } = new Dictionary<string, string>();
-
-            [JsonIgnore]
-            public DateTime? StartDate
-            {
-                get
-                {
-                    if (DateTime.TryParse(start, out var date))
-                    {
-                        return date;
-                    }
-                    return null;
-                }
-            }
-        }
-
-        private static List<SeasonKeyDefinition> GetKeySeasonDatesAsync()
-        {
-            // try and find info for this date
-            const string dateLookupURL = "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/seasons/BlobData/seasons.json";
-
-            List<SeasonKeyDefinition> res = new List<SeasonKeyDefinition>();
-
-            try
-            {
-                Debug.WriteLine($"Fetching image {dateLookupURL} from web.");
-                var resp = WebHelpers.httpClient.GetAsync(dateLookupURL).Result?.Content;
-                var json = resp.ReadAsStringAsync().Result;
-                res = JsonSerializer.Deserialize<List<SeasonKeyDefinition>>(json);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Failed trying to download: {dateLookupURL}\r\n{ex}");
-            }
-
-            return res;
-        }
-
 
         public void CompileToXenon()
         {
-            int indentDepth = 0;
-            int indentSpace = 4;
-            stringBuilder.Clear();
-            stringBuilder.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{Path.GetFileName(ServiceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
-
-            if (LSBImportOptions.UseThemedHymns || LSBImportOptions.UseThemedCreeds)
-            {
-                stringBuilder.AppendLine();
-                stringBuilder.AppendLine("#scope(LSBService)".Indent(indentDepth, indentSpace));
-                stringBuilder.AppendLine("{".Indent(indentDepth, indentSpace));
-                indentDepth++;
-                stringBuilder.AppendLine();
-                stringBuilder.AppendLine($"#var(\"stitchedimage.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")".Indent(indentDepth, indentSpace));
-                stringBuilder.AppendLine($"#var(\"texthymn.Layout\", \"{LSBImportOptions.ServiceThemeLib}::SideBar\")".Indent(indentDepth, indentSpace));
-                stringBuilder.AppendLine();
-
-
-                stringBuilder.AppendLine($"/// </MANUAL_UPDATE name='Theme Colors'>".Indent(indentDepth, indentSpace));
-                stringBuilder.AppendLine($"// See: https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Themes".Indent(indentDepth, indentSpace));
-
-                Dictionary<string, string> macros = LSBImportOptions.Macros;
-
-                if (LSBImportOptions.InferSeason)
-                {
-                    macros = ApplySeasonalMacroText(ServiceElements, macros);
-                }
-
-                // macros!
-                foreach (var macro in macros)
-                {
-                    stringBuilder.AppendLine($"#var(\"{LSBImportOptions.ServiceThemeLib}@{macro.Key}\", ```{macro.Value}```)".Indent(indentDepth, indentSpace));
-                }
-                stringBuilder.AppendLine();
-
-            }
-
-            foreach (var se in ServiceElements)
-            {
-                if (!se.FilterFromOutput)
-                {
-                    stringBuilder.AppendLine(se.LSBElement.XenonAutoGen(LSBImportOptions, ref indentDepth, indentSpace));
-                }
-            }
-
-            if (LSBImportOptions.UseThemedHymns)
-            {
-                indentDepth--;
-                stringBuilder.AppendLine("}");
-            }
+            XenonText = XenonGenerator.CompileToXenon(ServiceFileName, LSBImportOptions, ServiceElements);
         }
 
         public Task LoadWebAssets(Action<Bitmap, string, string, string> addImageAsAsset)

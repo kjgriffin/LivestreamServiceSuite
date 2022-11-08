@@ -1218,7 +1218,7 @@ namespace SlideCreater
 
         private void ClickImportServiceAdv(object sender, RoutedEventArgs e)
         {
-//#if DEBUG
+            //#if DEBUG
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Import from save of Lutheran Service Bulletin";
             ofd.Filter = "LSB Service (*.html)|*.html";
@@ -1229,7 +1229,7 @@ namespace SlideCreater
                 LSBImportWizardUI ui = new LSBImportWizardUI(ofd.FileName, options);
                 ui.ShowDialog();
             }
-//#endif
+            //#endif
         }
 
         private async void CreateProjectFromImportWizard(List<(string, string)> assets, string text)
@@ -1772,6 +1772,30 @@ namespace SlideCreater
                 prop.SetValue(options, dialog.Fields[i++].value);
             }
         }
+
+        private void mi_importoptions_plancameras_Click(object sender, RoutedEventArgs e)
+        {
+            // get list of options to filter
+            var props = options.PlannedCameras.GetType().GetProperties().Where(x => Attribute.IsDefined(x, typeof(BoolSettingAttribute)));
+
+            List<(string name, bool value)> fields = new List<(string name, bool value)>();
+            foreach (var prop in props)
+            {
+                fields.Add((prop.Name, (bool)prop.GetValue(options.PlannedCameras)));
+            }
+
+            // get user to select them
+            CheckboxSelection dialog = new CheckboxSelection("Select Planned Cameras", fields.ToArray());
+            dialog.ShowDialog();
+
+            int i = 0;
+            foreach (var prop in props)
+            {
+                prop.SetValue(options.PlannedCameras, dialog.Fields[i++].value);
+            }
+
+        }
+
 
         private void ClickRenderModeToggle(object sender, RoutedEventArgs e)
         {

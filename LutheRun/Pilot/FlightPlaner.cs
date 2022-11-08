@@ -4,6 +4,9 @@ using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
 
+using Microsoft.Windows.Input;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -57,7 +60,53 @@ namespace LutheRun.Pilot
             // then we need to schedule transitions on block boundaries based on where cameras are req/freed
             AsignSequencialStateBasedConflicts(service);
 
+            AssignCameraMovementsAtLatestPossiblePoint(service);
+
             // once we have a plan we can then attach the pilot actions
+            // let the xenon generator handle that ^
+            // the ParsedLSBElement now has enough info to do so
+        }
+
+
+        private static void AssignCameraMovementsAtLatestPossiblePoint(List<ParsedLSBElement> service)
+        {
+
+            foreach (var elem in service.Where(x => !x.FilterFromOutput))
+            {
+                // if element has camera requirments-
+                // solve anything it can
+                // search for latest slide that's earlier than this one
+                // that has an availability
+                foreach (var req in elem.CameraUse.RequiredCameras.Presets.Where(x => !elem.CameraUse.UnResolvedConflicts.ContainsKey(x.Key)))
+                {
+                    var latest = service.LastOrDefault(x => !x.FilterFromOutput && x.ElementOrder < elem.ElementOrder && !x.CameraUse.InUse.Presets.ContainsKey(req.Key));
+                    if (latest != null)
+                    {
+                        latest.CameraUse.SafeActions[req.Key] = (req.Value.FirstOrDefault(), elem.ElementOrder);
+                        elem.CameraUse.RequiredCameras.Solve(req.Key, req.Value.FirstOrDefault(), latest.ElementOrder);
+                    }
+                    else
+                    {
+                        // hmmm, can't find a suitable element for this...
+                        // warn??
+
+                    }
+                }
+                foreach (var req in elem.CameraUse.RequiredCameras.Presets.Where(x => elem.CameraUse.UnResolvedConflicts.ContainsKey(x.Key)))
+                {
+                    // find the previous element and warn that we should have moved a camera here, but there's a conflict
+                    var previous = service.LastOrDefault(x => !x.FilterFromOutput && x.ElementOrder < elem.ElementOrder);
+                    if (previous != null)
+                    {
+                        previous.CameraUse.RiskyActions[req.Key] = (req.Value.FirstOrDefault(), elem.ElementOrder);
+                        // not solved!
+                        //elem.CameraUse.RequiredCameras.Solve(req.Key, req.Value.FirstOrDefault(), latest.ElementOrder);
+                    }
+                }
+
+
+            }
+
 
         }
 

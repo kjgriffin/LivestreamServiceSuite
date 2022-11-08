@@ -52,13 +52,11 @@ namespace SlideCreater
             await parser.ParseHTML(m_serviceFilename);
             parser.Serviceify(parser.LSBImportOptions);
 
-            var rc = new LSBReCompiler();
             string tmpFile = IO.Path.GetTempFileName() + "lsbrecompile.html" + Guid.NewGuid().ToString() + ".html";
 
 
             parser.LSBImportOptions.Macros = IProjectLayoutLibraryManager.GetDefaultBundledLibraries().FirstOrDefault(x => x.LibName == "Xenon.CommonColored")?.Macros ?? new Dictionary<string, string>();
-
-            rc.CompileToXenonMappedToSource(m_serviceFilename, parser.LSBImportOptions, parser.ServiceElements);
+            parser.CompileToXenon();
 
             List<string> cssFiles = new List<string>();
             try
@@ -84,6 +82,7 @@ namespace SlideCreater
                 throw;
             }
 
+            var rc = new LSBReCompiler();
             await File.WriteAllTextAsync(tmpFile, rc.GenerateHTMLReport(parser.ServiceElements, cssFiles.ToArray()));
 
 
