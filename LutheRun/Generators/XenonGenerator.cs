@@ -290,8 +290,8 @@ namespace LutheRun.Generators
 
 
                     sb.AppendLine($"/// </MANUAL_UPDATE name='Flight Planner Stalled'>".Indent(indentDepth, indentSpace));
-                    sb.AppendLine("// Flight planner identified a dependancy for this camera movement for a future slide,".Indent(indentDepth, indentSpace));
-                    sb.AppendLine("// but it conflicts with an expected requirment for the camera to remain in its current position.".Indent(indentDepth, indentSpace));
+                    sb.AppendLine("// Flight planner: Camera movement required to resolve a future slide dependancy,".Indent(indentDepth, indentSpace));
+                    sb.AppendLine("// but it conflicts with an expectation for the camera to be actively in use- preventing safe motion.".Indent(indentDepth, indentSpace));
                     sb.AppendLine($"//> run[{camID}]({posPST})@15:{zoomPST};".Indent(indentDepth, indentSpace));
                 }
 

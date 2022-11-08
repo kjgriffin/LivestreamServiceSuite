@@ -1795,6 +1795,18 @@ namespace SlideCreater
             }
 
         }
+        private void mi_importoptions_fligthplandetails_pst_Click(object sender, RoutedEventArgs e)
+        {
+            ModelViewer ui = new ModelViewer(options.PilotPresetMap, "<cam>:<preset>", "<position>", "Preset Position Mapping");
+            ui.ShowDialog();
+            options.PilotPresetMap = ui.MarshalData();
+        }
+        private void mi_importoptions_fligthplandetails_zoom_Click(object sender, RoutedEventArgs e)
+        {
+            ModelViewer ui = new ModelViewer(options.PilotZoomMap, "<cam>:<preset>", "<zoom>", "Preset Zoom Mapping");
+            ui.ShowDialog();
+            options.PilotZoomMap = ui.MarshalData();
+        }
 
 
         private void ClickRenderModeToggle(object sender, RoutedEventArgs e)
