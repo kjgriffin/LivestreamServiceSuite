@@ -30,6 +30,7 @@ using CCUI_UI;
 using SwitcherControl.BMDSwitcher;
 using Integrated_Presenter.Presentation;
 using CCU.Config;
+using SwitcherControl.Safe;
 
 namespace IntegratedPresenter.Main
 {
@@ -364,7 +365,12 @@ namespace IntegratedPresenter.Main
             if (res == true)
             {
                 SwitcherConnectedUiUpdate(true);
-                switcherManager = new BMDSwitcherManager(this, autoTransMRE);
+
+                // Try an use a thread safe variant
+                //switcherManager = new BMDSwitcherManager(this, autoTransMRE);
+                switcherManager = new SafeBMDSwitcher(autoTransMRE, this.Title);
+
+
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
                 switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
                 SwitcherConnectedUiUpdate(false, true);

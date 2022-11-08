@@ -65,8 +65,9 @@ namespace SwitcherControl.Safe
 
         SingleThreadedExecutor _executor;
 
-        public SafeBMDSwitcher(string versionTitle = "unknown version")
+        public SafeBMDSwitcher(ManualResetEvent autoTransMRE, string versionTitle = "unknown version")
         {
+            _autoTransMRE = autoTransMRE;
             _executor = new SingleThreadedExecutor();
 
             // make sure that any initialization happens on the dedicated thread
@@ -77,7 +78,10 @@ namespace SwitcherControl.Safe
 
         private void Initialize(string versionTitle)
         {
-            _autoTransMRE = new ManualResetEvent(false);
+            if (_autoTransMRE == null)
+            {
+                _autoTransMRE = new ManualResetEvent(false);
+            }
             // initialize logger
             // enable logging
             using (Stream cstream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Integrated_Presenter.Log4Net_switcher.config"))
