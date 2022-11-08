@@ -244,11 +244,6 @@
 		</Reference>
 	</ItemGroup>
 
-
-	<ItemGroup>
-		<Folder Include="Automation\" />
-	</ItemGroup>
-
 	<ProjectExtensions>
 		<VisualStudio>
 			<UserProperties version_1json__JsonSchema="" />

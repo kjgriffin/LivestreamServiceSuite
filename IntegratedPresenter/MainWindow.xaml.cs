@@ -31,6 +31,7 @@ using SwitcherControl.BMDSwitcher;
 using Integrated_Presenter.Presentation;
 using CCU.Config;
 using SwitcherControl.Safe;
+using Integrated_Presenter.Automation;
 
 namespace IntegratedPresenter.Main
 {
@@ -39,7 +40,7 @@ namespace IntegratedPresenter.Main
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider
     {
 
 
@@ -65,6 +66,8 @@ namespace IntegratedPresenter.Main
         List<SlidePoolSource> SlidePoolButtons;
 
         private BuildVersion VersionInfo;
+
+        ActionAutomater _actionEngine;
 
         private readonly ILog _logger = LogManager.GetLogger("UserLogger");
 
@@ -97,6 +100,8 @@ namespace IntegratedPresenter.Main
             }
 
             _logger.Info($"{Title} Started.");
+
+            InitActionAutomater();
 
             // initialize conditionals
             _Cond1.Value = true;
@@ -182,6 +187,23 @@ namespace IntegratedPresenter.Main
             gp_timer_2.Start();
 
             UpdatePilotUI();
+        }
+
+        private void InitActionAutomater()
+        {
+            // for now main window still kinda owns too much
+            // but we're beginning to extract functionality
+            _actionEngine = new ActionAutomater(_logger,
+                                                this,
+                                                this,
+                                                this,
+                                                this,
+                                                this,
+                                                this,
+                                                this,
+                                                this,
+                                                this,
+                                                this);
         }
 
         private void PilotUI_OnUserRequestForManualReRun(object sender, int e)
@@ -1884,401 +1906,12 @@ namespace IntegratedPresenter.Main
 
         private async Task ExecuteSetupActions(ISlide s)
         {
-            _logger.Debug($"Begin Execution of setup actions for slide {s.Title}");
-            await Task.Run(async () =>
-            {
-                foreach (var task in s.SetupActions)
-                {
-                    s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
-                    var res = await PerformAutomationAction(task.Action);
-                    s.FireOnActionStateChange(task.ID, res);
-                }
-            });
-            _logger.Debug($"Completed Execution of setup actions for slide {s.Title}");
+            await _actionEngine.ExecuteSetupActions(s);
         }
 
         private async Task ExecuteActionSlide(ISlide s)
         {
-            _logger.Debug($"Begin Execution of actions for slide {s.Title}");
-            await Task.Run(async () =>
-            {
-                foreach (var task in s.Actions)
-                {
-                    s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
-                    var res = await PerformAutomationAction(task.Action);
-                    s.FireOnActionStateChange(task.ID, res);
-                }
-            });
-            _logger.Debug($"Completed Execution of actions for slide {s.Title}");
-        }
-
-        private async Task<TrackedActionState> PerformAutomationAction(AutomationAction task)
-        {
-            if (!task.MeetsConditionsToRun(GetCurrentConditionStatus()))
-            {
-                return TrackedActionState.Skipped;
-            }
-            await Task.Run(async () =>
-            {
-                switch (task.Action)
-                {
-                    case AutomationActions.PresetSelect:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Preset Select {task.DataI}");
-                            switcherManager?.PerformPresetSelect(task.DataI);
-                        });
-                        break;
-                    case AutomationActions.ProgramSelect:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Program Select {task.DataI}");
-                            switcherManager?.PerformProgramSelect(task.DataI);
-                        });
-                        break;
-                    case AutomationActions.AuxSelect:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Aux Select {task.DataI}");
-                            switcherManager?.PerformAuxSelect(task.DataI);
-                        });
-                        break;
-                    case AutomationActions.USK1Fill:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- USK1Fill {task.DataI}");
-                            switcherManager?.PerformUSK1FillSourceSelect(task.DataI);
-                        });
-                        break;
-                    case AutomationActions.PlacePIP:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- PlacePIP. read cfg");
-                            PIPPlaceSettings cfg = task?.DataO as PIPPlaceSettings;
-                            if (cfg != null)
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- PlacePIP at {cfg.ToString()}");
-                                var current = switcherManager?.GetCurrentState().DVESettings;
-                                var config = cfg.PlaceOverride(current);
-                                switcherManager?.SetPIPPosition(config);
-                            }
-                        });
-                        break;
-                    case AutomationActions.AutoTrans:
-                        Dispatcher.Invoke(() =>
-                        {
-                            //switcherManager?.PerformAutoTransition();
-                            _logger.Debug($"(PerformAutomationAction) -- AutoTrans (gaurded)");
-                            PerformGuardedAutoTransition();
-                        });
-                        break;
-                    case AutomationActions.CutTrans:
-                        Dispatcher.Invoke(() =>
-                        {
-                            // Will always allow automation to perform cut transition.
-                            // Gaurded Cut transition is only for debouncing/preventing operators using a keyboard from spamming cut requests.
-                            _logger.Debug($"(PerformAutomationAction) -- Cut (unguarded)");
-                            switcherManager?.PerformCutTransition();
-                        });
-                        break;
-                    case AutomationActions.AutoTakePresetIfOnSlide:
-                        // Take Preset if program source is fed from slides
-                        if (switcherState.ProgramID == _config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                //switcherManager?.PerformAutoTransition();
-                                _logger.Debug($"(PerformAutomationAction) -- AutoTrans (guarded), requred since 'slide' source was on air : AutoTakePresetIfOnSlide");
-                                PerformGuardedAutoTransition();
-                            });
-                            await Task.Delay((_config.MixEffectSettings.Rate / _config.VideoSettings.VideoFPS) * 1000);
-                        }
-                        break;
-                    case AutomationActions.DSK1On:
-                        if (!switcherState.DSK1OnAir)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- Toggle DSK1 since current state is OFF and requested state is ON");
-                                switcherManager?.PerformToggleDSK1();
-                            });
-                        }
-                        break;
-                    case AutomationActions.DSK1Off:
-                        if (switcherState.DSK1OnAir)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- Toggle DSK1 since current state is ON and requested state is OFF");
-                                switcherManager?.PerformToggleDSK1();
-                            });
-                        }
-                        break;
-                    case AutomationActions.DSK1FadeOn:
-                        if (!switcherState.DSK1OnAir)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- FADE ON DSK1 since current state is OFF and requested state is ON");
-                                switcherManager?.PerformAutoOnAirDSK1();
-                            });
-                        }
-                        break;
-                    case AutomationActions.DSK1FadeOff:
-                        if (switcherState.DSK1OnAir)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- FADE OFF DSK1 since current state is ON and requested state is OFF");
-                                switcherManager?.PerformAutoOffAirDSK1();
-                            });
-                        }
-                        break;
-
-                    case AutomationActions.DSK1TieOn:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- TIE DSK1 to Next Transition");
-                            switcherManager?.PerformSetTieDSK1(true);
-                        });
-                        break;
-                    case AutomationActions.DSK1TieOff:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- UNTIE DSK1 to Next Transition");
-                            switcherManager?.PerformSetTieDSK1(false);
-                        });
-                        break;
-
-
-
-                    case AutomationActions.DSK2On:
-                        if (!switcherState.DSK2OnAir)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- Toggle DSK2 since current state is OFF and requested state is ON");
-                                switcherManager?.PerformToggleDSK2();
-                            });
-                        }
-                        break;
-                    case AutomationActions.DSK2Off:
-                        if (switcherState.DSK2OnAir)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- Toggle DSK2 since current state is ON and requested state is OFF");
-                                switcherManager?.PerformToggleDSK2();
-                            });
-                        }
-                        break;
-                    case AutomationActions.DSK2FadeOn:
-                        if (!switcherState.DSK2OnAir)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- FADE ON DSK2 since current state is OFF and requested state is ON");
-                                switcherManager?.PerformAutoOnAirDSK2();
-                            });
-                        }
-                        break;
-                    case AutomationActions.DSK2FadeOff:
-                        if (switcherState.DSK2OnAir)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- FADE OFF DSK2 since current state is ON and requested state is OFF");
-                                switcherManager?.PerformAutoOffAirDSK2();
-                            });
-                        }
-                        break;
-
-                    case AutomationActions.DSK2TieOn:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- TIE DSK2 to Next Transition");
-                            switcherManager?.PerformSetTieDSK2(true);
-                        });
-                        break;
-                    case AutomationActions.DSK2TieOff:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- UNTIE DSK2 to Next Transition");
-                            switcherManager?.PerformSetTieDSK2(false);
-                        });
-                        break;
-
-                    case AutomationActions.RecordStart:
-                        break;
-                    case AutomationActions.RecordStop:
-                        break;
-
-                    case AutomationActions.Timer1Restart:
-                        if (_FeatureFlag_automationtimer1enabled)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- Reset gp timer 1");
-                                ResetGpTimer1();
-                            });
-                        }
-                        break;
-
-                    case AutomationActions.USK1On:
-                        if (!switcherState.USK1OnAir)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- USK1 ON air since current state is OFF and requsted state is ON");
-                                switcherManager?.PerformOnAirUSK1();
-                            });
-                        }
-                        break;
-                    case AutomationActions.USK1Off:
-                        if (switcherState.USK1OnAir)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                _logger.Debug($"(PerformAutomationAction) -- USK1 OFF air since current state is ON and requsted state is OFF");
-                                switcherManager?.PerformOffAirUSK1();
-                            });
-                        }
-                        break;
-
-
-                    case AutomationActions.USK1TieOn:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- ENABLE USK1 layer on Next Transition");
-                            switcherManager?.PerformSetKey1OnForNextTrans();
-                        });
-                        break;
-                    case AutomationActions.USK1TieOff:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- DISABLE USK1 layer on Next Transition");
-                            switcherManager?.PerformSetKey1OffForNextTrans();
-                        });
-                        break;
-
-                    case AutomationActions.USK1SetTypeChroma:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Configure USK1 for type chroma");
-                            switcherManager?.SetUSK1TypeChroma();
-                        });
-                        break;
-                    case AutomationActions.USK1SetTypeDVE:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Configure USK1 for type DVE PIP");
-                            switcherManager?.SetUSK1TypeDVE();
-                        });
-                        break;
-
-                    case AutomationActions.OpenAudioPlayer:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Opened Audio Player");
-                            OpenAudioPlayer();
-                            Focus();
-                        });
-                        break;
-                    case AutomationActions.LoadAudio:
-                        string filename = Path.Join(Presentation.Folder, task.DataS);
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Load Audio File {filename} to Aux Player");
-                            audioPlayer.OpenAudio(filename);
-                        });
-                        break;
-                    case AutomationActions.PlayAuxAudio:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Aux:PlayAudio()");
-                            audioPlayer.PlayAudio();
-                        });
-                        break;
-                    case AutomationActions.StopAuxAudio:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Aux:StopAudio()");
-                            audioPlayer.StopAudio();
-                        });
-                        break;
-                    case AutomationActions.PauseAuxAudio:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Aux:PauseAudio()");
-                            audioPlayer.PauseAudio();
-                        });
-                        break;
-                    case AutomationActions.ReplayAuxAudio:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- Aux:RestartAudio()");
-                            audioPlayer.RestartAudio();
-                        });
-                        break;
-
-                    case AutomationActions.PlayMedia:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- playMedia()");
-                            playMedia();
-                        });
-                        break;
-                    case AutomationActions.PauseMedia:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- pauseMedia()");
-                            pauseMedia();
-                        });
-                        break;
-                    case AutomationActions.StopMedia:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- stopMedia()");
-                            stopMedia();
-                        });
-                        break;
-                    case AutomationActions.RestartMedia:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- restartMedia()");
-                            restartMedia();
-                        });
-                        break;
-                    case AutomationActions.MuteMedia:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- muteMedia()");
-                            muteMedia();
-                        });
-                        break;
-                    case AutomationActions.UnMuteMedia:
-                        Dispatcher.Invoke(() =>
-                        {
-                            _logger.Debug($"(PerformAutomationAction) -- unmuteMedia()");
-                            unmuteMedia();
-                        });
-                        break;
-
-
-                    case AutomationActions.DelayMs:
-                        _logger.Debug($"(PerformAutomationAction) -- delay for {task.DataI} ms");
-                        await Task.Delay(task.DataI);
-                        break;
-                    case AutomationActions.None:
-                        break;
-                    case AutomationActions.OpsNote:
-                        break;
-                    default:
-                        _logger.Debug($"(PerformAutomationAction) -- UNKNOWN ACTION {task.Action}");
-                        break;
-                }
-            });
-            return TrackedActionState.Done;
+            await _actionEngine.ExecuteMainActions(s);
         }
 
         private bool MediaMuted = false;
@@ -5170,6 +4803,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
+
         PilotMode _pilotMode = PilotMode.STD;
 
         private void UpdatePilotUIStatus(string camName, params string[] args)
@@ -5364,5 +4998,95 @@ namespace IntegratedPresenter.Main
                 mock.UpdateMockCameraMovement(e);
             }
         }
+
+
+        #region ActionAutomater Providers
+        IBMDSwitcherManager ISwitcherDriverProvider.switcherManager { get => switcherManager; }
+        BMDSwitcherState ISwitcherDriverProvider.switcherState { get => switcherState; }
+        BMDSwitcherConfigSettings IConfigProvider._config { get => _config; }
+        bool IFeatureFlagProvider.AutomationTimer1Enabled { get => _FeatureFlag_automationtimer1enabled; }
+        string IPresentationProvider.Folder { get => Presentation?.Folder; }
+
+        void IAutoTransitionProvider.PerformGuardedAutoTransition()
+        {
+            PerformGuardedAutoTransition();
+        }
+        Dictionary<string, bool> IAutomationConditionProvider.GetCurrentConditionStatus()
+        {
+            return GetCurrentConditionStatus();
+        }
+        void IUserTimerProvider.ResetGpTimer1()
+        {
+            ResetGpTimer1();
+        }
+        void IMainUIProvider.Focus()
+        {
+            Dispatcher.Invoke(Focus);
+        }
+        void IAudioDriverProvider.OpenAudioPlayer()
+        {
+            Dispatcher.Invoke(OpenAudioPlayer);
+        }
+        void IAudioDriverProvider.RestartAudio()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                audioPlayer?.RestartAudio();
+            });
+        }
+        void IAudioDriverProvider.PauseAudio()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                audioPlayer?.PauseAudio();
+            });
+        }
+        void IAudioDriverProvider.StopAudio()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                audioPlayer?.StopAudio();
+            });
+        }
+        void IAudioDriverProvider.PlayAudio()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                audioPlayer?.PlayAudio();
+            });
+        }
+        void IAudioDriverProvider.OpenAudio(string filename)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                audioPlayer?.OpenAudio(filename);
+            });
+        }
+        void IMediaDriverProvider.unmuteMedia()
+        {
+            Dispatcher.Invoke(unmuteMedia);
+        }
+        void IMediaDriverProvider.muteMedia()
+        {
+            Dispatcher.Invoke(muteMedia);
+        }
+        void IMediaDriverProvider.restartMedia()
+        {
+            Dispatcher.Invoke(restartMedia);
+        }
+        void IMediaDriverProvider.stopMedia()
+        {
+            Dispatcher.Invoke(stopMedia);
+        }
+        void IMediaDriverProvider.pauseMedia()
+        {
+            Dispatcher.Invoke(pauseMedia);
+        }
+        void IMediaDriverProvider.playMedia()
+        {
+            Dispatcher.Invoke(playMedia);
+        }
+
+        #endregion
     }
 }
