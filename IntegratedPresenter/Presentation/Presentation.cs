@@ -325,6 +325,15 @@ namespace IntegratedPresenter.Main
             }
         }
 
+        public void SetNextSlideJump(int target)
+        {
+            if (target - 1 >= 0 && target - 1 < SlideCount)
+            {
+                // treat this as having someone use skip mode to get to just prior to the target jump point
+                _virtualCurrentSlide = target - 1;
+            }
+        }
+
         public void PrevSlide()
         {
             if (_virtualCurrentSlide - 1 >= 0)

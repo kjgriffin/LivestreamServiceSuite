@@ -65,6 +65,9 @@ namespace IntegratedPresenterAPIInterop
             [AutomationActions.DelayMs] = (1, AutomationActions.DelayMs, "DelayMs", new List<AutomationActionArgType> { AutomationActionArgType.Integer }),
             [AutomationActions.LoadAudio] = (1, AutomationActions.LoadAudio, "LoadAudioFile", new List<AutomationActionArgType> { AutomationActionArgType.String }),
 
+            
+            [AutomationActions.JumpToSlide] = (1, AutomationActions.JumpToSlide, "JumpToSlide", new List<AutomationActionArgType> { AutomationActionArgType.Integer }),
+            [AutomationActions.WatchSwitcherState] = (1, AutomationActions.WatchSwitcherState, "WatchSwitcherState", new List<AutomationActionArgType> { AutomationActionArgType.String }),
 
             [AutomationActions.PlacePIP] = (8, AutomationActions.PlacePIP, "PlacePIP", new List<AutomationActionArgType>
             {

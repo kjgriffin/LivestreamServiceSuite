@@ -2217,6 +2217,22 @@
                                                 <TranslateTransform X="450" Y="-180"></TranslateTransform>
                                             </TextBlock.RenderTransform>
                                         </TextBlock>
+                                        <Viewbox Name="SpeculativeJumpPreviewDisplay" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="576" Height="424">
+                                            <Grid Height="1080" Width="1920">
+                                                <!--<Border Panel.ZIndex="10" VerticalAlignment="Top" HorizontalAlignment="Center">-->
+                                                    <!--<TextBlock Foreground="Orange" FontWeight="Bold" FontSize="200">JUMP TARGET</TextBlock>-->
+                                                <!--</Border>-->
+                                                <Grid Width="1920" Height="1080">
+                                                    <Border Name="SpeculativeJumpPreviewBorder" BorderBrush="Blue" BorderThickness="2,2,2,2">
+                                                        <Grid>
+                                                            <local:MediaPlayer2 x:Name="SpeculativeJumpPreview" ></local:MediaPlayer2>
+                                                            <TextBlock Name="tbPreviewSpeculativeJumpVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
+                                                        </Grid>
+                                                    </Border>
+                                                </Grid>
+                                            </Grid>
+                                        </Viewbox>
+
                                     </Grid>
                                 </Border>
                             </Grid>

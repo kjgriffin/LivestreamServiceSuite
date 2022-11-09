@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace Integrated_Presenter.Automation
 {
@@ -49,6 +50,8 @@ namespace Integrated_Presenter.Automation
     internal interface IPresentationProvider
     {
         string Folder { get; }
+        void SetNextSlideTarget(int target);
+        Task TakeNextSlide();
     }
     internal interface IAudioDriverProvider
     {
@@ -71,6 +74,17 @@ namespace Integrated_Presenter.Automation
     }
 
 
+    class ActionResult
+    {
+        public ActionResult(TrackedActionState state, bool continueProcessingAutomation = true)
+        {
+            this.ActionState = state;
+            this.ContinueOtherActions = continueProcessingAutomation;
+        }
+
+        internal TrackedActionState ActionState { get; set; }
+        internal bool ContinueOtherActions { get; set; }
+    }
 
 
 
@@ -121,11 +135,20 @@ namespace Integrated_Presenter.Automation
             _logger.Debug($"Begin Execution of setup actions for slide {s.Title}");
             await Task.Run(async () =>
             {
+                bool keepProcessing = true;
                 foreach (var task in s.SetupActions)
                 {
-                    s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
-                    var res = await PerformAutomationAction(task.Action);
-                    s.FireOnActionStateChange(task.ID, res);
+                    if (keepProcessing)
+                    {
+                        s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
+                        var res = await PerformAutomationAction(task.Action);
+                        s.FireOnActionStateChange(task.ID, res.ActionState);
+                        keepProcessing = res.ContinueOtherActions;
+                    }
+                    else
+                    {
+                        s.FireOnActionStateChange(task.ID, TrackedActionState.Skipped);
+                    }
                 }
             });
             _logger.Debug($"Completed Execution of setup actions for slide {s.Title}");
@@ -137,23 +160,33 @@ namespace Integrated_Presenter.Automation
             _logger.Debug($"Begin Execution of actions for slide {s.Title}");
             await Task.Run(async () =>
             {
+                bool keepProcessing = true;
                 foreach (var task in s.Actions)
                 {
-                    s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
-                    var res = await PerformAutomationAction(task.Action);
-                    s.FireOnActionStateChange(task.ID, res);
+                    if (keepProcessing)
+                    {
+                        s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
+                        var res = await PerformAutomationAction(task.Action);
+                        s.FireOnActionStateChange(task.ID, res.ActionState);
+                        keepProcessing = res.ContinueOtherActions;
+                    }
+                    else
+                    {
+                        s.FireOnActionStateChange(task.ID, TrackedActionState.Skipped);
+                    }
                 }
             });
             _logger.Debug($"Completed Execution of actions for slide {s.Title}");
 
         }
 
-        internal async Task<TrackedActionState> PerformAutomationAction(AutomationAction task)
+        internal async Task<ActionResult> PerformAutomationAction(AutomationAction task)
         {
             if (!task.MeetsConditionsToRun(_automationConditionProvider.GetCurrentConditionStatus()))
             {
-                return TrackedActionState.Skipped;
+                return new ActionResult(TrackedActionState.Skipped);
             }
+            bool continueProcessing = true;
             await Task.Run(async () =>
             {
                 switch (task.Action)
@@ -388,6 +421,16 @@ namespace Integrated_Presenter.Automation
                         _logger.Debug($"(PerformAutomationAction) -- delay for {task.DataI} ms");
                         await Task.Delay(task.DataI);
                         break;
+
+
+                    case AutomationActions.JumpToSlide:
+                        _logger.Debug($"(PerformAutomationAction) -- jump to slide {task.DataI}");
+                        continueProcessing = false;
+                        _presentationProvider.SetNextSlideTarget(task.DataI);
+                        await _presentationProvider.TakeNextSlide();
+                        break;
+
+
                     case AutomationActions.None:
                         break;
                     case AutomationActions.OpsNote:
@@ -397,7 +440,7 @@ namespace Integrated_Presenter.Automation
                         break;
                 }
             });
-            return TrackedActionState.Done;
+            return new ActionResult(TrackedActionState.Done, continueProcessing);
 
         }
 

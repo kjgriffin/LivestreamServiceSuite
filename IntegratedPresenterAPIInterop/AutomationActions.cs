@@ -64,6 +64,10 @@
         USK1Fill,
 
         PlacePIP,
+
+
+        JumpToSlide,
+        WatchSwitcherState,
     }
 
 }

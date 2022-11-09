@@ -32,6 +32,7 @@ namespace IntegratedPresenter.Main
         bool Create(string folder);
         void NextSlide();
         void PrevSlide();
+        void SetNextSlideJump(int target);
         void SkipNextSlide();
         void SkipPrevSlide();
         void StartPres(int snum = 0);

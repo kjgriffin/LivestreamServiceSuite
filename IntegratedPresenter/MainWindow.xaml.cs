@@ -32,6 +32,7 @@ using Integrated_Presenter.Presentation;
 using CCU.Config;
 using SwitcherControl.Safe;
 using Integrated_Presenter.Automation;
+using System.ComponentModel.DataAnnotations;
 
 namespace IntegratedPresenter.Main
 {
@@ -159,10 +160,18 @@ namespace IntegratedPresenter.Main
             AfterPreview.AutoSilentReplay = true;
             PrevPreview.AutoSilentReplay = true;
 
+            SpeculativeJumpPreviewDisplay.Visibility = Visibility.Hidden;
+
+            SpeculativeJumpPreview.AutoSilentReplay = true;
+
             NextPreview.ShowBlackForActions = false;
             AfterPreview.ShowBlackForActions = false;
             PrevPreview.ShowBlackForActions = false;
             CurrentPreview.ShowBlackForActions = false;
+
+            SpeculativeJumpPreview.ShowBlackForActions = false;
+            SpeculativeJumpPreview.ShowAutomationPreviews = true;
+
             CurrentPreview.ShowIfMute = true;
 
             CurrentPreview.ShowAutomationPreviews = false;
@@ -345,12 +354,18 @@ namespace IntegratedPresenter.Main
 
         private void MainWindow_PresentationStateUpdated(ISlide currentslide)
         {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => MainWindow_PresentationStateUpdated(currentslide));
+                return;
+            }
             UpdateSlideNums();
             UpdateSlidePreviewControls();
             ResetSlideMediaTimes();
             UpdateSlideControls();
             UpdateMediaControls();
             UpdatePilotUI();
+            UpdateSpeculativeSlideJumpUI();
         }
 
         IBMDSwitcherManager switcherManager;
@@ -656,6 +671,7 @@ namespace IntegratedPresenter.Main
             // optionally update previews
             CurrentPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
             NextPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
+
 
 
             pilotUI?.FireOnSwitcherStateChangedForAutomation(_lastState, _config, PredictNextSlideTakesLiveCam());
@@ -1072,6 +1088,11 @@ namespace IntegratedPresenter.Main
 
         private void UpdateSlideNums()
         {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(UpdateSlideNums);
+                return;
+            }
             TbCurrSlide.Text = Presentation?.CurrentSlide.ToString() ?? "0";
             TbSlideCount.Text = Presentation?.SlideCount.ToString() ?? "0";
         }
@@ -1222,6 +1243,7 @@ namespace IntegratedPresenter.Main
                     tbPreviewPrevVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewPrevVideoDuration.Text = "";
                 }
+
             });
         }
 
@@ -2805,6 +2827,12 @@ namespace IntegratedPresenter.Main
 
         private void slidesUpdated()
         {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(slidesUpdated);
+                return;
+            }
+
             _display?.ShowSlide(false);
             _keydisplay?.ShowSlide(true);
 
@@ -4649,11 +4677,79 @@ namespace IntegratedPresenter.Main
 
         private void FireOnConditionalsUpdated()
         {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(FireOnConditionalsUpdated);
+                return;
+            }
+
             var cstatus = GetCurrentConditionStatus();
             PrevPreview?.FireOnActionConditionsUpdated(cstatus);
             CurrentPreview?.FireOnActionConditionsUpdated(cstatus);
             NextPreview?.FireOnActionConditionsUpdated(cstatus);
             AfterPreview?.FireOnActionConditionsUpdated(cstatus);
+            UpdateSpeculativeSlideJumpUI();
+
+        }
+
+        private void UpdateSpeculativeSlideJumpUI()
+        {
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(UpdateSpeculativeSlideJumpUI);
+                return;
+            }
+            var cstatus = (this as IAutomationConditionProvider).GetCurrentConditionStatus();
+            // Speculative Update for jump slides
+            var willrun = false;
+            var jtarget = Presentation.Next?.SetupActions?.FirstOrDefault(x => x.Action?.Action == AutomationActions.JumpToSlide);
+            if (jtarget == null)
+            {
+                jtarget = Presentation.Next?.Actions?.FirstOrDefault(x => x.Action?.Action == AutomationActions.JumpToSlide);
+            }
+            if (jtarget != null)
+            {
+                // figure out if the action will run
+                willrun = jtarget.Action.MeetsConditionsToRun(cstatus);
+                if (willrun)
+                {
+                    var index = jtarget.Action.DataI;
+                    // get the slide
+                    if (index >= 0 && index < Presentation.SlideCount)
+                    {
+                        var tslide = Presentation.Slides[index];
+                        SpeculativeJumpPreview.SetMedia(tslide, false);
+                        SpeculativeJumpPreviewDisplay.Visibility = Visibility.Visible;
+
+                        if (tslide.Type == SlideType.Video || tslide.Type == SlideType.ChromaKeyVideo)
+                        {
+                            // Speculative don't auto-play the media here
+                            //SpeculativeJumpPreview.PlayMedia();
+                            if (SpeculativeJumpPreview.MediaLength != TimeSpan.Zero)
+                            {
+                                tbPreviewSpeculativeJumpVideoDuration.Text = SpeculativeJumpPreview.MediaLength.ToString("\\T\\-mm\\:ss");
+                                tbPreviewSpeculativeJumpVideoDuration.Visibility = Visibility.Visible;
+                            }
+                        }
+                        else
+                        {
+                            tbPreviewSpeculativeJumpVideoDuration.Visibility = Visibility.Hidden;
+                            tbPreviewSpeculativeJumpVideoDuration.Text = "";
+                        }
+
+
+
+
+                        // only need to do this if visible
+                        SpeculativeJumpPreview?.FireOnActionConditionsUpdated(cstatus);
+                    }
+                }
+            }
+            if (!willrun)
+            {
+                SpeculativeJumpPreviewDisplay.Visibility = Visibility.Hidden;
+            }
+
         }
 
         private void SetCondition1(bool value)
@@ -5070,6 +5166,18 @@ namespace IntegratedPresenter.Main
         bool IFeatureFlagProvider.AutomationTimer1Enabled { get => _FeatureFlag_automationtimer1enabled; }
         string IPresentationProvider.Folder { get => Presentation?.Folder; }
 
+        void IPresentationProvider.SetNextSlideTarget(int target)
+        {
+            Presentation.SetNextSlideJump(target);
+            slidesUpdated();
+        }
+        async Task IPresentationProvider.TakeNextSlide()
+        {
+            // think it's ok here to fire and forget??
+            slidesUpdated();
+            await SlideDriveVideo_Next();
+            slidesUpdated();
+        }
         void IAutoTransitionProvider.PerformGuardedAutoTransition()
         {
             PerformGuardedAutoTransition();
