@@ -6,6 +6,95 @@ using System.Text.RegularExpressions;
 
 namespace IntegratedPresenterAPIInterop
 {
+    public class SumOfProductExpression
+    {
+        public List<Dictionary<string, bool>> Products { get; set; } = new List<Dictionary<string, bool>>();
+
+        public bool HasConditions
+        {
+            get
+            {
+                return Products.Any(x => x.Any());
+            }
+        }
+
+        public static SumOfProductExpression Parse(string input)
+        {
+            List<Dictionary<string, bool>> expectedProducts = new List<Dictionary<string, bool>>();
+
+            var productterms = Regex.Split(input, @"\+");
+
+            foreach (var pterm in productterms)
+            {
+                Dictionary<string, bool> expectedTerms = new Dictionary<string, bool>();
+
+                var factors = Regex.Split(pterm, "[*,]");
+
+                foreach (var factor in factors)
+                {
+                    // compute expectation of the factor
+                    string fstr = factor.Trim();
+                    if (fstr.StartsWith("!"))
+                    {
+                        expectedTerms[fstr.Substring(1, fstr.Length - 1)] = false;
+                    }
+                    else
+                    {
+                        expectedTerms[fstr] = true;
+                    }
+                }
+
+                expectedProducts.Add(expectedTerms);
+            }
+
+            return new SumOfProductExpression
+            {
+                Products = expectedProducts,
+            };
+        }
+
+
+        public static bool EvaluateProductTerm(Dictionary<string, bool> product, Dictionary<string, bool> condValues)
+        {
+            foreach (var cterm in product)
+            {
+                if (condValues?.TryGetValue(cterm.Key, out var cval) == true)
+                {
+                    if (cval != cterm.Value)
+                    {
+                        // product term fails
+                        return false;
+                    }
+                }
+                else if (cterm.Value)
+                {
+                    // expected true- undefined conditions are always false
+                    // product term fails
+                    return false;
+                }
+
+            }
+            return true;
+        }
+
+        public static bool EvaluateExpression(SumOfProductExpression expr, Dictionary<string, bool> condValues)
+        {
+            if (!expr.HasConditions)
+            {
+                return true;
+            }
+            foreach (var productExpr in expr?.Products)
+            {
+                if (EvaluateProductTerm(productExpr, condValues))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    }
+
     public class AutomationAction
     {
         public AutomationActions Action { get; set; } = AutomationActions.None;
@@ -14,7 +103,7 @@ namespace IntegratedPresenterAPIInterop
         public string DataS { get; set; } = "";
         public object DataO { get; set; } = new object();
 
-        public Dictionary<string, bool> Conditions { get; set; } = new Dictionary<string, bool>();
+        public SumOfProductExpression ExpectedConditions { get; set; } = new SumOfProductExpression();
 
         public override string ToString()
         {
@@ -23,21 +112,7 @@ namespace IntegratedPresenterAPIInterop
 
         public bool MeetsConditionsToRun(Dictionary<string, bool> condValues)
         {
-            foreach (var condReq in Conditions)
-            {
-                if (condValues?.TryGetValue(condReq.Key, out var condVal) == true)
-                {
-                    if (condVal != condReq.Value)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            return true;
+            return SumOfProductExpression.EvaluateExpression(ExpectedConditions, condValues);
         }
 
         public static AutomationAction Parse(string cline)
@@ -47,25 +122,16 @@ namespace IntegratedPresenterAPIInterop
             a.DataI = 0;
             a.DataS = "";
             a.Message = "";
-            a.Conditions = new Dictionary<string, bool>();
+            a.ExpectedConditions = new SumOfProductExpression();
 
             string command = cline;
 
             if (cline.StartsWith("<"))
             {
                 var res = Regex.Match(cline, @"<(?<conditions>.*)>(?<command>.*)");
-                var conditions = res.Groups["conditions"]?.Value.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>(0);
-                foreach (var cond in conditions)
-                {
-                    if (cond.StartsWith("!"))
-                    {
-                        a.Conditions[cond.Substring(1, cond.Length - 1)] = false;
-                    }
-                    else
-                    {
-                        a.Conditions[cond] = true;
-                    }
-                }
+
+                a.ExpectedConditions = SumOfProductExpression.Parse(res.Groups["conditions"].Value);
+
                 command = res.Groups["command"].Value;
             }
 
