@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SwitcherControl.BMDSwitcher
+using VariableMarkupAttributes.Attributes;
+
+namespace SwitcherControl.BMDSwitcher.State
 {
     public class BMDSwitcherState
     {
@@ -20,8 +22,12 @@ namespace SwitcherControl.BMDSwitcher
         public int TransitionFramesRemaining { get; set; }
         public double TransitionPosition { get; set; }
 
+        [ExposedAsVariable(nameof(PresetID))]
         public long PresetID { get; set; }
+
+        [ExposedAsVariable(nameof(ProgramID))]
         public long ProgramID { get; set; }
+
         public long AuxID { get; set; }
 
         public bool USK1OnAir { get; set; }
@@ -48,6 +54,9 @@ namespace SwitcherControl.BMDSwitcher
         public bool FTB { get; set; }
 
         public BMDUSKChromaSettings ChromaSettings { get; set; } = new BMDUSKChromaSettings();
+
+
+        [ExposedAsVariable(nameof(DVESettings))]
         public BMDUSKDVESettings DVESettings { get; set; } = new BMDUSKDVESettings();
 
 

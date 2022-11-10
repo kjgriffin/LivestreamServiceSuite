@@ -28,6 +28,7 @@ namespace IntegratedPresenter.Main
         List<ISlide> Slides { get; set; }
         BMDSwitcherConfigSettings SwitcherConfig { get; }
         IntegratedPresenterFeatures UserConfig { get; }
+        Dictionary<string, WatchVariable> WatchedVariables { get; }
 
         bool Create(string folder);
         void NextSlide();
@@ -36,5 +37,6 @@ namespace IntegratedPresenter.Main
         void SkipNextSlide();
         void SkipPrevSlide();
         void StartPres(int snum = 0);
+
     }
 }

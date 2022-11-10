@@ -6,7 +6,7 @@ using IntegratedPresenterAPIInterop;
 using log4net;
 
 using SwitcherControl.BMDSwitcher;
-
+using SwitcherControl.BMDSwitcher.State;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -430,6 +430,11 @@ namespace Integrated_Presenter.Automation
                         await _presentationProvider.TakeNextSlide();
                         break;
 
+                    case AutomationActions.WatchSwitcherStateBoolVal:
+                    case AutomationActions.WatchSwitcherStateIntVal:
+                        // TODO: do we need to process these as such??
+                        // or let them be handled as dynamic conditions
+                        break;
 
                     case AutomationActions.None:
                         break;

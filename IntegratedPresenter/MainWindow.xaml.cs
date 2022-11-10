@@ -33,6 +33,8 @@ using CCU.Config;
 using SwitcherControl.Safe;
 using Integrated_Presenter.Automation;
 using System.ComponentModel.DataAnnotations;
+using SwitcherControl.BMDSwitcher.State;
+using VariableMarkupAttributes.Attributes;
 
 namespace IntegratedPresenter.Main
 {
@@ -553,8 +555,10 @@ namespace IntegratedPresenter.Main
             pipctrl?.PIPSettingsUpdated(switcherState.DVESettings, switcherState.USK1FillSource);
 
             // update viewmodels
-
             UpdateSwitcherUI();
+
+            // conditions can change if they're watched
+            FireOnConditionalsUpdated();
         }
 
         public void ForceStateUpdateOnSwitcher()
@@ -4666,13 +4670,59 @@ namespace IntegratedPresenter.Main
 
         private Dictionary<string, bool> GetCurrentConditionStatus()
         {
-            return new Dictionary<string, bool>
+            var conditions = new Dictionary<string, bool>
             {
                 ["1"] = _Cond1.Value,
                 ["2"] = _Cond2.Value,
                 ["3"] = _Cond3.Value,
                 ["4"] = _Cond4.Value,
             };
+
+            // Assumes that the curent state of the switcher is acurate
+            // i.e. doesn't immediately re-poll... perhaps this is ok??
+            // effectively just make sure to script delays sufficient to process anything we might depend on
+
+            // extract required switcher state to satisfy requests
+            var exposedVariables = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(switcherState);
+
+            // try to find each requested value
+            if (Presentation != null)
+            {
+                foreach (var watch in Presentation?.WatchedVariables)
+                {
+                    bool evaluation = false;
+                    // use reflection to find a matching value
+                    if (exposedVariables.TryGetValue(watch.Value.VPath, out var eVal))
+                    {
+                        dynamic val = eVal.Value;
+                        // process equation
+                        switch (watch.Value.VType)
+                        {
+                            case AutomationActionArgType.Integer:
+                                // yeah.... so int's are 32 bit and longs are 64 bit
+                                // so just to be safe do it with longs (even if we describe it as an int)
+                                // because some bmd switcher state uses longs
+                                evaluation = (long)val == (long)watch.Value.ExpectedVal;
+                                break;
+                            case AutomationActionArgType.String:
+                                evaluation = (string)val == (string)watch.Value.ExpectedVal;
+                                break;
+                            case AutomationActionArgType.Double:
+                                evaluation = (double)val == (double)watch.Value.ExpectedVal;
+                                break;
+                            case AutomationActionArgType.Boolean:
+                                evaluation = (bool)val == (bool)watch.Value.ExpectedVal;
+                                break;
+                        }
+                    }
+
+                    conditions[watch.Key] = evaluation;
+                }
+            }
+
+
+
+            return conditions;
         }
 
         private void FireOnConditionalsUpdated()
@@ -4702,10 +4752,10 @@ namespace IntegratedPresenter.Main
             var cstatus = (this as IAutomationConditionProvider).GetCurrentConditionStatus();
             // Speculative Update for jump slides
             var willrun = false;
-            var jtarget = Presentation.Next?.SetupActions?.FirstOrDefault(x => x.Action?.Action == AutomationActions.JumpToSlide);
+            var jtarget = Presentation?.Next?.SetupActions?.FirstOrDefault(x => x.Action?.Action == AutomationActions.JumpToSlide);
             if (jtarget == null)
             {
-                jtarget = Presentation.Next?.Actions?.FirstOrDefault(x => x.Action?.Action == AutomationActions.JumpToSlide);
+                jtarget = Presentation?.Next?.Actions?.FirstOrDefault(x => x.Action?.Action == AutomationActions.JumpToSlide);
             }
             if (jtarget != null)
             {

@@ -1,4 +1,5 @@
 ﻿using IntegratedPresenter.BMDSwitcher.Config;
+using SwitcherControl.BMDSwitcher.State;
 
 namespace SwitcherControl.BMDSwitcher
 {

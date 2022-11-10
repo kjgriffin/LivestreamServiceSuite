@@ -15,7 +15,7 @@ using IntegratedPresenter.Main;
 using log4net;
 
 using SwitcherControl.BMDSwitcher;
-
+using SwitcherControl.BMDSwitcher.State;
 using System;
 using System.Collections.Generic;
 using System.IO;

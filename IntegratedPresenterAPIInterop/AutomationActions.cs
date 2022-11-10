@@ -67,7 +67,9 @@
 
 
         JumpToSlide,
-        WatchSwitcherState,
+        WatchSwitcherStateBoolVal,
+        WatchSwitcherStateIntVal,
+
     }
 
 }

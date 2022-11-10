@@ -5,6 +5,7 @@
         Integer,
         String,
         Double,
+        Boolean,
     }
 
 }

@@ -16,6 +16,23 @@ using System.Text.RegularExpressions;
 
 namespace IntegratedPresenter.Main
 {
+
+    public class WatchVariable
+    {
+
+        public WatchVariable(string wpath, object expectation, AutomationActionArgType vType)
+        {
+            this.VPath = wpath;
+            this.ExpectedVal = expectation;
+            this.VType = vType;
+        }
+
+        public string VPath { get; set; }
+        public object ExpectedVal { get; set; }
+        public AutomationActionArgType VType { get; set; }
+    }
+
+
     public class Presentation : IPresentation
     {
 
@@ -33,6 +50,7 @@ namespace IntegratedPresenter.Main
         public List<ISlide> Slides { get; set; } = new List<ISlide>();
 
         public static ISlide EmptySlide = new Slide() { Source = "", Type = SlideType.Empty };
+        public Dictionary<string, WatchVariable> WatchedVariables { get; private set; } = new Dictionary<string, WatchVariable>();
 
         public bool Create(string folder)
         {
@@ -223,6 +241,8 @@ namespace IntegratedPresenter.Main
                 }
             }
 
+            ComputeAggregateWatchVariables();
+
             return false;
         }
 
@@ -293,6 +313,7 @@ namespace IntegratedPresenter.Main
                 }
             }
         }
+
 
         public void NextSlide()
         {
@@ -377,6 +398,32 @@ namespace IntegratedPresenter.Main
             _virtualCurrentSlide = snum;
         }
 
+        public void ComputeAggregateWatchVariables()
+        {
+            // find every slide with actions the require watches
+            Dictionary<string, WatchVariable> variables = new Dictionary<string, WatchVariable>();
+
+            foreach (var slide in Slides)
+            {
+                foreach (var action in slide.Actions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateBoolVal))
+                {
+                    string vname = (string)action.Action.RawParams[2];
+                    string wpath = (string)action.Action.RawParams[0];
+                    object expectation = action.Action.RawParams[1];
+                    variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Boolean);
+                }
+                foreach (var action in slide.Actions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateIntVal))
+                {
+                    string vname = (string)action.Action.RawParams[2];
+                    string wpath = (string)action.Action.RawParams[0];
+                    object expectation = action.Action.RawParams[1];
+                    variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Integer);
+                }
+            }
+
+
+            WatchedVariables = variables;
+        }
     }
 
 

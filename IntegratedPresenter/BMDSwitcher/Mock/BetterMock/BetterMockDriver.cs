@@ -12,7 +12,7 @@ using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
 using SwitcherControl.BMDSwitcher;
-
+using SwitcherControl.BMDSwitcher.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;

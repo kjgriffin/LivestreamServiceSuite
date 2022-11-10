@@ -18,8 +18,7 @@ using CCUI_UI;
 using IntegratedPresenter.Main;
 
 using IntegratedPresenterAPIInterop;
-
-using SwitcherControl.BMDSwitcher;
+using SwitcherControl.BMDSwitcher.State;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {

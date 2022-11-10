@@ -1,4 +1,4 @@
-﻿using SwitcherControl.BMDSwitcher;
+﻿using SwitcherControl.BMDSwitcher.State;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {

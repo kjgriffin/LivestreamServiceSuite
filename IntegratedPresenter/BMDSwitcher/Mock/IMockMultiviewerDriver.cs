@@ -6,7 +6,7 @@ using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
 using SwitcherControl.BMDSwitcher;
-
+using SwitcherControl.BMDSwitcher.State;
 using System;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock

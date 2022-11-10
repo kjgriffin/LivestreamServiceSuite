@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SwitcherControl.BMDSwitcher
+namespace SwitcherControl.BMDSwitcher.State
 {
     public class DSKMaskSettings
     {

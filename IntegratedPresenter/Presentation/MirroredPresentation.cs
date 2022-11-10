@@ -188,7 +188,7 @@ namespace Integrated_Presenter.Presentation
             // ignore user config
 
 
-
+            pres.ComputeAggregateWatchVariables();
             return pres;
         }
 
