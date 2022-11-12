@@ -13,12 +13,13 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using ATEMSharedState.SwitcherState;
+
 using CCUI_UI;
 
 using IntegratedPresenter.Main;
 
 using IntegratedPresenterAPIInterop;
-using SwitcherControl.BMDSwitcher.State;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {

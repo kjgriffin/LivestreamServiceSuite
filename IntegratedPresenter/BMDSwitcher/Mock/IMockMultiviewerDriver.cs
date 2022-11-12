@@ -1,4 +1,6 @@
-﻿using CCU.Config;
+﻿using ATEMSharedState.SwitcherState;
+
+using CCU.Config;
 
 using CCUI_UI;
 
@@ -6,7 +8,6 @@ using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
 using SwitcherControl.BMDSwitcher;
-using SwitcherControl.BMDSwitcher.State;
 using System;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock

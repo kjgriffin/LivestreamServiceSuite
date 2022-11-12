@@ -1,4 +1,5 @@
-﻿using SwitcherControl.BMDSwitcher.State;
+﻿using ATEMSharedState.SwitcherState;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

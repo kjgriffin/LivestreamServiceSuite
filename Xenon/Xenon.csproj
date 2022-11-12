@@ -115,6 +115,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ATEMSharedState\ATEMSharedState.csproj" />
     <ProjectReference Include="..\CommonVersionInfo\CommonVersionInfo.csproj" />
     <ProjectReference Include="..\Configurations\Configurations.csproj" />
     <ProjectReference Include="..\IntegratedPresenterAPIInterop\IntegratedPresenterAPIInterop.csproj" />

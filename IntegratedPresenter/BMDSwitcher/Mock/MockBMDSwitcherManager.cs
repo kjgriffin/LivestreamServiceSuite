@@ -1,6 +1,8 @@
 ﻿#define USE_BETTER_MOCK_MV // leaving this for now in-case I've screwed up something critical/ want to factor this into an option rather than strictly deprecate it
 // though I belive its curently feature pair with the old one (technically better since it's more acurate with ME's)
 
+using ATEMSharedState.SwitcherState;
+
 using BMDSwitcherAPI;
 
 using CCU.Config;
@@ -15,7 +17,6 @@ using IntegratedPresenter.Main;
 using log4net;
 
 using SwitcherControl.BMDSwitcher;
-using SwitcherControl.BMDSwitcher.State;
 using System;
 using System.Collections.Generic;
 using System.IO;

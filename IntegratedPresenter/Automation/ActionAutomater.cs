@@ -1,4 +1,6 @@
-﻿using IntegratedPresenter.BMDSwitcher.Config;
+﻿using ATEMSharedState.SwitcherState;
+
+using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
 using IntegratedPresenterAPIInterop;
@@ -6,7 +8,6 @@ using IntegratedPresenterAPIInterop;
 using log4net;
 
 using SwitcherControl.BMDSwitcher;
-using SwitcherControl.BMDSwitcher.State;
 using System;
 using System.Collections.Generic;
 using System.IO;

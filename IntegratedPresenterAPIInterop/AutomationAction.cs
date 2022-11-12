@@ -4,6 +4,8 @@ using IntegratedPresenter.BMDSwitcher.Config;
 using System;
 using System.Text.RegularExpressions;
 
+using VariableMarkupAttributes;
+
 namespace IntegratedPresenterAPIInterop
 {
     public class SumOfProductExpression

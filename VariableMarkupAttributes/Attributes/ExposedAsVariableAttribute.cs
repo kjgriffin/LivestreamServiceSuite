@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace VariableMarkupAttributes.Attributes
 {
+    public class ExposesWatchableVariablesAttribute : Attribute
+    {
+    }
+
+
     public class ExposedAsVariableAttribute : Attribute
     {
         public string VariablePath { get; private set; }
@@ -23,6 +28,7 @@ namespace VariableMarkupAttributes.Attributes
         public string Path { get; set; }
         public object Value { get; set; }
         public PropertyInfo Metadata { get; set; }
+        public AutomationActionArgType TypeInfo { get; set; }
     }
 
 
@@ -52,12 +58,31 @@ namespace VariableMarkupAttributes.Attributes
                         {
                             Metadata = prop,
                             Path = attr.VariablePath,
-                            Value = prop.GetValue(instance)
+                            Value = prop.GetValue(instance),
+                            TypeInfo = ToAutomationType(prop.PropertyType),
                         };
                     }
                 }
             }
             return result;
+        }
+
+        public static AutomationActionArgType ToAutomationType(Type type)
+        {
+            if (type == typeof(int) || type == typeof(long))
+            {
+                return AutomationActionArgType.Integer;
+            }
+            if (type == typeof(string))
+            {
+                return AutomationActionArgType.String;
+            }
+            if (type == typeof(double) || type == typeof(float))
+            {
+                return AutomationActionArgType.Double;
+            }
+
+            return AutomationActionArgType.UNKNOWN_TYPE;
         }
 
     }

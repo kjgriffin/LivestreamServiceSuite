@@ -33,8 +33,9 @@ using CCU.Config;
 using SwitcherControl.Safe;
 using Integrated_Presenter.Automation;
 using System.ComponentModel.DataAnnotations;
-using SwitcherControl.BMDSwitcher.State;
 using VariableMarkupAttributes.Attributes;
+using ATEMSharedState.SwitcherState;
+using VariableMarkupAttributes;
 
 namespace IntegratedPresenter.Main
 {

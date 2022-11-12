@@ -13,7 +13,7 @@ using System.Windows;
 using log4net;
 using System.IO;
 using System.Threading;
-using SwitcherControl.BMDSwitcher.State;
+using ATEMSharedState.SwitcherState;
 
 namespace SwitcherControl.BMDSwitcher
 {

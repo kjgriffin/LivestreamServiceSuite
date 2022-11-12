@@ -1,4 +1,5 @@
-﻿using SwitcherControl.BMDSwitcher.State;
+﻿
+using ATEMSharedState.SwitcherState;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {
