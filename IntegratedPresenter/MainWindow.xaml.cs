@@ -4876,6 +4876,7 @@ namespace IntegratedPresenter.Main
             for (int i = 0; i < 5; i++)
             {
                 btns[i].IsActive = false;
+                btns[i].UpdateLayout();
                 if (_config.PIPPresets.Presets.TryGetValue(i + 1, out var cfg))
                 {
                     btns[i].PlaceName = cfg.Name;

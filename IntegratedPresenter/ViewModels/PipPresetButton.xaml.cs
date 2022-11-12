@@ -31,6 +31,7 @@ namespace Integrated_Presenter.ViewModels
         {
             InitializeComponent();
             this.DataContext = this;
+            //UpdateLayout();
         }
 
         public event ClickEventArgs OnClick;

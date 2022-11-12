@@ -95,6 +95,8 @@ namespace Integrated_Presenter.ViewModels
                 tbProduct.TextDecorations.Add(underline);
 
                 // keep the evaluation of each factor within the term
+                int j = 1;
+                int cnt = pexpr.Count;
                 foreach (var cfactor in pexpr)
                 {
                     var cfval = false;
@@ -114,6 +116,15 @@ namespace Integrated_Presenter.ViewModels
                         tbCond.Foreground = red;
                     }
                     tbProduct.Inlines.Add(tbCond);
+
+                    if (j < cnt)
+                    {
+                        Run tbProdOp = new Run("*");
+                        tbProdOp.Foreground = new SolidColorBrush(Color.FromRgb(240, 240, 240));
+                        tbProduct.Inlines.Add(tbProdOp);
+                    }
+
+                    j++;
                 }
 
                 spReqCond.Children.Add(tbProduct);

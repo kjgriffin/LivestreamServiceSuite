@@ -6,7 +6,7 @@
 		<RootNamespace>Integrated_Presenter</RootNamespace>
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>AppIcons/picon_RWa_icon.ico</ApplicationIcon>
-		<!--<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>-->
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 		<!--<PublishSingleFile>True</PublishSingleFile>-->
 		<!--<PublishReadyToRun>True</PublishReadyToRun>-->
 		<!--<SelfContained>True</SelfContained>-->
