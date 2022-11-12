@@ -412,7 +412,7 @@ namespace IntegratedPresenter.Main
 
                 // Try an use a thread safe variant
                 //switcherManager = new BMDSwitcherManager(this, autoTransMRE);
-                switcherManager = new SafeBMDSwitcher(autoTransMRE, this.Title);
+                switcherManager = new SafeBMDSwitcher(autoTransMRE, _logger, this.Title);
 
 
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;

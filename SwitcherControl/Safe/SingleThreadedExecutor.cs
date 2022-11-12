@@ -17,6 +17,30 @@ namespace SwitcherControl.Safe
         public Action Callback { get; set; }
     }
 
+    // https://stackoverflow.com/questions/18756354/wrapping-manualresetevent-as-awaitable-task
+    public static class WaitHandleExtensions
+    {
+        public static Task AsTask(this WaitHandle handle)
+        {
+            return AsTask(handle, Timeout.InfiniteTimeSpan);
+        }
+
+        public static Task AsTask(this WaitHandle handle, TimeSpan timeout)
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, timedOut) =>
+            {
+                var localTcs = (TaskCompletionSource<object>)state;
+                if (timedOut)
+                    localTcs.TrySetCanceled();
+                else
+                    localTcs.TrySetResult(null);
+            }, tcs, timeout, executeOnlyOnce: true);
+            tcs.Task.ContinueWith((_, state) => ((RegisteredWaitHandle)state).Unregister(null), registration, TaskScheduler.Default);
+            return tcs.Task;
+        }
+    }
+
     public class SingleThreadedExecutor
     {
 
@@ -34,6 +58,7 @@ namespace SwitcherControl.Safe
             m_workAvailable = new ManualResetEvent(false);
             m_workCallbackSync = new ConcurrentDictionary<Guid, ManualResetEvent>();
 
+            m_cancel = new CancellationTokenSource();
             workerThread = new Thread(RunLoop);
             workerThread.Name = "SingleThreadedExecutorWorkerThread";
             workerThread.SetApartmentState(ApartmentState.STA);
