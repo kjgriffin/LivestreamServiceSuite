@@ -29,6 +29,9 @@
         USK1Off,
         USK1On,
 
+        BKGDTieOn,
+        BKGDTieOff,
+
         USK1TieOn,
         USK1TieOff,
 

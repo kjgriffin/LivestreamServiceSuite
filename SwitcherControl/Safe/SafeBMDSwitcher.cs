@@ -1325,6 +1325,33 @@ namespace SwitcherControl.Safe
             }
             _BMDSwitcherTransitionParameters.SetNextTransitionSelection((_BMDSwitcherTransitionSelection)val);
         }
+        private void PerformSetBKDGOnForNextTrans()
+        {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+            // need at least 1 layer on
+            // so this will always work
+            var activelayers = _BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionBackground;
+            if (_state.TransNextKey1)
+            {
+                activelayers |= _BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionKey1;
+            }
+
+            _BMDSwitcherTransitionParameters.SetNextTransitionSelection(activelayers);
+        }
+
+        private void PerformSetBKDGOffForNextTrans()
+        {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+            // need at least 1 layer on
+            // only works if we have key1 on
+            if (_state.TransNextKey1)
+            {
+                _BMDSwitcherTransitionParameters.SetNextTransitionSelection(_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionKey1);
+            }
+        }
+
 
         private void PerformToggleKey1ForNextTrans()
         {
@@ -1678,6 +1705,17 @@ namespace SwitcherControl.Safe
         {
             _executor.EnqueueWork(PerformToggleBackgroundForNextTrans);
         }
+
+        void IBMDSwitcherManager.PerformSetBKDGOnForNextTrans()
+        {
+            _executor.EnqueueWork(PerformSetBKDGOnForNextTrans);
+        }
+        
+        void IBMDSwitcherManager.PerformSetBKDGOffForNextTrans()
+        {
+            _executor.EnqueueWork(PerformSetBKDGOffForNextTrans);
+        }
+
 
         void IBMDSwitcherManager.PerformToggleKey1ForNextTrans()
         {

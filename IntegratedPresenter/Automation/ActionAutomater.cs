@@ -8,6 +8,7 @@ using IntegratedPresenterAPIInterop;
 using log4net;
 
 using SwitcherControl.BMDSwitcher;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -330,6 +331,16 @@ namespace Integrated_Presenter.Automation
                             _userTimerProvider.ResetGpTimer1();
                         }
                         break;
+
+                    case AutomationActions.BKGDTieOn:
+                        _logger.Debug($"(PerformAutomationAction) -- ENABLE BKGD layer on Next Transition");
+                        _switcherProvider?.switcherManager?.PerformSetBKDGOnForNextTrans();
+                        break;
+                    case AutomationActions.BKGDTieOff:
+                        _logger.Debug($"(PerformAutomationAction) -- DISABLE BKGD layer on Next Transition");
+                        _switcherProvider?.switcherManager?.PerformSetBKDGOffForNextTrans();
+                        break;
+
 
                     case AutomationActions.USK1On:
                         if (!_switcherProvider.switcherState.USK1OnAir)

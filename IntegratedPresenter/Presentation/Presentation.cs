@@ -407,14 +407,16 @@ namespace IntegratedPresenter.Main
 
             foreach (var slide in Slides)
             {
-                foreach (var action in slide.Actions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateBoolVal))
+                var allSlideActions = slide.Actions.Concat(slide.SetupActions);
+
+                foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateBoolVal))
                 {
                     string vname = (string)action.Action.RawParams[2];
                     string wpath = (string)action.Action.RawParams[0];
                     object expectation = action.Action.RawParams[1];
                     variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Boolean);
                 }
-                foreach (var action in slide.Actions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateIntVal))
+                foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateIntVal))
                 {
                     string vname = (string)action.Action.RawParams[2];
                     string wpath = (string)action.Action.RawParams[0];

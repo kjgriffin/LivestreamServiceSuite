@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using Xenon.Compiler.SubParsers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -266,6 +267,15 @@ namespace Xenon.Compiler.AST
                             // techincally can kill the postset on the swapped slide
                             swappedfirst.Data.Remove(XenonASTHelpers.DATAKEY_POSTSET);
                         }
+
+                        // swap pilot
+                        if (swappedfirst.Data.TryGetValue(XenonASTExpression.DATAKEY_PILOT, out var pilot))
+                        {
+                            swaped.scripted.Data[XenonASTExpression.DATAKEY_PILOT] = pilot;
+                            // techincally can kill the postset on the swapped slide
+                            swappedfirst.Data.Remove(XenonASTExpression.DATAKEY_PILOT);
+                        }
+
 
                         modifiedslides.Add(swaped.scripted);
                         modifiedslides.Add(swaped.resource);

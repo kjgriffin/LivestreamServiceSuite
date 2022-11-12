@@ -9,19 +9,15 @@ using CCU.Config;
 
 using CCUI_UI;
 
-using Integrated_Presenter.BMDSwitcher.Mock;
-
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
 using log4net;
 
 using SwitcherControl.BMDSwitcher;
-using System;
+
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
@@ -466,6 +462,31 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _state.TransNextBackground = !_state.TransNextBackground;
             SwitcherStateChanged?.Invoke(_state);
         }
+
+        void IBMDSwitcherManager.PerformSetBKDGOnForNextTrans()
+        {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+            // need at least 1 layer on
+            // so this will always work
+
+            _state.TransNextBackground = true;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        void IBMDSwitcherManager.PerformSetBKDGOffForNextTrans()
+        {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+            // need at least 1 layer on
+            // only works if we have key1 on
+            if (_state.TransNextKey1)
+            {
+                _state.TransNextBackground = false;
+                SwitcherStateChanged?.Invoke(_state);
+            }
+        }
+
 
         void IBMDSwitcherManager.PerformToggleKey1ForNextTrans()
         {

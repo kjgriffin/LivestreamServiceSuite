@@ -45,6 +45,10 @@ namespace IntegratedPresenterAPIInterop
             [AutomationActions.DSK2TieOn] = (0, AutomationActions.DSK2TieOn, "DSK2TieOn", null, ExpectedVariableContents.NONE),
             [AutomationActions.DSK2TieOff] = (0, AutomationActions.DSK2TieOff, "DSK2TieOff", null, ExpectedVariableContents.NONE),
 
+
+            [AutomationActions.BKGDTieOn] = (0, AutomationActions.BKGDTieOn, "BKGDTieOn", null, ExpectedVariableContents.NONE),
+            [AutomationActions.BKGDTieOff] = (0, AutomationActions.BKGDTieOff, "BKGDTieOff", null, ExpectedVariableContents.NONE),
+
             [AutomationActions.USK1On] = (0, AutomationActions.USK1On, "USK1On", null, ExpectedVariableContents.NONE),
             [AutomationActions.USK1Off] = (0, AutomationActions.USK1Off, "USK1Off", null, ExpectedVariableContents.NONE),
             [AutomationActions.USK1TieOn] = (0, AutomationActions.USK1TieOn, "USK1TieOn", null, ExpectedVariableContents.NONE),

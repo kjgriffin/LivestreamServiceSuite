@@ -1597,6 +1597,41 @@ namespace SwitcherControl.BMDSwitcher
             });
         }
 
+        public void PerformSetBKDGOnForNextTrans()
+        {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+            _parent.Dispatcher.Invoke(() =>
+            {
+                // need at least 1 layer on
+                // so this will always work
+                var activelayers = _BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionBackground;
+                if (_state.TransNextKey1)
+                {
+                    activelayers |= _BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionKey1;
+                }
+
+                _BMDSwitcherTransitionParameters.SetNextTransitionSelection(activelayers);
+            });
+        }
+
+        public void PerformSetBKDGOffForNextTrans()
+        {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+            _parent.Dispatcher.Invoke(() =>
+            {
+                // need at least 1 layer on
+                // only works if we have key1 on
+                if (_state.TransNextKey1)
+                {
+                    _BMDSwitcherTransitionParameters.SetNextTransitionSelection(_BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionKey1);
+                }
+            });
+        }
+
+
+
         /// <summary>
         /// Assumes only 1 M/E and 1 USK
         /// Thus this will force the BKGD layer selected, since 1 must always be selected.

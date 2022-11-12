@@ -44,6 +44,8 @@ namespace SwitcherControl.BMDSwitcher
         void PerformUSK1RunToKeyFrameFull();
         void PerformUSK1FillSourceSelect(int sourceID);
         void PerformToggleBackgroundForNextTrans();
+        void PerformSetBKDGOnForNextTrans();
+        void PerformSetBKDGOffForNextTrans();
         void PerformToggleKey1ForNextTrans();
         void PerformSetKey1OnForNextTrans();
         void PerformSetKey1OffForNextTrans();
