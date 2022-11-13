@@ -2,17 +2,18 @@
 
 using IntegratedPresenter.BMDSwitcher.Config;
 
+using System;
+
 namespace SwitcherControl.BMDSwitcher
 {
 
-    public delegate void SwitcherDisconnectedEvent();
 
     public interface IBMDSwitcherManager
     {
         bool GoodConnection { get; set; }
 
         event SwitcherStateChange SwitcherStateChanged;
-        event SwitcherDisconnectedEvent OnSwitcherDisconnected;
+        event EventHandler<bool> OnSwitcherConnectionChanged;
 
         BMDSwitcherState ForceStateUpdate();
         BMDSwitcherState GetCurrentState();
@@ -34,7 +35,7 @@ namespace SwitcherControl.BMDSwitcher
         void PerformToggleDSK1();
         void PerformToggleDSK2();
         void PerformToggleFTB();
-        bool TryConnect(string address);
+        void TryConnect(string address);
         void Disconnect();
         void PerformToggleUSK1();
         void PerformOnAirUSK1();

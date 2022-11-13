@@ -55,7 +55,7 @@ namespace SwitcherControl.BMDSwitcher
 
 
         public event SwitcherStateChange SwitcherStateChanged;
-        public event SwitcherDisconnectedEvent OnSwitcherDisconnected;
+        public event EventHandler<bool> OnSwitcherConnectionChanged;
 
         public bool GoodConnection { get; set; } = false;
         bool IBMDSwitcherManager.GoodConnection { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -326,7 +326,7 @@ namespace SwitcherControl.BMDSwitcher
             SwitcherDisconnected();
         }
 
-        public bool TryConnect(string address)
+        public void TryConnect(string address)
         {
 
             _BMDSwitcherConnectToFailure failReason = 0;
@@ -335,7 +335,7 @@ namespace SwitcherControl.BMDSwitcher
                 _logger.Info($"Attempting synchronous connection to switcher on {address}");
                 _BMDSwitcherDiscovery.ConnectTo(address, out _BMDSwitcher, out failReason);
                 SwitcherConnected();
-                return true;
+                OnSwitcherConnectionChanged?.Invoke(this, true);
             }
             catch (COMException)
             {
@@ -354,7 +354,7 @@ namespace SwitcherControl.BMDSwitcher
                         MessageBox.Show("Switcher failed to connect for unknown reason", "Error");
                         break;
                 }
-                return false;
+                OnSwitcherConnectionChanged?.Invoke(this, false);
             }
 
         }
@@ -362,7 +362,7 @@ namespace SwitcherControl.BMDSwitcher
         public void Disconnect()
         {
             _logger.Debug($"[BMD HW] Runnning {System.Reflection.MethodBase.GetCurrentMethod()}");
-            OnSwitcherDisconnected?.Invoke();
+            OnSwitcherConnectionChanged?.Invoke(this, false);
             SwitcherDisconnected();
         }
 

@@ -16,6 +16,7 @@ using log4net;
 
 using SwitcherControl.BMDSwitcher;
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         IMockMultiviewerDriver mockMultiviewer;
 
         public event SwitcherStateChange SwitcherStateChanged;
-        public event SwitcherDisconnectedEvent OnSwitcherDisconnected;
+        public event EventHandler<bool> OnSwitcherConnectionChanged;
 
         private ILog _logger;
 
@@ -101,10 +102,10 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             (mockMultiviewer as BetterMockDriver)?.HandleStateUpdate(args);
         }
 
-        private void MockMultiviewer_OnMockWindowClosed()
+        private void MockMultiviewer_OnMockWindowClosed(object sender, EventArgs e)
         {
             _logger.Info($"[Mock SW] USER requested close");
-            OnSwitcherDisconnected?.Invoke();
+            OnSwitcherConnectionChanged?.Invoke(this, false);
         }
 
         private void Parent_PresentationStateUpdated(ISlide currentslide)
@@ -211,20 +212,20 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             SwitcherStateChanged?.Invoke(_state);
         }
 
-        public bool TryConnect(string address)
+        public void TryConnect(string address)
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // we can connect to anything (since its a mock)
             GoodConnection = true;
             ForceStateUpdate();
             SwitcherStateChanged?.Invoke(_state);
-            return true;
+            OnSwitcherConnectionChanged?.Invoke(this, true);
         }
 
         public void Disconnect()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-            OnSwitcherDisconnected?.Invoke();
+            OnSwitcherConnectionChanged?.Invoke(this, false);
             mockMultiviewer.Close();
         }
 

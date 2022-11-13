@@ -54,7 +54,7 @@ namespace SwitcherControl.Safe
 
 
         public event SwitcherStateChange SwitcherStateChanged;
-        public event SwitcherDisconnectedEvent OnSwitcherDisconnected;
+        public event EventHandler<bool> OnSwitcherConnectionChanged;
 
         public bool GoodConnection { get; set; } = false;
 
@@ -347,7 +347,7 @@ namespace SwitcherControl.Safe
         }
 
 
-        private bool TryConnect(string address)
+        private void TryConnect(string address)
         {
             while (!IsInitialized) ;
 
@@ -357,7 +357,7 @@ namespace SwitcherControl.Safe
                 _logger?.Info($"Attempting synchronous connection to switcher on {address}");
                 _BMDSwitcherDiscovery.ConnectTo(address, out _BMDSwitcher, out failReason);
                 SwitcherConnected();
-                return true;
+                OnSwitcherConnectionChanged?.Invoke(this, true);
             }
             catch (COMException)
             {
@@ -376,7 +376,7 @@ namespace SwitcherControl.Safe
                         MessageBox.Show("Switcher failed to connect for unknown reason", "Error");
                         break;
                 }
-                return false;
+                OnSwitcherConnectionChanged?.Invoke(this, false);
             }
 
         }
@@ -384,7 +384,7 @@ namespace SwitcherControl.Safe
         private void Disconnect()
         {
             _logger?.Debug($"[BMD HW] Runnning {System.Reflection.MethodBase.GetCurrentMethod()}");
-            OnSwitcherDisconnected?.Invoke();
+            OnSwitcherConnectionChanged?.Invoke(this, false);
             SwitcherDisconnected();
         }
 
@@ -1617,15 +1617,9 @@ namespace SwitcherControl.Safe
 
         #region External API Implementation
 
-        bool IBMDSwitcherManager.TryConnect(string address)
+        void IBMDSwitcherManager.TryConnect(string address)
         {
-            bool result = true;
-            Task.Run(async () =>
-            {
-                var handle = _executor.EnqueueWorkWithCallback(() => result = TryConnect(address), null);
-                await handle.wait.AsTask();
-            });
-            return result;
+            _executor.EnqueueWork(() => TryConnect(address));
         }
 
         void IBMDSwitcherManager.Disconnect()

@@ -416,42 +416,48 @@ namespace IntegratedPresenter.Main
 
 
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
-                switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
+                switcherManager.OnSwitcherConnectionChanged += SwitcherManager_OnSwitcherConnectionChanged;
                 SwitcherConnectedUiUpdate(false, true);
 
                 await Task.Delay(100).ConfigureAwait(true);
 
                 // give UI update time
-                if (switcherManager.TryConnect(connectWindow.IP))
-                {
-                    _logger.Debug("ConnectSwitcher() -- successfull, switcherManager initialized.");
-                    EnableSwitcherControls();
-                    // load current config
-                    SetSwitcherSettings();
-                    if (!shot_clock_timer.Enabled)
-                    {
-                        shot_clock_timer.Start();
-                    }
-                    SwitcherConnectedUiUpdate(true);
-                }
-                else
-                {
-                    _logger.Warn("ConnectSwitcher() -- failed to connect.");
-                    SwitcherConnectedUiUpdate(false);
-                    switcherManager.SwitcherStateChanged -= SwitcherManager_SwitcherStateChanged;
-                    switcherManager.OnSwitcherDisconnected -= SwitcherManager_OnSwitcherDisconnected;
-                    switcherManager = null;
-                }
+                switcherManager.TryConnect(connectWindow.IP);
             }
         }
 
-        private void SwitcherManager_OnSwitcherDisconnected()
+        private void SwitcherManager_OnSwitcherConnectionChanged(object sender, bool connected)
         {
-            _logger.Warn("SwitcherManager_OnSwitcherDisconnected() event handled.");
-            DisableSwitcherControls();
-            // Important part -> set switcherManager to null so we don't try and access it when its disconnected
-            switcherManager = null;
-            SwitcherConnectedUiUpdate(false);
+            if (!CheckAccess())
+            {
+                Dispatcher.Invoke(() => SwitcherManager_OnSwitcherConnectionChanged(sender, connected));
+                return;
+            }
+
+            _logger.Warn("SwitcherManager_OnSwitcherConnectionChanged event handled.");
+
+            if (connected)
+            {
+                _logger.Debug("ConnectSwitcher() -- successfull, switcherManager initialized.");
+                EnableSwitcherControls();
+                // load current config
+                SetSwitcherSettings();
+                if (!shot_clock_timer.Enabled)
+                {
+                    shot_clock_timer.Start();
+                }
+                SwitcherConnectedUiUpdate(true);
+            }
+            else
+            {
+                _logger.Warn("SwitcherManager_OnSwitcherDisconnected() event handled.");
+                DisableSwitcherControls();
+                _logger.Warn("ConnectSwitcher() -- failed to connect.");
+                SwitcherConnectedUiUpdate(false);
+                switcherManager.SwitcherStateChanged -= SwitcherManager_SwitcherStateChanged;
+                switcherManager.OnSwitcherConnectionChanged -= SwitcherManager_OnSwitcherConnectionChanged;
+                switcherManager = null;
+            }
         }
 
         private void MockConnectSwitcher()
@@ -464,7 +470,7 @@ namespace IntegratedPresenter.Main
             }
             switcherManager = new MockBMDSwitcherManager(this);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
-            switcherManager.OnSwitcherDisconnected += SwitcherManager_OnSwitcherDisconnected;
+            switcherManager.OnSwitcherConnectionChanged += SwitcherManager_OnSwitcherConnectionChanged;
             (switcherManager as MockBMDSwitcherManager)?.UpdateCCUConfig(Presentation?.CCPUConfig as CCPUConfig_Extended);
             switcherManager.TryConnect("localhost");
             _logger.Debug("MockConnectSwitcher() initialized switcherManger with mock switcher.");

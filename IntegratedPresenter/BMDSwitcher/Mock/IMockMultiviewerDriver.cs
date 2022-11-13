@@ -14,7 +14,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 {
     public interface IMockMultiviewerDriver
     {
-        event SwitcherDisconnectedEvent OnMockWindowClosed;
+        event EventHandler OnMockWindowClosed;
 
         void Close();
         void FadeDSK1(bool onair);
