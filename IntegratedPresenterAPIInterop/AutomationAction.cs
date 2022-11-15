@@ -215,7 +215,7 @@ namespace IntegratedPresenterAPIInterop
             }
             if (command.StartsWith("cmd:")) // dynamically parse it
             {
-                var cmatch = Regex.Match(command, @"cmd:(?<commandname>.*?)\((?<params>.*?)\)(\[(?<msg>.*)\])?;");
+                var cmatch = Regex.Match(command, @"cmd:(?<commandname>.*?)(\((?<params>.*?)\))?(\[(?<msg>.*)\])?;");
 
                 string cmdName = cmatch.Groups["commandname"].Value;
                 string pargs = cmatch.Groups["params"].Value;
@@ -230,7 +230,7 @@ namespace IntegratedPresenterAPIInterop
                     // with the metadata availabe now we can dynamicaly parse the args based on what's expected
                     var parsedParams = ParseDynamicParams(pargs, cmdMetadata.Value);
 
-                    if (parsedParams.success)
+                    if (parsedParams.success && parsedParams.data.Count == cmdMetadata.Value.NumArgs || cmdMetadata.Value.NumArgs == 0)
                     {
                         // legacy support for arg0, arg1, argd8 commands
                         if (cmdMetadata.Value.NumArgs == 1)
@@ -238,7 +238,7 @@ namespace IntegratedPresenterAPIInterop
                             switch (cmdMetadata.Value.OrderedArgTypes?.FirstOrDefault())
                             {
                                 case AutomationActionArgType.Integer:
-                                    a.DataI = (int)parsedParams.data.First();
+                                    a.DataI = Convert.ToInt32((long)parsedParams.data.First());
                                     break;
                                 case AutomationActionArgType.String:
                                     a.DataS = (string)parsedParams.data.First();

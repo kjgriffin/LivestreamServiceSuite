@@ -121,14 +121,14 @@ namespace Xenon.Renderer
 
                     string ctext = rs.Text;
                     // replace audio file references to proj temp folder since they aren't rendered out to memeory
-                    var fmatch = Regex.Match(ctext, @"arg1:LoadAudioFile\((?<file>.*)\)");
+                    var fmatch = Regex.Match(ctext, @"(arg1|cmd):LoadAudioFile\((?<file>.*)\)");
                     while (fmatch.Success)
                     {
                         var fname = proj.Assets.FirstOrDefault(x => $"Resource_{x.Name}{x.Extension}" == fmatch.Groups["file"].Value);
                         var file = fname?.CurrentPath ?? "";
-                        ctext = Regex.Replace(ctext, @"arg1:LoadAudioFile\(.*\)", $"arg1:LoadAudioFile({file})");
+                        ctext = Regex.Replace(ctext, @"(cmd|arg1):LoadAudioFile\(.*\)", $"cmd:LoadAudioFile({file})"); // I think it's safe at this point to always use the cmd flavour here
 
-                        fmatch = Regex.Match(ctext, @"arg1:LoadAudio\((?<file>.*)\)");
+                        fmatch = Regex.Match(ctext, @"(cmd|arg1):LoadAudio\((?<file>.*)\)");
                     }
 
                     var afile = MemoryMappedFile.CreateNew(aname, ctext.Length * 8 + 1024);
