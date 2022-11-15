@@ -5048,6 +5048,13 @@ namespace IntegratedPresenter.Main
             m_hotreloadpresentation = !m_hotreloadpresentation;
             miHotReloadPres.IsChecked = m_hotreloadpresentation;
 
+            Dispatcher.Invoke(() =>
+            {
+                tbHotReloadStatus.Text = m_hotreloadpresentation ? "READY" : "OFF";
+                tbHotReloadStatus.Foreground = m_hotreloadpresentation ? Brushes.Yellow : Brushes.White;
+            });
+
+
             if (m_hotreloadpresentation)
             {
                 Title = $"{_nominalTitle} (Hot Load Presentation Mode)";
@@ -5070,19 +5077,41 @@ namespace IntegratedPresenter.Main
             LoadHotPresentation();
         }
 
-        private void LoadHotPresentation()
+        private async Task LoadHotPresentation()
         {
             int lastSlide = Math.Max(Presentation?.CurrentSlide - 1 ?? 0, 0);
 
+            Dispatcher.Invoke(() =>
+            {
+                tbHotReloadStatus.Text = "RELOADING";
+                tbHotReloadStatus.Foreground = Brushes.Orange;
+            });
+
+            // can we load on a seperate task thread, and only then swap to UI ??
+            IPresentation pres = null;
+
+            await Task.Run(() =>
+            {
+                // create new presentation
+                pres = MirroredPresentationBuilder.Create();
+            });
+
+            Internal_StartHotLoadPresentation(pres, lastSlide);
+
+            Dispatcher.Invoke(() =>
+            {
+                tbHotReloadStatus.Text = "LOADED";
+                tbHotReloadStatus.Foreground = Brushes.LimeGreen;
+            });
+        }
+
+        private void Internal_StartHotLoadPresentation(IPresentation pres, int lastSlide)
+        {
             if (!CheckAccess())
             {
-                Dispatcher.Invoke(() => LoadHotPresentation());
+                Dispatcher.Invoke(() => Internal_StartHotLoadPresentation(pres, lastSlide));
                 return;
             }
-
-            // create new presentation
-            IPresentation pres = MirroredPresentationBuilder.Create();
-
 
             pres.StartPres(lastSlide);
             _pres = pres;
