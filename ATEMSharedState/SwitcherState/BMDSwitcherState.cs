@@ -1,4 +1,5 @@
-﻿using IntegratedPresenter.BMDSwitcher.Config;
+﻿using IntegratedPresenter.BMDSwitcher;
+using IntegratedPresenter.BMDSwitcher.Config;
 
 using System;
 using System.Collections.Generic;
@@ -85,9 +86,9 @@ namespace ATEMSharedState.SwitcherState
             InTransition = false;
             TransitionPosition = 0;
             TransitionFramesRemaining = 0;
-            PresetID = -1;
-            ProgramID = -1;
-            AuxID = -1;
+            PresetID = (long)BMDSwitcherVideoSources.Input2;
+            ProgramID = (long)BMDSwitcherVideoSources.Input1;
+            AuxID = (long)BMDSwitcherVideoSources.ME1Prog;
             DSK1OnAir = false;
             USK1OnAir = false;
             USK1KeyType = 1;

@@ -47,5 +47,10 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         }
 
+        public Brush GetOutput()
+        {
+            return new VisualBrush(gdisplay);
+        }
+
     }
 }

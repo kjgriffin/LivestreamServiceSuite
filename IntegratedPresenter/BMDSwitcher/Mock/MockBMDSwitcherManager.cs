@@ -395,6 +395,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (hardUpdate)
             {
+                _state.AuxID = config.DefaultAuxSource;
                 _state.USK1KeyType = config.USKSettings.IsChroma == 1 ? 2 : 1;
                 if (config.USKSettings.IsChroma == 1)
                 {
@@ -620,6 +621,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()} {sourceID}");
             _state.AuxID = sourceID;
+            mockMultiviewer.SetAuxInput(sourceID);
             SwitcherStateChanged?.Invoke(_state);
         }
 

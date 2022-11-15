@@ -27,6 +27,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         void SetPIPPosition(BMDUSKDVESettings state);
         void SetPresetInput(int inputID);
         void SetProgramInput(int inputID);
+        virtual void SetAuxInput(int inputID) { return; }
         void SetTieDSK1(bool tie);
         void SetTieDSK2(bool tie);
         void SetUSK1FillSource(int sourceID);

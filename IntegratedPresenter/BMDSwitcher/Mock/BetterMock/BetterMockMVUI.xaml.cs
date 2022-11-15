@@ -123,6 +123,8 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             {
                 m_simplePIPS[map.Key - 1].tbPIPName.Text = _cfg.Routing.FirstOrDefault(x => x.PhysicalInputId == map.Value).LongName;
             }
+
+            pip_aux.SetPIPName("AUX");
         }
 
         public void RefreshUI(ICameraSourceProvider cameras, ISwitcherStateProvider switcher)
@@ -261,6 +263,21 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
             // handle dsk2 layer
 
+
+            // drive aux output (since we may need the visual brush for program)
+            UpdateAuxOutput(state.AuxID, cameras);
+        }
+
+        private void UpdateAuxOutput(long sourceid, ICameraSourceProvider cams)
+        {
+            if (sourceid == (long)BMDSwitcherVideoSources.ME1Prog)
+            {
+                pip_aux.UpdateFromBrush(pip_ME_program.GetOutput());
+            }
+            else
+            {
+                pip_aux.UpdateFromBrush(GetGeneratedSourceById((int)sourceid, cams));
+            }
         }
 
         private Brush GetGeneratedSourceById(int id, ICameraSourceProvider cams)

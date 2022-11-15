@@ -881,7 +881,12 @@ namespace SwitcherControl.Safe
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _config = config;
             ConfigureMixEffectBlock();
-            ConfigureAux();
+
+            if (hardUpdate)
+            {
+                ConfigureAux();
+            }
+
             ConfigureCameraSources();
             ConfigureDownstreamKeys();
             ConfigureMultiviewer();
