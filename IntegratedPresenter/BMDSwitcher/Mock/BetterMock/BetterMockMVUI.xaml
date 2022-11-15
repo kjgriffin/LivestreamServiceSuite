@@ -50,7 +50,7 @@
 
             <Grid Grid.Row="1">
                 <Viewbox>
-                    <Grid Width="1920" Height="1080">
+                    <Grid Width="2400" Height="1080">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="2*"></RowDefinition>
                             <RowDefinition></RowDefinition>
@@ -61,6 +61,7 @@
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="480"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <local:MockMV_ME_PIP x:Name="pip_ME_program" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0"></local:MockMV_ME_PIP>
@@ -75,6 +76,13 @@
                         <local:MockMV_Simple_PIP x:Name="pip_7" Grid.Column="2" Grid.Row="2"></local:MockMV_Simple_PIP>
                         <local:MockMV_Simple_PIP x:Name="pip_8" Grid.Column="3" Grid.Row="2"></local:MockMV_Simple_PIP>
 
+                        <Grid Grid.Row="0" Grid.Column="4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <local:MockMV_SimpleOutput_PIP x:Name="pip_aux"></local:MockMV_SimpleOutput_PIP>
+                        </Grid>
                     </Grid>
                 </Viewbox>
             </Grid>

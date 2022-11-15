@@ -790,7 +790,7 @@
                                 <Grid Grid.Row="3">
                                     <Grid>
                                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" FlowDirection="RightToLeft">
-                                            <Border Style="{StaticResource GroupBorder}" Width="160">
+                                            <Border Style="{StaticResource GroupBorder}" Width="190">
                                                 <StackPanel>
                                                     <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">AUX SOURCES</TextBlock>
                                                     <StackPanel Orientation="Horizontal">
@@ -868,86 +868,166 @@
                                                 </StackPanel>
                                             </Border>
                                         </StackPanel>
-                                        <Border Style="{StaticResource GroupBorder}" Width="150" HorizontalAlignment="Right">
+                                        <Border Style="{StaticResource GroupBorder}" Width="190" HorizontalAlignment="Right">
                                             <StackPanel HorizontalAlignment="Center">
                                                 <TextBlock Margin="0,5,0,0" TextAlignment="Center" Style="{StaticResource GrayText}">CONDITIONS</TextBlock>
-                                                <StackPanel Orientation="Vertical">
-                                                    <Grid>
-                                                        <Grid Panel.ZIndex="1" Margin="0,10,0,0">
-                                                            <Viewbox x:Name="ksc_cond1" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
-                                                                <Grid>
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">PgUp</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </Grid>
-                                                            </Viewbox>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <StackPanel Orientation="Vertical">
+                                                        <Grid>
+                                                            <Grid Panel.ZIndex="1" Margin="0,10,0,0">
+                                                                <Viewbox x:Name="ksc_cond1" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
+                                                                    <Grid>
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">PgUp</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </Grid>
+                                                                </Viewbox>
+                                                            </Grid>
+                                                            <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond1" Click="ClickToggleCond1" Foreground="White">
+                                                                <Button.Content>1</Button.Content>
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <DataTrigger Binding="{Binding Value}" Value="True">
+                                                                                <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding Value}" Value="False">
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
+                                                                            </DataTrigger>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
                                                         </Grid>
-                                                        <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond1" Click="ClickToggleCond1" Foreground="White">
-                                                            <Button.Content>1</Button.Content>
-                                                            <Button.Template>
-                                                                <ControlTemplate>
-                                                                    <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                        <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                    </Border>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="True">
-                                                                            <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
-                                                                            <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="False">
-                                                                            <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                            <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
-                                                                        </DataTrigger>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                            <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
-                                                                            <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Button.Template>
-                                                        </Button>
-                                                    </Grid>
-                                                    <Grid>
-                                                        <Grid Panel.ZIndex="1" Margin="0,10,0,0">
-                                                            <Viewbox x:Name="ksc_cond2" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
-                                                                <Grid>
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">PgDn</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </Grid>
-                                                            </Viewbox>
+                                                        <Grid>
+                                                            <Grid Panel.ZIndex="1" Margin="0,10,0,0">
+                                                                <Viewbox x:Name="ksc_cond2" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
+                                                                    <Grid>
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">PgDn</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </Grid>
+                                                                </Viewbox>
+                                                            </Grid>
+                                                            <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond2" Click="ClickToggleCond2" Foreground="White">
+                                                                <Button.Content>2</Button.Content>
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <DataTrigger Binding="{Binding Value}" Value="True">
+                                                                                <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding Value}" Value="False">
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
+                                                                            </DataTrigger>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
                                                         </Grid>
-                                                        <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond2" Click="ClickToggleCond2" Foreground="White">
-                                                            <Button.Content>2</Button.Content>
-                                                            <Button.Template>
-                                                                <ControlTemplate>
-                                                                    <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                        <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                    </Border>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="True">
-                                                                            <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
-                                                                            <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="False">
-                                                                            <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                            <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
-                                                                        </DataTrigger>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                            <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
-                                                                            <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Button.Template>
-                                                        </Button>
-                                                    </Grid>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Vertical">
+                                                        <Grid>
+                                                            <Grid Panel.ZIndex="1" Margin="0,10,0,0">
+                                                                <Viewbox x:Name="ksc_cond3" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
+                                                                    <Grid>
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">RCTRL+PgUp</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </Grid>
+                                                                </Viewbox>
+                                                            </Grid>
+                                                            <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond3" Click="ClickToggleCond3" Foreground="White">
+                                                                <Button.Content>3</Button.Content>
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <DataTrigger Binding="{Binding Value}" Value="True">
+                                                                                <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding Value}" Value="False">
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
+                                                                            </DataTrigger>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Grid Panel.ZIndex="1" Margin="0,10,0,0">
+                                                                <Viewbox x:Name="ksc_cond4" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
+                                                                    <Grid>
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">RCTRL+PgDn</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </Grid>
+                                                                </Viewbox>
+                                                            </Grid>
+                                                            <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond4" Click="ClickToggleCond4" Foreground="White">
+                                                                <Button.Content>4</Button.Content>
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <DataTrigger Binding="{Binding Value}" Value="True">
+                                                                                <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding Value}" Value="False">
+                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
+                                                                            </DataTrigger>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
+                                                                                <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
+                                                    </StackPanel>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
@@ -1425,7 +1505,7 @@
                     <Grid Grid.Row="6" Name="gr_advanced_pip">
                         <Viewbox>
                             <Grid>
-                                <Border Name="PIPControls" Style="{StaticResource GroupBorder}" >
+                                <Border Name="PIPControls" Style="{StaticResource GroupBorder}" Visibility="Visible" Panel.ZIndex="10">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition></RowDefinition>
@@ -1789,7 +1869,7 @@
                                         </Grid>
                                     </Grid>
                                 </Border>
-                                <Border Name="ChromaControls" Style="{StaticResource GroupBorder}" Visibility="Hidden">
+                                <Border Name="ChromaControls" Style="{StaticResource GroupBorder}" Visibility="Visible">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition></RowDefinition>
@@ -2137,6 +2217,22 @@
                                                 <TranslateTransform X="450" Y="-180"></TranslateTransform>
                                             </TextBlock.RenderTransform>
                                         </TextBlock>
+                                        <Viewbox Name="SpeculativeJumpPreviewDisplay" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="576" Height="424">
+                                            <Grid Height="1080" Width="1920">
+                                                <!--<Border Panel.ZIndex="10" VerticalAlignment="Top" HorizontalAlignment="Center">-->
+                                                    <!--<TextBlock Foreground="Orange" FontWeight="Bold" FontSize="200">JUMP TARGET</TextBlock>-->
+                                                <!--</Border>-->
+                                                <Grid Width="1920" Height="1080">
+                                                    <Border Name="SpeculativeJumpPreviewBorder" BorderBrush="Blue" BorderThickness="2,2,2,2">
+                                                        <Grid>
+                                                            <local:MediaPlayer2 x:Name="SpeculativeJumpPreview" ></local:MediaPlayer2>
+                                                            <TextBlock Name="tbPreviewSpeculativeJumpVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
+                                                        </Grid>
+                                                    </Border>
+                                                </Grid>
+                                            </Grid>
+                                        </Viewbox>
+
                                     </Grid>
                                 </Border>
                             </Grid>

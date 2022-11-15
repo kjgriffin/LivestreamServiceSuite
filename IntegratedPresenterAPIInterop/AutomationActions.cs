@@ -29,6 +29,9 @@
         USK1Off,
         USK1On,
 
+        BKGDTieOn,
+        BKGDTieOff,
+
         USK1TieOn,
         USK1TieOff,
 
@@ -64,6 +67,12 @@
         USK1Fill,
 
         PlacePIP,
+
+
+        JumpToSlide,
+        WatchSwitcherStateBoolVal,
+        WatchSwitcherStateIntVal,
+
     }
 
 }

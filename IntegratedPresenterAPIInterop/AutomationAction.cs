@@ -4,8 +4,99 @@ using IntegratedPresenter.BMDSwitcher.Config;
 using System;
 using System.Text.RegularExpressions;
 
+using VariableMarkupAttributes;
+
 namespace IntegratedPresenterAPIInterop
 {
+    public class SumOfProductExpression
+    {
+        public List<Dictionary<string, bool>> Products { get; set; } = new List<Dictionary<string, bool>>();
+
+        public bool HasConditions
+        {
+            get
+            {
+                return Products.Any(x => x.Any());
+            }
+        }
+
+        public static SumOfProductExpression Parse(string input)
+        {
+            List<Dictionary<string, bool>> expectedProducts = new List<Dictionary<string, bool>>();
+
+            var productterms = Regex.Split(input, @"\+");
+
+            foreach (var pterm in productterms)
+            {
+                Dictionary<string, bool> expectedTerms = new Dictionary<string, bool>();
+
+                var factors = Regex.Split(pterm, "[*,]");
+
+                foreach (var factor in factors)
+                {
+                    // compute expectation of the factor
+                    string fstr = factor.Trim();
+                    if (fstr.StartsWith("!"))
+                    {
+                        expectedTerms[fstr.Substring(1, fstr.Length - 1)] = false;
+                    }
+                    else
+                    {
+                        expectedTerms[fstr] = true;
+                    }
+                }
+
+                expectedProducts.Add(expectedTerms);
+            }
+
+            return new SumOfProductExpression
+            {
+                Products = expectedProducts,
+            };
+        }
+
+
+        public static bool EvaluateProductTerm(Dictionary<string, bool> product, Dictionary<string, bool> condValues)
+        {
+            foreach (var cterm in product)
+            {
+                if (condValues?.TryGetValue(cterm.Key, out var cval) == true)
+                {
+                    if (cval != cterm.Value)
+                    {
+                        // product term fails
+                        return false;
+                    }
+                }
+                else if (cterm.Value)
+                {
+                    // expected true- undefined conditions are always false
+                    // product term fails
+                    return false;
+                }
+
+            }
+            return true;
+        }
+
+        public static bool EvaluateExpression(SumOfProductExpression expr, Dictionary<string, bool> condValues)
+        {
+            if (!expr.HasConditions)
+            {
+                return true;
+            }
+            foreach (var productExpr in expr?.Products)
+            {
+                if (EvaluateProductTerm(productExpr, condValues))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    }
+
     public class AutomationAction
     {
         public AutomationActions Action { get; set; } = AutomationActions.None;
@@ -13,8 +104,9 @@ namespace IntegratedPresenterAPIInterop
         public int DataI { get; set; } = 0;
         public string DataS { get; set; } = "";
         public object DataO { get; set; } = new object();
+        public List<object> RawParams { get; set; } = new List<object>();
 
-        public Dictionary<string, bool> Conditions { get; set; } = new Dictionary<string, bool>();
+        public SumOfProductExpression ExpectedConditions { get; set; } = new SumOfProductExpression();
 
         public override string ToString()
         {
@@ -23,21 +115,7 @@ namespace IntegratedPresenterAPIInterop
 
         public bool MeetsConditionsToRun(Dictionary<string, bool> condValues)
         {
-            foreach (var condReq in Conditions)
-            {
-                if (condValues?.TryGetValue(condReq.Key, out var condVal) == true)
-                {
-                    if (condVal != condReq.Value)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            return true;
+            return SumOfProductExpression.EvaluateExpression(ExpectedConditions, condValues);
         }
 
         public static AutomationAction Parse(string cline)
@@ -47,25 +125,16 @@ namespace IntegratedPresenterAPIInterop
             a.DataI = 0;
             a.DataS = "";
             a.Message = "";
-            a.Conditions = new Dictionary<string, bool>();
+            a.ExpectedConditions = new SumOfProductExpression();
 
             string command = cline;
 
             if (cline.StartsWith("<"))
             {
                 var res = Regex.Match(cline, @"<(?<conditions>.*)>(?<command>.*)");
-                var conditions = res.Groups["conditions"]?.Value.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>(0);
-                foreach (var cond in conditions)
-                {
-                    if (cond.StartsWith("!"))
-                    {
-                        a.Conditions[cond.Substring(1, cond.Length - 1)] = false;
-                    }
-                    else
-                    {
-                        a.Conditions[cond] = true;
-                    }
-                }
+
+                a.ExpectedConditions = SumOfProductExpression.Parse(res.Groups["conditions"].Value);
+
                 command = res.Groups["command"].Value;
             }
 
@@ -144,10 +213,119 @@ namespace IntegratedPresenterAPIInterop
                 }
 
             }
+            if (command.StartsWith("cmd:")) // dynamically parse it
+            {
+                var cmatch = Regex.Match(command, @"cmd:(?<commandname>.*?)\((?<params>.*?)\)(\[(?<msg>.*)\])?;");
+
+                string cmdName = cmatch.Groups["commandname"].Value;
+                string pargs = cmatch.Groups["params"].Value;
+                string msg = cmatch.Groups["msg"].Value;
+
+                a.Message = msg;
+                // find command
+                if (MetadataProvider.ScriptActionsMetadata.Any(x => x.Value.ActionName == cmdName))
+                {
+                    var cmdMetadata = MetadataProvider.ScriptActionsMetadata.FirstOrDefault(x => x.Value.ActionName == cmdName);
+
+                    // with the metadata availabe now we can dynamicaly parse the args based on what's expected
+                    var parsedParams = ParseDynamicParams(pargs, cmdMetadata.Value);
+
+                    if (parsedParams.success)
+                    {
+                        // legacy support for arg0, arg1, argd8 commands
+                        if (cmdMetadata.Value.NumArgs == 1)
+                        {
+                            switch (cmdMetadata.Value.OrderedArgTypes?.FirstOrDefault())
+                            {
+                                case AutomationActionArgType.Integer:
+                                    a.DataI = (int)parsedParams.data.First();
+                                    break;
+                                case AutomationActionArgType.String:
+                                    a.DataS = (string)parsedParams.data.First();
+                                    break;
+                            }
+                        }
+                        else if (cmdMetadata.Value.NumArgs == 8 && cmdMetadata.Value.Action == AutomationActions.PlacePIP)
+                        {
+                            PIPPlaceSettings placement = new PIPPlaceSettings()
+                            {
+                                PosX = (double)parsedParams.data[0],
+                                PosY = (double)parsedParams.data[1],
+                                ScaleX = (double)parsedParams.data[2],
+                                ScaleY = (double)parsedParams.data[3],
+                                MaskLeft = (double)parsedParams.data[4],
+                                MaskRight = (double)parsedParams.data[5],
+                                MaskTop = (double)parsedParams.data[6],
+                                MaskBottom = (double)parsedParams.data[7],
+                            };
+                            a.DataO = placement;
+                        }
+
+                        // otherwise just stuff the args directly into the args
+                        // new commands will look there for thier values as required
+                        a.RawParams = parsedParams.data;
+                        a.Action = cmdMetadata.Value.Action;
+                    }
+                }
+            }
 
             return a;
         }
 
+        static (bool success, List<object> data) ParseDynamicParams(string pstr, AutomationActionMetadata cmdMetadata)
+        {
+            var res = new List<object>();
+
+            // expect all args to be un-enclosed (even strings!)
+            // all args are comma seperated
+
+            var pargs = pstr.Split(",");
+
+            if (pargs.Length != cmdMetadata.NumArgs)
+            {
+                return (false, res);
+            }
+
+            for (int i = 0; i < pargs.Length; i++)
+            {
+                // try parsing the value as requested
+                switch (cmdMetadata.OrderedArgTypes[i])
+                {
+                    case AutomationActionArgType.Integer:
+                        // make life easy here and use more memory for gauranteed type safety
+                        // 64 bits is certianly better than 32 bits
+                        if (long.TryParse(pargs[i].Trim(), out var ival))
+                        {
+                            res.Add(ival);
+                        }
+                        break;
+                    case AutomationActionArgType.String:
+                        res.Add(pargs[i].Trim());
+                        break;
+                    case AutomationActionArgType.Double:
+                        if (double.TryParse(pargs[i].Trim(), out var dval))
+                        {
+                            res.Add(dval);
+                        }
+                        break;
+                    case AutomationActionArgType.Boolean:
+                        if (bool.TryParse(pargs[i].Trim(), out var bval))
+                        {
+                            res.Add(bval);
+                        }
+                        break;
+                    default:
+                        return (false, res);
+                }
+            }
+
+            return (true, res);
+        }
+
     }
+
+
+
+
 
 }

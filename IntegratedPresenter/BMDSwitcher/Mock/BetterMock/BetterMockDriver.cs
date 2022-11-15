@@ -1,4 +1,6 @@
-﻿using BMDSwitcherAPI;
+﻿using ATEMSharedState.SwitcherState;
+
+using BMDSwitcherAPI;
 
 using CCU.Config;
 
@@ -12,7 +14,6 @@ using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
 using SwitcherControl.BMDSwitcher;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,8 +50,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         bool _stateFTBInFade = false;
 
-        public event SwitcherDisconnectedEvent OnMockWindowClosed;
-
+        public event EventHandler OnMockWindowClosed;
         public event EventHandler<BMDSwitcherState> OnSwitcherStateUpdated;
 
         public BetterMockDriver(Dictionary<int, string> sourcemap, BMDSwitcherConfigSettings config, BMDSwitcherState startupState)
@@ -70,7 +70,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
 
         private void MultiviewerWindow_Closed(object sender, EventArgs e)
         {
-            OnMockWindowClosed?.Invoke();
+            OnMockWindowClosed?.Invoke(this, e);
         }
 
         public void UpdateSlideInput(ISlide s)

@@ -1,13 +1,13 @@
 ﻿#define USE_BETTER_MOCK_MV // leaving this for now in-case I've screwed up something critical/ want to factor this into an option rather than strictly deprecate it
 // though I belive its curently feature pair with the old one (technically better since it's more acurate with ME's)
 
+using ATEMSharedState.SwitcherState;
+
 using BMDSwitcherAPI;
 
 using CCU.Config;
 
 using CCUI_UI;
-
-using Integrated_Presenter.BMDSwitcher.Mock;
 
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
@@ -19,8 +19,6 @@ using SwitcherControl.BMDSwitcher;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
@@ -35,7 +33,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         IMockMultiviewerDriver mockMultiviewer;
 
         public event SwitcherStateChange SwitcherStateChanged;
-        public event SwitcherDisconnectedEvent OnSwitcherDisconnected;
+        public event EventHandler<bool> OnSwitcherConnectionChanged;
 
         private ILog _logger;
 
@@ -104,10 +102,10 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             (mockMultiviewer as BetterMockDriver)?.HandleStateUpdate(args);
         }
 
-        private void MockMultiviewer_OnMockWindowClosed()
+        private void MockMultiviewer_OnMockWindowClosed(object sender, EventArgs e)
         {
             _logger.Info($"[Mock SW] USER requested close");
-            OnSwitcherDisconnected?.Invoke();
+            OnSwitcherConnectionChanged?.Invoke(this, false);
         }
 
         private void Parent_PresentationStateUpdated(ISlide currentslide)
@@ -214,20 +212,20 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             SwitcherStateChanged?.Invoke(_state);
         }
 
-        public bool TryConnect(string address)
+        public void TryConnect(string address)
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             // we can connect to anything (since its a mock)
             GoodConnection = true;
             ForceStateUpdate();
             SwitcherStateChanged?.Invoke(_state);
-            return true;
+            OnSwitcherConnectionChanged?.Invoke(this, true);
         }
 
         public void Disconnect()
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-            OnSwitcherDisconnected?.Invoke();
+            OnSwitcherConnectionChanged?.Invoke(this, false);
             mockMultiviewer.Close();
         }
 
@@ -397,6 +395,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (hardUpdate)
             {
+                _state.AuxID = config.DefaultAuxSource;
                 _state.USK1KeyType = config.USKSettings.IsChroma == 1 ? 2 : 1;
                 if (config.USKSettings.IsChroma == 1)
                 {
@@ -465,6 +464,31 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _state.TransNextBackground = !_state.TransNextBackground;
             SwitcherStateChanged?.Invoke(_state);
         }
+
+        void IBMDSwitcherManager.PerformSetBKDGOnForNextTrans()
+        {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+            // need at least 1 layer on
+            // so this will always work
+
+            _state.TransNextBackground = true;
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        void IBMDSwitcherManager.PerformSetBKDGOffForNextTrans()
+        {
+            _logger.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+            // need at least 1 layer on
+            // only works if we have key1 on
+            if (_state.TransNextKey1)
+            {
+                _state.TransNextBackground = false;
+                SwitcherStateChanged?.Invoke(_state);
+            }
+        }
+
 
         void IBMDSwitcherManager.PerformToggleKey1ForNextTrans()
         {
@@ -597,6 +621,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()} {sourceID}");
             _state.AuxID = sourceID;
+            mockMultiviewer.SetAuxInput(sourceID);
             SwitcherStateChanged?.Invoke(_state);
         }
 

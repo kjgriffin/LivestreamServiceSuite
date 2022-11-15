@@ -1,4 +1,6 @@
-﻿using CCU.Config;
+﻿using ATEMSharedState.SwitcherState;
+
+using CCU.Config;
 
 using CCUI_UI;
 
@@ -6,14 +8,13 @@ using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
 using SwitcherControl.BMDSwitcher;
-
 using System;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {
     public interface IMockMultiviewerDriver
     {
-        event SwitcherDisconnectedEvent OnMockWindowClosed;
+        event EventHandler OnMockWindowClosed;
 
         void Close();
         void FadeDSK1(bool onair);
@@ -26,6 +27,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         void SetPIPPosition(BMDUSKDVESettings state);
         void SetPresetInput(int inputID);
         void SetProgramInput(int inputID);
+        virtual void SetAuxInput(int inputID) { return; }
         void SetTieDSK1(bool tie);
         void SetTieDSK2(bool tie);
         void SetUSK1FillSource(int sourceID);

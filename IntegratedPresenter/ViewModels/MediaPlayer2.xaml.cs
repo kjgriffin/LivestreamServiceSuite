@@ -1,11 +1,10 @@
-﻿using Integrated_Presenter.ViewModels;
+﻿using ATEMSharedState.SwitcherState;
+
+using Integrated_Presenter.ViewModels;
 
 using IntegratedPresenter.BMDSwitcher.Config;
 
 using IntegratedPresenterAPIInterop;
-
-using SwitcherControl.BMDSwitcher;
-
 using System;
 using System.Collections.Generic;
 using System.IO;

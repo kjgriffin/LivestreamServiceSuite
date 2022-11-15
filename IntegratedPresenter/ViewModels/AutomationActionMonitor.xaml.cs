@@ -12,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.TextFormatting;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
@@ -70,42 +71,81 @@ namespace Integrated_Presenter.ViewModels
                     break;
             }
 
-            bool willRun = true;
+            bool willRun = _action?.Action?.ExpectedConditions?.HasConditions == true ? false : true;
             spReqCond.Children.Clear();
-            foreach (var condReq in _action?.Action?.Conditions.OrderBy(x => x.Key))
+
+            SolidColorBrush green = new SolidColorBrush(Color.FromRgb(3, 207, 8));
+            SolidColorBrush red = new SolidColorBrush(Color.FromRgb(192, 0, 0));
+
+            int i = 0;
+            foreach (var pexpr in _action?.Action?.ExpectedConditions?.Products)
             {
-                bool cval = false;
-                if (conditionals.TryGetValue(condReq.Key, out var condVal))
+                // this is the evaluation of the entire term
+                bool termValue = SumOfProductExpression.EvaluateProductTerm(pexpr, conditionals);
+                willRun |= termValue;
+
+                TextBlock tbProduct = new TextBlock();
+                tbProduct.Margin = new Thickness(1);
+                tbProduct.FontSize = 20;
+                tbProduct.FontWeight = FontWeights.Bold;
+
+
+                TextDecoration underline = new TextDecoration(TextDecorationLocation.Underline, termValue ? new Pen(green, 2) : new Pen(red, 2), 2, TextDecorationUnit.FontRecommended, TextDecorationUnit.FontRecommended);
+
+                tbProduct.TextDecorations.Add(underline);
+
+                // keep the evaluation of each factor within the term
+                int j = 1;
+                int cnt = pexpr.Count;
+                foreach (var cfactor in pexpr)
                 {
-                    willRun &= (condVal == condReq.Value);
-                    cval = (condVal == condReq.Value);
-                }
-                else
-                {
-                    willRun = false;
+                    var cfval = false;
+                    if (conditionals.TryGetValue(cfactor.Key, out var cval))
+                    {
+                        cfval = (cval == cfactor.Value);
+                    }
+
+                    // draw it with the current state
+                    Run tbCond = new Run($"{(cfactor.Value == false ? "!" : "")}{cfactor.Key}");
+                    if (cfval)
+                    {
+                        tbCond.Foreground = green;
+                    }
+                    else
+                    {
+                        tbCond.Foreground = red;
+                    }
+                    tbProduct.Inlines.Add(tbCond);
+
+                    if (j < cnt)
+                    {
+                        Run tbProdOp = new Run("*");
+                        tbProdOp.Foreground = new SolidColorBrush(Color.FromRgb(240, 240, 240));
+                        tbProduct.Inlines.Add(tbProdOp);
+                    }
+
+                    j++;
                 }
 
-                // draw it with the current state
-                TextBlock tbCond = new TextBlock();
-                tbCond.Text = $"{(condReq.Value == false ? "!" : "")}{condReq.Key}";
-                tbCond.Margin = new Thickness(5);
-                tbCond.FontSize = 20;
-                tbCond.FontWeight = FontWeights.Bold;
-                if (cval)
+                spReqCond.Children.Add(tbProduct);
+
+                if (i < _action?.Action?.ExpectedConditions?.Products?.Count - 1)
                 {
-                    tbCond.Foreground = new SolidColorBrush(Color.FromRgb(3, 207, 8));
+                    TextBlock tbSum = new TextBlock();
+                    tbSum.Text = "+";
+                    tbSum.Foreground = new SolidColorBrush(Color.FromRgb(240, 240, 240));
+                    tbSum.FontSize = 20;
+                    tbSum.FontWeight = FontWeights.Bold;
+                    spReqCond.Children.Add(tbSum);
                 }
-                else
-                {
-                    tbCond.Foreground = new SolidColorBrush(Color.FromRgb(192, 0, 0));
-                }
-                spReqCond.Children.Add(tbCond);
+                i++;
             }
+
             if (!willRun)
             {
                 imgCondeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/RedNoEntry.png"));
             }
-            else if (_action?.Action?.Conditions?.Any() == true)
+            else if (_action?.Action?.ExpectedConditions?.HasConditions == true)
             {
                 imgCondeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreenPlay.png"));
             }

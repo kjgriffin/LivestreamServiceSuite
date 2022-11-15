@@ -1,16 +1,19 @@
-﻿using IntegratedPresenter.BMDSwitcher.Config;
+﻿using ATEMSharedState.SwitcherState;
+
+using IntegratedPresenter.BMDSwitcher.Config;
+
+using System;
 
 namespace SwitcherControl.BMDSwitcher
 {
 
-    public delegate void SwitcherDisconnectedEvent();
 
     public interface IBMDSwitcherManager
     {
         bool GoodConnection { get; set; }
 
         event SwitcherStateChange SwitcherStateChanged;
-        event SwitcherDisconnectedEvent OnSwitcherDisconnected;
+        event EventHandler<bool> OnSwitcherConnectionChanged;
 
         BMDSwitcherState ForceStateUpdate();
         BMDSwitcherState GetCurrentState();
@@ -32,7 +35,7 @@ namespace SwitcherControl.BMDSwitcher
         void PerformToggleDSK1();
         void PerformToggleDSK2();
         void PerformToggleFTB();
-        bool TryConnect(string address);
+        void TryConnect(string address);
         void Disconnect();
         void PerformToggleUSK1();
         void PerformOnAirUSK1();
@@ -42,6 +45,8 @@ namespace SwitcherControl.BMDSwitcher
         void PerformUSK1RunToKeyFrameFull();
         void PerformUSK1FillSourceSelect(int sourceID);
         void PerformToggleBackgroundForNextTrans();
+        void PerformSetBKDGOnForNextTrans();
+        void PerformSetBKDGOffForNextTrans();
         void PerformToggleKey1ForNextTrans();
         void PerformSetKey1OnForNextTrans();
         void PerformSetKey1OffForNextTrans();

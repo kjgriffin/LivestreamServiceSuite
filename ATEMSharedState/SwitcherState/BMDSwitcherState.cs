@@ -1,13 +1,25 @@
-﻿using BMDSwitcherAPI;
-
+﻿using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
 
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SwitcherControl.BMDSwitcher
+using VariableMarkupAttributes.Attributes;
+
+namespace ATEMSharedState.SwitcherState
 {
+    public static class DummyLoader
+    {
+        public static void Load()
+        {
+
+        }
+    }
+
+
+
+    [ExposesWatchableVariables]
     public class BMDSwitcherState
     {
 
@@ -20,14 +32,23 @@ namespace SwitcherControl.BMDSwitcher
         public int TransitionFramesRemaining { get; set; }
         public double TransitionPosition { get; set; }
 
+        [ExposedAsVariable(nameof(PresetID))]
         public long PresetID { get; set; }
+
+        [ExposedAsVariable(nameof(ProgramID))]
         public long ProgramID { get; set; }
+
+        [ExposedAsVariable(nameof(AuxID))]
         public long AuxID { get; set; }
 
+        [ExposedAsVariable(nameof(USK1OnAir))]
         public bool USK1OnAir { get; set; }
+        [ExposedAsVariable(nameof(USK1FillSource))]
         public long USK1FillSource { get; set; }
 
+        [ExposedAsVariable(nameof(TransNextBackground))]
         public bool TransNextBackground { get; set; }
+        [ExposedAsVariable(nameof(TransNextKey1))]
         public bool TransNextKey1 { get; set; }
 
         /// <summary>
@@ -40,14 +61,22 @@ namespace SwitcherControl.BMDSwitcher
         /// </summary>
         public int USK1KeyType { get; set; }
 
+        [ExposedAsVariable(nameof(DSK1OnAir))]
         public bool DSK1OnAir { get; set; }
+        [ExposedAsVariable(nameof(DSK1Tie))]
         public bool DSK1Tie { get; set; }
+        [ExposedAsVariable(nameof(DSK2OnAir))]
         public bool DSK2OnAir { get; set; }
+        [ExposedAsVariable(nameof(DSK2Tie))]
         public bool DSK2Tie { get; set; }
 
+        [ExposedAsVariable(nameof(FTB))]
         public bool FTB { get; set; }
 
         public BMDUSKChromaSettings ChromaSettings { get; set; } = new BMDUSKChromaSettings();
+
+
+        [ExposedAsVariable(nameof(DVESettings))]
         public BMDUSKDVESettings DVESettings { get; set; } = new BMDUSKDVESettings();
 
 
@@ -57,9 +86,9 @@ namespace SwitcherControl.BMDSwitcher
             InTransition = false;
             TransitionPosition = 0;
             TransitionFramesRemaining = 0;
-            PresetID = -1;
-            ProgramID = -1;
-            AuxID = -1;
+            PresetID = (long)BMDSwitcherVideoSources.Input2;
+            ProgramID = (long)BMDSwitcherVideoSources.Input1;
+            AuxID = (long)BMDSwitcherVideoSources.ME1Prog;
             DSK1OnAir = false;
             USK1OnAir = false;
             USK1KeyType = 1;

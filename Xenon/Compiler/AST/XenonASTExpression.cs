@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 using Xenon.Compiler.SubParsers;
@@ -29,6 +30,8 @@ namespace Xenon.Compiler.AST
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             var slides = Command?.Generate(project, this, Logger) ?? new List<Slide>();
+
+            var flightworthyslides = slides.Where(x => x.Number >= 0).OrderBy(x => x.Number).ToList();
 
             // add pilot here
             Dictionary<string, int> mappedKeys = new Dictionary<string, int>();

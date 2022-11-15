@@ -31,6 +31,7 @@ namespace Integrated_Presenter.ViewModels
         {
             InitializeComponent();
             this.DataContext = this;
+            //UpdateLayout();
         }
 
         public event ClickEventArgs OnClick;
@@ -57,6 +58,10 @@ namespace Integrated_Presenter.ViewModels
                 {
                     b.PIPPlace = value;
                 }
+                else
+                {
+                    UpdateLayout();
+                }
                 OnPropertyChanged();
             }
         }
@@ -72,6 +77,10 @@ namespace Integrated_Presenter.ViewModels
                 if (b != null)
                 {
                     b.PlaceName = value;
+                }
+                else
+                {
+                    UpdateLayout();
                 }
                 OnPropertyChanged();
             }

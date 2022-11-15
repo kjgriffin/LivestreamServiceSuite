@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ATEMSharedState\ATEMSharedState.csproj" />
     <ProjectReference Include="..\Configurations\Configurations.csproj" />
   </ItemGroup>
 
