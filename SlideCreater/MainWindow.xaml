@@ -187,6 +187,16 @@
                     </Grid>
                 </Button>
 
+                <Button Style="{StaticResource DarkBtn}" Click="ClickOpenLastAutosave" Width="115" Padding="10,0,10,0" Margin="10,5,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/ViewControls/Images/OpenFolderWhite.png" Width="40" Height="30" Margin="0,-1,0,0"></Image>
+                            <TextBlock VerticalAlignment="Center" Foreground="White">Reopen Last</TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+
+
                 <!--<Button Style="{StaticResource DarkBtn}" Click="FormatCode" Width="100" Padding="10,0,10,0" Margin="180,5,0,0">
                     <Grid>
                         <StackPanel Orientation="Horizontal">

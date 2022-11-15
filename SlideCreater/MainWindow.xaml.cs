@@ -1073,6 +1073,31 @@ namespace SlideCreater
             }
         }
 
+        private async Task RecoverLastAutosave()
+        {
+            // open tmp files folder and let 'em select an autosave
+            string tmppath = System.IO.Path.GetTempPath();
+            // check if we have a slidecreaterautosaves folder
+            var autosavepath = System.IO.Path.Join(tmppath, "slidecreaterautosaves");
+            if (Directory.Exists(autosavepath))
+            {
+                var files = Directory.GetFiles(autosavepath).Where(x => x.EndsWith("autosave.trusty.zip"));
+                var latest = files.OrderByDescending(x =>
+                {
+                    var fname = System.IO.Path.GetFileName(x);
+                    var sdate = fname.Substring(0, "YYYY-MM-DD".Length);
+                    var stime = fname.Substring("YYYY-MM-DD_".Length, "HH-MM-SS".Length).Replace("-", ":");
+                    DateTime.TryParse(sdate, out var date);
+                    TimeSpan.TryParse(stime, out var time);
+                    return date.Add(time);
+                }).FirstOrDefault();
+                if (File.Exists(latest))
+                {
+                    await TrustyOpen(latest);
+                }
+            }
+        }
+
         private async Task OverwriteWithAutoSave(AutoSave save)
         {
             await NewProject();
@@ -1979,5 +2004,9 @@ namespace SlideCreater
             return (JsonSerializer.Serialize(fakeCFG, new JsonSerializerOptions { WriteIndented = true }), trueCFG);
         }
 
+        private void ClickOpenLastAutosave(object sender, RoutedEventArgs e)
+        {
+            RecoverLastAutosave();
+        }
     }
 }
