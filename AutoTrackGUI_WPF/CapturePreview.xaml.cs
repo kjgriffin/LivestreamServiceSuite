@@ -20,6 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace AutoTrackGUI_WPF
 {
@@ -28,10 +29,55 @@ namespace AutoTrackGUI_WPF
     /// </summary>
     public partial class CapturePreview : UserControl
     {
+        DispatcherTimer _dtimer;
+        VideoCapture capture;
+        CascadeClassifier classifier;
+        Mat cframeA = new Mat();
+        Mat cframeB = new Mat();
+        Mat cframe = new Mat();
         public CapturePreview()
         {
             InitializeComponent();
-            Task.Run(Work);
+            //Task.Run(Work);
+            _dtimer = new DispatcherTimer();
+            _dtimer.Tick += _dtimer_Tick;
+            _dtimer.Interval = new TimeSpan(0, 0, 1 / 30);
+            Task.Run(() =>
+            {
+                capture = new VideoCapture(0, VideoCaptureAPIs.ANY);
+                capture.FrameWidth = 1920;
+                capture.FrameHeight = 1080;
+                classifier = new CascadeClassifier("haarcascade_frontalface_default.xml");
+
+                Dispatcher.Invoke(() => _dtimer.Start());
+            });
+        }
+
+        private async void _dtimer_Tick(object? sender, EventArgs e)
+        {
+
+            BitmapImage img = null;
+            capture.Read(cframe);
+
+            OpenCvSharp.Rect[] objs = new OpenCvSharp.Rect[0];
+
+            if (!cframe.Empty())
+            {
+                cframe.CopyTo(cframeB);
+                //Cv2.CvtColor(cframe, cframeA, ColorConversionCodes.RGB2GRAY);
+
+                objs = classifier.DetectMultiScale(cframe);
+
+                foreach (var obj in objs)
+                {
+                    cframe.Rectangle(obj, Scalar.Red, 2, LineTypes.Link4, 0);
+                }
+
+                var stream = cframe.ToMemoryStream();
+                img = ToBitmapFromPngMemoryStream(stream);
+
+            }
+            imgFrame.Source = img;
         }
 
         private async Task Work()
@@ -42,7 +88,7 @@ namespace AutoTrackGUI_WPF
             capture.FrameWidth = 1920;
             capture.FrameHeight = 1080;
 
-            //capture.Fps = 30;
+            capture.Fps = 30;
             //capture.AutoExposure = 0;
             //capture.Format = OpenCvSharp.FourCC.MPG4;
             //capture.FrameWidth = 1920;
@@ -81,26 +127,33 @@ namespace AutoTrackGUI_WPF
                 OpenCvSharp.Rect[] objs = new OpenCvSharp.Rect[0];
 
 
+                bool goodFrame = false;
                 if (!cframe.Empty())
                 {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     Task.Run(() =>
                     {
+                        // frame to greyscale
+                        //cframe.CopyTo(cframeA);
 
-                        if (ticks % 4 == 0)
-                        {
-                            objs = classifier.DetectMultiScale(cframe);
-                        }
+                        Mat cframeB = new Mat();
+                        cframe.CopyTo(cframeB);
+                        Cv2.CvtColor(cframe, cframeA, ColorConversionCodes.RGB2GRAY);
+
+                        objs = classifier.DetectMultiScale(cframeA);
+
                         foreach (var obj in objs)
                         {
-                            cframe.Rectangle(obj, Scalar.Red, 2, LineTypes.Link4, 0);
+                            cframeA.Rectangle(obj, Scalar.Red, 2, LineTypes.Link4, 0);
                         }
-                    //});
-                    //Task.Run(() =>
-                    //{
+                        //});
+                        //Task.Run(() =>
+                        //{
                         BitmapImage img = null;
-                        var stream = cframe.ToMemoryStream();
+
+                        var stream = cframeA.ToMemoryStream();
                         img = ToBitmapFromPngMemoryStream(stream);
+
 
                         //await Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                         //Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
@@ -110,14 +163,19 @@ namespace AutoTrackGUI_WPF
                         });
                     });
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+                    ticks++;
+                    goodFrame = true;
                 }
 
                 swTimer.Stop();
-                int delay = (int)Math.Max((1000 / 30) - swTimer.ElapsedMilliseconds, 1);
 
-                //await Task.Delay(delay);
+                if (!goodFrame)
+                {
+                    int delay = (int)Math.Max((1000 / 15) - swTimer.ElapsedMilliseconds, 1);
+                    await Task.Delay(delay);
+                }
 
-                ticks++;
                 var now = DateTime.Now.Second;
                 if (second != now)
                 {
