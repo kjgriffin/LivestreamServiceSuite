@@ -7,6 +7,18 @@
         mc:Ignorable="d"
         Title="Auto Track" Height="1080" Width="1920">
     <Grid>
-        <local:CapturePreview x:Name="capture"></local:CapturePreview>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid>
+            <StackPanel Orientation="Horizontal">
+                <Label VerticalAlignment="Center">Capture Device</Label>
+                <ComboBox Margin="10" Grid.Row="0" Name="cbVideoSources" Width="200"></ComboBox>
+                <Button Margin="10" Width="100" Click="ClickStart">Start Capture/Decode</Button>
+                <Button Margin="10" Width="100" Click="ClickStop">Stop Capture/Decode</Button>
+            </StackPanel>
+        </Grid>
+        <local:CapturePreview Grid.Row="1" x:Name="capture"></local:CapturePreview>
     </Grid>
 </Window>

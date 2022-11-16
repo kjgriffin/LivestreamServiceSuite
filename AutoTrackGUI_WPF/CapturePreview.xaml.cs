@@ -39,9 +39,26 @@ namespace AutoTrackGUI_WPF
         const int DecodeThreads = 3;
         Thread[] decodeThreads = new Thread[DecodeThreads];
 
+        public event EventHandler<List<OpenCvSharp.Rect>> OnBoundingBoxesFound;
+
+        int _devIndex;
+
+        bool running = false;
+        volatile bool KeepRunning = false;
+
         public CapturePreview()
         {
             InitializeComponent();
+        }
+
+        public void Start(int device)
+        {
+            if (running) return;
+
+            KeepRunning = true;
+            running = true;
+            _devIndex = device;
+
             dtimer.Interval = TimeSpan.FromMilliseconds(15.69);
             dtimer.Tick += Dtimer_Tick;
             dtimer.Start();
@@ -53,6 +70,23 @@ namespace AutoTrackGUI_WPF
                 decodeThreads[i] = new Thread(DecodeWork);
                 decodeThreads[i].Start();
             }
+        }
+
+        public void Stop()
+        {
+            //if (!running) return;
+            KeepRunning= false;
+
+            dtimer.Tick -= Dtimer_Tick;
+            dtimer.Stop();
+
+            // make sure all decode threads can stop
+            _workSem.Release(DecodeThreads);
+            Interlocked.Exchange(ref _inFlight, 0);
+            _doneFrames.Clear();
+            _toProcess.Clear();
+
+            running = false;
         }
 
         int second = 0;
@@ -104,7 +138,7 @@ namespace AutoTrackGUI_WPF
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            while (true)
+            while (KeepRunning)
             {
                 //var lastRun = swTimer.ElapsedMilliseconds;
                 //rollingAverage = (rollingAverage + lastRun) / 2;
@@ -139,7 +173,8 @@ namespace AutoTrackGUI_WPF
 
             }
 
-
+            capture.Release();
+            return Task.CompletedTask;
         }
 
         private void DecodeWork()
@@ -152,12 +187,12 @@ namespace AutoTrackGUI_WPF
             OpenCvSharp.Rect[] objs = new OpenCvSharp.Rect[0];
 
 
-            while (true)
+            while (KeepRunning)
             {
 
                 // wait for availbe frame to process
                 _workSem.WaitOne();
-                
+
                 Interlocked.Decrement(ref _inFlight);
 
                 Mat cframe;
@@ -170,6 +205,15 @@ namespace AutoTrackGUI_WPF
                     cframe.CopyTo(ccframe);
 
                     objs = classifier.DetectMultiScale(ccframe);
+
+                    // fire and forget to any consumer that cares
+                    Task.Run(() =>
+                    {
+                        // event gets handled on some generic workerthread the task was scheduled on
+                        // freeing our decode thread to keep chugging on new work
+                        OnBoundingBoxesFound?.Invoke(this, objs.ToList());
+                    });
+
                     foreach (var obj in objs)
                     {
                         ccframe.Rectangle(obj, Scalar.Red, 2, LineTypes.Link4, 0);

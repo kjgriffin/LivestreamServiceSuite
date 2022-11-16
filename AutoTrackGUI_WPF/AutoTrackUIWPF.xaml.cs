@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DirectShowLib;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +22,39 @@ namespace AutoTrackGUI_WPF
     /// </summary>
     public partial class AutoTrackUIWPF : Window
     {
+        Dictionary<string, int> devices = new Dictionary<string, int>();
+
+
         public AutoTrackUIWPF()
         {
             InitializeComponent();
+
+            int i = 0;
+            foreach (var cam in DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice))
+            {
+                devices[cam.Name] = i;
+                i++;
+            }
+
+            foreach (var item in devices)
+            {
+                cbVideoSources.Items.Add(item.Key);
+            }
+
+        }
+
+        private void ClickStart(object sender, RoutedEventArgs e)
+        {
+            if (cbVideoSources.SelectedIndex != -1)
+            {
+                // perhaps this is ok?
+                capture.Start(cbVideoSources.SelectedIndex);
+            }
+        }
+
+        private void ClickStop(object sender, RoutedEventArgs e)
+        {
+            capture?.Stop();
         }
     }
 }
