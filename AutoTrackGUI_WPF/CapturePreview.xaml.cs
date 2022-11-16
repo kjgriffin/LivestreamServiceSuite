@@ -1,8 +1,11 @@
-﻿using OpenCvSharp;
+﻿using Accessibility;
+
+using OpenCvSharp;
 using OpenCvSharp.ImgHash;
 using OpenCvSharp.WpfExtensions;
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,6 +13,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +24,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace AutoTrackGUI_WPF
 {
@@ -28,13 +33,55 @@ namespace AutoTrackGUI_WPF
     /// </summary>
     public partial class CapturePreview : UserControl
     {
+        DispatcherTimer dtimer = new DispatcherTimer();
+
+
+        const int DecodeThreads = 3;
+        Thread[] decodeThreads = new Thread[DecodeThreads];
+
         public CapturePreview()
         {
             InitializeComponent();
+            dtimer.Interval = TimeSpan.FromMilliseconds(15.69);
+            dtimer.Tick += Dtimer_Tick;
+            dtimer.Start();
+
             Task.Run(Work);
+
+            for (int i = 0; i < DecodeThreads; i++)
+            {
+                decodeThreads[i] = new Thread(DecodeWork);
+                decodeThreads[i].Start();
+            }
         }
 
-        private async Task Work()
+        int second = 0;
+        int frames = 0;
+        int fps = 0;
+        private void Dtimer_Tick(object? sender, EventArgs e)
+        {
+            while (_doneFrames.TryDequeue(out var img))
+            {
+                frames++;
+                imgFrame.Source = img;
+            }
+            var now = DateTime.Now.Second;
+            if (now != second)
+            {
+                fps = frames;
+                frames = 0;
+            }
+            second = now;
+            lbFPS.Text = $"FPS: {fps}";
+        }
+
+        ConcurrentQueue<Mat> _toProcess = new ConcurrentQueue<Mat>();
+        Semaphore _workSem = new Semaphore(0, int.MaxValue);
+        ConcurrentQueue<BitmapImage> _doneFrames = new ConcurrentQueue<BitmapImage>();
+        ManualResetEvent _doneMRE = new ManualResetEvent(false);
+        long _inFlight = 0;
+
+        private Task Work()
         {
 
             VideoCapture capture = new VideoCapture(0, VideoCaptureAPIs.ANY);
@@ -54,84 +101,94 @@ namespace AutoTrackGUI_WPF
             //imgFrame.Height = 720;
             //});
 
-            CascadeClassifier classifier = new CascadeClassifier("haarcascade_frontalface_default.xml");
-            Mat cframeA = new Mat();
-            Mat cframe = new Mat();
 
-
-            int ticks = 0;
-            int fps = 0;
-            int second = DateTime.Now.Second;
-
-            double rollingAverage = 0;
-
-            Stopwatch swTimer = new Stopwatch();
-            WriteableBitmap bmp = null;
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             while (true)
             {
-                var lastRun = swTimer.ElapsedMilliseconds;
-                rollingAverage = (rollingAverage + lastRun) / 2;
-                swTimer.Restart();
+                //var lastRun = swTimer.ElapsedMilliseconds;
+                //rollingAverage = (rollingAverage + lastRun) / 2;
 
-                capture.Read(cframe);
+                if (Interlocked.Read(ref _inFlight) < DecodeThreads) // don't make more work than we can handle
+                {
+
+                    stopwatch.Restart();
+
+                    Mat cframe = new Mat();
+                    if (capture.Read(cframe))
+                    {
+                        // mark frame ready
+                        Mat m = new Mat();
+                        cframe.CopyTo(m);
+                        _toProcess.Enqueue(m);
+                        _workSem.Release(1);
+                        Interlocked.Increment(ref _inFlight);
+                    }
+                }
+
+                var ellapsed = stopwatch.ElapsedMilliseconds;
+                stopwatch.Stop();
+
+                var sleep = (int)Math.Max(33 - ellapsed, 0); // time for 1 frame 
+                if (sleep > 0)
+                {
+                    Thread.Sleep(sleep);
+                }
 
                 //swTimer.Stop();
 
-                OpenCvSharp.Rect[] objs = new OpenCvSharp.Rect[0];
+            }
 
+
+        }
+
+        private void DecodeWork()
+        {
+            CascadeClassifier classifier = new CascadeClassifier("haarcascade_frontalface_default.xml");
+
+
+            Stopwatch swTimer = new Stopwatch();
+            WriteableBitmap bmp = null;
+            OpenCvSharp.Rect[] objs = new OpenCvSharp.Rect[0];
+
+
+            while (true)
+            {
+
+                // wait for availbe frame to process
+                _workSem.WaitOne();
+                
+                Interlocked.Decrement(ref _inFlight);
+
+                Mat cframe;
+                // get 'er out
+                while (!_toProcess.TryDequeue(out cframe)) ;
 
                 if (!cframe.Empty())
                 {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    Task.Run(() =>
-                    {
+                    Mat ccframe = new Mat();
+                    cframe.CopyTo(ccframe);
 
-                        if (ticks % 4 == 0)
-                        {
-                            objs = classifier.DetectMultiScale(cframe);
-                        }
-                        foreach (var obj in objs)
-                        {
-                            cframe.Rectangle(obj, Scalar.Red, 2, LineTypes.Link4, 0);
-                        }
-                    //});
-                    //Task.Run(() =>
+                    objs = classifier.DetectMultiScale(ccframe);
+                    foreach (var obj in objs)
+                    {
+                        ccframe.Rectangle(obj, Scalar.Red, 2, LineTypes.Link4, 0);
+                    }
+
+                    var stream = ccframe.ToMemoryStream();
+                    var img = ToBitmapFromPngMemoryStream(stream);
+
+                    // send it to done queue
+                    _doneFrames.Enqueue(img);
+
+                    //Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                     //{
-                        BitmapImage img = null;
-                        var stream = cframe.ToMemoryStream();
-                        img = ToBitmapFromPngMemoryStream(stream);
-
-                        //await Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                        //Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                        Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Render, () =>
-                        {
-                            imgFrame.Source = img;
-                        });
-                    });
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    //    imgFrame.Source = img;
+                    //});
                 }
 
-                swTimer.Stop();
-                int delay = (int)Math.Max((1000 / 30) - swTimer.ElapsedMilliseconds, 1);
-
-                //await Task.Delay(delay);
-
-                ticks++;
-                var now = DateTime.Now.Second;
-                if (second != now)
-                {
-                    fps = ticks;
-                    ticks = 0;
-                    Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                    {
-                        lbFPS.Text = $"FPS: {fps}";
-                        lbRTMS.Text = $"RTMS: {rollingAverage:0.00}";
-                    });
-                }
-                second = now;
+                //_workSem.Release();
             }
-
 
         }
 
