@@ -19,6 +19,21 @@
                 <Button Margin="10" Width="100" Click="ClickStop">Stop Capture/Decode</Button>
             </StackPanel>
         </Grid>
-        <local:CapturePreview Grid.Row="1" x:Name="capture"></local:CapturePreview>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Viewbox>
+                <Grid Width="1920" Height="1080">
+                    <local:CapturePreview Grid.Row="1" x:Name="capture"></local:CapturePreview>
+                    <Canvas Name="trackOverlay">
+                    </Canvas>
+                </Grid>
+            </Viewbox>
+        </Grid>
     </Grid>
 </Window>

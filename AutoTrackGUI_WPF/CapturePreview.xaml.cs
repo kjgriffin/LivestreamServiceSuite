@@ -36,10 +36,10 @@ namespace AutoTrackGUI_WPF
         DispatcherTimer dtimer = new DispatcherTimer();
 
 
-        const int DecodeThreads = 3;
+        const int DecodeThreads = 8;
         Thread[] decodeThreads = new Thread[DecodeThreads];
 
-        public event EventHandler<List<OpenCvSharp.Rect>> OnBoundingBoxesFound;
+        public event EventHandler<(List<OpenCvSharp.Rect> objs, long seqNum)> OnBoundingBoxesFound;
 
         int _devIndex;
 
@@ -75,7 +75,7 @@ namespace AutoTrackGUI_WPF
         public void Stop()
         {
             //if (!running) return;
-            KeepRunning= false;
+            KeepRunning = false;
 
             dtimer.Tick -= Dtimer_Tick;
             dtimer.Stop();
@@ -92,12 +92,17 @@ namespace AutoTrackGUI_WPF
         int second = 0;
         int frames = 0;
         int fps = 0;
+        long fnum = -1;
         private void Dtimer_Tick(object? sender, EventArgs e)
         {
             while (_doneFrames.TryDequeue(out var img))
             {
                 frames++;
-                imgFrame.Source = img;
+                if (img.seqNum > fnum)
+                {
+                    imgFrame.Source = img.img;
+                    fnum = img.seqNum;
+                }
             }
             var now = DateTime.Now.Second;
             if (now != second)
@@ -107,11 +112,12 @@ namespace AutoTrackGUI_WPF
             }
             second = now;
             lbFPS.Text = $"FPS: {fps}";
+            lbRTMS.Text = $"FRAMES: {fnum}";
         }
 
-        ConcurrentQueue<Mat> _toProcess = new ConcurrentQueue<Mat>();
+        ConcurrentQueue<(Mat mat, long seqNum)> _toProcess = new ConcurrentQueue<(Mat mat, long seqNum)>();
         Semaphore _workSem = new Semaphore(0, int.MaxValue);
-        ConcurrentQueue<BitmapImage> _doneFrames = new ConcurrentQueue<BitmapImage>();
+        ConcurrentQueue<(BitmapImage img, long seqNum)> _doneFrames = new ConcurrentQueue<(BitmapImage img, long seqNum)>();
         ManualResetEvent _doneMRE = new ManualResetEvent(false);
         long _inFlight = 0;
 
@@ -137,6 +143,7 @@ namespace AutoTrackGUI_WPF
 
 
             Stopwatch stopwatch = Stopwatch.StartNew();
+            long fi = 0;
 
             while (KeepRunning)
             {
@@ -154,7 +161,7 @@ namespace AutoTrackGUI_WPF
                         // mark frame ready
                         Mat m = new Mat();
                         cframe.CopyTo(m);
-                        _toProcess.Enqueue(m);
+                        _toProcess.Enqueue((m, fi++));
                         _workSem.Release(1);
                         Interlocked.Increment(ref _inFlight);
                     }
@@ -195,14 +202,14 @@ namespace AutoTrackGUI_WPF
 
                 Interlocked.Decrement(ref _inFlight);
 
-                Mat cframe;
+                (Mat mat, long seqNum) cframe;
                 // get 'er out
                 while (!_toProcess.TryDequeue(out cframe)) ;
 
-                if (!cframe.Empty())
+                if (!cframe.mat.Empty())
                 {
                     Mat ccframe = new Mat();
-                    cframe.CopyTo(ccframe);
+                    cframe.mat.CopyTo(ccframe);
 
                     objs = classifier.DetectMultiScale(ccframe);
 
@@ -211,7 +218,7 @@ namespace AutoTrackGUI_WPF
                     {
                         // event gets handled on some generic workerthread the task was scheduled on
                         // freeing our decode thread to keep chugging on new work
-                        OnBoundingBoxesFound?.Invoke(this, objs.ToList());
+                        OnBoundingBoxesFound?.Invoke(this, (objs.ToList(), cframe.seqNum));
                     });
 
                     foreach (var obj in objs)
@@ -223,7 +230,7 @@ namespace AutoTrackGUI_WPF
                     var img = ToBitmapFromPngMemoryStream(stream);
 
                     // send it to done queue
-                    _doneFrames.Enqueue(img);
+                    _doneFrames.Enqueue((img, cframe.seqNum));
 
                     //Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                     //{

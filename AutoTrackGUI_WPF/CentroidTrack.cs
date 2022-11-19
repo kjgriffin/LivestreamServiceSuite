@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Navigation;
 
 namespace AutoTrackGUI_WPF
 {
@@ -82,7 +83,9 @@ namespace AutoTrackGUI_WPF
         private int _TTL { get; set; } = 10;
         private int _DeadXTol { get; set; } = 100;
         private int _DeadYTol { get; set; } = 100;
-        private int _CCHPROMOTE { get; set; } = 10;
+        private int _CCHPROMOTE { get; set; } = 100;
+
+        private long _lastUpdateSeqNum = -1;
 
         private List<CentroidTrack> _tracks = new List<CentroidTrack>();
         private List<CentroidTrack> _unconfirmedTracks = new List<CentroidTrack>();
@@ -93,8 +96,14 @@ namespace AutoTrackGUI_WPF
             return new List<CentroidTrack>(_tracks);
         }
 
-        internal void Update(List<BoundingBox> blips)
+        internal bool Update(List<BoundingBox> blips, long updateSeqNum)
         {
+            // reject stale updates
+            if (updateSeqNum < _lastUpdateSeqNum)
+            {
+                return false;
+            }
+
             // reject any blip not in bounds
             var validBlips = blips.Where(b => Math.Abs(b.CenterX - CenterX) < HWidth && Math.Abs(b.CenterY - CenterY) < HHeight)
                                   .ToList();
@@ -116,6 +125,25 @@ namespace AutoTrackGUI_WPF
                     existingTrack.GoneStale();
                 }
             }
+
+            // update tracks assuming closest match
+            foreach (var unconfirmedTrack in _unconfirmedTracks)
+            {
+                // find a closest match from anything we have captured
+                var closest = validBlips.OrderBy(x => Math.Pow(CenterX - x.CenterX, 2) + Math.Pow(CenterY - x.CenterY, 2))
+                                       .FirstOrDefault();
+                if (closest != null)
+                {
+                    // update track
+                    unconfirmedTrack.Update(closest, _TTL);
+                    validBlips.Remove(closest);
+                }
+                else
+                {
+                    unconfirmedTrack.GoneStale();
+                }
+            }
+
 
             // if we have leftover blips, then we'll see if they match something that's long dead
             if (validBlips.Any())
@@ -148,6 +176,7 @@ namespace AutoTrackGUI_WPF
                     TrackID = _newID++,
                     TTL = _TTL,
                 };
+                _unconfirmedTracks.Add(uctrack);
             }
 
             var staleTracks = _tracks.Where(x => x.IsStale).ToList();
@@ -159,14 +188,15 @@ namespace AutoTrackGUI_WPF
 
             // promote new un-confirmed tracks that have sufficient history
             var promotedTracks = _unconfirmedTracks.Where(x => x.ConcurrentHistory > _CCHPROMOTE).ToList();
+            _unconfirmedTracks.RemoveAll(x => x.TTL < 0);
             foreach (var ptrack in promotedTracks)
             {
                 _tracks.Add(ptrack);
                 _unconfirmedTracks.Remove(ptrack);
             }
 
+            return true;
         }
-
 
     }
 
