@@ -1,8 +1,10 @@
 ﻿using AngleSharp.Dom;
+
 using LutheRun.Elements;
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
 using LutheRun.Pilot;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,6 +29,8 @@ namespace LutheRun.Elements.LSB
 
         private bool HasText { get; set; } = false;
         private int imageIndex = 0;
+
+        public bool IsCommunionHymn { get; set; } = false;
 
         public IEnumerable<HymnImageLine> Images => ImageUrls;
 
@@ -284,6 +288,9 @@ namespace LutheRun.Elements.LSB
             {
                 string pcmd = sr.ReadToEnd();
                 pcmd = Regex.Replace(pcmd, Regex.Escape("$>"), "".PadLeft(indentSpaces));
+
+                pcmd = Regex.Replace(pcmd, Regex.Escape("$PIPFILL"), IsCommunionHymn ? "5" : "1");
+                pcmd = Regex.Replace(pcmd, Regex.Escape("$PIPCAM"), IsCommunionHymn ? "ORGAN" : "BACK");
 
                 sb.AppendLine(pcmd.IndentBlock(indentDepth, indentSpaces));
             }

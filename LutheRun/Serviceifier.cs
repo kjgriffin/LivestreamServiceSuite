@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using LutheRun.Elements;
 using LutheRun.Elements.LSB;
 using LutheRun.Parsers;
@@ -133,6 +134,49 @@ namespace LutheRun
             }
 
             //return trimmed;
+            return service;
+        }
+
+
+        public static List<ParsedLSBElement> MarkCommunionHymns(this List<ParsedLSBElement> service, LSBImportOptions options)
+        {
+            // go through service
+            // if we see a caption about distribution we know communion hymns follow
+            bool communion = false;
+            bool foundCHymns = false;
+            foreach (var elem in service)
+            {
+                var cap = elem.LSBElement as LSBElementCaption;
+                if (cap != null && cap.Caption.ToLower().Contains("distribution"))
+                {
+                    communion = true;
+                }
+
+                if (communion)
+                {
+                    var hymn = elem.LSBElement as LSBElementHymn;
+
+                    if (hymn != null)
+                    {
+                        foundCHymns = true;
+                        hymn.IsCommunionHymn = true;
+                        elem.Generator += "; marked for distribution-> follows 'distribution' caption, before suspected end of communion";
+                    }
+
+                    if (foundCHymns) // allow elements other than hymns between indication of distribution and the first hymn
+                    {
+                        // once we find a hymn then we will enforce strict checks
+                        if (elem.LSBElement is not LSBElementHymn && (elem.LSBElement as ExternalPrefab)?.TypeIdentifier != "upnext")
+                        {
+                            // probably no-longer in distribution segment
+                            communion = false;
+                        }
+                    }
+                }
+
+            }
+
+
             return service;
         }
 
@@ -347,7 +391,7 @@ namespace LutheRun
 
 
 
-                if (element.ConsiderForServicification && LiturgyElements.Contains(element.LSBElement?.GetType()))
+                if (element.ConsiderForServicification && !element.FilterFromOutput && LiturgyElements.Contains(element.LSBElement?.GetType()))
                 {
                     inliturgy = true;
                     // also skip if its a full-package reading, since they're considered responsible for their own teardown
@@ -357,7 +401,7 @@ namespace LutheRun
                         inliturgy = false;
                     }
                 }
-                else if (element.ConsiderForServicification)
+                else if (element.ConsiderForServicification && !element.FilterFromOutput)
                 {
                     if (inliturgy)
                     {

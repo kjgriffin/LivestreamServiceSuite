@@ -63,6 +63,7 @@ namespace LutheRun.Parsers
             int i = 0;
             ServiceElements = Serviceifier.NormalizeHeaddingsToCaptions(ServiceElements, options)
                                           .AddAdditionalInferedElements(options)
+                                          .MarkCommunionHymns(options)
                                           .Filter(options)
                                           .Select(x =>
                                           {
