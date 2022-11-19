@@ -67,7 +67,7 @@ namespace LutheRun.Elements.LSB
                     sb.AppendLine("{".Indent(indentDepth, indentSpaces));
                     indentDepth++;
 
-                    sb.AppendLine("#var(\"complextext.Layout\",\"Xenon.Readings::SideBarSungResponse\")".Indent(indentDepth, indentSpaces));
+                    sb.AppendLine("#var(\"complextext.Layout\",\"Xenon.Readings::SideBarSungResponse2\")".Indent(indentDepth, indentSpaces));
 
                     sb.AppendLine("#complextext".Indent(indentDepth, indentSpaces));
                     sb.AppendLine("{".Indent(indentDepth, indentSpaces));
@@ -334,8 +334,8 @@ namespace LutheRun.Elements.LSB
             sb.AppendLine("{".Indent(indentDepth, indentSpaces));
             indentDepth++;
 
-            sb.AppendLine("#var(\"complextext.Layout\",\"Xenon.Readings::SideBarReading\")".Indent(indentDepth, indentSpaces));
-            sb.AppendLine("#var(\"tlit.Layout\",\"Xenon.Readings::SideBarResponse\")".Indent(indentDepth, indentSpaces));
+            sb.AppendLine("#var(\"complextext.Layout\",\"Xenon.Readings::SideBarReading2\")".Indent(indentDepth, indentSpaces));
+            sb.AppendLine("#var(\"tlit.Layout\",\"Xenon.Readings::SideBarResponse2\")".Indent(indentDepth, indentSpaces));
 
             // setup scripts -> handled by surrounding scripted block
 
