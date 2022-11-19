@@ -150,15 +150,17 @@ namespace LutheRun.Generators
                 sb.AppendLine($"#var(\"texthymn.Layout\", \"{options.ServiceThemeLib}::SideBar\")".Indent(indentDepth, indentSpace));
                 sb.AppendLine();
 
-
-                sb.AppendLine($"/// </MANUAL_UPDATE name='Theme Colors'>".Indent(indentDepth, indentSpace));
-                sb.AppendLine($"// See: https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Themes".Indent(indentDepth, indentSpace));
-
                 Dictionary<string, string> macros = options.Macros;
+                var smreq = XenonGenerator.ApplySeasonalMacroText(fullservice, macros);
+
+                sb.AppendLine($"// See: https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Themes".Indent(indentDepth, indentSpace));
+                if (!smreq.success)
+                {
+                    sb.AppendLine($"/// </MANUAL_UPDATE name='Theme Colors'>".Indent(indentDepth, indentSpace));
+                }
 
                 if (options.InferSeason)
                 {
-                    var smreq = XenonGenerator.ApplySeasonalMacroText(fullservice, macros);
                     macros = smreq.macros;
                     sb.AppendLine($"// Seasonal Extraction {(smreq.success ? "succeded" : "failed")} finding date [{(smreq.success ? smreq.extractedDate.ToShortDateString() : "")}] with theme for season: [{smreq.season}]".Indent(indentDepth, indentSpace));
                 }

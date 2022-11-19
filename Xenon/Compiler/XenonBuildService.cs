@@ -171,16 +171,16 @@ namespace Xenon.Compiler
                     });
                 }
 
-                var report = PilotReportGenerator.GeneratePilotPresetReport(proj);
-                Messages.Add(new XenonCompilerMessage()
-                {
-                    ErrorName = "Pilot Preset Use Report",
-                    ErrorMessage = report,
-                    Generator = "PilotReportGenerator",
-                    Inner = "",
-                    Level = XenonCompilerMessageType.Message,
-                    Token = "",
-                });
+                //var report = PilotReportGenerator.GeneratePilotPresetReport(proj);
+                //Messages.Add(new XenonCompilerMessage()
+                //{
+                //    ErrorName = "Pilot Preset Use Report",
+                //    ErrorMessage = report,
+                //    Generator = "PilotReportGenerator",
+                //    Inner = "",
+                //    Level = XenonCompilerMessageType.Message,
+                //    Token = "",
+                //});
 
 
                 if (failedslides > 0)
