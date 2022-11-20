@@ -159,7 +159,7 @@
             this.tb_tgtX.Name = "tb_tgtX";
             this.tb_tgtX.Size = new System.Drawing.Size(106, 23);
             this.tb_tgtX.TabIndex = 5;
-            this.tb_tgtX.Text = "700";
+            this.tb_tgtX.Text = "1370";
             // 
             // tb_tgtY
             // 
@@ -168,7 +168,7 @@
             this.tb_tgtY.Name = "tb_tgtY";
             this.tb_tgtY.Size = new System.Drawing.Size(106, 23);
             this.tb_tgtY.TabIndex = 6;
-            this.tb_tgtY.Text = "400";
+            this.tb_tgtY.Text = "650";
             // 
             // label1
             // 
@@ -217,7 +217,7 @@
             this.tb_mY.Name = "tb_mY";
             this.tb_mY.Size = new System.Drawing.Size(106, 23);
             this.tb_mY.TabIndex = 10;
-            this.tb_mY.Text = "50";
+            this.tb_mY.Text = "20";
             // 
             // tb_mX
             // 
@@ -226,7 +226,7 @@
             this.tb_mX.Name = "tb_mX";
             this.tb_mX.Size = new System.Drawing.Size(106, 23);
             this.tb_mX.TabIndex = 9;
-            this.tb_mX.Text = "50";
+            this.tb_mX.Text = "20";
             // 
             // button5
             // 
@@ -366,7 +366,7 @@
             this.tbValidY.Name = "tbValidY";
             this.tbValidY.Size = new System.Drawing.Size(106, 23);
             this.tbValidY.TabIndex = 25;
-            this.tbValidY.Text = "50";
+            this.tbValidY.Text = "675";
             // 
             // tbValidX
             // 
@@ -375,7 +375,7 @@
             this.tbValidX.Name = "tbValidX";
             this.tbValidX.Size = new System.Drawing.Size(106, 23);
             this.tbValidX.TabIndex = 24;
-            this.tbValidX.Text = "50";
+            this.tbValidX.Text = "1200";
             // 
             // label9
             // 
@@ -404,7 +404,7 @@
             this.tbRangeY.Name = "tbRangeY";
             this.tbRangeY.Size = new System.Drawing.Size(106, 23);
             this.tbRangeY.TabIndex = 29;
-            this.tbRangeY.Text = "50";
+            this.tbRangeY.Text = "135";
             // 
             // tbRangeX
             // 
@@ -413,7 +413,7 @@
             this.tbRangeX.Name = "tbRangeX";
             this.tbRangeX.Size = new System.Drawing.Size(106, 23);
             this.tbRangeX.TabIndex = 28;
-            this.tbRangeX.Text = "50";
+            this.tbRangeX.Text = "240";
             // 
             // button12
             // 
@@ -560,7 +560,7 @@
             this.tbvalidX_2.Name = "tbvalidX_2";
             this.tbvalidX_2.Size = new System.Drawing.Size(106, 23);
             this.tbvalidX_2.TabIndex = 24;
-            this.tbvalidX_2.Text = "50";
+            this.tbvalidX_2.Text = "720";
             // 
             // tbValidY_2
             // 
@@ -569,7 +569,7 @@
             this.tbValidY_2.Name = "tbValidY_2";
             this.tbValidY_2.Size = new System.Drawing.Size(106, 23);
             this.tbValidY_2.TabIndex = 25;
-            this.tbValidY_2.Text = "50";
+            this.tbValidY_2.Text = "675";
             // 
             // button15
             // 
@@ -697,7 +697,7 @@
             this.tbRangeY_2.Name = "tbRangeY_2";
             this.tbRangeY_2.Size = new System.Drawing.Size(106, 23);
             this.tbRangeY_2.TabIndex = 29;
-            this.tbRangeY_2.Text = "50";
+            this.tbRangeY_2.Text = "135";
             // 
             // button19
             // 
@@ -717,7 +717,7 @@
             this.tbRangeX_2.Name = "tbRangeX_2";
             this.tbRangeX_2.Size = new System.Drawing.Size(106, 23);
             this.tbRangeX_2.TabIndex = 28;
-            this.tbRangeX_2.Text = "50";
+            this.tbRangeX_2.Text = "240";
             // 
             // button20
             // 
@@ -737,7 +737,7 @@
             this.tbTGTX_2.Name = "tbTGTX_2";
             this.tbTGTX_2.Size = new System.Drawing.Size(106, 23);
             this.tbTGTX_2.TabIndex = 5;
-            this.tbTGTX_2.Text = "700";
+            this.tbTGTX_2.Text = "720";
             // 
             // button21
             // 
@@ -768,7 +768,7 @@
             this.tbTGTY_2.Name = "tbTGTY_2";
             this.tbTGTY_2.Size = new System.Drawing.Size(106, 23);
             this.tbTGTY_2.TabIndex = 6;
-            this.tbTGTY_2.Text = "400";
+            this.tbTGTY_2.Text = "675";
             // 
             // label17
             // 
@@ -807,7 +807,7 @@
             this.tbMargX_2.Name = "tbMargX_2";
             this.tbMargX_2.Size = new System.Drawing.Size(106, 23);
             this.tbMargX_2.TabIndex = 9;
-            this.tbMargX_2.Text = "50";
+            this.tbMargX_2.Text = "30";
             // 
             // label20
             // 
@@ -826,7 +826,7 @@
             this.tbMargY_2.Name = "tbMargY_2";
             this.tbMargY_2.Size = new System.Drawing.Size(106, 23);
             this.tbMargY_2.TabIndex = 10;
-            this.tbMargY_2.Text = "50";
+            this.tbMargY_2.Text = "30";
             // 
             // Form1
             // 

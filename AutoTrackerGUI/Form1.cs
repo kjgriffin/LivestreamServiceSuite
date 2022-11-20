@@ -52,7 +52,28 @@ namespace AutoTrackerGUI
         CancellationTokenSource cts;
         Thread worker;
 
-        CentroidTracker _tracker = new CentroidTracker();
+        CentroidTracker _tracker = new CentroidTracker()
+        {
+            PIPS = new List<PIPBox>
+            {
+                new PIPBox
+                {
+                    PIPID = 1,
+                    CX = 1200,
+                    CY = 675,
+                    XR = 240,
+                    YR = 135,
+                },
+                new PIPBox
+                {
+                    PIPID = 2,
+                    CX = 720,
+                    CY = 675,
+                    XR = 240,
+                    YR = 135,
+                },
+            }
+        };
         int devINDEX = 0;
 
         private void button1_Click(object sender, EventArgs e)
@@ -84,9 +105,9 @@ namespace AutoTrackerGUI
 
             //capture.FrameHeight = 720;
             //capture.FrameWidth = 1280;
-            capture.Open(devINDEX, OpenCvSharp.VideoCaptureAPIs.DSHOW);
-            capture.Set(OpenCvSharp.VideoCaptureProperties.FrameHeight, 720);
-            capture.Set(OpenCvSharp.VideoCaptureProperties.FrameWidth, 1280);
+            capture.Open(devINDEX, OpenCvSharp.VideoCaptureAPIs.ANY);
+            capture.Set(OpenCvSharp.VideoCaptureProperties.FrameHeight, 1080);
+            capture.Set(OpenCvSharp.VideoCaptureProperties.FrameWidth, 1920);
             //capture.Set(OpenCvSharp.VideoCaptureProperties.FrameHeight, 1080);
             //capture.Set(OpenCvSharp.VideoCaptureProperties.FrameWidth, 1920);
             //capture.Set(OpenCvSharp.VideoCaptureProperties.FourCC, FourCC.H264);
@@ -239,9 +260,9 @@ namespace AutoTrackerGUI
         PanTiltDirection _sslast = PanTiltDirection.STOP;
         private void DoTrack()
         {
-            var track = _tracker.GetTracks().FirstOrDefault(t => Math.Abs(t.Centroid.Center.X - _validX) < _rangeX && Math.Abs(t.Centroid.Center.Y - _validY) < _rangeY);
+            var track = _tracker.GetTracks().FirstOrDefault(t => Math.Abs(t.Centroid.Center.X - _validX) < _rangeX && Math.Abs(t.Centroid.Center.Y - _validY) < _rangeY && t.PIPGEN == 1);
             _cmdID++;
-            var strack = _tracker.GetTracks().FirstOrDefault(t => Math.Abs(t.Centroid.Center.X - _svX) < _srX && Math.Abs(t.Centroid.Center.Y - _svY) < _srY);
+            var strack = _tracker.GetTracks().FirstOrDefault(t => Math.Abs(t.Centroid.Center.X - _svX) < _srX && Math.Abs(t.Centroid.Center.Y - _svY) < _srY && t.PIPGEN == 2);
             if (_strackEnabled)
             {
                 // expectation is that if possible to track, strack will have it
@@ -279,7 +300,7 @@ namespace AutoTrackerGUI
 
                     if (_slast != dir)
                     {
-                        _camServer.Cam_RunDriveProgram("scam", dir, 2, 0);
+                        _camServer.Cam_RunDriveProgram("scam", dir, 1, 0);
                         _trackCMD = dcmd;
                     }
                     _slast = dir;
@@ -416,6 +437,10 @@ namespace AutoTrackerGUI
             _validY = int.Parse(tbValidY.Text);
             _rangeX = int.Parse(tbRangeX.Text);
             _rangeY = int.Parse(tbRangeY.Text);
+            _tracker.PIPS[0].CX = _validX;
+            _tracker.PIPS[0].CY = _validY;
+            _tracker.PIPS[0].XR = _rangeX;
+            _tracker.PIPS[0].YR = _rangeY;
         }
 
         private void button13_Click(object sender, EventArgs e)
@@ -424,6 +449,10 @@ namespace AutoTrackerGUI
             _svY = int.Parse(tbValidY_2.Text);
             _srX = int.Parse(tbRangeX_2.Text);
             _srY = int.Parse(tbRangeY_2.Text);
+            _tracker.PIPS[1].CX = _svX;
+            _tracker.PIPS[1].CY = _svY;
+            _tracker.PIPS[1].XR = _srX;
+            _tracker.PIPS[1].YR = _srY;
         }
 
         private void button22_Click(object sender, EventArgs e)

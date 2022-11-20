@@ -8,6 +8,23 @@ using System.Threading.Tasks;
 
 namespace TestScreenshot
 {
+
+    internal class PIPBox
+    {
+        public int PIPID { get; set; }
+        public int CX { get; set; }
+        public int CY { get; set; }
+        public int XR { get; set; }
+        public int YR { get; set; }
+
+        public bool ContainsBox(Centroid obj)
+        {
+            bool c1 =  Math.Abs(obj.Center.X - CX) < XR && Math.Abs(obj.Center.Y - CY) < YR;
+            bool b = obj.Bounds.Left > CX - XR && obj.Bounds.Right < CX + XR && obj.Bounds.Top > CY - YR && obj.Bounds.Bottom < CY + YR;
+            return c1 && b;
+        }
+    }
+
     internal class Centroid
     {
 
@@ -24,6 +41,7 @@ namespace TestScreenshot
 
     internal class CentroidTrack
     {
+
         internal Centroid Centroid { get; private set; }
         internal int XVel { get; private set; }
         internal int YVel { get; private set; }
@@ -31,7 +49,8 @@ namespace TestScreenshot
         internal bool Stale { get => TTL < 45; }
         internal int TTL { get; private set; } = 50;
         internal int ID { get; private set; }
-        internal string Name { get => $"ID: {ID:00} -- TTL:{TTL}"; }
+        internal string Name { get => $"<{PIPGEN}> ID: {ID:00} -- TTL:{TTL}"; }
+        internal int PIPGEN { get; set; } = -1;
 
         internal long Hits { get; private set; } = 0;
 
@@ -63,11 +82,12 @@ namespace TestScreenshot
         {
             TTL -= 1;
         }
-        public CentroidTrack(Centroid centroid, int ttl, int id)
+        public CentroidTrack(Centroid centroid, int ttl, int id, int PIPGEN = -1)
         {
             Centroid = centroid;
             TTL = ttl;
             ID = id;
+            this.PIPGEN = PIPGEN;
         }
 
         internal void UpdatePredictionByVelocity()
@@ -84,6 +104,7 @@ namespace TestScreenshot
 
     internal class CentroidTracker
     {
+        internal List<PIPBox> PIPS { get; set; } = new List<PIPBox>();
         List<CentroidTrack> Tracks { get; set; } = new List<CentroidTrack>();
 
         List<CentroidTrack> CandidateTracks = new List<CentroidTrack>();
@@ -154,7 +175,18 @@ namespace TestScreenshot
             // create new tracks for remaining objects
             foreach (var newObj in newTroids)
             {
-                CandidateTracks.Add(new CentroidTrack(newObj, 50, m_nextID++));
+                int pipid = -1;
+                // assign it to a pip
+                //CandidateTracks.Add(new CentroidTrack(newObj, 50, m_nextID++, pipid));
+                foreach (var pip in PIPS)//.OrderBy(x => Math.Pow(x.CX - newObj.Center.X, 2) + Math.Pow(x.CY - newObj.Center.Y, 2))) // let closetst PIP capture the new track
+                {
+                    if (pip.ContainsBox(newObj))
+                    {
+                        pipid = pip.PIPID;
+                        CandidateTracks.Add(new CentroidTrack(newObj, 50, m_nextID++, pipid));
+                        break;
+                    }
+                }
             }
         }
 
