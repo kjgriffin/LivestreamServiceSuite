@@ -28,6 +28,7 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTScript script = new XenonASTScript();
+            script._SourceLine = Lexer.Peek().linenum;
             script._srcToken = Lexer.CurrentToken;
             Lexer.GobbleWhitespace();
             StringBuilder sb = new StringBuilder();
@@ -137,6 +138,7 @@ namespace Xenon.Compiler.AST
             ("[^\\}]+(?=\\})",  false,"", null, GetContextualSuggestionsForScriptCommands),
             ("\\}", false, "", new List<(string, string)>() { ("\"", "end script")}, null),
         };
+        public int _SourceLine { get; set; }
 
         static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForScriptCommands = (priorcaptures, sourcesnippet, remainingsnippet, knownAssets, knownLayouts) =>
         {

@@ -14,10 +14,12 @@ namespace Xenon.Compiler.AST
         public string AssetName { get; set; } = "";
         public string Assettype { get; set; } = "";
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTResource resource = new XenonASTResource();
+            resource._SourceLine = Lexer.Peek().linenum;
             var args = Lexer.ConsumeArgList(true, "assetname", "type");
             resource.AssetName = args["assetname"];
             resource.Assettype = args["type"];

@@ -13,10 +13,12 @@ namespace Xenon.Compiler.AST
 
         public string SlideTitleMessage { get; set; } = "Liturgy Off";
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             // allow optional title parameter
+            this._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
             if (!Lexer.InspectEOF() && Lexer.Inspect("("))
             {

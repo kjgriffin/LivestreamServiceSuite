@@ -15,10 +15,12 @@ namespace Xenon.Compiler.AST
         public string KeyAssetName { get; set; }
         public string KeyType { get; set; }
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTVideo video = new XenonASTVideo();
+            video._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
             StringBuilder sb = new StringBuilder();
             var args = Lexer.ConsumeArgList(false, "assetname");

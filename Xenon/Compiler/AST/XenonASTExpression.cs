@@ -12,8 +12,11 @@ namespace Xenon.Compiler.AST
     class XenonASTExpression : IXenonASTElement
     {
         public static string DATAKEY_PILOT { get => "pilot-data"; }
+        public static string DATAKEY_PILOT_SOURCECODE_LOOKUP { get => "source-code-lookup-pilot"; }
+        public static string DATAKEY_CMD_SOURCECODE_LOOKUP { get => "source-code-lookup-generating-command"; }
 
-        public int _SourceLine { get; private set; }
+        public int _SourceLine { get; private set; } = -1;
+        public int _PilotSourceLine { get; private set; } = -1;
         public IXenonASTCommand Command { get; set; }
         public bool Postset { get; set; } = false;
         public bool Postset_forAll { get => Postset_All >= 0; }
@@ -30,6 +33,21 @@ namespace Xenon.Compiler.AST
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             var slides = Command?.Generate(project, this, Logger) ?? new List<Slide>();
+
+            foreach (var s in slides)
+            {
+                if (!s.NonRenderedMetadata.TryGetValue(DATAKEY_PILOT_SOURCECODE_LOOKUP, out _))
+                {
+                    s.NonRenderedMetadata[DATAKEY_PILOT_SOURCECODE_LOOKUP] = _PilotSourceLine;
+                }
+                if (!s.NonRenderedMetadata.TryGetValue(DATAKEY_CMD_SOURCECODE_LOOKUP, out _))
+                {
+                    if (Command?._SourceLine > -1)
+                    {
+                        s.NonRenderedMetadata[DATAKEY_CMD_SOURCECODE_LOOKUP] = Command._SourceLine;
+                    }
+                }
+            }
 
             var flightworthyslides = slides.Where(x => x.Number >= 0).OrderBy(x => x.Number).ToList();
 
@@ -102,7 +120,10 @@ namespace Xenon.Compiler.AST
             {
                 int sline = Lexer.Peek().linenum;
                 expr = CompileCommand(Lexer, Logger);
-                expr._SourceLine = sline;
+                if (expr._SourceLine == -1)
+                {
+                    expr._SourceLine = sline;
+                }
             }
             else
             {
@@ -144,6 +165,9 @@ namespace Xenon.Compiler.AST
 
             lexer.GobbleandLog("{");
             lexer.GobbleWhitespace();
+
+            var stok = lexer.Peek();
+            expr._PilotSourceLine = stok.linenum;
 
             int inspections = 0;
             while (inspections++ < 10000 && !lexer.InspectEOF() && !lexer.Inspect("}"))

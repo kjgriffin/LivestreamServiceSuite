@@ -1,7 +1,9 @@
 ﻿using AngleSharp.Dom;
+
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
 using LutheRun.Pilot;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,6 +36,13 @@ namespace LutheRun.Elements.LSB
         public string DebugString()
         {
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_RESPONSIVE_LITURGY.";
+        }
+
+        public bool PredictsEmptyContent()
+        {
+            int a = 0;
+            int b = 0;
+            return string.IsNullOrWhiteSpace(LSBResponsorialExtractor.ExtractResponsiveLiturgy(_litPTags, ref a, b));
         }
 
         public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)

@@ -20,10 +20,12 @@ namespace Xenon.Compiler.AST
 
         public XenonASTScript PostScript { get; set; }
         public bool HasPostScript { get; private set; } = false;
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTUpNext upnext = new XenonASTUpNext();
+            upnext._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
 
             var args = Lexer.ConsumeArgList(true, "title", "maintext", "infotext");

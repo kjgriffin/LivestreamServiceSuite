@@ -16,10 +16,12 @@ namespace Xenon.Compiler.AST
         public string Reference { get; set; }
         public string Preacher { get; set; }
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTSermon sermon = new XenonASTSermon();
+            sermon._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
 
             var args = Lexer.ConsumeArgList(true, "title", "reference", "preacher");

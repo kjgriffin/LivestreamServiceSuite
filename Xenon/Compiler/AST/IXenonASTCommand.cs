@@ -9,6 +9,9 @@ namespace Xenon.Compiler.AST
 {
     internal interface IXenonASTCommand : IXenonASTElement
     {
+
+        public int _SourceLine { get; set; } 
+
         public TopLevelCommandContextualSuggestions GetContextualSuggestions(XenonSuggestionService service, string sourcecode)
         {
             return (false, new List<(string suggestion, string description)>());

@@ -17,6 +17,7 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTScopedVariable variable = new XenonASTScopedVariable();
+            variable._SourceLine = Lexer.Peek().linenum;
             variable.Parent = Parent;
             Lexer.GobbleWhitespace();
             Lexer.GobbleandLog("(", "Expected opening ( before params");
@@ -127,6 +128,6 @@ namespace Xenon.Compiler.AST
             ("\\)", false, "", new List<(string, string)> {(")", "") }, null),
             */
         };
-
+        public int _SourceLine { get; set; }
     }
 }

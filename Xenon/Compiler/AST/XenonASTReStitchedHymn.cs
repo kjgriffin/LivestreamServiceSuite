@@ -26,6 +26,7 @@ namespace Xenon.Compiler.AST
         public string InputFormat { get; set; }
         public string OutputFormat { get; set; }
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         private string CopyrightTune
         {
@@ -64,6 +65,7 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTReStitchedHymn hymn = new XenonASTReStitchedHymn();
+            hymn._SourceLine = Lexer.Peek().linenum;
 
             Lexer.GobbleWhitespace();
 

@@ -13,10 +13,12 @@ namespace Xenon.Compiler.AST
     {
         public string AssetName { get; set; }
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTLiturgyImage litimage = new XenonASTLiturgyImage();
+            litimage._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
             var args = Lexer.ConsumeArgList(false, "asset");
             litimage.AssetName = args["asset"];

@@ -18,10 +18,12 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Parent { get; private set; }
         public string RawContent { get; private set; } = "";
         public int OrigContentSourceLine { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTLiturgy2 liturgy = new XenonASTLiturgy2();
+            liturgy._SourceLine = Lexer.Peek().linenum;
             liturgy.Parent = Parent;
 
             Lexer.GobbleWhitespace();

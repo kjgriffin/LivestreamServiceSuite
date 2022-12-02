@@ -60,6 +60,8 @@ namespace LutheRun.Parsers
         public bool AggressivelyParseInsideLSBContent { get; set; } = true;
         [BoolSetting]
         public bool FlightPlanning { get; set; } = true;
+        [BoolSetting]
+        public bool RemoveEarlyServiceSpecificElements { get; internal set; } = true;
 
 
         public string ServiceThemeLib { get; set; } = "Xenon.CommonColored";
@@ -117,7 +119,6 @@ namespace LutheRun.Parsers
 
             ["back:wide"] = "WIDE",
         };
-
     }
 
     public class BoolSettingAttribute : Attribute

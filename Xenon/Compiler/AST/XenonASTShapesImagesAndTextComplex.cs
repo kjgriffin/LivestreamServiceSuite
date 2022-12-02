@@ -23,10 +23,12 @@ namespace Xenon.Compiler.AST
         public List<string> Texts { get; private set; } = new List<string>();
         public List<string> FGAssetNames { get; private set; } = new List<string>();
         public List<string> BGAssetNames { get; private set; } = new List<string>();
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTShapesImagesAndTextComplex slide = new XenonASTShapesImagesAndTextComplex();
+            slide._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
             Lexer.GobbleandLog("{");
             Lexer.GobbleWhitespace();

@@ -267,11 +267,7 @@ namespace SlideCreater
 
         private void EnableDisableOptionalFeatures()
         {
-            if (VersionInfo.Mode != "Debug")
-            {
-                miimport_adv.Visibility = Visibility.Collapsed;
-                miimport_adv.IsEnabled = false;
-            }
+
         }
 
 
@@ -538,6 +534,12 @@ namespace SlideCreater
                 this.slide = 0;
             }
             tbSlideCount.Text = $"Slides: {slide.Number + 1}/{slides.Count()}";
+
+            // track the source line
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                ScrollToLine(slide.SourceLineRef);
+            }
         }
 
         List<RenderedSlide> slides = new List<RenderedSlide>();
@@ -1516,20 +1518,26 @@ namespace SlideCreater
             if (i >= 0 && i < logs.Count)
             {
                 var selection = logs[i];
-                if (selection.Token.linenum <= TbInput.LineCount)
-                {
-                    TbInput.ScrollToLine(selection.Token.linenum);
-                    TbInput.TextArea.Caret.Line = selection.Token.linenum + 1;
-                    TbInput.TextArea.Caret.Column = 0;
-                    TbInput.TextArea.Focus();
-                    TbInput.Select(TbInput.CaretOffset, TbInput.Document.Lines[selection.Token.linenum].Length);
-                }
-                else
-                {
-                    TbInput.Focus();
-                    TbInput.TextArea.ClearSelection();
-                }
+                ScrollToLine(selection.Token.linenum);
             }
+        }
+
+        private void ScrollToLine(int line)
+        {
+            if (line <= TbInput.LineCount)
+            {
+                TbInput.ScrollToLine(line);
+                TbInput.TextArea.Caret.Line = line + 1;
+                TbInput.TextArea.Caret.Column = 0;
+                TbInput.TextArea.Focus();
+                TbInput.Select(TbInput.CaretOffset, TbInput.Document.Lines[line].Length);
+            }
+            else
+            {
+                TbInput.Focus();
+                TbInput.TextArea.ClearSelection();
+            }
+
         }
 
         private void error_report_view_PreviewMouseDown(object sender, MouseButtonEventArgs e)

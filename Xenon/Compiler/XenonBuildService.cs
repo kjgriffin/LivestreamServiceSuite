@@ -9,6 +9,7 @@ using System.Windows;
 
 using Xenon.Analyzers;
 using Xenon.AssetManagment;
+using Xenon.Compiler.AST;
 using Xenon.Helpers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
@@ -222,6 +223,11 @@ namespace Xenon.Compiler
                         Interlocked.Increment(ref reusedslides);
                         // make sure to update the slide's number if it has changed though
                         rs.Number = slide.Number;
+                        if (slide.NonRenderedMetadata.TryGetValue(XenonASTExpression.DATAKEY_CMD_SOURCECODE_LOOKUP, out var sourceCodeLookup))
+                        {
+                            rs.SourceLineRef = (int)sourceCodeLookup;
+                        }
+
                         Messages.Add(new XenonCompilerMessage
                         {
                             ErrorName = "Re-using slide",

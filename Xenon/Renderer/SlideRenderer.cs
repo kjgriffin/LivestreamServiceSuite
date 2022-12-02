@@ -68,6 +68,10 @@ namespace Xenon.Renderer
             var res = _ApplyRenderers(s, Messages);
             res.Number = s.Number;
             res.OverridingBehaviour = s.OverridingBehaviour;
+            if (s.NonRenderedMetadata.TryGetValue(XenonASTExpression.DATAKEY_CMD_SOURCECODE_LOOKUP, out var sourceCodeLookup))
+            {
+                res.SourceLineRef = (int)sourceCodeLookup;
+            }
 
             // attach Postset
             if (s.Data.ContainsKey("postset"))

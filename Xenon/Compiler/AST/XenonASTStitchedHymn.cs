@@ -59,11 +59,12 @@ namespace Xenon.Compiler.AST
             }
         }
 
-
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTStitchedHymn hymn = new XenonASTStitchedHymn();
+            hymn._SourceLine = Lexer.Peek().linenum;
 
             Lexer.GobbleWhitespace();
 

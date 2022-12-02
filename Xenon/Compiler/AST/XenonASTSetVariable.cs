@@ -18,6 +18,7 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             Lexer.GobbleWhitespace();
+            this._SourceLine = Lexer.Peek().linenum;
             var args = Lexer.ConsumeArgList(true, "name", "value");
 
             VariableName = args["name"];
@@ -77,6 +78,6 @@ namespace Xenon.Compiler.AST
         };
 
         public IXenonASTElement Parent { get; private set; }
-
+        public int _SourceLine { get; set; }
     }
 }

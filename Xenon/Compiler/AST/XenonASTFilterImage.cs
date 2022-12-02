@@ -13,6 +13,7 @@ namespace Xenon.Compiler.AST
     {
         public List<(ImageFilter Type, ImageFilterParams FParams)> Filters { get; set; } = new List<(ImageFilter Type, ImageFilterParams)>();
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         private Dictionary<int, string> assetstoresolve = new Dictionary<int, string>();
         private int assetids = 0;
@@ -20,6 +21,7 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTFilterImage filterimage = new XenonASTFilterImage();
+            filterimage._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
             //var args = Lexer.ConsumeArgList(false, "asset");
             //filterimage.AssetName = args["asset"];

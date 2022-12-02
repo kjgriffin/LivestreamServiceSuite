@@ -26,10 +26,14 @@ namespace Xenon.Compiler.AST
         public bool HasFirst { get; private set; }
         public bool HasLast { get; private set; }
         public bool HasDupLast { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTAsScripted element = new XenonASTAsScripted();
+
+            element._SourceLine = Lexer.Peek().linenum;
+
             element.Children = new XenonASTElementCollection(element);
             element.Children.Elements = new List<IXenonASTElement>();
             element.Parent = Parent;
@@ -303,6 +307,7 @@ namespace Xenon.Compiler.AST
                     }
                 }
             }
+
 
             return modifiedslides;
         }

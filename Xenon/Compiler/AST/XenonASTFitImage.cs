@@ -12,10 +12,12 @@ namespace Xenon.Compiler.AST
         public string AssetName { get; set; }
         public string KeyType { get; set; }
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTFitImage fullimage = new XenonASTFitImage();
+            fullimage._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
             var args = Lexer.ConsumeArgList(false, "asset");
             fullimage.AssetName = args["asset"];

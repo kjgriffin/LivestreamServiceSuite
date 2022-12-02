@@ -17,10 +17,12 @@ namespace Xenon.Compiler.AST
         public string Title { get; set; }
         public string Reference { get; set; }
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTElementCollection litverses = new XenonASTElementCollection(Parent);
+            litverses._SourceLine = Lexer.Peek().linenum;
             // assume all tokens inside braces are litrugy commands
             // only excpetions are we will gobble all leading whitespace in braces, and will remove the last 
             // character of whitespace before last brace
@@ -68,6 +70,7 @@ namespace Xenon.Compiler.AST
         private XenonASTLiturgyVerse CompileSubContent(Lexer Lexer, XenonErrorLogger Logger)
         {
             XenonASTLiturgyVerse liturgy = new XenonASTLiturgyVerse();
+            liturgy._SourceLine = Lexer.Peek().linenum;
 
             while (!Lexer.Inspect("}") && !Lexer.Inspect("#"))
             {

@@ -52,10 +52,12 @@ namespace Xenon.Compiler.AST
     {
         public PrefabSlides PrefabSlide { get; set; }
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             this.Parent = Parent;
+            this._SourceLine = Lexer.Peek().linenum;
             return this;
         }
 

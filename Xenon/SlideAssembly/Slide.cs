@@ -27,6 +27,7 @@ namespace Xenon.SlideAssembly
         public string Asset { get; set; }
         public List<SlideLine> Lines { get; set; } = new List<SlideLine>();
         public Dictionary<string, object> Data { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, object> NonRenderedMetadata { get; set; } = new Dictionary<string, object>();
         public SlideOverridingBehaviour OverridingBehaviour { get; set; } = new SlideOverridingBehaviour();
 
         public Slide Clone()
@@ -41,6 +42,7 @@ namespace Xenon.SlideAssembly
                 Asset = Asset,
                 Lines = Lines,
                 Data = Data,
+                NonRenderedMetadata = NonRenderedMetadata,
                 OverridingBehaviour = OverridingBehaviour,
             };
         }

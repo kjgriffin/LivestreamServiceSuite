@@ -22,6 +22,7 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTElementCollection liturgys = new XenonASTElementCollection(Parent);
+            liturgys._SourceLine = Lexer.Peek().linenum;
             // assume all tokens inside braces are litrugy commands
             // only excpetions are we will gobble all leading whitespace in braces, and will remove the last 
             // character of whitespace before last brace
@@ -301,6 +302,6 @@ namespace Xenon.Compiler.AST
             ("{", false, "", new List<(string, string)> { ("{", "")}, null),
             ("[^}]*(?=})", false, "", new List<(string, string)> {("}", "") }, null),
         };
-
+        public int _SourceLine { get; set; }
     }
 }

@@ -23,9 +23,11 @@ namespace Xenon.Compiler.AST
         public string Mode { get; set; }
         public List<string> Text { get; set; } = new List<string>();
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
+            this._SourceLine = lexer.Peek().linenum;
             lexer.GobbleWhitespace();
             var args = lexer.ConsumeArgList(true, "title", "reference", "drawspeaker");
             Title = args["title"];

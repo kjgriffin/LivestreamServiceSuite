@@ -9,10 +9,12 @@ namespace Xenon.Compiler.AST
     class XenonASTSlideBreak : IXenonASTCommand
     {
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTSlideBreak slidebreak = new XenonASTSlideBreak();
+            slidebreak._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
             slidebreak.Parent = Parent;
             return slidebreak;

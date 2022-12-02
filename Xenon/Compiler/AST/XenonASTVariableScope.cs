@@ -16,6 +16,7 @@ namespace Xenon.Compiler.AST
 
         public XenonASTElementCollection children;
 
+
         public Dictionary<string, string> Variables { get; set; } = new Dictionary<string, string>();
         public string ScopeName { get; private set; }
         public List<RegexMatchedContextualSuggestions> contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
@@ -29,6 +30,7 @@ namespace Xenon.Compiler.AST
             new RegexMatchedContextualSuggestions("(```)|(\")", false, "septype", new List<(string, string)>{ ("```", "Enclose Value"), ("\"", "Enclose Value") }, null),
             new RegexMatchedContextualSuggestions(".+", false, "", null, GetContextualSuggestsionForEndOfCommand),
         };
+        public int _SourceLine { get; set; }
 
         static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableName = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts) =>
         {
@@ -64,6 +66,7 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTVariableScope scope = new XenonASTVariableScope();
+            scope._SourceLine = Lexer.Peek().linenum;
             scope.children = new XenonASTElementCollection(scope);
             scope.children.Elements = new List<IXenonASTElement>();
             scope.Parent = Parent;
@@ -121,7 +124,7 @@ namespace Xenon.Compiler.AST
 
             // inject layout macros
             var regex = new Regex("(?<lib>.*)@(?<name>(.*))");
-            foreach (var variable in Variables.Where(x => regex.Match(x.Key).Success).Select(x => new { variable = x, match = regex.Match(x.Key)}))
+            foreach (var variable in Variables.Where(x => regex.Match(x.Key).Success).Select(x => new { variable = x, match = regex.Match(x.Key) }))
             {
                 project.LayoutManager.OverrideMacroOnScope(variable.match.Groups["lib"].Value, variable.match.Groups["name"].Value, variable.variable.Value, ScopeName);
             }

@@ -20,10 +20,12 @@ namespace Xenon.Compiler.AST
 
         public List<string> Titles { get; private set; } = new List<string>();
         public int OrigContentSourceLine { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTTitledLiturgy liturgy = new XenonASTTitledLiturgy();
+            liturgy._SourceLine = Lexer.Peek().linenum;
             liturgy.Parent = Parent;
 
 

@@ -12,6 +12,7 @@ namespace Xenon.Compiler.AST
 
         public List<IXenonASTElement> Elements { get; set; } = new List<IXenonASTElement>();
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         IXenonASTElement IXenonASTElement.Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
@@ -33,7 +34,10 @@ namespace Xenon.Compiler.AST
             foreach (var elem in Elements)
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression {elem.GetType()}", ErrorName = "Generation Debug Log", Generator = "XenonASTExlementCollection:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, });
-                slides.AddRange(elem.Generate(project, _Parent, Logger));
+
+                var gslides = elem.Generate(project, _Parent, Logger);
+
+                slides.AddRange(gslides);
             }
             return slides;
         }

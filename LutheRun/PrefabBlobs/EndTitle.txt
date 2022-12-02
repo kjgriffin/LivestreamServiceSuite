@@ -32,7 +32,7 @@ $>}
 
 $>#scope(endpage-live)
 $>{
-$>#var("customdraw.Layout", "Xenon.CommonColored::EndPage-Live")
+$>$>#var("customdraw.Layout", "Xenon.CommonColored::EndPage-Live")
 
 
 $>$>#customdraw
@@ -61,9 +61,9 @@ $>$>}
 
 $>}
 
-#scope(endpage-static)
-{
-$>#var("customdraw.Layout", "Xenon.CommonColored::EndPage")
+$>#scope(endpage-static)
+$>{
+$>$>#var("customdraw.Layout", "Xenon.CommonColored::EndPage")
 
 $>$>#customdraw
 $>$>{

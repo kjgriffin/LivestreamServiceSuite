@@ -18,9 +18,11 @@ namespace Xenon.Compiler.AST
         public string Orientation { get; set; }
         private Token _badParamToken { get; set; }
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
+            this._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
 
             //var args = Lexer.ConsumeArgList(true, "part1", "part2", "orientation");

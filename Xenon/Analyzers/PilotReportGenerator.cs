@@ -16,6 +16,9 @@ namespace Xenon.Analyzers
 
         internal static void YellAboutUnkownPilotCommands(Project proj, XenonErrorLogger logger)
         {
+
+            var x = proj?.Slides.Select(x => (x.NonRenderedMetadata[XenonASTExpression.DATAKEY_PILOT_SOURCECODE_LOOKUP])).ToList();
+
             foreach (var slide in proj?.Slides)
             {
                 if (slide.Data.TryGetValue(XenonASTExpression.DATAKEY_PILOT, out var pilot))
@@ -29,6 +32,9 @@ namespace Xenon.Analyzers
                         var speed = match.Groups["speed"].Value;
                         int.TryParse(speed, out int ptspeed);
 
+                        slide.NonRenderedMetadata.TryGetValue(XenonASTExpression.DATAKEY_PILOT_SOURCECODE_LOOKUP, out var slref);
+                        int sourcelineref = (int)slref;
+
                         // if no-match warn about possibly invalid command
                         if (!match.Success)
                         {
@@ -39,7 +45,7 @@ namespace Xenon.Analyzers
                                 Generator = "PilotReportGenerator",
                                 Inner = "",
                                 Level = XenonCompilerMessageType.Warning, // technically it could be an older format, so just warn
-                                Token = "",
+                                Token = new Token("", sourcelineref),
                             });
                             continue;
                         }
@@ -54,7 +60,7 @@ namespace Xenon.Analyzers
                                 Generator = "PilotReportGenerator",
                                 Inner = "",
                                 Level = XenonCompilerMessageType.Error,
-                                Token = "",
+                                Token = new Token("", sourcelineref),
                             });
                         }
 
@@ -67,7 +73,7 @@ namespace Xenon.Analyzers
                                 Generator = "PilotReportGenerator",
                                 Inner = "",
                                 Level = XenonCompilerMessageType.Error,
-                                Token = "",
+                                Token = new Token("", sourcelineref),
                             });
                         }
                         else
@@ -81,7 +87,7 @@ namespace Xenon.Analyzers
                                     Generator = "PilotReportGenerator",
                                     Inner = "",
                                     Level = XenonCompilerMessageType.Error,
-                                    Token = "",
+                                    Token = new Token("", sourcelineref),
                                 });
                             }
                             if (!proj.CCPUConfig.KeyedZooms.TryGetValue(cname, out var zpresets) || !zpresets.ContainsKey(zname))
@@ -93,7 +99,7 @@ namespace Xenon.Analyzers
                                     Generator = "PilotReportGenerator",
                                     Inner = "",
                                     Level = XenonCompilerMessageType.Error,
-                                    Token = "",
+                                    Token = new Token("", sourcelineref),
                                 });
                             }
 

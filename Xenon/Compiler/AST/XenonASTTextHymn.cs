@@ -17,6 +17,7 @@ namespace Xenon.Compiler.AST
         public string CopyrightInfo { get; set; }
         public bool IsOverlay { get; set; } = false;
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement _localParent;
         public int _localVNum;
@@ -63,6 +64,7 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTTextHymn textHymn = new XenonASTTextHymn();
+            textHymn._SourceLine = Lexer.Peek().linenum;
 
             Lexer.GobbleWhitespace();
 

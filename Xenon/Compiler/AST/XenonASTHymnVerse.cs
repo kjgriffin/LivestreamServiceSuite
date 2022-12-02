@@ -15,10 +15,12 @@ namespace Xenon.Compiler.AST
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
         public string SubName { get; set; }
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTHymnVerse verse = new XenonASTHymnVerse();
+            verse._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
 
             // optionally allow params for verse title. used for e.g. 'chorus'/'refrain'/'verse 1' etc.

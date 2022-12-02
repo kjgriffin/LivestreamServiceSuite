@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DVIPProtocol.Protocol.Lib.Command.PTDrive;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,6 +24,7 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTAnthemTitle title = new XenonASTAnthemTitle();
+            title._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
 
             var args = Lexer.ConsumeArgList(true, "anthemtitle", "musician", "accompanianst", "credits");
@@ -100,6 +103,6 @@ namespace Xenon.Compiler.AST
             ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end credits")}, null ),
             ("\\)", false, "", new List<(string, string)> {(")", "") }, null),
         };
-
+        public int _SourceLine { get; set; }
     }
 }

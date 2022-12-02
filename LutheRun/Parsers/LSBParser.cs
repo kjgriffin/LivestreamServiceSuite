@@ -62,8 +62,10 @@ namespace LutheRun.Parsers
         {
             int i = 0;
             ServiceElements = Serviceifier.NormalizeHeaddingsToCaptions(ServiceElements, options)
-                                          .AddAdditionalInferedElements(options)
                                           .MarkCommunionHymns(options)
+                                          .StripEarlyServiceOnly(options)
+                                          .Filter(options)
+                                          .AddAdditionalInferedElements(options)
                                           .Filter(options)
                                           .Select(x =>
                                           {
@@ -127,7 +129,7 @@ namespace LutheRun.Parsers
             ServiceElements.Clear();
             foreach (var e in dom)
             {
-                _ParseLSBServiceElement(e);
+                _ParseLSBServiceElement(e, Guid.Empty);
             }
             ServiceElements.Add(new ParsedLSBElement
             {
@@ -136,214 +138,15 @@ namespace LutheRun.Parsers
                 Generator = "AutoGen Ack",
                 SourceElements = ack.ItemAsEnumerable(),
                 ParentSourceElement = ack,
+                Ancestory = Guid.NewGuid(),
             });
         }
 
-        private void ParseLSBServiceElement(IElement element, string previous = "[Is Top-Level LSB Element]", IElement parent = null)
+
+        internal bool _ParseLSBServiceElement(IElement element, Guid parTrack, IElement parent = null, string parGen = "[Top LSB Element]")
         {
-            /*
-            bool checkforselection = false;
-            if (element.ClassList.Contains("option-group"))
-            {
-                checkforselection = true;
-            }
-            if (element.Children.All(x => x.LocalName == "lsb-service-element"))
-            {
-                bool allseperate = true;
-                if (checkforselection)
-                {
-                    allseperate = false;
-                    if (element.Children.All(x => !x.ClassList.Contains("selected")))
-                    {
-                        allseperate = true;
-                    }
-                }
-                if (allseperate)
-                {
-                    foreach (var child in element.Children)
-                    {
-                        ParseLSBServiceElement(child);
-                    }
-                }
-                return;
-            }
-            */
-
-            if (element.LocalName == "lsb-content")
-            {
-                if (element.Children.Any(c => c.ClassList.Contains("lsb-responsorial")))
-                {
-                    ServiceElements.Add(new ParsedLSBElement
-                    {
-                        LSBElement = LSBElementLiturgy.Parse(element),
-                        Generator = $"{previous}; E=lsb-content with C:lsb-responsorial",
-                        SourceElements = element.ItemAsEnumerable(),
-                        ParentSourceElement = parent ?? element,
-                    });
-                }
-                foreach (var imageline in element.Children.Where(c => c.ClassList.Contains("image")))
-                {
-                    ServiceElements.Add(new ParsedLSBElement
-                    {
-                        LSBElement = LSBElementLiturgySung.Parse(imageline),
-                        Generator = $"{previous}; E<-lsb-content with C:image",
-                        SourceElements = imageline.ItemAsEnumerable(),
-                        ParentSourceElement = parent ?? element,
-                    });
-                }
-            }
-            else
-            {
-
-                if (element.ClassList.Contains("heading"))
-                {
-                    ServiceElements.Add(new ParsedLSBElement
-                    {
-                        LSBElement = LSBElementHeading.Parse(element),
-                        Generator = $"{previous}; E!=lsb-content with C:heading",
-                        ParentSourceElement = element,
-                        SourceElements = parent.ItemAsEnumerable() ?? element.ItemAsEnumerable(),
-                    });
-                }
-                else if (element.ClassList.Contains("caption"))
-                {
-                    // TODO: do something different for anthem-titles, sermon-titles, postlude/preludes. Ignore others???
-                    ServiceElements.Add(new ParsedLSBElement
-                    {
-                        LSBElement = LSBElementCaption.Parse(element),
-                        Generator = $"{previous} E!=lsb-content with C:caption",
-                        ParentSourceElement = element,
-                        SourceElements = parent.ItemAsEnumerable() ?? element.ItemAsEnumerable(),
-                    });
-                }
-                else if (element.ClassList.Contains("static"))
-                {
-                    if (ParseAsPrefab(element, "TODO", parent))
-                    {
-                        return;
-                    }
-
-                    if (ParsePropperAsFullMusic(element, "TODO", parent))
-                    {
-                        return;
-                    }
-
-                    // is liturgy responsorial if it contains lsb-content elements
-                    foreach (var child in element.Children.Where(c => c.LocalName == "lsb-content"))
-                    {
-                        ParseLSBServiceElement(child, "E!=lsb-content with E.Children.LN=lsb-content => E", element);
-                    }
-                }
-                else if (element.ClassList.Contains("reading"))
-                {
-                    if (LSBImportOptions.UseComplexReading)
-                    {
-                        ServiceElements.Add(new ParsedLSBElement
-                        {
-                            LSBElement = LSBElementReadingComplex.Parse(element, LSBImportOptions),
-                            Generator = "E!=lsb-content with C:reading [flag=UseComplexReading]",
-                            SourceElements = element.ItemAsEnumerable(),
-                            ParentSourceElement = parent ?? element,
-                        });
-                    }
-                    else
-                    {
-                        ServiceElements.Add(new ParsedLSBElement
-                        {
-                            LSBElement = LSBElementReading.Parse(element),
-                            Generator = "E!=lsb-content with C:reading [flag=!UseComplexReading]",
-                            SourceElements = element.ItemAsEnumerable(),
-                            ParentSourceElement = parent ?? element,
-                        });
-                    }
-                }
-                else if (element.ClassList.Contains("hymn"))
-                {
-                    ServiceElements.Add(new ParsedLSBElement
-                    {
-                        LSBElement = LSBElementHymn.Parse(element),
-                        Generator = "E!=lsb-content with C:hymn",
-                        SourceElements = element.ItemAsEnumerable(),
-                        ParentSourceElement = parent ?? element,
-                    });
-                }
-                else if (element.ClassList.Contains("option-group") || element.ClassList.Contains("group"))
-                {
-                    var singlechild = element.Children.Where(c => c.LocalName == "lsb-service-element");
-                    if (singlechild.Count() == 1)
-                    {
-                        if (singlechild.First().ClassList.Contains("static"))
-                        {
-                            ParseLSBServiceElement(singlechild.First(), "E!=lsb-content with C:option-group|group && E.Children.Where=>E.LN=lsb-service-element && E.C:static", element);
-                            return;
-                        }
-                    }
-
-                    // select all sub lsb-elements what are group selected
-                    var selectedgroup = element.Children.Where(c => c.LocalName == "lsb-service-element" && c.ClassList.Contains("selected"));
-                    foreach (var selectedelement in selectedgroup)
-                    {
-                        if (selectedelement.ClassList.Contains("group"))
-                        {
-                            foreach (var lsbserviceelement in selectedelement.Children.Where(c => c.LocalName == "lsb-service-element"))
-                            {
-                                ParseLSBServiceElement(lsbserviceelement, "E!=lsb-content with C:option-group|group && E.Children.Where=>E.LN=lsb-service-element && E.C:group then E.Children.Where=>E.LN=lsb-service-element", element);
-                            }
-                        }
-                        else if (selectedelement.ClassList.Contains("static"))
-                        {
-                            ParseLSBServiceElement(selectedelement, "E!=lsb-content with C:option-group|group && E.Children.Where=>E.LN=lsb-service-element && E.C:static", element);
-                        }
-                        else if (selectedelement.ClassList.Contains("prayer"))
-                        {
-                            foreach (var c in selectedelement.Children.Where(x => x.LocalName == "lsb-content"))
-                            {
-                                ParseLSBServiceElement(c, "E!=lsb-content with C:option-group|group && E.Children.Where=>E.LN=lsb-service-element && E.C:prayer then E.Children.Where=>E.LN=lsb-content", element);
-                            }
-                        }
-                    }
-                }
-                else if (element.ClassList.Contains("proper"))
-                {
-                    if (ParseAsPrefab(element, "TODO", parent))
-                    {
-                        return;
-                    }
-                    if (ParsePropperAsFullMusic(element, "TODO", parent) == true)
-                    {
-                        return;
-                    }
-                }
-                else if (element.ClassList.Contains("prayer"))
-                {
-                    if (ParseAsPrefab(element, "TODO", parent))
-                    {
-                        return;
-                    }
-                    foreach (var c in element.Children.Where(x => x.LocalName == "lsb-content"))
-                    {
-                        ParseLSBServiceElement(c, "E!=lsb-content with E.C:prayer then E.Children.Where=>E.LN=lsb-content", element);
-                    }
-                }
-                else
-                {
-                    ServiceElements.Add(new ParsedLSBElement
-                    {
-                        LSBElement = LSBElementUnknown.Parse(element),
-                        Generator = "E!=lsb-content default unknown",
-                        ParentSourceElement = element,
-                        SourceElements = parent.ItemAsEnumerable() ?? element.ItemAsEnumerable(),
-                    });
-                }
-            }
-        }
-
-
-
-
-
-        internal bool _ParseLSBServiceElement(IElement element, IElement parent = null, string parGen = "[Top LSB Element]")
-        {
+            // for a top-level element in the service generate a new id
+            Guid p = parTrack == Guid.Empty ? Guid.NewGuid() : parTrack;
             var parsed = false;
             List<string> rejected = new List<string>();
             if (element.ClassList.Contains("caption"))
@@ -354,6 +157,7 @@ namespace LutheRun.Parsers
                     Generator = $"{parGen}; (E) => E.C:caption",
                     SourceElements = element.ItemAsEnumerable(),
                     ParentSourceElement = parent,
+                    Ancestory = p,
                 });
                 return true;
             }
@@ -365,6 +169,7 @@ namespace LutheRun.Parsers
                     Generator = $"{parGen}; (E) => E.C:heading",
                     SourceElements = element.ItemAsEnumerable(),
                     ParentSourceElement = parent,
+                    Ancestory = p,
                 });
                 return true;
             }
@@ -376,6 +181,7 @@ namespace LutheRun.Parsers
                     Generator = $"{parGen}; (E) => E.C:hymn",
                     SourceElements = element.ItemAsEnumerable(),
                     ParentSourceElement = parent,
+                    Ancestory = p,
                 });
                 return true;
             }
@@ -389,6 +195,7 @@ namespace LutheRun.Parsers
                         Generator = $"{parGen}; (E) => E.C:reading [Flag=UseComplexReading]",
                         SourceElements = element.ItemAsEnumerable(),
                         ParentSourceElement = parent,
+                        Ancestory = p,
                     });
                 }
                 else
@@ -399,13 +206,14 @@ namespace LutheRun.Parsers
                         Generator = $"{parGen}; (E) => E.C:reading",
                         SourceElements = element.ItemAsEnumerable(),
                         ParentSourceElement = parent,
+                        Ancestory = p,
                     });
                 }
                 return true;
             }
             else if (element.ClassList.Contains("prayer"))
             {
-                parsed = _ParseLSBPrayerElement(element, $"{parGen}; (E) => E.C:prayer", parent);
+                parsed = _ParseLSBPrayerElement(element, $"{parGen}; (E) => E.C:prayer", parent, p);
                 if (!parsed)
                 {
                     rejected.Add("(E) => E.C:prayer | REJECTED");
@@ -413,7 +221,7 @@ namespace LutheRun.Parsers
             }
             else if (element.ClassList.Contains("proper"))
             {
-                parsed = _ParseLSBProperElement(element, $"{parGen}; (E) => E.C:proper", parent);
+                parsed = _ParseLSBProperElement(element, $"{parGen}; (E) => E.C:proper", parent, p);
                 if (!parsed)
                 {
                     rejected.Add("(E) => E.C:proper | REJECTED");
@@ -421,7 +229,7 @@ namespace LutheRun.Parsers
             }
             else if (element.ClassList.Contains("static"))
             {
-                parsed = _ParseLSBStaticElement(element, $"{parGen}; (E) => E.C:static", parent);
+                parsed = _ParseLSBStaticElement(element, $"{parGen}; (E) => E.C:static", parent, p);
                 if (!parsed)
                 {
                     rejected.Add("(E) => E.C:static | REJECTED");
@@ -429,7 +237,7 @@ namespace LutheRun.Parsers
             }
             else if (element.ClassList.Contains("shared-role"))
             {
-                parsed = _ParseLSBStaticElement(element, $"{parGen}; (E) => E.C:shared-role", parent);
+                parsed = _ParseLSBStaticElement(element, $"{parGen}; (E) => E.C:shared-role", parent, p);
                 if (!parsed)
                 {
                     rejected.Add("(E) => E.C:shared-role | REJECTED");
@@ -437,7 +245,7 @@ namespace LutheRun.Parsers
             }
             else if (element.ClassList.Contains("option-group"))
             {
-                parsed = _ParseLSBOptionGroupElement(element, $"{parGen}; (E) => E.C:option-group", parent);
+                parsed = _ParseLSBOptionGroupElement(element, $"{parGen}; (E) => E.C:option-group", parent, p);
                 if (!parsed)
                 {
                     rejected.Add("(E) => E.C:option-group | REJECTED");
@@ -445,7 +253,7 @@ namespace LutheRun.Parsers
             }
             else if (element.ClassList.Contains("group"))
             {
-                parsed = _ParseLSBGroupElement(element, $"{parGen}; (E) => E.C:group", parent);
+                parsed = _ParseLSBGroupElement(element, $"{parGen}; (E) => E.C:group", parent, p);
                 if (!parsed)
                 {
                     rejected.Add("(E) => E.C:group | REJECTED");
@@ -453,7 +261,7 @@ namespace LutheRun.Parsers
             }
             else if (element.ClassList.Contains("rite-like-group"))
             {
-                parsed = _ParseLSBRiteLikeGroupElement(element, $"{parGen}; (E) => E.C:rite-like-group", parent);
+                parsed = _ParseLSBRiteLikeGroupElement(element, $"{parGen}; (E) => E.C:rite-like-group", parent, p);
                 if (!parsed)
                 {
                     rejected.Add("(E) => E.C:rite-like-group | REJECTED");
@@ -468,99 +276,100 @@ namespace LutheRun.Parsers
                     Generator = $"(E) => E.C disptach fell through to default after :: {string.Join(',', rejected)}",
                     SourceElements = element.ItemAsEnumerable(),
                     ParentSourceElement = parent,
+                    Ancestory = p,
                 });
             }
             return parsed;
         }
 
-        private bool _ParseLSBRiteLikeGroupElement(IElement element, string parGen, IElement parent)
+        private bool _ParseLSBRiteLikeGroupElement(IElement element, string parGen, IElement parent, Guid p)
         {
             foreach (var subelement in element.Children.Where(c => c.ClassList.Contains("static")))
             {
-                _ParseLSBServiceElement(subelement, parent, $"{parGen}; (E) => E.Children.where(c=>c.C:static) => c");
+                _ParseLSBServiceElement(subelement, p, parent, $"{parGen}; (E) => E.Children.where(c=>c.C:static) => c");
             }
             return true;
         }
 
-        private bool _ParseLSBPrayerElement(IElement element, string parGen, IElement parent)
+        private bool _ParseLSBPrayerElement(IElement element, string parGen, IElement parent, Guid p)
         {
             // capture known prayers we have prefab slides for
-            if (ParseAsPrefab(element, parGen, parent))
+            if (ParseAsPrefab(element, parGen, parent, p))
             {
                 return true;
             }
             // otherwise just spit it out as liturgy
-            return _ParseLSBElementIntoLiturgy(element, "(E) => E isnt prefab", parent);
+            return _ParseLSBElementIntoLiturgy(element, "(E) => E isnt prefab", parent, p);
         }
 
-        private bool _ParseLSBProperElement(IElement element, string parGen, IElement parent)
+        private bool _ParseLSBProperElement(IElement element, string parGen, IElement parent, Guid p)
         {
-            if (ParseAsPrefab(element, parGen, parent))
+            if (ParseAsPrefab(element, parGen, parent, p))
             {
                 return true;
             }
-            if (ParsePropperAsFullMusic(element, parGen, parent))
+            if (ParsePropperAsFullMusic(element, parGen, parent, p))
             {
                 return true;
             }
-            if (ParsePropperAsIntroit(element, parGen, parent))
+            if (ParsePropperAsIntroit(element, parGen, parent, p))
             {
                 return true;
             }
             return false;
         }
 
-        private bool _ParseLSBStaticElement(IElement element, string parGen, IElement parent)
+        private bool _ParseLSBStaticElement(IElement element, string parGen, IElement parent, Guid p)
         {
-            if (ParseAsPrefab(element, parGen, parent))
+            if (ParseAsPrefab(element, parGen, parent, p))
             {
                 return true;
             }
-            if (ParsePropperAsFullMusic(element, parGen, parent))
+            if (ParsePropperAsFullMusic(element, parGen, parent, p))
             {
                 return true;
             }
-            return _ParseLSBElementIntoLiturgy(element, parGen, parent);
+            return _ParseLSBElementIntoLiturgy(element, parGen, parent, p);
         }
 
-        private bool _ParseLSBOptionGroupElement(IElement element, string parGen, IElement parent)
+        private bool _ParseLSBOptionGroupElement(IElement element, string parGen, IElement parent, Guid p)
         {
             // only parse selected element if in option group
             var selectedelement = element.Children.Where(c => c.LocalName == "lsb-service-element" && c.ClassList.Contains("selected"));
             foreach (var elem in selectedelement)
             {
-                _ParseLSBServiceElement(elem, parent, $"{parGen}; (E) => E.Children.where(c=>c.LN=lsb-service-element AND c.C:selected) => c");
+                _ParseLSBServiceElement(elem, p, parent, $"{parGen}; (E) => E.Children.where(c=>c.LN=lsb-service-element AND c.C:selected) => c");
             }
             return true;
         }
 
-        private bool _ParseLSBGroupElement(IElement element, string parGen, IElement parent)
+        private bool _ParseLSBGroupElement(IElement element, string parGen, IElement parent, Guid p)
         {
             var subelements = element.Children.Where(c => c.LocalName == "lsb-service-element");
             foreach (var elem in subelements)
             {
-                _ParseLSBServiceElement(elem, parent, $"{parGen}; (E) => E.Children.where(c=>c.LN=lsb-service-element) => c");
+                _ParseLSBServiceElement(elem, p, parent, $"{parGen}; (E) => E.Children.where(c=>c.LN=lsb-service-element) => c");
             }
             return true;
         }
 
-        private bool _ParseLSBElementIntoLiturgy(IElement element, string parGen, IElement parent)
+        private bool _ParseLSBElementIntoLiturgy(IElement element, string parGen, IElement parent, Guid p)
         {
             var anySuccess = false;
             foreach (var content in element.Children.Where(x => x.LocalName == "lsb-content"))
             {
-                var parsed = _ParseLSBContentIntoLiturgy(content, $"{parGen}; (E) => E.Children.Where(c=>c.LN=lsb-content) => c", parent);
+                var parsed = _ParseLSBContentIntoLiturgy(content, $"{parGen}; (E) => E.Children.Where(c=>c.LN=lsb-content) => c", parent, p);
                 anySuccess |= parsed;
             }
             return anySuccess;
         }
 
 
-        private bool _ParseLSBContentIntoLiturgy(IElement contentelement, string parGen, IElement parent)
+        private bool _ParseLSBContentIntoLiturgy(IElement contentelement, string parGen, IElement parent, Guid p)
         {
             if (LSBImportOptions.UseResponsiveLiturgy)
             {
-                return _PraseLSBContentIntoResponsiveLiturgy(contentelement, parGen, parent);
+                return _PraseLSBContentIntoResponsiveLiturgy(contentelement, parGen, parent, p);
             }
             List<string> ltext = new List<string>();
             List<IElement> lchildren = new List<IElement>();
@@ -582,6 +391,7 @@ namespace LutheRun.Parsers
                             Generator = $"{parGen}; (E) => E.Children.where(c => c.C:lsb-responsorial,lsb-responsorial-continued) => c",
                             SourceElements = new List<IElement>(lchildren),
                             ParentSourceElement = parent,
+                            Ancestory = p,
                         });
                         ltext.Clear();
                         lchildren.Clear();
@@ -592,6 +402,7 @@ namespace LutheRun.Parsers
                         Generator = $"{parGen}; (E) => E.Children.where(c => c.C:image) => c",
                         SourceElements = child.ItemAsEnumerable(),
                         ParentSourceElement = parent,
+                        Ancestory = p,
                     });
                 }
             }
@@ -603,13 +414,14 @@ namespace LutheRun.Parsers
                     Generator = $"{parGen}; (E) => E.Children.where(c => c.C:lsb-responsorial,lsb-responsorial-continued) => c",
                     SourceElements = new List<IElement>(lchildren),
                     ParentSourceElement = parent,
+                    Ancestory = p,
                 });
                 ltext.Clear();
             }
             return true;
         }
 
-        private bool _PraseLSBContentIntoResponsiveLiturgy(IElement contentelement, string parGen, IElement parent)
+        private bool _PraseLSBContentIntoResponsiveLiturgy(IElement contentelement, string parGen, IElement parent, Guid p)
         {
             // need to handle mixed liturgy
             // but collect all groups together
@@ -621,14 +433,19 @@ namespace LutheRun.Parsers
             {
                 if (liturgyelements.Any())
                 {
-                    ServiceElements.Add(new ParsedLSBElement
+                    var lit = LSBElementResponsiveLiturgy.Create(contentelement, liturgyelements) as LSBElementResponsiveLiturgy;
+                    if (!lit.PredictsEmptyContent())
                     {
-                        LSBElement = LSBElementResponsiveLiturgy.Create(contentelement, liturgyelements),
-                        Generator = $"{parGen}; (E) => E.Children.where(c=>c.C:lsb-responsorial,lsb-responsorial-continued) => c",
-                        SourceElements = new List<IElement>(liturgyelements),
-                        ParentSourceElement = parent,
-                    });
-                    anySuccess |= liturgyelements.Any();
+                        ServiceElements.Add(new ParsedLSBElement
+                        {
+                            LSBElement = lit,
+                            Generator = $"{parGen}; (E) => E.Children.where(c=>c.C:lsb-responsorial,lsb-responsorial-continued) => c",
+                            SourceElements = new List<IElement>(liturgyelements),
+                            ParentSourceElement = parent,
+                            Ancestory = p,
+                        });
+                        anySuccess |= liturgyelements.Any();
+                    }
                 }
                 liturgyelements.Clear();
             }
@@ -648,6 +465,7 @@ namespace LutheRun.Parsers
                         Generator = $"{parGen}; (E) => E.Children.where(c=>c.C:image) => c",
                         SourceElements = child.ItemAsEnumerable(),
                         ParentSourceElement = parent,
+                        Ancestory = p,
                     });
                     anySuccess |= liturgyelements.Any();
                 }
@@ -655,14 +473,18 @@ namespace LutheRun.Parsers
                 {
                     // handle it with the unknown block
                     AddChunkOfLiturgy();
-                    ServiceElements.Add(new ParsedLSBElement
+                    if (!string.IsNullOrWhiteSpace(child.TextContent))
                     {
-                        LSBElement = LSBElementUnknownFromContent.Create(child, child.TextContent),
-                        Generator = $"{parGen}; (E) => E.Children.where(c=>c.C:UNKNOWN) [Flags=AggressivelyParseInsideLSBContent] c.C:'{child.ClassList}' => c",
-                        SourceElements = child.ItemAsEnumerable(),
-                        ParentSourceElement = parent,
-                        ConsiderForServicification = false,
-                    });
+                        ServiceElements.Add(new ParsedLSBElement
+                        {
+                            LSBElement = LSBElementUnknownFromContent.Create(child, child.TextContent),
+                            Generator = $"{parGen}; (E) => E.Children.where(c=>c.C:UNKNOWN) [Flags=AggressivelyParseInsideLSBContent] c.C:'{child.ClassList}' => c",
+                            SourceElements = child.ItemAsEnumerable(),
+                            ParentSourceElement = parent,
+                            ConsiderForServicification = false,
+                            Ancestory = p,
+                        });
+                    }
                     // don't mark a successful parse by this item alone
                     //anySuccess |= liturgyelements.Any();
                 }
@@ -674,7 +496,7 @@ namespace LutheRun.Parsers
 
 
 
-        private bool ParsePropperAsIntroit(IElement element, string parGen, IElement parent)
+        private bool ParsePropperAsIntroit(IElement element, string parGen, IElement parent, Guid p)
         {
             var caption = LSBElementCaption.Parse(element) as LSBElementCaption;
             if (caption == null || caption?.Caption == string.Empty)
@@ -693,13 +515,14 @@ namespace LutheRun.Parsers
                 Generator = $"{parGen}; (E) => E has <Caption> containing 'introit'",
                 SourceElements = element.ItemAsEnumerable(),
                 ParentSourceElement = parent,
+                Ancestory = p,
             });
 
             return true;
         }
 
 
-        private bool ParsePropperAsFullMusic(IElement element, string parGen, IElement parent)
+        private bool ParsePropperAsFullMusic(IElement element, string parGen, IElement parent, Guid p)
         {
             var caption = LSBElementCaption.Parse(element) as LSBElementCaption;
             if (caption != null && caption?.Caption != string.Empty)
@@ -741,6 +564,7 @@ namespace LutheRun.Parsers
                             Generator = $"{parGen}; (E) => E.Children.where(c=>c.LN=lsb-content) => c && c.Children.where(x=>x.C:image)",
                             SourceElements = element.ItemAsEnumerable(),
                             ParentSourceElement = parent,
+                            Ancestory = p,
                         });
                         return true;
                     }
@@ -749,7 +573,7 @@ namespace LutheRun.Parsers
             return false;
         }
 
-        public bool ParseAsPrefab(IElement element, string parGen, IElement parent)
+        public bool ParseAsPrefab(IElement element, string parGen, IElement parent, Guid p)
         {
             var caption = LSBElementCaption.Parse(element) as LSBElementCaption;
             if (caption != null && caption?.Caption != string.Empty)
@@ -779,6 +603,7 @@ namespace LutheRun.Parsers
                             Generator = $"{parGen}; (E) => E has <Caption> [Flags=UseThemedCreeds]",
                             SourceElements = element.ItemAsEnumerable(),
                             ParentSourceElement = parent,
+                            Ancestory = p,
                         });
                         return true;
                     }
@@ -794,6 +619,7 @@ namespace LutheRun.Parsers
                             Generator = $"{parGen}; (E) => E has <Caption>",
                             SourceElements = element.ItemAsEnumerable(),
                             ParentSourceElement = parent,
+                            Ancestory = p,
                         });
                         return true;
                     }

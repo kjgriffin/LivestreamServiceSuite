@@ -16,10 +16,12 @@ namespace Xenon.Compiler.AST
         public string Name { get; set; }
         public string Reference { get; set; }
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTReading reading = new XenonASTReading();
+            reading._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
             var args = Lexer.ConsumeArgList(true, "name", "reference");
             reading.Name = args["name"];

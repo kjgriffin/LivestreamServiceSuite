@@ -10,6 +10,7 @@ namespace Xenon.Compiler.AST
     class XenonASTPrefabLordsPrayer : IXenonASTCommand
     {
         public IXenonASTElement Parent { get; private set; }
+        public int _SourceLine { get; set; }
 
         public void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
         {
@@ -21,6 +22,7 @@ namespace Xenon.Compiler.AST
         IXenonASTElement IXenonASTElement.Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             this.Parent = Parent;
+            this._SourceLine = Lexer.Peek().linenum;
             return this;
         }
 

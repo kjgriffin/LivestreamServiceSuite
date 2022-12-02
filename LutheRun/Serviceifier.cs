@@ -180,6 +180,52 @@ namespace LutheRun
             return service;
         }
 
+        public static List<ParsedLSBElement> StripEarlyServiceOnly(this List<ParsedLSBElement> service, LSBImportOptions options)
+        {
+            // go through service
+            // if we see a caption about distribution we know communion hymns follow
+            if (options.RemoveEarlyServiceSpecificElements)
+            {
+                HashSet<Guid> removedRoots = new HashSet<Guid>();
+
+                foreach (var elem in service)
+                {
+                    var hymn = elem.LSBElement as LSBElementHymn;
+                    if (hymn != null)
+                    {
+                        if (hymn.Caption.ToLower().Contains("8:30"))
+                        {
+                            // mark it for removal
+                            elem.FilterFromOutput = true;
+                            removedRoots.Add(elem.Ancestory);
+                        }
+                    }
+                    var caption = elem.LSBElement as LSBElementCaption;
+                    if (caption != null)
+                    {
+                        if (caption.Caption.ToLower().Contains("8:30"))
+                        {
+                            // mark it for removal
+                            elem.FilterFromOutput = true;
+                            removedRoots.Add(elem.Ancestory);
+                        }
+                    }
+                }
+
+                // remove everything with a parent listed as being removed
+                foreach (var elem in service)
+                {
+                    if (removedRoots.Contains(elem.Ancestory))
+                    {
+                        elem.FilterFromOutput = true;
+                    }
+                }
+            }
+
+            return service;
+        }
+
+
         public static List<ParsedLSBElement> AddAdditionalInferedElements(this List<ParsedLSBElement> service, LSBImportOptions options)
         {
             List<ParsedLSBElement> servicetoparse = null;
@@ -195,6 +241,7 @@ namespace LutheRun
                     LSBElement = new InsertTitlepage(),
                     AddedByInference = true,
                     Generator = "Start of Service",
+                    Ancestory = Guid.NewGuid(),
                 });
                 // always start with copyright
                 // default to preset center after copyright (though bells would handle this...)
@@ -204,6 +251,7 @@ namespace LutheRun
                     LSBElement = new ExternalPrefab("#copyright", (int)Camera.Organ, options.InferPostset, "copyright", BlockType.TITLEPAGE),
                     Generator = "Start of Service [Flag=UseCopyTitle]",
                     AddedByInference = true,
+                    Ancestory = Guid.NewGuid(),
                 });
 
                 servicetoparse = service;
@@ -249,6 +297,7 @@ namespace LutheRun
                         AddedByInference = true,
                         Generator = "Converted into CopyTilte [Flags=UseCopyTitle]",
                         SourceElements = acks.Select(x => x.SourceHTML).Concat(ack.SourceHTML.ItemAsEnumerable()),
+                        Ancestory = Guid.NewGuid(),
                     });
 
                     if (options.UseTitledEnd)
@@ -259,6 +308,7 @@ namespace LutheRun
                             Generator = "Generate Copy Title [Flags=UseCopyTitle]",
                             AddedByInference = true,
                             SourceElements = acks.Select(x => x.SourceHTML),
+                            Ancestory = Guid.NewGuid(),
                         };
                     }
                 }
@@ -424,6 +474,7 @@ namespace LutheRun
                                 LSBElement = new ExternalPrefab("#liturgyoff", "liturgyoff", BlockType.MISC_CORPERATE),
                                 Generator = "Next element NOT [liturgy]. Previous element was [liturgy]",
                                 AddedByInference = true,
+                                Ancestory = Guid.NewGuid(),
                             });
                         }
                         // we'll assume the bell's script turns it off
@@ -440,6 +491,7 @@ namespace LutheRun
                         AddedByInference = true,
                         Generator = "Next element is [hymn]",
                         ParentSourceElement = element.ParentSourceElement,
+                        Ancestory = Guid.NewGuid(),
                     });
 
                 }
@@ -458,6 +510,7 @@ namespace LutheRun
                     LSBElement = new ExternalPrefab("#viewservices", "viewservices", BlockType.UNKNOWN),
                     Generator = "End Service",
                     AddedByInference = true,
+                    Ancestory = Guid.NewGuid(),
                 });
             }
             else

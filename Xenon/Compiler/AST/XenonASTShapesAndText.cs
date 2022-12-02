@@ -16,10 +16,12 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Parent { get; private set; }
 
         public List<string> Texts { get; private set; }
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTShapesAndText shapeAndTexts = new XenonASTShapesAndText();
+            shapeAndTexts._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
 
             shapeAndTexts.Texts = TextBlockParser.ParseTextBlockLines(Lexer);

@@ -11,11 +11,13 @@ namespace Xenon.Compiler.AST
     internal class XenonASTPostFilter : IXenonASTCommand
     {
         public IXenonASTElement Parent { get; private set; }
-        public List<IXenonASTElement> Children { get; set; } = new List<IXenonASTElement>(); 
+        public List<IXenonASTElement> Children { get; set; } = new List<IXenonASTElement>();
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTPostFilter filter = new XenonASTPostFilter();
+            filter._SourceLine = Lexer.Peek().linenum;
 
 
 

@@ -30,6 +30,8 @@ namespace Xenon.Renderer
         public bool IsPostset { get; set; }
         public int Postset { get; set; }
 
+        public int SourceLineRef { get; set; } = 0;
+
         public SlideOverridingBehaviour OverridingBehaviour { get; set; }
 
         public static RenderedSlide Default()
@@ -57,6 +59,7 @@ namespace Xenon.Renderer
                 BitmapPNGMS = this.BitmapPNGMS,
                 KeyBitmap = this.KeyBitmap,
                 KeyPNGMS = this.KeyPNGMS,
+                SourceLineRef= this.SourceLineRef,
             };
         }
     }

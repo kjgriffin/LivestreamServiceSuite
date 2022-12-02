@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 using Xenon.AssetManagment;
 using Xenon.Compiler.SubParsers;
@@ -19,10 +20,12 @@ namespace Xenon.Compiler.AST
         public List<string> Texts { get; private set; } = new List<string>();
         public List<string> FGAssetNames { get; private set; } = new List<string>();
         public List<string> BGAssetNames { get; private set; } = new List<string>();
+        public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTShapesImagesAndText slide = new XenonASTShapesImagesAndText();
+            slide._SourceLine = Lexer.Peek().linenum;
             Lexer.GobbleWhitespace();
             Lexer.GobbleandLog("{");
             Lexer.GobbleWhitespace();
