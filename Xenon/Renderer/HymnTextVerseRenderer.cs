@@ -23,6 +23,7 @@ namespace Xenon.Renderer
         public static string DATAKEY_HCONTENT { get => "hcontent"; }
         public static string DATAKEY_VINFO { get => "vinfo"; }
         public static string DATAKEY_COPYRIGHT { get => "copyright"; }
+        public static string DATAKEY_DOXOLOGICAL { get => "doxological"; }
 
         [Obsolete]
         public SlideLayout Layouts { get; set; }
@@ -94,7 +95,9 @@ namespace Xenon.Renderer
                 lines = lobj as List<string>;
             }
 
-            CommonPoetryTextRenderer.Render(ibmp, ikbmp, layout.HymnContentBox, lines);
+            bool doxological = (bool)(slide.Data.GetValueOrDefault(DATAKEY_DOXOLOGICAL, false));
+
+            CommonPoetryTextRenderer.Render(ibmp, ikbmp, layout.HymnContentBox, lines, doxological, "D    ", "LSBSymbol");
 
             res.Bitmap = ibmp;
             res.KeyBitmap = ikbmp;

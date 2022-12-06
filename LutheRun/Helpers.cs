@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using AngleSharp.Dom;
 using System.Text.RegularExpressions;
+using AngleSharp;
 
 namespace LutheRun
 {
@@ -58,11 +59,28 @@ namespace LutheRun
             return sb.ToString().Trim();
         }
 
-        public static List<string> ParagraphText(this IElement paragraph)
+        public static List<string> ParseNumberedStanzaText(this IElement paragraph)
         {
-            paragraph.RemoveChild(paragraph.FirstChild);
-            paragraph.RemoveChild(paragraph.FirstChild);
-            string s = paragraph.InnerHtml;
+            var p = paragraph.Clone(true) as IElement;
+
+            p.RemoveChild(p.FirstChild);
+            p.RemoveChild(p.FirstChild);
+            string s = p.InnerHtml;
+            s = s.Replace("<br>", Environment.NewLine);
+            s = s.Replace("&nbsp;", " ");
+
+            return s.Split(Environment.NewLine).ToList();
+        }
+        public static List<string> ParseDoxologicalNumberedStanzaText(this IElement paragraph)
+        {
+            var p = paragraph.Clone(true) as IElement;
+
+            p.RemoveChild(p.FirstChild);
+            p.RemoveChild(p.FirstChild);
+            p.RemoveChild(p.FirstChild);
+            p.RemoveChild(p.FirstChild);
+
+            string s = p.InnerHtml;
             s = s.Replace("<br>", Environment.NewLine);
             s = s.Replace("&nbsp;", " ");
 

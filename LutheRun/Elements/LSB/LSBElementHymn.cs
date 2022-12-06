@@ -131,7 +131,16 @@ namespace LutheRun.Elements.LSB
                     //var s = Regex.Replace(child.TextContent, @"^\d+", "");
                     //verse.Lines = s.Split(new string[] { "\r\n", "\r", "\n", Environment.NewLine, ".", ",", ":", ";", "!", "?", "    " }, StringSplitOptions.RemoveEmptyEntries).ToList();
                     //res.TextVerses.Add(verse);
-                    verse.Lines = child.ParagraphText();
+                    verse.Lines = child.ParseNumberedStanzaText();
+                    res.TextVerses.Add(verse);
+                }
+                if (child.ClassList.Contains("doxological-numbered-stanza"))
+                {
+                    res.HasText = true;
+                    HymnTextVerse verse = new HymnTextVerse();
+                    verse.Number = child.QuerySelectorAll(".stanza-number").FirstOrDefault()?.TextContent ?? "";
+                    verse.Lines = child.ParseDoxologicalNumberedStanzaText();
+                    verse.Doxological = true;
                     res.TextVerses.Add(verse);
                 }
                 else if (child.ClassList.Contains("image"))
@@ -334,7 +343,12 @@ namespace LutheRun.Elements.LSB
                 foreach (var verse in TextVerses)
                 {
                     string verseinsert = verse.Number != string.Empty ? $"(Verse {verse.Number})" : "";
-                    sb.AppendLine($"#verse{verseinsert} {{".Indent(indentDepth, indentSpaces));
+                    if (verse.Doxological)
+                    {
+                        verseinsert += "[doxological]";
+                    }
+                    sb.AppendLine($"#verse{verseinsert}".Indent(indentDepth, indentSpaces));
+                    sb.AppendLine("{".Indent(indentDepth, indentSpaces));
                     indentDepth++;
                     foreach (var line in verse.Lines)
                     {
@@ -387,6 +401,7 @@ namespace LutheRun.Elements.LSB
 
         class HymnTextVerse
         {
+            public bool Doxological { get; set; } = false;
             public string Number { get; set; } = "";
             public List<string> Lines { get; set; } = new List<string>();
         }

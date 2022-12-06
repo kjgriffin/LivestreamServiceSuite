@@ -14,6 +14,7 @@ namespace Xenon.Compiler.AST
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
         public string SubName { get; set; }
+        public bool Doxological { get; set; } = false;
         public IXenonASTElement Parent { get; private set; }
         public int _SourceLine { get; set; }
 
@@ -30,6 +31,18 @@ namespace Xenon.Compiler.AST
                 verse.SubName = Lexer.ConsumeUntil(")").tvalue.Trim();
                 Lexer.Consume();
                 Lexer.GobbleWhitespace();
+            }
+
+            if (Lexer.Inspect("["))
+            {
+                Lexer.Consume();
+                var flags = Lexer.ConsumeUntil("]").tvalue.Trim().Split(",");
+                Lexer.GobbleandLog("]");
+                Lexer.GobbleWhitespace();
+                if (flags.Contains("doxological"))
+                {
+                    verse.Doxological = true;
+                }
             }
 
             Lexer.GobbleandLog("{", "Expect opening brace at start of verse.");
@@ -99,6 +112,7 @@ namespace Xenon.Compiler.AST
             slide.Data[HymnTextVerseRenderer.DATAKEY_HTUNE] = parent.Tune;
             slide.Data[HymnTextVerseRenderer.DATAKEY_COPYRIGHT] = parent.CopyrightInfo;
             slide.Data[HymnTextVerseRenderer.DATAKEY_VINFO] = SubName;
+            slide.Data[HymnTextVerseRenderer.DATAKEY_DOXOLOGICAL] = Doxological;
 
             slide.Data[HymnTextVerseRenderer.DATAKEY_HCONTENT] = vle.LayoutLines.Select(x => string.Concat(x.Words).Trim()).ToList();
 
