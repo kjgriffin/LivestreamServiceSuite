@@ -97,7 +97,8 @@ namespace LutheRun
 
             // rely on filter to remove extra junk
             // only use here is to remove unknown captions
-            foreach (var element in service)
+            // allow earlier filtering to rule
+            foreach (var element in service.Where(x => !x.FilterFromOutput))
             {
                 var caption = element.LSBElement as LSBElementCaption;
                 if (caption != null)
@@ -197,6 +198,7 @@ namespace LutheRun
                         {
                             // mark it for removal
                             elem.FilterFromOutput = true;
+                            elem.Generator += " ====> [REMOVED early service only];";
                             removedRoots.Add(elem.Ancestory);
                         }
                     }
@@ -218,6 +220,7 @@ namespace LutheRun
                     if (removedRoots.Contains(elem.Ancestory))
                     {
                         elem.FilterFromOutput = true;
+                        elem.Generator += " ====> [REMOVED early service only];";
                     }
                 }
             }
