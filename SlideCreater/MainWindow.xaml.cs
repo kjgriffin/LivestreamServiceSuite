@@ -37,6 +37,7 @@ using System.IO.MemoryMappedFiles;
 using IntegratedPresenterAPIInterop;
 using CCU.Config;
 using LutheRun.Parsers;
+using ICSharpCode.AvalonEdit.Search;
 
 namespace SlideCreater
 {
@@ -219,6 +220,8 @@ namespace SlideCreater
             TbInput.TextArea.PreviewTextInput += TextArea_PreviewTextInput;
 
             TbInput.TextArea.TextView.LinkTextForegroundBrush = System.Windows.Media.Brushes.LawnGreen;
+
+            SearchPanel.Install(TbInput.TextArea);
 
             TbConfig.LoadLanguage_JSON();
             TbConfigCCU.LoadLanguage_JSON();
