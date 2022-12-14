@@ -385,29 +385,34 @@ namespace LutheRun.Elements.LSB
             indentDepth--;
             sb.AppendLine("}".Indent(indentDepth, indentSpaces));
 
-            // dump command into sucripted block
-            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
-                                                                     .GetManifestResourceNames()
-                                                                     .FirstOrDefault(x => x.Contains("PIPReading"));
-
-            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
-                .GetManifestResourceStream(name);
-
-            var prefabblob = "";
-            using (StreamReader sr = new StreamReader(stream))
+            if (!lSBImportOptions.WrapConsecuitivePackages)
             {
-                prefabblob = sr.ReadToEnd();
+                // dump command into sucripted block
+                var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                                                         .GetManifestResourceNames()
+                                                                         .FirstOrDefault(x => x.Contains("PIPReading"));
+
+                var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                    .GetManifestResourceStream(name);
+
+                var prefabblob = "";
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    prefabblob = sr.ReadToEnd();
+                }
+
+                int indent = Regex.Match(prefabblob, @"^(?<indent>\$>)\$READING", RegexOptions.Multiline).Groups["indent"].Value.Length / 2;
+                string inject = sb.ToString().IndentBlock(indent, indentSpaces);
+
+
+                prefabblob = Regex.Replace(prefabblob, "\\$>", "    ");
+
+                prefabblob = Regex.Replace(prefabblob, @" +\$READING", inject);
+
+                return prefabblob.IndentBlock(_indentDepth, indentSpaces);
             }
 
-            int indent = Regex.Match(prefabblob, @"^(?<indent>\$>)\$READING", RegexOptions.Multiline).Groups["indent"].Value.Length / 2;
-            string inject = sb.ToString().IndentBlock(indent, indentSpaces);
-
-
-            prefabblob = Regex.Replace(prefabblob, "\\$>", "    ");
-
-            prefabblob = Regex.Replace(prefabblob, @" +\$READING", inject);
-
-            return prefabblob.IndentBlock(_indentDepth, indentSpaces);
+            return sb.ToString().IndentBlock(_indentDepth, indentSpaces);
         }
 
         enum ReadingResponsePart

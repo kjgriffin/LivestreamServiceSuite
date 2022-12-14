@@ -12,9 +12,11 @@
     <None Remove="PrefabBlobs\EndTitle.txt" />
     <None Remove="PrefabBlobs\LordsPrayer.txt" />
     <None Remove="PrefabBlobs\NiceneCreed.txt" />
-    <None Remove="PrefabBlobs\PIPReadingScripBlock.txt" />
+    <None Remove="PrefabBlobs\PIPReadingScriptBlock.txt" />
+    <None Remove="PrefabBlobs\PIPReadingScriptIntroBlock.txt" />
     <None Remove="PrefabBlobs\PrePIPScriptBlock_Creed.txt" />
     <None Remove="PrefabBlobs\PrePIPScriptBlock_Hymn.txt" />
+    <None Remove="PrefabBlobs\PrePIPScriptIntroBlock_Hymn.txt" />
     <None Remove="PrefabBlobs\UpNext_Numbered.txt" />
     <None Remove="PrefabBlobs\UpNext_UnNumbered.txt" />
   </ItemGroup>
@@ -23,7 +25,8 @@
     <EmbeddedResource Include="PrefabBlobs\Bells.txt" />
     <EmbeddedResource Include="PrefabBlobs\EndTitle.txt" />
     <EmbeddedResource Include="PrefabBlobs\CopyTitle.txt" />
-    <EmbeddedResource Include="PrefabBlobs\PIPReadingScripBlock.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PIPReadingScriptIntroBlock.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PIPReadingScriptBlock.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +37,7 @@
     <EmbeddedResource Include="PrefabBlobs\ApostlesCreed.txt" />
     <EmbeddedResource Include="PrefabBlobs\LordsPrayer.txt" />
     <EmbeddedResource Include="PrefabBlobs\NiceneCreed.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PrePIPScriptIntroBlock_Hymn.txt" />
     <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Hymn.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNext_Numbered.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNext_UnNumbered.txt" />

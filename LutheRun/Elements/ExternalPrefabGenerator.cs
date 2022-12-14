@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 using LutheRun.Elements.Interface;
 using LutheRun.Elements.LSB;
 using LutheRun.Parsers;
@@ -14,6 +15,12 @@ namespace LutheRun.Elements
 {
     internal static class ExternalPrefabGenerator
     {
+
+
+        public static ExternalPrefab BuildScriptedIntro(string blobintro, string blobreplace, string type, BlockType btype)
+        {
+            return new ExternalPrefab(blobintro, type, btype);
+        }
 
 
         public static ExternalPrefab BuildHymnIntroSlides(LSBElementHymn hymn, bool useUpNextForHymns)

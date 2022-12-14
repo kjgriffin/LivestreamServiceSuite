@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -487,21 +488,134 @@ namespace LutheRun
 
                 if (element.LSBElement is LSBElementHymn)
                 {
-                    // we can use the new up-next tabs if we have a hymn #
-                    newservice.Add(new ParsedLSBElement
-                    {
-                        LSBElement = ExternalPrefabGenerator.BuildHymnIntroSlides(element.LSBElement as LSBElementHymn, options.UseUpNextForHymns),
-                        AddedByInference = true,
-                        Generator = "Next element is [hymn]",
-                        ParentSourceElement = element.ParentSourceElement,
-                        Ancestory = Guid.NewGuid(),
-                    });
+                    bool dointro = true;
 
+                    if (options.WrapConsecuitivePackages)
+                    {
+                        // we're assumed to be wrapping consecutive hymns,
+                        // so check if last hymn is the same, because in that case we don't re-introduce it
+                        if (prevelement?.LSBElement is LSBElementHymn)
+                        {
+                            if ((prevelement.LSBElement as LSBElementHymn).Caption == (element.LSBElement as LSBElementHymn).Caption)
+                            {
+                                dointro = false;
+                            }
+                        }
+                    }
+
+                    if (dointro)
+                    {
+                        // we can use the new up-next tabs if we have a hymn #
+                        newservice.Add(new ParsedLSBElement
+                        {
+                            LSBElement = ExternalPrefabGenerator.BuildHymnIntroSlides(element.LSBElement as LSBElementHymn, options.UseUpNextForHymns),
+                            AddedByInference = true,
+                            Generator = "Next element is [hymn]",
+                            ParentSourceElement = element.ParentSourceElement,
+                            Ancestory = Guid.NewGuid(),
+                        });
+                    }
+                }
+
+                // try having pre/post script blocks
+                // allow them added here so we can coallesce blocks that should be scripted together
+
+                if (options.WrapConsecuitivePackages)
+                {
+                    if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings)
+                    {
+                        // assume the first consecutive reading element setups the block 
+                        if (prevelement.LSBElement is not LSBElementReadingComplex)
+                        {
+                            // add the reading prefab intro block
+                            newservice.Add(new ParsedLSBElement
+                            {
+                                LSBElement = ScriptedWrapper.FromBlob(BlockType.READING, "PIPReadingScriptIntroBlock"),
+                                AddedByInference = true,
+                                Generator = "Next element is [reading]",
+                                ParentSourceElement = element.ParentSourceElement,
+                                Ancestory = Guid.NewGuid(),
+                                HasWingsForFlighPlanning = false, // not a valid location to dump pilot-crap
+                            });
+                        }
+                    }
+                    if (element.LSBElement is LSBElementHymn && options.UsePIPHymns)
+                    {
+                        // assume the first consecutive hymn element setups the block 
+                        if (prevelement.LSBElement is not LSBElementHymn)
+                        {
+                            // add the reading prefab intro block
+                            Dictionary<string, string> pipReplace = new Dictionary<string, string>
+                            {
+                                ["$PIPFILL"] = (element.LSBElement as LSBElementHymn).IsCommunionHymn ? "5" : "1",
+                                ["$PIPCAM"] = (element.LSBElement as LSBElementHymn).IsCommunionHymn ? "ORGAN" : "BACK",
+                            };
+
+                            newservice.Add(new ParsedLSBElement
+                            {
+                                LSBElement = ScriptedWrapper.FromBlob(BlockType.HYMN, "PrePIPScriptIntroBlock_Hymn", blobReplace: pipReplace),
+                                AddedByInference = true,
+                                Generator = "Next element is [hymn]",
+                                ParentSourceElement = element.ParentSourceElement,
+                                Ancestory = Guid.NewGuid(),
+                                HasWingsForFlighPlanning = false, // not a valid location to dump pilot-crap
+                            });
+                        }
+                    }
                 }
 
                 newservice.Add(element);
-
                 prevelement = element;
+
+
+                // handle post scripting blocks here
+                if (options.WrapConsecuitivePackages)
+                {
+                    if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings)
+                    {
+                        if (nextelement?.LSBElement is not LSBElementReadingComplex)
+                        {
+                            // add the script teardown block here
+                            var scriptclose = new ParsedLSBElement
+                            {
+                                LSBElement = ScriptedWrapper.ClosingWrapper(BlockType.READING),
+                                AddedByInference = true,
+                                Generator = "Last element was [reading]",
+                                ParentSourceElement = element.ParentSourceElement,
+                                Ancestory = Guid.NewGuid(),
+                            };
+                            newservice.Add(scriptclose);
+                            prevelement = scriptclose;
+                        }
+                    }
+                    if (element.LSBElement is LSBElementHymn && options.FullPackageReadings)
+                    {
+                        bool doend = true;
+                        if (nextelement?.LSBElement is LSBElementHymn)
+                        {
+                            if ((nextelement.LSBElement as LSBElementHymn).Caption == (element.LSBElement as LSBElementHymn).Caption)
+                            {
+                                doend = false;
+                            }
+                        }
+
+                        if (doend)
+                        {
+                            // add the script teardown block here
+                            var scriptclose = new ParsedLSBElement
+                            {
+                                LSBElement = ScriptedWrapper.ClosingWrapper(BlockType.HYMN),
+                                AddedByInference = true,
+                                Generator = "Last element was [hymn]",
+                                ParentSourceElement = element.ParentSourceElement,
+                                Ancestory = Guid.NewGuid(),
+                            };
+                            newservice.Add(scriptclose);
+                            prevelement = scriptclose;
+                        }
+                    }
+                }
+
             }
 
 

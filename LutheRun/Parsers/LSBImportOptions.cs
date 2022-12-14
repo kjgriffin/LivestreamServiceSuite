@@ -39,6 +39,8 @@ namespace LutheRun.Parsers
         [BoolSetting]
         public bool FullPackageReadings { get; set; } = true;
         [BoolSetting]
+        public bool WrapConsecuitivePackages { get; set; } = true;
+        [BoolSetting]
         public bool InferResponsivePslamReadingsAsTitledLiturgy { get; set; } = true;
         [BoolSetting]
         public bool ForcePsalmsAsTitledLiturgy { get; set; } = false;
@@ -167,6 +169,8 @@ namespace LutheRun.Parsers
         [BoolSetting]
         public bool ComplexReading { get; set; } = true;
         [BoolSetting]
+        public bool ScriptWrapper { get; set; } = true;
+        [BoolSetting]
         public bool Caption { get; set; } = true;
         [BoolSetting]
         public bool Heading { get; set; } = false;
@@ -200,6 +204,8 @@ namespace LutheRun.Parsers
                     elements.Add(typeof(LSBElementReading));
                 if (ComplexReading)
                     elements.Add(typeof(LSBElementReadingComplex));
+                if (ScriptWrapper)
+                    elements.Add(typeof(ScriptedWrapper));
                 if (Caption)
                     elements.Add(typeof(LSBElementCaption));
                 if (Heading)

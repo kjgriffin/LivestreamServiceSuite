@@ -23,5 +23,6 @@ namespace LutheRun.Parsers.DataModel
         public bool ConsiderForServicification { get; set; } = true;
         internal BlockType BlockType { get; set; } = BlockType.UNKNOWN;
         internal CameraUsage CameraUse { get; set; } = new CameraUsage();
+        public bool HasWingsForFlighPlanning { get; set; } = true;
     }
 }

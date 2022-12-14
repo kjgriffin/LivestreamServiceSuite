@@ -247,7 +247,7 @@ namespace LutheRun.Elements.LSB
         {
             if (lSBImportOptions.UsePIPHymns)
             {
-                return XenonAutoGen_PIP(ref indentDepth, indentSpaces);
+                return XenonAutoGen_PIP(ref indentDepth, indentSpaces, lSBImportOptions);
             }
             return XenonAutoGen_Simple(ref indentDepth, indentSpaces);
         }
@@ -275,7 +275,7 @@ namespace LutheRun.Elements.LSB
             //sb.AppendLine("/// </XENON_AUTO_GEN>");
             return sb.ToString();
         }
-        private string XenonAutoGen_PIP(ref int indentDepth, int indentSpaces)
+        private string XenonAutoGen_PIP(ref int indentDepth, int indentSpaces, LSBImportOptions lSBImportOptions)
         {
             // Assumes that any text verses will always be at the end.
             StringBuilder sb = new StringBuilder();
@@ -285,27 +285,30 @@ namespace LutheRun.Elements.LSB
             // for now we'll just put it on both
 
 
-            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
-                                      .GetManifestResourceNames()
-                                      .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Hymn"));
-
-            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
-                .GetManifestResourceStream(name);
-
-            // wrap it into a scripted block
-            using (StreamReader sr = new StreamReader(stream))
+            if (!lSBImportOptions.WrapConsecuitivePackages)
             {
-                string pcmd = sr.ReadToEnd();
-                pcmd = Regex.Replace(pcmd, Regex.Escape("$>"), "".PadLeft(indentSpaces));
+                var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                          .GetManifestResourceNames()
+                                          .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Hymn"));
 
-                pcmd = Regex.Replace(pcmd, Regex.Escape("$PIPFILL"), IsCommunionHymn ? "5" : "1");
-                pcmd = Regex.Replace(pcmd, Regex.Escape("$PIPCAM"), IsCommunionHymn ? "ORGAN" : "BACK");
+                var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                    .GetManifestResourceStream(name);
 
-                sb.AppendLine(pcmd.IndentBlock(indentDepth, indentSpaces));
+                // wrap it into a scripted block
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    string pcmd = sr.ReadToEnd();
+                    pcmd = Regex.Replace(pcmd, Regex.Escape("$>"), "".PadLeft(indentSpaces));
+
+                    pcmd = Regex.Replace(pcmd, Regex.Escape("$PIPFILL"), IsCommunionHymn ? "5" : "1");
+                    pcmd = Regex.Replace(pcmd, Regex.Escape("$PIPCAM"), IsCommunionHymn ? "ORGAN" : "BACK");
+
+                    sb.AppendLine(pcmd.IndentBlock(indentDepth, indentSpaces));
+                }
+                indentDepth++;
+
+                sb.AppendLine();
             }
-            indentDepth++;
-
-            sb.AppendLine();
 
             var imagehymn = XenonAutoGenImageHymn(ref indentDepth, indentSpaces);
             if (!string.IsNullOrEmpty(imagehymn))
@@ -318,8 +321,11 @@ namespace LutheRun.Elements.LSB
                 sb.AppendLine(texthymn + PostsetCmd);
             }
 
-            indentDepth--;
-            sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+            if (!lSBImportOptions.WrapConsecuitivePackages)
+            {
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+            }
 
             return sb.ToString();
         }

@@ -79,7 +79,7 @@ namespace LutheRun.Pilot
                 // that has an availability
                 foreach (var req in elem.CameraUse.RequiredCameras.Presets.Where(x => !elem.CameraUse.UnResolvedConflicts.ContainsKey(x.Key)))
                 {
-                    var latest = service.LastOrDefault(x => !x.FilterFromOutput && x.ElementOrder < elem.ElementOrder && !x.CameraUse.InUse.Presets.ContainsKey(req.Key));
+                    var latest = service.LastOrDefault(x => !x.FilterFromOutput && x.ElementOrder < elem.ElementOrder && !x.CameraUse.InUse.Presets.ContainsKey(req.Key) && x.HasWingsForFlighPlanning);
                     if (latest != null)
                     {
                         latest.CameraUse.SafeActions[req.Key] = (req.Value.FirstOrDefault(), elem.ElementOrder);
@@ -95,7 +95,7 @@ namespace LutheRun.Pilot
                 foreach (var req in elem.CameraUse.RequiredCameras.Presets.Where(x => elem.CameraUse.UnResolvedConflicts.ContainsKey(x.Key)))
                 {
                     // find the previous element and warn that we should have moved a camera here, but there's a conflict
-                    var previous = service.LastOrDefault(x => !x.FilterFromOutput && x.ElementOrder < elem.ElementOrder);
+                    var previous = service.LastOrDefault(x => !x.FilterFromOutput && x.ElementOrder < elem.ElementOrder && x.HasWingsForFlighPlanning);
                     if (previous != null)
                     {
                         previous.CameraUse.RiskyActions[req.Key] = (req.Value.FirstOrDefault(), elem.ElementOrder);
