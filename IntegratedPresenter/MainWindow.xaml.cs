@@ -2027,6 +2027,10 @@ namespace IntegratedPresenter.Main
                             _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- AutoOnly so advancing to NextSlide() from Slide ({Presentation.CurrentSlide}) <next {Presentation.Next.Title}>. Will re-run automation on next slide.");
                             Presentation.NextSlide();
                             slidesUpdated();
+
+                            // let pilot run in full auto
+                            PerformAutoPilotActions(Presentation.EffectiveCurrent.AutoPilotActions);
+
                             await SlideDriveVideo_Next(Tied);
                             _logger.Debug($"SlideDriveVideo_Next(Tied={Tied}) -- completed AutoOnly. Skipping rest of actions.");
                             return;
