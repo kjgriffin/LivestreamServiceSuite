@@ -433,7 +433,24 @@ namespace Integrated_Presenter.Automation
                         _logger.Debug($"(PerformAutomationAction) -- delay for {task.DataI} ms");
                         await Task.Delay(task.DataI);
                         break;
+                    case AutomationActions.DelayUntil:
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- delay until {task.DataS}");
 
+                            // parse time as date
+                            if (DateTime.TryParse(task.DataS, out var time))
+                            {
+                                // compute time to wait
+                                DateTime now = DateTime.Now;
+                                TimeSpan diff = time - now;
+                                if (diff.TotalMilliseconds > 0)
+                                {
+                                    await Task.Delay((int)diff.TotalMilliseconds);
+                                }
+                            }
+
+                            break;
+                        }
 
                     case AutomationActions.JumpToSlide:
                         _logger.Debug($"(PerformAutomationAction) -- jump to slide {task.DataI}");

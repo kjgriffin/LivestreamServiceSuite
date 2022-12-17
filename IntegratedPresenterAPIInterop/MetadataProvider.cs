@@ -81,9 +81,10 @@ namespace IntegratedPresenterAPIInterop
             [AutomationActions.ProgramSelect] = (1, AutomationActions.ProgramSelect, "ProgramSelect", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.VIDEOSOURCE),
             [AutomationActions.AuxSelect] = (1, AutomationActions.AuxSelect, "AuxSelect", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.VIDEOSOURCE),
             [AutomationActions.USK1Fill] = (1, AutomationActions.USK1Fill, "USK1Fill", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.VIDEOSOURCE),
-            [AutomationActions.DelayMs] = (1, AutomationActions.DelayMs, "DelayMs", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.NONE),
             [AutomationActions.LoadAudio] = (1, AutomationActions.LoadAudio, "LoadAudioFile", new List<AutomationActionArgType> { AutomationActionArgType.String }, ExpectedVariableContents.PROJECTASSET),
 
+            [AutomationActions.DelayMs] = (1, AutomationActions.DelayMs, "DelayMs", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.NONE),
+            [AutomationActions.DelayUntil] = (1, AutomationActions.DelayUntil, "DelayUntil", new List<AutomationActionArgType> { AutomationActionArgType.String }, ExpectedVariableContents.NONE),
 
             [AutomationActions.JumpToSlide] = (1, AutomationActions.JumpToSlide, "JumpToSlide", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.NONE),
             [AutomationActions.WatchSwitcherStateBoolVal] = (3, AutomationActions.WatchSwitcherStateBoolVal, "WatchSwitcherStateBoolVal", new List<AutomationActionArgType>

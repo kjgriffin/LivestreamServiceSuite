@@ -53,6 +53,7 @@
 
 
         DelayMs,
+        DelayUntil,
 
         None,
         DriveNextSlide,
