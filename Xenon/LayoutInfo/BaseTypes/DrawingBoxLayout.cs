@@ -13,6 +13,7 @@ namespace Xenon.LayoutInfo.BaseTypes
         public LWJRect Box { get; set; }
         public LWJColor FillColor { get; set; }
         public LWJColor KeyColor { get; set; }
+        public bool InvertAll { get; set; } = false;
     }
 
     internal class AdvancedDrawingBoxLayout : DrawingBoxLayout

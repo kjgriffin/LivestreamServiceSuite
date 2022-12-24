@@ -91,7 +91,14 @@ namespace Xenon.Renderer
             int yoff = Math.Clamp(Math.Abs((hibmp.Height - layout.MusicBox.Box.Size.Height)) / 2, 0, layout.MusicBox.Box.Size.Height);
             hibmpctr.Mutate(ctx => ctx.DrawImage(hibmp, new Point(xoff, yoff), 1f));
             // then let the render just position it inside the box
-            CommonDrawingBoxRenderer.Render(ibmp, ikbmp, layout.MusicBox, hibmpctr, inferKey: false);
+
+            // invert??
+            if (layout.MusicBox.InvertAll)
+            {
+                hibmpctr.Mutate(ctx => ctx.Invert());
+            }
+
+            CommonDrawingBoxRenderer.Render(ibmp, ikbmp, layout.MusicBox, hibmpctr);
 
             // draw titles
             CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.NameBox, hymnname);
