@@ -40,9 +40,9 @@ namespace Xenon.LayoutEngine
             return hlines;
         }
 
-        public List<LSBImageResource> OrderAllAsOne()
+        public List<(LSBImageResource, int)> OrderAllAsOne(bool autoboxsplitonrefrain)
         {
-            List<LSBImageResource> res = new List<LSBImageResource>();
+            List<(LSBImageResource, int)> res = new List<(LSBImageResource, int)>();
 
             for (int linenum = 0; linenum < Verses.First().Lines; linenum++)
             {
@@ -50,39 +50,39 @@ namespace Xenon.LayoutEngine
                 {
                     if (versenum == 0)
                     {
-                        res.Add(Verses[0].GetLine(linenum).Music);
+                        res.Add((Verses[0].GetLine(linenum).Music, 0));
                     }
-                    res.Add(Verses[versenum].GetLine(linenum).Text);
+                    res.Add((Verses[versenum].GetLine(linenum).Text, 0));
                 }
             }
             if (RepeatingPostRefrain)
             {
                 for (int linenum = 0; linenum < Refrain.Lines; linenum++)
                 {
-                    res.Add(Refrain.GetLine(linenum).Music);
-                    res.Add(Refrain.GetLine(linenum).Text);
+                    res.Add((Refrain.GetLine(linenum).Music, autoboxsplitonrefrain ? 1 : 0));
+                    res.Add((Refrain.GetLine(linenum).Text, autoboxsplitonrefrain ? 1 : 0));
                 }
             }
             return res;
         }
 
-        public List<LSBImageResource> OrderRefrain()
+        public List<(LSBImageResource, int)> OrderRefrain(bool autoboxsplitonrefrain)
         {
-            List<LSBImageResource> res = new List<LSBImageResource>();
+            List<(LSBImageResource, int)> res = new List<(LSBImageResource, int)>();
             if (RepeatingPostRefrain)
             {
                 for (int linenum = 0; linenum < Refrain.Lines; linenum++)
                 {
-                    res.Add(Refrain.GetLine(linenum).Music);
-                    res.Add(Refrain.GetLine(linenum).Text);
+                    res.Add((Refrain.GetLine(linenum).Music, autoboxsplitonrefrain ? 1 : 0));
+                    res.Add((Refrain.GetLine(linenum).Text, autoboxsplitonrefrain ? 1 : 0));
                 }
             }
             return res;
         }
 
-        public List<LSBImageResource> OrderVerse(int versenum)
+        public List<(LSBImageResource, int)> OrderVerse(int versenum)
         {
-            List<LSBImageResource> res = new List<LSBImageResource>();
+            List<(LSBImageResource, int)> res = new List<(LSBImageResource, int)>();
             if (versenum > Verses.Count)
             {
                 return res;
@@ -90,8 +90,8 @@ namespace Xenon.LayoutEngine
 
             for (int i = 0; i < Verses[versenum].Lines; i++)
             {
-                res.Add(Verses[versenum].GetLine(i).Music);
-                res.Add(Verses[versenum].GetLine(i).Text);
+                res.Add((Verses[versenum].GetLine(i).Music, 0));
+                res.Add((Verses[versenum].GetLine(i).Text, 0));
             }
             return res;
         }
@@ -136,8 +136,8 @@ namespace Xenon.LayoutEngine
         public SixLabors.ImageSharp.Size Size { get; private set; }
         //public LSBImageResource(string assetref, Size size)
         //{
-            //AssetRef = assetref;
-            //Size = size;
+        //AssetRef = assetref;
+        //Size = size;
         //}
         public LSBImageResource(string assetref, SixLabors.ImageSharp.Size size)
         {

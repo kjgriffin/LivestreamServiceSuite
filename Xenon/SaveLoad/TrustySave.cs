@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.LayoutInfo;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 using Xenon.SlideAssembly.LayoutManagement;
 
@@ -199,6 +200,8 @@ namespace Xenon.SaveLoad
 
                 await TrustilyUpgradeOldVersion(archive, proj, originalVersion, currentVersion);
 
+                TrustilyUpgradeModernLayoutLibraries(proj, originalVersion, currentVersion);
+
                 preloadcode?.Invoke(proj.SourceCode);
 
                 archive.ExtractToDirectory(proj.LoadTmpPath);
@@ -206,6 +209,48 @@ namespace Xenon.SaveLoad
 
             return (proj, assetfilemap, assetdisplaynames, assetextensions, assetgroups);
 
+        }
+
+        private static void TrustilyUpgradeModernLayoutLibraries(Project proj, BuildVersion originalVersion, BuildVersion currentVersion)
+        {
+            // macros break this approach... not sure what to do instead
+            return;
+
+            // for now only breaking change is stitched image
+            if (!originalVersion.MeetsMinimumVersion(1, 9, 0, 16))
+            {
+                foreach (var library in proj.LayoutManager.AllLibraries())
+                {
+                    List<(string, string, string, string)> newlayouts = new List<(string, string, string, string)>();
+                    foreach (var candidatelayout in library.Layouts.Where(x => x.Group == LanguageKeywords.Commands[LanguageKeywordCommand.StitchedImage]))
+                    {
+                        // validate candidate layout has the new properties
+                        if (ILayoutInfoResolver<StitchedImageSlideLayoutInfo>.TryParseJson(candidatelayout.RawSource, out var layout))
+                        {
+                            layout.AutoBoxSplitOnRefrain = false;
+                            layout.MusicBoxes = new List<LayoutInfo.BaseTypes.DrawingBoxLayout>
+                            {
+#pragma warning disable CS0612 // Type or member is obsolete
+                                layout.MusicBox
+                            };
+#pragma warning restore CS0612 // Type or member is obsolete
+
+
+                            newlayouts.Add((library.LibName, candidatelayout.Name, candidatelayout.Group, JsonSerializer.Serialize(layout)));
+
+                        }
+                        else
+                        {
+                            // perhaps warn???
+                        }
+                    }
+                    foreach (var upgradedlayout in newlayouts)
+                    {
+                        proj.LayoutManager.SaveLayoutToLibrary(upgradedlayout.Item1, upgradedlayout.Item2, upgradedlayout.Item3, upgradedlayout.Item4);
+                    }
+                }
+
+            }
         }
 
         private static LayoutLibEntry TrustilyUpgradeOldLayoutLibrary(this LayoutLibEntry oldLib, BuildVersion originalVersionSC, BuildVersion targetVersionSC)

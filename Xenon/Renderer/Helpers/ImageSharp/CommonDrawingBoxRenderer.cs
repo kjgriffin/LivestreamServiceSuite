@@ -33,6 +33,10 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                 Size = layout.Box.Rectangle.Size
             };
             // I don't think we want modify the source image- we're not sure we actually own it here
+
+            // save original size for figuring out what to do later ??
+            SizeF rscalefactor = new SizeF(layout.Box.Size.Width - src.Width, layout.Box.Size.Height - src.Height);
+
             var scpy = src.Clone();
             scpy.Mutate(ctx => ctx.Resize(ropts));
 
@@ -40,7 +44,30 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 
 
             //ibmp.Mutate(ctx => ctx.DrawImage(scpy, layout.Box.Origin.Point, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.Clear, 1f));
-            ibmp.Mutate_OverlayImage(scpy, layout.Box.Origin.Point);
+
+            // compute location based on v/h align
+            Point imgorig = layout.Box.Origin.Point;
+            switch (layout.HorizontalAlignment)
+            {
+                case LayoutInfo.LWJHAlign.Center:
+                case LayoutInfo.LWJHAlign.Centered:
+                    imgorig.X += (layout.Box.Size.Width - scpy.Width) / 2;
+                    break;
+                case LayoutInfo.LWJHAlign.Right:
+                    imgorig.X += (layout.Box.Size.Width - scpy.Width);
+                    break;
+            }
+            switch (layout.VerticalAlignment)
+            {
+                case LayoutInfo.LWJVAlign.Center:
+                    imgorig.Y += (layout.Box.Size.Height - scpy.Height) / 2;
+                    break;
+                case LayoutInfo.LWJVAlign.Bottom:
+                    imgorig.Y += (layout.Box.Size.Height - scpy.Height);
+                    break;
+            }
+
+            ibmp.Mutate_OverlayImage(scpy, imgorig);
 
             // if transparent then create key from image based on alpha channel
             if (inferKey && layout.KeyColor.Alpha == 0)
@@ -60,7 +87,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                         scpy[x, y] = new Bgra32(alpha, alpha, alpha, 255);
                     }
                 }
-                ikbmp.Mutate(ctx => ctx.DrawImage(scpy, layout.Box.Origin.Point, 1f));
+                ikbmp.Mutate(ctx => ctx.DrawImage(scpy, imgorig, 1f));
             }
 
         }
@@ -95,7 +122,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                         return (byte)(((1 - alpha) * dest) + (src * alpha));
                     }
 
-                    var dpix = ibmp[xx,yy];
+                    var dpix = ibmp[xx, yy];
                     var spix = ioverlay[x, y];
 
                     float ascale = spix.A / 255f;

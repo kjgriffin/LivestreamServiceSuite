@@ -61,17 +61,29 @@ namespace Xenon.Renderer
             }
             if (slide.Data.TryGetValue(Slide.LAYOUT_INFO_KEY, out object info))
             {
-                try
+                if (TryParseJson(info, out LayoutType layout))
                 {
-                    return JsonSerializer.Deserialize<LayoutType>((string)info);
-                }
-                catch (Exception)
-                {
-                    return GetDefaultInfo(v);
+                    return layout;
                 }
             }
             return GetDefaultInfo(v);
         }
+
+        public static bool TryParseJson(object info, out LayoutType layout)
+        {
+            layout = null;
+            try
+            {
+                layout = JsonSerializer.Deserialize<LayoutType>((string)info);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //return GetDefaultInfo(v);
+                return false;
+            }
+        }
+
         LayoutType Deserialize(string json)
         {
             return JsonSerializer.Deserialize<LayoutType>(json);

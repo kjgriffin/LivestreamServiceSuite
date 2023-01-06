@@ -15,6 +15,7 @@ using Xenon.Renderer.Helpers.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using System.Windows.Media;
 
 namespace Xenon.Renderer
 {
@@ -22,6 +23,7 @@ namespace Xenon.Renderer
     {
 
         public static string DATAKEY_IMAGES { get => "ordered-images"; }
+        public static string DATAKEY_BOX_ASSIGNED_IMAGES { get => "box-assigned-ordered-images"; }
         public static string DATAKEY_TITLE { get => "title"; }
         public static string DATAKEY_NAME { get => "name"; }
         public static string DATAKEY_NUMBER { get => "number"; }
@@ -46,59 +48,81 @@ namespace Xenon.Renderer
                 }
             }
 
-            List<LSBImageResource> imageresources = (List<LSBImageResource>)slide.Data.GetOrDefault(DATAKEY_IMAGES, new List<LSBImageResource>());
+            //List<(LSBImageResource, int)> imageresources = (List<(LSBImageResource, int)>)slide.Data.GetOrDefault(DATAKEY_IMAGES, new List<(LSBImageResource, int)>());
             string title = (string)slide.Data.GetOrDefault(DATAKEY_TITLE, "");
             string hymnname = (string)slide.Data.GetOrDefault(DATAKEY_NAME, "");
             string number = (string)slide.Data.GetOrDefault(DATAKEY_NUMBER, "");
 
-            int width = imageresources.Select(i => i.Size.Width).Max();
-            int height = imageresources.Select(i => i.Size.Height).Aggregate((a, b) => a + b);
 
+            List<(LSBImageResource img, int bid)> allimageresources = (List<(LSBImageResource, int)>)slide.Data.GetOrDefault(DATAKEY_BOX_ASSIGNED_IMAGES, new List<(LSBImageResource img, int bid)>());
 
-            Image<Bgra32> hibmp = new Image<Bgra32>(width, height);
-            //Image<Bgra32> hikbmp = new Image<Bgra32>(width, height);
-
-            // draw all images
-            int hoff = 0;
-            foreach (var image in imageresources)
+            // handle each drawing box
+            int b = 0;
+            foreach (var musicbox in layout.AllMusicBoxes)
             {
-                // load image
-                try
+                List<LSBImageResource> imageresources = allimageresources.Where(x => x.bid == b).Select(x => x.img).ToList();
+
+                if (!imageresources.Any())
                 {
-                    Image<Bgra32> src = Image.Load<Bgra32>(projassets.GetProjectAssetByName(image.AssetRef).CurrentPath);
-                    //Bitmap b = new Bitmap(projassets.GetProjectAssetByName(image.AssetRef).CurrentPath);
-                    int x = (width - src.Width) / 2;
-                    //g.DrawImage(b, x, hoff, b.Width, b.Height);
-                    hibmp.Mutate(ctx =>
+                    continue;
+                }
+
+                int width = imageresources.Select(i => i.Size.Width).Max();
+                int height = imageresources.Select(i => i.Size.Height).Aggregate((a, b) => a + b);
+
+                Image<Bgra32> hibmp = new Image<Bgra32>(width, height);
+
+                // draw all images
+                int hoff = 0;
+                foreach (var image in imageresources)
+                {
+                    // load image
+                    try
                     {
-                        ctx.DrawImage(src, new Point(x, hoff), 1f);
-                    });
+                        Image<Bgra32> src = Image.Load<Bgra32>(projassets.GetProjectAssetByName(image.AssetRef).CurrentPath);
+                        //Bitmap b = new Bitmap(projassets.GetProjectAssetByName(image.AssetRef).CurrentPath);
+                        int x = (width - src.Width) / 2;
+                        //g.DrawImage(b, x, hoff, b.Width, b.Height);
+                        hibmp.Mutate(ctx =>
+                        {
+                            ctx.DrawImage(src, new Point(x, hoff), 1f);
+                        });
 
-                    hoff += src.Height;
+                        hoff += src.Height;
+                    }
+                    catch (Exception ex)
+                    {
+                        messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = "Error loading image", ErrorName = "Error Loading Asset", Generator = "StitchedImageRenderer", Inner = ex.Message, Level = Compiler.XenonCompilerMessageType.Error, Token = image.AssetRef });
+                        return null;
+                    }
                 }
-                catch (Exception ex)
+
+                /* we'll now let this logic be done generically by adv drawing box */
+
+                /*
+                // we'll manualy scale and center the hymn to its final size
+                hibmp.Mutate(ctx => ctx.Resize(new ResizeOptions { Mode = ResizeMode.Max, Size = musicbox.Box.Size.Size }));
+                // draw it back onto a full'sized blank
+                Image<Bgra32> hibmpctr = new Image<Bgra32>(musicbox.Box.Size.Width, musicbox.Box.Size.Height);
+                int xoff = Math.Clamp(Math.Abs((hibmp.Width - musicbox.Box.Size.Width)) / 2, 0, musicbox.Box.Size.Width);
+                int yoff = Math.Clamp(Math.Abs((hibmp.Height - musicbox.Box.Size.Height)) / 2, 0, musicbox.Box.Size.Height);
+                hibmpctr.Mutate(ctx => ctx.DrawImage(hibmp, new Point(xoff, yoff), 1f));
+                // then let the render just position it inside the box
+                */
+
+
+                // invert??
+                if (musicbox.InvertAll)
                 {
-                    messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = "Error loading image", ErrorName = "Error Loading Asset", Generator = "StitchedImageRenderer", Inner = ex.Message, Level = Compiler.XenonCompilerMessageType.Error, Token = image.AssetRef });
-                    return null;
+                    //hibmpctr.Mutate(ctx => ctx.Invert());
+                    hibmp.Mutate(ctx => ctx.Invert());
                 }
+
+                //CommonDrawingBoxRenderer.Render(ibmp, ikbmp, musicbox, hibmpctr);
+                CommonDrawingBoxRenderer.Render(ibmp, ikbmp, musicbox, hibmp);
+
+                b++;
             }
-
-            // we'll manualy scale and center the hymn to its final size
-            hibmp.Mutate(ctx => ctx.Resize(new ResizeOptions { Mode = ResizeMode.Max, Size = layout.MusicBox.Box.Size.Size }));
-            // draw it back onto a full'sized blank
-            Image<Bgra32> hibmpctr = new Image<Bgra32>(layout.MusicBox.Box.Size.Width, layout.MusicBox.Box.Size.Height);
-            int xoff = Math.Clamp(Math.Abs((hibmp.Width - layout.MusicBox.Box.Size.Width)) / 2, 0, layout.MusicBox.Box.Size.Width);
-            int yoff = Math.Clamp(Math.Abs((hibmp.Height - layout.MusicBox.Box.Size.Height)) / 2, 0, layout.MusicBox.Box.Size.Height);
-            hibmpctr.Mutate(ctx => ctx.DrawImage(hibmp, new Point(xoff, yoff), 1f));
-            // then let the render just position it inside the box
-
-            // invert??
-            if (layout.MusicBox.InvertAll)
-            {
-                hibmpctr.Mutate(ctx => ctx.Invert());
-            }
-
-            CommonDrawingBoxRenderer.Render(ibmp, ikbmp, layout.MusicBox, hibmpctr);
 
             // draw titles
             CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.NameBox, hymnname);
@@ -148,7 +172,10 @@ namespace Xenon.Renderer
                 }
             }
 
-            CommonDrawingBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.MusicBox);
+            foreach (var musicbox in layout.AllMusicBoxes)
+            {
+                CommonDrawingBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, musicbox);
+            }
 
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.TitleBox);
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.NameBox);

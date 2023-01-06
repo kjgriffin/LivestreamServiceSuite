@@ -7,6 +7,7 @@ using System.Text;
 
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
+using Xenon.LayoutInfo;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
@@ -15,7 +16,7 @@ namespace Xenon.Compiler.AST
     class XenonASTStitchedHymn : IXenonASTCommand
     {
 
-        public List<string> ImageAssets { get; set; } = new List<string>();
+        public List<(string name, int bid)> ImageAssets { get; set; } = new List<(string, int)>();
         public string Title { get; set; }
         public string HymnName { get; set; }
         public string Number { get; set; }
@@ -102,8 +103,20 @@ namespace Xenon.Compiler.AST
             while (!Lexer.InspectEOF() && !Lexer.Inspect("}"))
             {
                 Lexer.GobbleWhitespace();
+
+                // optionally parse for box id
+                int id = 0;
+
+                if (Lexer.Inspect("["))
+                {
+                    Lexer.Consume();
+                    var sid = Lexer.ConsumeUntil("]");
+                    Lexer.Gobble("]");
+                    int.TryParse(sid, out id);
+                }
+
                 string assetline = Lexer.ConsumeUntil(";");
-                hymn.ImageAssets.Add(assetline);
+                hymn.ImageAssets.Add((assetline, id));
                 Lexer.GobbleandLog(";", "Expected ';' at end of asset dependency");
                 Lexer.GobbleWhitespace();
             }
@@ -157,14 +170,14 @@ namespace Xenon.Compiler.AST
 
             foreach (var item in ImageAssets)
             {
-                string assetpath = project.Assets.Find(a => a.Name == item)?.CurrentPath ?? "";
+                string assetpath = project.Assets.Find(a => a.Name == item.name)?.CurrentPath ?? "";
                 try
                 {
                     if (!string.IsNullOrEmpty(assetpath))
                     {
 
                         SixLabors.ImageSharp.IImageInfo metadata = SixLabors.ImageSharp.Image.Identify(assetpath);
-                        ImageSizes[item] = new SixLabors.ImageSharp.Size(metadata.Width, metadata.Height);
+                        ImageSizes[item.name] = new SixLabors.ImageSharp.Size(metadata.Width, metadata.Height);
                     }
                     else
                     {
@@ -217,7 +230,8 @@ namespace Xenon.Compiler.AST
                     slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
                 }
 
-                slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = ImageSizes.Select(i => new LSBImageResource(i.Key, i.Value)).ToList();
+                //slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = ImageSizes.Select(i => new LSBImageResource(i.Key, i.Value)).ToList();
+                slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = ImageSizes.Select(i => (new LSBImageResource(i.Key, i.Value), ImageAssets.First(x => x.name == i.Key).bid)).ToList();
 
                 slide.AddPostset(_Parent, true, true);
 
@@ -238,9 +252,9 @@ namespace Xenon.Compiler.AST
             for (int i = 0; i < ImageAssets.Count; i++)
             {
                 // check for new music line
-                if (ImageSizes[ImageAssets[i]].Height > MinMusicHeight)
+                if (ImageSizes[ImageAssets[i].name].Height > MinMusicHeight)
                 {
-                    if (ImageSizes[ImageAssets[i]].Height > 130 && i == 0)
+                    if (ImageSizes[ImageAssets[i].name].Height > 130 && i == 0)
                     {
                     }
                     // add previous lines
@@ -250,18 +264,18 @@ namespace Xenon.Compiler.AST
                     }
 
                     // create new stuff
-                    linemusic = new LSBImageResource(ImageAssets[i], ImageSizes[ImageAssets[i]]);
+                    linemusic = new LSBImageResource(ImageAssets[i].name, ImageSizes[ImageAssets[i].name]);
                     linetexts = new List<LSBImageResource>();
                 }
                 // is text. attach to previous line
-                else if (ImageSizes[ImageAssets[i]].Height < MaxWordHeight)
+                else if (ImageSizes[ImageAssets[i].name].Height < MaxWordHeight)
                 {
-                    linetexts.Add(new LSBImageResource(ImageAssets[i], ImageSizes[ImageAssets[i]]));
+                    linetexts.Add(new LSBImageResource(ImageAssets[i].name, ImageSizes[ImageAssets[i].name]));
                 }
                 else
                 {
                     unconfidentaboutlinetype = true;
-                    badlines.Add($"'{ImageAssets[i]}'[{i}]{ImageSizes[ImageAssets[i]].Height}h");
+                    badlines.Add($"'{ImageAssets[i]}'[{i}]{ImageSizes[ImageAssets[i].name].Height}h");
                 }
             }
             if (linemusic != null)
@@ -318,7 +332,8 @@ namespace Xenon.Compiler.AST
                     slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
                 }
 
-                slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = ImageAssets.Select(i => new LSBImageResource(i, ImageSizes[i])).ToList();
+                //slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = ImageAssets.Select(i => new LSBImageResource(i.name, ImageSizes[i.name])).ToList();
+                slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = ImageAssets.Select(i => (new LSBImageResource(i.name, ImageSizes[i.name]), i.bid)).ToList();
 
                 slide.AddPostset(_Parent, true, true);
 
@@ -392,7 +407,7 @@ namespace Xenon.Compiler.AST
             int height = 0;
             foreach (var lineitem in ImageAssets)
             {
-                height += ImageSizes[lineitem].Height;
+                height += ImageSizes[lineitem.name].Height;
             }
 
             if (height < MaxHeightForImages)
@@ -416,9 +431,16 @@ namespace Xenon.Compiler.AST
                     slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
                 }
 
-                slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderAllAsOne();
-                slide.AddPostset(_Parent, true, true);
                 (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
+                // TODO: find a better way to do this perhaps?
+                StitchedImageSlideLayoutInfo layout = (new StitchedImageRenderer() as ISlideRenderer<StitchedImageSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
+
+
+                //slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderAllAsOne();
+                slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = hymn.OrderAllAsOne(layout.AutoBoxSplitOnRefrain);
+
+
+                slide.AddPostset(_Parent, true, true);
                 slides.Add(slide);
             }
             else
@@ -449,39 +471,53 @@ namespace Xenon.Compiler.AST
                         slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
                     }
 
-                    slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderVerse(versenum++);
+                    //slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderVerse(versenum++);
+                    List<(LSBImageResource, int)> imgs = hymn.OrderVerse(versenum++);
 
                     slide.AddPostset(_Parent, versenum == 0, hymn.Verses.Count == versenum && !hymn.RepeatingPostRefrain);
                     (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
-                    slides.Add(slide);
+                    StitchedImageSlideLayoutInfo layout = (new StitchedImageRenderer() as ISlideRenderer<StitchedImageSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
 
-                    if (hymn.RepeatingPostRefrain)
+                    if (hymn.RepeatingPostRefrain && layout.AutoBoxSplitOnRefrain)
                     {
-                        Slide refrainslide = new Slide();
-                        refrainslide.Name = $"stitchedhymn";
-                        refrainslide.Number = project.NewSlideNumber;
-                        refrainslide.Asset = "";
-                        refrainslide.Lines = new List<SlideLine>();
-                        refrainslide.Format = SlideFormat.StitchedImage;
-                        refrainslide.MediaType = MediaType.Image;
+                        imgs.AddRange(hymn.OrderRefrain(layout.AutoBoxSplitOnRefrain));
+                        slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = imgs;
+                        slides.Add(slide);
+                    }
+                    else
+                    {
 
-                        refrainslide.Data[StitchedImageRenderer.DATAKEY_TITLE] = Title;
-                        refrainslide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
-                        refrainslide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
-                        refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
-                        if (CopyrightText != CopyrightTune)
+                        slides.Add(slide);
+
+                        if (hymn.RepeatingPostRefrain)
                         {
-                            refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
-                            refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
+                            Slide refrainslide = new Slide();
+                            refrainslide.Name = $"stitchedhymn";
+                            refrainslide.Number = project.NewSlideNumber;
+                            refrainslide.Asset = "";
+                            refrainslide.Lines = new List<SlideLine>();
+                            refrainslide.Format = SlideFormat.StitchedImage;
+                            refrainslide.MediaType = MediaType.Image;
+
+                            refrainslide.Data[StitchedImageRenderer.DATAKEY_TITLE] = Title;
+                            refrainslide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
+                            refrainslide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
+                            refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
+                            if (CopyrightText != CopyrightTune)
+                            {
+                                refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
+                                refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
+                            }
+
+                            (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, refrainslide, LanguageKeywordCommand.StitchedImage);
+
+                            refrainslide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderRefrain(layout.AutoBoxSplitOnRefrain);
+
+
+                            refrainslide.AddPostset(_Parent, false, hymn.Verses.Count == versenum);
+
+                            slides.Add(refrainslide);
                         }
-
-                        refrainslide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderRefrain();
-
-
-                        refrainslide.AddPostset(_Parent, false, hymn.Verses.Count == versenum);
-
-                        (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, refrainslide, LanguageKeywordCommand.StitchedImage);
-                        slides.Add(refrainslide);
                     }
                 }
 
@@ -491,8 +527,8 @@ namespace Xenon.Compiler.AST
 
         private void WarnVerseOverheight(XenonErrorLogger Logger, Dictionary<string, SixLabors.ImageSharp.Size> ImageSizes)
         {
-            var heightaprox = 200 + ImageAssets.Select(i => ImageSizes[i].Height).Aggregate((item, sum) => sum + item);
-            var mwidth = ImageAssets.Select(i => ImageSizes[i].Width).Max();
+            var heightaprox = 200 + ImageAssets.Select(i => ImageSizes[i.name].Height).Aggregate((item, sum) => sum + item);
+            var mwidth = ImageAssets.Select(i => ImageSizes[i.name].Width).Max();
             if (heightaprox > 1200)
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Hymn over height: {HymnName}. Hymn interpreted to have only one verse,w with all lines on the same slide. Expected to have {heightaprox} height.", ErrorName = "Verse Overheight", Generator = "XenonASTStitchedHymn:Generate()", Inner = "", Level = XenonCompilerMessageType.Warning, Token = ("", IXenonASTCommand.GetParentExpression(this)._SourceLine) });

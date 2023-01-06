@@ -542,7 +542,7 @@ namespace LutheRun
                     if (element.LSBElement is LSBElementHymn && options.UsePIPHymns)
                     {
                         // assume the first consecutive hymn element setups the block 
-                        if (prevelement.LSBElement is not LSBElementHymn)
+                        if (prevelement?.LSBElement is not LSBElementHymn)
                         {
                             // add the reading prefab intro block
                             Dictionary<string, string> pipReplace = new Dictionary<string, string>

@@ -14,6 +14,10 @@ namespace Xenon.LayoutInfo.BaseTypes
         public LWJColor FillColor { get; set; }
         public LWJColor KeyColor { get; set; }
         public bool InvertAll { get; set; } = false;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public LWJHAlign HorizontalAlignment { get; set; } = LWJHAlign.Center;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public LWJVAlign VerticalAlignment { get; set; } = LWJVAlign.Center;
     }
 
     internal class AdvancedDrawingBoxLayout : DrawingBoxLayout
