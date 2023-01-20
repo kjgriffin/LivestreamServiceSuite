@@ -82,6 +82,12 @@ namespace Xenon.LayoutEngine.L2
         public static List<List<SizedTextBlurb>> GenerateSlides(List<TextBlockPara> paragraphs, ComplexTextboxLayout layout)
         {
             List<List<SizedTextBlurb>> slides = new List<List<SizedTextBlurb>>();
+
+            if (!paragraphs.Any())
+            {
+                return slides;
+            }
+
             /*
                     1. handle each line
                         - we'll greedily fit words on a line
