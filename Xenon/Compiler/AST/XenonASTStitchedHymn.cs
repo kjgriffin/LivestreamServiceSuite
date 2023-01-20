@@ -487,6 +487,7 @@ namespace Xenon.Compiler.AST
                     else
                     {
 
+                        slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = imgs;
                         slides.Add(slide);
 
                         if (hymn.RepeatingPostRefrain)
@@ -511,7 +512,7 @@ namespace Xenon.Compiler.AST
 
                             (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, refrainslide, LanguageKeywordCommand.StitchedImage);
 
-                            refrainslide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderRefrain(layout.AutoBoxSplitOnRefrain);
+                            refrainslide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = hymn.OrderRefrain(layout.AutoBoxSplitOnRefrain);
 
 
                             refrainslide.AddPostset(_Parent, false, hymn.Verses.Count == versenum);
