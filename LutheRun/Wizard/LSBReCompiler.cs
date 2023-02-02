@@ -16,10 +16,10 @@ namespace LutheRun.Wizard
     public class LSBReCompiler
     {
 
-        public string GenerateHTMLReport(List<ParsedLSBElement> fullservice, params string[] cssfiles)
+        public string GenerateHTMLReport(List<ParsedLSBElement> fullservice, string[] cssfiles, LSBImportOptions opts = null)
         {
             LSBParser parser = new LSBParser();
-            parser.LSBImportOptions = new LSBImportOptions();
+            parser.LSBImportOptions = opts ?? new LSBImportOptions();
 
             StringBuilder sb = new StringBuilder();
 

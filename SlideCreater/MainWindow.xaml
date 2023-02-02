@@ -131,6 +131,7 @@
                 <MenuItem  Foreground="Black" Name="mi_importoptions_flightplandetails_zoom" Header="Flight Plan Mapping (zoom)..." Click="mi_importoptions_fligthplandetails_zoom_Click"></MenuItem>
                 <Separator></Separator>
                 <MenuItem  Foreground="Black" Name="miimport_adv" Click="ClickImportServiceAdv" Header="Import Debugger"></MenuItem>
+                <MenuItem  Foreground="Black" Name="miimport_advtool" Click="ClickAdvImportTool" Header="Import Wizzard"></MenuItem>
             </MenuItem>
             <MenuItem Header="Recovery">
                 <MenuItem  Foreground="Black" Click="RecoverAutoSave" Header="Recover Auto Save">

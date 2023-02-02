@@ -1256,6 +1256,21 @@ namespace SlideCreater
             //#endif
         }
 
+        private void ClickAdvImportTool(object sender, RoutedEventArgs e)
+        {
+#if DEBUG
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Import from save of Lutheran Service Bulletin";
+            ofd.Filter = "LSB Service (*.html)|*.html";
+            if (ofd.ShowDialog() == true)
+            {
+                AdvImportTool ui = new AdvImportTool(ofd.FileName, options);
+                ui.ShowDialog();
+            }
+#endif
+        }
+
+
         private async void CreateProjectFromImportWizard(List<(string, string)> assets, string text)
         {
             await NewProject();
@@ -1858,9 +1873,12 @@ namespace SlideCreater
             {
                 //string formatted = await XenonFastFormatter.CompileReformat(TbInput.Text, 4);
                 //string formatted = XenonSimpleFormatter.Format(TbInput.Text);
+
+                // capture on UI thread
+                string code = TbInput.Text;
                 Task.Run(() =>
                 {
-                    string formatted = XenonTopLevelFormatter.FormatTopLevel(TbInput.Text);
+                    string formatted = XenonTopLevelFormatter.FormatTopLevel(code);
                     Dispatcher.Invoke(() => TbInput.Text = formatted);
                 });
             }
