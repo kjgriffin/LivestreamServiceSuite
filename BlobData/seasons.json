@@ -47,5 +47,51 @@
             "text-alt": "\"#ffcedef9\"",
             "text-sub": "\"#ff474747\""
         }
-    }
+    },
+    {
+        "start": "2023-01-15",
+        "note": "epiphany",
+        "macros": {
+            "color-main": "\"#ff298f45\"",
+            "text-alt": "\"#ff298f45\""
+        }
+    },
+    {
+        "start": "2023-02-19",
+        "note": "transfiguration",
+        "macros": {
+            "color-main": "\"#ffffebaf\"",
+            "color-sub": "\"#ffcedef9\"",
+            "text-main": "\"#ff474747\"",
+            "text-alt": "\"#ffcedef9\"",
+            "text-sub": "\"#ff474747\""
+        }
+    },
+    {
+        "start": "2023-02-22",
+        "note": "lent",
+        "macros": {
+            "color-main": "\"#ff452351\"",
+            "text-alt": "\"#ff452351\"",
+        }
+    },
+    {
+        "start": "2023-04-07",
+        "note": "good-friday",
+        "macros": {
+            "color-main": "\"#ff141417\"",
+            "text-alt": "\"#ff373737\"",
+        }
+    },
+    {
+        "start": "2023-04-09",
+        "note": "easter",
+        "macros": {
+            "color-main": "\"#ffffebaf\"",
+            "color-sub": "\"#fff9ceee\"",
+            "text-main": "\"#ff474747\"",
+            "text-alt": "\"#fff9ceee\"",
+            "text-sub": "\"#ff474747\""
+        }
+    },
 ]
