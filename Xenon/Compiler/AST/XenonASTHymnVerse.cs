@@ -13,7 +13,7 @@ namespace Xenon.Compiler.AST
     class XenonASTHymnVerse : IXenonASTCommand
     {
         public List<XenonASTContent> Content { get; set; } = new List<XenonASTContent>();
-        public string SubName { get; set; }
+        public string SubName { get; set; } = "";
         public bool Doxological { get; set; } = false;
         public IXenonASTElement Parent { get; private set; }
         public int _SourceLine { get; set; }
