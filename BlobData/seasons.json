@@ -72,7 +72,7 @@
         "note": "lent",
         "macros": {
             "color-main": "\"#ff452351\"",
-            "text-alt": "\"#ff452351\"",
+            "text-alt": "\"#ff452351\""
         }
     },
     {
@@ -80,7 +80,7 @@
         "note": "good-friday",
         "macros": {
             "color-main": "\"#ff141417\"",
-            "text-alt": "\"#ff373737\"",
+            "text-alt": "\"#ff373737\""
         }
     },
     {
