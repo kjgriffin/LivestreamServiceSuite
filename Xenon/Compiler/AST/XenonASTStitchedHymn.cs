@@ -465,6 +465,7 @@ namespace Xenon.Compiler.AST
                     slide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
                     slide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
                     slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
+                    slide.Data["render.info.verse.id"] = versenum; // this should prevent the tuples of image lines being treated as = between render and only showing first/last verses??
                     if (CopyrightText != CopyrightTune)
                     {
                         slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
@@ -472,7 +473,8 @@ namespace Xenon.Compiler.AST
                     }
 
                     //slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = hymn.OrderVerse(versenum++);
-                    List<(LSBImageResource, int)> imgs = hymn.OrderVerse(versenum++);
+                    List<(LSBImageResource, int)> imgs = new List<(LSBImageResource, int)>();
+                    imgs = hymn.OrderVerse(versenum++);
 
                     slide.AddPostset(_Parent, versenum == 0, hymn.Verses.Count == versenum && !hymn.RepeatingPostRefrain);
                     (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.StitchedImage);
@@ -481,13 +483,13 @@ namespace Xenon.Compiler.AST
                     if (hymn.RepeatingPostRefrain && layout.AutoBoxSplitOnRefrain)
                     {
                         imgs.AddRange(hymn.OrderRefrain(layout.AutoBoxSplitOnRefrain));
-                        slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = imgs;
+                        slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = new List<(LSBImageResource, int)>(imgs);
                         slides.Add(slide);
                     }
                     else
                     {
 
-                        slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = imgs;
+                        slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = new List<(LSBImageResource, int)>(imgs);
                         slides.Add(slide);
 
                         if (hymn.RepeatingPostRefrain)
@@ -504,6 +506,7 @@ namespace Xenon.Compiler.AST
                             refrainslide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
                             refrainslide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
                             refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
+                            slide.Data["render.info.verse.id"] = $"{versenum}-refrain"; // this should prevent the tuples of image lines being treated as = between render and only showing first/last verses??
                             if (CopyrightText != CopyrightTune)
                             {
                                 refrainslide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;

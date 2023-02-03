@@ -100,6 +100,10 @@ namespace Xenon.Renderer
                     renderpremultiplied = true;
                 }
             }
+            if (s.Data.ContainsKey(ShapeImageAndTextRenderer.DATAKEY_PREMULTIPLY_OVERRIDE))
+            {
+                renderpremultiplied = (bool)s.Data[ShapeImageAndTextRenderer.DATAKEY_PREMULTIPLY_OVERRIDE];
+            }
             if (renderpremultiplied)
             {
                 res.Bitmap = res.Bitmap?.PreMultiplyWithAlphaFast(res.KeyBitmap);

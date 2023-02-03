@@ -22,6 +22,8 @@ namespace Xenon.Compiler.AST
         public List<string> BGAssetNames { get; private set; } = new List<string>();
         public int _SourceLine { get; set; }
 
+        public bool PreMultiply { get; set; } = true;
+
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTShapesImagesAndText slide = new XenonASTShapesImagesAndText();
@@ -49,6 +51,20 @@ namespace Xenon.Compiler.AST
                 if (TextBlockParser.TryParseTextBlock(Lexer, out var text))
                 {
                     slide.Texts.Add(text);
+                }
+
+
+                if (Lexer.Inspect("premultiply"))
+                {
+                    Lexer.Consume();
+                    Lexer.GobbleWhitespace();
+                    Lexer.GobbleandLog("=");
+                    var pmval = Lexer.Consume();
+                    if (pmval == "false")
+                    {
+                        slide.PreMultiply = false;
+                    }
+                    Lexer.GobbleWhitespace();
                 }
 
                 if (Lexer.Inspect("asset"))
@@ -201,6 +217,7 @@ namespace Xenon.Compiler.AST
                 }
             }
 
+            slide.Data[ShapeImageAndTextRenderer.DATAKEY_PREMULTIPLY_OVERRIDE] = PreMultiply;
             slide.Data[ShapeImageAndTextRenderer.DATAKEY_FGDIMAGES] = FGAssets;
             slide.Data[ShapeImageAndTextRenderer.DATAKEY_BKGDIMAGES] = BGAssets;
             slide.Data[ShapeImageAndTextRenderer.DATAKEY_FALLBACKLAYOUT] = LanguageKeywords.LayoutForType[LanguageKeywordCommand.CustomDraw].defaultJsonFile;

@@ -18,6 +18,13 @@ namespace Xenon.LayoutInfo.BaseTypes
         public LWJHAlign HorizontalAlignment { get; set; } = LWJHAlign.Center;
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public LWJVAlign VerticalAlignment { get; set; } = LWJVAlign.Center;
+        public bool OverrideKeyImg { get; set; } = false;
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public LWJHAlign KeyHorizontalAlignmentOverride { get; set; } = LWJHAlign.Center;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public LWJVAlign KeyVerticalAlignmentOverride { get; set; } = LWJVAlign.Center;
+        public LWJRect KeyBoxOverride { get; set; }
     }
 
     internal class AdvancedDrawingBoxLayout : DrawingBoxLayout

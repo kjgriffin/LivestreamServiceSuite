@@ -22,6 +22,7 @@ namespace Xenon.Renderer
 {
     internal class ShapeImageAndTextRenderer : ISlideRenderer, ISlideRenderer<ShapeImageAndTextLayoutInfo>, ISlideLayoutPrototypePreviewer<ASlideLayoutInfo>
     {
+        public static string DATAKEY_PREMULTIPLY_OVERRIDE { get => "premultiply.override"; }
         public static string DATAKEY_BKGDIMAGES { get => "assets.background"; }
         public static string DATAKEY_FGDIMAGES { get => "assets.foreground"; }
         public static string DATAKEY_TEXTS { get => "shape-and-text-strings"; }

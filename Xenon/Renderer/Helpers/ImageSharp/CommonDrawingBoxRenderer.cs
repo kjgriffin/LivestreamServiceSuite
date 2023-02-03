@@ -67,7 +67,14 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                     break;
             }
 
-            ibmp.Mutate_OverlayImage(scpy, imgorig);
+            if (layout?.OverrideKeyImg == true)
+            {
+                ibmp.Mutate(ctx => ctx.DrawImage(scpy, imgorig, 1f));
+            }
+            else
+            {
+                ibmp.Mutate_OverlayImage(scpy, imgorig);
+            }
 
             // if transparent then create key from image based on alpha channel
             if (inferKey && layout.KeyColor.Alpha == 0)
@@ -88,6 +95,51 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                     }
                 }
                 ikbmp.Mutate(ctx => ctx.DrawImage(scpy, imgorig, 1f));
+            }
+            if (layout.OverrideKeyImg)
+            {
+
+                ropts = new ResizeOptions()
+                {
+                    Mode = resizeMode,
+                    Size = layout.KeyBoxOverride.Rectangle.Size
+                };
+                // I don't think we want modify the source image- we're not sure we actually own it here
+
+                // save original size for figuring out what to do later ??
+                rscalefactor = new SizeF(layout.KeyBoxOverride.Size.Width - src.Width, layout.KeyBoxOverride.Size.Height - src.Height);
+
+                var kscpy = src.Clone();
+                kscpy.Mutate(ctx => ctx.Resize(ropts));
+
+                // apply image processing here
+
+
+                //ibmp.Mutate(ctx => ctx.DrawImage(scpy, layout.Box.Origin.Point, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.Clear, 1f));
+
+                // compute location based on v/h align
+                Point kimgorig = layout.KeyBoxOverride.Origin.Point;
+                switch (layout.KeyHorizontalAlignmentOverride)
+                {
+                    case LayoutInfo.LWJHAlign.Center:
+                    case LayoutInfo.LWJHAlign.Centered:
+                        kimgorig.X += (layout.KeyBoxOverride.Size.Width - kscpy.Width) / 2;
+                        break;
+                    case LayoutInfo.LWJHAlign.Right:
+                        kimgorig.X += (layout.KeyBoxOverride.Size.Width - kscpy.Width);
+                        break;
+                }
+                switch (layout.KeyVerticalAlignmentOverride)
+                {
+                    case LayoutInfo.LWJVAlign.Center:
+                        kimgorig.Y += (layout.KeyBoxOverride.Size.Height - kscpy.Height) / 2;
+                        break;
+                    case LayoutInfo.LWJVAlign.Bottom:
+                        kimgorig.Y += (layout.KeyBoxOverride.Size.Height - kscpy.Height);
+                        break;
+                }
+
+                ikbmp.Mutate(ctx => ctx.DrawImage(kscpy, kimgorig, 1f));
             }
 
         }
