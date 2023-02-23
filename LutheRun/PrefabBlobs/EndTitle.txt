@@ -20,7 +20,7 @@ $>$><2>arg0:USK1TieOn[Tie PIP];
 $>$>arg1:DelayMs(100);
 $>$>arg0:AutoTrans[Take Hymn];
 $>}
-$>duplast=#script
+$>last=#script
 $>{
 $>$>#END;
 $>$>@<2>arg0:USK1TieOn[Tie PIP];
