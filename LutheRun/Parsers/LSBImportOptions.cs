@@ -18,6 +18,8 @@ namespace LutheRun.Parsers
         [BoolSetting]
         public bool UseUpNextForHymns { get; set; } = true;
         [BoolSetting]
+        public bool YeetThyselfFromLiturgyToUpNextWithAsLittleAplombAsPossible { get; set; } = true;
+        [BoolSetting]
         public bool UsePIPHymns { get; set; } = true;
 
         public bool OnlyKnownCaptions { get; set; } = true;

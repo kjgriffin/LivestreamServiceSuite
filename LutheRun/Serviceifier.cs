@@ -454,35 +454,47 @@ namespace LutheRun
                     {
                         inliturgy = false;
                     }
+
+                    var caption = element.LSBElement as LSBElementCaption;
+                    if (caption != null)
+                    {
+                        if (caption.Caption.ToLower().Contains("bells"))
+                        {
+                            inliturgy = false;
+                        }
+                    }
+
                 }
                 else if (element.ConsiderForServicification && !element.FilterFromOutput)
                 {
                     if (inliturgy)
                     {
-                        // don't add this one if we've infered bells should be prior
+                        // assumption here is that we'll get it off somehow
+                        // either explicitly, or via an allowable exception that will put us in a state where we don't expect to need to do this expliclity prior to a new set of liturgy being identified
+                        inliturgy = false;
+
+                        // get rid of liturgy
                         bool skip = false;
-                        var caption = prevelement.LSBElement as LSBElementCaption;
-                        if (caption != null)
+
+                        if (options.YeetThyselfFromLiturgyToUpNextWithAsLittleAplombAsPossible)
                         {
-                            if (caption.Caption.ToLower().Contains("bells"))
+                            var btype = element?.LSBElement?.BlockType() ?? BlockType.UNKNOWN;
+                            if (btype == BlockType.HYMN_INTRO || btype == BlockType.HYMN)
                             {
                                 skip = true;
                             }
                         }
 
-                        // get rid of liturgy
                         if (!skip)
                         {
                             newservice.Add(new ParsedLSBElement
                             {
                                 LSBElement = new ExternalPrefab("#liturgyoff", "liturgyoff", BlockType.MISC_CORPERATE),
-                                Generator = "Next element NOT [liturgy]. Previous element was [liturgy]",
+                                Generator = $"Next element NOT [liturgy] is [{element?.BlockType}]. Previous element was [liturgy]",
                                 AddedByInference = true,
                                 Ancestory = Guid.NewGuid(),
                             });
                         }
-                        // we'll assume the bell's script turns it off
-                        inliturgy = false;
                     }
                 }
 
