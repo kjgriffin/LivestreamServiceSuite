@@ -486,7 +486,7 @@ namespace LutheRun
                     }
                 }
 
-                if (element.LSBElement is LSBElementHymn)
+                if (element.LSBElement is LSBElementHymn && !element.FilterFromOutput)
                 {
                     bool dointro = true;
 
@@ -522,7 +522,7 @@ namespace LutheRun
 
                 if (options.WrapConsecuitivePackages)
                 {
-                    if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings)
+                    if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings && !element.FilterFromOutput)
                     {
                         // assume the first consecutive reading element setups the block 
                         if (prevelement.LSBElement is not LSBElementReadingComplex)
@@ -539,7 +539,7 @@ namespace LutheRun
                             });
                         }
                     }
-                    if (element.LSBElement is LSBElementHymn && options.UsePIPHymns)
+                    if (element.LSBElement is LSBElementHymn && options.UsePIPHymns && !element.FilterFromOutput)
                     {
                         // assume the first consecutive hymn element setups the block 
                         if (prevelement?.LSBElement is not LSBElementHymn)
@@ -571,7 +571,7 @@ namespace LutheRun
                 // handle post scripting blocks here
                 if (options.WrapConsecuitivePackages)
                 {
-                    if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings)
+                    if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings && !element.FilterFromOutput)
                     {
                         if (nextelement?.LSBElement is not LSBElementReadingComplex)
                         {
@@ -588,7 +588,7 @@ namespace LutheRun
                             prevelement = scriptclose;
                         }
                     }
-                    if (element.LSBElement is LSBElementHymn && options.FullPackageReadings)
+                    if (element.LSBElement is LSBElementHymn && options.FullPackageReadings && !element.FilterFromOutput)
                     {
                         bool doend = true;
                         if (nextelement?.LSBElement is LSBElementHymn)
