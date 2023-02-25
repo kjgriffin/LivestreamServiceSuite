@@ -445,6 +445,7 @@ namespace LutheRun
 
 
 
+                bool shutdownliturgy = false;
                 if (element.ConsiderForServicification && !element.FilterFromOutput && LiturgyElements.Contains(element.LSBElement?.GetType()))
                 {
                     inliturgy = true;
@@ -453,6 +454,12 @@ namespace LutheRun
                     if (reading != null && options.FullPackageReadings)
                     {
                         inliturgy = false;
+
+                        // anthem generating captions ought be excluded
+                        if ((prevelement?.LSBElement as LSBElementCaption)?.Caption?.ToLower().Contains("anthem") == true)
+                        {
+                            shutdownliturgy = true;
+                        }
                     }
 
                     var caption = element.LSBElement as LSBElementCaption;
@@ -472,31 +479,33 @@ namespace LutheRun
                         // assumption here is that we'll get it off somehow
                         // either explicitly, or via an allowable exception that will put us in a state where we don't expect to need to do this expliclity prior to a new set of liturgy being identified
                         inliturgy = false;
+                        shutdownliturgy = true;
 
                         // get rid of liturgy
-                        bool skip = false;
 
                         if (options.YeetThyselfFromLiturgyToUpNextWithAsLittleAplombAsPossible)
                         {
                             var btype = element?.LSBElement?.BlockType() ?? BlockType.UNKNOWN;
                             if (btype == BlockType.HYMN_INTRO || btype == BlockType.HYMN)
                             {
-                                skip = true;
+                                shutdownliturgy = false;
                             }
                         }
 
-                        if (!skip)
-                        {
-                            newservice.Add(new ParsedLSBElement
-                            {
-                                LSBElement = new ExternalPrefab("#liturgyoff", "liturgyoff", BlockType.MISC_CORPERATE),
-                                Generator = $"Next element NOT [liturgy] is [{element?.BlockType}]. Previous element was [liturgy]",
-                                AddedByInference = true,
-                                Ancestory = Guid.NewGuid(),
-                            });
-                        }
                     }
                 }
+
+                if (shutdownliturgy)
+                {
+                    newservice.Add(new ParsedLSBElement
+                    {
+                        LSBElement = new ExternalPrefab("#liturgyoff", "liturgyoff", BlockType.MISC_CORPERATE),
+                        Generator = $"Next element NOT [liturgy] is [{element?.BlockType}]. Previous element was [liturgy]",
+                        AddedByInference = true,
+                        Ancestory = Guid.NewGuid(),
+                    });
+                }
+
 
                 if (element.LSBElement is LSBElementHymn && !element.FilterFromOutput)
                 {

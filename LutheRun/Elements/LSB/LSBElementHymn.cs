@@ -348,7 +348,17 @@ namespace LutheRun.Elements.LSB
                 indentDepth++;
                 foreach (var verse in TextVerses)
                 {
-                    string verseinsert = verse.Number != string.Empty ? $"(Verse {verse.Number})" : "";
+                    //string verseinsert = verse.Number != string.Empty ? $"(Verse {verse.Number})" : "";
+                    string verseinsert = string.Empty;
+                    if (verse.Number != string.Empty)
+                    {
+                        string vformat = verse.Number.Trim();
+                        if (Regex.Match(vformat, @"\d+").Success)
+                        {
+                            vformat = $"Verse {vformat}";
+                        }
+                        verseinsert = $"({vformat})";
+                    }
                     if (verse.Doxological)
                     {
                         verseinsert += "[doxological]";
