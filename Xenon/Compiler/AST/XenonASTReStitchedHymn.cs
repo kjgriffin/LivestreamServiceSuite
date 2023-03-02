@@ -204,7 +204,7 @@ namespace Xenon.Compiler.AST
                     if (!string.IsNullOrEmpty(assetpath))
                     {
 
-                        IImageInfo metadata = Image.Identify(assetpath);
+                        ImageInfo metadata = Image.Identify(assetpath);
                         ImageSizes[item] = new Size(metadata.Width, metadata.Height);
                     }
                     else

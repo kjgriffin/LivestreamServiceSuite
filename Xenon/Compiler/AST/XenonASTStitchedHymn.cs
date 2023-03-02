@@ -176,7 +176,7 @@ namespace Xenon.Compiler.AST
                     if (!string.IsNullOrEmpty(assetpath))
                     {
 
-                        SixLabors.ImageSharp.IImageInfo metadata = SixLabors.ImageSharp.Image.Identify(assetpath);
+                        SixLabors.ImageSharp.ImageInfo metadata = SixLabors.ImageSharp.Image.Identify(assetpath);
                         ImageSizes[item.name] = new SixLabors.ImageSharp.Size(metadata.Width, metadata.Height);
                     }
                     else

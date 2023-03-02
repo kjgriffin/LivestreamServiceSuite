@@ -21,7 +21,8 @@ namespace Xenon.Helpers
         {
             using (var memoryStream = new MemoryStream())
             {
-                var imageEncoder = image.GetConfiguration().ImageFormatsManager.FindEncoder(PngFormat.Instance);
+                //var imageEncoder = image.GetConfiguration().ImageFormatsManager.FindEncoder(PngFormat.Instance);
+                var imageEncoder = image.GetConfiguration().ImageFormatsManager.GetEncoder(PngFormat.Instance);
                 image.Save(memoryStream, imageEncoder);
                 memoryStream.Seek(0, SeekOrigin.Begin);
                 return new GDI.Bitmap(memoryStream);
