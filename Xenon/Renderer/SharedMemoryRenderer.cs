@@ -113,7 +113,7 @@ namespace Xenon.Renderer
                             match = Regex.Match(lres.AltKeySource, "^Key_(?<num>\\d+)\\.png$");
                             if (match.Success)
                             {
-                                sinfo.HasOverridePrimary = true;
+                                sinfo.HasOverrideKey = true;
                                 sinfo.KeyResource = $"SC-Pres-Key_{match.Groups["num"].Value}-png";
                             }
                         }
@@ -240,6 +240,45 @@ namespace Xenon.Renderer
                     }
 
                 }
+                else if (rs.MediaType == MediaType.Video && rs.OverridingBehaviour?.ForceOverrideExport == true)
+                {
+                    string sname = $"SC-Res-{rs.OverridingBehaviour.OverrideExportName}-mp4";
+                    string kname = $"SC-Res-{rs.OverridingBehaviour.OverrideExportKeyName}-png";
+
+                    var mnum = Regex.Match(sname, "Resource_\\d+_forslide_(?<place>\\d+)").Groups["place"].Value;
+                    var snum = int.Parse(mnum);
+
+                    // now we'll rever sname back to the tmp asset under the hood
+                    sname = rs.AssetPath;
+
+                    //var sfile = MemoryMappedFile.CreateNew(sname, rs.BitmapPNGMS.Length);
+                    //mfiles.Add(sfile);
+                    //using (var stream = sfile.CreateViewStream())
+                    //{
+                    //    // this will probably be slow and use oodles of memory
+                    //    stream.Seek(0, SeekOrigin.Begin);
+                    //    stream.Write(rs.BitmapPNGMS.GetBuffer(), 0, (int)rs.BitmapPNGMS.Length);
+                    //}
+
+                    var kfile = MemoryMappedFile.CreateNew(kname, rs.KeyPNGMS.Length);
+                    mfiles.Add(kfile);
+                    using (var stream = kfile.CreateViewStream())
+                    {
+                        // this will probably be slow and use oodles of memory
+                        stream.Seek(0, SeekOrigin.Begin);
+                        stream.Write(rs.KeyPNGMS.GetBuffer(), 0, (int)rs.KeyPNGMS.Length);
+                    }
+                    if (presDescription.Slides.Count > snum)
+                    {
+                        presDescription.Slides[snum].HasOverridePrimary = true;
+                        presDescription.Slides[snum].PrimaryResource = sname;
+                        presDescription.Slides[snum].HasOverrideKey = true;
+                        presDescription.Slides[snum].KeyResource = kname;
+                    }
+
+                }
+
+
             }
 
             // include configs

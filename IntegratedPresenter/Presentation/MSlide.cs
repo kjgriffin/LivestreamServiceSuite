@@ -50,7 +50,7 @@ namespace IntegratedPresenter.Main
             }
             if (AltSources)
             {
-                if (!string.IsNullOrEmpty(AltSource))
+                if (!string.IsNullOrEmpty(AltSource) && AltSource.EndsWith("png"))
                 {
                     MemoryStream bs = new MemoryStream();
                     using (var f = MemoryMappedFile.OpenExisting(AltSource))
@@ -63,7 +63,7 @@ namespace IntegratedPresenter.Main
                     return true;
                 }
             }
-            if (!string.IsNullOrEmpty(Source))
+            if (!string.IsNullOrEmpty(Source) && Source.EndsWith("png"))
             {
                 MemoryStream bs = new MemoryStream();
                 using (var f = MemoryMappedFile.OpenExisting(Source))
@@ -83,7 +83,7 @@ namespace IntegratedPresenter.Main
             img = new BitmapImage();
             if (AltSources)
             {
-                if (!string.IsNullOrEmpty(AltKeySource))
+                if (!string.IsNullOrEmpty(AltKeySource) && AltKeySource.EndsWith("png"))
                 {
                     MemoryStream bs = new MemoryStream();
                     using (var f = MemoryMappedFile.OpenExisting(AltKeySource))
@@ -96,7 +96,7 @@ namespace IntegratedPresenter.Main
                     return true;
                 }
             }
-            if (!string.IsNullOrEmpty(KeySource))
+            if (!string.IsNullOrEmpty(KeySource) && KeySource.EndsWith("png"))
             {
                 MemoryStream bs = new MemoryStream();
                 using (var f = MemoryMappedFile.OpenExisting(KeySource))
@@ -151,12 +151,12 @@ namespace IntegratedPresenter.Main
         {
             if (AltSources)
             {
-                if (!string.IsNullOrEmpty(AltSource))
+                if (!string.IsNullOrEmpty(AltSource) && AltSource.EndsWith(".png"))
                 {
                     return true;
                 }
             }
-            if (!string.IsNullOrEmpty(Source))
+            if (!string.IsNullOrEmpty(Source) && Source.EndsWith(".png"))
             {
                 return true;
             }
@@ -166,12 +166,12 @@ namespace IntegratedPresenter.Main
         {
             if (AltSources)
             {
-                if (!string.IsNullOrEmpty(AltKeySource))
+                if (!string.IsNullOrEmpty(AltKeySource) && AltKeySource.EndsWith(".png"))
                 {
                     return true;
                 }
             }
-            if (!string.IsNullOrEmpty(KeySource))
+            if (!string.IsNullOrEmpty(KeySource) && KeySource.EndsWith(".png"))
             {
                 return true;
             }
@@ -280,6 +280,28 @@ namespace IntegratedPresenter.Main
                 }
             }
         }
+        public bool IsControllableMedia()
+        {
+            // should this be play/pause/stop/restartable ?
+
+            // if its got a video somewhere, then yes
+
+            if (Type == SlideType.Video || Type == SlideType.ChromaKeyVideo)
+            {
+                return true;
+            }
+
+            // but should also now allow the trickery where we can have action'ed videos
+
+            if (TryGetPrimaryVideoPath(out _))
+            {
+                // pretty sure this means we found a video- so I'd expect us to be able to control it
+                return true;
+            }
+
+            return true;
+        }
+
 
     }
 

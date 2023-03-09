@@ -44,7 +44,7 @@ namespace IntegratedPresenter.Main
             img = null;
             if (AltSources)
             {
-                if (!string.IsNullOrEmpty(AltSource))
+                if (!string.IsNullOrEmpty(AltSource) && AltSource.EndsWith(".png"))
                 {
                     img = new BitmapImage(new Uri(AltSource));
                     return true;
@@ -62,7 +62,7 @@ namespace IntegratedPresenter.Main
             img = null;
             if (AltSources)
             {
-                if (!string.IsNullOrEmpty(AltKeySource))
+                if (!string.IsNullOrEmpty(AltKeySource) && AltSource.EndsWith(".png"))
                 {
                     img = new BitmapImage(new Uri(AltKeySource));
                     return true;
@@ -115,7 +115,7 @@ namespace IntegratedPresenter.Main
         {
             if (AltSources)
             {
-                if (!string.IsNullOrEmpty(AltSource))
+                if (!string.IsNullOrEmpty(AltSource) && AltSource.EndsWith(".png"))
                 {
                     return true;
                 }
@@ -130,7 +130,7 @@ namespace IntegratedPresenter.Main
         {
             if (AltSources)
             {
-                if (!string.IsNullOrEmpty(AltKeySource))
+                if (!string.IsNullOrEmpty(AltKeySource) && AltSource.EndsWith(".png"))
                 {
                     return true;
                 }
@@ -231,9 +231,27 @@ namespace IntegratedPresenter.Main
             }
         }
 
+        public bool IsControllableMedia()
+        {
+            // should this be play/pause/stop/restartable ?
 
+            // if its got a video somewhere, then yes
 
+            if (Type == SlideType.Video || Type == SlideType.ChromaKeyVideo)
+            {
+                return true;
+            }
 
+            // but should also now allow the trickery where we can have action'ed videos
+
+            if (TryGetPrimaryVideoPath(out _))
+            {
+                // pretty sure this means we found a video- so I'd expect us to be able to control it
+                return true;
+            }
+
+            return true;
+        }
     }
 
 }

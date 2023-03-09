@@ -18,6 +18,7 @@ namespace IntegratedPresenter.Main
         bool TryGetPrimaryVideoPath(out string path);
         bool TryGetKeyVideoPath(out string path);
 
+        bool IsControllableMedia();
 
         //string AltKeySource { get; set; }
         //string AltSource { get; set; }

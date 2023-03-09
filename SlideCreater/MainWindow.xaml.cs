@@ -424,6 +424,13 @@ namespace SlideCreater
                             slide.Bitmap = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportName == sname)?.Bitmap;
                             slide.BitmapPNGMS = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportName == sname)?.BitmapPNGMS;
                         }
+                        srcoverride = Regex.Match(slide.Text, "!displaysrc='(?<src>Resource_.*)\\.mp4';");
+                        if (srcoverride.Success)
+                        {
+                            var sname = srcoverride.Groups["src"].Value;
+                            slide.AssetPath = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportName == sname)?.AssetPath;
+                        }
+
                     }
 
 
@@ -440,7 +447,7 @@ namespace SlideCreater
                         keyoverride = Regex.Match(slide.Text, "!keysrc='(?<src>Resource_.*)\\.png';");
                         if (keyoverride.Success)
                         {
-                            var sname = srcoverride.Groups["src"].Value;
+                            var sname = keyoverride.Groups["src"].Value;
                             slide.KeyBitmap = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportKeyName == sname)?.KeyBitmap;
                             slide.KeyPNGMS = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportKeyName == sname)?.KeyPNGMS;
                         }

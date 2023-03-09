@@ -36,6 +36,12 @@ namespace Xenon.Renderer
             {
                 string filename = $"{rs.Number}_{rs.RenderedAs}.mp4";
                 string kfilename = $"Key_{rs.Number}.png";
+                if (rs.OverridingBehaviour?.ForceOverrideExport == true)
+                {
+                    filename = $"{rs.OverridingBehaviour.OverrideExportName}.mp4";
+                    kfilename = $"{rs.OverridingBehaviour.OverrideExportKeyName}.png";
+                }
+
                 created.Add(filename);
                 created.Add(kfilename);
             }
@@ -122,6 +128,13 @@ namespace Xenon.Renderer
                 {
                     string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.mp4");
                     string kfilename = Path.Join(directory, $"Key_{slide.Number}.png");
+
+                    if (rs.OverridingBehaviour?.ForceOverrideExport == true)
+                    {
+                        filename = Path.Join(directory, $"{slide.OverridingBehaviour.OverrideExportName}.mp4");
+                        kfilename = Path.Join(directory, $"{slide.OverridingBehaviour.OverrideExportKeyName}.png");
+                    }
+
                     File.Copy(rs.AssetPath, filename);
                     using (var stream = new FileStream(kfilename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {

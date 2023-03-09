@@ -73,11 +73,12 @@ namespace SlideCreater
                         background.Visibility = Visibility.Visible;
                         textDisplay.Text = "AUTO BLACK KEY\r\n(for action)";
 
-                        if (!Regex.Match(Slide.Text, "!keysrc='.*\\.png';").Success)
+                        if (Regex.Match(Slide.Text, "!keysrc='.*\\.png';").Success)
                         {
-                            background.Visibility = Visibility.Visible;
+                            background.Visibility = Visibility.Hidden;
                             textDisplay.Visibility = Visibility.Hidden;
-                            ImgDisplay.Visibility = Visibility.Hidden;
+                            ImgDisplay.Visibility = Visibility.Visible;
+                            ImgDisplay.Source = Slide.KeyPNGMS?.ToBitmapImage();
                         }
                     }
                     else
@@ -134,6 +135,16 @@ namespace SlideCreater
                             background.Visibility = Visibility.Hidden;
                             ImgDisplay.Visibility = Visibility.Visible;
                             ImgDisplay.Source = Slide.BitmapPNGMS?.ToBitmapImage();
+                        }
+                        else if (Regex.Match(Slide.Text, "!displaysrc='.*\\.mp4';").Success)
+                        {
+                            ImgDisplay.Visibility = Visibility.Hidden;
+                            textDisplay.Visibility = Visibility.Hidden;
+                            VideoDisplay.Visibility = Visibility.Visible;
+                            VideoDisplay.Source = new Uri(Slide.AssetPath);
+                            VideoDisplay.MediaEnded += VideoDisplay_MediaEnded;
+                            VideoDisplay.Volume = 0;
+                            VideoDisplay.Play();
                         }
                     }
 

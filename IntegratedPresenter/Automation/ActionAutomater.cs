@@ -459,6 +459,15 @@ namespace Integrated_Presenter.Automation
                         await _presentationProvider.TakeNextSlide();
                         break;
 
+                    case AutomationActions.DriveNextSlide:
+                        _logger.Debug($"(PerformAutomationAction) -- drive next slide");
+                        continueProcessing = false;
+                        // calculate next slide
+                        _presentationProvider.SetNextSlideTarget(task.DataI);
+                        await _presentationProvider.TakeNextSlide();
+                        break;
+
+
                     case AutomationActions.WatchSwitcherStateBoolVal:
                     case AutomationActions.WatchSwitcherStateIntVal:
                         // TODO: do we need to process these as such??

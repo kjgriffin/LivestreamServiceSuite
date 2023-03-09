@@ -356,7 +356,7 @@ namespace Xenon.Compiler.AST
             }
 
             // NOTE: only supports images for now- make huge noise if we are trying to do this for any other type of slide!
-            if (slide.MediaType != MediaType.Image)
+            if (slide.MediaType != MediaType.Image || slide.MediaType != MediaType.Video)
             {
                 log.Log(new XenonCompilerMessage
                 {
@@ -369,8 +369,17 @@ namespace Xenon.Compiler.AST
                 });
             }
 
-            string srcFile = $"!displaysrc='{behaviour.OverrideExportName}.png';";
-            string keyFile = $"!keysrc='{behaviour.OverrideExportKeyName}.png';";
+            string ftype = "png";
+            string ktype = "png";
+
+            if (slide.MediaType == MediaType.Video)
+            {
+                ftype = "mp4";
+            }
+
+            string srcFile = $"!displaysrc='{behaviour.OverrideExportName}.{ftype}';";
+            string keyFile = $"!keysrc='{behaviour.OverrideExportKeyName}.{ktype}';";
+
 
             // extract the PostScript slide's commands and run overwrite/inject the appropriate src/key file overrides 
             var lines = script.Source.Split(';').Select(x => x.Trim()).Where(x => x.Length > 0).ToList();
@@ -413,6 +422,14 @@ namespace Xenon.Compiler.AST
             {
                 newlines.Insert(0, srcFile);
             }
+
+            //if (slide.MediaType == MediaType.Video)
+            //{
+            //    // need to point it here
+            //    string vsrcFile = $"!videosrc='{behaviour.OverrideExportName}.mp4';";
+            //    newlines.Insert(0, vsrcFile);
+            //}
+
             newlines.Insert(0, titleline);
 
             scriptslide.Data["source"] = string.Join(Environment.NewLine, newlines);
