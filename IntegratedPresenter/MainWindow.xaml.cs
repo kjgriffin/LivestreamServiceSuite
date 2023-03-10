@@ -1149,7 +1149,7 @@ namespace IntegratedPresenter.Main
                 {
                     if (_FeatureFlag_ShowEffectiveCurrentPreview)
                     {
-                        if (Presentation?.EffectiveCurrent.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                        if (Presentation?.EffectiveCurrent.IsControllableMedia() == true)
                         {
 
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
@@ -1158,7 +1158,7 @@ namespace IntegratedPresenter.Main
                     }
                     else
                     {
-                        if (Presentation?.Current.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                        if (Presentation?.Current.IsControllableMedia() == true)
                         {
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
                             tbPreviewCurrentVideoDuration.Visibility = Visibility.Visible;
@@ -1181,7 +1181,7 @@ namespace IntegratedPresenter.Main
                 {
                     if (_FeatureFlag_ShowEffectiveCurrentPreview)
                     {
-                        if (Presentation?.EffectiveCurrent.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                        if (Presentation?.EffectiveCurrent.IsControllableMedia() == true)
                         {
 
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
@@ -1195,7 +1195,7 @@ namespace IntegratedPresenter.Main
                     }
                     else
                     {
-                        if (Presentation?.Current.Type == SlideType.Video || Presentation?.EffectiveCurrent.Type == SlideType.ChromaKeyVideo)
+                        if (Presentation?.Current.IsControllableMedia() == true)
                         {
                             tbPreviewCurrentVideoDuration.Text = CurrentPreview.MediaTimeRemaining.ToString("\\T\\-mm\\:ss");
                             tbPreviewCurrentVideoDuration.Visibility = Visibility.Visible;
@@ -1212,7 +1212,7 @@ namespace IntegratedPresenter.Main
                     tbPreviewCurrentVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewCurrentVideoDuration.Text = "";
                 }
-                if (Presentation?.Next.Type == SlideType.Video || Presentation?.Next.Type == SlideType.ChromaKeyVideo)
+                if (Presentation?.Next.IsControllableMedia() == true)
                 {
                     NextPreview.PlayMedia();
                     if (NextPreview.MediaLength != TimeSpan.Zero)
@@ -1226,7 +1226,7 @@ namespace IntegratedPresenter.Main
                     tbPreviewNextVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewNextVideoDuration.Text = "";
                 }
-                if (Presentation?.After.Type == SlideType.Video || Presentation?.After.Type == SlideType.ChromaKeyVideo)
+                if (Presentation?.After.IsControllableMedia() == true)
                 {
                     AfterPreview.PlayMedia();
                     if (AfterPreview.MediaLength != TimeSpan.Zero)
@@ -1240,7 +1240,7 @@ namespace IntegratedPresenter.Main
                     tbPreviewAfterVideoDuration.Visibility = Visibility.Hidden;
                     tbPreviewAfterVideoDuration.Text = "";
                 }
-                if (Presentation?.Prev.Type == SlideType.Video || Presentation?.Prev.Type == SlideType.ChromaKeyVideo)
+                if (Presentation?.Prev.IsControllableMedia() == true)
                 {
                     PrevPreview.PlayMedia();
                     if (PrevPreview.MediaLength != TimeSpan.Zero)

@@ -250,7 +250,7 @@ namespace IntegratedPresenter.Main
                 return true;
             }
 
-            return true;
+            return false;
         }
     }
 
