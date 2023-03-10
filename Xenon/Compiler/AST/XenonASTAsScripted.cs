@@ -356,7 +356,7 @@ namespace Xenon.Compiler.AST
             }
 
             // NOTE: only supports images for now- make huge noise if we are trying to do this for any other type of slide!
-            if (slide.MediaType != MediaType.Image || slide.MediaType != MediaType.Video)
+            if (slide.MediaType != MediaType.Image && slide.MediaType != MediaType.Video)
             {
                 log.Log(new XenonCompilerMessage
                 {
