@@ -85,7 +85,7 @@ namespace IntegratedPresenter.Main
             }
             else if (Type == SlideType.Action && AltSources)
             {
-                if (AltSource?.EndsWith(".mp4") == true)
+                if (AltSource?.EndsWith(".mp4") == true || AltSource?.EndsWith(".gif") == true)
                 {
                     path = AltSource;
                     return true;

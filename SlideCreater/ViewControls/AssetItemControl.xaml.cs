@@ -86,6 +86,7 @@ namespace SlideCreater
         private void VideoAsset_MediaEnded(object sender, RoutedEventArgs e)
         {
             VideoAsset.Stop();
+            VideoAsset.Position = TimeSpan.FromMilliseconds(1);
             VideoAsset.Play();
         }
 

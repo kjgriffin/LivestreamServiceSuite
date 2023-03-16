@@ -424,7 +424,7 @@ namespace SlideCreater
                             slide.Bitmap = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportName == sname)?.Bitmap;
                             slide.BitmapPNGMS = slides.FirstOrDefault(s => s?.OverridingBehaviour?.OverrideExportName == sname)?.BitmapPNGMS;
                         }
-                        srcoverride = Regex.Match(slide.Text, "!displaysrc='(?<src>Resource_.*)\\.mp4';");
+                        srcoverride = Regex.Match(slide.Text, "!displaysrc='(?<src>Resource_.*)(\\.mp4)|(\\.gif)';");
                         if (srcoverride.Success)
                         {
                             var sname = srcoverride.Groups["src"].Value;
@@ -574,7 +574,7 @@ namespace SlideCreater
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Add Assets";
-            ofd.Filter = "Images, Video and Audio (*.png;*.jpg;*.bmp;*.mp4;*.mp3;*.wav)|*.png;*.jpg;*.bmp;*.mp4;*.mp3;*.wav";
+            ofd.Filter = "Images, Video and Audio (*.png;*.jpg;*.bmp;*.mp4;*.gif;*.mp3;*.wav)|*.png;*.jpg;*.bmp;*.mp4;*.gif;*.mp3;*.wav";
             ofd.Multiselect = true;
             if (ofd.ShowDialog() == true)
             {
@@ -614,7 +614,7 @@ namespace SlideCreater
                 {
                     asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image, Extension = System.IO.Path.GetExtension(file) };
                 }
-                else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
+                else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp4)|(\.gif)", RegexOptions.IgnoreCase))
                 {
                     asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = System.IO.Path.GetFileNameWithoutExtension(file), OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, Extension = System.IO.Path.GetExtension(file) };
                 }
@@ -652,7 +652,7 @@ namespace SlideCreater
                 {
                     asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Image, Extension = System.IO.Path.GetExtension(path) };
                 }
-                else if (Regex.IsMatch(System.IO.Path.GetExtension(path).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
+                else if (Regex.IsMatch(System.IO.Path.GetExtension(path).ToLower(), @"(\.mp4)|(\.gif)", RegexOptions.IgnoreCase))
                 {
                     asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = name, OriginalPath = path, LoadedTempPath = tmpassetpath, Type = AssetType.Video, Extension = System.IO.Path.GetExtension(path) };
                 }
@@ -1175,7 +1175,7 @@ namespace SlideCreater
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image, InternalDisplayName = save.AssetRenames.GetOrDefault(assetkey, assetkey), Extension = save.AssetExtensions[assetkey] };
                     }
-                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
+                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp4)|(\.gif)", RegexOptions.IgnoreCase))
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, InternalDisplayName = save.AssetRenames.GetOrDefault(assetkey, assetkey), Extension = save.AssetExtensions[assetkey] };
                     }
@@ -1424,7 +1424,7 @@ namespace SlideCreater
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Image, InternalDisplayName = opened.assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = opened.assetextensions[assetkey] };
                     }
-                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"\.mp4", RegexOptions.IgnoreCase))
+                    else if (Regex.IsMatch(System.IO.Path.GetExtension(file).ToLower(), @"(\.mp4)|(\.gif)", RegexOptions.IgnoreCase))
                     {
                         asset = new ProjectAsset() { Id = Guid.NewGuid(), Name = assetkey, OriginalPath = file, LoadedTempPath = tmpassetpath, Type = AssetType.Video, InternalDisplayName = opened.assetdisplaynames.GetOrDefault(assetkey, assetkey), Extension = opened.assetextensions[assetkey] };
                     }

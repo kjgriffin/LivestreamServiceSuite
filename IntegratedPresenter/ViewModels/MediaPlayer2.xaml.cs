@@ -199,7 +199,10 @@ namespace IntegratedPresenter.Main
                 Mute();
                 PlayMedia();
             }
-            OnMediaLoaded?.Invoke(this, new MediaPlaybackTimeEventArgs(videoPlayer.Position, videoPlayer.NaturalDuration.TimeSpan, (videoPlayer.NaturalDuration - videoPlayer.Position).TimeSpan));
+            if (videoPlayer.NaturalDuration != Duration.Automatic && videoPlayer.NaturalDuration != Duration.Forever)
+            {
+                OnMediaLoaded?.Invoke(this, new MediaPlaybackTimeEventArgs(videoPlayer.Position, videoPlayer.NaturalDuration.TimeSpan, (videoPlayer.NaturalDuration - videoPlayer.Position).TimeSpan));
+            }
         }
 
         public event EventHandler<MediaPlaybackTimeEventArgs> OnMediaLoaded;
@@ -289,7 +292,7 @@ namespace IntegratedPresenter.Main
         {
             if (_type == SlideType.Video || _type == SlideType.ChromaKeyVideo)
             {
-                videoPlayer.Position = TimeSpan.Zero;
+                videoPlayer.Position = TimeSpan.FromMilliseconds(1);
                 videoPlayer.Play();
             }
         }
@@ -299,6 +302,7 @@ namespace IntegratedPresenter.Main
             if (_type == SlideType.Video || _type == SlideType.ChromaKeyVideo)
             {
                 videoPlayer.Stop();
+                videoPlayer.Position = TimeSpan.FromMilliseconds(1);
             }
         }
 

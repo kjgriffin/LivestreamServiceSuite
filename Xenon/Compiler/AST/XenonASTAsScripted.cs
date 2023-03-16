@@ -375,6 +375,12 @@ namespace Xenon.Compiler.AST
             if (slide.MediaType == MediaType.Video)
             {
                 ftype = "mp4";
+                // actually look up the asset type
+                var match = proj.Assets.FirstOrDefault(x => x.DisplayName == slide.Asset);
+                if (match != null)
+                {
+                    ftype = Regex.Replace(match.Extension, @"\.", "");
+                }
             }
 
             string srcFile = $"!displaysrc='{behaviour.OverrideExportName}.{ftype}';";

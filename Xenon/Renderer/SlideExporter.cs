@@ -34,11 +34,13 @@ namespace Xenon.Renderer
             }
             else if (rs.MediaType == MediaType.Video)
             {
-                string filename = $"{rs.Number}_{rs.RenderedAs}.mp4";
+                string ftype = ".mp4";
+                ftype = System.IO.Path.GetExtension(rs.AssetPath);
+                string filename = $"{rs.Number}_{rs.RenderedAs}{ftype}";
                 string kfilename = $"Key_{rs.Number}.png";
                 if (rs.OverridingBehaviour?.ForceOverrideExport == true)
                 {
-                    filename = $"{rs.OverridingBehaviour.OverrideExportName}.mp4";
+                    filename = $"{rs.OverridingBehaviour.OverrideExportName}{ftype}";
                     kfilename = $"{rs.OverridingBehaviour.OverrideExportKeyName}.png";
                 }
 
@@ -126,12 +128,14 @@ namespace Xenon.Renderer
                 }
                 else if (rs.MediaType == MediaType.Video)
                 {
-                    string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}.mp4");
+                    string ftype = ".mp4";
+                    ftype = System.IO.Path.GetExtension(rs.AssetPath);
+                    string filename = Path.Join(directory, $"{slide.Number}_{rs.RenderedAs}{ftype}");
                     string kfilename = Path.Join(directory, $"Key_{slide.Number}.png");
 
                     if (rs.OverridingBehaviour?.ForceOverrideExport == true)
                     {
-                        filename = Path.Join(directory, $"{slide.OverridingBehaviour.OverrideExportName}.mp4");
+                        filename = Path.Join(directory, $"{slide.OverridingBehaviour.OverrideExportName}{ftype}");
                         kfilename = Path.Join(directory, $"{slide.OverridingBehaviour.OverrideExportKeyName}.png");
                     }
 

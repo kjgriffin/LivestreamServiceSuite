@@ -72,7 +72,7 @@ namespace IntegratedPresenter.Main
                 string extension = filename.Groups["extension"].Value;
 
                 // skip unrecognized files
-                List<string> valid = new List<string>() { "mp4", "png", "txt" };
+                List<string> valid = new List<string>() { "mp4", "png", "txt", "gif" };
                 if (!valid.Contains(extension.ToLower()))
                 {
                     continue;
