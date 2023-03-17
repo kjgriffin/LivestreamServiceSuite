@@ -18,8 +18,7 @@ using ATEMSharedState.SwitcherState;
 namespace SwitcherControl.BMDSwitcher
 {
 
-    public delegate void SwitcherStateChange(BMDSwitcherState args);
-
+#if WINDOWS
     public class BMDSwitcherManager : IBMDSwitcherManager
     {
 
@@ -1658,4 +1657,6 @@ namespace SwitcherControl.BMDSwitcher
             });
         }
     }
+
+#endif
 }

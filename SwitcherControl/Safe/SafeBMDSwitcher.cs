@@ -9,7 +9,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using log4net;
 using System.IO;
 using System.Threading;
@@ -138,7 +137,7 @@ namespace SwitcherControl.Safe
             if (_BMDSwitcherDiscovery == null)
             {
                 _logger?.Error("Could not create Switcher Discovery Instance.\nATEM Switcher Software not found/installed");
-                MessageBox.Show("Could not create Switcher Discovery Instance.\nATEM Switcher Software not found/installed", "Error");
+                //MessageBox.Show("Could not create Switcher Discovery Instance.\nATEM Switcher Software not found/installed", "Error");
             }
             _state = new BMDSwitcherState();
             SwitcherDisconnected();
@@ -365,15 +364,15 @@ namespace SwitcherControl.Safe
                 {
                     case _BMDSwitcherConnectToFailure.bmdSwitcherConnectToFailureNoResponse:
                         _logger?.Error($"Failed to connect to bmd switcher. No Response.");
-                        MessageBox.Show("No response from Switcher", "Error");
+                        //MessageBox.Show("No response from Switcher", "Error");
                         break;
                     case _BMDSwitcherConnectToFailure.bmdSwitcherConnectToFailureIncompatibleFirmware:
                         _logger?.Error($"Failed to connect to bmd switcher. Incompatible firmware.");
-                        MessageBox.Show("Switcher has incompatible firmware", "Error");
+                        //MessageBox.Show("Switcher has incompatible firmware", "Error");
                         break;
                     default:
                         _logger?.Error($"Failed to connect to bmd switcher. Unknown reason.");
-                        MessageBox.Show("Switcher failed to connect for unknown reason", "Error");
+                        //MessageBox.Show("Switcher failed to connect for unknown reason", "Error");
                         break;
                 }
                 OnSwitcherConnectionChanged?.Invoke(this, false);
@@ -513,7 +512,7 @@ namespace SwitcherControl.Safe
             if (_BMDSwitcherMixEffectBlock1 == null)
             {
                 _logger?.Error($"[BMD HW] failed to initialize mix effect block");
-                MessageBox.Show("Unexpected: Could not get first mix effect block", "Error");
+                //MessageBox.Show("Unexpected: Could not get first mix effect block", "Error");
                 return false;
             }
 
@@ -581,7 +580,7 @@ namespace SwitcherControl.Safe
             if (_BMDSwitcherDownstreamKey1 == null || _BMDSwitcherDownstreamKey2 == null)
             {
                 _logger?.Error($"[BMD HW] failed to iterate downstream keyers");
-                MessageBox.Show("Unexpected: Could not get one of the downstream keyers", "Error");
+                //MessageBox.Show("Unexpected: Could not get one of the downstream keyers", "Error");
                 return false;
             }
 

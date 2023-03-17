@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net7.0-windows</TargetFramework>
 		<RootNamespace>Integrated_Presenter</RootNamespace>
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>AppIcons/picon_RWa_icon.ico</ApplicationIcon>
