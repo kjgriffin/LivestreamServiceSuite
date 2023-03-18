@@ -245,6 +245,9 @@ namespace LutheRun.Parsers
                 string wformat = Regex.Replace(rcontent, "<span class=\"Apple-tab-span\" style=\"white-space:pre; mso-tab-count: 1;\">\\s<\\/span>", " "); // we'll handle tabs with single space
                 string vformat = Regex.Replace(wformat, "<sup class=\"verse-number\">(?<vnum>\\d+)</sup>", m => $" #[{m.Groups["vnum"].Value}] ");
 
+                // seem to also need to remove &nbsp; since that got slipped in
+                vformat = Regex.Replace(vformat, @"&nbsp;", " ");
+
                 // may want to preserve/handle <br> ....
                 // either remove or keep/translate to double space...
                 var segments = vformat.Split("<br>", StringSplitOptions.RemoveEmptyEntries);

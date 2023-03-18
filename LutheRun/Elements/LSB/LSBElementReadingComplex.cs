@@ -1,8 +1,10 @@
 ﻿using AngleSharp.Dom;
+
 using LutheRun.Elements;
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
 using LutheRun.Pilot;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +12,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+using Xenon.LayoutEngine;
 
 using static LutheRun.Elements.LSB.LSBElementHymn;
 
@@ -194,12 +198,57 @@ namespace LutheRun.Elements.LSB
 
         public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
         {
+            bool isResponsiveReading = false;
+            bool fullpackage = false;
+            if (lSBImportOptions.FullPackageReadings)
+            {
+                fullpackage = true;
+            }
 
-            if (!(lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy
-                && (ReadingTitle.ToLower().Contains("psalm")
-                || ReadingTitle.ToLower().Contains("introit")
-                || ReadingReference.ToLower().Contains("psalm")
-                || ReadingReference.ToLower().Contains("introit"))) && lSBImportOptions.FullPackageReadings)
+            // exceptions to when to full-package
+            if (lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy)
+            {
+                // check if we should instead fall-back to titled liturgy
+                isResponsiveReading |= (ReadingTitle?.ToLower().Contains("psalm") == true);
+                isResponsiveReading |= (ReadingReference?.ToLower().Contains("psalm") == true);
+                isResponsiveReading |= (ReadingTitle?.ToLower().Contains("introit") == true);
+                isResponsiveReading |= (ReadingReference?.ToLower().Contains("introit") == true);
+
+
+                // optionally enforce strict responsive-ness
+                if (lSBImportOptions.StrictlyEnforceResponsivenessForIntroits && isResponsiveReading)
+                {
+                    // dive inside the content and see what's going on
+                    if (!ReadingContentParser.ItHasResponsoryStyledContent(ReadingContent.Where(x => x.Type == ReadingResponsePart.ReadingText || x.Type == ReadingResponsePart.Unknown)
+                                                                                        .SelectMany(x => x.Elements)))
+                    {
+                        isResponsiveReading = false;
+                    }
+                }
+
+                if (isResponsiveReading)
+                {
+                    fullpackage = false;
+                }
+            }
+
+
+            // option for funeral psalm 23 exceptions
+            if (lSBImportOptions.SoLikeImDoingAFuneralHereAndPsalm23sGonnaBeDoneResponsivelySoJustOverrideAnyOtherComplexReadingSettingsThatGetInTheWay)
+            {
+                string titlemash = (ReadingTitle + ReadingReference).ToLower();
+                bool lookslikepsalm23 = titlemash.Contains("psalm") && titlemash.Contains("23");
+
+                if (lookslikepsalm23)
+                {
+                    isResponsiveReading = true;
+                    fullpackage = false;
+                }
+            }
+
+
+
+            if (fullpackage)
             {
                 return FullPackageReading(lSBImportOptions, ref indentDepth, indentSpaces);
             }
@@ -249,31 +298,28 @@ namespace LutheRun.Elements.LSB
             }
 
             // do title
-            if (!(lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy && ReadingTitle.ToLower().Contains("psalm")))
+            //if (!(lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy && ReadingTitle.ToLower().Contains("psalm")))
+            if (!isResponsiveReading)
             {
                 sb.AppendLine($"#reading(\"{ReadingTitle}\", \"{ReadingReference}\"){onreadingpostset}".Indent(indentDepth, indentSpaces));
             }
-            else if (lSBImportOptions.InferResponsivePslamReadingsAsTitledLiturgy)
+            else if (isResponsiveReading || lSBImportOptions.PullAllReadingContentAsTitledLiturgy)
             {
-                if (ReadingTitle.ToLower().Contains("psalm") || ReadingReference.ToLower().Contains("psalm") || lSBImportOptions.PullAllReadingContentAsTitledLiturgy)
-                {
-                    // assumes only 1 reading content...
-                    sb.AppendLine("#tlit".Indent(indentDepth, indentSpaces));
-                    sb.AppendLine("{".Indent(indentDepth, indentSpaces));
-                    indentDepth++;
-                    sb.AppendLine();
-                    sb.AppendLine($"title={{{ReadingTitle}}}".Indent(indentDepth, indentSpaces));
-                    sb.AppendLine();
-                    sb.AppendLine($"title={{{ReadingReference}}}".Indent(indentDepth, indentSpaces));
-                    sb.AppendLine();
-                    sb.AppendLine("content={".Indent(indentDepth, indentSpaces));
-                    indentDepth++;
-                    sb.AppendLine(LSBResponsorialExtractor.ExtractResponsivePoetry(ReadingContent.FirstOrDefault()?.Elements ?? new List<IElement>(), ref indentDepth, indentSpaces));
-                    indentDepth--;
-                    sb.AppendLine("}".Indent(indentDepth, indentSpaces));
-                    indentDepth--;
-                    sb.AppendLine("}".Indent(indentDepth, indentSpaces));
-                }
+                sb.AppendLine("#tlit".Indent(indentDepth, indentSpaces));
+                sb.AppendLine("{".Indent(indentDepth, indentSpaces));
+                indentDepth++;
+                sb.AppendLine();
+                sb.AppendLine($"title={{{ReadingTitle}}}".Indent(indentDepth, indentSpaces));
+                sb.AppendLine();
+                sb.AppendLine($"title={{{ReadingReference}}}".Indent(indentDepth, indentSpaces));
+                sb.AppendLine();
+                sb.AppendLine("content={".Indent(indentDepth, indentSpaces));
+                indentDepth++;
+                sb.AppendLine(LSBResponsorialExtractor.ExtractResponsivePoetry(ReadingContent.FirstOrDefault()?.Elements ?? new List<IElement>(), ref indentDepth, indentSpaces));
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpaces));
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpaces));
             }
 
             // optional insert text
@@ -366,7 +412,7 @@ namespace LutheRun.Elements.LSB
             sb.AppendLine("ctext={".Indent(indentDepth, indentSpaces));
             indentDepth++;
 
-            sb.AppendLine(LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault().Elements, ref indentDepth, indentSpaces));
+            sb.AppendLine(LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault()?.Elements ?? new List<IElement>(), ref indentDepth, indentSpaces));
 
             indentDepth--;
             sb.AppendLine("}".Indent(indentDepth, indentSpaces));

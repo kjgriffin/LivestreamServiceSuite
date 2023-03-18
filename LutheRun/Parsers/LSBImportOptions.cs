@@ -45,6 +45,10 @@ namespace LutheRun.Parsers
         [BoolSetting]
         public bool InferResponsivePslamReadingsAsTitledLiturgy { get; set; } = true;
         [BoolSetting]
+        public bool StrictlyEnforceResponsivenessForIntroits { get; set; } = true;
+        [BoolSetting]
+        public bool SoLikeImDoingAFuneralHereAndPsalm23sGonnaBeDoneResponsivelySoJustOverrideAnyOtherComplexReadingSettingsThatGetInTheWay { get; set; } = false;
+        [BoolSetting]
         public bool ForcePsalmsAsTitledLiturgy { get; set; } = false;
         [BoolSetting]
         public bool PullAllReadingContentAsTitledLiturgy { get; set; } = false;
