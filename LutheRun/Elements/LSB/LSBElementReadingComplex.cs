@@ -196,9 +196,9 @@ namespace LutheRun.Elements.LSB
             return Task.WhenAll(tasks);
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        public bool ShouldBePackaged(LSBImportOptions lSBImportOptions, out bool isResponsiveReading)
         {
-            bool isResponsiveReading = false;
+            isResponsiveReading = false;
             bool fullpackage = false;
             if (lSBImportOptions.FullPackageReadings)
             {
@@ -246,9 +246,12 @@ namespace LutheRun.Elements.LSB
                 }
             }
 
+            return fullpackage;
+        }
 
-
-            if (fullpackage)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        {
+            if (ShouldBePackaged(lSBImportOptions, out bool isResponsiveReading))
             {
                 return FullPackageReading(lSBImportOptions, ref indentDepth, indentSpaces);
             }

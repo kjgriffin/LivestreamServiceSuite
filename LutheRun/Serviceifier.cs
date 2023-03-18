@@ -543,10 +543,10 @@ namespace LutheRun
 
                 if (options.WrapConsecuitivePackages)
                 {
-                    if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings && !element.FilterFromOutput)
+                    if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings && !element.FilterFromOutput && (element.LSBElement as LSBElementReadingComplex)?.ShouldBePackaged(options, out _) == true)
                     {
                         // assume the first consecutive reading element setups the block 
-                        if (prevelement.LSBElement is not LSBElementReadingComplex)
+                        if (prevelement.LSBElement is not LSBElementReadingComplex || (prevelement.LSBElement as LSBElementReadingComplex)?.ShouldBePackaged(options, out _) == false)
                         {
                             // add the reading prefab intro block
                             newservice.Add(new ParsedLSBElement
@@ -592,9 +592,9 @@ namespace LutheRun
                 // handle post scripting blocks here
                 if (options.WrapConsecuitivePackages)
                 {
-                    if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings && !element.FilterFromOutput)
+                    if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings && !element.FilterFromOutput && (element.LSBElement as LSBElementReadingComplex)?.ShouldBePackaged(options, out _) == true)
                     {
-                        if (nextelement?.LSBElement is not LSBElementReadingComplex)
+                        if (nextelement?.LSBElement is not LSBElementReadingComplex || (nextelement?.LSBElement as LSBElementReadingComplex)?.ShouldBePackaged(options, out _) == false)
                         {
                             // add the script teardown block here
                             var scriptclose = new ParsedLSBElement
