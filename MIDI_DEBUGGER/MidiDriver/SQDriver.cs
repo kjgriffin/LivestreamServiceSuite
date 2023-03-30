@@ -32,7 +32,24 @@ namespace MIDI_DEBUGGER.MidiDriver
             _midiOutput = new MidiOut(MIDIdeviceOutID);
 
             Console.WriteLine($"SQDriver MIDI driver set to use input {MidiIn.DeviceInfo(MIDIdeviceInID).ProductName}");
+            Console.WriteLine($"SQDriver MIDI driver set to use input {MidiIn.DeviceInfo(MIDIdeviceInID).ProductId}");
             Console.WriteLine($"SQDriver MIDI driver set to use output {MidiOut.DeviceInfo(MIDIdeviceOutID).ProductName}");
+            Console.WriteLine($"SQDriver MIDI driver set to use output {MidiOut.DeviceInfo(MIDIdeviceOutID).ProductId}");
+
+            _midiInput.MessageReceived += _midiInput_MessageReceived;
+            _midiInput.ErrorReceived += _midiInput_ErrorReceived;
+
+            _midiInput.Start();
+        }
+
+        private void _midiInput_MessageReceived(object? sender, MidiInMessageEventArgs e)
+        {
+            Console.WriteLine($"MIDI::RX {e.MidiEvent}");
+        }
+
+        private void _midiInput_ErrorReceived(object? sender, MidiInMessageEventArgs e)
+        {
+            Console.WriteLine($"MIDI::RX {e}");
         }
 
         public void ChangeScene(int sceneNum)
@@ -52,7 +69,9 @@ namespace MIDI_DEBUGGER.MidiDriver
 
         public void SetMute(int srcID, bool muted)
         {
-            throw new NotImplementedException();
+            var cmd = SQProtocol.GenerateCommand_MuteSrc(0, (byte)srcID, muted);
+            Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
+            _midiOutput.SendBuffer(cmd);
         }
 
         public void SetInputLevelOnMix(int srcID, int MixID, int level)
@@ -73,14 +92,14 @@ namespace MIDI_DEBUGGER.MidiDriver
         private static byte BuildByte(byte MSB, byte LSB)
         {
             byte v1 = (byte)(MSB << 4);
-            byte v2 = (byte)(MSB & 0b00001111);
+            byte v2 = (byte)(LSB & 0b00001111);
             return (byte)(v1 | v2);
         }
 
-        static byte[] GenerateCommand_MuteSrc(byte midiChannel, ushort srcID, bool mute)
+        internal static byte[] GenerateCommand_MuteSrc(byte midiChannel, ushort srcID, bool mute)
         {
-            byte pmsb;
-            byte plsb;
+            byte pmsb = (byte)((srcID & 0xFF00) >> 8);
+            byte plsb = (byte)(srcID & 0x00FF);
             return new byte[]
             {
                 BuildByte(0xB, (byte)midiChannel),
@@ -97,7 +116,7 @@ namespace MIDI_DEBUGGER.MidiDriver
 
                 BuildByte(0xB, (byte)midiChannel),
                 0x26,
-                BuildByte(0xB, (byte)(mute ? 0x1 : 0x0)),
+                BuildByte(0x00, (byte)(mute ? 0x01 : 0x00)),
             };
         }
 
