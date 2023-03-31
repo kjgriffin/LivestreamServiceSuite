@@ -1,8 +1,10 @@
 ﻿using NAudio.Midi;
+using NAudio.Wave.SampleProviders;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,9 +16,8 @@ namespace MIDI_DEBUGGER.MidiDriver
         bool GetMute(int srcID);
         bool GetLevel(int srcID, int destID);
 
-        void SetMute(int srcID, bool muted);
-        void SetABSInputLevelOnMix(int srcID, int MixID, int level);
-        void SetABSMixLevelOutput(int mixID, int level);
+        void SetMute(string srcID, bool muted);
+        void SetLevelABS(string srcID, string destID, int level);
 
         void ChangeScene(int sceneNum);
     }
@@ -61,9 +62,15 @@ namespace MIDI_DEBUGGER.MidiDriver
             Console.WriteLine($"MIDI::RX {e}");
         }
 
+        /// <summary>
+        /// Send ChangeScene command.
+        /// </summary>
+        /// <param name="sceneNum">Scene Number [1, 300]</param>
         public void ChangeScene(int sceneNum)
         {
-            throw new NotImplementedException();
+            var cmd = SQProtocol.GenerateCommand_RecallScene(_midiCTRLChannel, (ushort)sceneNum);
+            Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
+            _midiOutput?.SendBuffer(cmd);
         }
 
         public bool GetLevel(int srcID, int destID)
@@ -76,23 +83,28 @@ namespace MIDI_DEBUGGER.MidiDriver
             throw new NotImplementedException();
         }
 
-        public void SetMute(int srcID, bool muted)
+        /// <summary>
+        /// Send Mute Command.
+        /// </summary>
+        /// <param name="srcID">Source to Mute.</param>
+        /// <param name="muted"><see langword="true"/> to mute channel.</param>
+        public void SetMute(string srcID, bool muted)
         {
-            var cmd = SQProtocol.GenerateCommand_MuteSrc(_midiCTRLChannel, (ushort)srcID, muted);
+            var cmd = SQProtocol.GenerateCommand_MuteSrc(_midiCTRLChannel, srcID, muted);
             Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
             _midiOutput?.SendBuffer(cmd);
         }
 
-        public void SetABSInputLevelOnMix(int srcID, int mixID, int level)
+        /// <summary>
+        /// Send Absolute Level Command.
+        /// </summary>
+        /// <param name="srcID">Source to set.</param>
+        /// <param name="destID">Destination to set source level on.</param>
+        /// <param name="level">Level to set 00=-inf;7F=+10db</param>
+        public void SetLevelABS(string srcID, string destID, int level)
         {
-            var cmd = SQProtocol.GenerateCommand_SetABSInputLevel(_midiCTRLChannel, (ushort)srcID, (ushort)mixID, (ushort)level);
-            Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
-            _midiOutput?.SendBuffer(cmd);
-        }
-
-        public void SetABSMixLevelOutput(int mixID, int level)
-        {
-            var cmd = SQProtocol.GenerateCommand_SetABSMasterLevel(_midiCTRLChannel, (ushort)mixID, (ushort)level);
+            string route = $"{srcID}:{destID}";
+            var cmd = SQProtocol.GenerateCommand_SetLevelABS(_midiCTRLChannel, route, (ushort)level);
             Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
             _midiOutput?.SendBuffer(cmd);
         }
@@ -102,57 +114,38 @@ namespace MIDI_DEBUGGER.MidiDriver
     static class SQProtocol
     {
 
-        static short[] MuteRouting;
-        static short[] MasterLevelRouting;
-        static short[,] InputLevelRouting;
-
-
-
-        private static short[] LoadSingleArrayAs3ColumnHEXLSBMSB(string input)
+        class NRPNData
         {
-            List<short> result = new List<short>();
+            public string ID { get; set; }
+            public short dVal { get; set; }
+            public byte MSB { get; set; }
+            public byte LSB { get; set; }
+        }
+
+        static Dictionary<string, NRPNData> MuteRouting;
+        static Dictionary<string, NRPNData> LevelRouting;
+
+        private static IEnumerable<NRPNData> LoadStringAsLinesOf_ID_DVAL_MSB_LSB(string input)
+        {
             // remove header
             foreach (var line in input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Skip(1))
             {
                 // split on ,
                 var parts = line.Split(',');
 
-                var msb = int.Parse(parts[1], System.Globalization.NumberStyles.HexNumber);
-                var lsb = int.Parse(parts[2], System.Globalization.NumberStyles.HexNumber);
+                short val = short.Parse(parts[1]);
+                byte msb = byte.Parse(parts[2], System.Globalization.NumberStyles.HexNumber);
+                byte lsb = byte.Parse(parts[3], System.Globalization.NumberStyles.HexNumber);
 
-                short val = (short)(msb << 8 | lsb);
-
-                result.Add(val);
-            }
-            return result.ToArray();
-        }
-
-        private static short[,] LoadMultiArrayAsNColumnHEXLSBMSB(string input, int columns)
-        {
-            var lines = input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();
-            short[,] result = new short[lines.Count, columns];
-
-            // remove header
-            int lnum = 0;
-            foreach (var line in lines)
-            {
-                // split on ,
-                var parts = line.Split(',');
-
-                for (int i = 1; i <= columns; i += 2)
+                yield return new NRPNData
                 {
-                    var msb = int.Parse(parts[i], System.Globalization.NumberStyles.HexNumber);
-                    var lsb = int.Parse(parts[i + 1], System.Globalization.NumberStyles.HexNumber);
-                    short val = (short)(msb << 8 | lsb);
-                    result[lnum, i - 1] = val;
-                }
-
-                lnum++;
+                    ID = parts[0],
+                    dVal = val,
+                    LSB = lsb,
+                    MSB = msb,
+                };
             }
-
-            return result;
         }
-
 
         private static string LoadStream(string sname)
         {
@@ -173,35 +166,11 @@ namespace MIDI_DEBUGGER.MidiDriver
         static SQProtocol()
         {
             // load config
-
-            string mutestr = LoadStream("SQ6Protocol_MuteRouting.csv");
-            MuteRouting = LoadSingleArrayAs3ColumnHEXLSBMSB(mutestr);
-
-            string masterlevel = LoadStream("SQ6Protocol_MasterLevelRouting.csv");
-            MasterLevelRouting = LoadSingleArrayAs3ColumnHEXLSBMSB(masterlevel);
-
-            string inputlevel = LoadStream("SQ6Protocol_InputLevelRouting.csv");
-            InputLevelRouting = LoadMultiArrayAsNColumnHEXLSBMSB(inputlevel, 13);
+            string mutestr = LoadStream("Mutes.csv");
+            MuteRouting = new Dictionary<string, NRPNData>(LoadStringAsLinesOf_ID_DVAL_MSB_LSB(mutestr).Select(x => new KeyValuePair<string, NRPNData>(x.ID, x)));
+            string levelsstr = LoadStream("Levels.csv");
+            LevelRouting = new Dictionary<string, NRPNData>(LoadStringAsLinesOf_ID_DVAL_MSB_LSB(levelsstr).Select(x => new KeyValuePair<string, NRPNData>(x.ID, x)));
         }
-
-        internal static short Lookup_InputLevelRouting(int srcID, int mixID)
-        {
-            return InputLevelRouting[srcID, mixID];
-        }
-
-        internal static short Lookup_MasterLevelRouting(int mixID)
-        {
-            return MasterLevelRouting[mixID];
-        }
-
-        internal static short Lookup_MuteRouting(int srcID)
-        {
-            return MuteRouting[srcID];
-        }
-
-
-
-
 
 
 
@@ -212,20 +181,18 @@ namespace MIDI_DEBUGGER.MidiDriver
             return (byte)(v1 | v2);
         }
 
-        internal static byte[] GenerateCommand_MuteSrc(byte midiChannel, ushort srcID, bool mute)
+        internal static byte[] GenerateCommand_MuteSrc(byte midiChannel, string srcID, bool mute)
         {
-            short rid = Lookup_MuteRouting(srcID);
-            byte pmsb = (byte)((rid & 0xFF00) >> 8);
-            byte plsb = (byte)(rid & 0x00FF);
+            var routing = MuteRouting[srcID];
             return new byte[]
             {
                 BuildByte(0xB, (byte)midiChannel),
                 0x63,
-                pmsb,
+                routing.MSB,
 
                 BuildByte(0xB, (byte)midiChannel),
                 0x62,
-                plsb,
+                routing.LSB,
 
                 BuildByte(0xB, (byte)midiChannel),
                 0x06,
@@ -237,23 +204,20 @@ namespace MIDI_DEBUGGER.MidiDriver
             };
         }
 
-        internal static byte[] GenerateCommand_SetABSInputLevel(byte midiChannel, ushort srcID, ushort mixID, ushort value)
+        internal static byte[] GenerateCommand_SetLevelABS(byte midiChannel, string lrouteID, ushort value)
         {
-            short rid = Lookup_InputLevelRouting(srcID, mixID);
-            byte pmsb = (byte)((rid & 0xFF00) >> 8);
-            byte plsb = (byte)(rid & 0x00FF);
-
+            var routing = LevelRouting[lrouteID];
             byte vc = (byte)((value & 0xFF00) >> 8);
             byte vf = (byte)(value & 0x00FF);
             return new byte[]
             {
                 BuildByte(0xB, (byte)midiChannel),
                 0x63,
-                pmsb,
+                routing.MSB,
 
                 BuildByte(0xB, (byte)midiChannel),
                 0x62,
-                plsb,
+                routing.LSB,
 
                 BuildByte(0xB, (byte)midiChannel),
                 0x06,
@@ -265,31 +229,45 @@ namespace MIDI_DEBUGGER.MidiDriver
             };
         }
 
-        internal static byte[] GenerateCommand_SetABSMasterLevel(byte midiChannel, ushort mixID, ushort value)
+        /// <summary>
+        /// Generates MIDI byte stream for command.
+        /// </summary>
+        /// <param name="midiChannel"></param>
+        /// <param name="sceneNum">1 - 300</param>
+        /// <returns></returns>
+        internal static byte[] GenerateCommand_RecallScene(byte midiChannel, ushort sceneNum)
         {
-            short rid = Lookup_MasterLevelRouting(mixID);
-            byte pmsb = (byte)((rid & 0xFF00) >> 8);
-            byte plsb = (byte)(rid & 0x00FF);
+            byte bank = 0;
+            byte program = 0;
 
-            byte vc = (byte)((value & 0xFF00) >> 8);
-            byte vf = (byte)(value & 0x00FF);
+            if (sceneNum > 0 && sceneNum <= 128)
+            {
+                bank = 0;
+                program = (byte)(sceneNum - 1);
+            }
+            else if (sceneNum > 128 && sceneNum <= 256)
+            {
+                bank = 1;
+                program = (byte)(sceneNum - 1 - 128);
+            }
+            else if (sceneNum > 256 && sceneNum <= 300)
+            {
+                bank = 2;
+                program = (byte)(sceneNum - 1 - 256);
+            }
+            else
+            {
+                // default into scene 0 for now
+            }
+
             return new byte[]
             {
                 BuildByte(0xB, (byte)midiChannel),
-                0x63,
-                pmsb,
+                0x00,
+                bank,
 
-                BuildByte(0xB, (byte)midiChannel),
-                0x62,
-                plsb,
-
-                BuildByte(0xB, (byte)midiChannel),
-                0x06,
-                vc,
-
-                BuildByte(0xB, (byte)midiChannel),
-                0x26,
-                vf
+                0xC0,
+                program
             };
         }
 

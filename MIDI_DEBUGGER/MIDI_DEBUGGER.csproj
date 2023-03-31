@@ -8,18 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="MidiDriver\ProtocolData\SQ6Protocol_InputLevelRouting.csv" />
-    <None Remove="MidiDriver\ProtocolData\SQ6Protocol_MasterLevelRouting.csv" />
-    <None Remove="MidiDriver\ProtocolData\SQ6Protocol_MuteRouting.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="MidiDriver\ProtocolData\SQ6Protocol_InputLevelRouting.csv" />
-    <EmbeddedResource Include="MidiDriver\ProtocolData\SQ6Protocol_MasterLevelRouting.csv" />
-    <EmbeddedResource Include="MidiDriver\ProtocolData\SQ6Protocol_MuteRouting.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="NAudio.Midi" Version="2.1.0" />
   </ItemGroup>
 

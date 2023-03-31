@@ -1,10 +1,30 @@
 ﻿using MIDI_DEBUGGER.MidiDriver;
+
 using NAudio.Midi;
 
 namespace MIDI_DEBUGGER
 {
     internal class Program
     {
+
+        static Dictionary<string, string> ChannelAssigments = new Dictionary<string, string>
+        {
+            // Ip channels have a -1 offset applied based on what the the board reports
+            ["Astley"] = "Ip13",
+            ["Roggow"] = "Ip21",
+            ["Choul"] = "Ip15",
+            ["Zabel"] = "Ip14",
+
+            ["Pulpit"] = "Ip1",
+            ["Lectern"] = "Ip2",
+            ["Alter"] = "Ip3",
+            ["Ambient"] = "Ip4",
+
+            ["Handmic"] = "Ip16",
+
+            ["GrandP"] = "Grp4",
+        };
+
         static void Main(string[] args)
         {
             Console.WriteLine("Looking for MIDI INPUT devices");
@@ -26,18 +46,53 @@ namespace MIDI_DEBUGGER
             }
 
             ISQDriver driver = new SQDriver(0, 1, 1);
-            driver.SetMute(0, true);
+
+            Console.WriteLine("m <src> (mute|unmute)");
+            Console.WriteLine("l <src> <dest> <value>");
+            Console.WriteLine("s <scene>");
 
             bool run = true;
             while (run)
             {
-                var input = Console.ReadKey();
+                var input = Console.ReadLine();
 
-                if (input.Key == ConsoleKey.Escape)
+                if (input.StartsWith("m"))
                 {
-                    run = false;
+                    var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length == 3)
+                    {
+                        string ch = parts[1];
+                        bool mute = parts[2] != "unmute";
+                        if (ChannelAssigments.TryGetValue(parts[1], out string val))
+                        {
+                            ch = val;
+                        }
+                        driver.SetMute(ch, mute);
+                    }
                 }
-                driver.SetMute(13 - 1, input.Key == ConsoleKey.M);
+                else if (input.StartsWith("l"))
+                {
+                    var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length == 4)
+                    {
+                        string ch = parts[1];
+                        if (ChannelAssigments.TryGetValue(parts[1], out string val))
+                        {
+                            ch = val;
+                        }
+                        int level = int.Parse(parts[3]);
+                        driver.SetLevelABS(ch, parts[2], level);
+                    }
+                }
+                else if (input.StartsWith("s"))
+                {
+                    var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length == 2)
+                    {
+                        int scene = int.Parse(parts[1]);
+                        driver.ChangeScene(scene);
+                    }
+                }
             }
         }
     }
