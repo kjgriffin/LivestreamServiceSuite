@@ -15,14 +15,16 @@ namespace MIDI_DEBUGGER.MidiDriver
         bool GetLevel(int srcID, int destID);
 
         void SetMute(int srcID, bool muted);
-        void SetInputLevelOnMix(int srcID, int MixID, int level);
-        void SetMixLevelOutput(int mixID, int level);
+        void SetABSInputLevelOnMix(int srcID, int MixID, int level);
+        void SetABSMixLevelOutput(int mixID, int level);
 
         void ChangeScene(int sceneNum);
     }
 
     public class SQDriver : ISQDriver
     {
+        const byte _midiCTRLChannel = 0;
+
         MidiIn _midiInput;
         MidiOut _midiOutput;
         public SQDriver(int MIDIdeviceInID, int MIDIdeviceOutID, int MIDIcontrolChannel)
@@ -76,19 +78,23 @@ namespace MIDI_DEBUGGER.MidiDriver
 
         public void SetMute(int srcID, bool muted)
         {
-            var cmd = SQProtocol.GenerateCommand_MuteSrc(0, (byte)srcID, muted);
+            var cmd = SQProtocol.GenerateCommand_MuteSrc(_midiCTRLChannel, (ushort)srcID, muted);
             Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
             _midiOutput?.SendBuffer(cmd);
         }
 
-        public void SetInputLevelOnMix(int srcID, int MixID, int level)
+        public void SetABSInputLevelOnMix(int srcID, int mixID, int level)
         {
-            throw new NotImplementedException();
+            var cmd = SQProtocol.GenerateCommand_SetABSInputLevel(_midiCTRLChannel, (ushort)srcID, (ushort)mixID, (ushort)level);
+            Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
+            _midiOutput?.SendBuffer(cmd);
         }
 
-        public void SetMixLevelOutput(int mixID, int level)
+        public void SetABSMixLevelOutput(int mixID, int level)
         {
-            throw new NotImplementedException();
+            var cmd = SQProtocol.GenerateCommand_SetABSMasterLevel(_midiCTRLChannel, (ushort)mixID, (ushort)level);
+            Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
+            _midiOutput?.SendBuffer(cmd);
         }
 
     }
@@ -228,6 +234,62 @@ namespace MIDI_DEBUGGER.MidiDriver
                 BuildByte(0xB, (byte)midiChannel),
                 0x26,
                 BuildByte(0x00, (byte)(mute ? 0x01 : 0x00)),
+            };
+        }
+
+        internal static byte[] GenerateCommand_SetABSInputLevel(byte midiChannel, ushort srcID, ushort mixID, ushort value)
+        {
+            short rid = Lookup_InputLevelRouting(srcID, mixID);
+            byte pmsb = (byte)((rid & 0xFF00) >> 8);
+            byte plsb = (byte)(rid & 0x00FF);
+
+            byte vc = (byte)((value & 0xFF00) >> 8);
+            byte vf = (byte)(value & 0x00FF);
+            return new byte[]
+            {
+                BuildByte(0xB, (byte)midiChannel),
+                0x63,
+                pmsb,
+
+                BuildByte(0xB, (byte)midiChannel),
+                0x62,
+                plsb,
+
+                BuildByte(0xB, (byte)midiChannel),
+                0x06,
+                vc,
+
+                BuildByte(0xB, (byte)midiChannel),
+                0x26,
+                vf
+            };
+        }
+
+        internal static byte[] GenerateCommand_SetABSMasterLevel(byte midiChannel, ushort mixID, ushort value)
+        {
+            short rid = Lookup_MasterLevelRouting(mixID);
+            byte pmsb = (byte)((rid & 0xFF00) >> 8);
+            byte plsb = (byte)(rid & 0x00FF);
+
+            byte vc = (byte)((value & 0xFF00) >> 8);
+            byte vf = (byte)(value & 0x00FF);
+            return new byte[]
+            {
+                BuildByte(0xB, (byte)midiChannel),
+                0x63,
+                pmsb,
+
+                BuildByte(0xB, (byte)midiChannel),
+                0x62,
+                plsb,
+
+                BuildByte(0xB, (byte)midiChannel),
+                0x06,
+                vc,
+
+                BuildByte(0xB, (byte)midiChannel),
+                0x26,
+                vf
             };
         }
 
