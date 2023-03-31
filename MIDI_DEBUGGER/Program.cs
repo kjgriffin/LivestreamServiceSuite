@@ -9,7 +9,6 @@ namespace MIDI_DEBUGGER
 
         static Dictionary<string, string> ChannelAssigments = new Dictionary<string, string>
         {
-            // Ip channels have a -1 offset applied based on what the the board reports
             ["Astley"] = "Ip13",
             ["Roggow"] = "Ip21",
             ["Choul"] = "Ip15",
