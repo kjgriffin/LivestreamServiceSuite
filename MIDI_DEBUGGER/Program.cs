@@ -26,7 +26,7 @@ namespace MIDI_DEBUGGER
             }
 
             ISQDriver driver = new SQDriver(0, 1, 1);
-            driver.SetMute(-1, true);
+            driver.SetMute(0, true);
 
             bool run = true;
             while (run)
