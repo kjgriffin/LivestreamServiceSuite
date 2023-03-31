@@ -15,6 +15,7 @@ namespace MIDI_DEBUGGER.MidiDriver
     {
         bool GetMute(int srcID);
         bool GetLevel(int srcID, int destID);
+        void GetParam(byte msb, byte lsb);
 
         void SetMute(string srcID, bool muted);
         void SetLevelABS(string srcID, string destID, int level);
@@ -105,6 +106,13 @@ namespace MIDI_DEBUGGER.MidiDriver
         {
             string route = $"{srcID}:{destID}";
             var cmd = SQProtocol.GenerateCommand_SetLevelABS(_midiCTRLChannel, route, (ushort)level);
+            Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
+            _midiOutput?.SendBuffer(cmd);
+        }
+
+        public void GetParam(byte paramMSB, byte paramLSB)
+        {
+            var cmd = SQProtocol.GenerateCommand_GetParam(_midiCTRLChannel, paramMSB, paramLSB);
             Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
             _midiOutput?.SendBuffer(cmd);
         }
@@ -228,6 +236,25 @@ namespace MIDI_DEBUGGER.MidiDriver
                 vf
             };
         }
+
+        internal static byte[] GenerateCommand_GetParam(byte midiChannel, byte msb, byte lsb)
+        {
+            return new byte[]
+            {
+                BuildByte(0xB, (byte)midiChannel),
+                0x63,
+                msb,
+
+                BuildByte(0xB, (byte)midiChannel),
+                0x62,
+                lsb,
+
+                BuildByte(0xB, (byte)midiChannel),
+                0x60,
+                0x7f,
+            };
+        }
+
 
         /// <summary>
         /// Generates MIDI byte stream for command.

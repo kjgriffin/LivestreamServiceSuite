@@ -92,6 +92,16 @@ namespace MIDI_DEBUGGER
                         driver.ChangeScene(scene);
                     }
                 }
+                else if (input.StartsWith("g"))
+                {
+                    var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length == 3)
+                    {
+                        byte msb = byte.Parse(parts[1], System.Globalization.NumberStyles.HexNumber);
+                        byte lsb = byte.Parse(parts[2], System.Globalization.NumberStyles.HexNumber);
+                        driver.GetParam(msb, lsb);
+                    }
+                }
             }
         }
     }

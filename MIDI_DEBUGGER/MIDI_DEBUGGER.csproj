@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="MidiDriver\ProtocolData\Levels.csv" />
+    <None Remove="MidiDriver\ProtocolData\Mutes.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="MidiDriver\ProtocolData\Levels.csv" />
+    <EmbeddedResource Include="MidiDriver\ProtocolData\Mutes.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="NAudio.Midi" Version="2.1.0" />
   </ItemGroup>
 
