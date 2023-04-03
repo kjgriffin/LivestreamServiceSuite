@@ -7,6 +7,8 @@ using IntegratedPresenterAPIInterop;
 
 using log4net;
 
+using MIDI_DEBUGGER.MidiDriver;
+
 using SwitcherControl.BMDSwitcher;
 
 using System;
@@ -107,6 +109,9 @@ namespace Integrated_Presenter.Automation
         IMediaDriverProvider _mediaDriverProvider;
 
 
+        ISQDriver _midiDriver;
+
+
         internal ActionAutomater(ILog logger,
                                  ISwitcherDriverProvider switcherProvider,
                                  IAutoTransitionProvider autoTransitionProvider,
@@ -130,6 +135,9 @@ namespace Integrated_Presenter.Automation
             _presentationProvider = presentationProvider;
             _audioDriverProvider = audioDriverProvider;
             _mediaDriverProvider = mediaDriverProvider;
+
+            // hard code this for now...
+            _midiDriver = new SQDriver(0, 1, 1);
         }
 
         internal async Task ExecuteSetupActions(ISlide s)
@@ -473,6 +481,21 @@ namespace Integrated_Presenter.Automation
                         // TODO: do we need to process these as such??
                         // or let them be handled as dynamic conditions
                         break;
+
+                    case AutomationActions.MIDISetMute:
+                        string ch = (string)task.RawParams[0];
+                        bool state = (bool)task.RawParams[1];
+                        _logger.Debug($"(PerformAutomationAction) -- midi set mute {ch} {state}");
+                        _midiDriver?.SetMute(ch, state);
+                        break;
+                    case AutomationActions.MIDISetLevel:
+                        string chsrc = (string)task.RawParams[0];
+                        string chdst = (string)task.RawParams[1];
+                        int level = (int)task.RawParams[2];
+                        _logger.Debug($"(PerformAutomationAction) -- midi set level {chsrc}->{chdst} {level}");
+                        _midiDriver?.SetLevelABS(chsrc, chdst, level);
+                        break;
+
 
                     case AutomationActions.None:
                         break;

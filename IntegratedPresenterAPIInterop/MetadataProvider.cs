@@ -114,6 +114,23 @@ namespace IntegratedPresenterAPIInterop
                 AutomationActionArgType.Double,
             },
             ExpectedVariableContents.NONE),
+
+            [AutomationActions.MIDISetMute] = (2, AutomationActions.MIDISetMute, "MIDISetMute", new List<AutomationActionArgType>
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.Boolean,
+            },
+            ExpectedVariableContents.NONE),
+
+            [AutomationActions.MIDISetLevel] = (3, AutomationActions.MIDISetLevel, "MIDISetLevel", new List<AutomationActionArgType>
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.String,
+                AutomationActionArgType.Integer,
+            },
+            ExpectedVariableContents.NONE),
+
+
         };
 
     }

@@ -235,6 +235,7 @@
 		<ProjectReference Include="..\CommonGraphics\CommonGraphics.csproj" />
 		<ProjectReference Include="..\CommonVersionInfo\CommonVersionInfo.csproj" />
 		<ProjectReference Include="..\IntegratedPresenterAPIInterop\IntegratedPresenterAPIInterop.csproj" />
+		<ProjectReference Include="..\MIDI_DEBUGGER\MIDI_DEBUGGER.csproj" />
 		<ProjectReference Include="..\SwitcherControl\SwitcherControl.csproj" />
 	</ItemGroup>
 

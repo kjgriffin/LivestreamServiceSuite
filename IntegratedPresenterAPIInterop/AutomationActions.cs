@@ -70,6 +70,10 @@
         PlacePIP,
 
 
+        MIDISetLevel,
+        MIDISetMute,
+
+
         JumpToSlide,
         WatchSwitcherStateBoolVal,
         WatchSwitcherStateIntVal,
