@@ -2,6 +2,7 @@
 using NAudio.Wave.SampleProviders;
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -13,8 +14,8 @@ namespace MIDI_DEBUGGER.MidiDriver
 
     public interface ISQDriver
     {
-        bool GetMute(int srcID);
-        bool GetLevel(int srcID, int destID);
+        void GetMute(string srcID, Action<int, int> OnCompleteCallback);
+        void GetLevel(string srcID, string destID, Action<int, int> OnCompleteCallback);
         void GetParam(byte msb, byte lsb);
 
         void SetMute(string srcID, bool muted);
@@ -29,6 +30,20 @@ namespace MIDI_DEBUGGER.MidiDriver
 
         MidiIn _midiInput;
         MidiOut _midiOutput;
+
+        Thread _listenThread;
+        ConcurrentQueue<MidiInMessageEventArgs> messageQueue;
+        ManualResetEvent messageReady;
+
+        object valueLock;
+        List<NRPNGetWorkItem> nrpnGetReqs;
+
+        class NRPNGetWorkItem
+        {
+            public int ParamID { get; set; }
+            public Action<int, int> OnSuccessWorkItem { get; set; }
+        }
+
         public SQDriver(int MIDIdeviceInID, int MIDIdeviceOutID, int MIDIcontrolChannel)
         {
             // setup midi in/out channels
@@ -41,6 +56,16 @@ namespace MIDI_DEBUGGER.MidiDriver
                 Console.WriteLine($"SQDriver MIDI driver set to use input {MidiIn.DeviceInfo(MIDIdeviceInID).ProductId}");
                 Console.WriteLine($"SQDriver MIDI driver set to use output {MidiOut.DeviceInfo(MIDIdeviceOutID).ProductName}");
                 Console.WriteLine($"SQDriver MIDI driver set to use output {MidiOut.DeviceInfo(MIDIdeviceOutID).ProductId}");
+
+                nrpnGetReqs = new List<NRPNGetWorkItem>();
+                valueLock = new object();
+
+                messageReady = new ManualResetEvent(false);
+                messageQueue = new ConcurrentQueue<MidiInMessageEventArgs>();
+                _listenThread = new Thread(ListenLoop);
+                _listenThread.Name = "SQDriver MIDI Listener Thread";
+                _listenThread.IsBackground = true;
+                _listenThread.Start();
 
                 _midiInput.MessageReceived += _midiInput_MessageReceived;
                 _midiInput.ErrorReceived += _midiInput_ErrorReceived;
@@ -55,12 +80,143 @@ namespace MIDI_DEBUGGER.MidiDriver
 
         private void _midiInput_MessageReceived(object? sender, MidiInMessageEventArgs e)
         {
-            Console.WriteLine($"MIDI::RX {e.MidiEvent}");
+            //Console.WriteLine($"MIDI::RX {e.MidiEvent}");
+            messageQueue.Enqueue(e);
+            messageReady.Set();
         }
 
         private void _midiInput_ErrorReceived(object? sender, MidiInMessageEventArgs e)
         {
-            Console.WriteLine($"MIDI::RX {e}");
+            //Console.WriteLine($"MIDI::RX {e}");
+        }
+
+        private void ListenLoop()
+        {
+            // simple state machine here to listen on all messages and pull out only NRPN sequences
+
+            int lastCCController = -1;
+            int step = -1;
+            int pmsb = 0;
+            int plsb = 0;
+            int vc = 0;
+            int vf = 0;
+
+            // run forever
+            while (true)
+            {
+                // wait for work
+                messageReady.WaitOne();
+
+                while (messageQueue.TryDequeue(out var msg))
+                {
+                    var cc = msg.MidiEvent as ControlChangeEvent;
+                    if (cc != null)
+                    {
+                        if (cc.Channel == 1)
+                        {
+                            if (TryParseCCToNRPN(ref lastCCController, ref step, cc, ref pmsb, ref plsb, ref vc, ref vf))
+                            {
+                                // completed
+                                // build an NRPN event from values, clear values and start again
+                                int param = (pmsb << 8) + plsb;
+                                int value = (vc << 8) + vf;
+
+                                // run whatever task we want
+                                lock (valueLock)
+                                {
+                                    var item = nrpnGetReqs.FirstOrDefault(x => x.ParamID == param);
+                                    if (item != null)
+                                    {
+                                        nrpnGetReqs.Remove(item);
+                                        Task.Run(() => item.OnSuccessWorkItem(param, value));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
+
+        private bool TryParseCCToNRPN(ref int lastController, ref int step, ControlChangeEvent e, ref int msb, ref int lsb, ref int vc, ref int vf)
+        {
+            if (lastController == 99 && step == 1)
+            {
+                if ((int)e.Controller == 98)
+                {
+                    lsb = e.ControllerValue;
+                    step = 2;
+                }
+                else
+                {
+                    // reject!
+                    msb = -1;
+                    lsb = -1;
+                    vf = -1;
+                    vc = -1;
+                }
+            }
+            else if (lastController == 98 && step == 2)
+            {
+                if ((int)e.Controller == 6)
+                {
+                    vc = e.ControllerValue;
+                    step = 3;
+                }
+                else
+                {
+                    // reject!
+                    msb = -1;
+                    lsb = -1;
+                    vf = -1;
+                    vc = -1;
+                }
+            }
+            else if (lastController == 6 && step == 3)
+            {
+                if ((int)e.Controller == 38)
+                {
+                    vf = e.ControllerValue;
+                    lastController = (int)e.Controller;
+                    step = -1;
+
+                    return true;
+                }
+                else
+                {
+                    // reject!
+                    msb = -1;
+                    lsb = -1;
+                    vf = -1;
+                    vc = -1;
+                }
+            }
+            // allow any prev message to enter fsm for parsing
+            else
+            {
+                if ((int)e.Controller == 99)
+                {
+                    step = 1;
+                    msb = e.ControllerValue;
+                    lsb = -1;
+                    vf = -1;
+                    vc = -1;
+                }
+                else
+                {
+                    // reject!
+                    msb = -1;
+                    lsb = -1;
+                    vf = -1;
+                    vc = -1;
+                }
+            }
+
+            lastController = (int)e.Controller;
+
+            return false;
         }
 
         /// <summary>
@@ -74,14 +230,34 @@ namespace MIDI_DEBUGGER.MidiDriver
             _midiOutput?.SendBuffer(cmd);
         }
 
-        public bool GetLevel(int srcID, int destID)
+        public void GetLevel(string srcID, string destID, Action<int, int> OnCompletedCallback)
         {
-            throw new NotImplementedException();
+            // calcluate param number
+            var param = SQProtocol.LevelRouting[$"{srcID}:{destID}"];
+            lock (valueLock)
+            {
+                nrpnGetReqs.Add(new NRPNGetWorkItem
+                {
+                    ParamID = param.dVal,
+                    OnSuccessWorkItem = OnCompletedCallback
+                });
+            }
+            GetParam(param.MSB, param.LSB);
         }
 
-        public bool GetMute(int srcID)
+        public void GetMute(string srcID, Action<int, int> OnCompletedCallback)
         {
-            throw new NotImplementedException();
+            // calcluate param number
+            var param = SQProtocol.MuteRouting[srcID];
+            lock (valueLock)
+            {
+                nrpnGetReqs.Add(new NRPNGetWorkItem
+                {
+                    ParamID = param.dVal,
+                    OnSuccessWorkItem = OnCompletedCallback
+                });
+            }
+            GetParam(param.MSB, param.LSB);
         }
 
         /// <summary>
@@ -122,7 +298,7 @@ namespace MIDI_DEBUGGER.MidiDriver
     static class SQProtocol
     {
 
-        class NRPNData
+        internal class NRPNData
         {
             public string ID { get; set; }
             public short dVal { get; set; }
@@ -130,8 +306,8 @@ namespace MIDI_DEBUGGER.MidiDriver
             public byte LSB { get; set; }
         }
 
-        static Dictionary<string, NRPNData> MuteRouting;
-        static Dictionary<string, NRPNData> LevelRouting;
+        internal static Dictionary<string, NRPNData> MuteRouting { private set; get; }
+        internal static Dictionary<string, NRPNData> LevelRouting { private set; get; }
 
         private static IEnumerable<NRPNData> LoadStringAsLinesOf_ID_DVAL_MSB_LSB(string input)
         {
