@@ -13,6 +13,7 @@ using SwitcherControl.BMDSwitcher;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -137,7 +138,16 @@ namespace Integrated_Presenter.Automation
             _mediaDriverProvider = mediaDriverProvider;
 
             // hard code this for now...
-            _midiDriver = new SQDriver(0, 1, 1);
+            try
+            {
+                _midiDriver = new SQDriver(0, 1, 1);
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Debugger.Break();
+#endif
+            }
         }
 
         internal async Task ExecuteSetupActions(ISlide s)
