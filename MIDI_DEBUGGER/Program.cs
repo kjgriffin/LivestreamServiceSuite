@@ -22,6 +22,8 @@ namespace MIDI_DEBUGGER
             ["Handmic"] = "Ip16",
 
             ["GrandP"] = "Grp4",
+
+            ["Computer"] = "Ip23" // and Ip24
         };
 
         static void Main(string[] args)

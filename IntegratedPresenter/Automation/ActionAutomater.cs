@@ -501,7 +501,7 @@ namespace Integrated_Presenter.Automation
                     case AutomationActions.MIDISetLevel:
                         string chsrc = (string)task.RawParams[0];
                         string chdst = (string)task.RawParams[1];
-                        int level = (int)task.RawParams[2];
+                        int level = unchecked((int)(long)task.RawParams[2]);
                         _logger.Debug($"(PerformAutomationAction) -- midi set level {chsrc}->{chdst} {level}");
                         _midiDriver?.SetLevelABS(chsrc, chdst, level);
                         break;
