@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MIDI_DEBUGGER.MidiDriver
+namespace SQMIDI.MidiDriver
 {
 
     public interface ISQDriver
@@ -52,10 +52,12 @@ namespace MIDI_DEBUGGER.MidiDriver
                 _midiInput = new MidiIn(MIDIdeviceInID);
                 _midiOutput = new MidiOut(MIDIdeviceOutID);
 
+#if DEBUG
                 Console.WriteLine($"SQDriver MIDI driver set to use input {MidiIn.DeviceInfo(MIDIdeviceInID).ProductName}");
                 Console.WriteLine($"SQDriver MIDI driver set to use input {MidiIn.DeviceInfo(MIDIdeviceInID).ProductId}");
                 Console.WriteLine($"SQDriver MIDI driver set to use output {MidiOut.DeviceInfo(MIDIdeviceOutID).ProductName}");
                 Console.WriteLine($"SQDriver MIDI driver set to use output {MidiOut.DeviceInfo(MIDIdeviceOutID).ProductId}");
+#endif
 
                 nrpnGetReqs = new List<NRPNGetWorkItem>();
                 valueLock = new object();
@@ -74,7 +76,9 @@ namespace MIDI_DEBUGGER.MidiDriver
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Console.WriteLine($"EXCEPTION {ex}");
+#endif
             }
         }
 
@@ -226,7 +230,9 @@ namespace MIDI_DEBUGGER.MidiDriver
         public void ChangeScene(int sceneNum)
         {
             var cmd = SQProtocol.GenerateCommand_RecallScene(_midiCTRLChannel, (ushort)sceneNum);
+#if DEBUG
             Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
+#endif
             _midiOutput?.SendBuffer(cmd);
         }
 
@@ -268,7 +274,9 @@ namespace MIDI_DEBUGGER.MidiDriver
         public void SetMute(string srcID, bool muted)
         {
             var cmd = SQProtocol.GenerateCommand_MuteSrc(_midiCTRLChannel, srcID, muted);
+#if DEBUG
             Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
+#endif
             _midiOutput?.SendBuffer(cmd);
         }
 
@@ -282,14 +290,18 @@ namespace MIDI_DEBUGGER.MidiDriver
         {
             string route = $"{srcID}:{destID}";
             var cmd = SQProtocol.GenerateCommand_SetLevelABS(_midiCTRLChannel, route, (ushort)level);
+#if DEBUG
             Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
+#endif
             _midiOutput?.SendBuffer(cmd);
         }
 
         public void GetParam(byte paramMSB, byte paramLSB)
         {
             var cmd = SQProtocol.GenerateCommand_GetParam(_midiCTRLChannel, paramMSB, paramLSB);
+#if DEBUG
             Console.WriteLine($"Sending Raw MIDI: {BitConverter.ToString(cmd)}");
+#endif
             _midiOutput?.SendBuffer(cmd);
         }
 
@@ -370,19 +382,19 @@ namespace MIDI_DEBUGGER.MidiDriver
             var routing = MuteRouting[srcID];
             return new byte[]
             {
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x63,
                 routing.MSB,
 
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x62,
                 routing.LSB,
 
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x06,
                 0x00,
 
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x26,
                 BuildByte(0x00, (byte)(mute ? 0x01 : 0x00)),
             };
@@ -395,19 +407,19 @@ namespace MIDI_DEBUGGER.MidiDriver
             byte vf = (byte)(value & 0x00FF);
             return new byte[]
             {
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x63,
                 routing.MSB,
 
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x62,
                 routing.LSB,
 
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x06,
                 vc,
 
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x26,
                 vf
             };
@@ -417,15 +429,15 @@ namespace MIDI_DEBUGGER.MidiDriver
         {
             return new byte[]
             {
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x63,
                 msb,
 
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x62,
                 lsb,
 
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x60,
                 0x7f,
             };
@@ -465,7 +477,7 @@ namespace MIDI_DEBUGGER.MidiDriver
 
             return new byte[]
             {
-                BuildByte(0xB, (byte)midiChannel),
+                BuildByte(0xB, midiChannel),
                 0x00,
                 bank,
 

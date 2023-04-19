@@ -7,7 +7,9 @@ using IntegratedPresenterAPIInterop;
 
 using log4net;
 
-using MIDI_DEBUGGER.MidiDriver;
+
+
+using SQMIDI.MidiDriver;
 
 using SwitcherControl.BMDSwitcher;
 

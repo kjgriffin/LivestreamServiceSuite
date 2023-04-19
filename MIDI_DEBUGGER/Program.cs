@@ -1,5 +1,4 @@
-﻿using MIDI_DEBUGGER.MidiDriver;
-
+﻿using SQMIDI.MidiDriver;
 using NAudio.Midi;
 
 namespace MIDI_DEBUGGER
