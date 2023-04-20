@@ -1,4 +1,6 @@
-﻿using IntegratedPresenter.BMDSwitcher;
+﻿using Configurations.SwitcherConfig;
+
+using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
 
 using System;
@@ -57,7 +59,7 @@ namespace ATEMSharedState.SwitcherState
         public int USK1KeyFrame { get; set; }
 
         /// <summary>
-        /// 1 = DVE, 2 = Chroma
+        /// 1 = DVE, 2 = Chroma, 3 = Pattern
         /// </summary>
         public int USK1KeyType { get; set; }
 
@@ -79,7 +81,8 @@ namespace ATEMSharedState.SwitcherState
         [ExposedAsVariable(nameof(DVESettings))]
         public BMDUSKDVESettings DVESettings { get; set; } = new BMDUSKDVESettings();
 
-
+        [ExposedAsVariable(nameof(PATTERNSettings))]
+        public BMDUSKPATTERNSettings PATTERNSettings { get; set; } = new BMDUSKPATTERNSettings();
 
         public void SetDefault()
         {
@@ -140,8 +143,16 @@ namespace ATEMSharedState.SwitcherState
                     SizeY = 0
                 }
             };
-
-
+            PATTERNSettings = new BMDUSKPATTERNSettings()
+            {
+                PatternType = "",
+                Inverted = false,
+                Size = 1,
+                Softness = 0,
+                Symmetry = 1,
+                XOffset = 0,
+                YOffset = 0,
+            };
         }
 
         public bool IsDifferentShot(BMDSwitcherState oldstate)
@@ -177,6 +188,7 @@ namespace ATEMSharedState.SwitcherState
                 TransNextKey1 = TransNextKey1,
                 ChromaSettings = ChromaSettings.Copy(),
                 DVESettings = DVESettings.Copy(),
+                PATTERNSettings = PATTERNSettings.Copy(),
             };
 
         }

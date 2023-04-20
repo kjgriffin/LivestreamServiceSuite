@@ -1,5 +1,7 @@
 ﻿using ATEMSharedState.SwitcherState;
 
+using Configurations.SwitcherConfig;
+
 using IntegratedPresenter.BMDSwitcher.Config;
 
 using System;
@@ -52,12 +54,14 @@ namespace SwitcherControl.BMDSwitcher
         void PerformSetKey1OffForNextTrans();
 
         void SetUSK1TypeDVE();
+        void SetUSK1TypePATTERN();
         void SetUSK1TypeChroma();
         void SetPIPPosition(BMDUSKDVESettings settings);
         void SetPIPKeyFrameA(BMDUSKDVESettings settings);
         void SetPIPKeyFrameB(BMDUSKDVESettings settings);
         void ConfigureUSK1PIP(BMDUSKDVESettings settings);
         void ConfigureUSK1Chroma(BMDUSKChromaSettings settings);
+        void ConfigureUSK1PATTERN(BMDUSKPATTERNSettings settings);
 
         void Close();
         void ConfigureSwitcher(BMDSwitcherConfigSettings config, bool hardUpdate = true);

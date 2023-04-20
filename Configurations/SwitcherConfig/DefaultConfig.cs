@@ -91,8 +91,9 @@ namespace Configurations.SwitcherConfig
                 },
                 USKSettings = new BMDUSKSettings()
                 {
-                    IsDVE = 1,
-                    IsChroma = 0,
+                    //IsDVE = 1,
+                    //IsChroma = 0,
+                    DefaultKeyType = 1,
                     PIPSettings = new BMDUSKDVESettings()
                     {
                         DefaultFillSource = 1,
@@ -132,6 +133,17 @@ namespace Configurations.SwitcherConfig
                         YSuppress = 0.595,
                         Lift = 0.095,
                         Narrow = 0
+                    },
+                    PATTERNSettings = new BMDUSKPATTERNSettings()
+                    {
+                        DefaultFillSource = 1,
+                        Inverted = false,
+                        PatternType = "",
+                        Size = 1,
+                        Softness = 0,
+                        Symmetry = 1,
+                        XOffset = 0,
+                        YOffset = 0,
                     },
                 },
                 PrerollSettings = new PrerollSettings()

@@ -20,6 +20,8 @@ namespace SwitcherControl.BMDSwitcher
 
     public delegate void SwitcherStateChange(BMDSwitcherState args);
 
+
+#if LEGACY
     public class BMDSwitcherManager : IBMDSwitcherManager
     {
 
@@ -1658,4 +1660,5 @@ namespace SwitcherControl.BMDSwitcher
             });
         }
     }
+#endif
 }

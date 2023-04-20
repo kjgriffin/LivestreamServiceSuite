@@ -44,7 +44,7 @@
                     <MenuItem Name="cbAdvancedPresentation" Header="Advanced Presentation [Q]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPresentation" Focusable="False"></MenuItem>
                     <MenuItem Header="Audio Player [A]" IsTabStop="False" Click="ClickViewAudioPlayer" Focusable="False"></MenuItem>
                     <MenuItem Name="cbAdvancedPIP" Header="Advanced PIP [P]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAdvancedPIP" Focusable="False"></MenuItem>
-                    <MenuItem Name="cbAdvancedPIPMovement" Header="Advanced PIP Location [L]" IsTabStop="False" Click="ClickViewAdvancedPIPLocation" Focusable="False"></MenuItem>
+                    <MenuItem Name="cbAdvancedPIPMovement" Header="Advanced PIP Location [L]" IsTabStop="False" Click="ClickViewAdvancedFlyKeySettings" Focusable="False"></MenuItem>
                     <MenuItem Header="Aux Output [X]" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickViewAuxOutput" Focusable="False"></MenuItem>
                     <MenuItem Name="cbViewProgramOverPresetBus" Header="Program/Preset Bus Inverted" IsTabStop="False" IsCheckable="True" IsChecked="False" Click="ClickToggleProgramPresetBusSwap" Focusable="False"></MenuItem>
                 </MenuItem>
@@ -1052,121 +1052,197 @@
                         <Viewbox>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"></ColumnDefinition>
+                                    <ColumnDefinition Width="150"></ColumnDefinition>
                                     <ColumnDefinition Width="200"></ColumnDefinition>
                                     <ColumnDefinition></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
                                 <Grid Grid.Column="0">
                                     <Border Style="{StaticResource GroupBorder}">
-                                        <StackPanel>
+                                        <StackPanel VerticalAlignment="Stretch">
+
                                             <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">USK 1</TextBlock>
 
-                                            <Grid>
-                                                <Viewbox Name="ksc_usk1t" Panel.ZIndex="1" Height="50" Width="50">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Border Style="{StaticResource UIShortcutBdr}">
-                                                            <Viewbox>
-                                                                <StackPanel>
-                                                                    <TextBlock Style="{StaticResource UIShortcut}">.</TextBlock>
-                                                                    <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                            <Grid Height="240">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50"></ColumnDefinition>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Grid.Column="1">
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_usk1t" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <StackPanel>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">.</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                        </StackPanel>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+
+                                                        <Button Name="BtnTransKey1" Click="ClickTransKey1" Style="{StaticResource SwitcherButton_Disabled}">KEY 1</Button>
+                                                    </Grid>
+
+                                                    <Grid>
+                                                        <Viewbox Name="ksc_usk1" Panel.ZIndex="1" Height="50" Width="50">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                    <Viewbox>
+                                                                        <StackPanel>
+                                                                            <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                                                            <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                        </StackPanel>
+                                                                    </Viewbox>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Viewbox>
+
+                                                        <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">ON AIR</Button>
+                                                    </Grid>
+
+                                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                                                        <Grid>
+                                                            <Viewbox Name="ksc_pl" Panel.ZIndex="1" Height="50" Width="50">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                        <Viewbox>
+                                                                            <StackPanel>
+                                                                                <TextBlock Padding="20, 5" Style="{StaticResource UIShortcut}">L</TextBlock>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                    </Border>
                                                                 </StackPanel>
                                                             </Viewbox>
-                                                        </Border>
+                                                            <Button Focusable="False" Click="ClickViewAdvancedFlyKeySettings" IsTabStop="False" x:Name="btnViewAdvancedFlyKeySettings" Grid.Row="0" Grid.Column="2">
+                                                                <Button.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Padding="10" Height="55" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">
+                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke">
+                                                                                <TextBlock Foreground="White" TextWrapping="Wrap">
+                                                                                    FLY KEY
+                                                                                </TextBlock>
+                                                                            </ContentControl>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+                                                            </Button>
+                                                        </Grid>
                                                     </StackPanel>
-                                                </Viewbox>
-
-                                                <Button Name="BtnTransKey1" Click="ClickTransKey1" Style="{StaticResource SwitcherButton_Disabled}">KEY 1</Button>
-                                            </Grid>
-
-                                            <Grid>
-                                                <Viewbox Name="ksc_usk1" Panel.ZIndex="1" Height="50" Width="50">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Border Style="{StaticResource UIShortcutBdr}">
-                                                            <Viewbox>
-                                                                <StackPanel>
-                                                                    <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
-                                                                    <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                        </Border>
-                                                    </StackPanel>
-                                                </Viewbox>
-
-                                                <Button Name="BtnUSK1OnOffAir" Click="ClickUSK1Toggle" Style="{StaticResource SwitcherButton_Disabled}">ON AIR</Button>
-                                            </Grid>
-
-                                            <Grid>
-
-                                                <Viewbox Name="ksc_usk1m" Panel.ZIndex="1" Height="50" Width="50">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Border Style="{StaticResource UIShortcutBdr}">
-                                                            <Viewbox>
-                                                                <StackPanel>
-                                                                    <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
-                                                                    <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                        </Border>
-                                                    </StackPanel>
-                                                </Viewbox>
 
 
-                                                <StackPanel>
-                                                    <Button Focusable="false" Name="BtnDVE" Click="ClickDVEMode" Foreground="White" Background="Red" Cursor="Hand">
-                                                        <Button.Content>DVE (PIP)</Button.Content>
-                                                        <Button.Template>
-                                                            <ControlTemplate>
-                                                                <Border Width="70" Height="30" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                </Border>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Cursor" Value="{Binding Path=Cursor, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
-                                                                        <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-                                                    </Button>
-
-                                                    <Button Focusable="false" Name="BtnPattern" Click="ClickDVEMode" Foreground="White" Background="Red" Cursor="Hand">
-                                                        <Button.Content>DVE (PIP)</Button.Content>
-                                                        <Button.Template>
-                                                            <ControlTemplate>
-                                                                <Border Width="70" Height="30" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                </Border>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Cursor" Value="{Binding Path=Cursor, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
-                                                                        <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-                                                    </Button>
-
-
-                                                    <Button Focusable="False" Name="BtnChroma" Click="ClickChromaMode" Foreground="White" Background="red" Cursor="Hand">
-                                                        <Button.Content>CHROMA</Button.Content>
-                                                        <Button.Template>
-                                                            <ControlTemplate>
-                                                                <Border Width="70" Height="30" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                </Border>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Cursor" Value="{Binding Path=Cursor, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
-                                                                        <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-                                                    </Button>
                                                 </StackPanel>
 
-                                            </Grid>
 
+                                                <Grid Grid.Column="0">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition></RowDefinition>
+                                                        <RowDefinition></RowDefinition>
+                                                        <RowDefinition></RowDefinition>
+                                                    </Grid.RowDefinitions>
+
+                                                    <Viewbox Name="ksc_usk1m" Panel.ZIndex="1" Height="50" Width="50" Grid.Row="0" Grid.RowSpan="3">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Style="{StaticResource UIShortcutBdr}">
+                                                                <Viewbox>
+                                                                    <StackPanel>
+                                                                        <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                                                        <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Viewbox>
+
+                                                    <Button Grid.Row="0" Focusable="false" Name="BtnDVE" Click="ClickDVEMode" Foreground="White" Background="Red" Cursor="Hand">
+                                                        <Button.Content>
+                                                            <Viewbox Stretch="Fill">
+                                                                <Label Foreground="White">
+                                                                    DVE
+                                                                    <Label.LayoutTransform>
+                                                                        <RotateTransform Angle="-90"/>
+                                                                    </Label.LayoutTransform>
+                                                                </Label>
+                                                            </Viewbox>
+                                                        </Button.Content>
+                                                        <Button.Template>
+                                                            <ControlTemplate>
+                                                                <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Cursor" Value="{Binding Path=Cursor, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                                                        <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+
+                                                    <Button Grid.Row="1" Focusable="false" Name="BtnPattern" Click="ClickPATTERNMode" Foreground="White" Background="Red" Cursor="Hand">
+                                                        <Button.Content>
+                                                            <Viewbox Stretch="Fill">
+                                                                <Label Foreground="White">
+                                                                    PATTERN
+                                                                    <Label.LayoutTransform>
+                                                                        <RotateTransform Angle="-90"></RotateTransform>
+                                                                    </Label.LayoutTransform>
+                                                                </Label>
+                                                            </Viewbox>
+                                                        </Button.Content>
+                                                        <Button.Template>
+                                                            <ControlTemplate>
+                                                                <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Cursor" Value="{Binding Path=Cursor, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                                                        <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+
+
+                                                    <Button Grid.Row="2" Focusable="False" Name="BtnChroma" Click="ClickChromaMode" Foreground="White" Background="red" Cursor="Hand">
+                                                        <Button.Content>
+                                                            <Viewbox Stretch="Fill">
+                                                                <Label Foreground="White">
+                                                                    CHROMA
+                                                                    <Label.LayoutTransform>
+                                                                        <RotateTransform Angle="-90"></RotateTransform>
+                                                                    </Label.LayoutTransform>
+                                                                </Label>
+                                                            </Viewbox>
+                                                        </Button.Content>
+                                                        <Button.Template>
+                                                            <ControlTemplate>
+                                                                <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Cursor" Value="{Binding Path=Cursor, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                                                        <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+
+                                                </Grid>
+                                            </Grid>
 
                                         </StackPanel>
                                     </Border>
@@ -1654,36 +1730,6 @@
                                                             </Button>
                                                         </Grid>-->
 
-                                                    </StackPanel>
-                                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                        <Grid>
-                                                            <Viewbox Name="ksc_pl" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <StackPanel>
-                                                                                <TextBlock Padding="20, 5" Style="{StaticResource UIShortcut}">L</TextBlock>
-                                                                            </StackPanel>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Focusable="False" Click="ClickViewAdvancedPIPLocation" IsTabStop="False" x:Name="btnViewAdvancedPIPLocation" Grid.Row="0" Grid.Column="2">
-                                                                <Button.Template>
-                                                                    <ControlTemplate>
-                                                                        <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">
-                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke">Open Advanced Control</ContentControl>
-                                                                        </Border>
-                                                                        <ControlTemplate.Triggers>
-                                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                                <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
-                                                                            </Trigger>
-                                                                        </ControlTemplate.Triggers>
-                                                                    </ControlTemplate>
-                                                                </Button.Template>
-                                                            </Button>
-                                                        </Grid>
                                                     </StackPanel>
                                                 </Grid>
                                             </StackPanel>

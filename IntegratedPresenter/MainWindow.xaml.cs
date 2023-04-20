@@ -776,20 +776,42 @@ namespace IntegratedPresenter.Main
             {
                 BtnDVE.Foreground = Brushes.Orange;
                 BtnChroma.Foreground = Brushes.White;
+                BtnPattern.Foreground = Brushes.White;
+
                 ChromaControls.Visibility = Visibility.Hidden;
                 PIPControls.Visibility = Visibility.Visible;
+
+                btnViewAdvancedFlyKeySettings.Visibility = Visibility.Visible;
             }
             if (switcherState?.USK1KeyType == 2)
             {
                 BtnDVE.Foreground = Brushes.White;
                 BtnChroma.Foreground = Brushes.Orange;
+                BtnPattern.Foreground = Brushes.White;
+
                 PIPControls.Visibility = Visibility.Hidden;
                 ChromaControls.Visibility = Visibility.Visible;
+
+                btnViewAdvancedFlyKeySettings.Visibility = Visibility.Hidden;
             }
+            if (switcherState?.USK1KeyType == 3)
+            {
+                BtnDVE.Foreground = Brushes.White;
+                BtnChroma.Foreground = Brushes.White;
+                BtnPattern.Foreground = Brushes.Orange;
+
+                PIPControls.Visibility = Visibility.Hidden;
+                ChromaControls.Visibility = Visibility.Hidden;
+
+                btnViewAdvancedFlyKeySettings.Visibility = Visibility.Visible;
+            }
+
             BtnDVE.Background = Brushes.Red;
             BtnChroma.Background = Brushes.Red;
+            BtnPattern.Background = Brushes.Red;
             BtnDVE.Cursor = Cursors.Hand;
             BtnChroma.Cursor = Cursors.Hand;
+            BtnPattern.Cursor = Cursors.Hand;
         }
 
         private void DisableKeyerUI()
@@ -1311,7 +1333,7 @@ namespace IntegratedPresenter.Main
 
             // extra features
 
-            if (e.Key == Key.P)
+            if (e.Key == Key.P && !Keyboard.IsKeyDown(Key.NumPad1))
             {
                 ToggleViewAdvancedPIP();
             }
@@ -1655,9 +1677,28 @@ namespace IntegratedPresenter.Main
                 ToggleUSK1();
             }
 
-            if (e.Key == Key.NumPad1)
+            //if (e.Key == Key.NumPad1)
+            //{
+                //ToggleUSK1Type();
+            //}
+
+            if (e.Key == Key.C || e.Key == Key.D || e.Key == Key.P)
             {
-                ToggleUSK1Type();
+                if (Keyboard.IsKeyDown(Key.NumPad1))
+                {
+                    switch(e.Key)
+                    {
+                        case Key.C:
+                            SetSwitcherKeyerChroma();
+                            break;
+                        case Key.D:
+                            SetSwitcherKeyerDVE();
+                            break;
+                        case Key.P:
+                            SetSwitcherKeyerPATTERN();
+                            break;
+                    }
+                }
             }
 
             if (e.Key == Key.Divide)
@@ -1716,7 +1757,7 @@ namespace IntegratedPresenter.Main
             }
 
             // color bars
-            if (e.Key == Key.C)
+            if (e.Key == Key.C && !Keyboard.IsKeyDown(Key.NumPad1))
             {
                 if (Keyboard.IsKeyDown(Key.Z))
                 {
@@ -3997,6 +4038,11 @@ namespace IntegratedPresenter.Main
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetSwitcherKeyerDVE();
         }
+        private void ClickPATTERNMode(object sender, RoutedEventArgs e)
+        {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
+            SetSwitcherKeyerPATTERN();
+        }
 
         private void ClickChromaMode(object sender, RoutedEventArgs e)
         {
@@ -4016,6 +4062,20 @@ namespace IntegratedPresenter.Main
                 ShowKeyerUI();
             }
         }
+
+        private void SetSwitcherKeyerPATTERN()
+        {
+            //switcherManager?.ConfigureUSK1PIP(_config.USKSettings.PIPSettings);
+            _logger.Debug("Commanding Switcher to reconfigure USK1 for DVE PIP.");
+            switcherManager?.SetUSK1TypePATTERN();
+            // force blocking state update
+            SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate());
+            if (switcherManager != null)
+            {
+                ShowKeyerUI();
+            }
+        }
+
 
         private void SetSwitcherKeyerChroma()
         {
@@ -4117,7 +4177,7 @@ namespace IntegratedPresenter.Main
         }
 
         PIPControl pipctrl;
-        private void ClickViewAdvancedPIPLocation(object sender, RoutedEventArgs e)
+        private void ClickViewAdvancedFlyKeySettings(object sender, RoutedEventArgs e)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ShowPIPLocationControl();
