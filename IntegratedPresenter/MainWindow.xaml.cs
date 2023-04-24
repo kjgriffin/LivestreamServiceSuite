@@ -780,6 +780,7 @@ namespace IntegratedPresenter.Main
 
                 ChromaControls.Visibility = Visibility.Hidden;
                 PIPControls.Visibility = Visibility.Visible;
+                PATTERNControls.Visibility = Visibility.Hidden;
 
                 btnViewAdvancedFlyKeySettings.Visibility = Visibility.Visible;
             }
@@ -791,6 +792,7 @@ namespace IntegratedPresenter.Main
 
                 PIPControls.Visibility = Visibility.Hidden;
                 ChromaControls.Visibility = Visibility.Visible;
+                PATTERNControls.Visibility = Visibility.Hidden;
 
                 btnViewAdvancedFlyKeySettings.Visibility = Visibility.Hidden;
             }
@@ -802,6 +804,7 @@ namespace IntegratedPresenter.Main
 
                 PIPControls.Visibility = Visibility.Hidden;
                 ChromaControls.Visibility = Visibility.Hidden;
+                PATTERNControls.Visibility = Visibility.Visible;
 
                 btnViewAdvancedFlyKeySettings.Visibility = Visibility.Visible;
             }

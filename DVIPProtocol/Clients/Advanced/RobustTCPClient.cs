@@ -245,7 +245,11 @@ namespace DVIPProtocol.Clients.Advanced
             {
                 while (stream.DataAvailable)
                 {
-                    stream.ReadByte();
+                    //stream.ReadByte();
+
+                    // since we're just trying to flush the buffer, do it with as few calls as possible
+                    Span<byte> _discard = new Span<byte>();
+                    var tossed = stream.Read(_discard);
                 }
             }
             catch (Exception ex)
@@ -274,10 +278,32 @@ namespace DVIPProtocol.Clients.Advanced
                     return (false, new byte[0]);
                 }
 
-                m_log?.Info($"[{m_endpoint.ToString()}] reading size highbyte.");
-                sizehigh = stream.ReadByte();
-                m_log?.Info($"[{m_endpoint.ToString()}] reading size lowbyte.");
-                sizelow = stream.ReadByte();
+                // performance??
+                // ms are critical right
+                // so call read only once if possible
+
+                byte[] _datain = new byte[m_client.ReceiveBufferSize]; // memory is cheap, this is enough to read the whole thing at once
+                m_log?.Info($"[{m_endpoint.ToString()}] reading ALL available");
+                var recieved = stream.Read(_datain, 0, _datain.Length);
+
+                // dvip protocol requires we receive first 2 bytes indicating how much data we'll get
+                while (recieved < 2)
+                {
+                    // need more data
+                    var appended = stream.Read(_datain, recieved, _datain.Length - recieved);
+                    recieved += appended;
+                }
+
+                // now should have at least 2 bytes of response
+                m_log?.Info($"[{m_endpoint.ToString()}] reading payload size.");
+                sizehigh = _datain[0];
+                sizehigh = _datain[1];
+
+                //m_log?.Info($"[{m_endpoint.ToString()}] reading size highbyte.");
+                //sizehigh = stream.ReadByte();
+                //m_log?.Info($"[{m_endpoint.ToString()}] reading size lowbyte.");
+                //sizelow = stream.ReadByte();
+                /*
                 if (sizehigh == -1 || sizelow == -1)
                 {
                     // unexpected end of stream too soon
@@ -285,17 +311,32 @@ namespace DVIPProtocol.Clients.Advanced
                     m_log?.Info($"[{m_endpoint.ToString()}] invalid size. Abort");
                     return (false, new byte[0]);
                 }
+                */
                 // get data here
                 dataSize = (uint)(sizehigh << 8 | sizelow) - 2;
-                // validate dataSize
-                if (dataSize < 0 || dataSize > 512)
+                m_log?.Info($"[{m_endpoint.ToString()}] expecting size {dataSize}");
+                // validate dataSize and that we have a response
+                if (dataSize <= 0 || dataSize > 512)
                 {
                     // reject
                     m_log?.Info($"[{m_endpoint.ToString()}] expecting invalid datasize of {dataSize}. REJECTED!");
                     return (false, new byte[0]);
                 }
+
+                // make sure we've captured all the expected data
+                while ((recieved - 2) < dataSize)
+                {
+                    // need more data
+                    var appended = stream.Read(_datain, recieved, _datain.Length - recieved);
+                    recieved += appended;
+                }
+
                 byte[] data = new byte[dataSize];
-                m_log?.Info($"[{m_endpoint.ToString()}] expecting size {dataSize}");
+                Array.Copy(_datain, 2, data, 0, dataSize);
+
+                // fire back with the captured data
+
+                /*
                 for (int x = 0; x < dataSize; x++)
                 {
                     m_log?.Info($"[{m_endpoint.ToString()}] reading byte {x} of {dataSize}");
@@ -312,6 +353,7 @@ namespace DVIPProtocol.Clients.Advanced
                         return (false, new byte[0]);
                     }
                 }
+                */
                 m_log?.Info($"[{m_endpoint.ToString()}] finished reading response: {BitConverter.ToString(data)}");
 
                 // wait for spin time

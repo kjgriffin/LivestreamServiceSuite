@@ -3,6 +3,7 @@
 using Integrated_Presenter.Presentation;
 
 using IntegratedPresenter.BMDSwitcher.Config;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,10 +46,12 @@ namespace Integrated_Presenter.ViewModels
             pvCurrent_plt.OnUserRequestForManualReRun += PvCurrent_plt_OnUserRequestForManualReRun;
             pvCurrent_ctr.OnUserRequestForManualReRun += PvCurrent_ctr_OnUserRequestForManualReRun;
             pvCurrent_lec.OnUserRequestForManualReRun += PvCurrent_lec_OnUserRequestForManualReRun;
+            pvCurrent_org.OnUserRequestForManualReRun += PvCurrent_lec_OnUserRequestForManualReRun;
 
             pvNext_plt.HideManualReRun();
             pvNext_ctr.HideManualReRun();
             pvNext_lec.HideManualReRun();
+            pvNext_org.HideManualReRun();
         }
 
         private void PvCurrent_lec_OnUserRequestForManualReRun(object sender, EventArgs e)
@@ -65,6 +68,11 @@ namespace Integrated_Presenter.ViewModels
         {
             OnUserRequestForManualReRun?.Invoke(this, 1);
         }
+        private void PvCurrent_org_OnUserRequestForManualReRun(object sender, EventArgs e)
+        {
+            OnUserRequestForManualReRun?.Invoke(this, 4);
+        }
+
 
         public event PilotModeChangedArgs OnModeChanged;
         public event TogglePilotModeArgs OnTogglePilotMode;
@@ -195,10 +203,12 @@ namespace Integrated_Presenter.ViewModels
             UpdateForCam("pulpit", pvCurrent_plt, displayActions, GetSubInfoForCam("pulpit", mode), true);
             UpdateForCam("center", pvCurrent_ctr, displayActions, GetSubInfoForCam("center", mode), true);
             UpdateForCam("lectern", pvCurrent_lec, displayActions, GetSubInfoForCam("lectern", mode), true);
+            UpdateForCam("organ", pvCurrent_org, displayActions, GetSubInfoForCam("organ", mode), true);
 
             UpdateForCam("pulpit", pvNext_plt, nextSlideActions, "", false);
             UpdateForCam("center", pvNext_ctr, nextSlideActions, "", false);
             UpdateForCam("lectern", pvNext_lec, nextSlideActions, "", false);
+            UpdateForCam("organ", pvNext_org, nextSlideActions, "", false);
 
         }
 
@@ -246,11 +256,15 @@ namespace Integrated_Presenter.ViewModels
             {
                 pvCurrent_lec.UpdateUI(action, mode, GetSubInfoForCam(camName, mode), true);
             }
+            if (camName == "organ")
+            {
+                pvCurrent_org.UpdateUI(action, mode, GetSubInfoForCam(camName, mode), true);
+            }
         }
 
         internal void FireLast(int id, CCUI_UI.ICCPUPresetMonitor_Executor driver)
         {
-            Dictionary<int, string> cams = new Dictionary<int, string> { [1] = "pulpit", [2] = "center", [3] = "lectern" };
+            Dictionary<int, string> cams = new Dictionary<int, string> { [1] = "pulpit", [2] = "center", [3] = "lectern", [4] = "organ" };
             if (cams.TryGetValue(id, out string camName))
             {
                 try
@@ -285,18 +299,21 @@ namespace Integrated_Presenter.ViewModels
                 pvCurrent_plt.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "left").First().PhysicalInputId);
                 pvCurrent_ctr.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "center").First().PhysicalInputId);
                 pvCurrent_lec.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "right").First().PhysicalInputId);
+                pvCurrent_org.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "organ").First().PhysicalInputId);
             }
             else
             {
                 pvCurrent_plt.UpdateOnAirWarning(false);
                 pvCurrent_ctr.UpdateOnAirWarning(false);
                 pvCurrent_lec.UpdateOnAirWarning(false);
+                pvCurrent_org.UpdateOnAirWarning(false);
             }
 
 
             pvNext_plt.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "left").First().PhysicalInputId && nextSlideGoesLive);
             pvNext_ctr.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "center").First().PhysicalInputId && nextSlideGoesLive);
             pvNext_lec.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "right").First().PhysicalInputId && nextSlideGoesLive);
+            pvNext_org.UpdateOnAirWarning(state.ProgramID == config.Routing.Where(r => r.KeyName == "organ").First().PhysicalInputId && nextSlideGoesLive);
         }
 
         private void ellipseState_MouseDown(object sender, MouseButtonEventArgs e)
