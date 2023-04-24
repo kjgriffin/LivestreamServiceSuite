@@ -1539,6 +1539,8 @@ namespace SwitcherControl.Safe
             patternParameters.SetSoftness(pattern.Softness);
             patternParameters.SetSize(pattern.Size);
             patternParameters.SetSymmetry(pattern.Symmetry);
+
+            _BMDSwitcherFlyKeyParamters.SetFly(1);
         }
 
         private void SetPIPPosition(BMDUSKDVESettings settings)
