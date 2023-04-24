@@ -1193,6 +1193,7 @@ namespace SlideCreater
 
         private async void ClickImportService(object sender, RoutedEventArgs e)
         {
+            await NewProject();
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Import from save of Lutheran Service Bulletin";
             ofd.Filter = "LSB Service (*.html)|*.html";
