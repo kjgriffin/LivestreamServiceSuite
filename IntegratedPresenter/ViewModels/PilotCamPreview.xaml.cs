@@ -277,12 +277,12 @@ namespace Integrated_Presenter.ViewModels
 
         private void ClickZOut(object sender, RoutedEventArgs e)
         {
-            OnUserRequestForZoomBump?.Invoke(this, (-1, 100));
+            OnUserRequestForZoomBump?.Invoke(this, (-1, 10));
         }
 
         private void ClickZIn(object sender, RoutedEventArgs e)
         {
-            OnUserRequestForZoomBump?.Invoke(this, (1, 100));
+            OnUserRequestForZoomBump?.Invoke(this, (1, 10));
         }
     }
 }

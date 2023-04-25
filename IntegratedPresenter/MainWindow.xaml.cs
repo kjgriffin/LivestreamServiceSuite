@@ -1838,7 +1838,7 @@ namespace IntegratedPresenter.Main
 
         private void PilotFireZoomBump(string cam, string zpresetmod, int dir, int zms)
         {
-            _camMonitor.FireZoom_Tracked(cam, dir, zms);
+            _camMonitor.ChirpZoom_RELATIVE(cam, dir, zms);
         }
 
         private void TogglePilotMode()

@@ -316,5 +316,10 @@ namespace CCUI_UI
         {
             //throw new NotImplementedException();
         }
+
+        public void ChirpZoom_RELATIVE(string camname, int direction, int duration)
+        {
+
+        }
     }
 }

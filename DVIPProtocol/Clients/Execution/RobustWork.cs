@@ -69,5 +69,9 @@ namespace DVIPProtocol.Clients.Execution
         /// The interval of time required to gaurantee the reset command has run to complete.
         /// </summary>
         public int ResetDelayMS { get; set; }
+        /// <summary>
+        /// Will ignore all responses to any of the steps
+        /// </summary>
+        public bool IgnoreALLResponse { get; set; } = false;
     }
 }

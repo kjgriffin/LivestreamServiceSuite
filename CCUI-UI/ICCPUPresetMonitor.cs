@@ -9,6 +9,7 @@ namespace CCUI_UI
         event CCUEvent OnCommandUpdate;
 
         void ChirpZoom(string camname, int direction, int duration);
+        void ChirpZoom_RELATIVE(string camname, int direction, int duration);
         CCPUConfig ExportStateToConfig();
         void FireZoomLevel(string camname, string presetname);
         void LoadConfig(CCPUConfig? cfg);
