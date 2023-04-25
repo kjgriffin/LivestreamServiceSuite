@@ -234,7 +234,7 @@ namespace IntegratedPresenter.Main
                     var cfg = sr.ReadToEnd();
                     try
                     {
-                        CCPUConfig = JsonSerializer.Deserialize<CCPUConfig>(cfg);
+                        CCPUConfig = JsonSerializer.Deserialize<CCPUConfig_Extended>(cfg);
                         HasCCUConfig = true;
                     }
                     catch (Exception ex)

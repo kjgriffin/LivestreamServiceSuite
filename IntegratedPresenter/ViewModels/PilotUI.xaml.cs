@@ -39,6 +39,7 @@ namespace Integrated_Presenter.ViewModels
     public partial class PilotUI : UserControl
     {
 
+        Dictionary<int, string> cams = new Dictionary<int, string> { [1] = "pulpit", [2] = "center", [3] = "lectern", [4] = "organ" };
 
         public PilotUI()
         {
@@ -48,10 +49,35 @@ namespace Integrated_Presenter.ViewModels
             pvCurrent_lec.OnUserRequestForManualReRun += PvCurrent_lec_OnUserRequestForManualReRun;
             pvCurrent_org.OnUserRequestForManualReRun += PvCurrent_lec_OnUserRequestForManualReRun;
 
+            pvCurrent_plt.OnUserRequestForZoomBump += PvCurrent_plt_OnUserRequestForZoomBump;
+            pvCurrent_ctr.OnUserRequestForZoomBump += PvCurrent_ctr_OnUserRequestForZoomBump;
+            pvCurrent_lec.OnUserRequestForZoomBump += PvCurrent_lec_OnUserRequestForZoomBump;
+            pvCurrent_org.OnUserRequestForZoomBump += PvCurrent_org_OnUserRequestForZoomBump;
+
             pvNext_plt.HideManualReRun();
             pvNext_ctr.HideManualReRun();
             pvNext_lec.HideManualReRun();
             pvNext_org.HideManualReRun();
+        }
+
+        private void PvCurrent_org_OnUserRequestForZoomBump(object sender, (int dir, int ammount) e)
+        {
+            OnUserRequestForManualZoomBump?.Invoke(this, ("organ", e.dir, e.ammount));
+        }
+
+        private void PvCurrent_lec_OnUserRequestForZoomBump(object sender, (int dir, int ammount) e)
+        {
+            OnUserRequestForManualZoomBump?.Invoke(this, ("lectern", e.dir, e.ammount));
+        }
+
+        private void PvCurrent_ctr_OnUserRequestForZoomBump(object sender, (int dir, int ammount) e)
+        {
+            OnUserRequestForManualZoomBump?.Invoke(this, ("center", e.dir, e.ammount));
+        }
+
+        private void PvCurrent_plt_OnUserRequestForZoomBump(object sender, (int dir, int ammount) e)
+        {
+            OnUserRequestForManualZoomBump?.Invoke(this, ("pulpit", e.dir, e.ammount));
         }
 
         private void PvCurrent_lec_OnUserRequestForManualReRun(object sender, EventArgs e)
@@ -77,6 +103,7 @@ namespace Integrated_Presenter.ViewModels
         public event PilotModeChangedArgs OnModeChanged;
         public event TogglePilotModeArgs OnTogglePilotMode;
         public event EventHandler<int> OnUserRequestForManualReRun;
+        public event EventHandler<(string cam, int dir, int zms)> OnUserRequestForManualZoomBump;
 
         Dictionary<string, IPilotAction> _lastNamedCache = new Dictionary<string, IPilotAction>();
         Dictionary<string, IPilotAction> _emergencyActions = new Dictionary<string, IPilotAction>();
@@ -264,7 +291,6 @@ namespace Integrated_Presenter.ViewModels
 
         internal void FireLast(int id, CCUI_UI.ICCPUPresetMonitor_Executor driver)
         {
-            Dictionary<int, string> cams = new Dictionary<int, string> { [1] = "pulpit", [2] = "center", [3] = "lectern", [4] = "organ" };
             if (cams.TryGetValue(id, out string camName))
             {
                 try

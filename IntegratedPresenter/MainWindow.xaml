@@ -2211,7 +2211,7 @@
                                     </Grid>
                                 </Border>
                                 <Border Name="PATTERNControls" Style="{StaticResource GroupBorder}" Visibility="Visible" Panel.ZIndex="10">
-                                    <viewmodels:PATTERNKeyControl></viewmodels:PATTERNKeyControl>
+                                    <viewmodels:PATTERNKeyControl x:Name="keyPatternControls"></viewmodels:PATTERNKeyControl>
                                 </Border>
                             </Grid>
                         </Viewbox>

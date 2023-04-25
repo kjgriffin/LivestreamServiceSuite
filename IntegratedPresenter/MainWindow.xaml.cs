@@ -129,6 +129,7 @@ namespace IntegratedPresenter.Main
             pilotUI.OnModeChanged += PilotUI_OnModeChanged;
             pilotUI.OnTogglePilotMode += PilotUI_OnTogglePilotMode;
             pilotUI.OnUserRequestForManualReRun += PilotUI_OnUserRequestForManualReRun;
+            pilotUI.OnUserRequestForManualZoomBump += PilotUI_OnUserRequestForManualZoomBump;
 
             // set a default config
             SetDefaultConfig();
@@ -144,6 +145,8 @@ namespace IntegratedPresenter.Main
 
             // start with no switcher connection so disable all controls correctly
             DisableSwitcherControls();
+
+            keyPatternControls.InitUIDrivers(this.ConvertSourceIDToButton, this.ConvertButtonToSourceID);
 
             // update PIP place hotkeys
             UpdateUIPIPPlaceKeys();
@@ -226,6 +229,12 @@ namespace IntegratedPresenter.Main
         {
             PilotFireLast(e);
         }
+
+        private void PilotUI_OnUserRequestForManualZoomBump(object sender, (string cam, int dir, int zms) e)
+        {
+            PilotFireZoomBump(e.cam, "", e.dir, e.zms);
+        }
+
 
         string _nominalTitle = "";
 
@@ -413,6 +422,7 @@ namespace IntegratedPresenter.Main
                 // Try an use a thread safe variant
                 //switcherManager = new BMDSwitcherManager(this, autoTransMRE);
                 switcherManager = new SafeBMDSwitcher(autoTransMRE, _logger, this.Title);
+                keyPatternControls.SetSwitcherDriver(switcherManager);
 
 
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
@@ -457,6 +467,7 @@ namespace IntegratedPresenter.Main
                 switcherManager.SwitcherStateChanged -= SwitcherManager_SwitcherStateChanged;
                 switcherManager.OnSwitcherConnectionChanged -= SwitcherManager_OnSwitcherConnectionChanged;
                 switcherManager = null;
+                keyPatternControls.SetSwitcherDriver(switcherManager);
             }
         }
 
@@ -469,6 +480,7 @@ namespace IntegratedPresenter.Main
                 return;
             }
             switcherManager = new MockBMDSwitcherManager(this);
+            keyPatternControls.SetSwitcherDriver(switcherManager);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.OnSwitcherConnectionChanged += SwitcherManager_OnSwitcherConnectionChanged;
             (switcherManager as MockBMDSwitcherManager)?.UpdateCCUConfig(Presentation?.CCPUConfig as CCPUConfig_Extended);
@@ -563,6 +575,8 @@ namespace IntegratedPresenter.Main
 
             // update viewmodels
             UpdateSwitcherUI();
+
+            keyPatternControls.UpdateFromSwitcherState(switcherState);
 
             // conditions can change if they're watched
             FireOnConditionalsUpdated();
@@ -832,6 +846,7 @@ namespace IntegratedPresenter.Main
         private void EnableKeyerControls()
         {
 
+            keyPatternControls.EnableControls(true);
             string style = "SwitcherButton";
 
 
@@ -869,7 +884,7 @@ namespace IntegratedPresenter.Main
 
         private void DisableKeyerControls()
         {
-
+            keyPatternControls.EnableControls(false);
             string style = "SwitcherButton_Disabled";
 
             BtnUSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
@@ -1682,14 +1697,14 @@ namespace IntegratedPresenter.Main
 
             //if (e.Key == Key.NumPad1)
             //{
-                //ToggleUSK1Type();
+            //ToggleUSK1Type();
             //}
 
             if (e.Key == Key.C || e.Key == Key.D || e.Key == Key.P)
             {
                 if (Keyboard.IsKeyDown(Key.NumPad1))
                 {
-                    switch(e.Key)
+                    switch (e.Key)
                     {
                         case Key.C:
                             SetSwitcherKeyerChroma();
@@ -1819,6 +1834,11 @@ namespace IntegratedPresenter.Main
             pilotUI?.FireLast(v, _camMonitor);
             //}
             // let it re-fire existing slide
+        }
+
+        private void PilotFireZoomBump(string cam, string zpresetmod, int dir, int zms)
+        {
+            _camMonitor.FireZoom_Tracked(cam, dir, zms);
         }
 
         private void TogglePilotMode()
@@ -3646,6 +3666,7 @@ namespace IntegratedPresenter.Main
 
         private void UpdateUIButtonLabels()
         {
+            keyPatternControls.UpdateButtonLabels(_config.Routing);
             foreach (var btn in _config.Routing)
             {
                 switch (btn.ButtonId)
@@ -4341,6 +4362,7 @@ namespace IntegratedPresenter.Main
 
             #endregion
 
+            keyPatternControls.ShowShortcuts(_showshortcuts);
         }
 
         public Visibility ShortcutVisibility { get; set; } = Visibility.Collapsed;
