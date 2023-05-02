@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:IntegratedPresenter.Main" xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:viewmodels="clr-namespace:Integrated_Presenter.ViewModels"
+        xmlns:local="clr-namespace:IntegratedPresenter.Main" xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:viewmodels="clr-namespace:Integrated_Presenter.ViewModels" xmlns:matrixcontrols="clr-namespace:Integrated_Presenter.ViewModels.MatrixControls"
         mc:Ignorable="d"
         Closing="OnClosing"
         PreviewKeyDown="WindowPreviewKeyDown"
@@ -90,10 +90,10 @@
 
                     <Grid.RowDefinitions>
                         <RowDefinition Name="grd_timers" Height="2*"></RowDefinition>
-                        <RowDefinition Name="grd_aux" Height="1.2*"></RowDefinition>
-                        <RowDefinition Name="grd_program" Height="1.3*"></RowDefinition>
-                        <RowDefinition Name="grd_preset" Height="1.2*"></RowDefinition>
-                        <RowDefinition Name="grd_transitions" Height="1*"></RowDefinition>
+                        <RowDefinition Name="grd_aux" Height="1*"></RowDefinition>
+                        <RowDefinition Name="grd_program" Height="1.1*"></RowDefinition>
+                        <RowDefinition Name="grd_preset" Height="1*"></RowDefinition>
+                        <RowDefinition Name="grd_transitions" Height="1.4*"></RowDefinition>
                         <RowDefinition Name="grd_keyers" Height="3*"></RowDefinition>
                         <RowDefinition Name="grd_advanced" Height="2.35*"></RowDefinition>
                     </Grid.RowDefinitions>
@@ -202,7 +202,7 @@
                     </Grid>
 
                     <Grid Grid.Row="1" Name="gr_auxrow">
-                        <Viewbox>
+                        <Viewbox HorizontalAlignment="Center">
                             <Border VerticalAlignment="Center" Style="{StaticResource GroupBorder}">
                                 <StackPanel>
                                     <TextBlock TextAlignment="Center" Margin="0,10,0,00" Style="{StaticResource GrayText}">PROJECTOR / AUX</TextBlock>
@@ -441,7 +441,7 @@
                     </Grid>
 
                     <Grid Grid.Row="2" Name="gr_ProgramBus">
-                        <Viewbox>
+                        <Viewbox HorizontalAlignment="Center">
                             <Border Style="{StaticResource GroupBorder}">
                                 <StackPanel>
                                     <Grid>
@@ -451,26 +451,32 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.ColumnSpan="2" TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PROGRAM</TextBlock>
                                         <Grid Grid.Column="1">
-                                            <Button Name="btnProgramLock" Click="ClickBtnProgramLock" Width="100" HorizontalAlignment="Right" Focusable="False" IsTabStop="False" Background="#2a2a2a" Foreground="Orange">
-                                                <Button.Content>LOCKED</Button.Content>
-                                                <Button.Template>
-                                                    <ControlTemplate>
-                                                        <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                            <ContentControl Name="btnProgramLockName" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                            </Button>
                                         </Grid>
                                     </Grid>
 
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Margin="15,0,20,10" Name="btnProgramLock" Click="ClickBtnProgramLock" Width="80" Height="30" HorizontalAlignment="Right" Focusable="False" IsTabStop="False" Background="#2a2a2a" Foreground="Orange">
+                                            <Button.Content>
+                                                LOCKED
+                                            </Button.Content>
+                                            <Button.LayoutTransform>
+                                                <RotateTransform Angle="-90"></RotateTransform>
+                                            </Button.LayoutTransform>
+                                            <Button.Template>
+                                                <ControlTemplate>
+                                                    <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                        <ContentControl Name="btnProgramLockName" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}">
+                                                        </ContentControl>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Cursor" Value="Hand"></Setter>
+                                                            <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
                                         <Grid>
                                             <Viewbox Name="ksc_ps1" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
                                                 <Grid>
@@ -680,368 +686,660 @@
                     </Grid>
 
                     <Grid Grid.Row="3" Name="gr_PresetBus">
-                        <Viewbox>
-                            <Border Style="{StaticResource GroupBorder}">
-                                <StackPanel>
-                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PRESET</TextBlock>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Grid>
-                                            <Viewbox Name="ksc_s1" Panel.ZIndex="1" Height="50" Width="50">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
-                                                        <Viewbox>
-                                                            <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
-                                                        </Viewbox>
-                                                    </Border>
-                                                </StackPanel>
-                                            </Viewbox>
-                                            <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
-                                        </Grid>
-                                        <Grid>
-                                            <Viewbox Name="ksc_s2" Panel.ZIndex="1" Height="50" Width="50">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
-                                                        <Viewbox>
-                                                            <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
-                                                        </Viewbox>
-                                                    </Border>
-                                                </StackPanel>
-                                            </Viewbox>
-                                            <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
-                                        </Grid>
-                                        <Grid>
-                                            <Viewbox Name="ksc_s3" Panel.ZIndex="1" Height="50" Width="50">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
-                                                        <Viewbox>
-                                                            <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
-                                                        </Viewbox>
-                                                    </Border>
-                                                </StackPanel>
-                                            </Viewbox>
-                                            <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
-                                        </Grid>
-                                        <Grid>
-                                            <Viewbox Name="ksc_s4" Panel.ZIndex="1" Height="50" Width="50">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
-                                                        <Viewbox>
-                                                            <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
-                                                        </Viewbox>
-                                                    </Border>
-                                                </StackPanel>
-                                            </Viewbox>
-                                            <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
-                                        </Grid>
-                                        <Grid>
-                                            <Viewbox Name="ksc_s5" Panel.ZIndex="1" Height="50" Width="50">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
-                                                        <Viewbox>
-                                                            <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
-                                                        </Viewbox>
-                                                    </Border>
-                                                </StackPanel>
-                                            </Viewbox>
-                                            <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
-                                        </Grid>
-                                        <Grid>
-                                            <Viewbox x:Name="ksc_s6" Panel.ZIndex="1" Height="50" Width="50">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
-                                                        <Viewbox>
-                                                            <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
-                                                        </Viewbox>
-                                                    </Border>
-                                                </StackPanel>
-                                            </Viewbox>
-                                            <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
-                                        </Grid>
-                                        <Grid>
-                                            <Viewbox Name="ksc_s7" Panel.ZIndex="1" Height="50" Width="50">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
-                                                        <Viewbox>
-                                                            <TextBlock Style="{StaticResource UIShortcut}">7</TextBlock>
-                                                        </Viewbox>
-                                                    </Border>
-                                                </StackPanel>
-                                            </Viewbox>
-                                            <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
-                                        </Grid>
-                                        <Grid>
-                                            <Viewbox Name="ksc_s8" Panel.ZIndex="1" Height="50" Width="50">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
-                                                        <Viewbox>
-                                                            <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
-                                                        </Viewbox>
-                                                    </Border>
-                                                </StackPanel>
-                                            </Viewbox>
-                                            <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
-                                        </Grid>
+                        <Viewbox HorizontalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource GroupBorder}" Margin="5,5,2.5,5">
+                                    <StackPanel>
+                                        <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">PRESET</TextBlock>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Grid>
+                                                <Viewbox Name="ksc_s1" Panel.ZIndex="1" Height="50" Width="50">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                            <Viewbox>
+                                                                <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                                            </Viewbox>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Viewbox>
+                                                <Button Name="BtnPreset1" Click="ClickPreset1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_s2" Panel.ZIndex="1" Height="50" Width="50">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                            <Viewbox>
+                                                                <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
+                                                            </Viewbox>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Viewbox>
+                                                <Button Name="BtnPreset2" Click="ClickPreset2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_s3" Panel.ZIndex="1" Height="50" Width="50">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                            <Viewbox>
+                                                                <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
+                                                            </Viewbox>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Viewbox>
+                                                <Button Name="BtnPreset3" Click="ClickPreset3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_s4" Panel.ZIndex="1" Height="50" Width="50">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                            <Viewbox>
+                                                                <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                                            </Viewbox>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Viewbox>
+                                                <Button Name="BtnPreset4" Click="ClickPreset4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_s5" Panel.ZIndex="1" Height="50" Width="50">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                            <Viewbox>
+                                                                <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
+                                                            </Viewbox>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Viewbox>
+                                                <Button Name="BtnPreset5" Click="ClickPreset5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox x:Name="ksc_s6" Panel.ZIndex="1" Height="50" Width="50">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                            <Viewbox>
+                                                                <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
+                                                            </Viewbox>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Viewbox>
+                                                <Button Name="BtnPreset6" Click="ClickPreset6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_s7" Panel.ZIndex="1" Height="50" Width="50">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                            <Viewbox>
+                                                                <TextBlock Style="{StaticResource UIShortcut}">7</TextBlock>
+                                                            </Viewbox>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Viewbox>
+                                                <Button Name="BtnPreset7" Click="ClickPreset7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_s8" Panel.ZIndex="1" Height="50" Width="50">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                            <Viewbox>
+                                                                <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
+                                                            </Viewbox>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Viewbox>
+                                                <Button Name="BtnPreset8" Click="ClickPreset8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                                            </Grid>
+                                        </StackPanel>
                                     </StackPanel>
-                                </StackPanel>
-                            </Border>
+                                </Border>
+                                <Border Style="{StaticResource GroupBorder}" Width="150" Margin="2.5,5,5,5">
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">AUX SOURCES</TextBlock>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Grid>
+                                                <Viewbox Name="ksc_ftb" Panel.ZIndex="1" Height="50" Width="50">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Padding="20,0" Style="{StaticResource UIShortcutBdr}">
+                                                            <Viewbox>
+                                                                <TextBlock Style="{StaticResource UIShortcut}">B</TextBlock>
+                                                            </Viewbox>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Viewbox>
+                                                <Button Name="BtnFTB" Click="ClickFTB" Style="{StaticResource SwitcherButton_Disabled}">FTB</Button>
+                                            </Grid>
+                                            <Grid>
+                                                <Viewbox Name="ksc_stest" Panel.ZIndex="1" Height="50" Width="50">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Padding="20,0" Style="{StaticResource UIShortcutBdr}">
+                                                            <Viewbox>
+                                                                <TextBlock Style="{StaticResource UIShortcut}">C</TextBlock>
+                                                            </Viewbox>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Viewbox>
+                                                <Button Name="BtnCBars" Click="ClickCBars" Style="{StaticResource SwitcherButton_Disabled}">TEST</Button>
+                                            </Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
                         </Viewbox>
                     </Grid>
 
                     <Grid Grid.Row="4">
-                        <Viewbox>
+                        <Viewbox HorizontalAlignment="Center">
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition Height="1*"></RowDefinition>
+                                    <RowDefinition Height="1*"></RowDefinition>
+                                    <RowDefinition Height="1*"></RowDefinition>
+                                    <RowDefinition Height="1*"></RowDefinition>
                                 </Grid.RowDefinitions>
 
                                 <Grid Grid.Row="3">
                                     <Grid>
-                                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" FlowDirection="RightToLeft">
-                                            <Border Style="{StaticResource GroupBorder}" Width="190">
-                                                <StackPanel>
-                                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">AUX SOURCES</TextBlock>
+                                        <StackPanel Orientation="Horizontal">
+                                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" FlowDirection="RightToLeft">
+                                                <Border Style="{StaticResource GroupBorder}" Width="250">
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">TRANSITION</TextBlock>
+                                                        <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                                                            <Grid>
+                                                                <Viewbox Name="ksc_auto" Panel.ZIndex="1" Height="50" Width="50">
+                                                                    <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                                                                        <Border Padding="18,0" Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">&#x21B5;</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                                <Button Name="BtnAutoTrans" Click="ClickAutoTrans" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Viewbox Name="ksc_cut" Panel.ZIndex="1" Height="50" Width="50">
+                                                                    <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                                                                        <Border Padding="13,0" Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <TextBlock Style="{StaticResource UIShortcut}">&#x2423;</TextBlock>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                                <Button Name="BtnCutTrans" Click="ClickCutTrans" Style="{StaticResource SwitcherButton_Disabled}">CUT</Button>
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Viewbox Name="ksc_bkgd" Panel.ZIndex="1" Height="50" Width="50">
+                                                                    <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                                                                        <Border Style="{StaticResource UIShortcutBdr}">
+                                                                            <Viewbox>
+                                                                                <StackPanel>
+                                                                                    <TextBlock Style="{StaticResource UIShortcut}">0</TextBlock>
+                                                                                    <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                                                </StackPanel>
+                                                                            </Viewbox>
+                                                                        </Border>
+                                                                    </StackPanel>
+                                                                </Viewbox>
+                                                                <Button Name="BtnBackgroundTrans" Click="ClickTransBkgd" Style="{StaticResource SwitcherButton_Disabled}">BKGD</Button>
+                                                            </Grid>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </StackPanel>
+                                            <Border Style="{StaticResource GroupBorder}" Width="190" HorizontalAlignment="Right">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBlock Margin="0,5,0,0" TextAlignment="Center" Style="{StaticResource GrayText}">CONDITIONS</TextBlock>
                                                     <StackPanel Orientation="Horizontal">
-                                                        <Grid>
-                                                            <Viewbox Name="ksc_ftb" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Border Padding="20,0" Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">B</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Name="BtnFTB" Click="ClickFTB" Style="{StaticResource SwitcherButton_Disabled}">FTB</Button>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Viewbox Name="ksc_stest" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Border Padding="20,0" Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">C</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Name="BtnCBars" Click="ClickCBars" Style="{StaticResource SwitcherButton_Disabled}">TEST</Button>
-                                                        </Grid>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Grid>
+                                                                <Grid Panel.ZIndex="1" Margin="0,10,0,0">
+                                                                    <Viewbox x:Name="ksc_cond1" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
+                                                                        <Grid>
+                                                                            <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                <Viewbox>
+                                                                                    <TextBlock Style="{StaticResource UIShortcut}">PgUp</TextBlock>
+                                                                                </Viewbox>
+                                                                            </Border>
+                                                                        </Grid>
+                                                                    </Viewbox>
+                                                                </Grid>
+                                                                <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond1" Click="ClickToggleCond1" Foreground="White">
+                                                                    <Button.Content>1</Button.Content>
+                                                                    <Button.Template>
+                                                                        <ControlTemplate>
+                                                                            <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <DataTrigger Binding="{Binding Value}" Value="True">
+                                                                                    <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Value}" Value="False">
+                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
+                                                                                </DataTrigger>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                    <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Grid Panel.ZIndex="1" Margin="0,10,0,0">
+                                                                    <Viewbox x:Name="ksc_cond2" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
+                                                                        <Grid>
+                                                                            <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                <Viewbox>
+                                                                                    <TextBlock Style="{StaticResource UIShortcut}">PgDn</TextBlock>
+                                                                                </Viewbox>
+                                                                            </Border>
+                                                                        </Grid>
+                                                                    </Viewbox>
+                                                                </Grid>
+                                                                <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond2" Click="ClickToggleCond2" Foreground="White">
+                                                                    <Button.Content>2</Button.Content>
+                                                                    <Button.Template>
+                                                                        <ControlTemplate>
+                                                                            <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <DataTrigger Binding="{Binding Value}" Value="True">
+                                                                                    <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Value}" Value="False">
+                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
+                                                                                </DataTrigger>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                    <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+                                                            </Grid>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Grid>
+                                                                <Grid Panel.ZIndex="1" Margin="0,10,0,0">
+                                                                    <Viewbox x:Name="ksc_cond3" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
+                                                                        <Grid>
+                                                                            <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                <Viewbox>
+                                                                                    <TextBlock Style="{StaticResource UIShortcut}">RCTRL+PgUp</TextBlock>
+                                                                                </Viewbox>
+                                                                            </Border>
+                                                                        </Grid>
+                                                                    </Viewbox>
+                                                                </Grid>
+                                                                <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond3" Click="ClickToggleCond3" Foreground="White">
+                                                                    <Button.Content>3</Button.Content>
+                                                                    <Button.Template>
+                                                                        <ControlTemplate>
+                                                                            <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <DataTrigger Binding="{Binding Value}" Value="True">
+                                                                                    <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Value}" Value="False">
+                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
+                                                                                </DataTrigger>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                    <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Grid Panel.ZIndex="1" Margin="0,10,0,0">
+                                                                    <Viewbox x:Name="ksc_cond4" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
+                                                                        <Grid>
+                                                                            <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                <Viewbox>
+                                                                                    <TextBlock Style="{StaticResource UIShortcut}">RCTRL+PgDn</TextBlock>
+                                                                                </Viewbox>
+                                                                            </Border>
+                                                                        </Grid>
+                                                                    </Viewbox>
+                                                                </Grid>
+                                                                <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond4" Click="ClickToggleCond4" Foreground="White">
+                                                                    <Button.Content>4</Button.Content>
+                                                                    <Button.Template>
+                                                                        <ControlTemplate>
+                                                                            <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <DataTrigger Binding="{Binding Value}" Value="True">
+                                                                                    <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Value}" Value="False">
+                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
+                                                                                </DataTrigger>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                    <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
+                                                                                    <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+                                                            </Grid>
+                                                        </StackPanel>
                                                     </StackPanel>
                                                 </StackPanel>
                                             </Border>
-                                            <Border Style="{StaticResource GroupBorder}" Width="300">
-                                                <StackPanel>
-                                                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">TRANSITION</TextBlock>
-                                                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                                                        <Grid>
-                                                            <Viewbox Name="ksc_auto" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
-                                                                    <Border Padding="18,0" Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x21B5;</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Name="BtnAutoTrans" Click="ClickAutoTrans" Style="{StaticResource SwitcherButton_Disabled}">AUTO</Button>
+                                            <Grid>
+                                                <Border Style="{StaticResource GroupBorder}">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition></RowDefinition>
+                                                            <RowDefinition></RowDefinition>
+                                                        </Grid.RowDefinitions>
+                                                        <Grid Grid.Row="0">
+
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                                <Button Name="btnSlideCtrlTab" Click="ClickSlideCtrlTab" Width="120" Height="30" Focusable="False" IsTabStop="False" Background="#2a2a2a" Foreground="Orange">
+                                                                    <Button.Content>
+                                                                        SLIDE CONTROLS
+                                                                    </Button.Content>
+                                                                    <Button.Template>
+                                                                        <ControlTemplate>
+                                                                            <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                <ContentControl Name="btnProgramLockName" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}">
+                                                                                </ContentControl>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+                                                                <Button Name="btnMediaCtrlTab" Click="ClickMediaCtrlTab" Width="200" Height="30" Focusable="False" IsTabStop="False" Background="#2a2a2a" Foreground="Orange">
+                                                                    <Button.Content>
+                                                                        MEDIA PLAYBACK CONTROLS
+                                                                    </Button.Content>
+                                                                    <Button.Template>
+                                                                        <ControlTemplate>
+                                                                            <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                <ContentControl Name="btnProgramLockName" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}">
+                                                                                </ContentControl>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+
+                                                            </StackPanel>
                                                         </Grid>
-                                                        <Grid>
-                                                            <Viewbox Name="ksc_cut" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
-                                                                    <Border Padding="13,0" Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x2423;</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Name="BtnCutTrans" Click="ClickCutTrans" Style="{StaticResource SwitcherButton_Disabled}">CUT</Button>
-                                                        </Grid>
-                                                        <Grid Margin="60,0,0,0">
-                                                            <Viewbox Name="ksc_bkgd" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <StackPanel>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">0</TextBlock>
-                                                                                <TextBlock FontSize="20" Style="{StaticResource UIShortcut}">NumPad</TextBlock>
+                                                        <Grid Name="slideControlGroup" Grid.Row="1" Visibility="Visible">
+                                                            <StackPanel>
+                                                                <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
+
+                                                                    <Grid>
+                                                                        <Viewbox x:Name="ksc_st" Panel.ZIndex="1" Height="50" Width="50">
+                                                                            <StackPanel Orientation="Vertical">
+                                                                                <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
+                                                                                    <Viewbox>
+                                                                                        <TextBlock Style="{StaticResource UIShortcut}">T</TextBlock>
+                                                                                    </Viewbox>
+                                                                                </Border>
                                                                             </StackPanel>
                                                                         </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Name="BtnBackgroundTrans" Click="ClickTransBkgd" Style="{StaticResource SwitcherButton_Disabled}">BKGD</Button>
-                                                        </Grid>
-                                                    </StackPanel>
-                                                </StackPanel>
-                                            </Border>
-                                        </StackPanel>
-                                        <Border Style="{StaticResource GroupBorder}" Width="190" HorizontalAlignment="Right">
-                                            <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Margin="0,5,0,0" TextAlignment="Center" Style="{StaticResource GrayText}">CONDITIONS</TextBlock>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <Grid>
-                                                            <Grid Panel.ZIndex="1" Margin="0,10,0,0">
-                                                                <Viewbox x:Name="ksc_cond1" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
-                                                                    <Grid>
-                                                                        <Border Style="{StaticResource UIShortcutBdr}">
-                                                                            <Viewbox>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">PgUp</TextBlock>
-                                                                            </Viewbox>
-                                                                        </Border>
+                                                                        <Button Name="BtnTake" Click="ClickTakeSlide" Style="{StaticResource SwitcherButton_Disabled}">TAKE</Button>
                                                                     </Grid>
-                                                                </Viewbox>
-                                                            </Grid>
-                                                            <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond1" Click="ClickToggleCond1" Foreground="White">
-                                                                <Button.Content>1</Button.Content>
-                                                                <Button.Template>
-                                                                    <ControlTemplate>
-                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                        </Border>
-                                                                        <ControlTemplate.Triggers>
-                                                                            <DataTrigger Binding="{Binding Value}" Value="True">
-                                                                                <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
-                                                                            </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding Value}" Value="False">
-                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
-                                                                            </DataTrigger>
-                                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                                <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
-                                                                            </Trigger>
-                                                                        </ControlTemplate.Triggers>
-                                                                    </ControlTemplate>
-                                                                </Button.Template>
-                                                            </Button>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Grid Panel.ZIndex="1" Margin="0,10,0,0">
-                                                                <Viewbox x:Name="ksc_cond2" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
                                                                     <Grid>
-                                                                        <Border Style="{StaticResource UIShortcutBdr}">
-                                                                            <Viewbox>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">PgDn</TextBlock>
-                                                                            </Viewbox>
-                                                                        </Border>
+                                                                        <Viewbox Name="ksc_sn" Panel.ZIndex="1" Height="50" Width="50">
+                                                                            <StackPanel Orientation="Vertical">
+                                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                    <Viewbox>
+                                                                                        <TextBlock Style="{StaticResource UIShortcut}">&#x1F846;</TextBlock>
+                                                                                    </Viewbox>
+                                                                                </Border>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                        <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton_Disabled}">NEXT</Button>
                                                                     </Grid>
-                                                                </Viewbox>
-                                                            </Grid>
-                                                            <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond2" Click="ClickToggleCond2" Foreground="White">
-                                                                <Button.Content>2</Button.Content>
-                                                                <Button.Template>
-                                                                    <ControlTemplate>
-                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                        </Border>
-                                                                        <ControlTemplate.Triggers>
-                                                                            <DataTrigger Binding="{Binding Value}" Value="True">
-                                                                                <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
-                                                                            </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding Value}" Value="False">
-                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
-                                                                            </DataTrigger>
-                                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                                <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
-                                                                            </Trigger>
-                                                                        </ControlTemplate.Triggers>
-                                                                    </ControlTemplate>
-                                                                </Button.Template>
-                                                            </Button>
-                                                        </Grid>
-                                                    </StackPanel>
-                                                    <StackPanel Orientation="Vertical">
-                                                        <Grid>
-                                                            <Grid Panel.ZIndex="1" Margin="0,10,0,0">
-                                                                <Viewbox x:Name="ksc_cond3" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
                                                                     <Grid>
-                                                                        <Border Style="{StaticResource UIShortcutBdr}">
-                                                                            <Viewbox>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">RCTRL+PgUp</TextBlock>
-                                                                            </Viewbox>
-                                                                        </Border>
+                                                                        <Viewbox Name="ksc_sp" Panel.ZIndex="1" Height="50" Width="50">
+                                                                            <StackPanel Orientation="Vertical">
+                                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                    <Viewbox>
+                                                                                        <TextBlock Style="{StaticResource UIShortcut}">&#x1F844;</TextBlock>
+                                                                                    </Viewbox>
+                                                                                </Border>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                        <Button Name="BtnPrev" Click="ClickPrevSlide" Style="{StaticResource SwitcherButton_Disabled}">PREV</Button>
                                                                     </Grid>
-                                                                </Viewbox>
-                                                            </Grid>
-                                                            <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond3" Click="ClickToggleCond3" Foreground="White">
-                                                                <Button.Content>3</Button.Content>
-                                                                <Button.Template>
-                                                                    <ControlTemplate>
-                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                        </Border>
-                                                                        <ControlTemplate.Triggers>
-                                                                            <DataTrigger Binding="{Binding Value}" Value="True">
-                                                                                <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
-                                                                            </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding Value}" Value="False">
-                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
-                                                                            </DataTrigger>
-                                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                                <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
-                                                                            </Trigger>
-                                                                        </ControlTemplate.Triggers>
-                                                                    </ControlTemplate>
-                                                                </Button.Template>
-                                                            </Button>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Grid Panel.ZIndex="1" Margin="0,10,0,0">
-                                                                <Viewbox x:Name="ksc_cond4" IsHitTestVisible="False" Panel.ZIndex="1" Height="20" Width="80">
-                                                                    <Grid>
-                                                                        <Border Style="{StaticResource UIShortcutBdr}">
-                                                                            <Viewbox>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">RCTRL+PgDn</TextBlock>
-                                                                            </Viewbox>
-                                                                        </Border>
-                                                                    </Grid>
-                                                                </Viewbox>
-                                                            </Grid>
-                                                            <Button Focusable="False" Margin="0,10,0,0" Name="Btn_Cond4" Click="ClickToggleCond4" Foreground="White">
-                                                                <Button.Content>4</Button.Content>
-                                                                <Button.Template>
-                                                                    <ControlTemplate>
-                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                        </Border>
-                                                                        <ControlTemplate.Triggers>
-                                                                            <DataTrigger Binding="{Binding Value}" Value="True">
-                                                                                <Setter Property="BorderBrush" Value="#ff12db1f" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#a012db1f" TargetName="Border"></Setter>
-                                                                            </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding Value}" Value="False">
-                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#a0ff0000" TargetName="Border"></Setter>
-                                                                            </DataTrigger>
-                                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                                <Setter Property="BorderBrush" Value="#ffdbd812" TargetName="Border"></Setter>
-                                                                                <Setter Property="Background" Value="#80dbd812" TargetName="Border"></Setter>
-                                                                            </Trigger>
-                                                                        </ControlTemplate.Triggers>
-                                                                    </ControlTemplate>
-                                                                </Button.Template>
-                                                            </Button>
-                                                        </Grid>
-                                                    </StackPanel>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Border>
 
+                                                                    <Grid>
+                                                                        <Viewbox Name="ksc_sdm" Panel.ZIndex="1" Height="50" Width="50">
+                                                                            <Viewbox.RenderTransform>
+                                                                                <TranslateTransform Y="12.5"></TranslateTransform>
+                                                                            </Viewbox.RenderTransform>
+                                                                            <StackPanel Orientation="Vertical">
+                                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                    <Viewbox>
+                                                                                        <TextBlock Style="{StaticResource UIShortcut}">RCtrl</TextBlock>
+                                                                                    </Viewbox>
+                                                                                </Border>
+                                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                    <Viewbox>
+                                                                                        <TextBlock Style="{StaticResource UIShortcut}">RShift</TextBlock>
+                                                                                    </Viewbox>
+                                                                                </Border>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+
+                                                                        <StackPanel VerticalAlignment="Center">
+                                                                            <Button Focusable="false" Name="BtnNoDrive" Click="ClickSlideNoDriveVideo" Foreground="White">
+                                                                                <Button.Content>NONE</Button.Content>
+                                                                                <Button.Template>
+                                                                                    <ControlTemplate>
+                                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                                        </Border>
+                                                                                        <ControlTemplate.Triggers>
+                                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                            </Trigger>
+                                                                                        </ControlTemplate.Triggers>
+                                                                                    </ControlTemplate>
+                                                                                </Button.Template>
+
+                                                                            </Button>
+                                                                            <Button Focusable="False" Name="BtnDrive" Click="ClickSlideDriveVideo" Foreground="White">
+                                                                                <Button.Content>DRIVE</Button.Content>
+                                                                                <Button.Template>
+                                                                                    <ControlTemplate>
+                                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                                        </Border>
+                                                                                        <ControlTemplate.Triggers>
+                                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                            </Trigger>
+                                                                                        </ControlTemplate.Triggers>
+                                                                                    </ControlTemplate>
+                                                                                </Button.Template>
+
+                                                                            </Button>
+                                                                            <Button Focusable="False" Name="BtnJump" Click="ClickSlideSkipMode" Foreground="White">
+                                                                                <Button.Content>SKIP</Button.Content>
+                                                                                <Button.Template>
+                                                                                    <ControlTemplate>
+                                                                                        <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                                                                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                                                                        </Border>
+                                                                                        <ControlTemplate.Triggers>
+                                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                                                                <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
+                                                                                            </Trigger>
+                                                                                        </ControlTemplate.Triggers>
+                                                                                    </ControlTemplate>
+                                                                                </Button.Template>
+
+                                                                            </Button>
+                                                                        </StackPanel>
+                                                                    </Grid>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                                    <Grid Margin="0,0,10,0">
+                                                                        <Viewbox Name="ksc_slidereset" Panel.ZIndex="1" Height="18" Width="50">
+                                                                            <StackPanel Orientation="Vertical">
+                                                                                <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                    <Viewbox>
+                                                                                        <TextBlock Style="{StaticResource UIShortcut}">Home</TextBlock>
+                                                                                    </Viewbox>
+                                                                                </Border>
+                                                                            </StackPanel>
+                                                                        </Viewbox>
+                                                                        <TextBlock Focusable="False">
+                                                                    <Hyperlink Focusable="false" Name="ResetSlideshow" Click="ResetSlideshow_Click">Reset</Hyperlink>
+                                                                        </TextBlock>
+                                                                    </Grid>
+                                                                    <TextBlock Name="TbCurrSlide" Foreground="Orange">0</TextBlock>
+                                                                    <TextBlock Foreground="Orange">/</TextBlock>
+                                                                    <TextBlock Name="TbSlideCount" Foreground="Orange">0</TextBlock>
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                        <Grid Name="mediaControlGroup" Grid.Row="1" Visibility="Hidden">
+                                                            <Border Style="{StaticResource GroupBorder}">
+                                                                <StackPanel>
+                                                                    <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
+                                                                        <Grid>
+                                                                            <Viewbox x:Name="ksc_mrestart" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                                                <Grid>
+                                                                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                            +
+                                                                                        <TextBlock.Effect>
+                                                                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                                        </TextBlock.Effect>
+                                                                                    </TextBlock>
+                                                                                    <StackPanel Orientation="Vertical">
+                                                                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                                            <Viewbox>
+                                                                                                <TextBlock Style="{StaticResource UIShortcut}">&#x1F845;</TextBlock>
+                                                                                            </Viewbox>
+                                                                                        </Border>
+                                                                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                                            <Viewbox>
+                                                                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                                            </Viewbox>
+                                                                                        </Border>
+                                                                                    </StackPanel>
+                                                                                </Grid>
+                                                                            </Viewbox>
+                                                                            <Button Focusable="False" Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
+                                                                        </Grid>
+                                                                        <Grid>
+                                                                            <Viewbox x:Name="ksc_mstop" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                                                                <Grid>
+                                                                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                            +
+                                                                                        <TextBlock.Effect>
+                                                                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                                                                        </TextBlock.Effect>
+                                                                                    </TextBlock>
+                                                                                    <StackPanel Orientation="Vertical">
+                                                                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                                            <Viewbox>
+                                                                                                <TextBlock Style="{StaticResource UIShortcut}">&#x1F847;</TextBlock>
+                                                                                            </Viewbox>
+                                                                                        </Border>
+                                                                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                                                                            <Viewbox>
+                                                                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                                                                            </Viewbox>
+                                                                                        </Border>
+                                                                                    </StackPanel>
+                                                                                </Grid>
+                                                                            </Viewbox>
+                                                                            <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource SwitcherButton_Disabled}">STOP</Button>
+                                                                        </Grid>
+                                                                        <Grid>
+                                                                            <Viewbox Name="ksc_mpause" Panel.ZIndex="1" Height="50" Width="50">
+                                                                                <StackPanel Orientation="Horizontal">
+                                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                        <Viewbox>
+                                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x1F847;</TextBlock>
+                                                                                        </Viewbox>
+                                                                                    </Border>
+                                                                                </StackPanel>
+                                                                            </Viewbox>
+                                                                            <Button Name="BtnPauseMedia" Click="ClickPauseMedia" Style="{StaticResource SwitcherButton_Disabled}">PAUSE</Button>
+                                                                        </Grid>
+                                                                        <Grid>
+                                                                            <Viewbox Name="ksc_mplay" Panel.ZIndex="1" Height="50" Width="50">
+                                                                                <StackPanel Orientation="Horizontal">
+                                                                                    <Border Style="{StaticResource UIShortcutBdr}">
+                                                                                        <Viewbox>
+                                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x1F845;</TextBlock>
+                                                                                        </Viewbox>
+                                                                                    </Border>
+                                                                                </StackPanel>
+                                                                            </Viewbox>
+                                                                            <Button Name="BtnPlayMedia" Click="ClickPlayMedia" Style="{StaticResource SwitcherButton_Disabled}">PLAY</Button>
+                                                                        </Grid>
+                                                                    </StackPanel>
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition></ColumnDefinition>
+                                                                            <ColumnDefinition></ColumnDefinition>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0">
+                                                                            <TextBlock Foreground="Orange">T-</TextBlock>
+                                                                            <TextBlock Name="TbMediaTimeRemaining" Foreground="Orange">0:00</TextBlock>
+                                                                        </StackPanel>
+                                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,0">
+                                                                            <TextBlock Foreground="Orange">T+</TextBlock>
+                                                                            <TextBlock Name="TbMediaTimeCurrent" Foreground="Orange">0:00</TextBlock>
+                                                                            <TextBlock Foreground="Orange">/</TextBlock>
+                                                                            <TextBlock Name="TbMediaTimeDurration" Foreground="Orange">0:00</TextBlock>
+                                                                        </StackPanel>
+                                                                    </Grid>
+                                                                </StackPanel>
+                                                            </Border>
+
+                                                        </Grid>
+                                                    </Grid>
+                                                </Border>
+                                            </Grid>
+                                        </StackPanel>
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -1049,12 +1347,12 @@
                     </Grid>
 
                     <Grid Grid.Row="5">
-                        <Viewbox>
+                        <Viewbox HorizontalAlignment="Left">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="150"></ColumnDefinition>
                                     <ColumnDefinition Width="200"></ColumnDefinition>
-                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="320"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
                                 <Grid Grid.Column="0">
                                     <Border Style="{StaticResource GroupBorder}">
@@ -1356,252 +1654,17 @@
                                     </Grid>
                                 </Border>
                                 <Grid Grid.Column="3">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition></RowDefinition>
-                                            <RowDefinition></RowDefinition>
-                                        </Grid.RowDefinitions>
-                                        <Grid Grid.Row="0">
-                                            <Border Style="{StaticResource GroupBorder}">
-                                                <StackPanel>
-                                                    <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">SLIDE CONTROLS</TextBlock>
-                                                    <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
-
-                                                        <Grid>
-                                                            <Viewbox x:Name="ksc_st" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Vertical">
-                                                                    <Border Padding="20, 0" Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">T</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Name="BtnTake" Click="ClickTakeSlide" Style="{StaticResource SwitcherButton_Disabled}">TAKE</Button>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Viewbox Name="ksc_sn" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Vertical">
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x1F846;</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Name="BtnNext" Click="ClickNextSlide" Style="{StaticResource SwitcherButton_Disabled}">NEXT</Button>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Viewbox Name="ksc_sp" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Vertical">
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x1F844;</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Name="BtnPrev" Click="ClickPrevSlide" Style="{StaticResource SwitcherButton_Disabled}">PREV</Button>
-                                                        </Grid>
-
-                                                        <Grid>
-                                                            <Viewbox Name="ksc_sdm" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <Viewbox.RenderTransform>
-                                                                    <TranslateTransform Y="12.5"></TranslateTransform>
-                                                                </Viewbox.RenderTransform>
-                                                                <StackPanel Orientation="Vertical">
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">RCtrl</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">RShift</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-
-                                                            <StackPanel VerticalAlignment="Center">
-                                                                <Button Focusable="false" Name="BtnNoDrive" Click="ClickSlideNoDriveVideo" Foreground="White">
-                                                                    <Button.Content>NONE</Button.Content>
-                                                                    <Button.Template>
-                                                                        <ControlTemplate>
-                                                                            <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                            </Border>
-                                                                            <ControlTemplate.Triggers>
-                                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                                </Trigger>
-                                                                            </ControlTemplate.Triggers>
-                                                                        </ControlTemplate>
-                                                                    </Button.Template>
-
-                                                                </Button>
-                                                                <Button Focusable="False" Name="BtnDrive" Click="ClickSlideDriveVideo" Foreground="White">
-                                                                    <Button.Content>DRIVE</Button.Content>
-                                                                    <Button.Template>
-                                                                        <ControlTemplate>
-                                                                            <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                            </Border>
-                                                                            <ControlTemplate.Triggers>
-                                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                                </Trigger>
-                                                                            </ControlTemplate.Triggers>
-                                                                        </ControlTemplate>
-                                                                    </Button.Template>
-
-                                                                </Button>
-                                                                <Button Focusable="False" Name="BtnJump" Click="ClickSlideSkipMode" Foreground="White">
-                                                                    <Button.Content>SKIP</Button.Content>
-                                                                    <Button.Template>
-                                                                        <ControlTemplate>
-                                                                            <Border Width="80" Height="20" Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
-                                                                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
-                                                                            </Border>
-                                                                            <ControlTemplate.Triggers>
-                                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                                    <Setter Property="Cursor" Value="Hand"></Setter>
-                                                                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                                                                </Trigger>
-                                                                            </ControlTemplate.Triggers>
-                                                                        </ControlTemplate>
-                                                                    </Button.Template>
-
-                                                                </Button>
-                                                            </StackPanel>
-                                                        </Grid>
-                                                    </StackPanel>
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                        <Grid Margin="0,0,10,0">
-                                                            <Viewbox Name="ksc_slidereset" Panel.ZIndex="1" Height="18" Width="50">
-                                                                <StackPanel Orientation="Vertical">
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">Home</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <TextBlock Focusable="False">
-                                                                    <Hyperlink Focusable="false" Name="ResetSlideshow" Click="ResetSlideshow_Click">Reset</Hyperlink>
-                                                            </TextBlock>
-                                                        </Grid>
-                                                        <TextBlock Name="TbCurrSlide" Foreground="Orange">0</TextBlock>
-                                                        <TextBlock Foreground="Orange">/</TextBlock>
-                                                        <TextBlock Name="TbSlideCount" Foreground="Orange">0</TextBlock>
-                                                    </StackPanel>
-                                                </StackPanel>
-                                            </Border>
-                                        </Grid>
-                                        <Grid Grid.Row="1">
-                                            <Border Style="{StaticResource GroupBorder}">
-                                                <StackPanel>
-                                                    <TextBlock TextAlignment="Right" Margin="0,5,20,0" Style="{StaticResource GrayText}">MEDIA PLAYBACK CONTROLS</TextBlock>
-                                                    <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
-                                                        <Grid>
-                                                            <Viewbox x:Name="ksc_mrestart" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
-                                                                <Grid>
-                                                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                                            +
-                                                                        <TextBlock.Effect>
-                                                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
-                                                                        </TextBlock.Effect>
-                                                                    </TextBlock>
-                                                                    <StackPanel Orientation="Vertical">
-                                                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
-                                                                            <Viewbox>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">&#x1F845;</TextBlock>
-                                                                            </Viewbox>
-                                                                        </Border>
-                                                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
-                                                                            <Viewbox>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
-                                                                            </Viewbox>
-                                                                        </Border>
-                                                                    </StackPanel>
-                                                                </Grid>
-                                                            </Viewbox>
-                                                            <Button Focusable="False" Name="BtnRestartMedia" Click="ClickRestartMedia" Style="{StaticResource SwitcherButton_Disabled}">RESTART</Button>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Viewbox x:Name="ksc_mstop" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
-                                                                <Grid>
-                                                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                                            +
-                                                                        <TextBlock.Effect>
-                                                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
-                                                                        </TextBlock.Effect>
-                                                                    </TextBlock>
-                                                                    <StackPanel Orientation="Vertical">
-                                                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
-                                                                            <Viewbox>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">&#x1F847;</TextBlock>
-                                                                            </Viewbox>
-                                                                        </Border>
-                                                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
-                                                                            <Viewbox>
-                                                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
-                                                                            </Viewbox>
-                                                                        </Border>
-                                                                    </StackPanel>
-                                                                </Grid>
-                                                            </Viewbox>
-                                                            <Button Name="BtnStopMedia" Click="ClickStopMedia" Style="{StaticResource SwitcherButton_Disabled}">STOP</Button>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Viewbox Name="ksc_mpause" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x1F847;</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Name="BtnPauseMedia" Click="ClickPauseMedia" Style="{StaticResource SwitcherButton_Disabled}">PAUSE</Button>
-                                                        </Grid>
-                                                        <Grid>
-                                                            <Viewbox Name="ksc_mplay" Panel.ZIndex="1" Height="50" Width="50">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Border Style="{StaticResource UIShortcutBdr}">
-                                                                        <Viewbox>
-                                                                            <TextBlock Style="{StaticResource UIShortcut}">&#x1F845;</TextBlock>
-                                                                        </Viewbox>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                            </Viewbox>
-                                                            <Button Name="BtnPlayMedia" Click="ClickPlayMedia" Style="{StaticResource SwitcherButton_Disabled}">PLAY</Button>
-                                                        </Grid>
-                                                    </StackPanel>
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition></ColumnDefinition>
-                                                            <ColumnDefinition></ColumnDefinition>
-                                                        </Grid.ColumnDefinitions>
-                                                        <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0">
-                                                            <TextBlock Foreground="Orange">T-</TextBlock>
-                                                            <TextBlock Name="TbMediaTimeRemaining" Foreground="Orange">0:00</TextBlock>
-                                                        </StackPanel>
-                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,0">
-                                                            <TextBlock Foreground="Orange">T+</TextBlock>
-                                                            <TextBlock Name="TbMediaTimeCurrent" Foreground="Orange">0:00</TextBlock>
-                                                            <TextBlock Foreground="Orange">/</TextBlock>
-                                                            <TextBlock Name="TbMediaTimeDurration" Foreground="Orange">0:00</TextBlock>
-                                                        </StackPanel>
-                                                    </Grid>
-                                                </StackPanel>
-                                            </Border>
-                                        </Grid>
-                                    </Grid>
+                                    <Border Style="{StaticResource GroupBorder}">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource GrayText}" Margin="5" HorizontalAlignment="Center">DYNAMIC CONTROLS</TextBlock>
+                                            <Grid>
+                                                <Viewbox>
+                                                    <matrixcontrols:_4x3Matrix x:Name="dynamicControlPanel"  Width="800" Height="600"></matrixcontrols:_4x3Matrix>
+                                                </Viewbox>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
                                 </Grid>
-
                             </Grid>
                         </Viewbox>
                     </Grid>

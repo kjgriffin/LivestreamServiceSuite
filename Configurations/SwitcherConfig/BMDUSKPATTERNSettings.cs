@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using VariableMarkupAttributes.Attributes;
+
 namespace Configurations.SwitcherConfig
 {
     public class BMDUSKPATTERNSettings
@@ -18,6 +20,8 @@ namespace Configurations.SwitcherConfig
         public double Size { get; set; }
         public double XOffset { get; set; }
         public double YOffset { get; set; }
+
+        [ExposedAsVariable(nameof(DefaultFillSource))]
         public int DefaultFillSource { get; set; }
 
         public bool Equivalent(BMDUSKPATTERNSettings pattern)

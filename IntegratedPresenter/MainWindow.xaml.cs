@@ -1,41 +1,47 @@
-﻿using BMDSwitcherAPI;
+﻿using ATEMSharedState.SwitcherState;
+
+using CCU.Config;
+
+using CCUI_UI;
+
+using CommonVersionInfo;
+
+using Configurations.FeatureConfig;
+
+using Integrated_Presenter.Automation;
+using Integrated_Presenter.DynamicDrivers;
+using Integrated_Presenter.Presentation;
+using Integrated_Presenter.ViewModels;
+
 using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
-using IntegratedPresenter.ViewModels;
+using IntegratedPresenter.BMDSwitcher.Mock;
+
+using IntegratedPresenterAPIInterop;
+
+using log4net;
+
 using Microsoft.Win32;
+
+using SwitcherControl.BMDSwitcher;
+using SwitcherControl.Safe;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Ports;
 using System.Linq;
-using System.Printing;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using log4net;
-using IntegratedPresenter.BMDSwitcher.Mock;
-using CommonVersionInfo;
-using Configurations.FeatureConfig;
-using IntegratedPresenterAPIInterop;
-using Integrated_Presenter.ViewModels;
 using System.Windows.Controls;
-using CCUI_UI;
-using SwitcherControl.BMDSwitcher;
-using Integrated_Presenter.Presentation;
-using CCU.Config;
-using SwitcherControl.Safe;
-using Integrated_Presenter.Automation;
-using System.ComponentModel.DataAnnotations;
-using VariableMarkupAttributes.Attributes;
-using ATEMSharedState.SwitcherState;
+using System.Windows.Input;
+using System.Windows.Media;
+
 using VariableMarkupAttributes;
+using VariableMarkupAttributes.Attributes;
 
 namespace IntegratedPresenter.Main
 {
@@ -44,7 +50,7 @@ namespace IntegratedPresenter.Main
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider
+    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider, IRaiseConditionsChanged
     {
 
 
@@ -71,7 +77,11 @@ namespace IntegratedPresenter.Main
 
         private BuildVersion VersionInfo;
 
-        ActionAutomater _actionEngine;
+        event EventHandler OnConditionalsUpdated;
+
+        ISlideScriptActionAutomater _slideActionEngine;
+        IActionAutomater _dynamicActionEngine;
+        IDynamicDriver _dynamicDriver;
 
         private readonly ILog _logger = LogManager.GetLogger("UserLogger");
 
@@ -158,6 +168,8 @@ namespace IntegratedPresenter.Main
             DisableAuxControls();
             UpdateProgramRowLockButtonUI();
 
+            UpdateSlideMediaTabControls();
+
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
             NextPreview.AutoSilentPlayback = true;
             AfterPreview.AutoSilentPlayback = true;
@@ -206,13 +218,37 @@ namespace IntegratedPresenter.Main
             gp_timer_2.Start();
 
             UpdatePilotUI();
+
+            // generate matrix ui
+            SpoolDynamicControls();
+        }
+
+        private void SpoolDynamicControls()
+        {
+            _dynamicActionEngine = new ActionAutomater(_logger,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            () => new Dictionary<string, WatchVariable>());
+            // when loading config driver will re-supply automation with watched variables
+            
+            // load the dynamic driver
+            _dynamicDriver = new DynamicMatrixDriver(dynamicControlPanel, _dynamicActionEngine, this);
+            _dynamicDriver.ConfigureControls(File.ReadAllText(@"D:\Downloads\controlseg.txt"), _pres?.Folder ?? "");
         }
 
         private void InitActionAutomater()
         {
             // for now main window still kinda owns too much
             // but we're beginning to extract functionality
-            _actionEngine = new ActionAutomater(_logger,
+            _slideActionEngine = new SlideActionAutomater(_logger,
                                                 this,
                                                 this,
                                                 this,
@@ -222,7 +258,8 @@ namespace IntegratedPresenter.Main
                                                 this,
                                                 this,
                                                 this,
-                                                this);
+                                                this,
+                                                () => Presentation?.WatchedVariables);
         }
 
         private void PilotUI_OnUserRequestForManualReRun(object sender, int e)
@@ -2034,12 +2071,12 @@ namespace IntegratedPresenter.Main
 
         private async Task ExecuteSetupActions(ISlide s)
         {
-            await _actionEngine.ExecuteSetupActions(s);
+            await _slideActionEngine.ExecuteSetupActions(s);
         }
 
         private async Task ExecuteActionSlide(ISlide s)
         {
-            await _actionEngine.ExecuteMainActions(s);
+            await _slideActionEngine.ExecuteMainActions(s);
         }
 
         private bool MediaMuted = false;
@@ -3433,6 +3470,7 @@ namespace IntegratedPresenter.Main
         private void OnClosing(object sender, CancelEventArgs e)
         {
             // stop timers
+            system_second_timer?.Stop();
             gp_timer_1?.Stop();
             gp_timer_2?.Stop();
             shot_clock_timer?.Stop();
@@ -4764,6 +4802,63 @@ namespace IntegratedPresenter.Main
         UIValue<bool> _Cond3 = new UIValue<bool>();
         UIValue<bool> _Cond4 = new UIValue<bool>();
 
+        private Dictionary<string, bool> GetCurrentConditionStatuses(Dictionary<string, WatchVariable> externalWatches)
+        {
+            var conditions = new Dictionary<string, bool>
+            {
+                ["1"] = _Cond1.Value,
+                ["2"] = _Cond2.Value,
+                ["3"] = _Cond3.Value,
+                ["4"] = _Cond4.Value,
+            };
+
+            // Assumes that the curent state of the switcher is acurate
+            // i.e. doesn't immediately re-poll... perhaps this is ok??
+            // effectively just make sure to script delays sufficient to process anything we might depend on
+
+            // extract required switcher state to satisfy requests
+            var exposedVariables = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(switcherState);
+
+            // try to find each requested value
+            if (externalWatches != null)
+            {
+                foreach (var watch in externalWatches)
+                {
+                    bool evaluation = false;
+                    // use reflection to find a matching value
+                    if (exposedVariables.TryGetValue(watch.Value.VPath, out var eVal))
+                    {
+                        dynamic val = eVal.Value;
+                        // process equation
+                        switch (watch.Value.VType)
+                        {
+                            case AutomationActionArgType.Integer:
+                                // yeah.... so int's are 32 bit and longs are 64 bit
+                                // so just to be safe do it with longs (even if we describe it as an int)
+                                // because some bmd switcher state uses longs
+                                evaluation = (long)val == (long)watch.Value.ExpectedVal;
+                                break;
+                            case AutomationActionArgType.String:
+                                evaluation = (string)val == (string)watch.Value.ExpectedVal;
+                                break;
+                            case AutomationActionArgType.Double:
+                                evaluation = (double)val == (double)watch.Value.ExpectedVal;
+                                break;
+                            case AutomationActionArgType.Boolean:
+                                evaluation = (bool)val == (bool)watch.Value.ExpectedVal;
+                                break;
+                        }
+                    }
+
+                    conditions[watch.Key] = evaluation;
+                }
+            }
+
+
+            return conditions;
+
+        }
+
         private Dictionary<string, bool> GetCurrentConditionStatus()
         {
             var conditions = new Dictionary<string, bool>
@@ -4829,13 +4924,14 @@ namespace IntegratedPresenter.Main
                 return;
             }
 
-            var cstatus = GetCurrentConditionStatus();
+            var cstatus = GetCurrentConditionStatuses(Presentation?.WatchedVariables);
             PrevPreview?.FireOnActionConditionsUpdated(cstatus);
             CurrentPreview?.FireOnActionConditionsUpdated(cstatus);
             NextPreview?.FireOnActionConditionsUpdated(cstatus);
             AfterPreview?.FireOnActionConditionsUpdated(cstatus);
             UpdateSpeculativeSlideJumpUI();
 
+            this.OnConditionalsUpdated.Invoke(this, new EventArgs());
         }
 
         private void UpdateSpeculativeSlideJumpUI()
@@ -4845,7 +4941,7 @@ namespace IntegratedPresenter.Main
                 Dispatcher.Invoke(UpdateSpeculativeSlideJumpUI);
                 return;
             }
-            var cstatus = (this as IAutomationConditionProvider).GetCurrentConditionStatus();
+            var cstatus = (this as IAutomationConditionProvider).GetCurrentConditionStatus(_pres?.WatchedVariables ?? new Dictionary<string, WatchVariable>());
             // Speculative Update for jump slides
             var willrun = false;
             var jtarget = Presentation?.Next?.SetupActions?.FirstOrDefault(x => x.Action?.Action == AutomationActions.JumpToSlide);
@@ -5039,6 +5135,48 @@ namespace IntegratedPresenter.Main
             SetupPIPToPresetPosition(5);
         }
 
+
+
+        private int _slideMediaActiveTab = 0;
+        int SlideMediaActiveTab
+        {
+            get => _slideMediaActiveTab;
+            set
+            {
+                _slideMediaActiveTab = value;
+                UpdateSlideMediaTabControls();
+            }
+        }
+        private void UpdateSlideMediaTabControls()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (_slideMediaActiveTab == 0)
+                {
+                    slideControlGroup.Visibility = Visibility.Visible;
+                    btnSlideCtrlTab.Foreground = Brushes.Orange;
+                    mediaControlGroup.Visibility = Visibility.Hidden;
+                    btnMediaCtrlTab.Foreground = Brushes.White;
+                }
+                else
+                {
+                    slideControlGroup.Visibility = Visibility.Hidden;
+                    btnSlideCtrlTab.Foreground = Brushes.White;
+                    mediaControlGroup.Visibility = Visibility.Visible;
+                    btnMediaCtrlTab.Foreground = Brushes.Orange;
+                }
+            });
+        }
+
+        private void ClickSlideCtrlTab(object sender, RoutedEventArgs e)
+        {
+            SlideMediaActiveTab = 0;
+        }
+
+        private void ClickMediaCtrlTab(object sender, RoutedEventArgs e)
+        {
+            SlideMediaActiveTab = 1;
+        }
 
         private void ClickToggleProgramPresetBusSwap(object sender, RoutedEventArgs e)
         {
@@ -5358,10 +5496,11 @@ namespace IntegratedPresenter.Main
         {
             PerformGuardedAutoTransition();
         }
-        Dictionary<string, bool> IAutomationConditionProvider.GetCurrentConditionStatus()
+        Dictionary<string, bool> IAutomationConditionProvider.GetCurrentConditionStatus(Dictionary<string, WatchVariable> watches)
         {
-            return GetCurrentConditionStatus();
+            return GetCurrentConditionStatuses(watches);
         }
+
         void IUserTimerProvider.ResetGpTimer1()
         {
             ResetGpTimer1();
@@ -5434,6 +5573,26 @@ namespace IntegratedPresenter.Main
             Dispatcher.Invoke(playMedia);
         }
 
+        Dictionary<string, bool> IRaiseConditionsChanged.GetConditionals(Dictionary<string, WatchVariable> watches)
+        {
+            return GetCurrentConditionStatuses(watches);
+        }
+
+        event EventHandler IRaiseConditionsChanged.OnConditionalsChanged
+        {
+            add
+            {
+                OnConditionalsUpdated += value;
+            }
+
+            remove
+            {
+                OnConditionalsUpdated -= value;
+            }
+        }
+
+
         #endregion
+
     }
 }
