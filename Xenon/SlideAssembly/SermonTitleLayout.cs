@@ -1,10 +1,7 @@
-﻿using Xenon.LayoutEngine;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Text;
+﻿using System.Drawing;
 using System.Text.Json.Serialization;
+
+using Xenon.LayoutEngine;
 
 namespace Xenon.SlideAssembly
 {
@@ -22,7 +19,7 @@ namespace Xenon.SlideAssembly
         {
             Font = new Font("Arial", 36, FontStyle.Regular);
         }
-    
+
         public SermonLayoutRenderInfo GetRenderInfo()
         {
             return new SermonLayoutRenderInfo();

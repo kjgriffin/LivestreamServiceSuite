@@ -1,11 +1,11 @@
-﻿using Xenon.SlideAssembly;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using System.Text.RegularExpressions;
-using Xenon.Renderer.ImageFilters;
+
 using Xenon.Helpers;
+using Xenon.Renderer.ImageFilters;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {

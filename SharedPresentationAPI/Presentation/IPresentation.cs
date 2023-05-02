@@ -4,16 +4,19 @@ using Configurations.FeatureConfig;
 
 using IntegratedPresenter.BMDSwitcher.Config;
 
-using System.Collections.Generic;
-using System.Drawing.Text;
+using IntegratedPresenterAPIInterop;
 
-namespace IntegratedPresenter.Main
+using VariableMarkupAttributes.Attributes;
+
+namespace SharedPresentationAPI.Presentation
 {
+    [ExposesWatchableVariables]
     public interface IPresentation
     {
         ISlide After { get; }
         CCPUConfig CCPUConfig { get; }
         ISlide Current { get; }
+        [ExposedAsVariable(nameof(CurrentSlide))]
         int CurrentSlide { get; }
         ISlide EffectiveCurrent { get; }
         string Folder { get; set; }

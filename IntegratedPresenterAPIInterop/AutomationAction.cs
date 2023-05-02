@@ -1,7 +1,6 @@
 ﻿
 using IntegratedPresenter.BMDSwitcher.Config;
 
-using System;
 using System.Text.RegularExpressions;
 
 using VariableMarkupAttributes;

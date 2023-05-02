@@ -1,21 +1,14 @@
 ﻿using DVIPProtocol.Clients.Advanced;
 using DVIPProtocol.Clients.Execution;
-using DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive;
 using DVIPProtocol.Protocol.Lib.Command.CamCTRL;
 using DVIPProtocol.Protocol.Lib.Command.PTDrive;
-using DVIPProtocol.Protocol.Lib.Inquiry;
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
 using log4net;
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CameraDriver
 {

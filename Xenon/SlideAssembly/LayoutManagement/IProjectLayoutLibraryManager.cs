@@ -1,7 +1,4 @@
-﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;

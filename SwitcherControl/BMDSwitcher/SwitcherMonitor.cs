@@ -1,9 +1,5 @@
 ﻿using BMDSwitcherAPI;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace SwitcherControl.BMDSwitcher
 {
     public delegate void SwitcherEventHandler(object sender, object args);

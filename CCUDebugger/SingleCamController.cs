@@ -1,17 +1,12 @@
 ﻿using DVIPProtocol.Clients;
 using DVIPProtocol.Protocol.ControlCommand;
+using DVIPProtocol.Protocol.ControlCommand.Cmd.Inq;
+using DVIPProtocol.Protocol.ControlCommand.Cmd.Memory;
 using DVIPProtocol.Protocol.ControlCommand.Cmd.Other;
 using DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive;
-using DVIPProtocol.Protocol.ControlCommand.Cmd.Memory;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using DVIPProtocol.Protocol.ControlCommand.Cmd.Inq;
 using DVIPProtocol.Protocol.ControlCommand.Cmd.Zoom;
+
+using System.Net;
 
 namespace CCUDebugger
 {

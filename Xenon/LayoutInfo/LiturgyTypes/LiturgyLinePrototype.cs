@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Xenon.LayoutInfo.LiturgyTypes
+﻿namespace Xenon.LayoutInfo.LiturgyTypes
 {
     /// <summary>
     /// Used to define how (inside a <see cref="Xenon.LayoutInfo.BaseTypes.TextboxLayout"/>)
@@ -17,6 +11,6 @@ namespace Xenon.LayoutInfo.LiturgyTypes
         public bool ShowSpeaker { get; set; }
         public LWJFont SpeakerFont { get; set; }
         public LWJColor SpeakerColor { get; set; }
-        public int SpeakerMargin { get; set; } 
+        public int SpeakerMargin { get; set; }
     }
 }

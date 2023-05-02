@@ -1,10 +1,9 @@
-﻿using Xenon.LayoutEngine;
-using Xenon.SlideAssembly;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+
 using Xenon.Helpers;
+using Xenon.LayoutEngine;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
@@ -31,8 +30,8 @@ namespace Xenon.Renderer
 
 
             // put name in center left
-            gfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.RegularFont, Brushes.White, Layouts.ReadingLayout.TextAera.Move(Layouts.ReadingLayout.Key.Location).Move(150, 0), GraphicsHelper.LeftVerticalCenterAlign); 
-            kgfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.RegularFont, Brushes.White, Layouts.ReadingLayout.TextAera.Move(Layouts.ReadingLayout.Key.Location).Move(150, 0), GraphicsHelper.LeftVerticalCenterAlign); 
+            gfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.RegularFont, Brushes.White, Layouts.ReadingLayout.TextAera.Move(Layouts.ReadingLayout.Key.Location).Move(150, 0), GraphicsHelper.LeftVerticalCenterAlign);
+            kgfx.DrawString(slide.Lines[0].Content[0].Data, renderInfo.RegularFont, Brushes.White, Layouts.ReadingLayout.TextAera.Move(Layouts.ReadingLayout.Key.Location).Move(150, 0), GraphicsHelper.LeftVerticalCenterAlign);
 
 
             // put reference in center right

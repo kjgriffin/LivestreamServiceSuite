@@ -1,15 +1,9 @@
-﻿using Xenon.LayoutEngine;
-using Xenon.SlideAssembly;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Shapes;
+
 using Xenon.Helpers;
+using Xenon.LayoutEngine;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {

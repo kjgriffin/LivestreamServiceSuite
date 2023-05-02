@@ -1,23 +1,20 @@
-﻿using Xenon.AssetManagment;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Windows;
-using System.IO.Compression;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Drawing;
-using System.Linq;
-using System.Diagnostics;
-using Xenon.Compiler.Suggestions;
-using System.Collections;
-using IntegratedPresenter.BMDSwitcher.Config;
+﻿using CCU.Config;
+
 using Configurations.SwitcherConfig;
+
+using IntegratedPresenter.BMDSwitcher.Config;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+
+using Xenon.AssetManagment;
+using Xenon.Compiler.Suggestions;
 using Xenon.SlideAssembly.LayoutManagement;
-using CCU.Config;
 
 namespace Xenon.SlideAssembly
 {
@@ -69,7 +66,7 @@ namespace Xenon.SlideAssembly
         }
 
 
-      
+
         internal void Clear()
         {
             Slides.Clear();
@@ -127,7 +124,7 @@ namespace Xenon.SlideAssembly
             InitializeDefaultAssets();
         }
 
-      
+
         public void InitializeDefaultAssets()
         {
 

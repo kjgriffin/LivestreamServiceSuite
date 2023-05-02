@@ -1,11 +1,7 @@
-﻿using Xenon.LayoutEngine;
-using Xenon.SlideAssembly;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using Xenon.Helpers;
+﻿using System.Collections.Generic;
 using System.IO;
+
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {

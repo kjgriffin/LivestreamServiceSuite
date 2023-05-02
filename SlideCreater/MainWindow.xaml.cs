@@ -1,43 +1,38 @@
-﻿using Microsoft.Win32;
+﻿using CCU.Config;
+
+using CommonVersionInfo;
+
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Search;
+
+using LutheRun.Parsers;
+
+using Microsoft.Win32;
+
+using SlideCreater.ViewControls;
+
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Text.Json;
-using Xenon.Compiler;
-using Xenon.Renderer;
-using Xenon.Helpers;
-using Xenon.SlideAssembly;
-using Xenon.AssetManagment;
-using System.Diagnostics;
-using SlideCreater.ViewControls;
-using Xenon.SaveLoad;
-using System.IO.Compression;
-using System.Net;
+
 using UIControls;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using Xenon.Compiler.Suggestions;
-using CommonVersionInfo;
-using System.Net.Http;
+
+using Xenon.AssetManagment;
+using Xenon.Compiler;
 using Xenon.Compiler.Formatter;
-using System.IO.MemoryMappedFiles;
-using IntegratedPresenterAPIInterop;
-using CCU.Config;
-using LutheRun.Parsers;
-using ICSharpCode.AvalonEdit.Search;
+using Xenon.Helpers;
+using Xenon.Renderer;
+using Xenon.SaveLoad;
+using Xenon.SlideAssembly;
 
 namespace SlideCreater
 {

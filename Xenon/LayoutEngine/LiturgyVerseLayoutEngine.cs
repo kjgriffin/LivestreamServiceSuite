@@ -1,10 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Controls.Ribbon.Primitives;
 
 namespace Xenon.LayoutEngine
 {
@@ -107,7 +103,7 @@ namespace Xenon.LayoutEngine
 
         public void BuildSlideLines(LiturgyLayoutRenderInfo renderInfo)
         {
-     
+
             foreach (var line in Lines)
             {
                 var par = BlockParagraphLayoutEngine.LayoutParagraph(renderInfo.TextBox, renderInfo.RegularFont, line);

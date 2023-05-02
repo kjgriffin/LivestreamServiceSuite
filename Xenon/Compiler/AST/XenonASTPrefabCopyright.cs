@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST

@@ -1,12 +1,13 @@
-﻿using Xenon.SlideAssembly;
+﻿using SixLabors.ImageSharp;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using Xenon.Compiler;
 using System.Linq;
 using System.Text.Json;
-using SixLabors.ImageSharp;
+
+using Xenon.Compiler;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {

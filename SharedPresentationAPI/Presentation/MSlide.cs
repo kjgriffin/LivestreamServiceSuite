@@ -1,21 +1,13 @@
-﻿
-using BMDSwitcherAPI;
-
-using CommonGraphics;
-
-using Integrated_Presenter.Presentation;
+﻿using CommonGraphics;
 
 using IntegratedPresenterAPIInterop;
 
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 
-namespace IntegratedPresenter.Main
+namespace SharedPresentationAPI.Presentation
 {
     public class MSlide : ISlide
     {

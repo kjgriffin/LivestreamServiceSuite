@@ -1,9 +1,4 @@
-﻿using Integrated_Presenter.Presentation;
-
-using System;
-using System.Collections.Generic;
-
-namespace IntegratedPresenter.Main
+﻿namespace SharedPresentationAPI.Presentation
 {
     internal static class PilotActionBuilder
     {

@@ -1,18 +1,11 @@
 ﻿using DVIPProtocol.Clients.Execution;
-using DVIPProtocol.Protocol.Lib.Command;
-using DVIPProtocol.Protocol.Lib.Inquiry;
 
 using log4net;
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DVIPProtocol.Clients.Advanced
 {
@@ -248,7 +241,7 @@ namespace DVIPProtocol.Clients.Advanced
                     //stream.ReadByte();
 
                     // since we're just trying to flush the buffer, do it with as few calls as possible
-                    
+
                     // when we're flushing the buffer, don't wait at all
 
                     Span<byte> _discard = new Span<byte>();

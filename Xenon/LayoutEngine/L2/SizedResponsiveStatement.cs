@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 using Xenon.Compiler.SubParsers;
-using Xenon.LayoutInfo;
 using Xenon.LayoutInfo.BaseTypes;
 
 namespace Xenon.LayoutEngine.L2

@@ -3,9 +3,6 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace UIControls

@@ -2,9 +2,6 @@
 
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
-using IntegratedPresenter.BMDSwitcher.Config;
-
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;

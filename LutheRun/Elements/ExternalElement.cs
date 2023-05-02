@@ -1,10 +1,8 @@
 ﻿using AngleSharp.Dom;
+
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
 using LutheRun.Pilot;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LutheRun.Elements
 {

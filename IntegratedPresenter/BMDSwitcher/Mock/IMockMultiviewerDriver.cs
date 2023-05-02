@@ -7,7 +7,8 @@ using CCUI_UI;
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
-using SwitcherControl.BMDSwitcher;
+using SharedPresentationAPI.Presentation;
+
 using System;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock

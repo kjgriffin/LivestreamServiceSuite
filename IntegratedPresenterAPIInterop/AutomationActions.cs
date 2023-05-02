@@ -74,6 +74,15 @@
         WatchSwitcherStateBoolVal,
         WatchSwitcherStateIntVal,
 
+        WatchStateBoolVal,
+        WatchStateIntVal,
+
+
+        SetupButtons,
+
+
+
+
     }
 
 }

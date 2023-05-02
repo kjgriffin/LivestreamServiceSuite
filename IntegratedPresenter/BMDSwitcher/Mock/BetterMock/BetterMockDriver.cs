@@ -1,7 +1,5 @@
 ﻿using ATEMSharedState.SwitcherState;
 
-using BMDSwitcherAPI;
-
 using CCU.Config;
 
 using CCUI_UI;
@@ -13,12 +11,11 @@ using Integrated_Presenter.BMDSwitcher.Mock;
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
-using SwitcherControl.BMDSwitcher;
+using SharedPresentationAPI.Presentation;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock

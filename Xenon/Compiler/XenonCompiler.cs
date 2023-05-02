@@ -1,16 +1,10 @@
-﻿using Xenon.AssetManagment;
-using Xenon.SlideAssembly;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Security.Permissions;
-using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Text.Json.Serialization;
+
 using Xenon.Compiler.AST;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler
 {

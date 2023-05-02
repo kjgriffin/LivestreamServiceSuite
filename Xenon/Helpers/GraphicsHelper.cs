@@ -1,19 +1,11 @@
-﻿using SixLabors.ImageSharp.Advanced;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.PixelFormats;
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Drawing.Text;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 
 namespace Xenon.Helpers
 {

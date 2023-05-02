@@ -1,12 +1,8 @@
-﻿using Integrated_Presenter.Presentation;
+﻿using IntegratedPresenterAPIInterop;
 
-using IntegratedPresenterAPIInterop;
-
-using System;
-using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 
-namespace IntegratedPresenter.Main
+namespace SharedPresentationAPI.Presentation
 {
     public interface ISlide
     {

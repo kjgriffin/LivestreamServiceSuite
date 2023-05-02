@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-
-using VariableMarkupAttributes;
+﻿using VariableMarkupAttributes;
 
 namespace IntegratedPresenterAPIInterop
 {
@@ -101,6 +93,23 @@ namespace IntegratedPresenterAPIInterop
                 AutomationActionArgType.String,
             },
             ExpectedVariableContents.EXPOSEDSTATE),
+            // duplicate command for backwards compatibility
+            [AutomationActions.WatchStateBoolVal] = (3, AutomationActions.WatchSwitcherStateBoolVal, "WatchStateBoolVal", new List<AutomationActionArgType>
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.Boolean,
+                AutomationActionArgType.String,
+            },
+            ExpectedVariableContents.EXPOSEDSTATE),
+            [AutomationActions.WatchStateIntVal] = (3, AutomationActions.WatchSwitcherStateIntVal, "WatchStateIntVal", new List<AutomationActionArgType>
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.Integer,
+                AutomationActionArgType.String,
+            },
+            ExpectedVariableContents.EXPOSEDSTATE),
+
+
 
             [AutomationActions.PlacePIP] = (8, AutomationActions.PlacePIP, "PlacePIP", new List<AutomationActionArgType>
             {
@@ -112,6 +121,13 @@ namespace IntegratedPresenterAPIInterop
                 AutomationActionArgType.Double,
                 AutomationActionArgType.Double,
                 AutomationActionArgType.Double,
+            },
+            ExpectedVariableContents.NONE),
+
+            [AutomationActions.SetupButtons] = (2, AutomationActions.SetupButtons, "SetupButtons", new List<AutomationActionArgType>
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.String,
             },
             ExpectedVariableContents.NONE),
         };

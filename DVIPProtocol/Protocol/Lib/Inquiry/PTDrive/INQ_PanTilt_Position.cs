@@ -1,12 +1,4 @@
-﻿using DVIPProtocol.Protocol.Lib.Command;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
+﻿namespace DVIPProtocol.Protocol.Lib.Inquiry.PTDrive
 {
     public class INQ_PanTilt_Position : IInquiry<IResponse>
     {

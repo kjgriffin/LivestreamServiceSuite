@@ -7,14 +7,9 @@ using IntegratedPresenterAPIInterop;
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Markup;
 
 using VariableMarkupAttributes;
 
@@ -348,14 +343,14 @@ namespace Integrated_Presenter.DynamicDrivers
             {
                 var allSlideActions = button.Actions.Concat(globalActions);
 
-                foreach (var action in allSlideActions.Where(x => x.Action == AutomationActions.WatchSwitcherStateBoolVal))
+                foreach (var action in allSlideActions.Where(x => x.Action == AutomationActions.WatchSwitcherStateBoolVal || x.Action == AutomationActions.WatchStateBoolVal))
                 {
                     string vname = (string)action.RawParams[2];
                     string wpath = (string)action.RawParams[0];
                     object expectation = action.RawParams[1];
                     variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Boolean);
                 }
-                foreach (var action in allSlideActions.Where(x => x.Action == AutomationActions.WatchSwitcherStateIntVal))
+                foreach (var action in allSlideActions.Where(x => x.Action == AutomationActions.WatchSwitcherStateIntVal || x.Action == AutomationActions.WatchStateIntVal))
                 {
                     string vname = (string)action.RawParams[2];
                     string wpath = (string)action.RawParams[0];

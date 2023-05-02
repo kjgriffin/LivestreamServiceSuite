@@ -10,7 +10,6 @@ using Configurations.FeatureConfig;
 
 using Integrated_Presenter.Automation;
 using Integrated_Presenter.DynamicDrivers;
-using Integrated_Presenter.Presentation;
 using Integrated_Presenter.ViewModels;
 
 using IntegratedPresenter.BMDSwitcher;
@@ -22,6 +21,8 @@ using IntegratedPresenterAPIInterop;
 using log4net;
 
 using Microsoft.Win32;
+
+using SharedPresentationAPI.Presentation;
 
 using SwitcherControl.BMDSwitcher;
 using SwitcherControl.Safe;
@@ -50,7 +51,7 @@ namespace IntegratedPresenter.Main
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider, IRaiseConditionsChanged
+    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider, IRaiseConditionsChanged, IDynamicControlProvider
     {
 
 
@@ -236,12 +237,13 @@ namespace IntegratedPresenter.Main
                                                             this,
                                                             this,
                                                             this,
-                                                            () => new Dictionary<string, WatchVariable>());
+                                                            () => new Dictionary<string, WatchVariable>(),
+                                                            this);
             // when loading config driver will re-supply automation with watched variables
-            
+
             // load the dynamic driver
             _dynamicDriver = new DynamicMatrixDriver(dynamicControlPanel, _dynamicActionEngine, this);
-            _dynamicDriver.ConfigureControls(File.ReadAllText(@"D:\Downloads\controlseg.txt"), _pres?.Folder ?? "");
+            //_dynamicDriver.ConfigureControls(File.ReadAllText(@"D:\Downloads\controlseg.txt"), _pres?.Folder ?? "");
         }
 
         private void InitActionAutomater()
@@ -259,7 +261,8 @@ namespace IntegratedPresenter.Main
                                                 this,
                                                 this,
                                                 this,
-                                                () => Presentation?.WatchedVariables);
+                                                () => Presentation?.WatchedVariables,
+                                                this);
         }
 
         private void PilotUI_OnUserRequestForManualReRun(object sender, int e)
@@ -4802,6 +4805,20 @@ namespace IntegratedPresenter.Main
         UIValue<bool> _Cond3 = new UIValue<bool>();
         UIValue<bool> _Cond4 = new UIValue<bool>();
 
+        private Dictionary<string, ExposedVariable> GetExposedVariables()
+        {
+            // currently get switcher state
+            Dictionary<string, ExposedVariable> switcherVars = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(switcherState);
+            // report presentation state??
+            Dictionary<string, ExposedVariable> presVars = new Dictionary<string, ExposedVariable>();
+            if (_pres != null)
+            {
+                presVars = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(_pres);
+            }
+
+            return new Dictionary<string, ExposedVariable>(switcherVars.Concat(presVars));
+        }
+
         private Dictionary<string, bool> GetCurrentConditionStatuses(Dictionary<string, WatchVariable> externalWatches)
         {
             var conditions = new Dictionary<string, bool>
@@ -4817,7 +4834,7 @@ namespace IntegratedPresenter.Main
             // effectively just make sure to script delays sufficient to process anything we might depend on
 
             // extract required switcher state to satisfy requests
-            var exposedVariables = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(switcherState);
+            var exposedVariables = GetExposedVariables(); // VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(switcherState);
 
             // try to find each requested value
             if (externalWatches != null)
@@ -4857,63 +4874,6 @@ namespace IntegratedPresenter.Main
 
             return conditions;
 
-        }
-
-        private Dictionary<string, bool> GetCurrentConditionStatus()
-        {
-            var conditions = new Dictionary<string, bool>
-            {
-                ["1"] = _Cond1.Value,
-                ["2"] = _Cond2.Value,
-                ["3"] = _Cond3.Value,
-                ["4"] = _Cond4.Value,
-            };
-
-            // Assumes that the curent state of the switcher is acurate
-            // i.e. doesn't immediately re-poll... perhaps this is ok??
-            // effectively just make sure to script delays sufficient to process anything we might depend on
-
-            // extract required switcher state to satisfy requests
-            var exposedVariables = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(switcherState);
-
-            // try to find each requested value
-            if (Presentation != null)
-            {
-                foreach (var watch in Presentation?.WatchedVariables)
-                {
-                    bool evaluation = false;
-                    // use reflection to find a matching value
-                    if (exposedVariables.TryGetValue(watch.Value.VPath, out var eVal))
-                    {
-                        dynamic val = eVal.Value;
-                        // process equation
-                        switch (watch.Value.VType)
-                        {
-                            case AutomationActionArgType.Integer:
-                                // yeah.... so int's are 32 bit and longs are 64 bit
-                                // so just to be safe do it with longs (even if we describe it as an int)
-                                // because some bmd switcher state uses longs
-                                evaluation = (long)val == (long)watch.Value.ExpectedVal;
-                                break;
-                            case AutomationActionArgType.String:
-                                evaluation = (string)val == (string)watch.Value.ExpectedVal;
-                                break;
-                            case AutomationActionArgType.Double:
-                                evaluation = (double)val == (double)watch.Value.ExpectedVal;
-                                break;
-                            case AutomationActionArgType.Boolean:
-                                evaluation = (bool)val == (bool)watch.Value.ExpectedVal;
-                                break;
-                        }
-                    }
-
-                    conditions[watch.Key] = evaluation;
-                }
-            }
-
-
-
-            return conditions;
         }
 
         private void FireOnConditionalsUpdated()
@@ -5471,7 +5431,34 @@ namespace IntegratedPresenter.Main
                 mock.UpdateMockCameraMovement(e);
             }
         }
+        private void clickLoadDynamicButtons(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Load Dynamic Buttons";
+            if (_pres != null)
+            {
+                ofd.InitialDirectory = _pres.Folder;
+            }
+            if (ofd.ShowDialog() == true)
+            {
+                var filetext = File.ReadAllText(ofd.FileName);
+                LoadDynamicButtons(filetext, Path.GetDirectoryName(ofd.FileName));
+            }
+        }
 
+        private void LoadDynamicButtons(string filetext, string resourcepath)
+        {
+            try
+            {
+                _dynamicDriver?.ConfigureControls(filetext, resourcepath);
+            }
+            catch (Exception)
+            {
+#if DEBUG
+                Debugger.Break();
+#endif
+            }
+        }
 
         #region ActionAutomater Providers
         IBMDSwitcherManager ISwitcherDriverProvider.switcherManager { get => switcherManager; }
@@ -5591,6 +5578,10 @@ namespace IntegratedPresenter.Main
             }
         }
 
+        void IDynamicControlProvider.ConfigureControls(string file, string resourcepath)
+        {
+            LoadDynamicButtons(file, resourcepath);
+        }
 
         #endregion
 

@@ -1,7 +1,4 @@
-﻿
-using System.Collections.Generic;
-
-using VariableMarkupAttributes;
+﻿using VariableMarkupAttributes;
 
 namespace IntegratedPresenterAPIInterop
 {
@@ -19,7 +16,7 @@ namespace IntegratedPresenterAPIInterop
             Action = stuff.action;
             ActionName = stuff.name;
             OrderedArgTypes = stuff.argtypes;
-            ParamaterContents= stuff.expectedContents;
+            ParamaterContents = stuff.expectedContents;
         }
 
         public static implicit operator AutomationActionMetadata((int nargs, AutomationActions action, string name, List<AutomationActionArgType>? argtypes, ExpectedVariableContents expectedContents) stuff)

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using GDI = System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Xenon.LayoutInfo;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+
+using Xenon.LayoutInfo;
 
 namespace Xenon.Renderer.Helpers.ImageSharp
 {

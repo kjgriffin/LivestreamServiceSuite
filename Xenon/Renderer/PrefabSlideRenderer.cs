@@ -1,15 +1,12 @@
-﻿using Xenon.Compiler;
-using Xenon.SlideAssembly;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.Versioning;
 using System.Text;
-using System.Windows.Media.Imaging;
-using Xenon.Helpers;
-using System.Linq.Expressions;
+
+using Xenon.Compiler;
 using Xenon.Compiler.AST;
-using Xenon.LayoutInfo;
+using Xenon.Helpers;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {

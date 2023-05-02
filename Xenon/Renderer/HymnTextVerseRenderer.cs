@@ -1,16 +1,14 @@
-﻿using Xenon.LayoutEngine;
-using Xenon.SlideAssembly;
-using Xenon.Helpers;
-using Xenon.LayoutInfo;
-using System.Collections.Generic;
-using Xenon.Compiler;
-using System;
-using System.Text.Json;
-using Xenon.Renderer.Helpers;
-using System.Linq;
-using Xenon.Renderer.Helpers.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp;
+
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+
+using Xenon.Compiler;
+using Xenon.LayoutInfo;
+using Xenon.Renderer.Helpers.ImageSharp;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {

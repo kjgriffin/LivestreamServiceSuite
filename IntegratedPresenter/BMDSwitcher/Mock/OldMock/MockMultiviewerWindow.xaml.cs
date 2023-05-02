@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
-using ATEMSharedState.SwitcherState;
+﻿using ATEMSharedState.SwitcherState;
 
 using CCUI_UI;
 
 using IntegratedPresenter.Main;
 
 using IntegratedPresenterAPIInterop;
+
+using SharedPresentationAPI.Presentation;
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {

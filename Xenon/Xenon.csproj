@@ -121,6 +121,7 @@
     <ProjectReference Include="..\CommonVersionInfo\CommonVersionInfo.csproj" />
     <ProjectReference Include="..\Configurations\Configurations.csproj" />
     <ProjectReference Include="..\IntegratedPresenterAPIInterop\IntegratedPresenterAPIInterop.csproj" />
+    <ProjectReference Include="..\SharedPresentationAPI\SharedPresentationAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,15 +3,11 @@
 using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using VariableMarkupAttributes.Attributes;
 
 namespace ATEMSharedState.SwitcherState
 {
-    public static class DummyLoader
+    public static class ATEMSharedState_AssemblyDummyLoader
     {
         public static void Load()
         {

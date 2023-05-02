@@ -1,18 +1,13 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Xenon.Compiler;
-using Xenon.Helpers;
 using Xenon.LayoutEngine.L2;
 using Xenon.LayoutInfo;
-using Xenon.Renderer.Helpers;
 using Xenon.Renderer.Helpers.ImageSharp;
 using Xenon.SlideAssembly;
 

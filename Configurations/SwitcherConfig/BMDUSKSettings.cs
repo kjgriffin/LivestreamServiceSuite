@@ -1,9 +1,5 @@
 ﻿using Configurations.SwitcherConfig;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace IntegratedPresenter.BMDSwitcher.Config
 {
     public class BMDUSKSettings

@@ -1,9 +1,7 @@
-﻿using System;
+﻿using LutheRun.Elements.LSB;
+
 using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
 using System.Threading.Tasks;
-using LutheRun.Elements.LSB;
 
 namespace LutheRun.Elements.Interface
 {

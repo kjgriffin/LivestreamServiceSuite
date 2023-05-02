@@ -1,22 +1,23 @@
-﻿using BMDSwitcherAPI;
+﻿using ATEMSharedState.SwitcherState;
+
+using BMDSwitcherAPI;
+
+using Configurations.SwitcherConfig;
+
 using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
+
+using log4net;
+
+using SwitcherControl.BMDSwitcher;
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using log4net;
-using System.IO;
 using System.Threading;
-using SwitcherControl.BMDSwitcher;
-using ATEMSharedState.SwitcherState;
-using Configurations.SwitcherConfig;
-using System.Diagnostics.SymbolStore;
+using System.Windows;
 
 namespace SwitcherControl.Safe
 {

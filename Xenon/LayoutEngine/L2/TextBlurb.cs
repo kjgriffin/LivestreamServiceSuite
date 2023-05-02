@@ -1,19 +1,20 @@
-﻿using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.Processing;
+﻿using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using SixLabors.Fonts;
-using Xenon.Renderer.Helpers.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 using System;
-using GDI = System.Drawing;
-using GDIT = System.Drawing.Text;
 using System.Linq;
 
 using Xenon.FontManagement;
 using Xenon.Helpers;
 using Xenon.LayoutInfo;
 using Xenon.LayoutInfo.BaseTypes;
+using Xenon.Renderer.Helpers.ImageSharp;
+
+using GDI = System.Drawing;
+using GDIT = System.Drawing.Text;
 
 namespace Xenon.LayoutEngine.L2
 {

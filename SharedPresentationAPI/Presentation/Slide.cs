@@ -1,19 +1,9 @@
-﻿
-using BMDSwitcherAPI;
+﻿using IntegratedPresenterAPIInterop;
 
-using Integrated_Presenter.Presentation;
-
-using IntegratedPresenterAPIInterop;
-
-using System;
-using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 
-namespace IntegratedPresenter.Main
+namespace SharedPresentationAPI.Presentation
 {
     public class Slide : ISlide
     {

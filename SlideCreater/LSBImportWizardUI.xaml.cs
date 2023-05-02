@@ -1,26 +1,14 @@
-﻿using AngleSharp;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
+
 using LutheRun.Parsers;
 using LutheRun.Wizard;
-
-using Microsoft.Web.WebView2.Core;
-using Microsoft.Web.WebView2.WinForms;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.Unicode;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 using Xenon.SlideAssembly;
 

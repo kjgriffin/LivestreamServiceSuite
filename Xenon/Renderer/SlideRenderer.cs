@@ -1,15 +1,12 @@
-﻿using Xenon.SlideAssembly;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using Xenon.Compiler;
-using Xenon.Renderer.ImageFilters;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Xenon.LayoutInfo;
+
 using Xenon.AssetManagment;
-using Xenon.Helpers;
+using Xenon.Compiler;
 using Xenon.Compiler.AST;
+using Xenon.Helpers;
+using Xenon.Renderer.ImageFilters;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {

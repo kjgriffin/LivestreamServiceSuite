@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AngleSharp.Dom;
+
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using AngleSharp.Dom;
+using System.Text;
 using System.Text.RegularExpressions;
-using AngleSharp;
 
 namespace LutheRun
 {

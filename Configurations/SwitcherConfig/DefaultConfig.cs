@@ -1,9 +1,9 @@
 ﻿using BMDSwitcherAPI;
+
 using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
-using System;
+
 using System.Collections.Generic;
-using System.Text;
 
 namespace Configurations.SwitcherConfig
 {

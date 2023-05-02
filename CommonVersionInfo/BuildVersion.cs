@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace CommonVersionInfo
 {
@@ -21,7 +18,7 @@ namespace CommonVersionInfo
         {
             Mode = string.Empty;
         }
- 
+
 
         public override string ToString()
         {

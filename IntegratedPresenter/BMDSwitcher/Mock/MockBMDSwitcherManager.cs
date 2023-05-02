@@ -3,8 +3,6 @@
 
 using ATEMSharedState.SwitcherState;
 
-using BMDSwitcherAPI;
-
 using CCU.Config;
 
 using CCUI_UI;
@@ -15,6 +13,8 @@ using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
 using log4net;
+
+using SharedPresentationAPI.Presentation;
 
 using SwitcherControl.BMDSwitcher;
 

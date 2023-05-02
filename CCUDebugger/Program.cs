@@ -1,9 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using CCUDebugger;
+
 using DVIPProtocol.Clients.Advanced;
 using DVIPProtocol.Protocol.Lib.Inquiry;
 
-using System.Linq;
 using System.Net;
 
 Console.WriteLine("Starting CCU Debugger!");
@@ -55,7 +55,7 @@ else
             Console.WriteLine(ex.ToString());
         }
     }
-   
+
     client.Stop();
 }
 

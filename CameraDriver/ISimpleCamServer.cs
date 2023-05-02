@@ -1,5 +1,4 @@
-﻿using DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive;
-using DVIPProtocol.Protocol.Lib.Command.PTDrive;
+﻿using DVIPProtocol.Protocol.Lib.Command.PTDrive;
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
 using log4net;

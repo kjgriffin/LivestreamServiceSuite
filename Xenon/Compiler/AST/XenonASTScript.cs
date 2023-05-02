@@ -1,19 +1,23 @@
-﻿using Xenon.SlideAssembly;
+﻿using ATEMSharedState.SwitcherState;
+
+using IntegratedPresenterAPIInterop;
+
+using SharedPresentationAPI;
+
 using System;
-using System.Diagnostics;
-using System.Runtime;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
+
+using VariableMarkupAttributes.Attributes;
+
+using Xenon.AssetManagment;
 using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
-using System.Linq;
-using Xenon.AssetManagment;
-using System.Text.RegularExpressions;
-using IntegratedPresenterAPIInterop;
-using VariableMarkupAttributes.Attributes;
-using System.CodeDom;
-using System.Reflection;
-using ATEMSharedState.SwitcherState;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
@@ -425,7 +429,8 @@ namespace Xenon.Compiler.AST
                         // for now just bmd state exposed
                         // eventually find all assemblies loaded and extract
                         //DummyLoader
-                        DummyLoader.Load();
+                        ATEMSharedState_AssemblyDummyLoader.Load();
+                        SharedPresentationAPI_AssemblyDummyLoader.Load();
 
                         foreach (var ass in AppDomain.CurrentDomain.GetAssemblies().OrderBy(x => x.FullName))
                         {

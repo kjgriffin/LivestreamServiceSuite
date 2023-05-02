@@ -20,7 +20,7 @@ namespace CameraDriver
         ManualResetEvent _wake = new ManualResetEvent(false);
 
         Stopwatch timer = new Stopwatch();
-        
+
         object _lock = new object();
         HashSet<Guid> _enquedItems = new HashSet<Guid>();
         Dictionary<Guid, WorkItemDelegate> _workItems = new Dictionary<Guid, WorkItemDelegate>();
@@ -38,7 +38,7 @@ namespace CameraDriver
         private void Run_Internal()
         {
             // setup all the timers etc.
-             
+
             while (true)
             {
 

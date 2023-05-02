@@ -2,21 +2,13 @@
 
 using Microsoft.Win32;
 
+using SharedPresentationAPI.Presentation;
+
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace IntegratedPresenter.Main
 {
@@ -297,7 +289,7 @@ namespace IntegratedPresenter.Main
                 openFileDialog.Filter = "Image (*.png)|*.png";
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    Slide.KeySource = openFileDialog.FileName; 
+                    Slide.KeySource = openFileDialog.FileName;
                 }
                 else
                 {
@@ -317,7 +309,7 @@ namespace IntegratedPresenter.Main
 
         private void UpdateDurationUI()
         {
-            if ((Slide?.Type == SlideType.Video || Slide?.Type == SlideType.ChromaKeyVideo ) && mediapreview.MediaLength != TimeSpan.Zero)
+            if ((Slide?.Type == SlideType.Video || Slide?.Type == SlideType.ChromaKeyVideo) && mediapreview.MediaLength != TimeSpan.Zero)
             {
                 tbDuration.Text = mediapreview.MediaLength.ToString("\\T\\-mm\\:ss");
                 tbDuration.Visibility = Visibility.Visible;
@@ -369,12 +361,13 @@ namespace IntegratedPresenter.Main
         public string SourceIDNum
         {
             get => sourceIdNum;
-            set {
+            set
+            {
                 sourceIdNum = value;
                 tbNum1.Text = sourceIdNum;
                 tbNum2.Text = sourceIdNum;
             }
-        } 
+        }
 
         private void ClickChromaStillMode(object sender, RoutedEventArgs e)
         {

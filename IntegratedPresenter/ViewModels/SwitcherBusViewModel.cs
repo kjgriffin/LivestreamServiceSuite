@@ -1,9 +1,7 @@
 ﻿using ATEMSharedState.SwitcherState;
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 namespace IntegratedPresenter.ViewModels
 {
@@ -43,7 +41,7 @@ namespace IntegratedPresenter.ViewModels
         private bool lit;
         public bool Lit
         {
-            get => lit; 
+            get => lit;
             set
             {
                 lit = value;

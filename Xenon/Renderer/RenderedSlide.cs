@@ -1,10 +1,9 @@
-﻿using Xenon.SlideAssembly;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+
 using System.IO;
+
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
@@ -59,7 +58,7 @@ namespace Xenon.Renderer
                 BitmapPNGMS = this.BitmapPNGMS,
                 KeyBitmap = this.KeyBitmap,
                 KeyPNGMS = this.KeyPNGMS,
-                SourceLineRef= this.SourceLineRef,
+                SourceLineRef = this.SourceLineRef,
             };
         }
     }

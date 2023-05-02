@@ -3,18 +3,13 @@ using SixLabors.ImageSharp.PixelFormats;
 
 using System;
 using System.Collections.Generic;
-using GDI = System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.Helpers;
 using Xenon.LayoutInfo;
 using Xenon.Renderer.Helpers.ImageSharp;
 using Xenon.SlideAssembly;
-using Xenon.AssetManagment;
 
 namespace Xenon.Renderer
 {
@@ -76,24 +71,24 @@ namespace Xenon.Renderer
             foreach (var image in layout.Images)
             {
                 if (i < imageNames.Count)
-                try
-                {
-                    Image<Bgra32> src = Image.Load<Bgra32>(projassets.GetProjectAssetByName(imageNames[i]).CurrentPath);
-                    CommonAdvancedImageDrawingBoxRenderer.Render(ibmp, ikbmp, image, src);
-                }
-                catch (Exception ex)
-                {
-                    messages.Add(new XenonCompilerMessage
+                    try
                     {
-                        ErrorMessage = "Error loading image",
-                        ErrorName = "Error Loading Asset",
-                        Generator = "AdvancedImageSlideRenderer",
-                        Inner = ex.Message,
-                        Level = Compiler.XenonCompilerMessageType.Error,
-                        Token = imageNames[i]
-                    });
-                    return null;
-                }
+                        Image<Bgra32> src = Image.Load<Bgra32>(projassets.GetProjectAssetByName(imageNames[i]).CurrentPath);
+                        CommonAdvancedImageDrawingBoxRenderer.Render(ibmp, ikbmp, image, src);
+                    }
+                    catch (Exception ex)
+                    {
+                        messages.Add(new XenonCompilerMessage
+                        {
+                            ErrorMessage = "Error loading image",
+                            ErrorName = "Error Loading Asset",
+                            Generator = "AdvancedImageSlideRenderer",
+                            Inner = ex.Message,
+                            Level = Compiler.XenonCompilerMessageType.Error,
+                            Token = imageNames[i]
+                        });
+                        return null;
+                    }
                 i++;
             }
 

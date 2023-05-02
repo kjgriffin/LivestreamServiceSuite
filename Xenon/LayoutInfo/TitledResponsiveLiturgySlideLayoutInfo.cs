@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Xenon.LayoutInfo.BaseTypes;
 using Xenon.Renderer;
@@ -16,7 +12,7 @@ namespace Xenon.LayoutInfo
         public List<LWJPolygon> Shapes { get; set; } = new List<LWJPolygon>();
         public List<TextboxLayout> TitleBoxes { get; set; } = new List<TextboxLayout>();
         public LiturgyTextboxLayout ContentBox { get; set; } = new LiturgyTextboxLayout();
-        
+
 
         public override string GetDefaultJson()
         {
