@@ -268,7 +268,11 @@ namespace Xenon.Renderer
                     }
 
                 }
-
+                else if (rs.RenderedAs == "RawText")
+                {
+                    var key = Regex.Match(rs.RenderedAs, @"RawResource_(?<key>\d+)").Groups["key"].Value;
+                    presDescription.RawTextResources[rs.Name] = rs.Text;
+                }
 
             }
 

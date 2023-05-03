@@ -84,6 +84,7 @@ namespace Integrated_Presenter.Automation
 
         }
 
+        /*
         public async Task<ActionResult> PerformAutomationAction(AutomationAction task)
         {
             if (!task.MeetsConditionsToRun(_automationConditionProvider.GetCurrentConditionStatus(GetWatches())))
@@ -388,6 +389,7 @@ namespace Integrated_Presenter.Automation
             return new ActionResult(TrackedActionState.Done, continueProcessing);
 
         }
+        */
 
     }
 }

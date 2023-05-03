@@ -21,6 +21,11 @@ namespace Xenon.Renderer
                 created.Add($"Resource_{rs.Name}{rs.CopyExtension}");
             }
 
+            if (rs.RenderedAs == "RawText")
+            {
+                created.Add($"RawResource_{rs.Name}{rs.CopyExtension}");
+            }
+
             if (rs.MediaType == MediaType.Image)
             {
                 string filename = $"{rs.Number}_{rs.RenderedAs}.png";
@@ -104,6 +109,13 @@ namespace Xenon.Renderer
                     // for now it would be done for Image type slides, with an overriden renderedas
                     string filename = Path.Join(directory, $"Resource_{rs.Name}{rs.CopyExtension}");
                     File.Copy(rs.AssetPath, filename, true);
+                    continue;
+                }
+
+                if (rs.RenderedAs == "RawText")
+                {
+                    string filename = Path.Join(directory, $"RawResource_{rs.Name}{rs.CopyExtension}");
+                    File.WriteAllText(filename, rs.Text);
                     continue;
                 }
 

@@ -33,6 +33,8 @@ namespace SharedPresentationAPI.Presentation
         IntegratedPresenterFeatures UserConfig { get; }
         Dictionary<string, WatchVariable> WatchedVariables { get; }
 
+        Dictionary<string, string> RawTextResources { get; }
+
         bool Create(string folder);
         void NextSlide();
         void PrevSlide();

@@ -5452,7 +5452,7 @@ namespace IntegratedPresenter.Main
             {
                 _dynamicDriver?.ConfigureControls(filetext, resourcepath);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 #if DEBUG
                 Debugger.Break();
@@ -5580,7 +5580,27 @@ namespace IntegratedPresenter.Main
 
         void IDynamicControlProvider.ConfigureControls(string file, string resourcepath)
         {
-            LoadDynamicButtons(file, resourcepath);
+            // call assumes its running from presentation
+            // so point it there
+
+            string text = "";
+            string path = resourcepath;
+            if (resourcepath == "%pres%")
+            {
+                if (_pres != null)
+                {
+                    path = _pres?.Folder ?? resourcepath;
+                    if (_pres.RawTextResources.TryGetValue(file, out var ftext))
+                    {
+                        text = ftext;
+                    }
+                }
+            }
+
+            if (text != string.Empty)
+            {
+                LoadDynamicButtons(text, path);
+            }
         }
 
         #endregion

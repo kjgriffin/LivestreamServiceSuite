@@ -4,44 +4,14 @@ using Integrated_Presenter.ViewModels.MatrixControls;
 using IntegratedPresenter.Main;
 
 using IntegratedPresenterAPIInterop;
+using IntegratedPresenterAPIInterop.DynamicDrivers;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-
-using VariableMarkupAttributes;
 
 namespace Integrated_Presenter.DynamicDrivers
 {
-
-    internal interface IDynamicDriver
-    {
-        static string ParseConfigID(string rawText)
-        {
-            var lines = rawText.Split(Environment.NewLine);
-            if (lines.FirstOrDefault().StartsWith("dynamic"))
-            {
-                var match = Regex.Match(lines.FirstOrDefault(), "dynamic:(?<module>.*);");
-                if (match.Success)
-                {
-                    return match.Groups["module"].Value;
-                }
-            }
-            return string.Empty;
-        }
-
-        bool SupportsConfig(string configID);
-        void ConfigureControls(string rawText, string resourceFolder);
-        void ClearControls();
-    }
-
-    internal interface IRaiseConditionsChanged
-    {
-        event EventHandler OnConditionalsChanged;
-        Dictionary<string, bool> GetConditionals(Dictionary<string, WatchVariable> watches);
-    }
 
     internal class DynamicMatrixDriver : IDynamicDriver
     {
@@ -92,7 +62,17 @@ namespace Integrated_Presenter.DynamicDrivers
                     bool run = SumOfProductExpression.EvaluateExpression(dv.expr, cstate);
                     if (run)
                     {
-                        _ui.UpdateButton(btn.X, btn.Y, dv.pkey, dv.value);
+                        if (!_ui.CheckAccess())
+                        {
+                            _ui.Dispatcher.Invoke(() =>
+                            {
+                                _ui.UpdateButton(btn.X, btn.Y, dv.pkey, dv.value);
+                            });
+                        }
+                        else
+                        {
+                            _ui.UpdateButton(btn.X, btn.Y, dv.pkey, dv.value);
+                        }
                     }
                 }
             }
@@ -135,7 +115,18 @@ namespace Integrated_Presenter.DynamicDrivers
                 bool enabled = false;
 
                 // dump in defaults for now
-                _ui.InstallButton(button.X, button.Y, top, bottom, backcolor, hovercolor, enabled);
+                if (!_ui.CheckAccess())
+                {
+                    _ui.Dispatcher.Invoke(() =>
+                    {
+                        _ui.InstallButton(button.X, button.Y, top, bottom, backcolor, hovercolor, enabled);
+                    });
+                }
+                else
+                {
+                    _ui.InstallButton(button.X, button.Y, top, bottom, backcolor, hovercolor, enabled);
+                }
+
             }
             // perform update of all
             DrawButtons();
@@ -145,224 +136,6 @@ namespace Integrated_Presenter.DynamicDrivers
         {
             return configID == "matrix(4x3)";
         }
-    }
-
-    public class DynamicControlTButtonDefinition
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public List<(string pkey, string value, SumOfProductExpression expr)> DrawValues { get; set; } = new List<(string pkey, string value, SumOfProductExpression expr)>();
-        public List<AutomationAction> Actions { get; set; } = new List<AutomationAction>();
-    }
-
-    internal static class DynamicControlTemplateParser
-    {
-        private static bool TryFind(this string s, ref int startIndex, string match)
-        {
-            if (s.Length - startIndex - match.Length > 0)
-            {
-                var sub = s.Substring(startIndex, match.Length);
-                if (sub == match)
-                {
-                    startIndex += match.Length;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private static int ExtractMatchedBraces(string input, int sindex, out string inside)
-        {
-            // starts at sindex within input
-            // searches for initial brace
-            // searches for matching closing brace
-
-            bool open = false;
-            bool close = false;
-            int depth = 0;
-            StringBuilder sb = new StringBuilder();
-
-            while (sindex < input.Length)
-            {
-                if (input[sindex] == '{')
-                {
-                    if (depth == 0)
-                    {
-                        open = true;
-                    }
-                    depth++;
-                }
-                if (input[sindex] == '}')
-                {
-                    depth--;
-                    if (depth == 0)
-                    {
-                        close = true;
-                    }
-                }
-
-                if (open)
-                {
-                    sb.Append(input[sindex]);
-                }
-
-                if (open && close)
-                {
-                    inside = sb.ToString();
-                    return sindex;
-                }
-
-                sindex++;
-            }
-            inside = sb.ToString();
-            return sindex;
-        }
-
-        public static List<(int, int, string)> FindButtonEntries(string config)
-        {
-            List<(int, int, string)> result = new List<(int, int, string)>();
-            int index = 0;
-            while (index < config.Length)
-            {
-                // find definition of button
-                if (config.TryFind(ref index, "[TButton]"))
-                {
-                    // expect
-                    int x = int.Parse(config.Substring(index++, 1));
-                    index++;
-                    int y = int.Parse(config.Substring(index++, 1));
-                    string draw;
-                    index = ExtractMatchedBraces(config, index, out var btntxt);
-                    result.Add((x, y, btntxt));
-                }
-                else
-                {
-                    index++;
-                }
-            }
-            return result;
-        }
-
-        public static string FindGlobalConditions(string config)
-        {
-            string globals = "";
-
-            int index = 0;
-            while (index < config.Length)
-            {
-                // find definition of button
-                if (config.TryFind(ref index, "[Globals]"))
-                {
-                    index = ExtractMatchedBraces(config, index, out globals);
-                    if (globals.Length > 1)
-                    {
-                        globals = globals.Remove(0, 1);
-                        globals = globals.Remove(globals.Length - 1, 1);
-                        globals = globals.Trim();
-                    }
-                    return globals;
-                }
-                else
-                {
-                    index++;
-                }
-            }
-
-
-            return globals;
-        }
-
-        public static DynamicControlTButtonDefinition ParseButtonEntry((int x, int y, string body) entry, string resourcefolder)
-        {
-            string draw = "";
-            string actions = "";
-            int i = 0;
-            while (i < entry.body.Length)
-            {
-                if (entry.body.TryFind(ref i, "draw="))
-                {
-                    ExtractMatchedBraces(entry.body, i, out draw);
-                    if (draw.Length > 1)
-                    {
-                        draw = draw.Remove(0, 1);
-                        draw = draw.Remove(draw.Length - 1, 1);
-                        draw = draw.Trim();
-                    }
-                }
-                if (entry.body.TryFind(ref i, "fire="))
-                {
-                    ExtractMatchedBraces(entry.body, i, out actions);
-                    if (actions.Length > 1)
-                    {
-                        actions = actions.Remove(0, 1);
-                        actions = actions.Remove(actions.Length - 1, 1);
-                        actions = actions.Trim();
-                    }
-                }
-                i++;
-            }
-
-            DynamicControlTButtonDefinition def = new DynamicControlTButtonDefinition();
-
-            def.X = entry.x;
-            def.Y = entry.y;
-
-            // parse script
-            if (ActionLoader.TryLoadActions(actions, resourcefolder, out var loadedActions))
-            {
-                def.Actions = loadedActions.Actions.Select(x => x.Action).ToList();
-            }
-
-            // parse draw
-            var draws = draw.Split(Environment.NewLine);
-            foreach (var d in draws)
-            {
-                // expected format is: <cond>VAR=val;
-                var match = Regex.Match(d, "(<(?<cond>.*)>)?(?<var>\\w+)=(?<val>.*);");
-                if (match.Success)
-                {
-                    SumOfProductExpression expr = new SumOfProductExpression();
-                    if (match.Groups["cond"].Value.Length > 0)
-                    {
-                        expr = SumOfProductExpression.Parse(match.Groups["cond"].Value);
-                    }
-                    def.DrawValues.Add((match.Groups["var"].Value, match.Groups["val"].Value, expr));
-                }
-            }
-
-
-            return def;
-        }
-
-        public static Dictionary<string, WatchVariable> ComputeAggregateWatchVariables(List<DynamicControlTButtonDefinition> buttons, List<AutomationAction> globalActions)
-        {
-            // find every slide with actions the require watches
-            Dictionary<string, WatchVariable> variables = new Dictionary<string, WatchVariable>();
-
-            foreach (var button in buttons)
-            {
-                var allSlideActions = button.Actions.Concat(globalActions);
-
-                foreach (var action in allSlideActions.Where(x => x.Action == AutomationActions.WatchSwitcherStateBoolVal || x.Action == AutomationActions.WatchStateBoolVal))
-                {
-                    string vname = (string)action.RawParams[2];
-                    string wpath = (string)action.RawParams[0];
-                    object expectation = action.RawParams[1];
-                    variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Boolean);
-                }
-                foreach (var action in allSlideActions.Where(x => x.Action == AutomationActions.WatchSwitcherStateIntVal || x.Action == AutomationActions.WatchStateIntVal))
-                {
-                    string vname = (string)action.RawParams[2];
-                    string wpath = (string)action.RawParams[0];
-                    object expectation = action.RawParams[1];
-                    variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Integer);
-                }
-            }
-
-
-            return variables;
-        }
-
     }
 
 }

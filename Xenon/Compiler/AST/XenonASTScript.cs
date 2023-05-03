@@ -103,6 +103,11 @@ namespace Xenon.Compiler.AST
                 {
                     src = Regex.Replace(src, $"%{match.Groups["var"].Value}%", project.BMDSwitcherConfig.Routing.FirstOrDefault(x => x.ButtonName == match.Groups["var"].Value).PhysicalInputId.ToString());
                 }
+                else if (match?.Groups["var"].Value == "pres")
+                {
+                    // this is OK
+                    // leave it
+                }
                 else
                 {
                     Logger.Log(new XenonCompilerMessage()

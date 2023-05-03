@@ -38,7 +38,8 @@ namespace Xenon.Renderer
             new ResponsiveLiturgyRenderer(),
             new HymnTextVerseRenderer(),
             new AdvancedImageSlideRenderer(),
-            new ComplexShapeImageAndTextRenderer()
+            new ComplexShapeImageAndTextRenderer(),
+            new RawTextRenderer(),
         };
 
         public ProjectAsset GetProjectAssetByName(string assetName)

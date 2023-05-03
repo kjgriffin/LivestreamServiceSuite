@@ -254,6 +254,14 @@ namespace Xenon.Compiler.AST
                 expr.Command = (IXenonASTCommand)resource.Compile(Lexer, Logger, parent);
                 return expr;
             }
+            if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.DynamicControllerDef]))
+            {
+                XenonASTDynamicController resource = new XenonASTDynamicController();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.DynamicControllerDef]);
+                expr.Command = (IXenonASTCommand)resource.Compile(Lexer, Logger, parent);
+                return expr;
+            }
+
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Script]))
             {
                 XenonASTScript script = new XenonASTScript();

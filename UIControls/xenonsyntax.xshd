@@ -137,6 +137,7 @@
 			<Word>#customdraw</Word>
 			<Word>#complextext</Word>
 			<Word>#tlit</Word>
+			<Word>#dynamiccontroller</Word>
 			<!-- ... -->
 		</Keywords>
 	</RuleSet>

@@ -226,6 +226,20 @@ namespace SharedPresentationAPI.Presentation
                 }
             }
 
+            // load raw text resources
+            files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"RawResource_.+\.txt").Success).ToList();
+            foreach (var file in files)
+            {
+                var key = Regex.Match(file, @"RawResource_(?<key>.+)\.txt").Groups["key"].Value;
+                using (StreamReader sr = new StreamReader(file))
+                {
+                    // load the pilot actions...
+                    var src = sr.ReadToEnd();
+                    RawTextResources[key] = src;
+                }
+            }
+
+
             ComputeAggregateWatchVariables();
 
             return false;
@@ -300,6 +314,7 @@ namespace SharedPresentationAPI.Presentation
             }
         }
 
+        public Dictionary<string, string> RawTextResources { get; internal set; } = new Dictionary<string, string>();
 
         public void NextSlide()
         {

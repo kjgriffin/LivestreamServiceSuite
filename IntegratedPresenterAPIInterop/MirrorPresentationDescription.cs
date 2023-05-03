@@ -12,6 +12,7 @@
     public class MirrorPresentationDescription
     {
         public List<MirrorSlide> Slides { get; set; } = new List<MirrorSlide>();
+        public Dictionary<string, string> RawTextResources { get; set; } = new Dictionary<string, string>();
         public string HeavyResourcePath { get; set; } = "";
 
         public string BMDCfgFile { get; set; } = "";

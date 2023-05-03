@@ -21,6 +21,7 @@
 
         Script,
         ResourceCopy,
+        RawTextFile,
         StitchedImage,
         ShapesAndTexts,
         ResponsiveLiturgy,

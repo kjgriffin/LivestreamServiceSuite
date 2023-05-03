@@ -178,6 +178,9 @@ namespace SharedPresentationAPI.Presentation
             // ignore user config
 
 
+            // bulk copy raw resources
+            pres.RawTextResources = presPackage.RawTextResources;
+
             pres.ComputeAggregateWatchVariables();
             return pres;
         }

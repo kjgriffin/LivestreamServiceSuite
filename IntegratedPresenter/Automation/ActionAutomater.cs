@@ -351,7 +351,7 @@ namespace Integrated_Presenter.Automation
                             break;
                         }
                         _logger.Debug($"(PerformAutomationAction) -- setup buttons from file: ${task.RawParams[0]} @{task.RawParams[1]}");
-
+                        _dynamicControlProvider.ConfigureControls((string)task.RawParams[0], (string)task.RawParams[1]);
                         break;
 
 
