@@ -5442,15 +5442,15 @@ namespace IntegratedPresenter.Main
             if (ofd.ShowDialog() == true)
             {
                 var filetext = File.ReadAllText(ofd.FileName);
-                LoadDynamicButtons(filetext, Path.GetDirectoryName(ofd.FileName));
+                LoadDynamicButtons(filetext, Path.GetDirectoryName(ofd.FileName), true);
             }
         }
 
-        private void LoadDynamicButtons(string filetext, string resourcepath)
+        private void LoadDynamicButtons(string filetext, string resourcepath, bool overwriteAll)
         {
             try
             {
-                _dynamicDriver?.ConfigureControls(filetext, resourcepath);
+                _dynamicDriver?.ConfigureControls(filetext, resourcepath, overwriteAll);
             }
             catch (Exception ex)
             {
@@ -5578,7 +5578,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        void IDynamicControlProvider.ConfigureControls(string file, string resourcepath)
+        void IDynamicControlProvider.ConfigureControls(string file, string resourcepath, bool overwriteAll)
         {
             // call assumes its running from presentation
             // so point it there
@@ -5599,7 +5599,7 @@ namespace IntegratedPresenter.Main
 
             if (text != string.Empty)
             {
-                LoadDynamicButtons(text, path);
+                LoadDynamicButtons(text, path, overwriteAll);
             }
         }
 

@@ -10,11 +10,11 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    class PrefabSlideRenderer
+    class PrefabSlideRenderer : ISlideRenderer
     {
         public SlideLayout Layouts { get; set; }
 
-        public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages)
+        public RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages, ISlideRendertimeInfoProvider info)
         {
             RenderedSlide res = new RenderedSlide();
             res.AssetPath = "";
@@ -90,7 +90,7 @@ namespace Xenon.Renderer
                     case PrefabSlides.Script_LiturgyOff:
                     case PrefabSlides.Script_OrganIntro:
                         ScriptRenderer sr = new ScriptRenderer();
-                        return sr.RenderSlide(slide, messages);
+                        return sr.RenderSlide(slide, messages, info);
                 }
 
             }
@@ -115,6 +115,14 @@ namespace Xenon.Renderer
 
             res.Bitmap = bmp.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>();
             return res;
+        }
+
+        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        {
+            if (slide.Format == SlideFormat.Prefab)
+            {
+                result = RenderSlide(slide, Messages, info);
+            }
         }
     }
 }

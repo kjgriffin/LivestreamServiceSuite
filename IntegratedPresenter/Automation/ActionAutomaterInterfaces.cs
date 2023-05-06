@@ -15,7 +15,7 @@ namespace Integrated_Presenter.Automation
 
     internal interface IDynamicControlProvider
     {
-        void ConfigureControls(string file, string resourcepath);
+        void ConfigureControls(string file, string resourcepath, bool overwriteAll);
     }
     internal interface ISwitcherDriverProvider
     {

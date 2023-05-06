@@ -41,6 +41,12 @@ namespace SlideCreater.ViewControls
                         tbScriptText.Text = value.Text;
                         bHasScriptTag.Visibility = Visibility.Visible;
                     }
+                    else if (value.MediaType == Xenon.SlideAssembly.MediaType.Empty && !string.IsNullOrEmpty(value?.Text))
+                    {
+                        // still show text
+                        tbScriptText.Text = value.Text;
+                        bHasScriptTag.Visibility = Visibility.Collapsed;
+                    }
                     else
                     {
                         tbScriptText.Text = "";

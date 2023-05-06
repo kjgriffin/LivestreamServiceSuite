@@ -345,13 +345,13 @@ namespace Integrated_Presenter.Automation
                         break;
 
                     case AutomationActions.SetupButtons:
-                        if (task.RawParams.Count != 2)
+                        if (task.RawParams.Count != 3)
                         {
                             _logger.Debug($"(PerformAutomationAction) -- ABORT (bad params) setup buttons from file");
                             break;
                         }
                         _logger.Debug($"(PerformAutomationAction) -- setup buttons from file: ${task.RawParams[0]} @{task.RawParams[1]}");
-                        _dynamicControlProvider.ConfigureControls((string)task.RawParams[0], (string)task.RawParams[1]);
+                        _dynamicControlProvider.ConfigureControls((string)task.RawParams[0], (string)task.RawParams[1], (bool)task.RawParams[2]);
                         break;
 
 

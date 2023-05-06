@@ -21,7 +21,7 @@ namespace Integrated_Presenter.DynamicDrivers
         }
 
         bool SupportsConfig(string configID);
-        void ConfigureControls(string rawText, string resourceFolder);
+        void ConfigureControls(string rawText, string resourceFolder, bool overwriteAll);
         void ClearControls();
     }
 

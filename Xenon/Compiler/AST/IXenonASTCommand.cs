@@ -5,6 +5,11 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
+    internal interface IXenonASTCommandPostGenerateWithInfo
+    {
+
+    }
+
     internal interface IXenonASTCommand : IXenonASTElement
     {
 

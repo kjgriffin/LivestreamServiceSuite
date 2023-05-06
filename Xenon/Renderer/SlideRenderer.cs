@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Markup;
 
 using Xenon.AssetManagment;
 using Xenon.Compiler;
@@ -10,7 +13,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    class SlideRenderer : IAssetResolver
+    class SlideRenderer : IAssetResolver, ISlideRendertimeInfoProvider
     {
         Project _project { get; set; }
 
@@ -25,7 +28,6 @@ namespace Xenon.Renderer
         LiturgyVerseSlideRenderer lvsr = new LiturgyVerseSlideRenderer();
         AnthemTitleSlideRenderer atsr = new AnthemTitleSlideRenderer();
         CopySlideRenderer csr = new CopySlideRenderer();
-        ScriptRenderer sr = new ScriptRenderer();
         ImageFilterRenderer ifr = new ImageFilterRenderer();
 
         private List<ISlideRenderer> Renderers = new List<ISlideRenderer>
@@ -40,6 +42,8 @@ namespace Xenon.Renderer
             new AdvancedImageSlideRenderer(),
             new ComplexShapeImageAndTextRenderer(),
             new RawTextRenderer(),
+            new ScriptRenderer(),
+            new PrefabSlideRenderer(),
         };
 
         public ProjectAsset GetProjectAssetByName(string assetName)
@@ -124,7 +128,7 @@ namespace Xenon.Renderer
                 // this will enable future features
                 // in addition to what we have now 'full slide renderers' we may want to add 'post renderers' that modify exisitng slides
                 // this would allow that... though we'd need to ensure a pass order
-                render.VisitSlideForRendering(slide, this, Messages, ref result);
+                render.VisitSlideForRendering(slide, this, this, Messages, ref result);
             }
             // TODO: remove once we switch everything over to the new way
             if (result == null)
@@ -178,9 +182,10 @@ namespace Xenon.Renderer
                     //return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide, Messages);
                     return null;
                 case SlideFormat.Prefab:
-                    return psr.RenderSlide(slide, Messages);
+                    //return psr.RenderSlide(slide, Messages);
                 case SlideFormat.Script:
-                    return sr.RenderSlide(slide, Messages);
+                    //return sr.RenderSlide(slide, Messages);
+                    return null;
                 case SlideFormat.ResourceCopy:
                     return csr.RenderSlide(slide, Messages);
                 default:
@@ -188,5 +193,47 @@ namespace Xenon.Renderer
             }
         }
 
+        public int FindSlideNumber(string reference)
+        {
+            // parse reference
+            var match = Regex.Match(reference, @"%slide\.num\.(?<label>.*)\.(?<num>\d+)%");
+            if (match.Success)
+            {
+                int num = int.Parse(match.Groups["num"].Value);
+                string label = match.Groups["label"].Value;
+
+                // peek into the project
+                // find all slides exposing a slide label
+                // dump 'er in
+                List<Slide> candidates = new List<Slide>();
+
+                foreach (var slide in _project.Slides)
+                {
+                    if (slide.Data.TryGetValue(XenonASTExpression.DATAKEY_CMD_SOURCESLIDENUM_LABELS, out var d))
+                    {
+                        var data = d as List<string>;
+                        if (data != null && data.Contains(label))
+                        {
+                            candidates.Add(slide);
+                        }
+                    }
+                }
+
+                // try find slide
+                var orderedSlides = candidates.OrderBy(x => x.Number).ToList();
+                if (num < 0)
+                {
+                    orderedSlides.Reverse();
+                    num -= 1;
+                }
+                if (num < orderedSlides.Count)
+                {
+                    return orderedSlides[num].Number;
+                }
+
+            }
+
+            return 0;
+        }
     }
 }

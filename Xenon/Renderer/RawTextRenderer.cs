@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Xenon.Compiler;
@@ -10,13 +11,39 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
+    internal class CommonTextContentSlideVariableReplacer
+    {
+        public static string ReplaceVariablesInText(string input, ISlideRendertimeInfoProvider info)
+        {
+            // think this can be limited to single pass replacement
+            // i.e. don't need recursive replacements
+
+            var matches = Regex.Matches(input, @"%slide\.num\.(.*)\.\d+%");
+            foreach (Match match in matches)
+            {
+                int i = info.FindSlideNumber(match.Value);
+                input = input.Replace(match.Value, i.ToString());
+            }
+            //while (matches.Any())
+            //{
+            //    // replace it
+            //    int i = info.FindSlideNumber(matches[0].Value);
+            //    input = Regex.Replace(input, @"%slide\.num\.(.*)\.\d+%", i.ToString());
+
+            //    matches = Regex.Matches(input, @"%slide\.num\.(.*)\.\d+%");
+            //}
+
+            return input;
+        }
+    }
+
     internal class RawTextRenderer : ISlideRenderer
     {
 
         public static string DATAKEY_KEYNAME = "keyname";
         public static string DATAKEY_RAWTEXT = "rawtext";
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
         {
             if (slide.Format == SlideFormat.RawTextFile)
             {
@@ -35,7 +62,7 @@ namespace Xenon.Renderer
 
                 if (slide.Data.TryGetValue(DATAKEY_RAWTEXT, out var text))
                 {
-                    result.Text = (string)text;
+                    result.Text = CommonTextContentSlideVariableReplacer.ReplaceVariablesInText((string)text, info);
                 }
             }
         }

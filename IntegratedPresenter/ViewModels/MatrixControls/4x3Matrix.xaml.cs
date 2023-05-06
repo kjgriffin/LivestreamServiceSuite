@@ -23,13 +23,7 @@ namespace Integrated_Presenter.ViewModels.MatrixControls
         public _4x3Matrix()
         {
             InitializeComponent();
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    RemoveButton(i, j);
-                }
-            }
+            ClearMatrix();
         }
 
         public void InstallButton(int x, int y, string top, string bottom, string bcolor, string hcolor, bool enabled)
@@ -145,6 +139,16 @@ namespace Integrated_Presenter.ViewModels.MatrixControls
             return Colors.Black;
         }
 
+        internal void ClearMatrix()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    RemoveButton(i, j);
+                }
+            }
 
+        }
     }
 }

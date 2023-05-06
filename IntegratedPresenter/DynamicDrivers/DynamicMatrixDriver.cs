@@ -83,7 +83,7 @@ namespace Integrated_Presenter.DynamicDrivers
 
         }
 
-        public void ConfigureControls(string rawText, string resourcefolder)
+        public void ConfigureControls(string rawText, string resourcefolder, bool overwriteAll)
         {
             // parse it
             var entries = DynamicControlTemplateParser.FindButtonEntries(rawText);
@@ -103,11 +103,19 @@ namespace Integrated_Presenter.DynamicDrivers
             // inject watches into automater
             _actionEngine.ProvideWatchInfo(() => _watches);
 
-            _buttons.Clear();
+            if (overwriteAll)
+            {
+                _buttons.Clear();
+                _ui.Dispatcher.Invoke(() =>
+                {
+                    _ui.ClearMatrix();
+                });
+            }
 
             foreach (var button in buttons)
             {
-                _buttons[$"{button.X},{button.Y}"] = button;
+                string id = $"{button.X},{button.Y}";
+                _buttons[id] = button;
                 string top = "";
                 string bottom = "";
                 string backcolor = "#eaeaea";

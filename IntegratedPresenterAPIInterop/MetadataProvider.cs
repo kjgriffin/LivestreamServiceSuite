@@ -124,10 +124,11 @@ namespace IntegratedPresenterAPIInterop
             },
             ExpectedVariableContents.NONE),
 
-            [AutomationActions.SetupButtons] = (2, AutomationActions.SetupButtons, "SetupButtons", new List<AutomationActionArgType>
+            [AutomationActions.SetupButtons] = (3, AutomationActions.SetupButtons, "SetupButtons", new List<AutomationActionArgType>
             {
                 AutomationActionArgType.String,
                 AutomationActionArgType.String,
+                AutomationActionArgType.Boolean,
             },
             ExpectedVariableContents.NONE),
         };

@@ -16,8 +16,6 @@ namespace Xenon.Compiler.AST
             return;
         }
 
-
-
         public void GenerateDebug(Project project);
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer);
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent);

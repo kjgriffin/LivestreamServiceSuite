@@ -347,11 +347,20 @@ namespace Xenon.Compiler.AST
                 slide.Data.Remove(XenonASTHelpers.DATAKEY_POSTSET);
             }
 
+            // swap pilot
             if (slide.Data.TryGetValue(XenonASTExpression.DATAKEY_PILOT, out var pilot))
             {
                 scriptslide.Data[XenonASTExpression.DATAKEY_PILOT] = pilot;
                 slide.Data.Remove(XenonASTExpression.DATAKEY_PILOT);
             }
+
+            // swap labeling
+            if (slide.Data.TryGetValue(XenonASTExpression.DATAKEY_CMD_SOURCESLIDENUM_LABELS, out var labels))
+            {
+                scriptslide.Data[XenonASTExpression.DATAKEY_CMD_SOURCESLIDENUM_LABELS] = labels;
+                slide.Data.Remove(XenonASTExpression.DATAKEY_CMD_SOURCESLIDENUM_LABELS);
+            }
+
 
             // NOTE: only supports images for now- make huge noise if we are trying to do this for any other type of slide!
             if (slide.MediaType != MediaType.Image && slide.MediaType != MediaType.Video)
