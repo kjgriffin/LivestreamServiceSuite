@@ -21,8 +21,8 @@ namespace Xenon.Renderer
             res.MediaType = MediaType.Image;
             res.RenderedAs = "Full"; // I think we can leave this just fine...
 
-            Bitmap bmp = new Bitmap(Layouts.PrefabLayout.Size.Width, Layouts.PrefabLayout.Size.Height);
-            Bitmap kbmp = new Bitmap(Layouts.PrefabLayout.Size.Width, Layouts.PrefabLayout.Size.Height);
+            Bitmap bmp = new Bitmap(Layouts?.PrefabLayout.Size.Width ?? 1920, Layouts?.PrefabLayout.Size.Height ?? 1080);
+            Bitmap kbmp = new Bitmap(Layouts?.PrefabLayout.Size.Width ?? 1920, Layouts?.PrefabLayout.Size.Height ?? 1080);
             Graphics gfx = Graphics.FromImage(bmp);
             Graphics kgfx = Graphics.FromImage(kbmp);
 
