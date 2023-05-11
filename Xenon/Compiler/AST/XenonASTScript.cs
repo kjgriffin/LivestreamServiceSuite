@@ -15,8 +15,10 @@ using System.Text.RegularExpressions;
 using VariableMarkupAttributes.Attributes;
 
 using Xenon.AssetManagment;
+using Xenon.Compiler.Meta;
 using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -123,7 +125,12 @@ namespace Xenon.Compiler.AST
             }
 
 
-            script.Data["source"] = src;
+            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            {
+                DKEY = ScriptRenderer.DATAKEY_SCRIPTSOURCE_TARGET,
+                Raw = src,
+            };
+            script.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
 
             return script.ToList();
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+using Xenon.Compiler.Meta;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -26,8 +27,14 @@ namespace Xenon.Compiler.AST
                 progress?.Report(cprog + prog * 100 / total * ((100 - cprog) / 100));
             }
 
+            // Attribute sit outside the project right...
+            // so here we can easily just 'update' the slides as required
+            SlideNumberVariableSubstituter subengine = new SlideNumberVariableSubstituter(slides);
+            project.Slides.AddRange(subengine.ApplyNesscarySubstitutions());
+
+
             // at this point here we'll allow slides to be put onto the project
-            project.Slides.AddRange(slides);
+            //project.Slides.AddRange(slides);
 
             return slides;
         }

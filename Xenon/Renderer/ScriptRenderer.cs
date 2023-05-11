@@ -8,6 +8,8 @@ namespace Xenon.Renderer
 {
     class ScriptRenderer : ISlideRenderer
     {
+        public static string DATAKEY_SCRIPTSOURCE_TARGET { get => "source"; }
+
         public SlideLayout Layouts { get; set; }
 
         public RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, ISlideRendertimeInfoProvider info)
@@ -15,8 +17,8 @@ namespace Xenon.Renderer
             // only at render time can we solve some variables
             // for some commands we now can jump to slides
             // by now we can finally resolve the number
-            string src = (string)slide.Data["source"];
-            src = CommonTextContentSlideVariableReplacer.ReplaceVariablesInText(src, info);
+            string src = (string)slide.Data[DATAKEY_SCRIPTSOURCE_TARGET];
+            //src = CommonTextContentSlideVariableReplacer.ReplaceVariablesInText(src, info);
 
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Text;

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Xenon.Compiler.Meta;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -445,7 +447,12 @@ namespace Xenon.Compiler.AST
 
             newlines.Insert(0, titleline);
 
-            scriptslide.Data["source"] = string.Join(Environment.NewLine, newlines);
+            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            {
+                DKEY = ScriptRenderer.DATAKEY_SCRIPTSOURCE_TARGET,
+                Raw = string.Join(Environment.NewLine, newlines),
+            };
+            scriptslide.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
 
             return (scriptslide, slide);
         }

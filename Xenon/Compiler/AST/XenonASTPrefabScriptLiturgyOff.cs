@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+using Xenon.Compiler.Meta;
 using Xenon.Helpers;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -50,9 +52,15 @@ namespace Xenon.Compiler.AST
             slide.Lines = new List<SlideLine>();
             slide.Asset = "";
             // put script here
-            slide.Data["source"] = $"#{SlideTitleMessage};" + Environment.NewLine
+            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            {
+                DKEY = ScriptRenderer.DATAKEY_SCRIPTSOURCE_TARGET,
+                Raw = $"#{SlideTitleMessage};" + Environment.NewLine
                 + "@arg0:DSK1FadeOff[Kill Liturgy];" + Environment.NewLine
-                + "@arg1:DelayMs(1000);";
+                + "@arg1:DelayMs(1000);",
+            };
+
+            slide.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
             slide.Data["prefabtype"] = PrefabSlides.Script_LiturgyOff;
             slide.MediaType = MediaType.Empty;
             slide.Format = SlideFormat.Prefab;

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Xenon.Compiler.Meta;
 using Xenon.Helpers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
@@ -88,7 +89,14 @@ namespace Xenon.Compiler.AST
             res.MediaType = MediaType.Empty;
 
             res.Data[RawTextRenderer.DATAKEY_KEYNAME] = KeyName;
-            res.Data[RawTextRenderer.DATAKEY_RAWTEXT] = Source;
+
+            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            {
+                DKEY = RawTextRenderer.DATAKEY_RAWTEXT_TARGET,
+                Raw = Source,
+            };
+
+            res.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
 
             return res.ToList();
         }

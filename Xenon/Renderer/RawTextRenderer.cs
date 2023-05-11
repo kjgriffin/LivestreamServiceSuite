@@ -41,7 +41,7 @@ namespace Xenon.Renderer
     {
 
         public static string DATAKEY_KEYNAME = "keyname";
-        public static string DATAKEY_RAWTEXT = "rawtext";
+        public static string DATAKEY_RAWTEXT_TARGET = "rawtext";
 
         public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
         {
@@ -60,9 +60,10 @@ namespace Xenon.Renderer
                 }
                 result.CopyExtension = ".txt";
 
-                if (slide.Data.TryGetValue(DATAKEY_RAWTEXT, out var text))
+                if (slide.Data.TryGetValue(DATAKEY_RAWTEXT_TARGET, out var text))
                 {
-                    result.Text = CommonTextContentSlideVariableReplacer.ReplaceVariablesInText((string)text, info);
+                    //result.Text = CommonTextContentSlideVariableReplacer.ReplaceVariablesInText((string)text, info);
+                    result.Text = (string)text;
                 }
             }
         }
