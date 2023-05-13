@@ -7,19 +7,33 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xenon.Compiler.Meta;
+using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
-    internal class XenonASTDynamicController : IXenonASTCommand
+    internal class XenonASTDynamicController : IXenonASTCommand, IXenonCommandSuggestionCallback
     {
         public int _SourceLine { get; set; }
         public IXenonASTElement Parent { get; private set; }
 
         public string Source { get; set; } = "";
         public string KeyName { get; set; } = "";
+        List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>
+        {
+            ("#dynamiccontroller", false, "", new List<(string, string)>{("#dynamiccontroller", "")}, null),
+            ("\\(", false, "", new List<(string, string)>{("(", "begin params")}, null),
+            ("[^)]", false, "", new List<(string, string)>{(")", "panel name")}, null),
+            ("\\)", false, "", new List<(string, string)>{(")", "end params")}, null),
+            ("\\{", false, "", new List<(string, string)>{("{", "controller definition")}, null),
+            ("dynamic:", false, "", new List<(string, string)>{("dynamic:", "controller definition")}, null),
+            ("[^;]+(?=;)", false, "", new List<(string, string)>{("panel(4x3);", "panel style")}, null),
+            ("[^\\}]+(?=\\})", false, "", new List<(string, string)>{}, null),
+            ("\\}", false, "", new List<(string, string)>{("}", "end controller definition")}, null),
+        };
+
         private Token _srcToken;
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
