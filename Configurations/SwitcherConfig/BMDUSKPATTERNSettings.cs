@@ -41,6 +41,7 @@ namespace Configurations.SwitcherConfig
         {
             return new BMDUSKPATTERNSettings
             {
+                DefaultFillSource = DefaultFillSource,
                 PatternType = PatternType,
                 Inverted = Inverted,
                 Softness = Softness,

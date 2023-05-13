@@ -573,6 +573,19 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1KeyType = 3;
+
+            // safe switcher actually sets all the params eventually
+            _state.USK1FillSource = settings.DefaultFillSource;
+
+            if (!BMDUSKPATTERNSettings.Patterns.TryGetValue(settings.PatternType, out var ptype))
+            {
+                ptype = BMDUSKPATTERNSettings.DEFAULTPATTERNTYPE;
+            }
+            _state.PATTERNSettings = settings.Copy();
+
+            // safe switcher will enable fly-keyer
+            // but we don't seem to track that curently in the state
+
             SwitcherStateChanged?.Invoke(_state);
         }
 

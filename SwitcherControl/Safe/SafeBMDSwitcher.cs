@@ -1646,7 +1646,7 @@ namespace SwitcherControl.Safe
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             //_config.USKSettings.IsDVE = 0;
             //_config.USKSettings.IsChroma = 1;
-            _config.USKSettings.DefaultKeyType = 2;
+            _config.USKSettings.DefaultKeyType = 3;
 
 
             ConfigureUSKForPATTERN(settings);
