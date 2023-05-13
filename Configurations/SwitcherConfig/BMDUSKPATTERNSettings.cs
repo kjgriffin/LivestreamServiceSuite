@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using VariableMarkupAttributes.Attributes;
 
 namespace Configurations.SwitcherConfig
@@ -52,7 +52,11 @@ namespace Configurations.SwitcherConfig
             };
         }
 
-
+        public static string FindPattern(_BMDSwitcherPatternStyle pattern)
+        {
+            var match = Patterns.FirstOrDefault(x => x.Value == pattern).Key;
+            return match;
+        }
 
         public static _BMDSwitcherPatternStyle DEFAULTPATTERNTYPE { get => _BMDSwitcherPatternStyle.bmdSwitcherPatternStyleCircleIris; }
 

@@ -1235,9 +1235,12 @@ namespace SwitcherControl.Safe
             _BMDSwitcherFlyKeyParamters.GetSizeX(out csizex);
             _BMDSwitcherFlyKeyParamters.GetSizeY(out csizey);
 
+            string patternName = BMDUSKPATTERNSettings.FindPattern(pattern);
+
             _state.PATTERNSettings = new BMDUSKPATTERNSettings()
             {
-                PatternType = "",
+                DefaultFillSource = _config?.USKSettings.PATTERNSettings.DefaultFillSource ?? 0,
+                PatternType = patternName,
                 Inverted = inverse == 1,
                 Size = size,
                 Softness = softness,
@@ -1535,8 +1538,8 @@ namespace SwitcherControl.Safe
             patternParameters.SetPattern(ptype);
 
             patternParameters.SetInverse(pattern.Inverted ? 1 : 0);
-            patternParameters.SetVerticalOffset(pattern.XOffset);
-            patternParameters.SetHorizontalOffset(pattern.YOffset);
+            patternParameters.SetVerticalOffset(pattern.YOffset);
+            patternParameters.SetHorizontalOffset(pattern.XOffset);
             patternParameters.SetSoftness(pattern.Softness);
             patternParameters.SetSize(pattern.Size);
             patternParameters.SetSymmetry(pattern.Symmetry);

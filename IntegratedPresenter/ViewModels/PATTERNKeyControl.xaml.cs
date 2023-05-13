@@ -49,6 +49,7 @@ namespace Integrated_Presenter.ViewModels
 
         private void Slide_y_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            DisableHandlers();
             var val = _activePattern.Copy();
             val.YOffset = e.NewValue;
             _switcher?.ConfigureUSK1PATTERN(val);
@@ -56,6 +57,7 @@ namespace Integrated_Presenter.ViewModels
 
         private void Slide_x_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            DisableHandlers();
             var val = _activePattern.Copy();
             val.XOffset = e.NewValue;
             _switcher?.ConfigureUSK1PATTERN(val);
@@ -63,6 +65,7 @@ namespace Integrated_Presenter.ViewModels
 
         private void Slide_sharp_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            DisableHandlers();
             var val = _activePattern.Copy();
             val.Softness = e.NewValue;
             _switcher?.ConfigureUSK1PATTERN(val);
@@ -70,6 +73,7 @@ namespace Integrated_Presenter.ViewModels
 
         private void Slide_sym_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            DisableHandlers();
             var val = _activePattern.Copy();
             val.Symmetry = e.NewValue;
             _switcher?.ConfigureUSK1PATTERN(val);
@@ -77,7 +81,8 @@ namespace Integrated_Presenter.ViewModels
 
         private void Slide_size_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var val = _activePattern.Copy();
+            DisableHandlers();
+             var val = _activePattern.Copy();
             val.Size = e.NewValue;
             _switcher?.ConfigureUSK1PATTERN(val);
         }
@@ -151,10 +156,10 @@ namespace Integrated_Presenter.ViewModels
             Brush gray = new SolidColorBrush(Color.FromRgb(0x97, 0x97, 0x97));
 
             // select which pattern is active
-            ptn_vbar.Fill = state.PATTERNSettings.PatternType == "v-bar" ? selected : gray;
-            ptn_hbar.Fill = state.PATTERNSettings.PatternType == "h-bar" ? selected : gray;
-            ptn_vbarn.Fill = state.PATTERNSettings.PatternType == "v-barn" ? selected : gray;
-            ptn_hbarn.Fill = state.PATTERNSettings.PatternType == "h-barn" ? selected : gray;
+            ptn_vbar.Fill = state.PATTERNSettings.PatternType == "h-bar" ? selected : gray;
+            ptn_hbar.Fill = state.PATTERNSettings.PatternType == "v-bar" ? selected : gray;
+            ptn_vbarn.Fill = state.PATTERNSettings.PatternType == "h-barn" ? selected : gray;
+            ptn_hbarn.Fill = state.PATTERNSettings.PatternType == "v-barn" ? selected : gray;
             ptn_tbox.Fill = state.PATTERNSettings.PatternType == "t-box" ? selected : gray;
             ptn_circle_iris.Fill = state.PATTERNSettings.PatternType == "circle-iris" ? selected : gray;
             ptn_diamond_iris.Fill = state.PATTERNSettings.PatternType == "diamond-iris" ? selected : gray;
@@ -285,6 +290,13 @@ namespace Integrated_Presenter.ViewModels
             _switcher?.ConfigureUSK1PATTERN(val);
         }
 
+        private void cener_sym(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var val = _activePattern.Copy();
+            val.Symmetry = 0.5;
+            _switcher?.ConfigureUSK1PATTERN(val);
+        }
+
         private void ClickInvert(object sender, RoutedEventArgs e)
         {
             var val = _activePattern.Copy();
@@ -303,22 +315,22 @@ namespace Integrated_Presenter.ViewModels
 
         private void setvbar(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            SetPatternType("v-bar");
+            SetPatternType("h-bar");
         }
 
         private void sethbar(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            SetPatternType("h-bar");
+            SetPatternType("v-bar");
         }
 
         private void setvbarn(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            SetPatternType("v-barn");
+            SetPatternType("h-barn");
 
         }
         private void sethbarn(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            SetPatternType("h-barn");
+            SetPatternType("v-barn");
 
         }
 
@@ -392,5 +404,6 @@ namespace Integrated_Presenter.ViewModels
         {
             SetPatternType("lc-box");
         }
+
     }
 }

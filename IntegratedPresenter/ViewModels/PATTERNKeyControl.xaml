@@ -397,7 +397,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">SIZE</TextBlock>
                     <TextBlock x:Name="tbSize" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
-                    <Slider Name="slide_size" Maximum="1" Minimum="0" TickFrequency="0.01" IsSnapToTickEnabled="True" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
+                    <Slider Name="slide_size" Maximum="1" Minimum="0" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="0" Margin="10">
                     <Grid.ColumnDefinitions>
@@ -405,9 +405,9 @@
                         <ColumnDefinition Width="50"></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">SHARP</TextBlock>
+                    <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">SOFT</TextBlock>
                     <TextBlock Name="tbSoft" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
-                    <Slider Name="slide_sharp" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
+                    <Slider Minimum="0" Maximum="1" Name="slide_sharp" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
                 </Grid>
                 <Grid Grid.Row="0" Grid.Column="1" Margin="10">
                     <Grid.ColumnDefinitions>
@@ -416,8 +416,8 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">SYM.</TextBlock>
-                    <TextBlock x:Name="tbSym" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
-                    <Slider Name="slide_sym" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
+                    <TextBlock PreviewMouseDown="cener_sym" x:Name="tbSym" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                    <Slider Minimum="0" Maximum="1" Name="slide_sym" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="1" Margin="10">
                     <Grid.ColumnDefinitions>
@@ -445,7 +445,7 @@
                         </Button.Template>
                     </Button>
 
-                    <Slider Name="slide_x" Maximum="1" Minimum="0" Value="0.5" TickFrequency="0.01" IsSnapToTickEnabled="True" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Margin="10" Cursor="Hand"></Slider>
+                    <Slider Name="slide_x" Maximum="1" Minimum="0" Value="0.5" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Margin="10" Cursor="Hand"></Slider>
                 </Grid>
             </Grid>
 
@@ -456,7 +456,7 @@
                     <RowDefinition Height="80"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <Slider Name="slide_y" Maximum="1" Minimum="0" Value="0.5" TickFrequency="0.01" IsSnapToTickEnabled="True" Grid.Column="2" Focusable="False" IsTabStop="False" HorizontalAlignment="Center" Orientation="Vertical" Margin="10" Cursor="Hand"></Slider>
+                <Slider Name="slide_y" Maximum="1" Minimum="0" Value="0.5" Grid.Column="2" Focusable="False" IsTabStop="False" HorizontalAlignment="Center" Orientation="Vertical" Margin="10" Cursor="Hand"></Slider>
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>

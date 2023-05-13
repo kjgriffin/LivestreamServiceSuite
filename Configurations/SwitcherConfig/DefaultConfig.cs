@@ -138,12 +138,12 @@ namespace Configurations.SwitcherConfig
                     {
                         DefaultFillSource = 1,
                         Inverted = false,
-                        PatternType = "",
-                        Size = 1,
-                        Softness = 0,
-                        Symmetry = 1,
-                        XOffset = 0,
-                        YOffset = 0,
+                        PatternType = "circle-iris",
+                        Size = 0.3,
+                        Softness = 0.2,
+                        Symmetry = 0.8,
+                        XOffset = 0.5,
+                        YOffset = 0.5,
                     },
                 },
                 PrerollSettings = new PrerollSettings()
