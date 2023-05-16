@@ -47,6 +47,7 @@ namespace IntegratedPresenterAPIInterop
             [AutomationActions.USK1TieOff] = (0, AutomationActions.USK1TieOff, "USK1TieOff", null, ExpectedVariableContents.NONE),
             [AutomationActions.USK1SetTypeChroma] = (0, AutomationActions.USK1SetTypeChroma, "USK1SetTypeChroma", null, ExpectedVariableContents.NONE),
             [AutomationActions.USK1SetTypeDVE] = (0, AutomationActions.USK1SetTypeDVE, "USK1SetTypeDVE", null, ExpectedVariableContents.NONE),
+            [AutomationActions.USK1SetTypePATTERN] = (0, AutomationActions.USK1SetTypePATTERN, "USK1SetTypePATTERN", null, ExpectedVariableContents.NONE),
 
             [AutomationActions.RecordStart] = (0, AutomationActions.RecordStart, "RecordStart", null, ExpectedVariableContents.NONE),
             [AutomationActions.RecordStop] = (0, AutomationActions.RecordStop, "RecordStop", null, ExpectedVariableContents.NONE),
@@ -116,6 +117,18 @@ namespace IntegratedPresenterAPIInterop
                 AutomationActionArgType.Double,
                 AutomationActionArgType.Double,
                 AutomationActionArgType.Double,
+                AutomationActionArgType.Double,
+                AutomationActionArgType.Double,
+                AutomationActionArgType.Double,
+                AutomationActionArgType.Double,
+                AutomationActionArgType.Double,
+            },
+            ExpectedVariableContents.NONE),
+
+            [AutomationActions.ConfigurePATTERN] = (7, AutomationActions.ConfigurePATTERN, "ApplyPATTERN", new List<AutomationActionArgType>
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.Boolean,
                 AutomationActionArgType.Double,
                 AutomationActionArgType.Double,
                 AutomationActionArgType.Double,

@@ -69,7 +69,6 @@
 
         PlacePIP,
 
-
         JumpToSlide,
         WatchSwitcherStateBoolVal,
         WatchSwitcherStateIntVal,
@@ -80,9 +79,8 @@
 
         SetupButtons,
 
-
-
-
+        USK1SetTypePATTERN,
+        ConfigurePATTERN,
     }
 
 }

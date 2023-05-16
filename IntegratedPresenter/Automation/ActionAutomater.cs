@@ -1,4 +1,6 @@
-﻿using IntegratedPresenter.BMDSwitcher.Config;
+﻿using Configurations.SwitcherConfig;
+
+using IntegratedPresenter.BMDSwitcher.Config;
 
 using IntegratedPresenterAPIInterop;
 
@@ -97,6 +99,19 @@ namespace Integrated_Presenter.Automation
                             _switcherProvider?.switcherManager?.SetPIPPosition(config);
                         }
                         break;
+
+                    case AutomationActions.ConfigurePATTERN:
+                        _logger.Debug($"(PerformAutomationAction) -- ApplyPATTERN. read cfg");
+                        BMDUSKPATTERNSettings ptn = task?.DataO as BMDUSKPATTERNSettings;
+                        if (ptn != null)
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- PlacePIP at {ptn.ToString()}");
+                            var cfill = _switcherProvider?.switcherManager?.GetCurrentState().USK1FillSource;
+                            ptn.DefaultFillSource = (int)cfill;
+                            _switcherProvider?.switcherManager?.ConfigureUSK1PATTERN(ptn);
+                        }
+                        break;
+
                     case AutomationActions.AutoTrans:
                         //_switcherProvider?.switcherManager?.PerformAutoTransition();
                         _logger.Debug($"(PerformAutomationAction) -- AutoTrans (gaurded)");
@@ -251,6 +266,10 @@ namespace Integrated_Presenter.Automation
                     case AutomationActions.USK1SetTypeDVE:
                         _logger.Debug($"(PerformAutomationAction) -- Configure USK1 for type DVE PIP");
                         _switcherProvider?.switcherManager?.SetUSK1TypeDVE();
+                        break;
+                    case AutomationActions.USK1SetTypePATTERN:
+                        _logger.Debug($"(PerformAutomationAction) -- Configure USK1 for type PATTERN");
+                        _switcherProvider?.switcherManager?.SetUSK1TypePATTERN();
                         break;
 
                     case AutomationActions.OpenAudioPlayer:

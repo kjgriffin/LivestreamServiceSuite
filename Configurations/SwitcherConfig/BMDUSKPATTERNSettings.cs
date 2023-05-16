@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using VariableMarkupAttributes.Attributes;
 
 namespace Configurations.SwitcherConfig
@@ -17,6 +18,12 @@ namespace Configurations.SwitcherConfig
         public double Size { get; set; }
         public double XOffset { get; set; }
         public double YOffset { get; set; }
+
+        public override string ToString()
+        {
+            return $"X{XOffset};Y{YOffset};Sz{Size};Sym{Symmetry};Soft{Softness};I{Inverted};P{PatternType};";
+        }
+
 
         [ExposedAsVariable(nameof(DefaultFillSource))]
         public int DefaultFillSource { get; set; }
