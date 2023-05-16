@@ -47,6 +47,11 @@ namespace Integrated_Presenter.ViewModels
             pvCurrent_lec.OnUserRequestForZoomBump += PvCurrent_lec_OnUserRequestForZoomBump;
             pvCurrent_org.OnUserRequestForZoomBump += PvCurrent_org_OnUserRequestForZoomBump;
 
+            pvCurrent_plt.EnableCarlsZoom();
+            pvCurrent_ctr.EnableCarlsZoom();
+            pvCurrent_lec.EnableCarlsZoom();
+            pvCurrent_org.EnableCarlsZoom();
+
             pvNext_plt.HideManualReRun();
             pvNext_ctr.HideManualReRun();
             pvNext_lec.HideManualReRun();

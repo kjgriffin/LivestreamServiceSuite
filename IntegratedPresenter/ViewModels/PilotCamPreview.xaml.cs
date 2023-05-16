@@ -83,6 +83,25 @@ namespace Integrated_Presenter.ViewModels
         {
             btnReFire.IsEnabled = false;
             btnReFire.Visibility = Visibility.Hidden;
+            btnZIN.IsEnabled = false;
+            btnZIN.Visibility = Visibility.Hidden;
+            btnZOUT.IsEnabled = false;
+            btnZOUT.Visibility = Visibility.Hidden;
+        }
+
+        public void EnableCarlsZoom()
+        {
+#if DEBUG
+            btnZIN.IsEnabled = true;
+            btnZIN.Visibility = Visibility.Visible;
+            btnZOUT.IsEnabled = true;
+            btnZOUT.Visibility = Visibility.Visible;
+#else
+            btnZIN.IsEnabled = false;
+            btnZIN.Visibility = Visibility.Hidden;
+            btnZOUT.IsEnabled = false;
+            btnZOUT.Visibility = Visibility.Hidden;
+#endif
         }
 
         string splitify(string input)

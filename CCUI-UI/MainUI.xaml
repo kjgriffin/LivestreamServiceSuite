@@ -43,10 +43,12 @@
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <local:CamPresetControl x:Name="cam1" Grid.Column="0" Margin="10"></local:CamPresetControl>
                     <local:CamPresetControl x:Name="cam2" Grid.Column="1" Margin="10"></local:CamPresetControl>
                     <local:CamPresetControl x:Name="cam3" Grid.Column="2" Margin="10"></local:CamPresetControl>
+                    <local:CamPresetControl x:Name="cam4" Grid.Column="3" Margin="10"></local:CamPresetControl>
                 </Grid>
             </Viewbox>
         </Grid>
