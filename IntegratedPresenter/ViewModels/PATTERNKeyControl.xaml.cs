@@ -27,6 +27,8 @@ namespace Integrated_Presenter.ViewModels
 
         BMDUSKPATTERNSettings _activePattern;
 
+        bool UIDriven = true;
+
         public PATTERNKeyControl()
         {
             InitializeComponent();
@@ -49,6 +51,10 @@ namespace Integrated_Presenter.ViewModels
 
         private void Slide_y_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!UIDriven)
+            {
+                return;
+            }
             DisableHandlers();
             var val = _activePattern.Copy();
             val.YOffset = e.NewValue;
@@ -57,6 +63,10 @@ namespace Integrated_Presenter.ViewModels
 
         private void Slide_x_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!UIDriven)
+            {
+                return;
+            }
             DisableHandlers();
             var val = _activePattern.Copy();
             val.XOffset = e.NewValue;
@@ -65,6 +75,10 @@ namespace Integrated_Presenter.ViewModels
 
         private void Slide_sharp_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!UIDriven)
+            {
+                return;
+            }
             DisableHandlers();
             var val = _activePattern.Copy();
             val.Softness = e.NewValue;
@@ -73,6 +87,10 @@ namespace Integrated_Presenter.ViewModels
 
         private void Slide_sym_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!UIDriven)
+            {
+                return;
+            }
             DisableHandlers();
             var val = _activePattern.Copy();
             val.Symmetry = e.NewValue;
@@ -81,6 +99,10 @@ namespace Integrated_Presenter.ViewModels
 
         private void Slide_size_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!UIDriven)
+            {
+                return;
+            }
             DisableHandlers();
              var val = _activePattern.Copy();
             val.Size = e.NewValue;
@@ -89,11 +111,14 @@ namespace Integrated_Presenter.ViewModels
 
         private void DisableHandlers()
         {
+            //UIDriven = false;
+            /*
             slide_size.ValueChanged -= Slide_size_ValueChanged;
             slide_sym.ValueChanged -= Slide_sym_ValueChanged;
             slide_sharp.ValueChanged -= Slide_sharp_ValueChanged;
             slide_x.ValueChanged -= Slide_x_ValueChanged;
             slide_y.ValueChanged -= Slide_y_ValueChanged;
+            */
         }
 
         public void InitUIDrivers(Func<long, int> convertSourceIDToButton, Func<int, int> convertButtonToSourceID)
@@ -184,7 +209,7 @@ namespace Integrated_Presenter.ViewModels
 
             BtnINVERT.Foreground = state.PATTERNSettings.Inverted ? Brushes.Orange : Brushes.White;
 
-            DisableHandlers();
+            UIDriven = false;
 
             slide_x.Value = state.PATTERNSettings.XOffset;
             slide_y.Value = state.PATTERNSettings.YOffset;
@@ -192,7 +217,7 @@ namespace Integrated_Presenter.ViewModels
             slide_sym.Value = state.PATTERNSettings.Symmetry;
             slide_sharp.Value = state.PATTERNSettings.Softness;
 
-            EnableHandlers();
+            UIDriven = true;
         }
 
         public void ShowShortcuts(bool show)
