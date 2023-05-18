@@ -74,6 +74,7 @@ namespace IntegratedPresenter.Main
 
         ICCPUPresetMonitor _camMonitor;
 
+
         List<SlidePoolSource> SlidePoolButtons;
 
         private BuildVersion VersionInfo;
@@ -238,7 +239,8 @@ namespace IntegratedPresenter.Main
                                                             this,
                                                             this,
                                                             () => new Dictionary<string, WatchVariable>(),
-                                                            this);
+                                                            this,
+                                                            this._camMonitor);
             // when loading config driver will re-supply automation with watched variables
 
             // load the dynamic driver
@@ -262,7 +264,8 @@ namespace IntegratedPresenter.Main
                                                 this,
                                                 this,
                                                 () => Presentation?.WatchedVariables,
-                                                this);
+                                                this,
+                                                this._camMonitor);
         }
 
         private void PilotUI_OnUserRequestForManualReRun(object sender, int e)
@@ -4809,14 +4812,16 @@ namespace IntegratedPresenter.Main
         {
             // currently get switcher state
             Dictionary<string, ExposedVariable> switcherVars = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(switcherState);
-            // report presentation state??
+            // report presentation state
             Dictionary<string, ExposedVariable> presVars = new Dictionary<string, ExposedVariable>();
             if (_pres != null)
             {
                 presVars = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(_pres);
             }
+            // report pilot state
+            Dictionary<string, ExposedVariable> pilotVars = new Dictionary<string, ExposedVariable>();
 
-            return new Dictionary<string, ExposedVariable>(switcherVars.Concat(presVars));
+            return new Dictionary<string, ExposedVariable>(switcherVars.Concat(presVars).Concat(pilotVars));
         }
 
         private Dictionary<string, bool> GetCurrentConditionStatuses(Dictionary<string, WatchVariable> externalWatches)

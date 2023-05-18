@@ -1,4 +1,6 @@
-﻿using Configurations.SwitcherConfig;
+﻿using CCUI_UI;
+
+using Configurations.SwitcherConfig;
 
 using IntegratedPresenter.BMDSwitcher.Config;
 
@@ -29,6 +31,7 @@ namespace Integrated_Presenter.Automation
         protected IMediaDriverProvider _mediaDriverProvider;
         protected ConditionWatchProvider GetWatches;
         protected IDynamicControlProvider _dynamicControlProvider;
+        protected ICCPUPresetMonitor _camPresets;
 
 
         internal ActionAutomater(ILog logger,
@@ -43,7 +46,8 @@ namespace Integrated_Presenter.Automation
                                  IAudioDriverProvider audioDriverProvider,
                                  IMediaDriverProvider mediaDriverProvider,
                                  ConditionWatchProvider watchProvider,
-                                 IDynamicControlProvider dynamicControlProvider)
+                                 IDynamicControlProvider dynamicControlProvider,
+                                 ICCPUPresetMonitor camPresets)
         {
             _logger = logger;
             _switcherProvider = switcherProvider;
@@ -58,6 +62,7 @@ namespace Integrated_Presenter.Automation
             _mediaDriverProvider = mediaDriverProvider;
             GetWatches = watchProvider;
             _dynamicControlProvider = dynamicControlProvider;
+            _camPresets = camPresets;
         }
 
 
@@ -372,6 +377,13 @@ namespace Integrated_Presenter.Automation
                         _logger.Debug($"(PerformAutomationAction) -- setup buttons from file: ${task.RawParams[0]} @{task.RawParams[1]}");
                         _dynamicControlProvider.ConfigureControls((string)task.RawParams[0], (string)task.RawParams[1], (bool)task.RawParams[2]);
                         break;
+
+
+                    /* TODO: try and see if we can fire cams here
+                //case AutomationActions.CAMS:
+                    _camPresets?.
+                    //break;
+                    */
 
 
                     case AutomationActions.WatchSwitcherStateBoolVal:
