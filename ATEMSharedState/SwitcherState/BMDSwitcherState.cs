@@ -57,6 +57,7 @@ namespace ATEMSharedState.SwitcherState
         /// <summary>
         /// 1 = DVE, 2 = Chroma, 3 = Pattern
         /// </summary>
+        [ExposedAsVariable(nameof(USK1KeyType))]
         public int USK1KeyType { get; set; }
 
         [ExposedAsVariable(nameof(DSK1OnAir))]
