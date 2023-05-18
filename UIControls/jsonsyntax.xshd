@@ -17,7 +17,13 @@
 			<Word>NaN</Word>
 			<Word>Infinity</Word>
 		</Keywords>
-
+		<Span color="Comment">
+			<Begin>//</Begin>
+		</Span>
+		<Span color="Comment" multiline="true">
+			<Begin>/\*</Begin>
+			<End>\*/</End>
+		</Span>
 		<Span color="StringVal" multiline="true">
 			<Begin>(?&lt;=\:\s)"</Begin>
 			<End>"</End>
