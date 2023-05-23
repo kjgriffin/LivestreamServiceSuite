@@ -1,8 +1,4 @@
-﻿using IntegratedPresenterAPIInterop;
-
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 using Xenon.Compiler.AST;
 using Xenon.LayoutInfo;
@@ -121,6 +117,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.CustomText] = "customtext",
             [LanguageKeywordCommand.CustomDraw] = "customdraw",
             [LanguageKeywordCommand.ComplexText] = "complextext",
+            [LanguageKeywordCommand.DynamicControllerDef] = "dynamiccontroller",
         };
 
         public static Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata>()
@@ -165,6 +162,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.CustomText] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTShapesAndText()),
             [LanguageKeywordCommand.CustomDraw] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTShapesImagesAndText()),
             [LanguageKeywordCommand.ComplexText] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTShapesImagesAndTextComplex()),
+            [LanguageKeywordCommand.DynamicControllerDef] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTDynamicController()),
         };
 
     }
@@ -237,6 +235,7 @@ namespace Xenon.Compiler
         TitledLiturgyVerse2,
         ReStitchedHymn,
         ComplexText,
+        DynamicControllerDef,
     }
 
 }

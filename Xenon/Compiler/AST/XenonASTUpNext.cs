@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
@@ -59,7 +58,7 @@ namespace Xenon.Compiler.AST
             sb.Append("#");
             sb.Append(LanguageKeywords.Commands[LanguageKeywordCommand.UpNext]);
             sb.AppendLine($"(\"{Title}\", \"{MainText}\", \"{InfoText}\")");
-            
+
             if (HasPostScript)
             {
                 PostScript.DecompileFormatted(sb, ref indentDepth, indentSize);

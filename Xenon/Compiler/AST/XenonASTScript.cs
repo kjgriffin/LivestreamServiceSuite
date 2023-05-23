@@ -1,19 +1,25 @@
-﻿using Xenon.SlideAssembly;
+﻿using ATEMSharedState.SwitcherState;
+
+using IntegratedPresenterAPIInterop;
+
+using SharedPresentationAPI;
+
 using System;
-using System.Diagnostics;
-using System.Runtime;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
+
+using VariableMarkupAttributes.Attributes;
+
+using Xenon.AssetManagment;
+using Xenon.Compiler.Meta;
 using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
-using System.Linq;
-using Xenon.AssetManagment;
-using System.Text.RegularExpressions;
-using IntegratedPresenterAPIInterop;
-using VariableMarkupAttributes.Attributes;
-using System.CodeDom;
-using System.Reflection;
-using ATEMSharedState.SwitcherState;
+using Xenon.Renderer;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
@@ -99,6 +105,11 @@ namespace Xenon.Compiler.AST
                 {
                     src = Regex.Replace(src, $"%{match.Groups["var"].Value}%", project.BMDSwitcherConfig.Routing.FirstOrDefault(x => x.ButtonName == match.Groups["var"].Value).PhysicalInputId.ToString());
                 }
+                else if (match?.Groups["var"].Value == "pres" || match?.Groups["var"].Value.StartsWith("slide.num") == true)
+                {
+                    // this is OK
+                    // leave it
+                }
                 else
                 {
                     Logger.Log(new XenonCompilerMessage()
@@ -114,7 +125,12 @@ namespace Xenon.Compiler.AST
             }
 
 
-            script.Data["source"] = src;
+            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            {
+                DKEY = ScriptRenderer.DATAKEY_SCRIPTSOURCE_TARGET,
+                Raw = src,
+            };
+            script.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
 
             return script.ToList();
         }
@@ -425,7 +441,8 @@ namespace Xenon.Compiler.AST
                         // for now just bmd state exposed
                         // eventually find all assemblies loaded and extract
                         //DummyLoader
-                        DummyLoader.Load();
+                        ATEMSharedState_AssemblyDummyLoader.Load();
+                        SharedPresentationAPI_AssemblyDummyLoader.Load();
 
                         foreach (var ass in AppDomain.CurrentDomain.GetAssemblies().OrderBy(x => x.FullName))
                         {

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Xenon.LayoutInfo.BaseTypes;
-using Xenon.LayoutInfo.LiturgyTypes;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 

@@ -10,10 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace CCUI_UI
 {
@@ -200,6 +198,18 @@ namespace CCUI_UI
             ChirpZoom_Internal(camname, direction, duration);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="camname"></param>
+        /// <param name="direction">-1 = WIDE/ 1 = TELE</param>
+        /// <param name="duration">Duration in ms. Expected that 200ms is about as small as will work</param>
+        public void ChirpZoom_RELATIVE(string camname, int direction, int duration)
+        {
+            ChirpZoom_RELATIVE_Internal(camname, direction, duration);
+        }
+
+
         internal Guid ChirpZoom_Internal(string camname, int direction, int duration)
         {
             // reject invalid duration, or greater than 10 sec
@@ -209,6 +219,17 @@ namespace CCUI_UI
             }
             return m_server?.Cam_RunZoomChrip(camname, direction, duration) ?? Guid.Empty;
         }
+
+        internal Guid ChirpZoom_RELATIVE_Internal(string camname, int direction, int duration)
+        {
+            // reject invalid duration, or greater than 10 sec
+            if (duration < 0 || duration > 10000)
+            {
+                return Guid.Empty;
+            }
+            return m_server?.Cam_RunZoomChrip_RELATIVE(camname, direction, duration) ?? Guid.Empty;
+        }
+
 
         public CCPUConfig ExportStateToConfig()
         {

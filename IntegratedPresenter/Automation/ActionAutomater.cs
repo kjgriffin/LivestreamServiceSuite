@@ -1,110 +1,37 @@
-﻿using ATEMSharedState.SwitcherState;
+﻿using CCUI_UI;
+
+using Configurations.SwitcherConfig;
 
 using IntegratedPresenter.BMDSwitcher.Config;
-using IntegratedPresenter.Main;
 
 using IntegratedPresenterAPIInterop;
 
 using log4net;
 
-using SwitcherControl.BMDSwitcher;
-
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace Integrated_Presenter.Automation
 {
-
-    internal interface ISwitcherDriverProvider
-    {
-        IBMDSwitcherManager switcherManager { get; }
-        BMDSwitcherState switcherState { get; }
-    }
-    internal interface IAutoTransitionProvider
-    {
-        void PerformGuardedAutoTransition();
-    }
-    internal interface IAutomationConditionProvider
-    {
-        Dictionary<string, bool> GetCurrentConditionStatus();
-    }
-    internal interface IConfigProvider
-    {
-        BMDSwitcherConfigSettings _config { get; }
-    }
-    internal interface IFeatureFlagProvider
-    {
-        bool AutomationTimer1Enabled { get; }
-    }
-    internal interface IUserTimerProvider
-    {
-        void ResetGpTimer1();
-    }
-    internal interface IMainUIProvider
-    {
-        void Focus();
-    }
-    internal interface IPresentationProvider
-    {
-        string Folder { get; }
-        void SetNextSlideTarget(int target);
-        Task TakeNextSlide();
-    }
-    internal interface IAudioDriverProvider
-    {
-        void OpenAudioPlayer();
-        void RestartAudio();
-        void PauseAudio();
-        void StopAudio();
-        void PlayAudio();
-        void OpenAudio(string filename);
-    }
-    internal interface IMediaDriverProvider
-    {
-        void unmuteMedia();
-        void muteMedia();
-        void restartMedia();
-        void stopMedia();
-        void pauseMedia();
-        void playMedia();
-
-    }
-
-
-    class ActionResult
-    {
-        public ActionResult(TrackedActionState state, bool continueProcessingAutomation = true)
-        {
-            this.ActionState = state;
-            this.ContinueOtherActions = continueProcessingAutomation;
-        }
-
-        internal TrackedActionState ActionState { get; set; }
-        internal bool ContinueOtherActions { get; set; }
-    }
-
-
-
-
-    internal class ActionAutomater
+    internal class ActionAutomater : IActionAutomater
     {
 
-        ILog _logger;
-        ISwitcherDriverProvider _switcherProvider;
-        IAutoTransitionProvider _autoTransitionProvider;
-        IAutomationConditionProvider _automationConditionProvider;
-        IConfigProvider _configProvider;
-        IFeatureFlagProvider _featureFlagProvider;
-        IUserTimerProvider _userTimerProvider;
-        IMainUIProvider _mainUIProvider;
-        IPresentationProvider _presentationProvider;
-        IAudioDriverProvider _audioDriverProvider;
-        IMediaDriverProvider _mediaDriverProvider;
+        protected ILog _logger;
+        protected ISwitcherDriverProvider _switcherProvider;
+        protected IAutoTransitionProvider _autoTransitionProvider;
+        protected IAutomationConditionProvider _automationConditionProvider;
+        protected IConfigProvider _configProvider;
+        protected IFeatureFlagProvider _featureFlagProvider;
+        protected IUserTimerProvider _userTimerProvider;
+        protected IMainUIProvider _mainUIProvider;
+        protected IPresentationProvider _presentationProvider;
+        protected IAudioDriverProvider _audioDriverProvider;
+        protected IMediaDriverProvider _mediaDriverProvider;
+        protected ConditionWatchProvider GetWatches;
+        protected IDynamicControlProvider _dynamicControlProvider;
+        protected ICCPUPresetMonitor _camPresets;
 
 
         internal ActionAutomater(ILog logger,
@@ -117,7 +44,10 @@ namespace Integrated_Presenter.Automation
                                  IMainUIProvider mainUIProvider,
                                  IPresentationProvider presentationProvider,
                                  IAudioDriverProvider audioDriverProvider,
-                                 IMediaDriverProvider mediaDriverProvider)
+                                 IMediaDriverProvider mediaDriverProvider,
+                                 ConditionWatchProvider watchProvider,
+                                 IDynamicControlProvider dynamicControlProvider,
+                                 ICCPUPresetMonitor camPresets)
         {
             _logger = logger;
             _switcherProvider = switcherProvider;
@@ -130,61 +60,15 @@ namespace Integrated_Presenter.Automation
             _presentationProvider = presentationProvider;
             _audioDriverProvider = audioDriverProvider;
             _mediaDriverProvider = mediaDriverProvider;
+            GetWatches = watchProvider;
+            _dynamicControlProvider = dynamicControlProvider;
+            _camPresets = camPresets;
         }
 
-        internal async Task ExecuteSetupActions(ISlide s)
+
+        public virtual async Task<ActionResult> PerformAutomationAction(AutomationAction task)
         {
-            _logger.Debug($"Begin Execution of setup actions for slide {s.Title}");
-            await Task.Run(async () =>
-            {
-                bool keepProcessing = true;
-                foreach (var task in s.SetupActions)
-                {
-                    if (keepProcessing)
-                    {
-                        s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
-                        var res = await PerformAutomationAction(task.Action);
-                        s.FireOnActionStateChange(task.ID, res.ActionState);
-                        keepProcessing = res.ContinueOtherActions;
-                    }
-                    else
-                    {
-                        s.FireOnActionStateChange(task.ID, TrackedActionState.Skipped);
-                    }
-                }
-            });
-            _logger.Debug($"Completed Execution of setup actions for slide {s.Title}");
-
-        }
-
-        internal async Task ExecuteMainActions(ISlide s)
-        {
-            _logger.Debug($"Begin Execution of actions for slide {s.Title}");
-            await Task.Run(async () =>
-            {
-                bool keepProcessing = true;
-                foreach (var task in s.Actions)
-                {
-                    if (keepProcessing)
-                    {
-                        s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
-                        var res = await PerformAutomationAction(task.Action);
-                        s.FireOnActionStateChange(task.ID, res.ActionState);
-                        keepProcessing = res.ContinueOtherActions;
-                    }
-                    else
-                    {
-                        s.FireOnActionStateChange(task.ID, TrackedActionState.Skipped);
-                    }
-                }
-            });
-            _logger.Debug($"Completed Execution of actions for slide {s.Title}");
-
-        }
-
-        internal async Task<ActionResult> PerformAutomationAction(AutomationAction task)
-        {
-            if (!task.MeetsConditionsToRun(_automationConditionProvider.GetCurrentConditionStatus()))
+            if (!task.MeetsConditionsToRun(_automationConditionProvider.GetCurrentConditionStatus(GetWatches())))
             {
                 return new ActionResult(TrackedActionState.Skipped);
             }
@@ -220,6 +104,19 @@ namespace Integrated_Presenter.Automation
                             _switcherProvider?.switcherManager?.SetPIPPosition(config);
                         }
                         break;
+
+                    case AutomationActions.ConfigurePATTERN:
+                        _logger.Debug($"(PerformAutomationAction) -- ApplyPATTERN. read cfg");
+                        BMDUSKPATTERNSettings ptn = task?.DataO as BMDUSKPATTERNSettings;
+                        if (ptn != null)
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- PlacePIP at {ptn.ToString()}");
+                            var cfill = _switcherProvider?.switcherManager?.GetCurrentState().USK1FillSource;
+                            ptn.DefaultFillSource = (int)cfill;
+                            _switcherProvider?.switcherManager?.ConfigureUSK1PATTERN(ptn);
+                        }
+                        break;
+
                     case AutomationActions.AutoTrans:
                         //_switcherProvider?.switcherManager?.PerformAutoTransition();
                         _logger.Debug($"(PerformAutomationAction) -- AutoTrans (gaurded)");
@@ -375,6 +272,10 @@ namespace Integrated_Presenter.Automation
                         _logger.Debug($"(PerformAutomationAction) -- Configure USK1 for type DVE PIP");
                         _switcherProvider?.switcherManager?.SetUSK1TypeDVE();
                         break;
+                    case AutomationActions.USK1SetTypePATTERN:
+                        _logger.Debug($"(PerformAutomationAction) -- Configure USK1 for type PATTERN");
+                        _switcherProvider?.switcherManager?.SetUSK1TypePATTERN();
+                        break;
 
                     case AutomationActions.OpenAudioPlayer:
                         _logger.Debug($"(PerformAutomationAction) -- Opened Audio Player");
@@ -467,9 +368,28 @@ namespace Integrated_Presenter.Automation
                         await _presentationProvider.TakeNextSlide();
                         break;
 
+                    case AutomationActions.SetupButtons:
+                        if (task.RawParams.Count != 3)
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- ABORT (bad params) setup buttons from file");
+                            break;
+                        }
+                        _logger.Debug($"(PerformAutomationAction) -- setup buttons from file: ${task.RawParams[0]} @{task.RawParams[1]}");
+                        _dynamicControlProvider.ConfigureControls((string)task.RawParams[0], (string)task.RawParams[1], (bool)task.RawParams[2]);
+                        break;
+
+
+                    /* TODO: try and see if we can fire cams here
+                //case AutomationActions.CAMS:
+                    _camPresets?.
+                    //break;
+                    */
+
 
                     case AutomationActions.WatchSwitcherStateBoolVal:
                     case AutomationActions.WatchSwitcherStateIntVal:
+                    case AutomationActions.WatchStateBoolVal:
+                    case AutomationActions.WatchStateIntVal:
                         // TODO: do we need to process these as such??
                         // or let them be handled as dynamic conditions
                         break;
@@ -487,5 +407,9 @@ namespace Integrated_Presenter.Automation
 
         }
 
+        public void ProvideWatchInfo(ConditionWatchProvider watches)
+        {
+            GetWatches = watches;
+        }
     }
 }

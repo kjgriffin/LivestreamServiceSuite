@@ -1,20 +1,12 @@
 ﻿using ATEMSharedState.SwitcherState;
 
 using IntegratedPresenter.BMDSwitcher.Config;
+
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Integrated_Presenter.ViewModels
 {
@@ -54,7 +46,7 @@ namespace Integrated_Presenter.ViewModels
         {
             if (state.ProgramID == config.Routing.Where(r => r.KeyName == "slide").First().PhysicalInputId)
             {
-                EnableConditionalTrans(config.Routing.FirstOrDefault(r => r.PhysicalInputId == state.PresetID)?.LongName.ToUpper() ?? $"INPUT {state.PresetID}" );
+                EnableConditionalTrans(config.Routing.FirstOrDefault(r => r.PhysicalInputId == state.PresetID)?.LongName.ToUpper() ?? $"INPUT {state.PresetID}");
             }
             else
             {

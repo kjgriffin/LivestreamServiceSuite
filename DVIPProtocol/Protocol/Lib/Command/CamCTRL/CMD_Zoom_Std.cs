@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using static DVIPProtocol.Protocol.Lib.Command.CamCTRL.CMD_Zoom_Std;
-
-namespace DVIPProtocol.Protocol.Lib.Command.CamCTRL
+﻿namespace DVIPProtocol.Protocol.Lib.Command.CamCTRL
 {
     public partial class CMD_Zoom_Std : ICommand
     {

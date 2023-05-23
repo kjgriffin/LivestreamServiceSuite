@@ -1,17 +1,11 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Xenon.Compiler;
-using Xenon.Helpers;
 using Xenon.LayoutInfo;
-using Xenon.Renderer.Helpers;
 using Xenon.Renderer.Helpers.ImageSharp;
 using Xenon.SlideAssembly;
 
@@ -29,7 +23,7 @@ namespace Xenon.Renderer
             return ISlideLayoutPrototypePreviewer<ShapeAndTextLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
         {
             if (slide.Format == SlideFormat.ShapesAndTexts)
             {

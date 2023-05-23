@@ -4,7 +4,6 @@ using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 
 using Xenon.AssetManagment;
@@ -14,9 +13,13 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
+    internal interface ISlideRendertimeInfoProvider
+    {
+        public int FindSlideNumber(string reference);
+    }
     internal interface ISlideRenderer
     {
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result);
+        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result);
     }
     internal interface ISlideRenderer<out LayoutInfoType> where LayoutInfoType : ALayoutInfo
     {

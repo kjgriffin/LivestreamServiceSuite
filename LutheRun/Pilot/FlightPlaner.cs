@@ -1,19 +1,10 @@
-﻿using AngleSharp.Dom;
-
-using LutheRun.Elements.Interface;
+﻿using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
 
-using Microsoft.Windows.Input;
-
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.Xml;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LutheRun.Pilot
 {

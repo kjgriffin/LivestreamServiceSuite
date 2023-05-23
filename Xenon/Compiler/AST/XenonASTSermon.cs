@@ -1,11 +1,12 @@
-﻿using Xenon.SlideAssembly;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
-using Xenon.Helpers;
 using System.Linq;
+using System.Text;
+
+using Xenon.Helpers;
 using Xenon.Renderer;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {

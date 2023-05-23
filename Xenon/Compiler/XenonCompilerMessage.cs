@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Text;
-
-namespace Xenon.Compiler
+﻿namespace Xenon.Compiler
 {
     public enum XenonCompilerMessageType
     {

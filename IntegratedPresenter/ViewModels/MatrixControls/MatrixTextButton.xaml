@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="Integrated_Presenter.ViewModels.MatrixControls.MatrixTextButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Integrated_Presenter.ViewModels.MatrixControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="200">
+    <Grid Width="200" Height="200">
+
+        <Border Name="border" Background="#eaeaea" BorderBrush="#a0a0a0" BorderThickness="8" CornerRadius="10" Margin="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Viewbox Grid.Row="0" Margin="10">
+                    <TextBlock IsHitTestVisible="False" Name="tbTop" FontWeight="SemiBold" Foreground="Black" FontSize="40" FontFamily="ArialNarrow" HorizontalAlignment="Center" VerticalAlignment="Center">XXXXXX</TextBlock>
+                </Viewbox>
+                <Viewbox Grid.Row="1" Margin="10">
+                    <TextBlock IsHitTestVisible="False" Name="tbBottom" FontWeight="SemiBold" Foreground="Black" FontSize="40" FontFamily="ArialNarrow" HorizontalAlignment="Center" VerticalAlignment="Center">XXXXXX</TextBlock>
+                </Viewbox>
+            </Grid>
+        </Border>
+
+    </Grid>
+</UserControl>

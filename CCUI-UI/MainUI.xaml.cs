@@ -6,18 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CCUI_UI
 {
@@ -71,6 +62,16 @@ namespace CCUI_UI
             cam3.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
             cam3.OnRunZoomProgramRequest += Cam_OnChripZoomRequest;
 
+            cam4.OnRestartRequest += Cam_OnRestartRequest;
+            cam4.OnStopRequest += Cam_OnStopRequest;
+            cam4.OnSavePresetRequest += Cam_OnSavePresetRequest;
+            cam4.OnSaveZoomRequest += Cam_OnSaveZoomRequest;
+            cam4.OnFirePresetRequest += Cam_OnFirePresetRequest;
+            cam4.OnFireZoomRequest += Cam_OnFireZoomRequest;
+            cam4.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
+            cam4.OnRunZoomProgramRequest += Cam_OnChripZoomRequest;
+
+
             miFakeClients.IsChecked = (m_monitor as CCPUPresetMonitor)?.m_usingFake ?? false;
 
             ReConfigure();
@@ -99,6 +100,7 @@ namespace CCUI_UI
             CCPUConfig.ClientConfig c1 = null;
             CCPUConfig.ClientConfig c2 = null;
             CCPUConfig.ClientConfig c3 = null;
+            CCPUConfig.ClientConfig c4 = null;
 
             var sorted = cfg.Clients.OrderBy(c => c.IPAddress).ToList();
             for (int i = 0; i < 3; i++)
@@ -115,6 +117,9 @@ namespace CCUI_UI
                             break;
                         case 2:
                             c3 = sorted[i];
+                            break;
+                        case 3:
+                            c4 = sorted[i];
                             break;
                     }
                 }
@@ -137,6 +142,12 @@ namespace CCUI_UI
                 cfg.KeyedPresets.TryGetValue(c3.Name, out var presets);
                 cfg.KeyedZooms.TryGetValue(c3.Name, out var zpresets);
                 cam3.Reconfigure(c3.Name, c3.IPAddress, c3.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets ?? new Dictionary<string, CameraDriver.ZoomProgram>());
+            }
+            if (c4 != null)
+            {
+                cfg.KeyedPresets.TryGetValue(c4.Name, out var presets);
+                cfg.KeyedZooms.TryGetValue(c4.Name, out var zpresets);
+                cam3.Reconfigure(c4.Name, c4.IPAddress, c3.Port.ToString(), presets?.Select(x => x.Key).ToList() ?? new List<string>(), zpresets ?? new Dictionary<string, CameraDriver.ZoomProgram>());
             }
 
         }
@@ -199,6 +210,15 @@ namespace CCUI_UI
             cam3.OnFireZoomRequest -= Cam_OnFireZoomRequest;
             cam3.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
             cam3.OnRunZoomProgramRequest -= Cam_OnChripZoomRequest;
+
+            cam4.OnRestartRequest -= Cam_OnRestartRequest;
+            cam4.OnStopRequest -= Cam_OnStopRequest;
+            cam4.OnSavePresetRequest -= Cam_OnSavePresetRequest;
+            cam4.OnSaveZoomRequest -= Cam_OnSaveZoomRequest;
+            cam4.OnFirePresetRequest -= Cam_OnFirePresetRequest;
+            cam4.OnFireZoomRequest -= Cam_OnFireZoomRequest;
+            cam4.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
+            cam4.OnRunZoomProgramRequest -= Cam_OnChripZoomRequest;
         }
 
         internal void AddKnownPreset(string cname, string pname)
@@ -220,6 +240,10 @@ namespace CCUI_UI
             {
                 cam3.NewPresetAdded(pname);
             }
+            else if (cam4.LockedSettings && cam4.CamName == cname)
+            {
+                cam4.NewPresetAdded(pname);
+            }
         }
         internal void AddKnownZoom(string cname, string pname)
         {
@@ -239,6 +263,10 @@ namespace CCUI_UI
             else if (cam3.LockedSettings && cam3.CamName == cname)
             {
                 cam3.NewZoomAdded(pname);
+            }
+            else if (cam4.LockedSettings && cam4.CamName == cname)
+            {
+                cam4.NewZoomAdded(pname);
             }
         }
 
@@ -343,6 +371,10 @@ namespace CCUI_UI
             else if (cname == cam3?.CamName)
             {
                 cam3.UpdateLastStatus(cmd, status, ok);
+            }
+            else if (cname == cam4?.CamName)
+            {
+                cam4.UpdateLastStatus(cmd, status, ok);
             }
         }
 

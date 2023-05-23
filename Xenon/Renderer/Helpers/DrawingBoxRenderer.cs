@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 using Xenon.LayoutInfo.BaseTypes;
-using Xenon.Renderer.ImageFilters;
 
 namespace Xenon.Renderer.Helpers
 {

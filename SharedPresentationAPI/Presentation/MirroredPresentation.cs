@@ -1,29 +1,19 @@
 ﻿using CCU.Config;
 
-using CCUI_UI;
-
-using Configurations.FeatureConfig;
-
 using IntegratedPresenter.BMDSwitcher.Config;
-using IntegratedPresenter.Main;
 
 using IntegratedPresenterAPIInterop;
 
-using System;
-using System.Collections.Generic;
+using SharedPresentationAPI.Presentation;
+
 using System.IO;
 using System.IO.MemoryMappedFiles;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Integrated_Presenter.Presentation
+namespace SharedPresentationAPI.Presentation
 {
 
-    internal class PresentationHotReloadService
+    public class PresentationHotReloadService
     {
 
         CancellationTokenSource m_cancel;
@@ -77,12 +67,12 @@ namespace Integrated_Presenter.Presentation
 
 
 
-    internal class MirroredPresentationBuilder
+    public class MirroredPresentationBuilder
     {
 
         public static IPresentation Create()
         {
-            IntegratedPresenter.Main.Presentation pres = new IntegratedPresenter.Main.Presentation();
+            Presentation pres = new Presentation();
 
             string dfiletext = "";
             using (var file = MemoryMappedFile.OpenExisting(CommonAPINames.HotReloadPresentationDescriptionFile))
@@ -187,6 +177,9 @@ namespace Integrated_Presenter.Presentation
 
             // ignore user config
 
+
+            // bulk copy raw resources
+            pres.RawTextResources = presPackage.RawTextResources;
 
             pres.ComputeAggregateWatchVariables();
             return pres;

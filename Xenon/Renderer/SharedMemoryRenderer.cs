@@ -1,21 +1,12 @@
 ﻿using IntegratedPresenterAPIInterop;
 
-using SixLabors.ImageSharp;
-
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Markup;
-using System.Xaml;
 
-using Xenon.Compiler;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
@@ -277,7 +268,11 @@ namespace Xenon.Renderer
                     }
 
                 }
-
+                else if (rs.RenderedAs == "RawText")
+                {
+                    var key = Regex.Match(rs.RenderedAs, @"RawResource_(?<key>\d+)").Groups["key"].Value;
+                    presDescription.RawTextResources[rs.Name] = rs.Text;
+                }
 
             }
 

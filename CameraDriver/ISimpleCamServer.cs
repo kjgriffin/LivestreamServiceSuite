@@ -1,5 +1,4 @@
-﻿using DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive;
-using DVIPProtocol.Protocol.Lib.Command.PTDrive;
+﻿using DVIPProtocol.Protocol.Lib.Command.PTDrive;
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
 using log4net;
@@ -62,6 +61,7 @@ namespace CameraDriver
         public event CameraZoomSaved OnZoomSavedSuccess;
 
         Guid Cam_RunZoomChrip(string cnameID, int direction, int duration, Guid _rid = default(Guid));
+        Guid Cam_RunZoomChrip_RELATIVE(string cnameID, int direction, int duration, Guid _rid = default(Guid));
         void Cam_RunZoomProgram(string cnameID, int direction);
         new Guid Cam_RecallPresetPosition(string cnameID, string presetName, byte speed = 0x10);
         void Cam_SaveZoomPresetProgram(string cnameID, string presetName, int zlevel, string mode);

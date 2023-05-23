@@ -1,16 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Xenon.Compiler.Suggestions;
-using Xenon.LayoutInfo;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
+    internal interface IXenonASTCommandPostGenerateWithInfo
+    {
+
+    }
+
     internal interface IXenonASTCommand : IXenonASTElement
     {
 
-        public int _SourceLine { get; set; } 
+        public int _SourceLine { get; set; }
 
         public TopLevelCommandContextualSuggestions GetContextualSuggestions(XenonSuggestionService service, string sourcecode)
         {

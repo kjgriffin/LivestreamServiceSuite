@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+using Xenon.Compiler.Meta;
 using Xenon.Helpers;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -36,10 +38,15 @@ namespace Xenon.Compiler.AST
             slide.Lines = new List<SlideLine>();
             slide.Asset = "";
             // put script here
-            slide.Data["source"] = "#Organ Intro;" + Environment.NewLine
+            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            {
+                DKEY = ScriptRenderer.DATAKEY_SCRIPTSOURCE_TARGET,
+                Raw = "#Organ Intro;" + Environment.NewLine
                 + "@arg1:PresetSelect(5)[Preset Organ];" + Environment.NewLine
                 + "@arg1:DelayMs(100);" + Environment.NewLine
-                + "@arg0:AutoTrans[Take Organ];";
+                + "@arg0:AutoTrans[Take Organ];",
+            };
+            slide.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
             slide.Data["prefabtype"] = PrefabSlides.Script_OrganIntro;
             slide.MediaType = MediaType.Empty;
             slide.Format = SlideFormat.Prefab;

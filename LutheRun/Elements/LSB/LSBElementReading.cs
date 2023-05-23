@@ -1,12 +1,11 @@
 ﻿using AngleSharp.Dom;
+
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
 using LutheRun.Pilot;
-using System;
-using System.Collections.Generic;
+
 using System.Linq;
 using System.Text;
-using System.Windows.Navigation;
 
 namespace LutheRun.Elements.LSB
 {

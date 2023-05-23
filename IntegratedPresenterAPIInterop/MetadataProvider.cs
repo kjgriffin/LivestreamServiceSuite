@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-
-using VariableMarkupAttributes;
+﻿using VariableMarkupAttributes;
 
 namespace IntegratedPresenterAPIInterop
 {
@@ -55,6 +47,7 @@ namespace IntegratedPresenterAPIInterop
             [AutomationActions.USK1TieOff] = (0, AutomationActions.USK1TieOff, "USK1TieOff", null, ExpectedVariableContents.NONE),
             [AutomationActions.USK1SetTypeChroma] = (0, AutomationActions.USK1SetTypeChroma, "USK1SetTypeChroma", null, ExpectedVariableContents.NONE),
             [AutomationActions.USK1SetTypeDVE] = (0, AutomationActions.USK1SetTypeDVE, "USK1SetTypeDVE", null, ExpectedVariableContents.NONE),
+            [AutomationActions.USK1SetTypePATTERN] = (0, AutomationActions.USK1SetTypePATTERN, "USK1SetTypePATTERN", null, ExpectedVariableContents.NONE),
 
             [AutomationActions.RecordStart] = (0, AutomationActions.RecordStart, "RecordStart", null, ExpectedVariableContents.NONE),
             [AutomationActions.RecordStop] = (0, AutomationActions.RecordStop, "RecordStop", null, ExpectedVariableContents.NONE),
@@ -101,6 +94,23 @@ namespace IntegratedPresenterAPIInterop
                 AutomationActionArgType.String,
             },
             ExpectedVariableContents.EXPOSEDSTATE),
+            // duplicate command for backwards compatibility
+            [AutomationActions.WatchStateBoolVal] = (3, AutomationActions.WatchSwitcherStateBoolVal, "WatchStateBoolVal", new List<AutomationActionArgType>
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.Boolean,
+                AutomationActionArgType.String,
+            },
+            ExpectedVariableContents.EXPOSEDSTATE),
+            [AutomationActions.WatchStateIntVal] = (3, AutomationActions.WatchSwitcherStateIntVal, "WatchStateIntVal", new List<AutomationActionArgType>
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.Integer,
+                AutomationActionArgType.String,
+            },
+            ExpectedVariableContents.EXPOSEDSTATE),
+
+
 
             [AutomationActions.PlacePIP] = (8, AutomationActions.PlacePIP, "PlacePIP", new List<AutomationActionArgType>
             {
@@ -112,6 +122,26 @@ namespace IntegratedPresenterAPIInterop
                 AutomationActionArgType.Double,
                 AutomationActionArgType.Double,
                 AutomationActionArgType.Double,
+            },
+            ExpectedVariableContents.NONE),
+
+            [AutomationActions.ConfigurePATTERN] = (7, AutomationActions.ConfigurePATTERN, "ApplyPATTERN", new List<AutomationActionArgType>
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.Boolean,
+                AutomationActionArgType.Double,
+                AutomationActionArgType.Double,
+                AutomationActionArgType.Double,
+                AutomationActionArgType.Double,
+                AutomationActionArgType.Double,
+            },
+            ExpectedVariableContents.NONE),
+
+            [AutomationActions.SetupButtons] = (3, AutomationActions.SetupButtons, "SetupButtons", new List<AutomationActionArgType>
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.String,
+                AutomationActionArgType.Boolean,
             },
             ExpectedVariableContents.NONE),
         };

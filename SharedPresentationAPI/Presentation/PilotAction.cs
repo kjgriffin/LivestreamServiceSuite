@@ -1,23 +1,18 @@
 ﻿using CCUI_UI;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace Integrated_Presenter.Presentation
+namespace SharedPresentationAPI.Presentation
 {
     public interface IPilotAction
     {
-        internal void Execute(ICCPUPresetMonitor_Executor driverContext, int defaultSpeed);
-        internal string CamName { get; }
-        internal string PresetName { get; }
-        internal string DisplayInfo { get; }
-        internal string AltName { get; }
-        internal string Status { get; }
-        internal List<Guid> ReqIds { get; }
+        public void Execute(ICCPUPresetMonitor_Executor driverContext, int defaultSpeed);
+        public string CamName { get; }
+        public string PresetName { get; }
+        public string DisplayInfo { get; }
+        public string AltName { get; }
+        public string Status { get; }
+        public List<Guid> ReqIds { get; }
 
         void Reset();
         void StatusUpdate(string[] args);

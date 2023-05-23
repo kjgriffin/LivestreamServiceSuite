@@ -1,12 +1,14 @@
-﻿using System;
+﻿using AngleSharp.Dom;
+
+using LutheRun.Elements.Interface;
+using LutheRun.Parsers;
+using LutheRun.Pilot;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using AngleSharp.Dom;
-using LutheRun.Elements.Interface;
-using LutheRun.Parsers;
-using LutheRun.Pilot;
 using static LutheRun.Parsers.LSBResponsorialExtractor;
 
 namespace LutheRun.Elements.LSB

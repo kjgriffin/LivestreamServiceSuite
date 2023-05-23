@@ -1,23 +1,17 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 
 using System;
 using System.Collections.Generic;
-using GDI = System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Xenon.AssetManagment;
 using Xenon.Compiler;
-using Xenon.Helpers;
+using Xenon.LayoutEngine.L2;
 using Xenon.LayoutInfo;
-using Xenon.Renderer.Helpers;
 using Xenon.Renderer.Helpers.ImageSharp;
 using Xenon.SlideAssembly;
-using Xenon.LayoutEngine.L2;
 
 namespace Xenon.Renderer
 {
@@ -35,7 +29,7 @@ namespace Xenon.Renderer
             return ISlideLayoutPrototypePreviewer<ComplexShapeImageAndTextLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
         {
             if (slide.Format == SlideFormat.ComplexText)
             {

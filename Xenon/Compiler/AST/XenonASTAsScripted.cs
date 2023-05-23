@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-using Xenon.Compiler.SubParsers;
+using Xenon.Compiler.Meta;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -349,11 +349,20 @@ namespace Xenon.Compiler.AST
                 slide.Data.Remove(XenonASTHelpers.DATAKEY_POSTSET);
             }
 
+            // swap pilot
             if (slide.Data.TryGetValue(XenonASTExpression.DATAKEY_PILOT, out var pilot))
             {
                 scriptslide.Data[XenonASTExpression.DATAKEY_PILOT] = pilot;
                 slide.Data.Remove(XenonASTExpression.DATAKEY_PILOT);
             }
+
+            // swap labeling
+            if (slide.Data.TryGetValue(XenonASTExpression.DATAKEY_CMD_SOURCESLIDENUM_LABELS, out var labels))
+            {
+                scriptslide.Data[XenonASTExpression.DATAKEY_CMD_SOURCESLIDENUM_LABELS] = labels;
+                slide.Data.Remove(XenonASTExpression.DATAKEY_CMD_SOURCESLIDENUM_LABELS);
+            }
+
 
             // NOTE: only supports images for now- make huge noise if we are trying to do this for any other type of slide!
             if (slide.MediaType != MediaType.Image && slide.MediaType != MediaType.Video)
@@ -438,7 +447,12 @@ namespace Xenon.Compiler.AST
 
             newlines.Insert(0, titleline);
 
-            scriptslide.Data["source"] = string.Join(Environment.NewLine, newlines);
+            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            {
+                DKEY = ScriptRenderer.DATAKEY_SCRIPTSOURCE_TARGET,
+                Raw = string.Join(Environment.NewLine, newlines),
+            };
+            scriptslide.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
 
             return (scriptslide, slide);
         }

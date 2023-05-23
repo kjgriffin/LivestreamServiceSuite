@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+
 using Xenon.Compiler;
-using Xenon.SlideAssembly;
 using Xenon.Helpers;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer.ImageFilters
 {

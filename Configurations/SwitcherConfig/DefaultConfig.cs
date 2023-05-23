@@ -1,9 +1,9 @@
 ﻿using BMDSwitcherAPI;
+
 using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
-using System;
+
 using System.Collections.Generic;
-using System.Text;
 
 namespace Configurations.SwitcherConfig
 {
@@ -91,8 +91,9 @@ namespace Configurations.SwitcherConfig
                 },
                 USKSettings = new BMDUSKSettings()
                 {
-                    IsDVE = 1,
-                    IsChroma = 0,
+                    //IsDVE = 1,
+                    //IsChroma = 0,
+                    DefaultKeyType = 1,
                     PIPSettings = new BMDUSKDVESettings()
                     {
                         DefaultFillSource = 1,
@@ -132,6 +133,17 @@ namespace Configurations.SwitcherConfig
                         YSuppress = 0.595,
                         Lift = 0.095,
                         Narrow = 0
+                    },
+                    PATTERNSettings = new BMDUSKPATTERNSettings()
+                    {
+                        DefaultFillSource = 1,
+                        Inverted = false,
+                        PatternType = "circle-iris",
+                        Size = 0.3,
+                        Softness = 0.2,
+                        Symmetry = 0.8,
+                        XOffset = 0.5,
+                        YOffset = 0.5,
                     },
                 },
                 PrerollSettings = new PrerollSettings()

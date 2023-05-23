@@ -1,11 +1,5 @@
 ﻿using DVIPProtocol.Binary.Magic;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace DVIPProtocol.Protocol.ControlCommand.Cmd.Zoom
 {
     public class ZoomCommand_STD : ControlCommand
@@ -35,7 +29,7 @@ namespace DVIPProtocol.Protocol.ControlCommand.Cmd.Zoom
 
     public enum ZoomDir_STD : ushort
     {
-        
+
         STOP = 00,
         TELE = 02,
         WIDE = 03,

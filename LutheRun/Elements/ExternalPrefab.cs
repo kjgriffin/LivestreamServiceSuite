@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using LutheRun.Parsers;
+﻿using LutheRun.Parsers;
 using LutheRun.Pilot;
+
+using System.Text.RegularExpressions;
 
 namespace LutheRun.Elements
 {

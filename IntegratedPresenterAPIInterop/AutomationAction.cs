@@ -1,7 +1,8 @@
 ﻿
+using Configurations.SwitcherConfig;
+
 using IntegratedPresenter.BMDSwitcher.Config;
 
-using System;
 using System.Text.RegularExpressions;
 
 using VariableMarkupAttributes;
@@ -259,6 +260,20 @@ namespace IntegratedPresenterAPIInterop
                                 MaskBottom = (double)parsedParams.data[7],
                             };
                             a.DataO = placement;
+                        }
+                        else if (cmdMetadata.Value.NumArgs == 7 && cmdMetadata.Value.Action == AutomationActions.ConfigurePATTERN)
+                        {
+                            BMDUSKPATTERNSettings pattern = new BMDUSKPATTERNSettings()
+                            {
+                                PatternType = (string)parsedParams.data[0],
+                                Inverted = (bool)parsedParams.data[1],
+                                Size = (double)parsedParams.data[2],
+                                Symmetry = (double)parsedParams.data[3],
+                                Softness = (double)parsedParams.data[4],
+                                XOffset = (double)parsedParams.data[5],
+                                YOffset = (double)parsedParams.data[6],
+                                DefaultFillSource = 0,
+                            };
                         }
 
                         // otherwise just stuff the args directly into the args

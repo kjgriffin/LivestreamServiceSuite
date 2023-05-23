@@ -1,14 +1,9 @@
 ﻿using SixLabors.ImageSharp.Drawing.Processing;
 
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text.Json.Serialization;
-
-using Xenon.Helpers;
 
 namespace Xenon.LayoutInfo
 {

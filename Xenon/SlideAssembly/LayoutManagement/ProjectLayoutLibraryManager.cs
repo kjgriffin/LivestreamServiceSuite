@@ -3,17 +3,14 @@ using SixLabors.ImageSharp.PixelFormats;
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 using Xenon.Compiler;
 using Xenon.LayoutInfo;
-using Xenon.Renderer;
 using Xenon.SaveLoad;
 using Xenon.SlideAssembly.LayoutManagement;
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
-using System.Text;
-
-namespace IntegratedPresenter.BMDSwitcher
+﻿namespace IntegratedPresenter.BMDSwitcher
 {
     /* acording to: https://www.skaarhoj.com/fileadmin/BMDPROTOCOL.html
      */

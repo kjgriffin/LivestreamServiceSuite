@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IntegratedPresenterAPIInterop
+﻿namespace IntegratedPresenterAPIInterop
 {
 
     public static class CommonAPINames
@@ -18,6 +12,7 @@ namespace IntegratedPresenterAPIInterop
     public class MirrorPresentationDescription
     {
         public List<MirrorSlide> Slides { get; set; } = new List<MirrorSlide>();
+        public Dictionary<string, string> RawTextResources { get; set; } = new Dictionary<string, string>();
         public string HeavyResourcePath { get; set; } = "";
 
         public string BMDCfgFile { get; set; } = "";

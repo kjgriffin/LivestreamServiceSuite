@@ -14,6 +14,7 @@ namespace Xenon.Compiler.AST
         public static string DATAKEY_PILOT { get => "pilot-data"; }
         public static string DATAKEY_PILOT_SOURCECODE_LOOKUP { get => "source-code-lookup-pilot"; }
         public static string DATAKEY_CMD_SOURCECODE_LOOKUP { get => "source-code-lookup-generating-command"; }
+        public static string DATAKEY_CMD_SOURCESLIDENUM_LABELS { get => "source-code-slide-num-lookup-label"; }
 
         public int _SourceLine { get; private set; } = -1;
         public int _PilotSourceLine { get; private set; } = -1;
@@ -27,6 +28,7 @@ namespace Xenon.Compiler.AST
         public int Postset_Last { get; set; } = -1;
 
         public Dictionary<string, string> PilotCommands = new Dictionary<string, string>();
+        public List<string> Attributes = new List<string>();
 
         public IXenonASTElement Parent { get; private set; }
 
@@ -45,6 +47,21 @@ namespace Xenon.Compiler.AST
                     if (Command?._SourceLine > -1)
                     {
                         s.NonRenderedMetadata[DATAKEY_CMD_SOURCECODE_LOOKUP] = Command._SourceLine;
+                    }
+                }
+                // process labeling
+                var label = Attributes.FirstOrDefault(x => x.StartsWith("@label::"));
+                if (label != null)
+                {
+                    var lname = label.Remove(0, "@label::".Length);
+                    if (s.Data.TryGetValue(DATAKEY_CMD_SOURCESLIDENUM_LABELS, out var d))
+                    {
+                        var dl = d as List<string>;
+                        dl.Add(lname);
+                    }
+                    else
+                    {
+                        s.Data[DATAKEY_CMD_SOURCESLIDENUM_LABELS] = new List<string> { lname };
                     }
                 }
             }
@@ -115,6 +132,21 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTExpression expr;
+            List<string> attrs = new List<string>();
+
+            Lexer.GobbleWhitespace();
+            while (!Lexer.InspectEOF() && !Lexer.Inspect("#"))
+            {
+                // allow optional 'attribute' style on any valid command
+                if (Lexer.Inspect("["))
+                {
+                    Lexer.Consume();
+                    attrs.Add(Lexer.ConsumeUntil("]"));
+                    Lexer.GobbleandLog("]");
+                    Lexer.GobbleWhitespace();
+                }
+            }
+
             // parse expressions command
             if (Lexer.GobbleandLog("#"))
             {
@@ -124,6 +156,7 @@ namespace Xenon.Compiler.AST
                 {
                     expr._SourceLine = sline;
                 }
+                expr.Attributes = attrs;
             }
             else
             {
@@ -254,6 +287,14 @@ namespace Xenon.Compiler.AST
                 expr.Command = (IXenonASTCommand)resource.Compile(Lexer, Logger, parent);
                 return expr;
             }
+            if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.DynamicControllerDef]))
+            {
+                XenonASTDynamicController resource = new XenonASTDynamicController();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.DynamicControllerDef]);
+                expr.Command = (IXenonASTCommand)resource.Compile(Lexer, Logger, parent);
+                return expr;
+            }
+
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Script]))
             {
                 XenonASTScript script = new XenonASTScript();

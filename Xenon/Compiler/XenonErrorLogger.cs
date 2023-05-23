@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Xenon.Compiler
 {
@@ -13,7 +11,7 @@ namespace Xenon.Compiler
 
         public void Log(XenonCompilerMessage message)
         {
-            messages.Add(message); 
+            messages.Add(message);
         }
 
         public void ClearErrors()

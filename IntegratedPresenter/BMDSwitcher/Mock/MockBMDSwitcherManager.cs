@@ -3,16 +3,18 @@
 
 using ATEMSharedState.SwitcherState;
 
-using BMDSwitcherAPI;
-
 using CCU.Config;
 
 using CCUI_UI;
+
+using Configurations.SwitcherConfig;
 
 using IntegratedPresenter.BMDSwitcher.Config;
 using IntegratedPresenter.Main;
 
 using log4net;
+
+using SharedPresentationAPI.Presentation;
 
 using SwitcherControl.BMDSwitcher;
 
@@ -396,17 +398,22 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             if (hardUpdate)
             {
                 _state.AuxID = config.DefaultAuxSource;
-                _state.USK1KeyType = config.USKSettings.IsChroma == 1 ? 2 : 1;
-                if (config.USKSettings.IsChroma == 1)
-                {
-                    _state.USK1FillSource = config.USKSettings.ChromaSettings.FillSource;
-                }
-                else
+                _state.USK1KeyType = config.USKSettings.DefaultKeyType;
+                if (config.USKSettings.DefaultKeyType == 1)
                 {
                     _state.USK1FillSource = config.USKSettings.PIPSettings.DefaultFillSource;
                 }
+                else if (config.USKSettings.DefaultKeyType == 2)
+                {
+                    _state.USK1FillSource = config.USKSettings.ChromaSettings.FillSource;
+                }
+                else if (config.USKSettings.DefaultKeyType == 3)
+                {
+                    _state.USK1FillSource = config.USKSettings.PATTERNSettings.DefaultFillSource;
+                }
                 _state.DVESettings = config.USKSettings.PIPSettings;
                 _state.ChromaSettings = config.USKSettings.ChromaSettings;
+                _state.PATTERNSettings = config.USKSettings.PATTERNSettings;
             }
 
             ForceStateUpdate();
@@ -562,6 +569,27 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             SwitcherStateChanged?.Invoke(_state);
         }
 
+        public void ConfigureUSK1PATTERN(BMDUSKPATTERNSettings settings)
+        {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            _state.USK1KeyType = 3;
+
+            // safe switcher actually sets all the params eventually
+            _state.USK1FillSource = settings.DefaultFillSource;
+
+            if (!BMDUSKPATTERNSettings.Patterns.TryGetValue(settings.PatternType, out var ptype))
+            {
+                ptype = BMDUSKPATTERNSettings.DEFAULTPATTERNTYPE;
+            }
+            _state.PATTERNSettings = settings.Copy();
+
+            // safe switcher will enable fly-keyer
+            // but we don't seem to track that curently in the state
+
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+
         public void ConfigureUSK1Chroma(BMDUSKChromaSettings settings)
         {
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -590,6 +618,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _state.USK1KeyType = 1;
             mockMultiviewer.setUSK1KeyType(1);
+            SwitcherStateChanged?.Invoke(_state);
+        }
+
+        public void SetUSK1TypePATTERN()
+        {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            _state.USK1KeyType = 3;
+            mockMultiviewer.setUSK1KeyType(3);
             SwitcherStateChanged?.Invoke(_state);
         }
 

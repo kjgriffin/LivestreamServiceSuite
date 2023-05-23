@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Xenon.LayoutEngine.L2
 {
@@ -166,7 +164,7 @@ namespace Xenon.LayoutEngine.L2
                 Blurbs.RemoveAt(0);
             }
             //trim end
-            while(Blurbs.Any() && string.IsNullOrWhiteSpace(Blurbs.Last().Text))
+            while (Blurbs.Any() && string.IsNullOrWhiteSpace(Blurbs.Last().Text))
             {
                 Blurbs.RemoveAt(Blurbs.Count - 1);
             }

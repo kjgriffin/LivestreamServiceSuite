@@ -1,18 +1,11 @@
 ﻿using DVIPProtocol.Clients.Execution;
-using DVIPProtocol.Protocol.Lib.Command;
-using DVIPProtocol.Protocol.Lib.Inquiry;
 
 using log4net;
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DVIPProtocol.Clients.Advanced
 {
@@ -155,22 +148,22 @@ namespace DVIPProtocol.Clients.Advanced
 
                 if (seq.Setup != null && seq.Setup.Length > 0)
                 {
-                    var s = DoTCPTimed(seq.Setup, seq.SetupDelayMS);
-                    proceed = s.success;
+                    var s = DoTCPTimed(seq.Setup, seq.SetupDelayMS, seq.IgnoreALLResponse);
+                    proceed = seq.IgnoreALLResponse ? true : s.success;
                     resp = s.resp;
                 }
 
                 if (proceed)
                 {
-                    var c1 = DoTCPTimed(seq.First, seq.DelayMS);
-                    proceed = c1.success;
+                    var c1 = DoTCPTimed(seq.First, seq.DelayMS, seq.IgnoreALLResponse);
+                    proceed = seq.IgnoreALLResponse ? true : c1.success;
                     resp = resp.Concat(c1.resp).ToArray();
                 }
 
                 if (proceed)
                 {
-                    var c2 = DoTCPTimed(seq.Second, 0);
-                    proceed = c2.success;
+                    var c2 = DoTCPTimed(seq.Second, 0, seq.IgnoreALLResponse);
+                    proceed = seq.IgnoreALLResponse ? true : c2.success;
                     resp = resp.Concat(c2.resp).ToArray();
                 }
 
@@ -187,7 +180,7 @@ namespace DVIPProtocol.Clients.Advanced
                     bool reset = false;
                     for (int j = 0; j < seq.RetryAttempts; j++)
                     {
-                        if (DoTCPTimed(seq.Reset, seq.DelayMS).success)
+                        if (DoTCPTimed(seq.Reset, seq.DelayMS, seq.IgnoreALLResponse).success)
                         {
                             reset = true;
                             j = seq.RetryAttempts;
@@ -222,7 +215,7 @@ namespace DVIPProtocol.Clients.Advanced
             try
             {
                 stream = m_client.GetStream();
-                stream.ReadTimeout = 5000; // TODO: figure out how long this really should be...
+                //stream.ReadTimeout = 5000; // TODO: figure out how long this really should be...
             }
             catch (Exception ex)
             {
@@ -245,7 +238,15 @@ namespace DVIPProtocol.Clients.Advanced
             {
                 while (stream.DataAvailable)
                 {
-                    stream.ReadByte();
+                    //stream.ReadByte();
+
+                    // since we're just trying to flush the buffer, do it with as few calls as possible
+
+                    // when we're flushing the buffer, don't wait at all
+
+                    Span<byte> _discard = new Span<byte>();
+                    stream.ReadTimeout = 0;
+                    var tossed = stream.Read(_discard);
                 }
             }
             catch (Exception ex)
@@ -274,10 +275,36 @@ namespace DVIPProtocol.Clients.Advanced
                     return (false, new byte[0]);
                 }
 
-                m_log?.Info($"[{m_endpoint.ToString()}] reading size highbyte.");
-                sizehigh = stream.ReadByte();
-                m_log?.Info($"[{m_endpoint.ToString()}] reading size lowbyte.");
-                sizelow = stream.ReadByte();
+                // performance??
+                // ms are critical right
+                // so call read only once if possible
+
+                // at this point we want data
+                // set a read timeout to hopefully catch it
+                stream.ReadTimeout = 50; // this may be within acceptable slop?
+
+                byte[] _datain = new byte[m_client.ReceiveBufferSize]; // memory is cheap, this is enough to read the whole thing at once
+                m_log?.Info($"[{m_endpoint.ToString()}] reading ALL available");
+                var recieved = stream.Read(_datain, 0, _datain.Length);
+
+                // dvip protocol requires we receive first 2 bytes indicating how much data we'll get
+                while (recieved < 2)
+                {
+                    // need more data
+                    var appended = stream.Read(_datain, recieved, _datain.Length - recieved);
+                    recieved += appended;
+                }
+
+                // now should have at least 2 bytes of response
+                m_log?.Info($"[{m_endpoint.ToString()}] reading payload size.");
+                sizehigh = _datain[0];
+                sizelow = _datain[1];
+
+                //m_log?.Info($"[{m_endpoint.ToString()}] reading size highbyte.");
+                //sizehigh = stream.ReadByte();
+                //m_log?.Info($"[{m_endpoint.ToString()}] reading size lowbyte.");
+                //sizelow = stream.ReadByte();
+                /*
                 if (sizehigh == -1 || sizelow == -1)
                 {
                     // unexpected end of stream too soon
@@ -285,17 +312,32 @@ namespace DVIPProtocol.Clients.Advanced
                     m_log?.Info($"[{m_endpoint.ToString()}] invalid size. Abort");
                     return (false, new byte[0]);
                 }
+                */
                 // get data here
                 dataSize = (uint)(sizehigh << 8 | sizelow) - 2;
-                // validate dataSize
-                if (dataSize < 0 || dataSize > 512)
+                m_log?.Info($"[{m_endpoint.ToString()}] expecting size {dataSize}");
+                // validate dataSize and that we have a response
+                if (dataSize <= 0 || dataSize > 512)
                 {
                     // reject
                     m_log?.Info($"[{m_endpoint.ToString()}] expecting invalid datasize of {dataSize}. REJECTED!");
                     return (false, new byte[0]);
                 }
+
+                // make sure we've captured all the expected data
+                while ((recieved - 2) < dataSize)
+                {
+                    // need more data
+                    var appended = stream.Read(_datain, recieved, _datain.Length - recieved);
+                    recieved += appended;
+                }
+
                 byte[] data = new byte[dataSize];
-                m_log?.Info($"[{m_endpoint.ToString()}] expecting size {dataSize}");
+                Array.Copy(_datain, 2, data, 0, dataSize);
+
+                // fire back with the captured data
+
+                /*
                 for (int x = 0; x < dataSize; x++)
                 {
                     m_log?.Info($"[{m_endpoint.ToString()}] reading byte {x} of {dataSize}");
@@ -312,6 +354,7 @@ namespace DVIPProtocol.Clients.Advanced
                         return (false, new byte[0]);
                     }
                 }
+                */
                 m_log?.Info($"[{m_endpoint.ToString()}] finished reading response: {BitConverter.ToString(data)}");
 
                 // wait for spin time

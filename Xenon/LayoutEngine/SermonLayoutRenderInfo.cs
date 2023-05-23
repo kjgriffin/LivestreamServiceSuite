@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using System.Windows.Documents;
+﻿using System.Drawing;
 
 namespace Xenon.LayoutEngine
 {
@@ -10,9 +6,9 @@ namespace Xenon.LayoutEngine
     {
         public SermonLayoutRenderInfo(string fontname = "Arial", int fontsize = 36)
         {
-            BoldFont = new Font(fontname, fontsize, FontStyle.Bold); 
-            RegularFont = new Font(fontname, fontsize, FontStyle.Regular); 
-            ItalicFont = new Font(fontname, fontsize, FontStyle.Italic); 
+            BoldFont = new Font(fontname, fontsize, FontStyle.Bold);
+            RegularFont = new Font(fontname, fontsize, FontStyle.Regular);
+            ItalicFont = new Font(fontname, fontsize, FontStyle.Italic);
         }
 
         public Font BoldFont { get; set; }

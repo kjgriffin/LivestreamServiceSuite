@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.Drawing;
 
 namespace Xenon.Helpers
 {
@@ -18,7 +14,7 @@ namespace Xenon.Helpers
         {
             return new Rectangle(r.X + offset.X, r.Y + offset.Y, r.Width, r.Height);
         }
-        
+
         public static RectangleF Move(this RectangleF r, PointF offset)
         {
             return new RectangleF(r.X + offset.X, r.Y + offset.Y, r.Width, r.Height);
@@ -29,7 +25,7 @@ namespace Xenon.Helpers
         {
             return new Rectangle(r.X + offsetx, r.Y + offsety, r.Width, r.Height);
         }
-        
+
         public static RectangleF Move(this RectangleF r, float offsetx, float offsety)
         {
             return new RectangleF(r.X + offsetx, r.Y + offsety, r.Width, r.Height);

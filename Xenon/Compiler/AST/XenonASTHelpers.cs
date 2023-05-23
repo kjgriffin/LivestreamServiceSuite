@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Xenon.SlideAssembly;
+﻿using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {

@@ -1,8 +1,6 @@
-﻿using Xenon.LayoutEngine;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
+﻿using System.Drawing;
+
+using Xenon.LayoutEngine;
 
 namespace Xenon.SlideAssembly
 {

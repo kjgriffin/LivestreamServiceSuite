@@ -5,11 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.LayoutInfo;
@@ -392,6 +390,8 @@ namespace Xenon.SlideAssembly.LayoutManagement
         private (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) _Internal_GetLayoutPreview(string layoutname, string groupname, string libname, string layoutjson)
         {
             string json = _Internal_ResolveLayoutMacros(layoutjson, layoutname, groupname, libname);
+
+
             if (LanguageKeywords.Commands.ContainsValue(groupname))
             {
                 LanguageKeywordCommand cmd = LanguageKeywords.Commands.FirstOrDefault(x => x.Value == groupname).Key;

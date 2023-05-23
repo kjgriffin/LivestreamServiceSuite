@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Xenon.Compiler
@@ -19,7 +18,7 @@ namespace Xenon.Compiler
                 var m = Regex.Match(line, @"/// </MANUAL_UPDATE name=\'(?<name>.*)\'>");
                 if (m.Success)
                 {
-                    logger.Log(new XenonCompilerMessage() { ErrorName = $"Manual Update Required for {m.Groups["name"].Value}", ErrorMessage = $"Found command marked for manual update of {m.Groups["name"].Value}.", Generator = "XMLErrorGenerator", Inner = "", Level = XenonCompilerMessageType.ManualIntervention, Token = (m.Groups["name"].Value, lnum)});
+                    logger.Log(new XenonCompilerMessage() { ErrorName = $"Manual Update Required for {m.Groups["name"].Value}", ErrorMessage = $"Found command marked for manual update of {m.Groups["name"].Value}.", Generator = "XMLErrorGenerator", Inner = "", Level = XenonCompilerMessageType.ManualIntervention, Token = (m.Groups["name"].Value, lnum) });
                 }
                 lnum += 1;
             }

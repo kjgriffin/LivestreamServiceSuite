@@ -1,9 +1,5 @@
 ﻿using CommonVersionInfo;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Xenon.LayoutInfo
 {
 

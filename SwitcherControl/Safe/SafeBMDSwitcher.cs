@@ -1,20 +1,23 @@
-﻿using BMDSwitcherAPI;
+﻿using ATEMSharedState.SwitcherState;
+
+using BMDSwitcherAPI;
+
+using Configurations.SwitcherConfig;
+
 using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
+
+using log4net;
+
+using SwitcherControl.BMDSwitcher;
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using log4net;
-using System.IO;
 using System.Threading;
-using SwitcherControl.BMDSwitcher;
-using ATEMSharedState.SwitcherState;
+using System.Windows;
 
 namespace SwitcherControl.Safe
 {
@@ -42,6 +45,7 @@ namespace SwitcherControl.Safe
         private MixEffectBlockMonitor _mixEffectBlockMonitor;
         private BMDSwitcherAuxMonitor _auxMonitor;
         private UpstreamKeyMonitor _upstreamKey1Monitor;
+        private BMDSwitcherPatternKeyMonitor _patternKeyMonitor;
         private DownstreamKeyMonitor _dsk1Monitor;
         private DownstreamKeyMonitor _dsk2Monitor;
         private List<InputMonitor> _inputMonitors;
@@ -120,6 +124,9 @@ namespace SwitcherControl.Safe
             _upstreamKey1Monitor.UpstreamKeyCutChanged += _upstreamKey1Monitor_UpstreamKeyCutChanged;
             _upstreamKey1Monitor.UpstreamKeyMaskChanged += _upstreamKey1Monitor_UpstreamKeyMaskChanged;
 
+            _patternKeyMonitor = new BMDSwitcherPatternKeyMonitor();
+            _patternKeyMonitor.OnAnyChange += _patternKeyMonitor_OnAnyChange;
+
             _flykeyMonitor = new SwitcherFlyKeyMonitor();
             _flykeyMonitor.KeyFrameChanged += _flykeyMonitor_KeyFrameChanged;
             _flykeyMonitor.KeyFrameStateChange += _flykeyMonitor_KeyFrameStateChange;
@@ -144,6 +151,16 @@ namespace SwitcherControl.Safe
             SwitcherDisconnected();
             _logger?.Info("Initialized Switcher with disconnected state. Setup monitor callbacks.");
             IsInitialized = true;
+        }
+
+        private void _patternKeyMonitor_OnAnyChange(object sender, EventArgs e)
+        {
+            _logger?.Debug($"[BMD HW] EVENT ON {System.Reflection.MethodBase.GetCurrentMethod()}");
+            _executor.EnqueueWork(() =>
+            {
+                ForceStateUpdate_PatternSettings();
+                SwitcherStateChanged?.Invoke(_state);
+            });
         }
 
         private void _mixEffectBlockMonitor_InTransitionChanged(object sender, object args)
@@ -543,6 +560,8 @@ namespace SwitcherControl.Safe
             _BMDSwitcherFlyKeyParamters = (IBMDSwitcherKeyFlyParameters)_BMDSwitcherUpstreamKey1;
             _BMDSwitcherFlyKeyParamters.AddCallback(_flykeyMonitor);
 
+            IBMDSwitcherKeyPatternParameters pattern = (IBMDSwitcherKeyPatternParameters)_BMDSwitcherUpstreamKey1;
+            pattern.AddCallback(_patternKeyMonitor);
 
             return true;
         }
@@ -724,6 +743,7 @@ namespace SwitcherControl.Safe
                 ForceStateUpdate_USK1();
                 ForceStateUpdate_ChromaSettings();
                 ForceStateUpdate_PIPSettings();
+                ForceStateUpdate_PatternSettings();
                 ForceStateUpdate_DSK1();
                 ForceStateUpdate_DSK2();
                 ForceStateUpdate_FTB();
@@ -754,13 +774,13 @@ namespace SwitcherControl.Safe
             switch (keytype)
             {
                 case _BMDSwitcherKeyType.bmdSwitcherKeyTypeLuma:
-                    _state.USK1KeyType = 3;
+                    _state.USK1KeyType = 4;
                     break;
                 case _BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma:
                     _state.USK1KeyType = 2;
                     break;
                 case _BMDSwitcherKeyType.bmdSwitcherKeyTypePattern:
-                    _state.USK1KeyType = 4;
+                    _state.USK1KeyType = 3;
                     break;
                 case _BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE:
                     _state.USK1KeyType = 1;
@@ -998,21 +1018,41 @@ namespace SwitcherControl.Safe
         private void ConfigureUpstreamKey()
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-            if (_config.USKSettings.IsChroma == 1)
-            {
-                ConfigureUSKforChroma();
-                ConfigureDVEPIPSettings();
-            }
-            else if (_config.USKSettings.IsDVE == 1)
+
+            ConfigureUSK1ChromaSettings();
+            ConfigureDVEPIPSettings();
+            ConfigureUSK1PATTERNSettings(_config.USKSettings.PATTERNSettings);
+
+            if (_config.USKSettings.DefaultKeyType == 1)
             {
                 ConfigureUSKforPictureInPicture();
-                //ConfigureUSK1ChromaSettings();
+            }
+            else if (_config.USKSettings.DefaultKeyType == 2)
+            {
+                ConfigureUSKforChroma();
+            }
+            else if (_config.USKSettings.DefaultKeyType == 3)
+            {
+                ConfigureUSKForPATTERN(_config.USKSettings.PATTERNSettings);
             }
         }
+
+        private void ConfigureUSKForPATTERN(BMDUSKPATTERNSettings settings)
+        {
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypePattern);
+            _config.USKSettings.DefaultKeyType = 3;
+
+            ConfigureUSK1PATTERNSettings(settings);
+
+            ForceStateUpdate();
+        }
+
         private void ConfigureUSKforChroma()
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
+            _config.USKSettings.DefaultKeyType = 2;
 
             ConfigureUSK1ChromaSettings();
 
@@ -1058,6 +1098,7 @@ namespace SwitcherControl.Safe
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
+            _config.USKSettings.DefaultKeyType = 1;
 
             ConfigureDVEPIPSettings();
 
@@ -1174,6 +1215,42 @@ namespace SwitcherControl.Safe
                 }
             };
         }
+
+        private void ForceStateUpdate_PatternSettings()
+        {
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            IBMDSwitcherKeyPatternParameters patternparams = (IBMDSwitcherKeyPatternParameters)_BMDSwitcherUpstreamKey1;
+
+            patternparams.GetPattern(out var pattern);
+            patternparams.GetInverse(out var inverse);
+            patternparams.GetSize(out var size);
+            patternparams.GetSoftness(out var softness);
+            patternparams.GetSymmetry(out var symmetry);
+            patternparams.GetHorizontalOffset(out var xoff);
+            patternparams.GetVerticalOffset(out var yoff);
+
+            double cposx, cposy, csizex, csizey;
+            _BMDSwitcherFlyKeyParamters.GetPositionX(out cposx);
+            _BMDSwitcherFlyKeyParamters.GetPositionY(out cposy);
+            _BMDSwitcherFlyKeyParamters.GetSizeX(out csizex);
+            _BMDSwitcherFlyKeyParamters.GetSizeY(out csizey);
+
+            string patternName = BMDUSKPATTERNSettings.FindPattern(pattern);
+
+            _state.PATTERNSettings = new BMDUSKPATTERNSettings()
+            {
+                DefaultFillSource = _config?.USKSettings.PATTERNSettings.DefaultFillSource ?? 0,
+                PatternType = patternName,
+                Inverted = inverse == 1,
+                Size = size,
+                Softness = softness,
+                Symmetry = symmetry,
+                XOffset = xoff,
+                YOffset = yoff,
+            };
+        }
+
+
         private void ConfigureAudioLevels()
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -1446,6 +1523,30 @@ namespace SwitcherControl.Safe
             _BMDSwitcherTransitionParameters.SetNextTransitionSelection((_BMDSwitcherTransitionSelection)val);
         }
 
+        private void ConfigureUSK1PATTERNSettings(BMDUSKPATTERNSettings pattern)
+        {
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            IBMDSwitcherKeyPatternParameters patternParameters = (IBMDSwitcherKeyPatternParameters)_BMDSwitcherUpstreamKey1;
+
+            _BMDSwitcherUpstreamKey1.SetInputFill(pattern.DefaultFillSource);
+
+            if (!BMDUSKPATTERNSettings.Patterns.TryGetValue(pattern.PatternType, out var ptype))
+            {
+                ptype = BMDUSKPATTERNSettings.DEFAULTPATTERNTYPE;
+            }
+
+            patternParameters.SetPattern(ptype);
+
+            patternParameters.SetInverse(pattern.Inverted ? 1 : 0);
+            patternParameters.SetVerticalOffset(pattern.YOffset);
+            patternParameters.SetHorizontalOffset(pattern.XOffset);
+            patternParameters.SetSoftness(pattern.Softness);
+            patternParameters.SetSize(pattern.Size);
+            patternParameters.SetSymmetry(pattern.Symmetry);
+
+            _BMDSwitcherFlyKeyParamters.SetFly(1);
+        }
+
         private void SetPIPPosition(BMDUSKDVESettings settings)
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -1534,22 +1635,37 @@ namespace SwitcherControl.Safe
         private void ConfigureUSK1PIP(BMDUSKDVESettings settings)
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-            _config.USKSettings.IsDVE = 1;
-            _config.USKSettings.IsChroma = 0;
+            //_config.USKSettings.IsDVE = 1;
+            //_config.USKSettings.IsChroma = 0;
+            _config.USKSettings.DefaultKeyType = 1;
             _config.USKSettings.PIPSettings = settings;
             ConfigureUSKforPictureInPicture();
 
             ForceStateUpdate();
         }
 
+        private void ConfigureUSK1PATTERN(BMDUSKPATTERNSettings settings)
+        {
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            //_config.USKSettings.IsDVE = 0;
+            //_config.USKSettings.IsChroma = 1;
+            _config.USKSettings.DefaultKeyType = 3;
+
+
+            ConfigureUSKForPATTERN(settings);
+
+            ForceStateUpdate();
+        }
+
+
         private void ConfigureUSK1Chroma(BMDUSKChromaSettings settings)
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
-            _config.USKSettings.IsDVE = 0;
-            _config.USKSettings.IsChroma = 1;
+            //_config.USKSettings.IsDVE = 0;
+            //_config.USKSettings.IsChroma = 1;
+            _config.USKSettings.DefaultKeyType = 2;
             _config.USKSettings.ChromaSettings = settings;
             ConfigureUSKforChroma();
-
 
             ForceStateUpdate();
         }
@@ -1570,6 +1686,12 @@ namespace SwitcherControl.Safe
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
             _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
+            ForceStateUpdate();
+        }
+        private void SetUSK1TypePATTERN()
+        {
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            _BMDSwitcherUpstreamKey1.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypePattern);
             ForceStateUpdate();
         }
 
@@ -1817,6 +1939,10 @@ namespace SwitcherControl.Safe
         {
             _executor.EnqueueWork(SetUSK1TypeDVE);
         }
+        void IBMDSwitcherManager.SetUSK1TypePATTERN()
+        {
+            _executor.EnqueueWork(SetUSK1TypePATTERN);
+        }
 
         void IBMDSwitcherManager.SetUSK1TypeChroma()
         {
@@ -1846,6 +1972,10 @@ namespace SwitcherControl.Safe
         void IBMDSwitcherManager.ConfigureUSK1Chroma(BMDUSKChromaSettings settings)
         {
             _executor.EnqueueWork(() => ConfigureUSK1Chroma(settings));
+        }
+        void IBMDSwitcherManager.ConfigureUSK1PATTERN(BMDUSKPATTERNSettings settings)
+        {
+            _executor.EnqueueWork(() => ConfigureUSK1PATTERN(settings));
         }
 
         void IBMDSwitcherManager.Close()

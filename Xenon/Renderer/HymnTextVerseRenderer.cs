@@ -1,16 +1,14 @@
-﻿using Xenon.LayoutEngine;
-using Xenon.SlideAssembly;
-using Xenon.Helpers;
-using Xenon.LayoutInfo;
-using System.Collections.Generic;
-using Xenon.Compiler;
-using System;
-using System.Text.Json;
-using Xenon.Renderer.Helpers;
-using System.Linq;
-using Xenon.Renderer.Helpers.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp;
+
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+
+using Xenon.Compiler;
+using Xenon.LayoutInfo;
+using Xenon.Renderer.Helpers.ImageSharp;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
@@ -56,7 +54,7 @@ namespace Xenon.Renderer
             return ISlideLayoutPrototypePreviewer<TextHymnLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
         {
             if (slide.Format == SlideFormat.HymnTextVerse)
             {

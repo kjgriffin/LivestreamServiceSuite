@@ -1,15 +1,10 @@
 ﻿using IntegratedPresenter.BMDSwitcher.Config;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace IntegratedPresenter.Main
 {
@@ -24,10 +19,14 @@ namespace IntegratedPresenter.Main
         Action<BMDUSKDVESettings> SetPIPKeyframeBOnSwitcher;
         Func<int, int> ConvertButtonToSourceID;
 
+        bool _startupComplete = false;
+
         MainWindow _parent;
         public PIPControl(MainWindow parent, Action<BMDUSKDVESettings> setpiponswitcher, Action<BMDUSKDVESettings> setpipkeyaonswitcher, Action<BMDUSKDVESettings> setpipkeybonswitcher, BMDUSKDVESettings current, long? USK1FillSource, Func<int, int> convertbuttontosourceid)
         {
             InitializeComponent();
+
+            _startupComplete = false;
 
             pipfills[0] = preset_PIP_1;
             pipfills[1] = preset_PIP_2;
@@ -54,6 +53,34 @@ namespace IntegratedPresenter.Main
         public bool HasClosed { get; set; } = false;
 
 
+        private void PlaceToCurrent(BMDUSKDVESettings state)
+        {
+            PlaceToCurrent(state.Current.PositionX, state.Current.PositionY, Math.Max(state.Current.SizeX, state.Current.SizeY), state.MaskLeft, state.MaskRight, state.MaskTop, state.MaskBottom, state.IsMasked);
+        }
+
+        private void PlaceToCurrent(double x, double y, double scaleXY, double maskL, double maskR, double maskT, double maskB, int mask)
+        {
+            bool masked = false;
+            if (mask == 1)
+            {
+                masked = true;
+            }
+            if (mask == -1)
+            {
+                masked = (maskR != 0 || maskL != 0 || maskT != 0 || maskB != 0);
+            }
+
+            pipxoff = x;
+            pipyoff = y;
+            pipscale = scaleXY;
+            pipml = masked ? maskL : 0;
+            pipmr = masked ? maskR : 0;
+            pipmt = masked ? maskT : 0;
+            pipmb = masked ? maskB : 0;
+
+            Dispatcher.Invoke(UpdateUI);
+        }
+
         public void PIPSettingsUpdated(BMDUSKDVESettings state, long USK1FillSource)
         {
             truepipxoff = state.Current.PositionX;
@@ -63,6 +90,13 @@ namespace IntegratedPresenter.Main
             truepipmr = state.IsMasked == 1 ? state.MaskRight : 0;
             truepipmt = state.IsMasked == 1 ? state.MaskTop : 0;
             truepipmb = state.IsMasked == 1 ? state.MaskBottom : 0;
+
+            // start in same place
+            if (!_startupComplete)
+            {
+                PlaceToCurrent(state);
+                _startupComplete = true;
+            }
 
             /*
             keyapipscale = Math.Max(state.KeyFrameA.SizeX, state.KeyFrameA.SizeY);
@@ -347,6 +381,14 @@ namespace IntegratedPresenter.Main
             else
             {
                 CmdMode = false;
+            }
+
+            if (e.Key == Key.C)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    PlaceToCurrent(truepipxoff, truepipyoff, truepipscale, truepipml, truepipmr, truepipmt, truepipmb, -1);
+                });
             }
 
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Xenon.SlideAssembly
+﻿namespace Xenon.SlideAssembly
 {
     public enum SlideFormat
     {
@@ -25,6 +21,7 @@ namespace Xenon.SlideAssembly
 
         Script,
         ResourceCopy,
+        RawTextFile,
         StitchedImage,
         ShapesAndTexts,
         ResponsiveLiturgy,

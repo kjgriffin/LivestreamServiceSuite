@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using DVIPProtocol.Binary.Magic;
+﻿using DVIPProtocol.Binary.Magic;
 
 namespace DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive
 {

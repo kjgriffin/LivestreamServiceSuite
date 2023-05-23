@@ -1,14 +1,8 @@
 ﻿using DVIPProtocol.Clients.Execution;
-using DVIPProtocol.Protocol;
 using DVIPProtocol.Protocol.Lib.Command;
 using DVIPProtocol.Protocol.Lib.Inquiry;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DVIPProtocol.Clients.Advanced
 {

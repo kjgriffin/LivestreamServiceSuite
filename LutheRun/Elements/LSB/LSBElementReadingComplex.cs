@@ -1,6 +1,5 @@
 ﻿using AngleSharp.Dom;
 
-using LutheRun.Elements;
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
 using LutheRun.Pilot;
@@ -12,8 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
-using Xenon.LayoutEngine;
 
 using static LutheRun.Elements.LSB.LSBElementHymn;
 

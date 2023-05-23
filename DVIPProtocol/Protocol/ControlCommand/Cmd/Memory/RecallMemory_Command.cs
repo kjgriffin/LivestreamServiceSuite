@@ -1,11 +1,5 @@
 ﻿using DVIPProtocol.Binary.Magic;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace DVIPProtocol.Protocol.ControlCommand.Cmd.Memory
 {
     public class RecallMemory_Command : ControlCommand

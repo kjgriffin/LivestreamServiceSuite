@@ -1,0 +1,687 @@
+﻿<UserControl x:Class="Integrated_Presenter.ViewModels.PATTERNKeyControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Integrated_Presenter.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid Background="#2f2f30">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="100"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Border PreviewMouseDown="setvbar" Grid.Column="0" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Rectangle Name="ptn_vbar" Width="15" Height="40" Fill="#979797">
+                        <Rectangle.RenderTransform>
+                            <TranslateTransform X="10"></TranslateTransform>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="sethbar" Grid.Column="1" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Rectangle Name="ptn_hbar" Width="40" Height="15" Fill="#979797">
+                        <Rectangle.RenderTransform>
+                            <TranslateTransform Y="10"></TranslateTransform>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="setvbarn" Grid.Column="2" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Panel.ZIndex="10" Width="15" Height="40" Fill="#171717"></Rectangle>
+                        <Rectangle Name="ptn_vbarn" Width="40" Height="40" Fill="#979797"></Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="sethbarn" Grid.Column="3" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Panel.ZIndex="10" Width="40" Height="15" Fill="#171717"></Rectangle>
+                        <Rectangle Name="ptn_hbarn" Width="40" Height="40" Fill="#979797"></Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="settbar" Grid.Column="4" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Panel.ZIndex="10" Width="15" Height="40" Fill="#171717"></Rectangle>
+                        <Rectangle Panel.ZIndex="10" Width="40" Height="15" Fill="#171717"></Rectangle>
+                        <Rectangle Name="ptn_tbox" Width="40" Height="40" Fill="#979797"></Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+
+                <Border PreviewMouseDown="setciris" Grid.Column="5" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Ellipse Name="ptn_circle_iris" Width="20" Height="20" Fill="#979797"></Ellipse>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="setdiris" Grid.Column="6" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Rectangle Name="ptn_diamond_iris" Width="15" Height="15" Fill="#979797">
+                        <Rectangle.RenderTransformOrigin>
+                            <Point X="0.5" Y="0.5"></Point>
+                        </Rectangle.RenderTransformOrigin>
+                        <Rectangle.RenderTransform>
+                            <RotateTransform Angle="45"></RotateTransform>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="setldiag" Grid.Column="7" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Polygon Name="ptn_ldiag" Points="5,5 40,5 5,40" Fill="#979797"></Polygon>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="setrdiag" Grid.Column="8" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Polygon Name="ptn_rdiag" Points="5,5 40,5 40,40" Fill="#979797"></Polygon>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="setriris" Grid.Column="0" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Name="ptn_rect_iris" Width="15" Height="15" Fill="#979797"></Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="settl" Grid.Column="1" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Name="ptn_tl_box" Width="15" Height="15" Fill="#979797">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform X="-10" Y="-10"></TranslateTransform>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+
+                <Border PreviewMouseDown="settc" Grid.Column="2" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Name="ptn_tc_box" Width="15" Height="15" Fill="#979797">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform X="0" Y="-10"></TranslateTransform>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="settr" Grid.Column="3" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Name="ptn_tr_box" Width="15" Height="15" Fill="#979797">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform X="10" Y="-10"></TranslateTransform>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="setcr" Grid.Column="4" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Name="ptn_rc_box" Width="15" Height="15" Fill="#979797">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform X="10" Y="0"></TranslateTransform>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="setbr" Grid.Column="5" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Name="ptn_br_box" Width="15" Height="15" Fill="#979797">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform X="10" Y="10"></TranslateTransform>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="setbc" Grid.Column="6" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Name="ptn_bc_box" Width="15" Height="15" Fill="#979797">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform X="0" Y="10"></TranslateTransform>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="setbl" Grid.Column="7" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Name="ptn_bl_box" Width="15" Height="15" Fill="#979797">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform X="-10" Y="10"></TranslateTransform>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+
+                <Border PreviewMouseDown="setcl" Grid.Column="8" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Grid>
+                        <Rectangle Name="ptn_lc_box" Width="15" Height="15" Fill="#979797">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform X="-10" Y="0"></TranslateTransform>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                    </Grid>
+                    <Border.Style>
+                        <Style>
+                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0" Grid.Column="0" Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">SIZE</TextBlock>
+                    <TextBlock x:Name="tbSize" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                    <Slider Name="slide_size" Maximum="1" Minimum="0" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="0" Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">SOFT</TextBlock>
+                    <TextBlock Name="tbSoft" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                    <Slider Minimum="0" Maximum="1" Name="slide_sharp" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
+                </Grid>
+                <Grid Grid.Row="0" Grid.Column="1" Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">SYM.</TextBlock>
+                    <TextBlock PreviewMouseDown="cener_sym" x:Name="tbSym" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                    <Slider Minimum="0" Maximum="1" Name="slide_sym" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="1" Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">INVERT</TextBlock>
+
+                    <Button Click="ClickInvert" Grid.Column="0" Focusable="false" Name="BtnINVERT" Foreground="White" Background="Red" Cursor="Hand" Width="60" Height="35">
+                        <Button.Content>
+                            INVERT
+                        </Button.Content>
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Border Name="Border" Background="#1d1d1d" BorderBrush="{TemplateBinding Foreground}" Margin="3" BorderThickness="1">
+                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Cursor" Value="{Binding Path=Cursor, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                        <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" TargetName="Border"></Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Slider Name="slide_x" Maximum="1" Minimum="0" Value="0.5" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Margin="10" Cursor="Hand"></Slider>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.RowSpan="2">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="80"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Slider Name="slide_y" Maximum="1" Minimum="0" Value="0.5" Grid.Column="2" Focusable="False" IsTabStop="False" HorizontalAlignment="Center" Orientation="Vertical" Margin="10" Cursor="Hand"></Slider>
+
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">Y:</TextBlock>
+                    <TextBlock x:Name="tbY" PreviewMouseDown="center_y" Cursor="Hand" Grid.Row="0" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                    <TextBlock Grid.Row="1" Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">X:</TextBlock>
+                    <TextBlock x:Name="tbX" PreviewMouseDown="center_x" Cursor="Hand" Grid.Row="1" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                </Grid>
+
+            </Grid>
+
+            <Grid Grid.Row="2" Grid.ColumnSpan="2">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock TextAlignment="Center" Margin="0,5,0,0" Style="{StaticResource GrayText}">FILL SOURCE</TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Grid>
+                            <Viewbox Name="ksc_pf1" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                        </Grid>
+                        <Grid>
+                            <Viewbox Name="ksc_pf2" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                        </Grid>
+                        <Grid>
+                            <Viewbox x:Name="ksc_pf3" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                        </Grid>
+                        <Grid>
+                            <Viewbox Name="ksc_pf4" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                        </Grid>
+                        <Grid>
+                            <Viewbox Name="ksc_pf5" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                        </Grid>
+                        <Grid>
+                            <Viewbox Name="ksc_pf6" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                        </Grid>
+                        <Grid>
+                            <Viewbox Name="ksc_pf7" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">7</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP7" Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                        </Grid>
+                        <Grid>
+                            <Viewbox Name="ksc_pf8" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP8" Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

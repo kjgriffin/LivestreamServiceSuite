@@ -1,45 +1,28 @@
 ﻿using CCU.Config;
 
-using Integrated_Presenter.Presentation;
-
 using IntegratedPresenter.BMDSwitcher.Config;
 
 using IntegratedPresenterAPIInterop;
 
-using System;
-using System.Collections.Generic;
+using SharedPresentationAPI.Presentation;
+
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
 using VariableMarkupAttributes;
+using VariableMarkupAttributes.Attributes;
 
-namespace IntegratedPresenter.Main
+namespace SharedPresentationAPI.Presentation
 {
 
-    public class WatchVariable
-    {
 
-        public WatchVariable(string wpath, object expectation, AutomationActionArgType vType)
-        {
-            this.VPath = wpath;
-            this.ExpectedVal = expectation;
-            this.VType = vType;
-        }
-
-        public string VPath { get; set; }
-        public object ExpectedVal { get; set; }
-        public AutomationActionArgType VType { get; set; }
-    }
-
-
+    [ExposesWatchableVariables]
     public class Presentation : IPresentation
     {
 
         public bool HasSwitcherConfig { get; internal set; } = false;
-        public BMDSwitcher.Config.BMDSwitcherConfigSettings SwitcherConfig { get; internal set; }
+        public IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings SwitcherConfig { get; internal set; }
 
         public bool HasUserConfig { get; private set; } = false;
         public Configurations.FeatureConfig.IntegratedPresenterFeatures UserConfig { get; private set; }
@@ -234,7 +217,7 @@ namespace IntegratedPresenter.Main
                     var cfg = sr.ReadToEnd();
                     try
                     {
-                        CCPUConfig = JsonSerializer.Deserialize<CCPUConfig>(cfg);
+                        CCPUConfig = JsonSerializer.Deserialize<CCPUConfig_Extended>(cfg);
                         HasCCUConfig = true;
                     }
                     catch (Exception ex)
@@ -243,6 +226,20 @@ namespace IntegratedPresenter.Main
                 }
             }
 
+            // load raw text resources
+            files = Directory.GetFiles(folder).Where(f => Regex.Match(f, @"RawResource_.+\.txt").Success).ToList();
+            foreach (var file in files)
+            {
+                var key = Regex.Match(file, @"RawResource_(?<key>.+)\.txt").Groups["key"].Value;
+                using (StreamReader sr = new StreamReader(file))
+                {
+                    // load the pilot actions...
+                    var src = sr.ReadToEnd();
+                    RawTextResources[key] = src;
+                }
+            }
+
+
             ComputeAggregateWatchVariables();
 
             return false;
@@ -250,6 +247,7 @@ namespace IntegratedPresenter.Main
 
         public int SlideCount { get => Slides.Count; }
 
+        [ExposedAsVariable(nameof(CurrentSlide))]
         public int CurrentSlide { get => _currentSlide + 1; }
 
         private int _currentSlide = 0;
@@ -316,6 +314,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
+        public Dictionary<string, string> RawTextResources { get; internal set; } = new Dictionary<string, string>();
 
         public void NextSlide()
         {
@@ -409,14 +408,14 @@ namespace IntegratedPresenter.Main
             {
                 var allSlideActions = slide.Actions.Concat(slide.SetupActions);
 
-                foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateBoolVal))
+                foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateBoolVal || x.Action.Action == AutomationActions.WatchStateBoolVal))
                 {
                     string vname = (string)action.Action.RawParams[2];
                     string wpath = (string)action.Action.RawParams[0];
                     object expectation = action.Action.RawParams[1];
                     variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Boolean);
                 }
-                foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateIntVal))
+                foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateIntVal || x.Action.Action == AutomationActions.WatchStateIntVal))
                 {
                     string vname = (string)action.Action.RawParams[2];
                     string wpath = (string)action.Action.RawParams[0];

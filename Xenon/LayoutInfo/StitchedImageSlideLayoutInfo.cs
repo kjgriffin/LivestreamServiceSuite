@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using Xenon.LayoutInfo.BaseTypes;
-using Xenon.LayoutInfo.Serialization;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 

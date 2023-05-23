@@ -1,7 +1,7 @@
-﻿using Xenon.SlideAssembly;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
+
+using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
@@ -15,8 +15,6 @@ namespace Xenon.Compiler.AST
         {
             return;
         }
-
-
 
         public void GenerateDebug(Project project);
         public XenonCompilerSyntaxReport Recognize(Lexer Lexer);

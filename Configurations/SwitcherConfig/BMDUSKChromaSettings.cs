@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace IntegratedPresenter.BMDSwitcher.Config
+﻿namespace IntegratedPresenter.BMDSwitcher.Config
 {
     public class BMDUSKChromaSettings
     {

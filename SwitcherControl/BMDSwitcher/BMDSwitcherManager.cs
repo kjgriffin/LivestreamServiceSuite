@@ -1,25 +1,12 @@
-﻿using BMDSwitcherAPI;
-using IntegratedPresenter.BMDSwitcher;
-using IntegratedPresenter.BMDSwitcher.Config;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using log4net;
-using System.IO;
-using System.Threading;
-using ATEMSharedState.SwitcherState;
+﻿using ATEMSharedState.SwitcherState;
 
 namespace SwitcherControl.BMDSwitcher
 {
 
     public delegate void SwitcherStateChange(BMDSwitcherState args);
 
+
+#if LEGACY
     public class BMDSwitcherManager : IBMDSwitcherManager
     {
 
@@ -1658,4 +1645,5 @@ namespace SwitcherControl.BMDSwitcher
             });
         }
     }
+#endif
 }

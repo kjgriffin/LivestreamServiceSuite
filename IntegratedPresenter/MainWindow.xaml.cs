@@ -1,41 +1,48 @@
-﻿using BMDSwitcherAPI;
+﻿using ATEMSharedState.SwitcherState;
+
+using CCU.Config;
+
+using CCUI_UI;
+
+using CommonVersionInfo;
+
+using Configurations.FeatureConfig;
+
+using Integrated_Presenter.Automation;
+using Integrated_Presenter.DynamicDrivers;
+using Integrated_Presenter.ViewModels;
+
 using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
-using IntegratedPresenter.ViewModels;
+using IntegratedPresenter.BMDSwitcher.Mock;
+
+using IntegratedPresenterAPIInterop;
+
+using log4net;
+
 using Microsoft.Win32;
+
+using SharedPresentationAPI.Presentation;
+
+using SwitcherControl.BMDSwitcher;
+using SwitcherControl.Safe;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Ports;
 using System.Linq;
-using System.Printing;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using log4net;
-using IntegratedPresenter.BMDSwitcher.Mock;
-using CommonVersionInfo;
-using Configurations.FeatureConfig;
-using IntegratedPresenterAPIInterop;
-using Integrated_Presenter.ViewModels;
 using System.Windows.Controls;
-using CCUI_UI;
-using SwitcherControl.BMDSwitcher;
-using Integrated_Presenter.Presentation;
-using CCU.Config;
-using SwitcherControl.Safe;
-using Integrated_Presenter.Automation;
-using System.ComponentModel.DataAnnotations;
-using VariableMarkupAttributes.Attributes;
-using ATEMSharedState.SwitcherState;
+using System.Windows.Input;
+using System.Windows.Media;
+
 using VariableMarkupAttributes;
+using VariableMarkupAttributes.Attributes;
 
 namespace IntegratedPresenter.Main
 {
@@ -44,7 +51,7 @@ namespace IntegratedPresenter.Main
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider
+    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider, IRaiseConditionsChanged, IDynamicControlProvider
     {
 
 
@@ -67,11 +74,16 @@ namespace IntegratedPresenter.Main
 
         ICCPUPresetMonitor _camMonitor;
 
+
         List<SlidePoolSource> SlidePoolButtons;
 
         private BuildVersion VersionInfo;
 
-        ActionAutomater _actionEngine;
+        event EventHandler OnConditionalsUpdated;
+
+        ISlideScriptActionAutomater _slideActionEngine;
+        IActionAutomater _dynamicActionEngine;
+        IDynamicDriver _dynamicDriver;
 
         private readonly ILog _logger = LogManager.GetLogger("UserLogger");
 
@@ -129,6 +141,7 @@ namespace IntegratedPresenter.Main
             pilotUI.OnModeChanged += PilotUI_OnModeChanged;
             pilotUI.OnTogglePilotMode += PilotUI_OnTogglePilotMode;
             pilotUI.OnUserRequestForManualReRun += PilotUI_OnUserRequestForManualReRun;
+            pilotUI.OnUserRequestForManualZoomBump += PilotUI_OnUserRequestForManualZoomBump;
 
             // set a default config
             SetDefaultConfig();
@@ -145,6 +158,8 @@ namespace IntegratedPresenter.Main
             // start with no switcher connection so disable all controls correctly
             DisableSwitcherControls();
 
+            keyPatternControls.InitUIDrivers(this.ConvertSourceIDToButton, this.ConvertButtonToSourceID);
+
             // update PIP place hotkeys
             UpdateUIPIPPlaceKeys();
 
@@ -154,6 +169,8 @@ namespace IntegratedPresenter.Main
             UpdateSlideModeButtons();
             DisableAuxControls();
             UpdateProgramRowLockButtonUI();
+
+            UpdateSlideMediaTabControls();
 
             this.PresentationStateUpdated += MainWindow_PresentationStateUpdated;
             NextPreview.AutoSilentPlayback = true;
@@ -203,13 +220,39 @@ namespace IntegratedPresenter.Main
             gp_timer_2.Start();
 
             UpdatePilotUI();
+
+            // generate matrix ui
+            SpoolDynamicControls();
+        }
+
+        private void SpoolDynamicControls()
+        {
+            _dynamicActionEngine = new ActionAutomater(_logger,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            this,
+                                                            () => new Dictionary<string, WatchVariable>(),
+                                                            this,
+                                                            this._camMonitor);
+            // when loading config driver will re-supply automation with watched variables
+
+            // load the dynamic driver
+            _dynamicDriver = new DynamicMatrixDriver(dynamicControlPanel, _dynamicActionEngine, this);
+            //_dynamicDriver.ConfigureControls(File.ReadAllText(@"D:\Downloads\controlseg.txt"), _pres?.Folder ?? "");
         }
 
         private void InitActionAutomater()
         {
             // for now main window still kinda owns too much
             // but we're beginning to extract functionality
-            _actionEngine = new ActionAutomater(_logger,
+            _slideActionEngine = new SlideActionAutomater(_logger,
                                                 this,
                                                 this,
                                                 this,
@@ -219,13 +262,22 @@ namespace IntegratedPresenter.Main
                                                 this,
                                                 this,
                                                 this,
-                                                this);
+                                                this,
+                                                () => Presentation?.WatchedVariables,
+                                                this,
+                                                this._camMonitor);
         }
 
         private void PilotUI_OnUserRequestForManualReRun(object sender, int e)
         {
             PilotFireLast(e);
         }
+
+        private void PilotUI_OnUserRequestForManualZoomBump(object sender, (string cam, int dir, int zms) e)
+        {
+            PilotFireZoomBump(e.cam, "", e.dir, e.zms);
+        }
+
 
         string _nominalTitle = "";
 
@@ -413,6 +465,7 @@ namespace IntegratedPresenter.Main
                 // Try an use a thread safe variant
                 //switcherManager = new BMDSwitcherManager(this, autoTransMRE);
                 switcherManager = new SafeBMDSwitcher(autoTransMRE, _logger, this.Title);
+                keyPatternControls.SetSwitcherDriver(switcherManager);
 
 
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
@@ -457,6 +510,7 @@ namespace IntegratedPresenter.Main
                 switcherManager.SwitcherStateChanged -= SwitcherManager_SwitcherStateChanged;
                 switcherManager.OnSwitcherConnectionChanged -= SwitcherManager_OnSwitcherConnectionChanged;
                 switcherManager = null;
+                keyPatternControls.SetSwitcherDriver(switcherManager);
             }
         }
 
@@ -469,6 +523,7 @@ namespace IntegratedPresenter.Main
                 return;
             }
             switcherManager = new MockBMDSwitcherManager(this);
+            keyPatternControls.SetSwitcherDriver(switcherManager);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.OnSwitcherConnectionChanged += SwitcherManager_OnSwitcherConnectionChanged;
             (switcherManager as MockBMDSwitcherManager)?.UpdateCCUConfig(Presentation?.CCPUConfig as CCPUConfig_Extended);
@@ -563,6 +618,8 @@ namespace IntegratedPresenter.Main
 
             // update viewmodels
             UpdateSwitcherUI();
+
+            keyPatternControls.UpdateFromSwitcherState(switcherState);
 
             // conditions can change if they're watched
             FireOnConditionalsUpdated();
@@ -776,20 +833,45 @@ namespace IntegratedPresenter.Main
             {
                 BtnDVE.Foreground = Brushes.Orange;
                 BtnChroma.Foreground = Brushes.White;
+                BtnPattern.Foreground = Brushes.White;
+
                 ChromaControls.Visibility = Visibility.Hidden;
                 PIPControls.Visibility = Visibility.Visible;
+                PATTERNControls.Visibility = Visibility.Hidden;
+
+                btnViewAdvancedFlyKeySettings.Visibility = Visibility.Visible;
             }
             if (switcherState?.USK1KeyType == 2)
             {
                 BtnDVE.Foreground = Brushes.White;
                 BtnChroma.Foreground = Brushes.Orange;
+                BtnPattern.Foreground = Brushes.White;
+
                 PIPControls.Visibility = Visibility.Hidden;
                 ChromaControls.Visibility = Visibility.Visible;
+                PATTERNControls.Visibility = Visibility.Hidden;
+
+                btnViewAdvancedFlyKeySettings.Visibility = Visibility.Hidden;
             }
+            if (switcherState?.USK1KeyType == 3)
+            {
+                BtnDVE.Foreground = Brushes.White;
+                BtnChroma.Foreground = Brushes.White;
+                BtnPattern.Foreground = Brushes.Orange;
+
+                PIPControls.Visibility = Visibility.Hidden;
+                ChromaControls.Visibility = Visibility.Hidden;
+                PATTERNControls.Visibility = Visibility.Visible;
+
+                btnViewAdvancedFlyKeySettings.Visibility = Visibility.Visible;
+            }
+
             BtnDVE.Background = Brushes.Red;
             BtnChroma.Background = Brushes.Red;
+            BtnPattern.Background = Brushes.Red;
             BtnDVE.Cursor = Cursors.Hand;
             BtnChroma.Cursor = Cursors.Hand;
+            BtnPattern.Cursor = Cursors.Hand;
         }
 
         private void DisableKeyerUI()
@@ -807,6 +889,7 @@ namespace IntegratedPresenter.Main
         private void EnableKeyerControls()
         {
 
+            keyPatternControls.EnableControls(true);
             string style = "SwitcherButton";
 
 
@@ -844,7 +927,7 @@ namespace IntegratedPresenter.Main
 
         private void DisableKeyerControls()
         {
-
+            keyPatternControls.EnableControls(false);
             string style = "SwitcherButton_Disabled";
 
             BtnUSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
@@ -1311,7 +1394,7 @@ namespace IntegratedPresenter.Main
 
             // extra features
 
-            if (e.Key == Key.P)
+            if (e.Key == Key.P && !Keyboard.IsKeyDown(Key.NumPad1))
             {
                 ToggleViewAdvancedPIP();
             }
@@ -1655,9 +1738,28 @@ namespace IntegratedPresenter.Main
                 ToggleUSK1();
             }
 
-            if (e.Key == Key.NumPad1)
+            //if (e.Key == Key.NumPad1)
+            //{
+            //ToggleUSK1Type();
+            //}
+
+            if (e.Key == Key.C || e.Key == Key.D || e.Key == Key.P)
             {
-                ToggleUSK1Type();
+                if (Keyboard.IsKeyDown(Key.NumPad1))
+                {
+                    switch (e.Key)
+                    {
+                        case Key.C:
+                            SetSwitcherKeyerChroma();
+                            break;
+                        case Key.D:
+                            SetSwitcherKeyerDVE();
+                            break;
+                        case Key.P:
+                            SetSwitcherKeyerPATTERN();
+                            break;
+                    }
+                }
             }
 
             if (e.Key == Key.Divide)
@@ -1716,7 +1818,7 @@ namespace IntegratedPresenter.Main
             }
 
             // color bars
-            if (e.Key == Key.C)
+            if (e.Key == Key.C && !Keyboard.IsKeyDown(Key.NumPad1))
             {
                 if (Keyboard.IsKeyDown(Key.Z))
                 {
@@ -1775,6 +1877,11 @@ namespace IntegratedPresenter.Main
             pilotUI?.FireLast(v, _camMonitor);
             //}
             // let it re-fire existing slide
+        }
+
+        private void PilotFireZoomBump(string cam, string zpresetmod, int dir, int zms)
+        {
+            _camMonitor.ChirpZoom_RELATIVE(cam, dir, zms);
         }
 
         private void TogglePilotMode()
@@ -1970,12 +2077,12 @@ namespace IntegratedPresenter.Main
 
         private async Task ExecuteSetupActions(ISlide s)
         {
-            await _actionEngine.ExecuteSetupActions(s);
+            await _slideActionEngine.ExecuteSetupActions(s);
         }
 
         private async Task ExecuteActionSlide(ISlide s)
         {
-            await _actionEngine.ExecuteMainActions(s);
+            await _slideActionEngine.ExecuteMainActions(s);
         }
 
         private bool MediaMuted = false;
@@ -3369,6 +3476,7 @@ namespace IntegratedPresenter.Main
         private void OnClosing(object sender, CancelEventArgs e)
         {
             // stop timers
+            system_second_timer?.Stop();
             gp_timer_1?.Stop();
             gp_timer_2?.Stop();
             shot_clock_timer?.Stop();
@@ -3602,6 +3710,7 @@ namespace IntegratedPresenter.Main
 
         private void UpdateUIButtonLabels()
         {
+            keyPatternControls.UpdateButtonLabels(_config.Routing);
             foreach (var btn in _config.Routing)
             {
                 switch (btn.ButtonId)
@@ -3997,6 +4106,11 @@ namespace IntegratedPresenter.Main
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             SetSwitcherKeyerDVE();
         }
+        private void ClickPATTERNMode(object sender, RoutedEventArgs e)
+        {
+            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
+            SetSwitcherKeyerPATTERN();
+        }
 
         private void ClickChromaMode(object sender, RoutedEventArgs e)
         {
@@ -4016,6 +4130,20 @@ namespace IntegratedPresenter.Main
                 ShowKeyerUI();
             }
         }
+
+        private void SetSwitcherKeyerPATTERN()
+        {
+            //switcherManager?.ConfigureUSK1PIP(_config.USKSettings.PIPSettings);
+            _logger.Debug("Commanding Switcher to reconfigure USK1 for DVE PIP.");
+            switcherManager?.SetUSK1TypePATTERN();
+            // force blocking state update
+            SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate());
+            if (switcherManager != null)
+            {
+                ShowKeyerUI();
+            }
+        }
+
 
         private void SetSwitcherKeyerChroma()
         {
@@ -4117,7 +4245,7 @@ namespace IntegratedPresenter.Main
         }
 
         PIPControl pipctrl;
-        private void ClickViewAdvancedPIPLocation(object sender, RoutedEventArgs e)
+        private void ClickViewAdvancedFlyKeySettings(object sender, RoutedEventArgs e)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ShowPIPLocationControl();
@@ -4278,6 +4406,7 @@ namespace IntegratedPresenter.Main
 
             #endregion
 
+            keyPatternControls.ShowShortcuts(_showshortcuts);
         }
 
         public Visibility ShortcutVisibility { get; set; } = Visibility.Collapsed;
@@ -4679,7 +4808,23 @@ namespace IntegratedPresenter.Main
         UIValue<bool> _Cond3 = new UIValue<bool>();
         UIValue<bool> _Cond4 = new UIValue<bool>();
 
-        private Dictionary<string, bool> GetCurrentConditionStatus()
+        private Dictionary<string, ExposedVariable> GetExposedVariables()
+        {
+            // currently get switcher state
+            Dictionary<string, ExposedVariable> switcherVars = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(switcherState);
+            // report presentation state
+            Dictionary<string, ExposedVariable> presVars = new Dictionary<string, ExposedVariable>();
+            if (_pres != null)
+            {
+                presVars = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(_pres);
+            }
+            // report pilot state
+            Dictionary<string, ExposedVariable> pilotVars = new Dictionary<string, ExposedVariable>();
+
+            return new Dictionary<string, ExposedVariable>(switcherVars.Concat(presVars).Concat(pilotVars));
+        }
+
+        private Dictionary<string, bool> GetCurrentConditionStatuses(Dictionary<string, WatchVariable> externalWatches)
         {
             var conditions = new Dictionary<string, bool>
             {
@@ -4694,12 +4839,12 @@ namespace IntegratedPresenter.Main
             // effectively just make sure to script delays sufficient to process anything we might depend on
 
             // extract required switcher state to satisfy requests
-            var exposedVariables = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(switcherState);
+            var exposedVariables = GetExposedVariables(); // VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(switcherState);
 
             // try to find each requested value
-            if (Presentation != null)
+            if (externalWatches != null)
             {
-                foreach (var watch in Presentation?.WatchedVariables)
+                foreach (var watch in externalWatches)
                 {
                     bool evaluation = false;
                     // use reflection to find a matching value
@@ -4732,8 +4877,8 @@ namespace IntegratedPresenter.Main
             }
 
 
-
             return conditions;
+
         }
 
         private void FireOnConditionalsUpdated()
@@ -4744,13 +4889,14 @@ namespace IntegratedPresenter.Main
                 return;
             }
 
-            var cstatus = GetCurrentConditionStatus();
+            var cstatus = GetCurrentConditionStatuses(Presentation?.WatchedVariables);
             PrevPreview?.FireOnActionConditionsUpdated(cstatus);
             CurrentPreview?.FireOnActionConditionsUpdated(cstatus);
             NextPreview?.FireOnActionConditionsUpdated(cstatus);
             AfterPreview?.FireOnActionConditionsUpdated(cstatus);
             UpdateSpeculativeSlideJumpUI();
 
+            this.OnConditionalsUpdated.Invoke(this, new EventArgs());
         }
 
         private void UpdateSpeculativeSlideJumpUI()
@@ -4760,7 +4906,7 @@ namespace IntegratedPresenter.Main
                 Dispatcher.Invoke(UpdateSpeculativeSlideJumpUI);
                 return;
             }
-            var cstatus = (this as IAutomationConditionProvider).GetCurrentConditionStatus();
+            var cstatus = (this as IAutomationConditionProvider).GetCurrentConditionStatus(_pres?.WatchedVariables ?? new Dictionary<string, WatchVariable>());
             // Speculative Update for jump slides
             var willrun = false;
             var jtarget = Presentation?.Next?.SetupActions?.FirstOrDefault(x => x.Action?.Action == AutomationActions.JumpToSlide);
@@ -4954,6 +5100,48 @@ namespace IntegratedPresenter.Main
             SetupPIPToPresetPosition(5);
         }
 
+
+
+        private int _slideMediaActiveTab = 0;
+        int SlideMediaActiveTab
+        {
+            get => _slideMediaActiveTab;
+            set
+            {
+                _slideMediaActiveTab = value;
+                UpdateSlideMediaTabControls();
+            }
+        }
+        private void UpdateSlideMediaTabControls()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (_slideMediaActiveTab == 0)
+                {
+                    slideControlGroup.Visibility = Visibility.Visible;
+                    btnSlideCtrlTab.Foreground = Brushes.Orange;
+                    mediaControlGroup.Visibility = Visibility.Hidden;
+                    btnMediaCtrlTab.Foreground = Brushes.White;
+                }
+                else
+                {
+                    slideControlGroup.Visibility = Visibility.Hidden;
+                    btnSlideCtrlTab.Foreground = Brushes.White;
+                    mediaControlGroup.Visibility = Visibility.Visible;
+                    btnMediaCtrlTab.Foreground = Brushes.Orange;
+                }
+            });
+        }
+
+        private void ClickSlideCtrlTab(object sender, RoutedEventArgs e)
+        {
+            SlideMediaActiveTab = 0;
+        }
+
+        private void ClickMediaCtrlTab(object sender, RoutedEventArgs e)
+        {
+            SlideMediaActiveTab = 1;
+        }
 
         private void ClickToggleProgramPresetBusSwap(object sender, RoutedEventArgs e)
         {
@@ -5248,7 +5436,34 @@ namespace IntegratedPresenter.Main
                 mock.UpdateMockCameraMovement(e);
             }
         }
+        private void clickLoadDynamicButtons(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Load Dynamic Buttons";
+            if (_pres != null)
+            {
+                ofd.InitialDirectory = _pres.Folder;
+            }
+            if (ofd.ShowDialog() == true)
+            {
+                var filetext = File.ReadAllText(ofd.FileName);
+                LoadDynamicButtons(filetext, Path.GetDirectoryName(ofd.FileName), true);
+            }
+        }
 
+        private void LoadDynamicButtons(string filetext, string resourcepath, bool overwriteAll)
+        {
+            try
+            {
+                _dynamicDriver?.ConfigureControls(filetext, resourcepath, overwriteAll);
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Debugger.Break();
+#endif
+            }
+        }
 
         #region ActionAutomater Providers
         IBMDSwitcherManager ISwitcherDriverProvider.switcherManager { get => switcherManager; }
@@ -5273,10 +5488,11 @@ namespace IntegratedPresenter.Main
         {
             PerformGuardedAutoTransition();
         }
-        Dictionary<string, bool> IAutomationConditionProvider.GetCurrentConditionStatus()
+        Dictionary<string, bool> IAutomationConditionProvider.GetCurrentConditionStatus(Dictionary<string, WatchVariable> watches)
         {
-            return GetCurrentConditionStatus();
+            return GetCurrentConditionStatuses(watches);
         }
+
         void IUserTimerProvider.ResetGpTimer1()
         {
             ResetGpTimer1();
@@ -5349,6 +5565,50 @@ namespace IntegratedPresenter.Main
             Dispatcher.Invoke(playMedia);
         }
 
+        Dictionary<string, bool> IRaiseConditionsChanged.GetConditionals(Dictionary<string, WatchVariable> watches)
+        {
+            return GetCurrentConditionStatuses(watches);
+        }
+
+        event EventHandler IRaiseConditionsChanged.OnConditionalsChanged
+        {
+            add
+            {
+                OnConditionalsUpdated += value;
+            }
+
+            remove
+            {
+                OnConditionalsUpdated -= value;
+            }
+        }
+
+        void IDynamicControlProvider.ConfigureControls(string file, string resourcepath, bool overwriteAll)
+        {
+            // call assumes its running from presentation
+            // so point it there
+
+            string text = "";
+            string path = resourcepath;
+            if (resourcepath == "%pres%")
+            {
+                if (_pres != null)
+                {
+                    path = _pres?.Folder ?? resourcepath;
+                    if (_pres.RawTextResources.TryGetValue(file, out var ftext))
+                    {
+                        text = ftext;
+                    }
+                }
+            }
+
+            if (text != string.Empty)
+            {
+                LoadDynamicButtons(text, path, overwriteAll);
+            }
+        }
+
         #endregion
+
     }
 }

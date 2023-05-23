@@ -1,21 +1,18 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+
+using System;
 using System.Collections.Generic;
-using GDI = System.Drawing;
-using System.Text;
-using Xenon.SlideAssembly;
 using System.Linq;
+using System.Text.Json;
+
+using Xenon.Compiler;
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
-using Xenon.AssetManagment;
-using Xenon.Compiler;
 using Xenon.LayoutInfo;
-using Xenon.Renderer.Helpers;
-using System.Text.Json;
 using Xenon.Renderer.Helpers.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-using System.Windows.Media;
+using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
@@ -149,7 +146,7 @@ namespace Xenon.Renderer
             return res;
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
         {
             if (slide.Format == SlideFormat.StitchedImage)
             {

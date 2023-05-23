@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 using Xenon.SlideAssembly.LayoutManagement;
 
@@ -110,7 +101,7 @@ namespace UIControls
             Accepted = false;
 
             // undo all the renaming in order
-            while(renames.TryPop(out var rename))
+            while (renames.TryPop(out var rename))
             {
                 this.renameMacro(rename.Item2, rename.Item1, libname);
             }
@@ -139,7 +130,7 @@ namespace UIControls
             {
                 // track what we're doing so discard can undo it
                 renames.Push((lastSelection, tbMName.Text));
-                
+
                 renameMacro(lastSelection, tbMName.Text, libname);
 
                 // rename it here too...

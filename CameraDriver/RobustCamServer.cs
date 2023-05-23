@@ -1,21 +1,14 @@
 ﻿using DVIPProtocol.Clients.Advanced;
 using DVIPProtocol.Clients.Execution;
-using DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive;
 using DVIPProtocol.Protocol.Lib.Command.CamCTRL;
 using DVIPProtocol.Protocol.Lib.Command.PTDrive;
-using DVIPProtocol.Protocol.Lib.Inquiry;
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
 
 using log4net;
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CameraDriver
 {
@@ -242,6 +235,83 @@ namespace CameraDriver
                 }
             });
             m_workAvailable.Set();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cnameID"></param>
+        /// <param name="direction">-1 WIDE / 1 TELE / 0 STOP</param>
+        /// <param name="duration">time in MS to run zoom for. Note: 200ms seems to be the smallest gauranteed interval</param>
+        public Guid Cam_RunZoomChrip_RELATIVE(string cnameID, int direction, int duration, Guid _reqid = default(Guid))
+        {
+            if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(cnameID))
+            {
+                return Guid.Empty;
+            }
+            Guid reqId;
+            if (_reqid == Guid.Empty)
+            {
+                reqId = Guid.NewGuid();
+            }
+            else
+            {
+                reqId = _reqid;
+            }
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing zoom chrip job {reqId}");
+            m_dispatchCommands.Enqueue(() =>
+            {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] running zoom chrip job {reqId}");
+                if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
+                {
+                    m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chrip [{direction}] for camera {cnameID}");
+                    //var setup = CMD_Zoom_Variable.Create(direction == -1 ? ZoomDir.TELE : direction == 1 ? ZoomDir.WIDE : ZoomDir.STOP, 0x07);
+                    var zoom = CMD_Zoom_Variable.Create(direction == -1 ? ZoomDir.WIDE : direction == 1 ? ZoomDir.TELE : ZoomDir.STOP, 0x00);
+                    var stop = CMD_Zoom_Std.Create(ZoomDir.STOP);
+
+                    RobustSequence rcmd = new RobustSequence
+                    {
+                        First = zoom.PackagePayload(),
+                        Second = stop.PackagePayload(),
+                        DelayMS = duration, // note it seems that 200ms is about the smallest time we can gaurantee reliably
+                                            // Setup full program sequence
+                                            // automatically determine the setup sequence required
+                                            // if we're going in, then the only initial state that makes sense is from full wide
+                                            // likewise going out you need to start all the way in
+                                            // use the stop command as a reset.....
+                        Setup = null, // setup.PackagePayload(),
+                        SetupDelayMS = 0,
+                        // TODO: do we *really* need to stop the zoom in once we're maxed in, or can we let it just change direction?
+                        Reset = stop.PackagePayload(),
+                        ResetDelayMS = 0,
+
+                        OnCompleted = (int attempts, byte[] resp) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chirp ({duration}ms) [{direction}] for camera {cnameID} COMPLETED");
+                                OnWorkCompleted?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"after {attempts} tries", reqId.ToString());
+                            });
+                        },
+                        OnFail = (int attempts) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting zoom chrip [{direction}] for camera {cnameID} of {duration}ms FAILED");
+                                OnWorkFailed?.Invoke(cnameID, "CHIRP", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", $"of {duration}ms", reqId.ToString());
+                            });
+                        },
+                        RetryAttempts = 1,
+                        IgnoreALLResponse = true,
+                    };
+
+                    OnWorkStarted?.Invoke(cnameID, "CHIRP", $"{duration}ms", direction == -1 ? "WIDE" : direction == 1 ? "TELE" : "STOP", reqId.ToString());
+
+                    client?.DoRobustWork(rcmd);
+                }
+            });
+            m_workAvailable.Set();
+            return reqId;
         }
 
         /// <summary>

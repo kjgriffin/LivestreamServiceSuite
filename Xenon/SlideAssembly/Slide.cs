@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Security.Cryptography.Xml;
-using System.Text;
 using System.Text.Json;
 
 namespace Xenon.SlideAssembly
