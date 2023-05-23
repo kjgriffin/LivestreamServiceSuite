@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+
+using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +24,7 @@ namespace UIControls
 
         private string SaveToLayoutName;
         private string SaveToLayoutLibrary;
-        private string LayoutJson { get; set; }
+        private LayoutSourceInfo SourceInfo { get; set; }
 
         readonly string Group;
         private string LibName { get; set; }
@@ -37,17 +40,27 @@ namespace UIControls
 
         GetLayoutPreview getLayoutPreview;
 
-        public LayoutDesigner(string libname, List<string> alllibs, string layoutname, string layoutjson, string group, bool editable, SaveLayoutToLibrary save, Action updateCallback, GetLayoutPreview getLayoutPreview)
+        public LayoutDesigner(string libname, List<string> alllibs, string layoutname, LayoutSourceInfo rawlayoutsource, string group, bool editable, SaveLayoutToLibrary save, Action updateCallback, GetLayoutPreview getLayoutPreview)
         {
             InitializeComponent();
-            TbJson.LoadLanguage_JSON();
+            SourceInfo = rawlayoutsource;
+
+            if (rawlayoutsource.LangType == "json")
+            {
+                TbJson.LoadLanguage_JSON();
+            }
+            else if (rawlayoutsource.LangType == "html")
+            {
+                TbJson.LoadLanguage_HTML();
+            }
+
+            TbJson.Text = SourceInfo.RawSource;
 
             textChangeTimeoutTimer.Interval = TimeSpan.FromSeconds(1);
             LayoutName = $"{layoutname}";
-            LayoutJson = layoutjson;
             LibName = libname;
             Group = group;
-            TbJson.Text = LayoutJson;
+
             tbnameorig.Text = LayoutName;
             //tbnameorig1.Text = LayoutName;
             tbName.Text = $"{LayoutName}";
@@ -73,7 +86,7 @@ namespace UIControls
             Save = save;
             UpdateCallback = updateCallback;
 
-            ShowPreviews(layoutjson);
+            ShowPreviews(rawlayoutsource.RawSource);
         }
 
         private void ShowPreviews(string layoutjson)
@@ -81,7 +94,7 @@ namespace UIControls
             //string resolvedJson = ResolveLayoutMacros?.Invoke(layoutjson, LayoutName, Group, LibName);
 
             //var r = ProjectLayoutLibraryManager.GetLayoutPreview(Group, layoutjson);
-            var r = getLayoutPreview.Invoke(LayoutName, Group, LibName, layoutjson);
+            var r = getLayoutPreview.Invoke(LayoutName, Group, LibName, layoutjson, SourceInfo.LangType);
             if (r.isvalid)
             {
                 srcinvalid.Visibility = Visibility.Hidden;
@@ -133,7 +146,12 @@ namespace UIControls
         {
             if (GetNames())
             {
-                Save?.Invoke(SaveToLayoutLibrary, SaveToLayoutName, Group, TbJson.Text);
+                LayoutSourceInfo newinfo = new LayoutSourceInfo()
+                {
+                    LangType = SourceInfo.LangType,
+                    RawSource = TbJson.Text,
+                };
+                Save?.Invoke(SaveToLayoutLibrary, SaveToLayoutName, Group, newinfo);
                 UpdateCallback?.Invoke();
             }
         }

@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 using Xenon.Compiler;
+using Xenon.Helpers;
 using Xenon.LayoutInfo;
 using Xenon.SaveLoad;
 
@@ -74,6 +75,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
         public string LayoutVersion { get; set; }
         public string Group { get; set; }
         public string RawSource { get; set; }
+        public string SourceType { get; set; } = "json";
     }
 
     public class XenonMacroOverride
@@ -85,7 +87,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
     }
 
     public delegate string ResolveLayoutMacros(string rawjson, string layoutName, string groupName, string libName);
-    public delegate (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) GetLayoutPreview(string layoutname, string group, string lib, string layoutjson);
+    public delegate (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) GetLayoutPreview(string layoutname, string group, string lib, string layoutjson, string type);
 
     public delegate Dictionary<string, string> GetLibraryMacros(string libname);
     public delegate void EditLibraryMacros(string libname, Dictionary<string, string> value);
@@ -93,7 +95,12 @@ namespace Xenon.SlideAssembly.LayoutManagement
     public delegate void RenameMacroReferences(string oldname, string newname, string libname);
     public delegate int FindAllMacroReferences(string name, string libname);
 
-    public delegate string GetLayoutSource(string name, string group, string lib);
+    public class LayoutSourceInfo
+    {
+        public string RawSource { get; set; }
+        public string LangType { get; set; }
+    }
+    public delegate LayoutSourceInfo GetLayoutSource(string name, string group, string lib);
 
     internal class XenonLayoutManager : IProjectLayoutLibraryManager
     {
@@ -110,17 +117,30 @@ namespace Xenon.SlideAssembly.LayoutManagement
         public SaveLayoutToLibrary SaveLayoutToLibrary { get => _Internal_SaveLayoutToLibrary; }
 
 
-        private bool _Internal_SaveLayoutToLibrary(string libname, string layoutname, string group, string json)
+        private bool _Internal_SaveLayoutToLibrary(string libname, string layoutname, string group, LayoutSourceInfo source)
         {
             InitializeNewLibrary(libname);
             var lib = m_libraries[libname];
             lib.Layouts.RemoveAll(lib => lib.Name == layoutname && lib.Group == group);
+
+            string src = source.RawSource;
+            if (source.LangType == "html")
+            {
+                HTMLLayoutInfo html = new HTMLLayoutInfo()
+                {
+                    HTMLSrc = source.RawSource,
+                    CSSSrc = "",
+                };
+                src = JsonSerializer.Serialize(html, new JsonSerializerOptions() { WriteIndented = true });
+            }
+
             lib.Layouts.Add(new XenonLayout
             {
                 Group = group,
                 Name = layoutname,
                 LayoutVersion = Versioning.Versioning.Version.ToString(),
-                RawSource = json
+                RawSource = src,
+                SourceType = source.LangType,
             });
             return true;
         }
@@ -184,14 +204,16 @@ namespace Xenon.SlideAssembly.LayoutManagement
             XenonLayoutLibrary lib = m_libraries[libname];
 
             var cmd = LanguageKeywords.Commands.First(x => x.Value == group).Key;
-            string json = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultJson(LanguageKeywords.LayoutForType[cmd].defaultJsonFile);
+            var metadata = LanguageKeywords.LayoutForType[cmd];
+            string json = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultJson(metadata.defaultJsonFile);
 
             lib.Layouts.Add(new XenonLayout
             {
                 Name = layoutname,
                 Group = group,
                 LayoutVersion = Versioning.Versioning.Version.ToString(),
-                RawSource = json
+                RawSource = json,
+                SourceType = metadata.type,
             });
         }
 
@@ -279,13 +301,15 @@ namespace Xenon.SlideAssembly.LayoutManagement
                 var cmdmeta = LanguageKeywords.LanguageKeywordMetadata[cmd];
                 if (cmdmeta.hasLayoutInfo)
                 {
-                    string json = LanguageKeywords.LayoutForType[cmd].layoutResolver._Internal_GetDefaultJson(LanguageKeywords.LayoutForType[cmd].defaultJsonFile);
+                    var metadata = LanguageKeywords.LayoutForType[cmd];
+                    string json = metadata.layoutResolver._Internal_GetDefaultJson(metadata.defaultJsonFile);
                     XenonLayout layout = new XenonLayout
                     {
                         Name = "Default",
                         Group = LanguageKeywords.Commands[cmd],
                         LayoutVersion = Versioning.Versioning.Version.ToString(),
                         RawSource = json,
+                        SourceType = metadata.type,
                     };
                     defaultlib.Layouts.Add(layout);
                 }
@@ -359,7 +383,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
             }
         }
 
-        public (bool found, string json) FindLayoutByFullyQualifiedName(LanguageKeywordCommand type, string fullname, string defaultLibrary = DEFAULTLIBNAME)
+        public (bool found, LayoutSourceInfo info) FindLayoutByFullyQualifiedName(LanguageKeywordCommand type, string fullname, string defaultLibrary = DEFAULTLIBNAME)
         {
             // parse the library, or fallback to default it none specified
             var match = Regex.Match(fullname, @"((?<libname>.*)::)?(?<layoutname>.*)");
@@ -371,25 +395,46 @@ namespace Xenon.SlideAssembly.LayoutManagement
                 if (m_libraries.TryGetValue(libname, out var lib))
                 {
                     var typeMatched = lib.Layouts.Where(x => x.Group == LanguageKeywords.Commands[type]).FirstOrDefault(x => x.Name == layoutname);
+                    var metadata = LanguageKeywords.LayoutForType[type];
 
                     if (typeMatched != null)
                     {
                         // resolve macros
                         // 1. assumes that all libraries have any defined macros provided a default- so it should be able to put something here...
                         // 2. during compilation, we need to forward declare any macro overrides, such that by the point they get invoked in a layout, we can find them
-                        return (true, _Internal_ResolveLayoutMacros(typeMatched.RawSource, typeMatched.Name, typeMatched.Group, libname));
+                        var src = _Internal_ResolveLayoutMacros(typeMatched.RawSource, typeMatched.Name, typeMatched.Group, libname);
+                        return (true, new LayoutSourceInfo()
+                        {
+                            RawSource = src,
+                            LangType = metadata.type,
+                        });
                     }
                 }
             }
-            return (false, "");
+            return (false, new LayoutSourceInfo());
 
         }
 
         public GetLayoutPreview GetLayoutPreview { get => _Internal_GetLayoutPreview; }
 
-        private (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) _Internal_GetLayoutPreview(string layoutname, string groupname, string libname, string layoutjson)
+        private (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) _Internal_GetLayoutPreview(string layoutname, string groupname, string libname, string layoutjson, string type)
         {
             string json = _Internal_ResolveLayoutMacros(layoutjson, layoutname, groupname, libname);
+
+            if (type == "json")
+            {
+                // nothing to do
+            }
+            else if (type == "html")
+            {
+                // expecting raw html, so wrap it up
+                HTMLLayoutInfo info = new HTMLLayoutInfo()
+                {
+                    CSSSrc = "",
+                    HTMLSrc = layoutjson,
+                };
+                json = JsonSerializer.Serialize(info, new JsonSerializerOptions() { WriteIndented = true });
+            }
 
 
             if (LanguageKeywords.Commands.ContainsValue(groupname))
@@ -514,13 +559,30 @@ namespace Xenon.SlideAssembly.LayoutManagement
 
         [JsonIgnore]
         public GetLayoutSource GetLayoutSource { get => _Internal_GetLayoutSource; }
-        private string _Internal_GetLayoutSource(string name, string group, string lib)
+        private LayoutSourceInfo _Internal_GetLayoutSource(string name, string group, string lib)
         {
+            var info = new LayoutSourceInfo()
+            {
+                RawSource = "",
+                LangType = "json",
+            };
             if (m_libraries.TryGetValue(lib, out var library))
             {
-                return library.Layouts.FirstOrDefault(x => x.Group == group && x.Name == name)?.RawSource ?? "";
+                var libinfo = library.Layouts.FirstOrDefault(x => x.Group == group && x.Name == name);
+                //info.RawSource = library.Layouts.FirstOrDefault(x => x.Group == group && x.Name == name)?.RawSource ?? "";
+                info.RawSource = libinfo?.RawSource ?? "";
+                info.LangType = libinfo?.SourceType ?? "json";
+
+                if (info.LangType == "html")
+                {
+                    var x = JsonSerializer.Deserialize<HTMLLayoutInfo>(info.RawSource);
+                    if (x != null)
+                    {
+                        info.RawSource = x.HTMLSrc;
+                    }
+                }
             }
-            return "";
+            return info;
         }
 
     }

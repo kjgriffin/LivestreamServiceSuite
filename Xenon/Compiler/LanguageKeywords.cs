@@ -20,23 +20,24 @@ namespace Xenon.Compiler
             return $"{Commands[cmd]}.{LAYOUTJSONVARNAME}";
         }
 
-        public static Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo> layoutResolver, ISlideLayoutPrototypePreviewer<ALayoutInfo> prototypicalLayoutPreviewer, string defaultJsonFile)> LayoutForType = new Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>, string)>
+        public static Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo> layoutResolver, ISlideLayoutPrototypePreviewer<ALayoutInfo> prototypicalLayoutPreviewer, string defaultJsonFile, string type)> LayoutForType = new Dictionary<LanguageKeywordCommand, (ILayoutInfoResolver<ALayoutInfo>, ISlideLayoutPrototypePreviewer<ALayoutInfo>, string, string)>
         {
             //[LanguageKeywordCommand.TwoPartTitle] = (new _2TitleSlideLayoutInfo(), new TwoPartTitleSlideRenderer(), ""),
-            [LanguageKeywordCommand.TwoPartTitle] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "_2TitleLayoutInfo_Default.json"),
-            [LanguageKeywordCommand.StitchedImage] = (new StitchedImageSlideLayoutInfo(), new StitchedImageRenderer(), ""),
-            [LanguageKeywordCommand.TitledLiturgyVerse] = (new TitledLiturgyVerseSlideLayoutInfo(), new TitledLiturgyVerseSlideRenderer(), ""),
-            [LanguageKeywordCommand.Liturgy2] = (new ResponsiveLiturgySlideLayoutInfo(), new ResponsiveLiturgyRenderer(), ""),
-            [LanguageKeywordCommand.TitledLiturgyVerse2] = (new TitledResponsiveLiturgySlideLayoutInfo(), new TitledResponsiveLiturgyRenderer(), ""),
-            [LanguageKeywordCommand.UpNext] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "UpNextLayoutInfo_Default.json"),
-            [LanguageKeywordCommand.AnthemTitle] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "AnthemTitleLayoutInfo_Default.json"),
-            [LanguageKeywordCommand.Reading] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "ReadingLayoutInfo_Default.json"),
-            [LanguageKeywordCommand.Sermon] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "SermonLayoutInfo_Default.json"),
-            [LanguageKeywordCommand.CustomText] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), ""),
-            [LanguageKeywordCommand.CustomDraw] = (new ShapeImageAndTextLayoutInfo(), new ShapeImageAndTextRenderer(), ""),
-            [LanguageKeywordCommand.ComplexText] = (new ComplexShapeImageAndTextLayoutInfo(), new ComplexShapeImageAndTextRenderer(), ""),
-            [LanguageKeywordCommand.TextHymn] = (new TextHymnLayoutInfo(), new HymnTextVerseRenderer(), ""),
-            [LanguageKeywordCommand.LiturgyImage] = (new AdvancedImagesSlideLayoutInfo(), new AdvancedImageSlideRenderer(), ""),
+            [LanguageKeywordCommand.TwoPartTitle] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "_2TitleLayoutInfo_Default.json", "json"),
+            [LanguageKeywordCommand.StitchedImage] = (new StitchedImageSlideLayoutInfo(), new StitchedImageRenderer(), "", "json"),
+            [LanguageKeywordCommand.TitledLiturgyVerse] = (new TitledLiturgyVerseSlideLayoutInfo(), new TitledLiturgyVerseSlideRenderer(), "", "json"),
+            [LanguageKeywordCommand.Liturgy2] = (new ResponsiveLiturgySlideLayoutInfo(), new ResponsiveLiturgyRenderer(), "", "json"),
+            [LanguageKeywordCommand.TitledLiturgyVerse2] = (new TitledResponsiveLiturgySlideLayoutInfo(), new TitledResponsiveLiturgyRenderer(), "", "json"),
+            [LanguageKeywordCommand.UpNext] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "UpNextLayoutInfo_Default.json", "json"),
+            [LanguageKeywordCommand.AnthemTitle] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "AnthemTitleLayoutInfo_Default.json", "json"),
+            [LanguageKeywordCommand.Reading] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "ReadingLayoutInfo_Default.json", "json"),
+            [LanguageKeywordCommand.Sermon] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "SermonLayoutInfo_Default.json", "json"),
+            [LanguageKeywordCommand.CustomText] = (new ShapeAndTextLayoutInfo(), new ShapeAndTextRenderer(), "", "json"),
+            [LanguageKeywordCommand.CustomDraw] = (new ShapeImageAndTextLayoutInfo(), new ShapeImageAndTextRenderer(), "", "json"),
+            [LanguageKeywordCommand.ComplexText] = (new ComplexShapeImageAndTextLayoutInfo(), new ComplexShapeImageAndTextRenderer(), "", "json"),
+            [LanguageKeywordCommand.TextHymn] = (new TextHymnLayoutInfo(), new HymnTextVerseRenderer(), "", "json"),
+            [LanguageKeywordCommand.LiturgyImage] = (new AdvancedImagesSlideLayoutInfo(), new AdvancedImageSlideRenderer(), "", "json"),
+            [LanguageKeywordCommand.HTML] = (new HTMLLayoutInfo(), new HTMLSlideRenderer(), "", "html"),
         };
 
         public static List<string> WholeWords = new List<string>()
@@ -118,6 +119,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.CustomDraw] = "customdraw",
             [LanguageKeywordCommand.ComplexText] = "complextext",
             [LanguageKeywordCommand.DynamicControllerDef] = "dynamiccontroller",
+            [LanguageKeywordCommand.HTML] = "html",
         };
 
         public static Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata>()
@@ -163,6 +165,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.CustomDraw] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, false, new XenonASTShapesImagesAndText()),
             [LanguageKeywordCommand.ComplexText] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTShapesImagesAndTextComplex()),
             [LanguageKeywordCommand.DynamicControllerDef] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTDynamicController()),
+            [LanguageKeywordCommand.HTML] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTHTML()),
         };
 
     }
@@ -236,6 +239,7 @@ namespace Xenon.Compiler
         ReStitchedHymn,
         ComplexText,
         DynamicControllerDef,
+        HTML,
     }
 
 }
