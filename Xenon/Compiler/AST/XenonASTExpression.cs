@@ -303,6 +303,15 @@ namespace Xenon.Compiler.AST
                 return expr;
             }
 
+            if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.HTML]))
+            {
+                XenonASTHTML script = new XenonASTHTML();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.HTML]);
+                expr.Command = (IXenonASTCommand)script.Compile(Lexer, Logger, parent);
+                return expr;
+            }
+
+
 
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.SetVar]))
             {

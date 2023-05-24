@@ -87,7 +87,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
     }
 
     public delegate string ResolveLayoutMacros(string rawjson, string layoutName, string groupName, string libName);
-    public delegate (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) GetLayoutPreview(string layoutname, string group, string lib, string layoutjson, string type);
+    public delegate (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) GetLayoutPreview(string layoutname, string group, string lib, LayoutSourceInfo src, string type);
 
     public delegate Dictionary<string, string> GetLibraryMacros(string libname);
     public delegate void EditLibraryMacros(string libname, Dictionary<string, string> value);
@@ -98,6 +98,8 @@ namespace Xenon.SlideAssembly.LayoutManagement
     public class LayoutSourceInfo
     {
         public string RawSource { get; set; }
+        public string RawSource_Key { get; set; }
+        public Dictionary<string, string> OtherData { get; set; } = new Dictionary<string, string>();
         public string LangType { get; set; }
     }
     public delegate LayoutSourceInfo GetLayoutSource(string name, string group, string lib);
@@ -129,7 +131,8 @@ namespace Xenon.SlideAssembly.LayoutManagement
                 HTMLLayoutInfo html = new HTMLLayoutInfo()
                 {
                     HTMLSrc = source.RawSource,
-                    CSSSrc = "",
+                    HTMLSrc_KEY = source.RawSource_Key,
+                    CSSSrc = source.OtherData["css"],
                 };
                 src = JsonSerializer.Serialize(html, new JsonSerializerOptions() { WriteIndented = true });
             }
@@ -417,21 +420,30 @@ namespace Xenon.SlideAssembly.LayoutManagement
 
         public GetLayoutPreview GetLayoutPreview { get => _Internal_GetLayoutPreview; }
 
-        private (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) _Internal_GetLayoutPreview(string layoutname, string groupname, string libname, string layoutjson, string type)
+        private (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) _Internal_GetLayoutPreview(string layoutname, string groupname, string libname, LayoutSourceInfo src, string type)
         {
-            string json = _Internal_ResolveLayoutMacros(layoutjson, layoutname, groupname, libname);
+            string main = _Internal_ResolveLayoutMacros(src.RawSource, layoutname, groupname, libname);
+            string key = _Internal_ResolveLayoutMacros(src.RawSource_Key, layoutname, groupname, libname);
+            string css = "";
+            if (src.OtherData.TryGetValue("css", out var rcss))
+            {
+                css = _Internal_ResolveLayoutMacros(rcss, layoutname, groupname, libname);
+            }
+
+            string json = "";
 
             if (type == "json")
             {
-                // nothing to do
+                json = src.RawSource;
             }
             else if (type == "html")
             {
                 // expecting raw html, so wrap it up
                 HTMLLayoutInfo info = new HTMLLayoutInfo()
                 {
-                    CSSSrc = "",
-                    HTMLSrc = layoutjson,
+                    CSSSrc = css,
+                    HTMLSrc = main,
+                    HTMLSrc_KEY = key,
                 };
                 json = JsonSerializer.Serialize(info, new JsonSerializerOptions() { WriteIndented = true });
             }
@@ -564,6 +576,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
             var info = new LayoutSourceInfo()
             {
                 RawSource = "",
+                RawSource_Key = "",
                 LangType = "json",
             };
             if (m_libraries.TryGetValue(lib, out var library))
@@ -579,6 +592,11 @@ namespace Xenon.SlideAssembly.LayoutManagement
                     if (x != null)
                     {
                         info.RawSource = x.HTMLSrc;
+                        info.RawSource_Key = x.HTMLSrc_KEY;
+                        info.OtherData = new Dictionary<string, string>
+                        {
+                            ["css"] = x.CSSSrc,
+                        };
                     }
                 }
             }

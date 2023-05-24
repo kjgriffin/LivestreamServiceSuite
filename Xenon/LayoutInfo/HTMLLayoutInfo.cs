@@ -13,6 +13,7 @@ namespace Xenon.LayoutInfo
     internal class HTMLLayoutInfo : ALayoutInfo, ILayoutInfoResolver<HTMLLayoutInfo>
     {
         public string HTMLSrc { get; set; } = "";
+        public string HTMLSrc_KEY { get; set; } = "";
         public string CSSSrc { get; set; } = "";
 
         public HTMLLayoutInfo GetLayoutInfo(Slide slide)

@@ -3,18 +3,18 @@
 <!-- converted to AvalonEdit format by Siegfried Pammer in 2010 -->
 <SyntaxDefinition name="HTML" extensions=".htm;.html" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
 	<Color name="Comment" foreground="DarkSlateGray" exampleText="&lt;!-- comment --&gt;" />
-	<Color name="Digits" foreground="DarkBlue" exampleText="&lt;digits&gt;0123456789&lt;/digits&gt;" />
+	<Color name="Digits" foreground="#ffd717e8" exampleText="&lt;digits&gt;0123456789&lt;/digits&gt;" />
 	<Color name="ScriptTag" foreground="#FF8B008B" exampleText="&lt;script&gt;alert('Hello World!');&lt;/script&gt;" />
 	<Color name="JavaScriptTag" foreground="#FF8B008B" exampleText="&lt;script lang=&quot;JavaScript&quot;&gt;alert('Hello World!');&lt;/script&gt;" />
 	<Color name="JScriptTag" foreground="#FF8B008B" exampleText="&lt;script lang=&quot;JScript&quot;&gt;Response.Write(&quot;Hello World!&quot;);&lt;/script&gt;" />
 	<Color name="VBScriptTag" foreground="#FF8B008B" exampleText="&lt;script lang=&quot;VBScript&quot;&gt;Response.Write(&quot;Hello World!&quot;)&lt;/script&gt;" />
 	<Color name="UnknownScriptTag" foreground="#FF8B008B" exampleText="&lt;script la&gt;alert('Hello World!');&lt;/script&gt;" />
-	<Color name="HtmlTag" foreground="#FF8B008B" exampleText="&lt;html&gt;Hello World!/html&gt;" />
-	<Color name="Tags" foreground="#FF8B008B" exampleText="&lt;html&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
-	<Color name="Attributes" foreground="Red" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
-	<Color name="Slash" foreground="DarkMagenta" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
-	<Color name="Assignment" foreground="Blue" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
-	<Color name="String" foreground="Blue" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="HtmlTag" foreground="#ffeb9534" exampleText="&lt;html&gt;Hello World!/html&gt;" />
+	<Color name="Tags" foreground="#ffeb9534" exampleText="&lt;html&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="Attributes" foreground="#ff34c0eb" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="Slash" foreground="#ffeb9534" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="Assignment" foreground="Gray" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="String" foreground="#ffe84817" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
 	<Color name="EntityReference" foreground="Blue" exampleText="&lt;html background='green'&gt;Hello&amp;nbsp;World! &lt;test /&gt;&lt;/html&gt;" />
 	<Color name="Entities" foreground="#FF008000" exampleText="&lt;html background='green'&gt;Hello&amp;nbsp;World! &lt;test /&gt;&lt;/html&gt;" />
 	<Color name="UnknownAttribute" foreground="Blue" exampleText="&lt;html foo='bar' background='green'&gt;Hello&amp;nbsp;World! &lt;test /&gt;&lt;/html&gt;" />
@@ -106,7 +106,7 @@
 		</Keywords>
 		<Rule color="Digits">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
 	</RuleSet>
-	<RuleSet name="HtmlTagSet" ignoreCase="false">
+	<RuleSet name="HtmlTagSet" ignoreCase="true">
 		<Keywords color="Slash">
 			<Word>/</Word>
 		</Keywords>

@@ -49,6 +49,8 @@ namespace Xenon.Compiler
         {
             CompilerSucess = false;
 
+            Lexer.ClearInspectionState();
+
             try
             {
                 proj.BMDSwitcherConfig = JsonSerializer.Deserialize<IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings>(proj.SourceConfig);

@@ -48,13 +48,29 @@ namespace UIControls
             if (rawlayoutsource.LangType == "json")
             {
                 TbJson.LoadLanguage_JSON();
+                editor_JSON.Visibility = Visibility.Visible;
+                editor_HTML.Visibility = Visibility.Hidden;
+                TbJson.Text = SourceInfo.RawSource;
             }
             else if (rawlayoutsource.LangType == "html")
             {
-                TbJson.LoadLanguage_HTML();
+                TbHtml.LoadLanguage_HTML();
+                TbKey.LoadLanguage_HTML();
+                TbCSS.LoadLanguage_HTML();
+                editor_JSON.Visibility = Visibility.Hidden;
+                editor_HTML.Visibility = Visibility.Visible;
+                TbHtml.Text = SourceInfo.RawSource;
+                TbKey.Text = SourceInfo.RawSource_Key;
+                if (SourceInfo.OtherData?.TryGetValue("css", out var css) == true)
+                {
+                    TbCSS.Text = css;
+                }
+                else
+                {
+                    TbCSS.Text = "";
+                }
             }
 
-            TbJson.Text = SourceInfo.RawSource;
 
             textChangeTimeoutTimer.Interval = TimeSpan.FromSeconds(1);
             textChangeTimeoutTimer.Tick += TextChangeTimeoutTimer_Tick;
@@ -87,7 +103,7 @@ namespace UIControls
             Save = save;
             UpdateCallback = updateCallback;
 
-            ShowPreviews(rawlayoutsource.RawSource);
+            ShowPreviews(SourceInfo);
         }
 
         private void TextChangeTimeoutTimer_Tick(object sender, EventArgs e)
@@ -95,12 +111,12 @@ namespace UIControls
             ReRender();
         }
 
-        private void ShowPreviews(string layoutjson)
+        private void ShowPreviews(LayoutSourceInfo src)
         {
             //string resolvedJson = ResolveLayoutMacros?.Invoke(layoutjson, LayoutName, Group, LibName);
 
             //var r = ProjectLayoutLibraryManager.GetLayoutPreview(Group, layoutjson);
-            var r = getLayoutPreview.Invoke(LayoutName, Group, LibName, layoutjson, SourceInfo.LangType);
+            var r = getLayoutPreview.Invoke(LayoutName, Group, LibName, src, SourceInfo.LangType);
             if (r.isvalid)
             {
                 srcinvalid.Visibility = Visibility.Hidden;
@@ -139,9 +155,24 @@ namespace UIControls
             //    await Task.Delay(1000);
             //    stillChanging = false;
             //}
+            textChangeTimeoutTimer.Stop();
             try
             {
-                ShowPreviews(TbJson.Text);
+                if (SourceInfo.LangType == "json")
+                {
+                    SourceInfo.RawSource = TbJson.Text;
+                }
+                else if (SourceInfo.LangType == "html")
+                {
+                    SourceInfo.RawSource = TbHtml.Text;
+                    SourceInfo.RawSource_Key = TbKey.Text;
+                    if (SourceInfo.OtherData == null)
+                    {
+                        SourceInfo.OtherData = new Dictionary<string, string>();
+                    }
+                    SourceInfo.OtherData["css"] = TbCSS.Text;
+                }
+                ShowPreviews(SourceInfo);
             }
             catch (Exception)
             {
@@ -156,7 +187,12 @@ namespace UIControls
                 LayoutSourceInfo newinfo = new LayoutSourceInfo()
                 {
                     LangType = SourceInfo.LangType,
-                    RawSource = TbJson.Text,
+                    RawSource = SourceInfo.LangType == "json" ? TbJson.Text : TbHtml.Text,
+                    RawSource_Key = SourceInfo.LangType == "html" ? TbKey.Text : "",
+                    OtherData = new Dictionary<string, string>
+                    {
+                        ["css"] = SourceInfo.LangType == "html" ? TbCSS.Text : "",
+                    }
                 };
                 Save?.Invoke(SaveToLayoutLibrary, SaveToLayoutName, Group, newinfo);
                 UpdateCallback?.Invoke();
