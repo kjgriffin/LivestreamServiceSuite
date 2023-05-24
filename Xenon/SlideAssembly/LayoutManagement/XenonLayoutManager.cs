@@ -160,10 +160,10 @@ namespace Xenon.SlideAssembly.LayoutManagement
             int attempts = 100000;
             while (attempts-- > 0)
             {
-                var firstmatch = Regex.Match(newjson, "%(?<mname>.*)%");
+                var firstmatch = Regex.Match(newjson, "%(?<mname>\\w+)%");
                 if (firstmatch.Success)
                 {
-                    var regex = new Regex("%.*%");
+                    var regex = new Regex(Regex.Escape(firstmatch.Value));
                     newjson = regex.Replace(newjson, _Internal_ResolveMacro(firstmatch.Groups["mname"].Value, libName), 1);
                 }
                 else

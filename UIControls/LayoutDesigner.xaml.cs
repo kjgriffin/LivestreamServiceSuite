@@ -56,7 +56,7 @@ namespace UIControls
             {
                 TbHtml.LoadLanguage_HTML();
                 TbKey.LoadLanguage_HTML();
-                TbCSS.LoadLanguage_HTML();
+                TbCSS.LoadLanguage_CSS();
                 editor_JSON.Visibility = Visibility.Hidden;
                 editor_HTML.Visibility = Visibility.Visible;
                 TbHtml.Text = SourceInfo.RawSource;

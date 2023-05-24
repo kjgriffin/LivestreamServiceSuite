@@ -2,7 +2,7 @@
 <!-- syntaxdefinition for HTML 2000 by Mike Krueger -->
 <!-- converted to AvalonEdit format by Siegfried Pammer in 2010 -->
 <SyntaxDefinition name="HTML" extensions=".htm;.html" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-	<Color name="Comment" foreground="DarkSlateGray" exampleText="&lt;!-- comment --&gt;" />
+	<Color name="Comment" foreground="Gray" exampleText="&lt;!-- comment --&gt;" />
 	<Color name="Digits" foreground="#ffd717e8" exampleText="&lt;digits&gt;0123456789&lt;/digits&gt;" />
 	<Color name="ScriptTag" foreground="#FF8B008B" exampleText="&lt;script&gt;alert('Hello World!');&lt;/script&gt;" />
 	<Color name="JavaScriptTag" foreground="#FF8B008B" exampleText="&lt;script lang=&quot;JavaScript&quot;&gt;alert('Hello World!');&lt;/script&gt;" />
