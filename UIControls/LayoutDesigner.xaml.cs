@@ -57,6 +57,7 @@ namespace UIControls
             TbJson.Text = SourceInfo.RawSource;
 
             textChangeTimeoutTimer.Interval = TimeSpan.FromSeconds(1);
+            textChangeTimeoutTimer.Tick += TextChangeTimeoutTimer_Tick;
             LayoutName = $"{layoutname}";
             LibName = libname;
             Group = group;
@@ -89,6 +90,11 @@ namespace UIControls
             ShowPreviews(rawlayoutsource.RawSource);
         }
 
+        private void TextChangeTimeoutTimer_Tick(object sender, EventArgs e)
+        {
+            ReRender();
+        }
+
         private void ShowPreviews(string layoutjson)
         {
             //string resolvedJson = ResolveLayoutMacros?.Invoke(layoutjson, LayoutName, Group, LibName);
@@ -111,27 +117,28 @@ namespace UIControls
             }
         }
 
-        private async void SourceTextChanged(object sender, EventArgs e)
+        private void SourceTextChanged(object sender, EventArgs e)
         {
             if (!Editable)
             {
                 return;
             }
-            stillChanging = true;
+            //stillChanging = true;
             if (!textChangeTimeoutTimer.IsEnabled)
             {
+                textChangeTimeoutTimer.Stop();
                 textChangeTimeoutTimer.Start();
             }
-            await ReRender();
+            //await ReRender();
         }
 
-        private async Task ReRender()
+        private void ReRender()
         {
-            while (stillChanging)
-            {
-                await Task.Delay(1000);
-                stillChanging = false;
-            }
+            //while (stillChanging)
+            //{
+            //    await Task.Delay(1000);
+            //    stillChanging = false;
+            //}
             try
             {
                 ShowPreviews(TbJson.Text);

@@ -32,7 +32,7 @@ namespace UIControls
         }
         public static void LoadLanguage_HTML(this ICSharpCode.AvalonEdit.TextEditor editor)
         {
-            using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(Assembly.GetExecutingAssembly().GetName().Name + ".jsonsyntax.xshd"))
+            using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(Assembly.GetExecutingAssembly().GetName().Name + ".htmlsyntax.xshd"))
             {
                 using (XmlTextReader reader = new XmlTextReader(s))
                 {
