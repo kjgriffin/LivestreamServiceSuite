@@ -160,7 +160,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
             int attempts = 100000;
             while (attempts-- > 0)
             {
-                var firstmatch = Regex.Match(newjson, "%(?<mname>\\w+)%");
+                var firstmatch = Regex.Match(newjson, "%(?<mname>(\\w|-)+)%");
                 if (firstmatch.Success)
                 {
                     var regex = new Regex(Regex.Escape(firstmatch.Value));
