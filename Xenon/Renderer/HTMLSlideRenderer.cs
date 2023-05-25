@@ -5,6 +5,9 @@ using AngleSharp.Html.Parser;
 
 using CoreHtmlToImage;
 
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
@@ -12,6 +15,7 @@ using SixLabors.ImageSharp.Processing;
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -26,6 +30,48 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
+    static class CHROME_RENDER_ENGINE
+    {
+        static WebDriver driver;
+
+        static CHROME_RENDER_ENGINE()
+        {
+            ChromeOptions opts = new ChromeOptions();
+            opts.AddArgument("window-size=1920x1080");
+            opts.AddArgument("--hide-scrollbars");
+            opts.AddArgument("--no--sandbos");
+            opts.AddArgument("--headless");
+            ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            driver = new ChromeDriver(service, opts);
+        }
+
+        public static Image<Bgra32> RenderWithHeadlessChrome(string html)
+        {
+
+            var htmlFile = Path.GetTempFileName() + ".html";
+            using (StreamWriter sw = new StreamWriter(htmlFile))
+            {
+                sw.Write(html);
+            }
+
+            // hmmmm, looks like we need a file on disk for this.
+            // get it out of the project's tmp folder
+
+            string content = "file:///" + htmlFile;
+            driver.Navigate().GoToUrl(content);
+            Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
+            var img = Image.Load<Bgra32>(ss.AsByteArray);
+
+            // cleanup up
+            // close browser?
+            //driver.Quit();
+            //File.Delete(htmlFile);
+
+            return img;
+        }
+    }
+
     internal class HTMLSlideRenderer : ISlideRenderer, ISlideRenderer<HTMLLayoutInfo>, ISlideLayoutPrototypePreviewer<HTMLLayoutInfo>
     {
         public static string DATAKEY_TEXTS { get => "content-replacements"; }
@@ -46,11 +92,15 @@ namespace Xenon.Renderer
             html_main = HTML_INJECT_STYLE(html_main, css);
             html_key = HTML_INJECT_STYLE(html_key, css);
 
-            var pngbytes_main = converter.FromHtmlString(html_main, format: ImageFormat.Png);
-            var pngbytes_key = converter.FromHtmlString(html_key, format: ImageFormat.Png);
+            //var pngbytes_main = converter.FromHtmlString(html_main, format: ImageFormat.Png);
+            //var pngbytes_key = converter.FromHtmlString(html_key, format: ImageFormat.Png);
 
-            Image<Bgra32> ibmp = Image.Load<Bgra32>(pngbytes_main);
-            Image<Bgra32> ikbmp = Image.Load<Bgra32>(pngbytes_key);
+            //Image<Bgra32> ibmp = Image.Load<Bgra32>(pngbytes_main);
+            //Image<Bgra32> ikbmp = Image.Load<Bgra32>(pngbytes_key);
+
+
+            Image<Bgra32> ibmp = CHROME_RENDER_ENGINE.RenderWithHeadlessChrome(html_main);
+            Image<Bgra32> ikbmp = CHROME_RENDER_ENGINE.RenderWithHeadlessChrome(html_key);
 
             return (ibmp, ikbmp);
         }
@@ -97,18 +147,22 @@ namespace Xenon.Renderer
 
             res.RenderedAs = EXTRACT_SLIDE_TYPE(html_slide, "Liturgy");
 
-            var converter = new HtmlConverter();
-            var pngbytes_slide = converter.FromHtmlString(html_slide, format: ImageFormat.Png);
-            var pngbytes_key = converter.FromHtmlString(html_key, format: ImageFormat.Png);
+            //var converter = new HtmlConverter();
+            //var pngbytes_slide = converter.FromHtmlString(html_slide, format: ImageFormat.Png);
+            //var pngbytes_key = converter.FromHtmlString(html_key, format: ImageFormat.Png);
 
 
-            Image<Bgra32> ibmp = Image.Load<Bgra32>(pngbytes_slide);
-            Image<Bgra32> ikbmp = Image.Load<Bgra32>(pngbytes_key);
+            //Image<Bgra32> ibmp = Image.Load<Bgra32>(pngbytes_slide);
+            //Image<Bgra32> ikbmp = Image.Load<Bgra32>(pngbytes_key);
+
+            Image<Bgra32> ibmp = CHROME_RENDER_ENGINE.RenderWithHeadlessChrome(html_slide);
+            Image<Bgra32> ikbmp = CHROME_RENDER_ENGINE.RenderWithHeadlessChrome(html_key);
 
             res.Bitmap = ibmp;
             res.KeyBitmap = ikbmp;
             return res;
         }
+
 
         private string HTML_INJECT_STYLE(string src, string css)
         {

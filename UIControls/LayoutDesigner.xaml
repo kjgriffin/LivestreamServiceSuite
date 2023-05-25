@@ -25,6 +25,7 @@
                             <TextBlock VerticalAlignment="Center" Foreground="White">]</TextBlock>
                         </StackPanel>-->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                        <Button Name="btn_update"  Click="Click_Update" Height="40" Width="80" Margin="10,0,0,0" Background="#b242db" Foreground="White">Refresh</Button>
                         <Button Name="btn_save"  Click="Click_SaveAs" Height="40" Width="80" Margin="10,0,0,0" Background="Orange">Overwrite</Button>
                         <TextBlock VerticalAlignment="Center" Foreground="White" Margin="10,0,5,0">Name</TextBlock>
                         <TextBox Background="#272727" Foreground="White" Name="tbName" MinWidth="200" Height="24" TextAlignment="Left" VerticalContentAlignment="Center" TextChanged="tbNameChanged"></TextBox>

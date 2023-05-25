@@ -111,6 +111,7 @@
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.1" />
     <PackageReference Include="CoreHtmlToImage" Version="1.0.6" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.9.1" />
     <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta17" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta14" />

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.VisualBasic.Devices;
+
+using Newtonsoft.Json.Linq;
 
 using System;
 using System.Collections.Generic;
@@ -6,6 +8,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -33,16 +37,28 @@ namespace UIControls
 
         SaveLayoutToLibrary Save;
 
-        DispatcherTimer textChangeTimeoutTimer = new DispatcherTimer();
-        bool stillChanging = false;
-
         Action UpdateCallback;
-
         GetLayoutPreview getLayoutPreview;
+
+        bool _dirty = false;
+        bool DirtyChanges
+        {
+            get => _dirty;
+            set
+            {
+                Dispatcher.Invoke(() =>
+                {
+
+                    btn_update.Background = value ? new SolidColorBrush(Color.FromRgb(0xb2, 0x42, 0xdb)) : new SolidColorBrush(Colors.Gray);
+                });
+                _dirty = value;
+            }
+        }
 
         public LayoutDesigner(string libname, List<string> alllibs, string layoutname, LayoutSourceInfo rawlayoutsource, string group, bool editable, SaveLayoutToLibrary save, Action updateCallback, GetLayoutPreview getLayoutPreview)
         {
             InitializeComponent();
+            this.PreviewKeyDown += LayoutDesigner_PreviewKeyDown;
             SourceInfo = rawlayoutsource;
 
             if (rawlayoutsource.LangType == "json")
@@ -71,9 +87,6 @@ namespace UIControls
                 }
             }
 
-
-            textChangeTimeoutTimer.Interval = TimeSpan.FromSeconds(1);
-            textChangeTimeoutTimer.Tick += TextChangeTimeoutTimer_Tick;
             LayoutName = $"{layoutname}";
             LibName = libname;
             Group = group;
@@ -104,11 +117,17 @@ namespace UIControls
             UpdateCallback = updateCallback;
 
             ShowPreviews(SourceInfo);
+
+            DirtyChanges = false;
         }
 
-        private void TextChangeTimeoutTimer_Tick(object sender, EventArgs e)
+        private void LayoutDesigner_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            ReRender();
+            if (e.Key == System.Windows.Input.Key.R && System.Windows.Input.Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                e.Handled = true;
+                ReRender();
+            }
         }
 
         private void ShowPreviews(LayoutSourceInfo src)
@@ -135,27 +154,19 @@ namespace UIControls
 
         private void SourceTextChanged(object sender, EventArgs e)
         {
-            if (!Editable)
+            if (Editable)
             {
-                return;
-            }
-            //stillChanging = true;
-            if (!textChangeTimeoutTimer.IsEnabled)
-            {
-                textChangeTimeoutTimer.Stop();
-                textChangeTimeoutTimer.Start();
+                DirtyChanges = true;
             }
             //await ReRender();
         }
 
         private void ReRender()
         {
-            //while (stillChanging)
-            //{
-            //    await Task.Delay(1000);
-            //    stillChanging = false;
-            //}
-            textChangeTimeoutTimer.Stop();
+            if (!DirtyChanges)
+            {
+                return;
+            }
             try
             {
                 if (SourceInfo.LangType == "json")
@@ -173,6 +184,7 @@ namespace UIControls
                     SourceInfo.OtherData["css"] = TbCSS.Text;
                 }
                 ShowPreviews(SourceInfo);
+                DirtyChanges = false;
             }
             catch (Exception)
             {
@@ -226,6 +238,11 @@ namespace UIControls
                 btn_save.Content = "Overwrite";
                 btn_save.Background = Brushes.Orange;
             }
+        }
+
+        private void Click_Update(object sender, RoutedEventArgs e)
+        {
+            ReRender();
         }
     }
 }
