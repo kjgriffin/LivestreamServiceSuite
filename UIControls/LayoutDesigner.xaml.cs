@@ -3,8 +3,10 @@
 using Newtonsoft.Json.Linq;
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,6 +42,10 @@ namespace UIControls
         Action UpdateCallback;
         GetLayoutPreview getLayoutPreview;
 
+        ConcurrentQueue<CancellationTokenSource> cancels = new ConcurrentQueue<CancellationTokenSource>();
+
+        DateTime LastUpdated { get; set; }
+
         bool _dirty = false;
         bool DirtyChanges
         {
@@ -48,7 +54,6 @@ namespace UIControls
             {
                 Dispatcher.Invoke(() =>
                 {
-
                     btn_update.Background = value ? new SolidColorBrush(Color.FromRgb(0xb2, 0x42, 0xdb)) : new SolidColorBrush(Colors.Gray);
                 });
                 _dirty = value;
@@ -157,8 +162,35 @@ namespace UIControls
             if (Editable)
             {
                 DirtyChanges = true;
+                var now = DateTime.Now;
+                if ((now - LastUpdated).TotalMilliseconds < 1000)
+                {
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    cancels.Enqueue(cts);
+                    Task.Run(() => CheckIfWesBeDoingOurselvesAnUpdate(true, cts));
+                }
+                LastUpdated = DateTime.Now;
             }
             //await ReRender();
+        }
+
+        async Task CheckIfWesBeDoingOurselvesAnUpdate(bool immediateCheck, CancellationTokenSource canceled)
+        {
+            if (!immediateCheck)
+            {
+                // 1 second timeout
+                await Task.Delay(1000, canceled.Token);
+            }
+            var now = DateTime.Now;
+            while ((now - LastUpdated).TotalMilliseconds < 1000)
+            {
+                await Task.Delay(1000, canceled.Token);
+                now = DateTime.Now;
+            }
+            if (!canceled.IsCancellationRequested)
+            {
+                ReRender();
+            }
         }
 
         private void ReRender()
@@ -169,22 +201,30 @@ namespace UIControls
             }
             try
             {
-                if (SourceInfo.LangType == "json")
+                foreach (var item in cancels)
                 {
-                    SourceInfo.RawSource = TbJson.Text;
+                    item.Cancel();
                 }
-                else if (SourceInfo.LangType == "html")
+                cancels.Clear();
+                Dispatcher.Invoke(() =>
                 {
-                    SourceInfo.RawSource = TbHtml.Text;
-                    SourceInfo.RawSource_Key = TbKey.Text;
-                    if (SourceInfo.OtherData == null)
+                    if (SourceInfo.LangType == "json")
                     {
-                        SourceInfo.OtherData = new Dictionary<string, string>();
+                        SourceInfo.RawSource = TbJson.Text;
                     }
-                    SourceInfo.OtherData["css"] = TbCSS.Text;
-                }
-                ShowPreviews(SourceInfo);
-                DirtyChanges = false;
+                    else if (SourceInfo.LangType == "html")
+                    {
+                        SourceInfo.RawSource = TbHtml.Text;
+                        SourceInfo.RawSource_Key = TbKey.Text;
+                        if (SourceInfo.OtherData == null)
+                        {
+                            SourceInfo.OtherData = new Dictionary<string, string>();
+                        }
+                        SourceInfo.OtherData["css"] = TbCSS.Text;
+                    }
+                    ShowPreviews(SourceInfo);
+                    DirtyChanges = false;
+                });
             }
             catch (Exception)
             {

@@ -14,13 +14,16 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Xenon.Compiler;
@@ -44,9 +47,79 @@ namespace Xenon.Renderer
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             driver = new ChromeDriver(service, opts);
+
+            _workerThread = new Thread(RunJobs);
+            _workerThread.Name = "CHROME_RENDER_THREAD";
+            _workerThread.IsBackground = true;
+            _workerThread.Start();
         }
 
-        public static Image<Bgra32> RenderWithHeadlessChrome(string html)
+        class WorkItem
+        {
+            public string HTML { get; set; }
+            public Guid ReqID { get; set; }
+        }
+
+        static ConcurrentQueue<WorkItem> jobs = new ConcurrentQueue<WorkItem>();
+        static Thread _workerThread;
+        static ManualResetEvent _workAvailable = new ManualResetEvent(false);
+        static ConcurrentDictionary<Guid, Image<Bgra32>> _rendered = new ConcurrentDictionary<Guid, Image<Bgra32>>();
+        static Semaphore signalReady = new Semaphore(0, 10000); // probably enough??
+        static long Waiters = 0;
+
+        public static void RunJobs()
+        {
+            while (true)
+            {
+                _workAvailable.WaitOne();
+                // perform all work available
+                while (jobs.TryDequeue(out var job))
+                {
+                    var img = RenderWithHeadlessChrome(job.HTML);
+                    _rendered[job.ReqID] = img;
+                }
+                // signal only when all are done?
+                var waiters = (int)Interlocked.Read(ref Waiters);
+                if (waiters > 0)
+                {
+                    signalReady.Release(waiters);
+                }
+            }
+        }
+
+        public static Task<Image<Bgra32>> PerformRenderWithHeadlessChrome(string html)
+        {
+            Interlocked.Increment(ref Waiters);
+            // spinup a job here
+            Guid id = Guid.NewGuid();
+            jobs.Enqueue(new WorkItem
+            {
+                HTML = html,
+                ReqID = id,
+            });
+            _workAvailable.Set();
+
+            // wait for completion
+            bool look = true;
+            while (look)
+            {
+                signalReady.WaitOne();
+
+                // check if we've rendered this job
+                if (_rendered.TryGetValue(id, out var res))
+                {
+                    _rendered.Remove(id, out _);
+                    Interlocked.Decrement(ref Waiters);
+                    return Task.FromResult(res);
+                }
+            }
+#if DEBUG
+            Debugger.Break();
+#endif
+            return Task.FromResult(default(Image<Bgra32>));
+        }
+
+        private static Image<Bgra32> RenderWithHeadlessChrome(string html)
         {
 
             var htmlFile = Path.GetTempFileName() + ".html";
@@ -99,8 +172,8 @@ namespace Xenon.Renderer
             //Image<Bgra32> ikbmp = Image.Load<Bgra32>(pngbytes_key);
 
 
-            Image<Bgra32> ibmp = CHROME_RENDER_ENGINE.RenderWithHeadlessChrome(html_main);
-            Image<Bgra32> ikbmp = CHROME_RENDER_ENGINE.RenderWithHeadlessChrome(html_key);
+            Image<Bgra32> ibmp = CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_main).Result;
+            Image<Bgra32> ikbmp = CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_key).Result;
 
             return (ibmp, ikbmp);
         }
@@ -155,8 +228,8 @@ namespace Xenon.Renderer
             //Image<Bgra32> ibmp = Image.Load<Bgra32>(pngbytes_slide);
             //Image<Bgra32> ikbmp = Image.Load<Bgra32>(pngbytes_key);
 
-            Image<Bgra32> ibmp = CHROME_RENDER_ENGINE.RenderWithHeadlessChrome(html_slide);
-            Image<Bgra32> ikbmp = CHROME_RENDER_ENGINE.RenderWithHeadlessChrome(html_key);
+            Image<Bgra32> ibmp = CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_slide).Result;
+            Image<Bgra32> ikbmp = CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_key).Result;
 
             res.Bitmap = ibmp;
             res.KeyBitmap = ikbmp;
