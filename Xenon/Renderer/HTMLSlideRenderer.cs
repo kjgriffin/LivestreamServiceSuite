@@ -79,10 +79,20 @@ namespace Xenon.Renderer
                     _rendered[job.ReqID] = img;
                 }
                 // signal only when all are done?
+                var released = signalReady.Release();
                 var waiters = (int)Interlocked.Read(ref Waiters);
-                if (waiters > 0)
+                if (waiters > 0 && released < waiters)
                 {
-                    signalReady.Release(waiters);
+                    // release a few more
+                    signalReady.Release(waiters - released);
+                }
+                else if (released > waiters)
+                {
+                    // eat a few
+                    for (int i = 0; i < released - waiters; i++)
+                    {
+                        signalReady.WaitOne();
+                    }
                 }
             }
         }
