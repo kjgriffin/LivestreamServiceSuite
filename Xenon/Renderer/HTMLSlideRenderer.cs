@@ -75,8 +75,6 @@ namespace Xenon.Renderer
             res.MediaType = MediaType.Image;
             res.AssetPath = "";
             //res.RenderedAs = string.IsNullOrWhiteSpace(layout?.SlideType) ? "Liturgy" : layout.SlideType;
-            // TODO: fix this!
-            res.RenderedAs = "Liturgy";
 
             var html_slide = layout.HTMLSrc;
             var html_key = layout.HTMLSrc_KEY;
@@ -96,6 +94,8 @@ namespace Xenon.Renderer
 
             html_slide = HTML_INJECT_STYLE(html_slide, css);
             html_key = HTML_INJECT_STYLE(html_key, css);
+
+            res.RenderedAs = EXTRACT_SLIDE_TYPE(html_slide, "Liturgy");
 
             var converter = new HtmlConverter();
             var pngbytes_slide = converter.FromHtmlString(html_slide, format: ImageFormat.Png);
@@ -167,6 +167,24 @@ namespace Xenon.Renderer
             return document.ToHtml();
         }
 
+        private string EXTRACT_SLIDE_TYPE(string src, string defaultValue)
+        {
+            var parser = new HtmlParser();
+            var document = parser.ParseDocument(src);
+
+            // find all elements that are tagged
+            var tag = document.Head.QuerySelectorAll($"meta[data-slide-type]").FirstOrDefault();
+
+            if (tag != null)
+            {
+                var att = tag.GetAttribute("data-slide-type");
+                if (att != null)
+                {
+                    return att;
+                }
+            }
+            return defaultValue;
+        }
 
     }
 }
