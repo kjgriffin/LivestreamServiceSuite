@@ -42,7 +42,7 @@ namespace Xenon.Renderer
             ChromeOptions opts = new ChromeOptions();
             opts.AddArgument("window-size=1920x1080");
             opts.AddArgument("--hide-scrollbars");
-            opts.AddArgument("--no--sandbos");
+            opts.AddArgument("--no--sandbox");
             opts.AddArgument("--headless");
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
