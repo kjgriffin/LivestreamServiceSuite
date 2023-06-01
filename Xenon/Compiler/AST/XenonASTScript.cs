@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using VariableMarkupAttributes;
 using VariableMarkupAttributes.Attributes;
 
 using Xenon.AssetManagment;
@@ -444,6 +445,19 @@ namespace Xenon.Compiler.AST
                         ATEMSharedState_AssemblyDummyLoader.Load();
                         SharedPresentationAPI_AssemblyDummyLoader.Load();
 
+                        AutomationActionArgType argType = AutomationActionArgType.UNKNOWN_TYPE;
+                        switch(cmdMetadata.Action)
+                        {
+                            case AutomationActions.WatchSwitcherStateBoolVal:
+                            case AutomationActions.WatchStateBoolVal:
+                                argType = AutomationActionArgType.Boolean;
+                                break;
+                            case AutomationActions.WatchSwitcherStateIntVal:
+                            case AutomationActions.WatchStateIntVal:
+                                argType = AutomationActionArgType.Integer;
+                                break;
+                        }
+
                         foreach (var ass in AppDomain.CurrentDomain.GetAssemblies().OrderBy(x => x.FullName))
                         {
                             foreach (Type t in ass.GetTypes())
@@ -452,7 +466,7 @@ namespace Xenon.Compiler.AST
                                 {
                                     var instance = Activator.CreateInstance(t);
                                     var props = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(instance);
-                                    suggestions.AddRange(props.Select(x => (x.Key, $"Exposed State Type<{x.Value.TypeInfo}>")));
+                                    suggestions.AddRange(props.Where(x => x.Value.TypeInfo == argType).Select(x => (x.Key, $"Exposed State Type<{x.Value.TypeInfo}>")));
                                 }
                             }
                         }

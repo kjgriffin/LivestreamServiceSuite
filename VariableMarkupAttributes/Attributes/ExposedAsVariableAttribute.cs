@@ -75,6 +75,10 @@ namespace VariableMarkupAttributes.Attributes
             {
                 return AutomationActionArgType.Double;
             }
+            if (type == typeof(bool))
+            {
+                return AutomationActionArgType.Boolean;
+            }
 
             return AutomationActionArgType.UNKNOWN_TYPE;
         }

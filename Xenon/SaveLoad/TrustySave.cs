@@ -215,6 +215,7 @@ namespace Xenon.SaveLoad
             // macros break this approach... not sure what to do instead
             return;
 
+            /*
             // for now only breaking change is stitched image
             if (!originalVersion.MeetsMinimumVersion(1, 9, 0, 16))
             {
@@ -250,6 +251,7 @@ namespace Xenon.SaveLoad
                 }
 
             }
+            */
         }
 
         private static LayoutLibEntry TrustilyUpgradeOldLayoutLibrary(this LayoutLibEntry oldLib, BuildVersion originalVersionSC, BuildVersion targetVersionSC)

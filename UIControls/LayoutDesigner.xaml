@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="LayoutDesigner" Height="450" Width="800">
     <Window.Resources>
-        
+
     </Window.Resources>
     <Grid Background="#272727">
         <Grid>
@@ -25,6 +25,7 @@
                             <TextBlock VerticalAlignment="Center" Foreground="White">]</TextBlock>
                         </StackPanel>-->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                        <Button Name="btn_update"  Click="Click_Update" Height="40" Width="80" Margin="10,0,0,0" Background="#b242db" Foreground="White">Refresh</Button>
                         <Button Name="btn_save"  Click="Click_SaveAs" Height="40" Width="80" Margin="10,0,0,0" Background="Orange">Overwrite</Button>
                         <TextBlock VerticalAlignment="Center" Foreground="White" Margin="10,0,5,0">Name</TextBlock>
                         <TextBox Background="#272727" Foreground="White" Name="tbName" MinWidth="200" Height="24" TextAlignment="Left" VerticalContentAlignment="Center" TextChanged="tbNameChanged"></TextBox>
@@ -43,8 +44,20 @@
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Border BorderBrush="#373737" BorderThickness="3" Margin="10">
+                    <Border Name="editor_JSON" BorderBrush="#373737" BorderThickness="3" Margin="10">
                         <AvalonEdit:TextEditor Foreground="White" Background="#171717" Name="TbJson" FontFamily="cascadia" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
+                    </Border>
+                    <Border Name="editor_HTML" BorderBrush="#373737" BorderThickness="3" Margin="10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <AvalonEdit:TextEditor Grid.Row="0" Foreground="White" Background="#171717" Name="TbHtml" FontFamily="cascadia" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
+                            <AvalonEdit:TextEditor Grid.Row="1" Foreground="White" Background="#171717" Name="TbKey" FontFamily="cascadia" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
+                            <AvalonEdit:TextEditor Grid.Row="2" Foreground="White" Background="#171717" Name="TbCSS" FontFamily="cascadia" FontSize="13" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
+                        </Grid>
                     </Border>
                     <ScrollViewer Grid.Column="1">
                         <StackPanel>

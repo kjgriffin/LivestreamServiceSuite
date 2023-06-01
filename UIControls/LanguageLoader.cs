@@ -30,6 +30,27 @@ namespace UIControls
                 }
             }
         }
+        public static void LoadLanguage_HTML(this ICSharpCode.AvalonEdit.TextEditor editor)
+        {
+            using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(Assembly.GetExecutingAssembly().GetName().Name + ".htmlsyntax.xshd"))
+            {
+                using (XmlTextReader reader = new XmlTextReader(s))
+                {
+                    editor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                }
+            }
+        }
+        public static void LoadLanguage_CSS(this ICSharpCode.AvalonEdit.TextEditor editor)
+        {
+            using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(Assembly.GetExecutingAssembly().GetName().Name + ".csssyntax.xshd"))
+            {
+                using (XmlTextReader reader = new XmlTextReader(s))
+                {
+                    editor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                }
+            }
+        }
+
 
 
     }

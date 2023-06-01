@@ -61,7 +61,7 @@ namespace Xenon.Compiler.AST
                 var l = project.LayoutManager.FindLayoutByFullyQualifiedName(layoutGroup, layoutoverridefromproj);
                 if (l.found)
                 {
-                    return (true, l.json);
+                    return (true, l.info.RawSource);
                 }
             }
 
@@ -84,7 +84,7 @@ namespace Xenon.Compiler.AST
                 var l = project.LayoutManager.FindLayoutByFullyQualifiedName(layoutGroup, layoutoverridefromproj);
                 if (l.found)
                 {
-                    slide.Data[Slide.LAYOUT_INFO_KEY] = l.json;
+                    slide.Data[Slide.LAYOUT_INFO_KEY] = l.info.RawSource;
                 }
             }
             // TODO: warn about overwrite from code

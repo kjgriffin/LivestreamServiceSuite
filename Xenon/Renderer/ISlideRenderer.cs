@@ -104,12 +104,21 @@ namespace Xenon.Renderer
             //var assembly = System.Reflection.Assembly.GetAssembly(typeof(ALayoutInfo)).GetManifestResourceNames();
             var stream = System.Reflection.Assembly.GetAssembly(typeof(ASlideLayoutInfo)).GetManifestResourceStream(name);
 
-            using (StreamReader sr = new StreamReader(stream))
+            if (stream != null)
             {
-                string json = sr.ReadToEnd();
-                return JsonSerializer.Deserialize<LayoutType>(json);
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    string json = sr.ReadToEnd();
+                    return JsonSerializer.Deserialize<LayoutType>(json);
+                }
             }
-
+            else if (typeof(LayoutType).GetConstructor(Type.EmptyTypes) != null)
+            { 
+                var constructor = typeof(LayoutType).GetConstructor(Type.EmptyTypes);
+                return (LayoutType)constructor.Invoke(null);
+            }
+            // hope we don't get here
+            return null;
         }
         LayoutType _Internal_GetDefaultInfo(string overrideDefault = "");
         string _Internal_GetDefaultJson(string overrideDefault = "")

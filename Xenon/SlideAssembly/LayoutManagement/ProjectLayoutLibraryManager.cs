@@ -17,7 +17,7 @@ using Xenon.SlideAssembly.LayoutManagement;
 namespace Xenon.SlideAssembly
 {
 
-    public delegate bool SaveLayoutToLibrary(string libname, string layoutname, string group, string json);
+    public delegate bool SaveLayoutToLibrary(string libname, string layoutname, string group, LayoutSourceInfo source);
 
     public class ProjectLayoutLibraryManager
     {
@@ -121,7 +121,7 @@ namespace Xenon.SlideAssembly
             libgroup[layoutname] = json;
         }
 
-        internal bool _Internal_SaveLayoutToLibrary(string libname, string layoutname, string group, string json)
+        internal bool _Internal_SaveLayoutToLibrary(string libname, string layoutname, string group, LayoutSourceInfo source)
         {
             InitializeNewLibrary(libname); // we're ok if it already exists
 
@@ -130,7 +130,7 @@ namespace Xenon.SlideAssembly
             var cmd = LanguageKeywords.Commands.First(x => x.Value == group).Key;
             var layouts = lib[cmd];
 
-            layouts[layoutname] = json;
+            layouts[layoutname] = source.RawSource;
             // TODO: do object ref's have it set on the project by now?
 
             return true;

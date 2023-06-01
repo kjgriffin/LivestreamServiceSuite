@@ -44,6 +44,7 @@ namespace Xenon.Renderer
             new RawTextRenderer(),
             new ScriptRenderer(),
             new PrefabSlideRenderer(),
+            new HTMLSlideRenderer(),
         };
 
         public ProjectAsset GetProjectAssetByName(string assetName)

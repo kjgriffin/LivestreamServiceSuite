@@ -21,11 +21,13 @@ namespace Xenon.Compiler.AST
         public XenonASTScript LastScript { get; private set; }
 
         public XenonASTScript DupLastScript { get; private set; }
+        public XenonASTScript DupFirstScript { get; private set; }
 
         public bool HasAll { get; private set; }
         public bool HasFirst { get; private set; }
         public bool HasLast { get; private set; }
         public bool HasDupLast { get; private set; }
+        public bool HasDupFirst { get; private set; }
         public int _SourceLine { get; set; }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
@@ -139,6 +141,33 @@ namespace Xenon.Compiler.AST
                     element.DupLastScript = script;
                     element.HasDupLast = true;
                 }
+                else if (Lexer.Inspect("dupfirst"))
+                {
+                    if (element.HasFirst)
+                    {
+                        Logger.Log(new XenonCompilerMessage
+                        {
+                            ErrorMessage = "first already defined for scripted block. They will conflict with undefined behaviour",
+                            ErrorName = "Script Conflict: last conflicts with duplast",
+                            Generator = "XenonASTASScripted::Compile()",
+                            Inner = "",
+                            Level = XenonCompilerMessageType.Error,
+                            Token = Lexer.CurrentToken,
+                        });
+                    }
+                    Lexer.Consume();
+                    Lexer.GobbleWhitespace();
+                    Lexer.GobbleandLog("=", "expected = to assign duplicating first script");
+                    Lexer.GobbleWhitespace();
+                    Lexer.GobbleandLog("#", "expected #");
+                    Lexer.GobbleandLog("script", "expected script command");
+                    Lexer.GobbleWhitespace();
+                    XenonASTScript script = new XenonASTScript();
+                    script = (XenonASTScript)script.Compile(Lexer, Logger, element);
+                    element.DupFirstScript = script;
+                    element.HasDupFirst = true;
+                }
+
                 else
                 {
                     // or allow nested expressions
@@ -185,6 +214,13 @@ namespace Xenon.Compiler.AST
                 sb.Append("duplast=".PadLeft(indentDepth * indentSize));
                 DupLastScript.DecompileFormatted(sb, ref indentDepth, indentSize);
             }
+
+            if (HasDupFirst)
+            {
+                sb.Append("dupfirst=".PadLeft(indentDepth * indentSize));
+                DupFirstScript.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+
 
             if (HasAll)
             {
@@ -244,7 +280,7 @@ namespace Xenon.Compiler.AST
                     modifiedslides.Add(swaped.scripted);
                     modifiedslides.Add(swaped.resource);
                 }
-                else if (!(slide == childslides.Last() && HasDupLast))
+                else if (!((slide == childslides.Last() && HasDupLast) && (slide == childslides.First() && HasDupFirst)))
                 {
                     modifiedslides.Add(slide);
                 }
@@ -306,6 +342,64 @@ namespace Xenon.Compiler.AST
                         modifiedslides.Add(swaped.resource);
                     }
                 }
+
+                if (slide == childslides.First() && HasDupFirst)
+                {
+                    if (slide == childslides.Last() && HasLast)
+                    {
+                        // its a duplicating first, and we've already mangled it because the last script has used it
+                        // so we'll borrow the original slide, and add a new one with the dup-first
+                        // need to increase the number of scopy though
+
+                        // we also need to get down 'n dirty and steal the postset and add it to the duplast
+                        var swappedfirst = modifiedslides[0];
+
+                        scopy.Number = project.NewSlideNumber;
+                        var swaped = SwapForScript(scopy, DupFirstScript, project, Logger);
+
+                        // swap postset
+                        if (swappedfirst.TryGetPostset(out var postset))
+                        {
+                            swaped.scripted.Data[XenonASTHelpers.DATAKEY_POSTSET] = postset;
+                            // techincally can kill the postset on the swapped slide
+                            swappedfirst.Data.Remove(XenonASTHelpers.DATAKEY_POSTSET);
+                        }
+
+                        // swap pilot
+                        if (swappedfirst.Data.TryGetValue(XenonASTExpression.DATAKEY_PILOT, out var pilot))
+                        {
+                            swaped.scripted.Data[XenonASTExpression.DATAKEY_PILOT] = pilot;
+                            // techincally can kill the postset on the swapped slide
+                            swappedfirst.Data.Remove(XenonASTExpression.DATAKEY_PILOT);
+                        }
+
+
+                        modifiedslides.Add(swaped.scripted);
+                        modifiedslides.Add(swaped.resource);
+                    }
+                    else
+                    {
+                        // still need to duplicate the slide, but it's not mangled by any other scriptification already
+
+                        // add original
+                        modifiedslides.Add(slide);
+
+                        // add duplicated scriptified slide
+                        scopy.Number = project.NewSlideNumber;
+                        var swaped = SwapForScript(scopy, DupLastScript, project, Logger);
+
+                        // extract posteset
+                        if (slide.TryGetPostset(out var postset))
+                        {
+                            swaped.scripted.Data[XenonASTHelpers.DATAKEY_POSTSET] = postset;
+                            slide.Data.Remove(XenonASTHelpers.DATAKEY_POSTSET);
+                        }
+
+                        modifiedslides.Add(swaped.scripted);
+                        modifiedslides.Add(swaped.resource);
+                    }
+                }
+
             }
 
 

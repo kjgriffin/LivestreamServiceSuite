@@ -29,5 +29,6 @@
         ResponsiveLiturgyTitledVerse,
         AdvancedImages,
         ComplexText,
+        HTML,
     }
 }

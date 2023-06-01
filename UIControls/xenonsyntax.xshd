@@ -138,6 +138,7 @@
 			<Word>#complextext</Word>
 			<Word>#tlit</Word>
 			<Word>#dynamiccontroller</Word>
+			<Word>#html</Word>
 			<!-- ... -->
 		</Keywords>
 	</RuleSet>
