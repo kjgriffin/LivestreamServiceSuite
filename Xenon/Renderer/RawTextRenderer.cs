@@ -33,6 +33,15 @@ namespace Xenon.Renderer
             //    matches = Regex.Matches(input, @"%slide\.num\.(.*)\.\d+%");
             //}
 
+            // should we also allow camera matches??
+            matches = Regex.Matches(input, @"%cam\.(?<cam>\w+)%");
+            foreach (Match match in matches)
+            {
+                int i = info.FindCameraID(match.Groups["cam"].Value.ToLower());
+                input = input.Replace(match.Value, i.ToString());
+            }
+
+
             return input;
         }
     }

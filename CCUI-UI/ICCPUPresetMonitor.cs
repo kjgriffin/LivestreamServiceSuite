@@ -1,10 +1,12 @@
 ﻿using CCU.Config;
 
+using IntegratedPresenterAPIInterop;
+
 using System.Net;
 
 namespace CCUI_UI
 {
-    public interface ICCPUPresetMonitor : ICCPUPresetMonitor_Executor
+    public interface ICCPUPresetMonitor : ICCPUPresetMonitor_Executor, IDeviceDriver
     {
         event CCUEvent OnCommandUpdate;
 

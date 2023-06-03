@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 using Xenon.Compiler.SubParsers;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -35,6 +36,18 @@ namespace Xenon.Compiler.AST
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
             var slides = Command?.Generate(project, this, Logger) ?? new List<Slide>();
+
+            // apply anything on the scope
+            if (Command.TryGetScopedVariable(SlideRenderer.VARNAME_SLIDE_PREMULTIPLEY_OVERRIDE, out string pval).found)
+            {
+                if (bool.TryParse(pval, out var premultiply))
+                {
+                    slides.ForEach(x =>
+                    {
+                        x.Data[SlideRenderer.DATAKEY_SLIDE_PREMULTIPLY_OVERRIDE] = premultiply;
+                    });
+                }
+            }
 
             foreach (var s in slides)
             {

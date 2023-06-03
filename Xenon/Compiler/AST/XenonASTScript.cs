@@ -126,12 +126,12 @@ namespace Xenon.Compiler.AST
             }
 
 
-            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            SlideVariableSubstituter.UnresolvedText unresolved = new SlideVariableSubstituter.UnresolvedText
             {
                 DKEY = ScriptRenderer.DATAKEY_SCRIPTSOURCE_TARGET,
                 Raw = src,
             };
-            script.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
+            script.Data[SlideVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
 
             return script.ToList();
         }

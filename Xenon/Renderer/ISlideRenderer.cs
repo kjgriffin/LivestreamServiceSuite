@@ -16,6 +16,7 @@ namespace Xenon.Renderer
     internal interface ISlideRendertimeInfoProvider
     {
         public int FindSlideNumber(string reference);
+        public int FindCameraID(string camName);
     }
     internal interface ISlideRenderer
     {

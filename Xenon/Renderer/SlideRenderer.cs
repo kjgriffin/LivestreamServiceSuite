@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Markup;
 
 using Xenon.AssetManagment;
 using Xenon.Compiler;
@@ -15,6 +13,9 @@ namespace Xenon.Renderer
 {
     class SlideRenderer : IAssetResolver, ISlideRendertimeInfoProvider
     {
+        public static string VARNAME_SLIDE_PREMULTIPLEY_OVERRIDE { get => "rendermode.premultiply"; }
+        public static string DATAKEY_SLIDE_PREMULTIPLY_OVERRIDE { get => "premultiply.override"; }
+
         Project _project { get; set; }
 
 
@@ -107,6 +108,12 @@ namespace Xenon.Renderer
             {
                 renderpremultiplied = (bool)s.Data[ShapeImageAndTextRenderer.DATAKEY_PREMULTIPLY_OVERRIDE];
             }
+            // let anyone set this on the scope
+            if (s.Data.ContainsKey(SlideRenderer.DATAKEY_SLIDE_PREMULTIPLY_OVERRIDE))
+            {
+                renderpremultiplied = (bool)s.Data[SlideRenderer.DATAKEY_SLIDE_PREMULTIPLY_OVERRIDE];
+            }
+
             if (renderpremultiplied)
             {
                 res.Bitmap = res.Bitmap?.PreMultiplyWithAlphaFast(res.KeyBitmap);
@@ -183,7 +190,7 @@ namespace Xenon.Renderer
                     //return hvsr.RenderSlide(_project.Layouts.TextHymnLayout.GetRenderInfo(), slide, Messages);
                     return null;
                 case SlideFormat.Prefab:
-                    //return psr.RenderSlide(slide, Messages);
+                //return psr.RenderSlide(slide, Messages);
                 case SlideFormat.Script:
                     //return sr.RenderSlide(slide, Messages);
                     return null;
@@ -235,6 +242,11 @@ namespace Xenon.Renderer
             }
 
             return 0;
+        }
+
+        public int FindCameraID(string camName)
+        {
+            return _project.BMDSwitcherConfig.Routing.FirstOrDefault(x => x.LongName.ToLower() == camName)?.PhysicalInputId ?? 0;
         }
     }
 }

@@ -2,6 +2,8 @@
 
 using Configurations.SwitcherConfig;
 
+using DVIPProtocol.Protocol.Lib.Command.PTDrive;
+
 using IntegratedPresenter.BMDSwitcher.Config;
 
 using IntegratedPresenterAPIInterop;
@@ -378,12 +380,34 @@ namespace Integrated_Presenter.Automation
                         _dynamicControlProvider.ConfigureControls((string)task.RawParams[0], (string)task.RawParams[1], (bool)task.RawParams[2]);
                         break;
 
+                    case AutomationActions.ForceRunPostSet:
+                        var slide = _presentationProvider.GetCurentSlide();
+                        if (slide != null && slide.PostsetEnabled)
+                        {
+                            int postset = slide.PostsetId;
+                            _logger.Debug($"(PerformAutomationAction) -- force run postset {postset}");
+                            _switcherProvider.switcherManager.PerformPresetSelect(postset);
+                        }
+                        else
+                        {
+                            if (task.RawParams.Count == 2 && (bool)task.RawParams[0])
+                            {
+                                int postset = (int)((long)task.RawParams[1]);
+                                _logger.Debug($"(PerformAutomationAction) -- force run postset with fallback {postset}");
+                                _switcherProvider.switcherManager.PerformPresetSelect(postset);
+                            }
+                        }
+                        break;
+
 
                     /* TODO: try and see if we can fire cams here
-                //case AutomationActions.CAMS:
+                    //case AutomationActions.CAMS:
                     _camPresets?.
                     //break;
                     */
+                    //case AutomationActions.FireCam:
+                    //    _camPresets?.FirePresetWithZoom_Tracked();
+                    //    break;
 
 
                     case AutomationActions.WatchSwitcherStateBoolVal:
@@ -410,6 +434,15 @@ namespace Integrated_Presenter.Automation
         public void ProvideWatchInfo(ConditionWatchProvider watches)
         {
             GetWatches = watches;
+        }
+
+        public void UpdateDriver(IDeviceDriver driver)
+        {
+            // figure out what type of driver we actually have
+            if (driver as ICCPUPresetMonitor != null)
+            {
+                _camPresets = driver as ICCPUPresetMonitor;
+            }
         }
     }
 }

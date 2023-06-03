@@ -8,5 +8,6 @@ namespace Integrated_Presenter.Automation
     {
         Task<ActionResult> PerformAutomationAction(AutomationAction task);
         void ProvideWatchInfo(ConditionWatchProvider watches);
+        void UpdateDriver(IDeviceDriver driver);
     }
 }

@@ -6,6 +6,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using Xenon.Compiler.Suggestions;
+using Xenon.Helpers;
+using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
@@ -34,7 +36,9 @@ namespace Xenon.Compiler.AST
 
         static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableName = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts) =>
         {
-            return (false, new List<(string, string)>() { ("\"", "End Variable Name") }.Concat(LanguageKeywords.LayoutForType.Select(x => ($"{LanguageKeywords.Commands[x.Key]}.Layout", $"Set layout override for layout type: {LanguageKeywords.Commands[x.Key]}"))).ToList());
+            return (false, new List<(string, string)>() { ("\"", "End Variable Name") }
+            .Concat(LanguageKeywords.LayoutForType.Select(x => ($"{LanguageKeywords.Commands[x.Key]}.Layout", $"Set layout override for layout type: {LanguageKeywords.Commands[x.Key]}")))
+            .Concat((SlideRenderer.VARNAME_SLIDE_PREMULTIPLEY_OVERRIDE, "true/false to override all slides render behaviour (implied true by default)").ItemAsEnumerable()).ToList());
         };
 
         static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestsionForEndOfCommand = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts) =>

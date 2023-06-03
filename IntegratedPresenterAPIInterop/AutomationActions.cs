@@ -81,6 +81,7 @@
 
         USK1SetTypePATTERN,
         ConfigurePATTERN,
+        ForceRunPostSet,
     }
 
 }

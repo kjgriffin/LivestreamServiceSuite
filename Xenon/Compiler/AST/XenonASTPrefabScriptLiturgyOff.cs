@@ -52,7 +52,7 @@ namespace Xenon.Compiler.AST
             slide.Lines = new List<SlideLine>();
             slide.Asset = "";
             // put script here
-            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            SlideVariableSubstituter.UnresolvedText unresolved = new SlideVariableSubstituter.UnresolvedText
             {
                 DKEY = ScriptRenderer.DATAKEY_SCRIPTSOURCE_TARGET,
                 Raw = $"#{SlideTitleMessage};" + Environment.NewLine
@@ -60,7 +60,7 @@ namespace Xenon.Compiler.AST
                 + "@arg1:DelayMs(1000);",
             };
 
-            slide.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
+            slide.Data[SlideVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
             slide.Data["prefabtype"] = PrefabSlides.Script_LiturgyOff;
             slide.MediaType = MediaType.Empty;
             slide.Format = SlideFormat.Prefab;

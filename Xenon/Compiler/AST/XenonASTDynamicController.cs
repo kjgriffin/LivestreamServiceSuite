@@ -104,13 +104,13 @@ namespace Xenon.Compiler.AST
 
             res.Data[RawTextRenderer.DATAKEY_KEYNAME] = KeyName;
 
-            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            SlideVariableSubstituter.UnresolvedText unresolved = new SlideVariableSubstituter.UnresolvedText
             {
                 DKEY = RawTextRenderer.DATAKEY_RAWTEXT_TARGET,
                 Raw = Source,
             };
 
-            res.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
+            res.Data[SlideVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
 
             return res.ToList();
         }

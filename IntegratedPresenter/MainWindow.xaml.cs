@@ -5426,6 +5426,10 @@ namespace IntegratedPresenter.Main
             }
 
             _camMonitor.OnCommandUpdate += _camMonitor_OnCommandUpdate;
+
+            // update drivers
+            _slideActionEngine.UpdateDriver(_camMonitor);
+            _dynamicActionEngine.UpdateDriver(_camMonitor);
         }
 
         private void Mock_OnCameraMoved(object sender, CameraUpdateEventArgs e)
@@ -5471,6 +5475,10 @@ namespace IntegratedPresenter.Main
         BMDSwitcherConfigSettings IConfigProvider._config { get => _config; }
         bool IFeatureFlagProvider.AutomationTimer1Enabled { get => _FeatureFlag_automationtimer1enabled; }
         string IPresentationProvider.Folder { get => Presentation?.Folder; }
+        ISlide IPresentationProvider.GetCurentSlide()
+        {
+            return Presentation?.EffectiveCurrent;
+        }
 
         void IPresentationProvider.SetNextSlideTarget(int target)
         {

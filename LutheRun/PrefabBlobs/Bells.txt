@@ -9,10 +9,10 @@ $>@arg0:OpenAudioPlayer;
 $>/// </MANUAL_UPDATE name='bells-filename'>
 $>// make sure that this file matches the generated resource file
 $>@arg1:LoadAudioFile(Resource_Bells.wav)[Load Bells];
-$>@arg1:PresetSelect(7)[Preset Center];
+$>@arg1:PresetSelect(%cam.CENTER%)[Preset Center];
 $>@arg1:DelayMs(100);
 $>@arg0:AutoTrans[Take Center];
 $>@arg1:DelayMs(2000);
 $>@arg0:PlayAuxAudio[Play Bells];
-$>arg1:PresetSelect(8)[Preset Pulpit];
+$>arg1:PresetSelect(%cam.PULPIT%)[Preset Pulpit];
 }

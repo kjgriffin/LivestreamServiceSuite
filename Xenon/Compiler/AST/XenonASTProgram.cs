@@ -29,7 +29,7 @@ namespace Xenon.Compiler.AST
 
             // Attribute sit outside the project right...
             // so here we can easily just 'update' the slides as required
-            SlideNumberVariableSubstituter subengine = new SlideNumberVariableSubstituter(slides);
+            SlideVariableSubstituter subengine = new SlideVariableSubstituter(slides, project.BMDSwitcherConfig);
             project.Slides.AddRange(subengine.ApplyNesscarySubstitutions());
 
 

@@ -541,12 +541,12 @@ namespace Xenon.Compiler.AST
 
             newlines.Insert(0, titleline);
 
-            SlideNumberVariableSubstituter.UnresolvedText unresolved = new SlideNumberVariableSubstituter.UnresolvedText
+            SlideVariableSubstituter.UnresolvedText unresolved = new SlideVariableSubstituter.UnresolvedText
             {
                 DKEY = ScriptRenderer.DATAKEY_SCRIPTSOURCE_TARGET,
                 Raw = string.Join(Environment.NewLine, newlines),
             };
-            scriptslide.Data[SlideNumberVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
+            scriptslide.Data[SlideVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
 
             return (scriptslide, slide);
         }

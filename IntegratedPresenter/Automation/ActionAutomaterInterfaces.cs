@@ -5,6 +5,8 @@ using IntegratedPresenter.Main;
 
 using IntegratedPresenterAPIInterop;
 
+using SharedPresentationAPI.Presentation;
+
 using SwitcherControl.BMDSwitcher;
 
 using System.Collections.Generic;
@@ -49,6 +51,8 @@ namespace Integrated_Presenter.Automation
     internal interface IPresentationProvider
     {
         string Folder { get; }
+
+        ISlide GetCurentSlide();
         void SetNextSlideTarget(int target);
         Task TakeNextSlide();
     }

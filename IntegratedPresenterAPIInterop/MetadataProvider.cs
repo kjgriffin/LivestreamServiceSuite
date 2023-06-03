@@ -69,6 +69,7 @@ namespace IntegratedPresenterAPIInterop
             [AutomationActions.Timer1Restart] = (0, AutomationActions.Timer1Restart, "Timer1Restart", null, ExpectedVariableContents.NONE),
 
 
+            [AutomationActions.Timer1Restart] = (0, AutomationActions.Timer1Restart, "Timer1Restart", null, ExpectedVariableContents.NONE),
 
             [AutomationActions.PresetSelect] = (1, AutomationActions.PresetSelect, "PresetSelect", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.VIDEOSOURCE),
             [AutomationActions.ProgramSelect] = (1, AutomationActions.ProgramSelect, "ProgramSelect", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.VIDEOSOURCE),
@@ -142,6 +143,13 @@ namespace IntegratedPresenterAPIInterop
                 AutomationActionArgType.String,
                 AutomationActionArgType.String,
                 AutomationActionArgType.Boolean,
+            },
+            ExpectedVariableContents.NONE),
+
+            [AutomationActions.ForceRunPostSet] = (2, AutomationActions.ForceRunPostSet, "ForceRunPostset", new List<AutomationActionArgType>()
+            {
+                AutomationActionArgType.Boolean,
+                AutomationActionArgType.Integer,
             },
             ExpectedVariableContents.NONE),
         };

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IntegratedPresenter.BMDSwitcher.Config;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +13,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.Meta
 {
-    internal class SlideNumberVariableSubstituter : ISlideRendertimeInfoProvider
+    internal class SlideVariableSubstituter : ISlideRendertimeInfoProvider
     {
         public int FindSlideNumber(string reference)
         {
@@ -57,10 +59,12 @@ namespace Xenon.Compiler.Meta
         }
 
         List<Slide> _slides { get; }
+        BMDSwitcherConfigSettings _bmdConfig { get; }
 
-        public SlideNumberVariableSubstituter(List<Slide> slides)
+        public SlideVariableSubstituter(List<Slide> slides, IntegratedPresenter.BMDSwitcher.Config.BMDSwitcherConfigSettings bMDSwitcherConfig)
         {
             _slides = slides;
+            _bmdConfig = bMDSwitcherConfig;
         }
 
 
@@ -90,5 +94,9 @@ namespace Xenon.Compiler.Meta
             return _slides;
         }
 
+        public int FindCameraID(string camName)
+        {
+            return _bmdConfig.Routing.FirstOrDefault(x => x.LongName.ToLower() == camName)?.PhysicalInputId ?? 0;
+        }
     }
 }
