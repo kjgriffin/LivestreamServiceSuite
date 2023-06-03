@@ -62,7 +62,7 @@ namespace Xenon.Renderer
                         sinfo.SlideType = SlideType.Full; // perhaps?
                     }
 
-                    var mfile = MemoryMappedFile.CreateOrOpen(fname, rs.BitmapPNGMS.Length);
+                    var mfile = MemoryMappedFile.CreateNew(fname, rs.BitmapPNGMS.Length);
                     mfiles.Add(mfile);
                     using (var stream = mfile.CreateViewStream())
                     {
@@ -71,7 +71,7 @@ namespace Xenon.Renderer
                         stream.Write(rs.BitmapPNGMS.GetBuffer(), 0, (int)rs.BitmapPNGMS.Length);
                     }
 
-                    var kfile = MemoryMappedFile.CreateOrOpen(kname, rs.KeyPNGMS.Length);
+                    var kfile = MemoryMappedFile.CreateNew(kname, rs.KeyPNGMS.Length);
                     mfiles.Add(kfile);
                     using (var stream = kfile.CreateViewStream())
                     {

@@ -82,6 +82,8 @@
         USK1SetTypePATTERN,
         ConfigurePATTERN,
         ForceRunPostSet,
+        FireCamPreset,
+        FireActivePreset,
     }
 
 }

@@ -157,14 +157,15 @@ namespace Xenon.SlideAssembly.LayoutManagement
             // replace matches with macro
             string newjson = rawjson;
 
-            int attempts = 100000;
+            int attempts = 1000;
             while (attempts-- > 0)
             {
                 var firstmatch = Regex.Match(newjson, "%(?<mname>(\\w|-)+)%");
                 if (firstmatch.Success)
                 {
-                    var regex = new Regex(Regex.Escape(firstmatch.Value));
-                    newjson = regex.Replace(newjson, _Internal_ResolveMacro(firstmatch.Groups["mname"].Value, libName), 1);
+                    //var regex = new Regex(Regex.Escape(firstmatch.Value));
+                    //newjson = regex.Replace(newjson, _Internal_ResolveMacro(firstmatch.Groups["mname"].Value, libName), 1);
+                    newjson = Regex.Replace(newjson, Regex.Escape(firstmatch.Value), _Internal_ResolveMacro(firstmatch.Groups["mname"].Value, libName));
                 }
                 else
                 {
@@ -198,7 +199,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
             //System.Diagnostics.Debugger.Break();
 #endif
 
-            return "_$MISSING$_"; //... hmmm this is probably bad
+            return "_>MISSING<_"; //... hmmm this is probably bad
         }
 
         public void CreateNewLayoutFromDefaults(string libname, string group, string layoutname)
@@ -434,7 +435,7 @@ namespace Xenon.SlideAssembly.LayoutManagement
 
             if (type == "json")
             {
-                json = src.RawSource;
+                json = main;
             }
             else if (type == "html")
             {

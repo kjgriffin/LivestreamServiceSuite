@@ -152,6 +152,22 @@ namespace IntegratedPresenterAPIInterop
                 AutomationActionArgType.Integer,
             },
             ExpectedVariableContents.NONE),
+
+            [AutomationActions.FireActivePreset] = (1, AutomationActions.FireActivePreset, "FireActivePreset", new List<AutomationActionArgType>()
+            {
+                AutomationActionArgType.String,
+            },
+            ExpectedVariableContents.NONE),
+            [AutomationActions.FireCamPreset] = (4, AutomationActions.FireCamPreset, "FireCamPreset", new List<AutomationActionArgType>()
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.String,
+                AutomationActionArgType.Integer,
+                AutomationActionArgType.String,
+            },
+            ExpectedVariableContents.NONE),
+
+
         };
 
     }

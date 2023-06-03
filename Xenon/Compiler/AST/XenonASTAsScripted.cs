@@ -280,12 +280,14 @@ namespace Xenon.Compiler.AST
                     modifiedslides.Add(swaped.scripted);
                     modifiedslides.Add(swaped.resource);
                 }
-                else if (!((slide == childslides.Last() && HasDupLast) && (slide == childslides.First() && HasDupFirst)))
+                // Add slides untouches if we don't script them
+                else if (!(slide == childslides.Last() && HasDupLast) && !(slide == childslides.First() && HasDupFirst))
                 {
                     modifiedslides.Add(slide);
                 }
 
-
+                // handle duplicates
+                // last beats first
                 if (slide == childslides.Last() && HasDupLast)
                 {
                     if (slide == childslides.First() && HasFirst)
@@ -342,8 +344,7 @@ namespace Xenon.Compiler.AST
                         modifiedslides.Add(swaped.resource);
                     }
                 }
-
-                if (slide == childslides.First() && HasDupFirst)
+                else if (slide == childslides.First() && HasDupFirst)
                 {
                     if (slide == childslides.Last() && HasLast)
                     {
@@ -399,6 +400,8 @@ namespace Xenon.Compiler.AST
                         modifiedslides.Add(swaped.resource);
                     }
                 }
+
+
 
             }
 

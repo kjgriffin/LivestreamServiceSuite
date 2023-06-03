@@ -400,15 +400,35 @@ namespace Integrated_Presenter.Automation
                         break;
 
 
-                    /* TODO: try and see if we can fire cams here
-                    //case AutomationActions.CAMS:
-                    _camPresets?.
-                    //break;
-                    */
-                    //case AutomationActions.FireCam:
-                    //    _camPresets?.FirePresetWithZoom_Tracked();
-                    //    break;
+                    case AutomationActions.FireActivePreset:
+                        slide = _presentationProvider.GetCurentSlide();
+                        if (task.RawParams.Count == 1 && slide != null && slide.AutoPilotActions.Any())
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- fire cam preset");
+                            string camname = (string)task.RawParams[0];
 
+                            // check if we have an active pilot command to fire
+                            var pst = slide.AutoPilotActions.FirstOrDefault(x => x.CamName == camname);
+                            if (pst != null)
+                            {
+                                pst.Execute(_camPresets, 15);
+                            }
+                        }
+                        break;
+                    case AutomationActions.FireCamPreset:
+                        if (task.RawParams.Count == 4)
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- fire active preset");
+
+                            string camname = (string)task.RawParams[0];
+                            string presetname = (string)task.RawParams[1];
+                            int speed = (int)((long)task.RawParams[2]);
+                            string zoompst = (string)task.RawParams[3];
+
+                            _camPresets?.FirePreset_Tracked(camname, presetname, speed);
+                            _camPresets?.FireZoomLevel_Tracked(camname, zoompst);
+                        }
+                        break;
 
                     case AutomationActions.WatchSwitcherStateBoolVal:
                     case AutomationActions.WatchSwitcherStateIntVal:

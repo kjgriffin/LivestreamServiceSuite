@@ -71,7 +71,7 @@ namespace Xenon.Renderer
         {
             while (true)
             {
-                _workAvailable.WaitOne();
+                _workAvailable.WaitOne(TimeSpan.FromSeconds(10));
                 // perform all work available
                 while (jobs.TryDequeue(out var job))
                 {
@@ -91,7 +91,7 @@ namespace Xenon.Renderer
                     // eat a few
                     for (int i = 0; i < released - waiters; i++)
                     {
-                        signalReady.WaitOne();
+                        signalReady.WaitOne(TimeSpan.FromSeconds(10));
                     }
                 }
             }
@@ -113,7 +113,7 @@ namespace Xenon.Renderer
             bool look = true;
             while (look)
             {
-                signalReady.WaitOne();
+                signalReady.WaitOne(TimeSpan.FromSeconds(10));
 
                 // check if we've rendered this job
                 if (_rendered.TryGetValue(id, out var res))

@@ -18,9 +18,18 @@ $>$>arg1:DelayMs(100);
 $>$>arg0:AutoTrans[Take Hymn];
 $>}
 
-$>duplast=#script
-$>{
-$>$>#PIP Teardown;
-$>$>arg0:USK1TieOff[Un Tie];
-$>$>arg0:USK1Off[Kill Key];
+$>duplast=#script{
+$>$>#HYMN TEARDOWN;
+$>$>cmd:WatchStateBoolVal(TransNextKey1, true, tie);
+$>$>cmd:WatchSwitcherStateBoolVal(USK1OnAir, true, pip);
+$>$>cmd:DSK1Off[Kill gfx];
+$>$>cmd:USK1TieOn[kill pip];
+$>$>cmd:USK1TieOff[kill pip];
+$>$>cmd:ForceRunPostset(true, %cam.CENTER%);
+$>$>cmd:DelayMs(100);
+$>$>cmd:AutoTrans;
+$>$>cmd:DelayMs(1500);
+$>$>cmd:USK1TieOff;
+$>$>cmd:DSK1Off;
+$>$>cmd:DriveNextSlide[NEXT];
 $>}

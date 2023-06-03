@@ -111,6 +111,10 @@ namespace Xenon.Compiler.AST
                     // this is OK
                     // leave it
                 }
+                else if (match?.Groups["var"].Value.StartsWith("cam.") == true)
+                {
+                    // let us substitue later
+                }
                 else
                 {
                     Logger.Log(new XenonCompilerMessage()
