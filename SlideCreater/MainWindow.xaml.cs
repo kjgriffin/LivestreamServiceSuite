@@ -1545,7 +1545,7 @@ namespace SlideCreater
 
         private void ScrollToLine(int line)
         {
-            if (line <= TbInput.LineCount)
+            if (line >= 0 && line <= TbInput.LineCount)
             {
                 TbInput.ScrollToLine(line);
                 TbInput.TextArea.Caret.Line = line + 1;
