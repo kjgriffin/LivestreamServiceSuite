@@ -63,43 +63,32 @@ namespace Xenon.Renderer
         static ConcurrentQueue<WorkItem> jobs = new ConcurrentQueue<WorkItem>();
         static Thread _workerThread;
         static ManualResetEvent _workAvailable = new ManualResetEvent(false);
+        static ManualResetEvent _doneReady = new ManualResetEvent(false);
         static ConcurrentDictionary<Guid, Image<Bgra32>> _rendered = new ConcurrentDictionary<Guid, Image<Bgra32>>();
-        static Semaphore signalReady = new Semaphore(0, 10000); // probably enough??
-        static long Waiters = 0;
+        static long Completed = 0;
+        static readonly TimeSpan timeout = TimeSpan.FromSeconds(3);
+
 
         public static void RunJobs()
         {
             while (true)
             {
-                _workAvailable.WaitOne(TimeSpan.FromSeconds(10));
+                _workAvailable.WaitOne(timeout);
                 // perform all work available
                 while (jobs.TryDequeue(out var job))
                 {
                     var img = RenderWithHeadlessChrome(job.HTML);
                     _rendered[job.ReqID] = img;
+                    Interlocked.Increment(ref Completed);
                 }
-                // signal only when all are done?
-                var released = signalReady.Release();
-                var waiters = (int)Interlocked.Read(ref Waiters);
-                if (waiters > 0 && released < waiters)
-                {
-                    // release a few more
-                    signalReady.Release(waiters - released);
-                }
-                else if (released > waiters)
-                {
-                    // eat a few
-                    for (int i = 0; i < released - waiters; i++)
-                    {
-                        signalReady.WaitOne(TimeSpan.FromSeconds(10));
-                    }
-                }
+                // signal that we've finished
+                // work was requested by someone, so the can reset this
+                _doneReady.Set();
             }
         }
 
         public static Task<Image<Bgra32>> PerformRenderWithHeadlessChrome(string html)
         {
-            Interlocked.Increment(ref Waiters);
             // spinup a job here
             Guid id = Guid.NewGuid();
             jobs.Enqueue(new WorkItem
@@ -113,14 +102,24 @@ namespace Xenon.Renderer
             bool look = true;
             while (look)
             {
-                signalReady.WaitOne(TimeSpan.FromSeconds(10));
+                _doneReady.WaitOne(timeout);
 
                 // check if we've rendered this job
                 if (_rendered.TryGetValue(id, out var res))
                 {
                     _rendered.Remove(id, out _);
-                    Interlocked.Decrement(ref Waiters);
+                    // keep blocking stuff again because
+                    var finished = Interlocked.Decrement(ref Completed);
+                    if (finished == 0)
+                    {
+                        _doneReady.Reset();
+                    }
                     return Task.FromResult(res);
+                }
+                else
+                {
+                    // perhaps??
+                    Thread.Sleep(timeout);
                 }
             }
 #if DEBUG
