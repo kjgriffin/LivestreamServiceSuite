@@ -7,6 +7,7 @@ using LutheRun.Pilot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace LutheRun
@@ -178,6 +179,46 @@ namespace LutheRun
 
 
             return service;
+        }
+
+
+        public static List<ParsedLSBElement> ExpandifyElements(this List<ParsedLSBElement> service, LSBImportOptions options)
+        {
+            List<ParsedLSBElement> newService = new List<ParsedLSBElement>();
+            int i = 0;
+            foreach (var element in service)
+            {
+                // need to add some meat onto anthems
+                element.ElementOrder = i;
+                if (options.ExpandAnthemsForAutomation && (element.LSBElement is LSBElementCaption) && (element.LSBElement as LSBElementCaption).Caption.ToLower().Contains("anthem"))
+                {
+                    newService.Add(new ParsedLSBElement
+                    {
+                        LSBElement = new ExternalPrefab("TEST", "anthem-intro", BlockType.ANTHEM),
+                        AddedByInference = true,
+                        Ancestory = element.Ancestory,
+                        BlockType = BlockType.ANTHEM,
+                        CameraUse = new CameraUsage(),
+                        ConsiderForServicification = true,
+                        ElementOrder = i,
+                        FilterFromOutput = false,
+                        Generator = "ElementExpandification:: ANTHEM INTRO",
+                        HasWingsForFlighPlanning = true,
+                        ParentSourceElement = element.ParentSourceElement,
+                        SourceElements = element.SourceElements,
+                        XenonCode = "TEST...",
+                    });
+                    i++;
+                    element.ElementOrder = i;
+                    newService.Add(element);
+                }
+                else
+                {
+                    newService.Add(element);
+                }
+            }
+
+            return newService;
         }
 
         public static List<ParsedLSBElement> StripEarlyServiceOnly(this List<ParsedLSBElement> service, LSBImportOptions options)
@@ -454,7 +495,7 @@ namespace LutheRun
                         inliturgy = false;
 
                         // anthem generating captions ought be excluded
-                        if ((prevelement?.LSBElement as LSBElementCaption)?.Caption?.ToLower().Contains("anthem") == true)
+                        if ((prevelement?.LSBElement as LSBElementCaption)?.Caption?.ToLower().Contains("anthem") == true && !options.ExpandAnthemsForAutomation)
                         {
                             shutdownliturgy = true;
                         }

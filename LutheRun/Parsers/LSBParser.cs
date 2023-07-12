@@ -60,6 +60,7 @@ namespace LutheRun.Parsers
                                           .MarkCommunionHymns(options)
                                           .StripEarlyServiceOnly(options)
                                           .Filter(options)
+                                          .ExpandifyElements(options)
                                           .AddAdditionalInferedElements(options)
                                           .Filter(options)
                                           .Select(x =>

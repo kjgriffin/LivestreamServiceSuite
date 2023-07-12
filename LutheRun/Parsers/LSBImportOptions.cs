@@ -67,6 +67,8 @@ namespace LutheRun.Parsers
         [BoolSetting]
         public bool RemoveEarlyServiceSpecificElements { get; internal set; } = true;
 
+        [BoolSetting]
+        public bool ExpandAnthemsForAutomation { get; internal set; } = true;
 
         public string ServiceThemeLib { get; set; } = "Xenon.CommonColored";
 
