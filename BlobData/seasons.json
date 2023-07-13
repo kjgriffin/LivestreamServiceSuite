@@ -93,5 +93,13 @@
             "text-alt": "\"#fff9ceee\"",
             "text-sub": "\"#ff474747\""
         }
+    },
+    {
+        "start": "2023-06-11",
+        "note": "pentecost",
+        "macros": {
+            "color-main": "\"#ff298f45\"",
+            "text-alt": "\"#ff298f45\""
+        }
     }
 ]
