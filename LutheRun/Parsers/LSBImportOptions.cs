@@ -18,6 +18,12 @@ namespace LutheRun.Parsers
         [BoolSetting]
         public bool UsePIPHymns { get; set; } = true;
 
+        [BoolSetting]
+        public bool RunPIPHymnsLikeAProWithoutStutters { get; set; } = true;
+
+        [BoolSetting]
+        public bool ImSoProICanRunPIPHymsWithoutStuttersEvenDuringCommunion { get; set; } = true;
+
         public bool OnlyKnownCaptions { get; set; } = true;
         [BoolSetting]
         public bool UseResponsiveLiturgy { get; set; } = true;
@@ -71,6 +77,7 @@ namespace LutheRun.Parsers
         public bool ExpandAnthemsForAutomation { get; internal set; } = true;
 
         public string ServiceThemeLib { get; set; } = "Xenon.CommonColored";
+        public string ServiceThemeLib_Anthems { get; set; } = "Xenon.Anthems";
 
         public Dictionary<string, string> Macros { get; set; } = new Dictionary<string, string>();
 
@@ -83,6 +90,7 @@ namespace LutheRun.Parsers
             ["center:front"] = "FRONT",
             ["center:sermon"] = "SERMON",
             ["center:anthem"] = "ANTHEM",
+            ["center:anthem-start"] = "ANTHEM-INTRO",
 
             ["pulpit:sermon"] = "JESUS",
             ["pulpit:anthem"] = "ANTHEM",
@@ -107,6 +115,7 @@ namespace LutheRun.Parsers
             ["center:front"] = "FRONT",
             ["center:sermon"] = "SERMON",
             ["center:anthem"] = "ANTHEM",
+            ["center:anthem-start"] = "ANTHEM-INTRO",
 
             ["pulpit:sermon"] = "JESUS",
             ["pulpit:anthem"] = "ANTHEM",

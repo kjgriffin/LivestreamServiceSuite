@@ -2,6 +2,7 @@
 
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 using System;
@@ -17,7 +18,7 @@ namespace LutheRun.Elements.LSB
 
         public IElement SourceHTML { get; private set; }
 
-        public BlockType BlockType()
+        public BlockType BlockType(LSBImportOptions importOptions)
         {
             return Pilot.BlockType.LITURGY_CORPERATE;
         }
@@ -61,7 +62,7 @@ namespace LutheRun.Elements.LSB
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_LITURGY. LiturgyText:'{LiturgyText}'";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
         {
 
             string litcontent = LSBResponsorialExtractor.ExtractResponsiveLiturgy(SourceHTML, ref indentDepth, indentSpaces);

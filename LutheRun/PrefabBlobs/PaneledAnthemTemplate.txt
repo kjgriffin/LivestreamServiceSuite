@@ -1,0 +1,30 @@
+﻿#scope(auto-id$ANTHEMID-anthem)
+{
+$>#var("html.Layout", "Xenon.Anthems::StdAnthem")
+
+$>#scripted
+$>{
+$>$>first=#script{
+$>$>$>#ANTHEM START;
+$>$>$>@cmd:SetupButtons(anthem-panel-type1-id24, %pres%, true);
+$>$>$>@cmd:PresetSelect(%cam.CENTER%);
+$>$>$>@cmd:DelayMs(100);
+$>$>$>@cmd:AutoTrans;
+$>$>$>cmd:DelayMs(1500);
+$>$>$>cmd:DSK1FadeOn;
+$>$>}
+
+$>$>/// </MANUAL_UPDATE name='anthem'>
+$>$>[@label::anthem-title-id24]
+$>$>#html
+$>$>{
+$>$>$>text[title]{}
+$>$>$>text[composer]{}
+$>$>$>text[performer]{}
+$>$>$>text[others]{}
+
+$>$>}
+
+$>}
+
+}

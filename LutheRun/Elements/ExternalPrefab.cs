@@ -1,4 +1,5 @@
 ﻿using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 using System.Text.RegularExpressions;
@@ -9,7 +10,7 @@ namespace LutheRun.Elements
     {
 
 
-        public override BlockType BlockType()
+        public override BlockType BlockType(LSBImportOptions importOptions)
         {
             return btype;
         }
@@ -69,7 +70,7 @@ namespace LutheRun.Elements
             this.btype = btype;
         }
 
-        public override string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        public override string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
         {
             string postset = isPostset ? $"::postset(last={Postset})" : "";
             // Injected postset takes precedence??

@@ -1200,7 +1200,10 @@ namespace SlideCreater
                 if (options.UseThemedCreeds || options.UseThemedHymns)
                 {
                     // make user select the theme
-                    options.ServiceThemeLib = GetUserSelectedThemeForImport();
+                    //options.ServiceThemeLib = GetUserSelectedThemeForImport();
+
+                    // Xenon.CommonColored should be used
+
                     // lets ask Xenon for the macros for the libray
                     var tmp = IProjectLayoutLibraryManager.GetDefaultBundledLibraries();
                     options.Macros = IProjectLayoutLibraryManager.GetDefaultBundledLibraries()

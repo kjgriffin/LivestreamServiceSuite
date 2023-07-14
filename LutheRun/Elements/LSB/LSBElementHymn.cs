@@ -2,6 +2,7 @@
 
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 using System;
@@ -38,7 +39,7 @@ namespace LutheRun.Elements.LSB
 
         public IElement SourceHTML { get; private set; }
 
-        public BlockType BlockType()
+        public BlockType BlockType(LSBImportOptions importOptions)
         {
             return Pilot.BlockType.HYMN;
         }
@@ -242,7 +243,7 @@ namespace LutheRun.Elements.LSB
             return "";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
         {
             if (lSBImportOptions.UsePIPHymns)
             {
@@ -283,12 +284,27 @@ namespace LutheRun.Elements.LSB
             // may want to get a bit more advanced for split image/text hymns to apply postset first only on image and postset last only on text
             // for now we'll just put it on both
 
+            string wrappername = "PrePIPScriptBlock_Hymn-std";
+
+            if (lSBImportOptions.RunPIPHymnsLikeAProWithoutStutters)
+            {
+                if (IsCommunionHymn && !lSBImportOptions.ImSoProICanRunPIPHymsWithoutStuttersEvenDuringCommunion)
+                {
+                    // intentionally do nothing here, because I'm too lazy to d'morgan this block of logic
+                }
+                else
+                {
+                    wrappername = "PrePIPScriptBlock_Hymn-fast";
+                }
+            }
+
+
 
             if (!lSBImportOptions.WrapConsecuitivePackages)
             {
                 var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                                           .GetManifestResourceNames()
-                                          .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Hymn"));
+                                          .FirstOrDefault(x => x.Contains(wrappername));
 
                 var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                     .GetManifestResourceStream(name);
@@ -299,8 +315,9 @@ namespace LutheRun.Elements.LSB
                     string pcmd = sr.ReadToEnd();
                     pcmd = Regex.Replace(pcmd, Regex.Escape("$>"), "".PadLeft(indentSpaces));
 
-                    pcmd = Regex.Replace(pcmd, Regex.Escape("$PIPFILL"), IsCommunionHymn ? "5" : "1");
+                    pcmd = Regex.Replace(pcmd, Regex.Escape("$PIPFILL"), IsCommunionHymn ? "ORGAN" : "BACK");
                     pcmd = Regex.Replace(pcmd, Regex.Escape("$PIPCAM"), IsCommunionHymn ? "ORGAN" : "BACK");
+                    pcmd = Regex.Replace(pcmd, Regex.Escape("$POSTCAM"), IsCommunionHymn ? "ORGAN" : "CENTER");
 
                     sb.AppendLine(pcmd.IndentBlock(indentDepth, indentSpaces));
                 }

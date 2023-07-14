@@ -2,6 +2,7 @@
 
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 using System.Text;
@@ -25,7 +26,7 @@ namespace LutheRun.Elements.LSB
 
         }
 
-        public BlockType BlockType()
+        public BlockType BlockType(LSBImportOptions importOptions)
         {
             return Pilot.BlockType.LITURGY_CORPERATE;
         }
@@ -35,7 +36,7 @@ namespace LutheRun.Elements.LSB
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_UNKNOWN_FROM_CONTENT.";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
         {
             // TODO: have some sort of general method for dealing with this...
             StringBuilder sb = new StringBuilder();

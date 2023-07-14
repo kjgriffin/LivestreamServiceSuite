@@ -2,6 +2,7 @@
 
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 namespace LutheRun.Elements.LSB
@@ -29,12 +30,12 @@ namespace LutheRun.Elements.LSB
             return $"/// XENON DEBUG::Parsed as LSB_PREFAB[{Prefab}]. For Source Element: {SourceText}";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
         {
             return $"#{Prefab}".Indent(indentDepth, indentSpaces);
         }
 
-        public BlockType BlockType()
+        public BlockType BlockType(LSBImportOptions importOptions)
         {
             return BType;
         }

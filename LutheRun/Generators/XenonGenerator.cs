@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 using Xenon.Helpers;
 
@@ -166,6 +167,28 @@ namespace LutheRun.Generators
                 {
                     sb.AppendLine($"#var(\"{options.ServiceThemeLib}@{macro.Key}\", ```{macro.Value}```)".Indent(indentDepth, indentSpace));
                 }
+
+                // eeeewwww! but I've been backed into a corner here, since the html layout's can't handle the '"' characters in colors
+                // so I guess we just dump out any macros here???
+
+                // dump all macros in?
+                foreach (var macro in macros)
+                {
+                    // check if it's a color
+                    var match = Regex.Match(macro.Value, "\"(?<hex>#[\\dabcdefABCDEF]{6,8})\"");
+                    if (match.Success)
+                    {
+                        string hex = match.Groups["hex"].Value;
+                        hex = hex.Remove(0, 1); // trim #
+                        while (hex.Length > 6)
+                        {
+                            hex = hex.Remove(0, 1);
+                        }
+                        sb.AppendLine($"#var(\"{options.ServiceThemeLib_Anthems}@{macro.Key}\", \"#{hex}\")".Indent(indentDepth, indentSpace));
+                    }
+                }
+
+
                 sb.AppendLine();
 
             }
@@ -183,7 +206,7 @@ namespace LutheRun.Generators
             {
                 if (!se.FilterFromOutput)
                 {
-                    sb.AppendLine(se.LSBElement?.XenonAutoGen(options, ref indentDepth, indentSpace) ?? se.XenonCode ?? "");
+                    sb.AppendLine(se.LSBElement?.XenonAutoGen(options, ref indentDepth, indentSpace, se) ?? se.XenonCode ?? "");
 
                     // here we can attach pilot
                     GeneratePilotCommand(sb, ref indentDepth, indentSpace, options, se);

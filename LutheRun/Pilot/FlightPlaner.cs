@@ -43,7 +43,7 @@ namespace LutheRun.Pilot
             // that we know how to schedule cameras for (eg. lituryg-corperate, hymn, sermon, announcment, reading etc.)
 
             // mutating call that will attach block info to service
-            Blockify(service);
+            Blockify(service, options);
 
             // once blocked we'll analyze for camera usage requirements based on blocks
             AsignCameraUseage(service);
@@ -208,6 +208,15 @@ namespace LutheRun.Pilot
                         cams.AddRequirement(CameraID.PULPIT, "anthem");
                         cams.FreeCamera(CameraID.BACK);
                         break;
+                    case BlockType.ANTHEM_RESOLVED: // assumes the anthem package contains enough setup/teardown handles entrance/exit conditions
+
+                        // assumes we'll start and end on center
+                        cams.AddRequirement(CameraID.CENTER, "anthem-start");
+
+                        // nominal runs won't use these ever
+                        cams.FreeCamera(CameraID.ORGAN);
+                        cams.FreeCamera(CameraID.BACK);
+                        break;
                     case BlockType.OPENING:
                         cams.AddRequirement(CameraID.PULPIT, "opening");
                         cams.AddRequirement(CameraID.CENTER, "front");
@@ -237,11 +246,11 @@ namespace LutheRun.Pilot
         }
 
 
-        private static void Blockify(List<ParsedLSBElement> service)
+        private static void Blockify(List<ParsedLSBElement> service, LSBImportOptions options)
         {
             foreach (var element in service)
             {
-                var cType = element.LSBElement?.BlockType();
+                var cType = element.LSBElement?.BlockType(options);
                 element.BlockType = cType ?? BlockType.UNKNOWN;
             }
         }
@@ -278,6 +287,7 @@ namespace LutheRun.Pilot
         PRELUDE,
         POSTLUDE,
         ANTHEM,
+        ANTHEM_RESOLVED,
         OPENING,
         CREED,
         TITLEPAGE,

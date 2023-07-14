@@ -2,6 +2,7 @@
 
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 namespace LutheRun.Elements
@@ -17,12 +18,12 @@ namespace LutheRun.Elements
             return $"/// XENON DEBUG::Added External Element";
         }
 
-        public virtual string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace)
+        public virtual string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo)
         {
             return "";
         }
 
-        public virtual BlockType BlockType()
+        public virtual BlockType BlockType(LSBImportOptions importOptions)
         {
             return Pilot.BlockType.UNKNOWN;
         }

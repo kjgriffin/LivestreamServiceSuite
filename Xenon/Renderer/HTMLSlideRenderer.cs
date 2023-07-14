@@ -82,12 +82,15 @@ namespace Xenon.Renderer
                     Interlocked.Increment(ref Completed);
                 }
                 // signal that we've finished
-                // work was requested by someone, so the can reset this
-                _doneReady.Set();
+                // work was requested by someone, so they can reset this
+                if (Interlocked.Add(ref Completed, 0) > 0)
+                {
+                    _doneReady.Set();
+                }
             }
         }
 
-        public static Task<Image<Bgra32>> PerformRenderWithHeadlessChrome(string html)
+        public static async Task<Image<Bgra32>> PerformRenderWithHeadlessChrome(string html)
         {
             // spinup a job here
             Guid id = Guid.NewGuid();
@@ -114,18 +117,18 @@ namespace Xenon.Renderer
                     {
                         _doneReady.Reset();
                     }
-                    return Task.FromResult(res);
+                    return res;
                 }
                 else
                 {
                     // perhaps??
-                    Thread.Sleep(timeout);
+                    await Task.Delay(500);
                 }
             }
 #if DEBUG
             Debugger.Break();
 #endif
-            return Task.FromResult(default(Image<Bgra32>));
+            return default(Image<Bgra32>);
         }
 
         private static Image<Bgra32> RenderWithHeadlessChrome(string html)

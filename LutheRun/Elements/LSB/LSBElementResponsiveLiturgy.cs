@@ -2,6 +2,7 @@
 
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace LutheRun.Elements.LSB
 
         }
 
-        public BlockType BlockType()
+        public BlockType BlockType(LSBImportOptions importOptions)
         {
             return Pilot.BlockType.LITURGY_CORPERATE;
         }
@@ -42,7 +43,7 @@ namespace LutheRun.Elements.LSB
             return string.IsNullOrWhiteSpace(LSBResponsorialExtractor.ExtractResponsiveLiturgy(_litPTags, ref a, b));
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("#liturgyresponsive".Indent(indentDepth, indentSpaces));

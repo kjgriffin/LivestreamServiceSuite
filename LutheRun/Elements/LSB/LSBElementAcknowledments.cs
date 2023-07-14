@@ -2,6 +2,7 @@
 
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 namespace LutheRun.Elements.LSB
@@ -13,7 +14,7 @@ namespace LutheRun.Elements.LSB
 
         public string Text { get; private set; }
 
-        public BlockType BlockType()
+        public BlockType BlockType(LSBImportOptions importOptions)
         {
             return Pilot.BlockType.IGNORED;
         }
@@ -23,7 +24,7 @@ namespace LutheRun.Elements.LSB
             return "";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo)
         {
             return $"acknowledments={{{Text}}}";
         }

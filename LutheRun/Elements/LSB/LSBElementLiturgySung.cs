@@ -2,6 +2,7 @@
 
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 using System;
@@ -26,7 +27,7 @@ namespace LutheRun.Elements.LSB
 
         public IElement SourceHTML { get; private set; }
 
-        public BlockType BlockType()
+        public BlockType BlockType(LSBImportOptions importOptions)
         {
             return Pilot.BlockType.LITURGY_CORPERATE;
         }
@@ -118,7 +119,7 @@ namespace LutheRun.Elements.LSB
             }
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
         {
             StringBuilder sb = new StringBuilder();
 

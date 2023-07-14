@@ -2,11 +2,13 @@
 
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 using System;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace LutheRun.Elements.LSB
 {
@@ -18,6 +20,8 @@ namespace LutheRun.Elements.LSB
         public string SubCaption { get; private set; } = "";
 
         public IElement SourceHTML { get; private set; }
+
+        public static Random rnd = new Random(DateTime.Now.Millisecond);
 
         public static ILSBElement Parse(IElement element)
         {
@@ -50,7 +54,7 @@ namespace LutheRun.Elements.LSB
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_CAPTION. Caption:'{Caption}' SubCaption:'{SubCaption}'";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo)
         {
             // for now just make a title slide:: and flag it as optional
             //return $"/// <XENON_AUTO_GEN optional=\"true\">\r\n#2title(\"{Caption.Replace('\"', '\'')}\", \"{SubCaption.Replace('\"', '\'')}\", \"horizontal\")\r\n/// </XENON_AUTO_GEN>";
@@ -84,9 +88,28 @@ namespace LutheRun.Elements.LSB
             }
             else if (ctest.Contains("anthem"))
             {
-                sb.AppendLine("/// </MANUAL_UPDATE name='anthem'>".Indent(indentDepth, indentSpace));
-                sb.AppendLine("//> INSERTION POINT: anthem".Indent(indentDepth, indentSpace));
-                sb.AppendLine($"#anthemtitle(\"{Caption}\", \"{SubCaption}\", \"\", \"\"){PostsetCmd}".Indent(indentDepth, indentSpace));
+                if (lSBImportOptions.ExpandAnthemsForAutomation)
+                {
+                    // anthem was pre-expanded, so do something different here....
+
+                    // dump in a scope and title generating slide
+
+                    // this will allow pilot to still attach here if needed
+
+                    // previous 'expander' intro will setup/configure a panel that all anthem operations will use
+                    string blobtext = ExternalPrefabGenerator.PrepareBlob("PaneledAnthemTemplate");
+
+                    blobtext = Regex.Replace(blobtext, Regex.Escape("$>"), "".PadLeft(indentSpace));
+                    blobtext = Regex.Replace(blobtext, Regex.Escape("$ANTHEMID"), fullInfo.ElementOrder.ToString());
+
+                    sb.AppendLine(blobtext.IndentBlock(indentDepth, indentSpace));
+                }
+                else
+                {
+                    sb.AppendLine("/// </MANUAL_UPDATE name='anthem'>".Indent(indentDepth, indentSpace));
+                    sb.AppendLine("//> INSERTION POINT: anthem".Indent(indentDepth, indentSpace));
+                    sb.AppendLine($"#anthemtitle(\"{Caption}\", \"{SubCaption}\", \"\", \"\"){PostsetCmd}".Indent(indentDepth, indentSpace));
+                }
             }
             else if (ctest.Contains("sermon"))
             {
@@ -104,7 +127,7 @@ namespace LutheRun.Elements.LSB
             return sb.ToString();
         }
 
-        public BlockType BlockType()
+        public BlockType BlockType(LSBImportOptions importOptions)
         {
             string ctest = $"{Caption.ToLower()} {SubCaption.ToLower()}";
 
@@ -122,6 +145,10 @@ namespace LutheRun.Elements.LSB
             }
             else if (ctest.Contains("anthem"))
             {
+                if (importOptions.ExpandAnthemsForAutomation)
+                {
+                    return Pilot.BlockType.ANTHEM_RESOLVED;
+                }
                 return Pilot.BlockType.ANTHEM;
             }
             else if (ctest.Contains("sermon"))

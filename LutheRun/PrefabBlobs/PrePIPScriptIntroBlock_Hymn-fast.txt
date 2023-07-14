@@ -1,7 +1,4 @@
 ﻿
-#scripted
-{
-
 $>first=#script
 $>{
 $>$>#PIP Hymn;
@@ -10,8 +7,8 @@ $>$>!keysrc='Resource_#_forkey_#.png';
 $>$>@arg0:DSK1Off[Kill Key];
 $>$>@arg0:USK1Off[Kill Key];
 $>$>@arg1:DelayMs(100);
-$>$>@<1>arg1:USK1Fill($PIPFILL)[Fill PIP $PIPCAM];
-$>$>arg1:PresetSelect(4)[Preset Hymn];
+$>$>@<1>arg1:USK1Fill(%cam.$PIPFILL%)[Fill PIP $PIPCAM];
+$>$>arg1:PresetSelect(%cam.SLIDE%)[Preset Hymn];
 $>$><2>argd8:PlacePIP(-11.2,-5.5,0.27,0.27,0,0,0,0)[Setup PIP];
 $>$><2>arg0:USK1TieOn[Tie PIP];
 $>$>arg1:DelayMs(100);
@@ -23,13 +20,13 @@ $>$>#HYMN TEARDOWN;
 $>$>cmd:WatchStateBoolVal(TransNextKey1, true, tie);
 $>$>cmd:WatchSwitcherStateBoolVal(USK1OnAir, true, pip);
 $>$>cmd:DSK1Off[Kill gfx];
-$>$>cmd:USK1TieOn[kill pip];
-$>$>cmd:USK1TieOff[kill pip];
-$>$>cmd:ForceRunPostset(true, %cam.CENTER%);
+$>$><pip*!tie>cmd:USK1TieOn[kill pip];
+$>$><!pip*tie>cmd:USK1TieOff[kill pip];
+$>$>cmd:ForceRunPostset(true, %cam.$POSTCAM%);
 $>$>cmd:DelayMs(100);
 $>$>cmd:AutoTrans;
 $>$>cmd:DelayMs(1500);
 $>$>cmd:USK1TieOff;
 $>$>cmd:DSK1Off;
 $>$>cmd:DriveNextSlide[NEXT];
-$>}
+$>} 

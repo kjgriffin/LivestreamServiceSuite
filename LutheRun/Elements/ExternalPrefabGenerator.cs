@@ -44,6 +44,24 @@ namespace LutheRun.Elements
 
         }
 
+        public static string PrepareBlob(string blobfile)
+        {
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                             .GetManifestResourceNames()
+                                             .FirstOrDefault(x => x.Contains(blobfile));
+
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                .GetManifestResourceStream(name);
+
+            var prefabblob = "";
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                prefabblob = sr.ReadToEnd();
+            }
+
+            return prefabblob;
+        }
+
         private static string UpNextCommand(string blobfile, string hname, string hnumber, string postset)
         {
             var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))

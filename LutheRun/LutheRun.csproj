@@ -6,22 +6,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="PrefabBlobs\AnthemPanel.txt" />
+    <None Remove="PrefabBlobs\AnthemTemplate.txt" />
     <None Remove="PrefabBlobs\ApostlesCreed.txt" />
     <None Remove="PrefabBlobs\Bells.txt" />
     <None Remove="PrefabBlobs\CopyTitle.txt" />
     <None Remove="PrefabBlobs\EndTitle.txt" />
     <None Remove="PrefabBlobs\LordsPrayer.txt" />
     <None Remove="PrefabBlobs\NiceneCreed.txt" />
+    <None Remove="PrefabBlobs\PaneledAnthemTemplate.txt" />
     <None Remove="PrefabBlobs\PIPReadingScriptBlock.txt" />
     <None Remove="PrefabBlobs\PIPReadingScriptIntroBlock.txt" />
     <None Remove="PrefabBlobs\PrePIPScriptBlock_Creed.txt" />
-    <None Remove="PrefabBlobs\PrePIPScriptBlock_Hymn.txt" />
-    <None Remove="PrefabBlobs\PrePIPScriptIntroBlock_Hymn.txt" />
+    <None Remove="PrefabBlobs\PrePIPScriptBlock_Hymn-Fast.txt" />
+    <None Remove="PrefabBlobs\PrePIPScriptBlock_Hymn-std.txt" />
+    <None Remove="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-fast.txt" />
+    <None Remove="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-std.txt" />
     <None Remove="PrefabBlobs\UpNext_Numbered.txt" />
     <None Remove="PrefabBlobs\UpNext_UnNumbered.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="PrefabBlobs\AnthemPanel.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PaneledAnthemTemplate.txt" />
+    <EmbeddedResource Include="PrefabBlobs\AnthemTemplate.txt" />
     <EmbeddedResource Include="PrefabBlobs\Bells.txt" />
     <EmbeddedResource Include="PrefabBlobs\EndTitle.txt" />
     <EmbeddedResource Include="PrefabBlobs\CopyTitle.txt" />
@@ -37,8 +45,10 @@
     <EmbeddedResource Include="PrefabBlobs\ApostlesCreed.txt" />
     <EmbeddedResource Include="PrefabBlobs\LordsPrayer.txt" />
     <EmbeddedResource Include="PrefabBlobs\NiceneCreed.txt" />
-    <EmbeddedResource Include="PrefabBlobs\PrePIPScriptIntroBlock_Hymn.txt" />
-    <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Hymn.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-fast.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Hymn-fast.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-std.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Hymn-std.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNext_Numbered.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNext_UnNumbered.txt" />
   </ItemGroup>

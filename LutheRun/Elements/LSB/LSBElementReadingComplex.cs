@@ -2,6 +2,7 @@
 
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 using System;
@@ -171,7 +172,7 @@ namespace LutheRun.Elements.LSB
         private List<ReadingPartElementCollection> PostTitle { get; set; } = new List<ReadingPartElementCollection>();
 
 
-        public BlockType BlockType()
+        public BlockType BlockType(LSBImportOptions importOptions)
         {
             return Pilot.BlockType.READING;
         }
@@ -246,7 +247,7 @@ namespace LutheRun.Elements.LSB
             return fullpackage;
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
         {
             if (ShouldBePackaged(lSBImportOptions, out bool isResponsiveReading))
             {

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace LutheRun
 {
@@ -192,12 +193,14 @@ namespace LutheRun
                 element.ElementOrder = i;
                 if (options.ExpandAnthemsForAutomation && (element.LSBElement is LSBElementCaption) && (element.LSBElement as LSBElementCaption).Caption.ToLower().Contains("anthem"))
                 {
+                    var cmdtxt = ExternalPrefabGenerator.PrepareBlob("AnthemPanel");
+                    cmdtxt = Regex.Replace(cmdtxt, Regex.Escape("$ANTHEMID"), (i + 1).ToString());
                     newService.Add(new ParsedLSBElement
                     {
-                        LSBElement = new ExternalPrefab("TEST", "anthem-intro", BlockType.ANTHEM),
+                        LSBElement = new ExternalPrefab(cmdtxt, "anthem-intro", BlockType.ANTHEM_RESOLVED) { IndentReplacementIndentifier = "$>" },
                         AddedByInference = true,
                         Ancestory = element.Ancestory,
-                        BlockType = BlockType.ANTHEM,
+                        BlockType = BlockType.ANTHEM_RESOLVED,
                         CameraUse = new CameraUsage(),
                         ConsiderForServicification = true,
                         ElementOrder = i,
@@ -524,7 +527,7 @@ namespace LutheRun
 
                         if (options.YeetThyselfFromLiturgyToUpNextWithAsLittleAplombAsPossible)
                         {
-                            var btype = element?.LSBElement?.BlockType() ?? BlockType.UNKNOWN;
+                            var btype = element?.LSBElement?.BlockType(options) ?? BlockType.UNKNOWN;
                             if (btype == BlockType.HYMN_INTRO || btype == BlockType.HYMN)
                             {
                                 shutdownliturgy = false;
@@ -601,19 +604,35 @@ namespace LutheRun
                     }
                     if (element.LSBElement is LSBElementHymn && options.UsePIPHymns && !element.FilterFromOutput)
                     {
+                        bool isCommunionHymn = (element.LSBElement as LSBElementHymn)?.IsCommunionHymn ?? false;
                         // assume the first consecutive hymn element setups the block 
                         if (prevelement?.LSBElement is not LSBElementHymn)
                         {
                             // add the reading prefab intro block
                             Dictionary<string, string> pipReplace = new Dictionary<string, string>
                             {
-                                ["$PIPFILL"] = (element.LSBElement as LSBElementHymn).IsCommunionHymn ? "5" : "1",
-                                ["$PIPCAM"] = (element.LSBElement as LSBElementHymn).IsCommunionHymn ? "ORGAN" : "BACK",
+                                ["$PIPFILL"] = isCommunionHymn ? "ORGAN" : "BACK",
+                                ["$PIPCAM"] = isCommunionHymn ? "ORGAN" : "BACK",
+                                ["$POSTCAM"] = isCommunionHymn ? "ORGAN" : "CENTER",
                             };
+
+                            string wrappername = "PrePIPScriptIntroBlock_Hymn-std";
+
+                            if (options.RunPIPHymnsLikeAProWithoutStutters)
+                            {
+                                if (isCommunionHymn && !options.ImSoProICanRunPIPHymsWithoutStuttersEvenDuringCommunion)
+                                {
+                                    // intentionally do nothing here, because I'm too lazy to d'morgan this block of logic
+                                }
+                                else
+                                {
+                                    wrappername = "PrePIPScriptIntroBlock_Hymn-fast";
+                                }
+                            }
 
                             newservice.Add(new ParsedLSBElement
                             {
-                                LSBElement = ScriptedWrapper.FromBlob(BlockType.HYMN, "PrePIPScriptIntroBlock_Hymn", blobReplace: pipReplace),
+                                LSBElement = ScriptedWrapper.FromBlob(BlockType.HYMN, wrappername, blobReplace: pipReplace),
                                 AddedByInference = true,
                                 Generator = "Next element is [hymn]",
                                 ParentSourceElement = element.ParentSourceElement,
