@@ -281,7 +281,7 @@ namespace DVIPProtocol.Clients.Advanced
 
                 // at this point we want data
                 // set a read timeout to hopefully catch it
-                stream.ReadTimeout = 50; // this may be within acceptable slop?
+                stream.ReadTimeout = 150; // this may be within acceptable slop? // 2023-07-15 increasing this from 50 -> 150, we're consistantly failing our timeout's
 
                 byte[] _datain = new byte[m_client.ReceiveBufferSize]; // memory is cheap, this is enough to read the whole thing at once
                 m_log?.Info($"[{m_endpoint.ToString()}] reading ALL available");
@@ -294,6 +294,10 @@ namespace DVIPProtocol.Clients.Advanced
                     var appended = stream.Read(_datain, recieved, _datain.Length - recieved);
                     recieved += appended;
                 }
+
+                // for my personal edification...
+                var ackRespTime = timer.ElapsedMilliseconds;
+                m_log?.Info($"[{m_endpoint.ToString()}] recieved response within {ackRespTime} ms from start of transmit.");
 
                 // now should have at least 2 bytes of response
                 m_log?.Info($"[{m_endpoint.ToString()}] reading payload size.");
