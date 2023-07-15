@@ -8,7 +8,7 @@ $>$>@arg0:DSK1Off[Kill Key];
 $>$>@arg0:USK1Off[Kill Key];
 $>$>@arg1:DelayMs(100);
 $>$>@<1>arg1:USK1Fill(%cam.$PIPFILL%)[Fill PIP $PIPCAM];
-$>$>arg1:PresetSelect(%cam.SLIDE%)[Preset Hymn];
+$>$>arg1:PresetSelect(%cam.SLIDESHOW%)[Preset Hymn];
 $>$><2>argd8:PlacePIP(-11.2,-5.5,0.27,0.27,0,0,0,0)[Setup PIP];
 $>$><2>arg0:USK1TieOn[Tie PIP];
 $>$>arg1:DelayMs(100);

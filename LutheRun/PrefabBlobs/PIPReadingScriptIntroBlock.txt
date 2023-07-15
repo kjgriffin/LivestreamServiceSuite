@@ -4,10 +4,10 @@ $>#PIP Reading;
 $>!displaysrc='Resource_#_forslide_#.png';
 $>!keysrc='Resource_#_forkey_#.png';
 $>@arg0:DSK1Off[Kill Key];
-$>@arg1:PresetSelect(6)[Preset Lectern];
+$>@arg1:PresetSelect(%cam.LECTERN%)[Preset Lectern];
 $>@<2>arg0:USK1Off[Kill Key];
 $>@arg1:DelayMs(100);
-$>@<1>arg1:USK1Fill(6)[Fill PIP Lectern];
+$>@<1>arg1:USK1Fill(%cam.LECTERN%)[Fill PIP Lectern];
 $>@<2>argd8:PlacePIP(-6.4,0,1,1,6.4,6.4,0,0)[Setup PIP];
 $>@<2>arg0:USK1TieOn[Tie PIP];
 $>@arg0:DSK1TieOn[Tie DSK];
@@ -20,7 +20,7 @@ $>arg0:DSK1TieOff[Un Tie];
 duplast=#script
 {
 $>#PIP Teardown;
-$><2>arg1:ProgramSelect(6)[Force Lectern];
+$><2>arg1:ProgramSelect(%cam.LECTERN%)[Force Lectern];
 $>arg0:USK1TieOff[Un Tie];
 $>arg0:USK1Off[Kill Key];
 $>arg0:DSK1FadeOff[Kill DSK];
