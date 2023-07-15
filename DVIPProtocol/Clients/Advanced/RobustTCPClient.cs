@@ -1,4 +1,6 @@
-﻿using DVIPProtocol.Clients.Execution;
+﻿#define BIT_BANG
+
+using DVIPProtocol.Clients.Execution;
 
 using log4net;
 
@@ -285,6 +287,87 @@ namespace DVIPProtocol.Clients.Advanced
 
                 byte[] _datain = new byte[m_client.ReceiveBufferSize]; // memory is cheap, this is enough to read the whole thing at once
                 m_log?.Info($"[{m_endpoint.ToString()}] reading ALL available");
+
+
+#if BIT_BANG
+                var received = 0;
+                var MS_ACK_MAX = 100;
+
+                bool respbegin = false;
+
+                while (timer.ElapsedMilliseconds < MS_ACK_MAX && received < 2 && !respbegin)
+                {
+                    // spin wait up to time for response
+                    if (stream.DataAvailable)
+                    {
+                        // read the data
+                        var bit = stream.ReadByte();
+                        if (bit != -1)
+                        {
+                            _datain[received] = (byte)bit;
+                            respbegin = true;
+                            received++;
+                        }
+                    }
+                }
+
+                // for my personal edification...
+                var ackRespTime = timer.ElapsedMilliseconds;
+                m_log?.Info($"[{m_endpoint.ToString()}] recieved response within {ackRespTime} ms from start of transmit.");
+
+                // we have evidence of getting a response
+                // we'll allow a fair bit of time here to gather the whole kit
+                // need 2 bytes to indicate DVIP package size
+                while (received < 2)
+                {
+                    if (stream.DataAvailable)
+                    {
+                        var bit = stream.ReadByte();
+                        if (bit != -1)
+                        {
+                            _datain[received] = (byte)bit;
+                            respbegin = true;
+                            received++;
+                        }
+                    }
+                }
+
+                // now should have at least 2 bytes of response
+                m_log?.Info($"[{m_endpoint.ToString()}] reading payload size.");
+                sizehigh = _datain[0];
+                sizelow = _datain[1];
+
+                dataSize = (uint)(sizehigh << 8 | sizelow) - 2;
+                m_log?.Info($"[{m_endpoint.ToString()}] expecting size {dataSize}");
+
+                // validate dataSize and that we have a response
+                if (dataSize <= 0 || dataSize > 512)
+                {
+                    // reject
+                    m_log?.Info($"[{m_endpoint.ToString()}] expecting invalid datasize of {dataSize}. REJECTED!");
+                    return (false, new byte[0]);
+                }
+
+                // make sure we've captured all the expected data
+                while ((received - 2) < dataSize)
+                {
+                    // need more data
+                    if (stream.DataAvailable)
+                    {
+                        var bit = stream.ReadByte();
+                        if (bit != -1)
+                        {
+                            _datain[received] = (byte)bit;
+                            respbegin = true;
+                            received++;
+                        }
+                    }
+                }
+
+#endif
+
+
+#if USE_READ
                 var recieved = stream.Read(_datain, 0, _datain.Length);
 
                 // dvip protocol requires we receive first 2 bytes indicating how much data we'll get
@@ -335,6 +418,10 @@ namespace DVIPProtocol.Clients.Advanced
                     var appended = stream.Read(_datain, recieved, _datain.Length - recieved);
                     recieved += appended;
                 }
+#endif
+
+
+
 
                 byte[] data = new byte[dataSize];
                 Array.Copy(_datain, 2, data, 0, dataSize);
@@ -361,7 +448,7 @@ namespace DVIPProtocol.Clients.Advanced
                 */
                 m_log?.Info($"[{m_endpoint.ToString()}] finished reading response: {BitConverter.ToString(data)}");
 
-                // wait for spin time
+                // wait for any extra spin time
                 if (timer.ElapsedMilliseconds < msTime)
                 {
                     m_log?.Info($"[{m_endpoint.ToString()}] spin waiting for timeout.");
