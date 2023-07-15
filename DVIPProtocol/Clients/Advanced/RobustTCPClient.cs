@@ -245,7 +245,7 @@ namespace DVIPProtocol.Clients.Advanced
                     // when we're flushing the buffer, don't wait at all
 
                     Span<byte> _discard = new Span<byte>();
-                    stream.ReadTimeout = 0;
+                    stream.ReadTimeout = 1;
                     var tossed = stream.Read(_discard);
                 }
             }
