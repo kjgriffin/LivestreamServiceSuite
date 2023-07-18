@@ -22,8 +22,9 @@ namespace LutheRun.Parsers
         public bool RunPIPHymnsLikeAProWithoutStutters { get; set; } = true;
 
         [BoolSetting]
-        public bool ImSoProICanRunPIPHymsWithoutStuttersEvenDuringCommunion { get; set; } = true;
+        public bool ImSoProICanRunPIPHymsWithoutStuttersEvenDuringCommunion { get; set; } = false;
 
+        [BoolSetting]
         public bool OnlyKnownCaptions { get; set; } = true;
         [BoolSetting]
         public bool UseResponsiveLiturgy { get; set; } = true;
