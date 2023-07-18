@@ -283,7 +283,7 @@ namespace DVIPProtocol.Clients.Advanced
 
                 // at this point we want data
                 // set a read timeout to hopefully catch it
-                stream.ReadTimeout = 150; // this may be within acceptable slop? // 2023-07-15 increasing this from 50 -> 150, we're consistantly failing our timeout's
+                stream.ReadTimeout = 200; // this may be within acceptable slop? // 2023-07-15 increasing this from 50 -> 150, we're consistantly failing our timeout's
 
                 byte[] _datain = new byte[m_client.ReceiveBufferSize]; // memory is cheap, this is enough to read the whole thing at once
                 m_log?.Info($"[{m_endpoint.ToString()}] reading ALL available");
@@ -291,7 +291,9 @@ namespace DVIPProtocol.Clients.Advanced
 
 #if BIT_BANG
                 var received = 0;
-                var MS_ACK_MAX = 100;
+                const int MS_ACK_MAX = 150;
+                const int MS_2_RESP_TIMEOUT = 200;
+                const int MS_FULL_RESP_TIMEOUT = 500;
 
                 bool respbegin = false;
 
@@ -315,10 +317,17 @@ namespace DVIPProtocol.Clients.Advanced
                 var ackRespTime = timer.ElapsedMilliseconds;
                 m_log?.Info($"[{m_endpoint.ToString()}] recieved response within {ackRespTime} ms from start of transmit.");
 
+                if (!respbegin)
+                {
+                    // if we don't have resp- fail out
+                    return (false, new byte[0]);
+                }
+
+
                 // we have evidence of getting a response
                 // we'll allow a fair bit of time here to gather the whole kit
                 // need 2 bytes to indicate DVIP package size
-                while (received < 2)
+                while (received < 2 && timer.ElapsedMilliseconds < MS_2_RESP_TIMEOUT)
                 {
                     if (stream.DataAvailable)
                     {
@@ -330,6 +339,12 @@ namespace DVIPProtocol.Clients.Advanced
                             received++;
                         }
                     }
+                }
+
+                if (received != 2)
+                {
+                    // fail out
+                    return (false, new byte[0]);
                 }
 
                 // now should have at least 2 bytes of response
@@ -351,6 +366,12 @@ namespace DVIPProtocol.Clients.Advanced
                 // make sure we've captured all the expected data
                 while ((received - 2) < dataSize)
                 {
+                    if (timer.ElapsedMilliseconds > MS_FULL_RESP_TIMEOUT)
+                    {
+                        // fail out on time
+                        return (false, new byte[0]);
+                    }
+
                     // need more data
                     if (stream.DataAvailable)
                     {
@@ -363,6 +384,7 @@ namespace DVIPProtocol.Clients.Advanced
                         }
                     }
                 }
+
 
 #endif
 
