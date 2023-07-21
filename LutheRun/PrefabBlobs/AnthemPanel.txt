@@ -14,6 +14,7 @@ $>$>cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.PULPIT%, pulpitFill);
 $>$>cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.CENTER%, centerFill);
 $>$>cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.LECTERN%, lecternFill);
 $>$>cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.ORGAN%, organFill);
+$>$>cmd:WatchSwitcherStateIntVal(PresetID, %cam.LECTERN%, lecternPst);
 $>}
 $>
 $>[TButton]0,0
@@ -230,7 +231,7 @@ $>$>$>BackColor=#ed5cd7;
 $>$>$>TextColor=#efefef;
 $>$>}
 $>$>fire={
-$>$>$><lecternOnAir>cmd:PresetSelect(%cam.CENTER%);
+$>$>$><lecternOnAir+lecternPst>cmd:PresetSelect(%cam.CENTER%);
 $>$>$><usk1on>cmd:USK1TieOn;
 $>$>$>cmd:DelayMs(100);
 $>$>$>cmd:AutoTrans;
