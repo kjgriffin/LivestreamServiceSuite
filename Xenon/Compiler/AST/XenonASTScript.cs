@@ -161,7 +161,7 @@ namespace Xenon.Compiler.AST
         };
         public int _SourceLine { get; set; }
 
-        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForScriptCommands = (priorcaptures, sourcesnippet, remainingsnippet, knownAssets, knownLayouts) =>
+        public static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForScriptCommands = (priorcaptures, sourcesnippet, remainingsnippet, knownAssets, knownLayouts) =>
         {
             // its' not validation we're doing, so just get the start of the line and work from there.
 

@@ -150,7 +150,7 @@ namespace Xenon.Compiler.Suggestions
 
         }
 
-        private List<(string, string)> AllCommandKeywords()
+        internal static List<(string, string)> AllCommandKeywords()
         {
             /*
             List<(string, string)> res = new List<(string, string)>();
