@@ -14,6 +14,7 @@
     <None Remove="PrefabBlobs\EndTitle.txt" />
     <None Remove="PrefabBlobs\LordsPrayer.txt" />
     <None Remove="PrefabBlobs\NiceneCreed.txt" />
+    <None Remove="PrefabBlobs\PaneldAnnouncementsTemplate.txt" />
     <None Remove="PrefabBlobs\PaneledAnthemTemplate.txt" />
     <None Remove="PrefabBlobs\PIPReadingScriptBlock.txt" />
     <None Remove="PrefabBlobs\PIPReadingScriptIntroBlock.txt" />
@@ -28,6 +29,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="PrefabBlobs\AnthemPanel.txt" />
+    <EmbeddedResource Include="PrefabBlobs\PaneldAnnouncementsTemplate.txt" />
     <EmbeddedResource Include="PrefabBlobs\PaneledAnthemTemplate.txt" />
     <EmbeddedResource Include="PrefabBlobs\AnthemTemplate.txt" />
     <EmbeddedResource Include="PrefabBlobs\Bells.txt" />

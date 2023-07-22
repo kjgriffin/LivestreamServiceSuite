@@ -6,7 +6,7 @@ $>#scripted
 $>{
 $>$>first=#script{
 $>$>$>#ANTHEM START;
-$>$>$>@cmd:SetupButtons(anthem-panel-type1-id24, %pres%, true);
+$>$>$>@cmd:SetupButtons(anthem-panel-type1-id$ANTHEMID, %pres%, true);
 $>$>$>@cmd:PresetSelect(%cam.CENTER%);
 $>$>$>@cmd:DelayMs(100);
 $>$>$>@cmd:AutoTrans;
@@ -15,7 +15,7 @@ $>$>$>cmd:DSK1FadeOn;
 $>$>}
 
 $>$>/// </MANUAL_UPDATE name='anthem'>
-$>$>[@label::anthem-title-id24]
+$>$>[@label::anthem-title-id$ANTHEMID]
 $>$>#html
 $>$>{
 $>$>$>text[title]{}

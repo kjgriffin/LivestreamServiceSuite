@@ -1,4 +1,4 @@
-﻿#dynamiccontroller(anthem-panel-type1-id24)
+﻿#dynamiccontroller(anthem-panel-type1-id$ANTHEMID)
 {
 $>dynamic:matrix(4x3);
 $>

@@ -99,8 +99,14 @@ namespace LutheRun.Elements.LSB
                     // previous 'expander' intro will setup/configure a panel that all anthem operations will use
                     string blobtext = ExternalPrefabGenerator.PrepareBlob("PaneledAnthemTemplate");
 
+                    int anthemID = -1;
+                    if (fullInfo.OutOfBandInfo.TryGetValue("anthemUID", out object oanthemid))
+                    {
+                        anthemID = (int)oanthemid;
+                    }
+
                     blobtext = Regex.Replace(blobtext, Regex.Escape("$>"), "".PadLeft(indentSpace));
-                    blobtext = Regex.Replace(blobtext, Regex.Escape("$ANTHEMID"), fullInfo.ElementOrder.ToString());
+                    blobtext = Regex.Replace(blobtext, Regex.Escape("$ANTHEMID"), anthemID.ToString());
 
                     sb.AppendLine(blobtext.IndentBlock(indentDepth, indentSpace));
                 }
@@ -116,6 +122,15 @@ namespace LutheRun.Elements.LSB
                 sb.AppendLine("/// </MANUAL_UPDATE name='sermon'>".Indent(indentDepth, indentSpace));
                 sb.AppendLine("//> INSERTION POINT: sermon".Indent(indentDepth, indentSpace));
                 sb.AppendLine($"#sermon(\"TITLE\", \"REFERENCE\", \"PREACHER\"){PostsetCmd}".Indent(indentDepth, indentSpace));
+            }
+            else if (ctest.Contains("announcements") || ctest.Contains("offering"))
+            {
+                string blobtext = ExternalPrefabGenerator.PrepareBlob("PaneledAnthemTemplate");
+
+                blobtext = Regex.Replace(blobtext, Regex.Escape("$>"), "".PadLeft(indentSpace));
+                blobtext = Regex.Replace(blobtext, Regex.Escape("$ANTHEMID"), fullInfo.ElementOrder.ToString());
+
+                sb.AppendLine(blobtext.IndentBlock(indentDepth, indentSpace));
             }
 
             else if (!lSBImportOptions.OnlyKnownCaptions)
@@ -154,6 +169,10 @@ namespace LutheRun.Elements.LSB
             else if (ctest.Contains("sermon"))
             {
                 return Pilot.BlockType.SERMON;
+            }
+            else if (ctest.Contains("announcements") || ctest.Contains("offering"))
+            {
+                return Pilot.BlockType.ANNOUNCEMENTS;
             }
 
             return Pilot.BlockType.UNKNOWN;

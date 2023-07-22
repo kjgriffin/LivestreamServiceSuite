@@ -1,4 +1,6 @@
-﻿using LutheRun.Elements;
+﻿using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
+
+using LutheRun.Elements;
 using LutheRun.Elements.LSB;
 using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
@@ -186,15 +188,14 @@ namespace LutheRun
         public static List<ParsedLSBElement> ExpandifyElements(this List<ParsedLSBElement> service, LSBImportOptions options)
         {
             List<ParsedLSBElement> newService = new List<ParsedLSBElement>();
-            int i = 0;
+            int anthemUID = 0; // track all anthems
             foreach (var element in service)
             {
                 // need to add some meat onto anthems
-                element.ElementOrder = i;
                 if (options.ExpandAnthemsForAutomation && (element.LSBElement is LSBElementCaption) && (element.LSBElement as LSBElementCaption).Caption.ToLower().Contains("anthem"))
                 {
                     var cmdtxt = ExternalPrefabGenerator.PrepareBlob("AnthemPanel");
-                    cmdtxt = Regex.Replace(cmdtxt, Regex.Escape("$ANTHEMID"), (i + 1).ToString());
+                    cmdtxt = Regex.Replace(cmdtxt, Regex.Escape("$ANTHEMID"), (anthemUID).ToString());
                     newService.Add(new ParsedLSBElement
                     {
                         LSBElement = new ExternalPrefab(cmdtxt, "anthem-intro", BlockType.ANTHEM_RESOLVED) { IndentReplacementIndentifier = "$>" },
@@ -203,7 +204,7 @@ namespace LutheRun
                         BlockType = BlockType.ANTHEM_RESOLVED,
                         CameraUse = new CameraUsage(),
                         ConsiderForServicification = true,
-                        ElementOrder = i,
+                        ElementOrder = 0,
                         FilterFromOutput = false,
                         Generator = "ElementExpandification:: ANTHEM INTRO",
                         HasWingsForFlighPlanning = true,
@@ -211,9 +212,10 @@ namespace LutheRun
                         SourceElements = element.SourceElements,
                         XenonCode = "TEST...",
                     });
-                    i++;
-                    element.ElementOrder = i;
+                    // modify element to have it's id
+                    element.OutOfBandInfo["anthemUID"] = anthemUID;
                     newService.Add(element);
+                    anthemUID++;
                 }
                 else
                 {

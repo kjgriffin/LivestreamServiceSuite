@@ -1,0 +1,9 @@
+﻿#script{
+$>#Announcements;
+$>@cmd:SetupButtons(anthem-panel-type1-id, %pres%, true);
+$>@cmd:PresetSelect(%cam.CENTER%);
+$>@cmd:DelayMs(100);
+$>@cmd:AutoTrans;
+$>cmd:DelayMs(1500);
+$>cmd:DSK1FadeOn;
+}

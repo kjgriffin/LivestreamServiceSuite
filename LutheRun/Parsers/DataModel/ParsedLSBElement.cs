@@ -24,5 +24,6 @@ namespace LutheRun.Parsers.DataModel
         internal BlockType BlockType { get; set; } = BlockType.UNKNOWN;
         internal CameraUsage CameraUse { get; set; } = new CameraUsage();
         public bool HasWingsForFlighPlanning { get; set; } = true;
+        public Dictionary<string, object> OutOfBandInfo = new Dictionary<string, object>();
     }
 }
