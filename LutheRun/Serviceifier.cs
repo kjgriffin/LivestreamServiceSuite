@@ -109,7 +109,7 @@ namespace LutheRun
                     if (options.OnlyKnownCaptions)
                     {
                         // removed 'postlude' since it's now handled via end title
-                        if (new[] { "bells", "prelude", "anthem", "sermon" }.Any(c => caption.Caption.ToLower().Contains(c)))
+                        if (new[] { "bells", "prelude", "anthem", "sermon", "announcements", "offering" }.Any(c => caption.Caption.ToLower().Contains(c)))
                         {
                             //trimmed.Add(element);
                             element.FilterFromOutput = false;
