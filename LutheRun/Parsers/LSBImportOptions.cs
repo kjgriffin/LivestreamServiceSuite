@@ -101,6 +101,7 @@ namespace LutheRun.Parsers
             ["lectern:sermon"] = "SERMON",
             ["lectern:anthem"] = "ANTHEM",
             ["lectern:opening"] = "OPENING",
+            ["lectern:lec"] = "LEC-MID",
 
             ["organ:organ"] = "ORGAN",
             ["organ:piano?"] = "PIANO",
@@ -126,6 +127,7 @@ namespace LutheRun.Parsers
             ["lectern:sermon"] = "SERMON",
             ["lectern:anthem"] = "ANTHEM",
             ["lectern:opening"] = "OPENING",
+            ["lectern:lec"] = "LEC-MID",
 
             ["organ:organ"] = "ORGAN",
             ["organ:piano?"] = "PIANO",

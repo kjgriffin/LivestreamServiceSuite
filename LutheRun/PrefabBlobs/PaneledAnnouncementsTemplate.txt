@@ -1,0 +1,9 @@
+﻿#script{
+$>#Announcements;
+$>@cmd:WatchSwitcherStateIntVal(ProgramID, %cam.SLIDE%, cam);
+$>@<cam>cmd:PresetSelect(%cam.CENTER%);
+$>@<cam>cmd:DelayMs(100);
+$>@<cam>cmd:AutoTrans;
+$>@<cam>cmd:DelayMs(1500);
+$>@cmd:PresetSelect(%cam.LECTERN%);
+}

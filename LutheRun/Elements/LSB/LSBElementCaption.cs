@@ -125,10 +125,10 @@ namespace LutheRun.Elements.LSB
             }
             else if (ctest.Contains("announcements") || ctest.Contains("offering"))
             {
-                string blobtext = ExternalPrefabGenerator.PrepareBlob("PaneledAnthemTemplate");
+                string blobtext = ExternalPrefabGenerator.PrepareBlob("PaneledAnnouncementsTemplate");
 
                 blobtext = Regex.Replace(blobtext, Regex.Escape("$>"), "".PadLeft(indentSpace));
-                blobtext = Regex.Replace(blobtext, Regex.Escape("$ANTHEMID"), fullInfo.ElementOrder.ToString());
+                //blobtext = Regex.Replace(blobtext, Regex.Escape("$ANTHEMID"), fullInfo.ElementOrder.ToString());
 
                 sb.AppendLine(blobtext.IndentBlock(indentDepth, indentSpace));
             }

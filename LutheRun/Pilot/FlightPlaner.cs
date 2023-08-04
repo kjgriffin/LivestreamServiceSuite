@@ -150,6 +150,8 @@ namespace LutheRun.Pilot
                         cams.FreeCamera(CameraID.BACK);
                         break;
                     case BlockType.ANNOUNCEMENTS:
+                        cams.AddRequirement(CameraID.CENTER, "front");
+                        cams.AddRequirement(CameraID.LECTERN, "lec");
                         break;
                     case BlockType.MISC_CORPERATE:
                         cams.AddRequirement(CameraID.CENTER, "front");
