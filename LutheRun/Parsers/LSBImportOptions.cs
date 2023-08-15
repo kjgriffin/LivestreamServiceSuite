@@ -37,6 +37,19 @@ namespace LutheRun.Parsers
         /// </summary>
         [BoolSetting]
         public bool FullTextReadings { get; set; } = false;
+
+        /// <summary>
+        /// Use NIV version for reading instead of ESV from service builder
+        /// </summary>
+        [BoolSetting]
+        public bool ReadingTextNIVOverride { get; set; } = true;
+
+        /// <summary>
+        /// If using NIV version, will also include the pericope text
+        /// </summary>
+        [BoolSetting]
+        public bool IncludePericopes { get; set; } = true;
+
         /// <summary>
         /// Requires ComplexReadings. Will include the full reading text, but packaged (to handle titles/scripts) accordingly.
         /// Will attempt to ignore introit/responsive psalms if InferResponsivePsalmReadingsAsTitledLiturgy is enabled

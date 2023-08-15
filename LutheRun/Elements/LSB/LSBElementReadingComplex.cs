@@ -1,5 +1,7 @@
 ﻿using AngleSharp.Dom;
 
+using Concord;
+
 using LutheRun.Elements.Interface;
 using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
@@ -247,6 +249,71 @@ namespace LutheRun.Elements.LSB
             return fullpackage;
         }
 
+        public string GetContentString(ref int indentDepth, int indentSpaces, LSBImportOptions options)
+        {
+            if (!options.ReadingTextNIVOverride)
+            {
+                return LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault()?.Elements ?? new List<IElement>(), ref indentDepth, indentSpaces);
+            }
+
+            // use our internal NIV translation lookup
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                LSBReferenceUnpacker refdecoder = new LSBReferenceUnpacker();
+                var sections = refdecoder.ParseSections(ReadingReference);
+                HardCopyAPI niv = BibleBuilder.BuildNIV();
+                //HardCopyAPI esv = BibleBuilder.BuildESV();
+
+                List<HardCopyAPI.Verse> verses = new List<HardCopyAPI.Verse>();
+                foreach (var section in sections)
+                {
+                    // peek into first verse of section to check against pericope
+                    //var v = niv.GetVerse(section.Book, section.StartChapter, section.StartVerse);
+
+                    sb.AppendLine("<block>".Indent(indentDepth, indentSpaces));
+                    indentDepth++;
+                    foreach (var vlist in refdecoder.EnumerateVerses(section, niv))
+                    {
+                        //verses.Add(niv.GetVerse(vlist.Book, vlist.Chapter, vlist.Verse));
+                        BuildVerseString(niv.GetVerse(vlist.Book, vlist.Chapter, vlist.Verse), sb, ref indentDepth, indentSpaces, options);
+                    }
+                    indentDepth--;
+                    sb.AppendLine("</block>".Indent(indentDepth, indentSpaces));
+                }
+
+                //return string.Join(";", verses.Select(x => $"{x.Number} {x.Text}"));
+                return sb.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "// Error Pulling Alt Reading Text";
+            }
+        }
+
+        public void BuildVerseString(HardCopyAPI.Verse verse, StringBuilder sb, ref int indentDepth, int indentSpaces, LSBImportOptions options)
+        {
+            if (!string.IsNullOrEmpty(verse.Pericope) && options.IncludePericopes)
+            {
+                sb.AppendLine($"<text style='bold' color='#ff808080'>{verse.Pericope}</text>".Indent(indentDepth, indentSpaces));
+                sb.AppendLine("<text xml:space=\"preserve\">  </text>".Indent(indentDepth, indentSpaces));
+            }
+
+            sb.AppendLine($"<text style='superscript' rules='nbspn'>{verse.Number}</text>".Indent(indentDepth, indentSpaces));
+
+            var hunks = verse.Text.Split("<br/>");
+
+            foreach (var hunk in hunks)
+            {
+                sb.AppendLine($"<text>{hunk}</text>".Indent(indentDepth, indentSpaces));
+                if (hunk != hunks.Last())
+                {
+                    sb.AppendLine("<text xml:space=\"preserve\">  </text>".Indent(indentDepth, indentSpaces));
+                }
+            }
+
+        }
+
         public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
         {
             if (ShouldBePackaged(lSBImportOptions, out bool isResponsiveReading))
@@ -334,12 +401,13 @@ namespace LutheRun.Elements.LSB
 
                 sb.AppendLine($"text={{{ReadingTitle}}}".Indent(indentDepth, indentSpaces));
                 sb.AppendLine($"text={{{ReadingReference}}}".Indent(indentDepth, indentSpaces));
-                sb.AppendLine($"text={{ESV}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
+                sb.AppendLine($"text={{{(lSBImportOptions.ReadingTextNIVOverride ? "NIV" : "ESV")}}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
 
                 sb.AppendLine("ctext={".Indent(indentDepth, indentSpaces));
                 indentDepth++;
 
-                sb.AppendLine(LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault().Elements, ref indentDepth, indentSpaces));
+                //sb.AppendLine(LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault().Elements, ref indentDepth, indentSpaces));
+                sb.AppendLine(GetContentString(ref indentDepth, indentSpaces, lSBImportOptions));
 
                 indentDepth--;
                 sb.AppendLine("}".Indent(indentDepth, indentSpaces));
@@ -408,12 +476,13 @@ namespace LutheRun.Elements.LSB
 
             sb.AppendLine($"text={{{ReadingTitle}}}".Indent(indentDepth, indentSpaces));
             sb.AppendLine($"text={{{ReadingReference}}}".Indent(indentDepth, indentSpaces));
-            sb.AppendLine($"text={{ESV}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
+            sb.AppendLine($"text={{{(lSBImportOptions.ReadingTextNIVOverride ? "NIV" : "ESV")}}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
 
             sb.AppendLine("ctext={".Indent(indentDepth, indentSpaces));
             indentDepth++;
 
-            sb.AppendLine(LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault()?.Elements ?? new List<IElement>(), ref indentDepth, indentSpaces));
+            //sb.AppendLine(LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault()?.Elements ?? new List<IElement>(), ref indentDepth, indentSpaces));
+            sb.AppendLine(GetContentString(ref indentDepth, indentSpaces, lSBImportOptions));
 
             indentDepth--;
             sb.AppendLine("}".Indent(indentDepth, indentSpaces));

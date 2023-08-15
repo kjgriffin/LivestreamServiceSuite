@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Source\2450.Pericopes.csv" />
+    <None Remove="Source\ESV-Books.json" />
+    <None Remove="Source\ESV.json" />
+    <None Remove="Source\NIV-Books.json" />
+    <None Remove="Source\NIV.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Source\2450.Pericopes.csv" />
+    <EmbeddedResource Include="Source\ESV-Books.json" />
+    <EmbeddedResource Include="Source\ESV.json" />
+    <EmbeddedResource Include="Source\NIV-Books.json" />
+    <EmbeddedResource Include="Source\NIV.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="7.0.3" />
+  </ItemGroup>
+
+</Project>
