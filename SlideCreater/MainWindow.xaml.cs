@@ -2,6 +2,8 @@
 
 using CommonVersionInfo;
 
+using Concord;
+
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Search;
 
@@ -2042,6 +2044,34 @@ namespace SlideCreater
         private void ClickOpenLastAutosave(object sender, RoutedEventArgs e)
         {
             RecoverLastAutosave();
+        }
+
+        private void Click_GenerateArbitraryReading_Complex(object sender, RoutedEventArgs e)
+        {
+            // prompt for verse (give examples)
+            TbPromptDialog refDialog = new TbPromptDialog("Select Bible Reference", "Reference", "1 John 15:4-8, 16, 5:3-6:1");
+            if (refDialog.ShowDialog() != true)
+            {
+                // abort?
+                return;
+            }
+            BibleTranslations translation = BibleTranslations.ESV;
+            TbPromptDialog tDialg = new TbPromptDialog("Select Bible Translation", "Translation", "ESV");
+            if (tDialg.ShowDialog() != true)
+            {
+                // abort?
+                return;
+            }
+            translation = tDialg.ResultValue.ToLower() == "niv" ? BibleTranslations.NIV : BibleTranslations.ESV;
+            try
+            {
+                var text = LutheRun.Generators.ReadingTextGenerator.GenerateXenonComplexReading(translation, refDialog.ResultValue, 0, 4);
+                TbInput.TextArea.PerformTextInput(text);
+            }
+            catch (Exception)
+            {
+                // silent fail?
+            }
         }
     }
 }

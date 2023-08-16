@@ -143,6 +143,9 @@
             <MenuItem Header="Analyze">
                 <MenuItem Foreground="Black" Click="ClickAnalyzePilotPresetUse" Header="Compute Pilot Preset Use"></MenuItem>
             </MenuItem>
+            <MenuItem Header="Tools">
+                <MenuItem Foreground="Black" Click="Click_GenerateArbitraryReading_Complex" Header="Generate Arbitrary Reading (Complex)"></MenuItem>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem  Foreground="Black" Header="Commands" Click="ClickHelpCommands">
                     <MenuItem.Icon>

@@ -35,13 +35,22 @@ namespace Concord
             return new HardCopyAPI(GetBlob("NIV.json"), GetBlob("NIV-Books.json"));
         }
 
-        public static IBibleAPI BuildNIVAPI()
+        public static IBibleAPI BuildAPI(BibleTranslations translation)
         {
-            return new HardCopyAPIv2(GetBlob("NIVbible.txt.json"));
-        }
-        public static IBibleAPI BuildESVAPI()
-        {
+            switch (translation)
+            {
+                case BibleTranslations.NIV:
+                    return new HardCopyAPIv2(GetBlob("NIVbible.txt.json"));
+                case BibleTranslations.ESV:
+                    return new HardCopyAPIv2(GetBlob("ESVbible.txt.json"));
+            }
             return new HardCopyAPIv2(GetBlob("ESVbible.txt.json"));
         }
+    }
+
+    public enum BibleTranslations
+    {
+        NIV,
+        ESV,
     }
 }

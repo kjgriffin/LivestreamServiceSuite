@@ -45,10 +45,10 @@ namespace LutheRun.Parsers
         public bool ReadingTextNIVOverride { get; set; } = true;
 
         /// <summary>
-        /// 
+        /// Use embedded ESV version for reading instead of ESV from service builder (overrides NIV selection)
         /// </summary>
         [BoolSetting]
-        public bool ReadingTextESVOverride { get; set; } = true;
+        public bool ReadingTextESVOverride { get; set; } = false;
 
         /// <summary>
         /// Requires ComplexReadings. Will include the full reading text, but packaged (to handle titles/scripts) accordingly.

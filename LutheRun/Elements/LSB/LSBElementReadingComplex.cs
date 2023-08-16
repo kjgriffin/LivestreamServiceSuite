@@ -3,6 +3,7 @@
 using Concord;
 
 using LutheRun.Elements.Interface;
+using LutheRun.Generators;
 using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
@@ -251,7 +252,7 @@ namespace LutheRun.Elements.LSB
 
         public string GetContentString(ref int indentDepth, int indentSpaces, LSBImportOptions options)
         {
-            if (!options.ReadingTextNIVOverride)
+            if (!options.ReadingTextNIVOverride && !options.ReadingTextESVOverride)
             {
                 return LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault()?.Elements ?? new List<IElement>(), ref indentDepth, indentSpaces);
             }
@@ -259,25 +260,10 @@ namespace LutheRun.Elements.LSB
             // use our internal NIV translation lookup
             try
             {
-                StringBuilder sb = new StringBuilder();
-                LSBReferenceUnpacker refdecoder = new LSBReferenceUnpacker();
-                var sections = refdecoder.ParseSections(ReadingReference);
-                IBibleAPI niv = BibleBuilder.BuildNIVAPI();
+                // ESV wins over NIV
+                var translation = options.ReadingTextESVOverride ? BibleTranslations.ESV : options.ReadingTextNIVOverride ? BibleTranslations.NIV : BibleTranslations.ESV;
 
-                List<IBibleVerse> verses = new List<IBibleVerse>();
-                foreach (var section in sections)
-                {
-                    sb.AppendLine("<block>".Indent(indentDepth, indentSpaces));
-                    indentDepth++;
-                    foreach (var vlist in refdecoder.EnumerateVerses(section, niv))
-                    {
-                        BuildVerseString(niv.GetVerse(vlist.Book, vlist.Chapter, vlist.Verse), sb, ref indentDepth, indentSpaces, options);
-                    }
-                    indentDepth--;
-                    sb.AppendLine("</block>".Indent(indentDepth, indentSpaces));
-                }
-
-                return sb.ToString();
+                return ReadingTextGenerator.GenerateXenonComplexReading(translation, ReadingReference, indentDepth, indentSpaces);
             }
             catch (Exception ex)
             {
