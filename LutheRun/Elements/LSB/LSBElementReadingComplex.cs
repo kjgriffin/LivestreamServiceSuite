@@ -262,27 +262,21 @@ namespace LutheRun.Elements.LSB
                 StringBuilder sb = new StringBuilder();
                 LSBReferenceUnpacker refdecoder = new LSBReferenceUnpacker();
                 var sections = refdecoder.ParseSections(ReadingReference);
-                HardCopyAPI niv = BibleBuilder.BuildNIV();
-                //HardCopyAPI esv = BibleBuilder.BuildESV();
+                IBibleAPI niv = BibleBuilder.BuildNIVAPI();
 
-                List<HardCopyAPI.Verse> verses = new List<HardCopyAPI.Verse>();
+                List<IBibleVerse> verses = new List<IBibleVerse>();
                 foreach (var section in sections)
                 {
-                    // peek into first verse of section to check against pericope
-                    //var v = niv.GetVerse(section.Book, section.StartChapter, section.StartVerse);
-
                     sb.AppendLine("<block>".Indent(indentDepth, indentSpaces));
                     indentDepth++;
                     foreach (var vlist in refdecoder.EnumerateVerses(section, niv))
                     {
-                        //verses.Add(niv.GetVerse(vlist.Book, vlist.Chapter, vlist.Verse));
                         BuildVerseString(niv.GetVerse(vlist.Book, vlist.Chapter, vlist.Verse), sb, ref indentDepth, indentSpaces, options);
                     }
                     indentDepth--;
                     sb.AppendLine("</block>".Indent(indentDepth, indentSpaces));
                 }
 
-                //return string.Join(";", verses.Select(x => $"{x.Number} {x.Text}"));
                 return sb.ToString();
             }
             catch (Exception ex)
@@ -291,14 +285,8 @@ namespace LutheRun.Elements.LSB
             }
         }
 
-        public void BuildVerseString(HardCopyAPI.Verse verse, StringBuilder sb, ref int indentDepth, int indentSpaces, LSBImportOptions options)
+        public void BuildVerseString(IBibleVerse verse, StringBuilder sb, ref int indentDepth, int indentSpaces, LSBImportOptions options)
         {
-            if (!string.IsNullOrEmpty(verse.Pericope) && options.IncludePericopes)
-            {
-                sb.AppendLine($"<text style='bold' color='#ff808080'>{verse.Pericope}</text>".Indent(indentDepth, indentSpaces));
-                sb.AppendLine("<text xml:space=\"preserve\">  </text>".Indent(indentDepth, indentSpaces));
-            }
-
             sb.AppendLine($"<text style='superscript' rules='nbspn'>{verse.Number}</text>".Indent(indentDepth, indentSpaces));
 
             var hunks = verse.Text.Split("<br/>");

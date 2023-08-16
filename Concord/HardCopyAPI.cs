@@ -5,7 +5,15 @@ using System.Text.Json;
 
 namespace Concord
 {
-    public class HardCopyAPI : IBibleInfoProvider
+    public interface IBibleVerse
+    {
+        int Number { get; }
+        string Text { get; }
+        int ChapterRef { get; }
+        int BookRef { get; }
+    }
+
+    public class HardCopyAPI : IBibleInfoProvider, IBibleVerseProvider
     {
         Dictionary<int, Book> Books;
         Dictionary<string, BookMetadata> BookMeta;
@@ -21,7 +29,7 @@ namespace Concord
             public string text { get; set; }
         }
 
-        public class Verse
+        public class Verse : IBibleVerse
         {
             public int Number { get; set; }
             public string Text { get; set; }
@@ -109,7 +117,7 @@ namespace Concord
         }
 
 
-        public Verse GetVerse(string Book, int chapter, int verse)
+        public IBibleVerse GetVerse(string Book, int chapter, int verse)
         {
             if (BookMeta.TryGetValue(Book.ToLower(), out var bookinfo))
             {

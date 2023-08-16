@@ -9,16 +9,20 @@
     <None Remove="Source\2450.Pericopes.csv" />
     <None Remove="Source\ESV-Books.json" />
     <None Remove="Source\ESV.json" />
+    <None Remove="Source\ESVbible.txt.json" />
     <None Remove="Source\NIV-Books.json" />
     <None Remove="Source\NIV.json" />
+    <None Remove="Source\NIVbible.txt.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Source\2450.Pericopes.csv" />
     <EmbeddedResource Include="Source\ESV-Books.json" />
     <EmbeddedResource Include="Source\ESV.json" />
+    <EmbeddedResource Include="Source\ESVbible.txt.json" />
     <EmbeddedResource Include="Source\NIV-Books.json" />
     <EmbeddedResource Include="Source\NIV.json" />
+    <EmbeddedResource Include="Source\NIVbible.txt.json" />
   </ItemGroup>
 
   <ItemGroup>

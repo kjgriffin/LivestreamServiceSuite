@@ -29,11 +29,19 @@ namespace Concord
         {
             return new HardCopyAPI(GetBlob("ESV.json"), GetBlob("ESV-Books.json"));
         }
+
         public static HardCopyAPI BuildNIV()
         {
             return new HardCopyAPI(GetBlob("NIV.json"), GetBlob("NIV-Books.json"));
         }
 
-
+        public static IBibleAPI BuildNIVAPI()
+        {
+            return new HardCopyAPIv2(GetBlob("NIVbible.txt.json"));
+        }
+        public static IBibleAPI BuildESVAPI()
+        {
+            return new HardCopyAPIv2(GetBlob("ESVbible.txt.json"));
+        }
     }
 }
