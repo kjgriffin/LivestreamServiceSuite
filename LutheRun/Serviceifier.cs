@@ -12,6 +12,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Automation;
 
 namespace LutheRun
 {
@@ -216,6 +217,18 @@ namespace LutheRun
                     element.OutOfBandInfo["anthemUID"] = anthemUID;
                     newService.Add(element);
                     anthemUID++;
+                }
+                else if (options.ExpandSermonWithAutoShutdown && element.LSBElement is LSBElementCaption && (element.LSBElement as LSBElementCaption).Caption.ToLower().Contains("sermon"))
+                {
+                    newService.Add(element);
+                    newService.Add(new ParsedLSBElement
+                    {
+                        LSBElement = new ExternalPrefab("#liturgyoff", "liturgyoff", BlockType.SERMON_END),
+                        Generator = $"Previous element was [sermon] FLAG::ExpandifySermonShutdown",
+                        AddedByInference = true,
+                        Ancestory = Guid.NewGuid(),
+                        ConsiderForServicification = true,
+                    });
                 }
                 else
                 {
@@ -490,7 +503,12 @@ namespace LutheRun
 
 
                 bool shutdownliturgy = false;
-                if (element.ConsiderForServicification && !element.FilterFromOutput && LiturgyElements.Contains(element.LSBElement?.GetType()))
+                if ((element.LSBElement as ExternalPrefab)?.TypeIdentifier == "liturgyoff")
+                {
+                    inliturgy = false;
+                    shutdownliturgy = false;
+                }
+                else if (element.ConsiderForServicification && !element.FilterFromOutput && LiturgyElements.Contains(element.LSBElement?.GetType()))
                 {
                     inliturgy = true;
                     // also skip if its a full-package reading, since they're considered responsible for their own teardown
@@ -514,7 +532,6 @@ namespace LutheRun
                             inliturgy = false;
                         }
                     }
-
                 }
                 else if (element.ConsiderForServicification && !element.FilterFromOutput)
                 {
@@ -535,7 +552,6 @@ namespace LutheRun
                                 shutdownliturgy = false;
                             }
                         }
-
                     }
                 }
 

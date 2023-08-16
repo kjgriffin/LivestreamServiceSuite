@@ -45,6 +45,12 @@ namespace LutheRun.Parsers
         public bool ReadingTextNIVOverride { get; set; } = true;
 
         /// <summary>
+        /// 
+        /// </summary>
+        [BoolSetting]
+        public bool ReadingTextESVOverride { get; set; } = true;
+
+        /// <summary>
         /// Requires ComplexReadings. Will include the full reading text, but packaged (to handle titles/scripts) accordingly.
         /// Will attempt to ignore introit/responsive psalms if InferResponsivePsalmReadingsAsTitledLiturgy is enabled
         /// </summary>
@@ -83,6 +89,9 @@ namespace LutheRun.Parsers
 
         [BoolSetting]
         public bool ExpandAnthemsForAutomation { get; internal set; } = true;
+
+        [BoolSetting]
+        public bool ExpandSermonWithAutoShutdown { get; internal set; } = true;
 
         public string ServiceThemeLib { get; set; } = "Xenon.CommonColored";
         public string ServiceThemeLib_Anthems { get; set; } = "Xenon.Anthems";

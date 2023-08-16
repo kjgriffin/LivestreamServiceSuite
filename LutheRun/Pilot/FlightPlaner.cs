@@ -171,6 +171,13 @@ namespace LutheRun.Pilot
                         cams.FreeCamera(CameraID.ORGAN);
                         cams.FreeCamera(CameraID.BACK);
                         break;
+                    case BlockType.SERMON_END:
+                        cams.FreeCamera(CameraID.BACK);
+                        cams.FreeCamera(CameraID.ORGAN);
+                        cams.FreeCamera(CameraID.CENTER);
+                        cams.FreeCamera(CameraID.LECTERN);
+                        cams.FreeCamera(CameraID.PULPIT); // not sure about this?? of course we truly need one still, but for purpose of automation consider all freed in an attempt to not stall
+                        break;
                     case BlockType.HYMN:
                         cams.AddRequirement(CameraID.ORGAN, "organ");
                         cams.AddRequirement(CameraID.BACK, "wide");
@@ -281,6 +288,7 @@ namespace LutheRun.Pilot
         MISC_CORPERATE,
         READING,
         SERMON,
+        SERMON_END,
         HYMN,
         HYMN_ORGAN,
         HYMN_OTHER,
