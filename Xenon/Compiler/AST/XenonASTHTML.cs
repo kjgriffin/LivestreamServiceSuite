@@ -36,6 +36,7 @@ namespace Xenon.Compiler.AST
                     Lexer.GobbleandLog("[");
                     var key = Lexer.ConsumeUntil("]");
                     Lexer.GobbleandLog("]");
+                    Lexer.GobbleWhitespace();
                     Lexer.GobbleandLog("{");
                     var data = Lexer.ConsumeUntil("}");
                     Lexer.GobbleandLog("}");

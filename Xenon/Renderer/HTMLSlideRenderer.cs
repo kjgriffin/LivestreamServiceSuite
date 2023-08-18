@@ -73,7 +73,7 @@ namespace Xenon.Renderer
         {
             while (true)
             {
-                _workAvailable.WaitOne(timeout);
+                _workAvailable.WaitOne();
                 // perform all work available
                 while (jobs.TryDequeue(out var job))
                 {
@@ -122,7 +122,7 @@ namespace Xenon.Renderer
                 else
                 {
                     // perhaps??
-                    await Task.Delay(500);
+                    await Task.Delay(500).ConfigureAwait(false);
                 }
             }
 #if DEBUG
