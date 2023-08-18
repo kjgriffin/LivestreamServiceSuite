@@ -102,9 +102,9 @@
             "text-alt": "\"#ff298f45\""
         },
         "extras": {
-            "Xenon.Anthems@color-main": "\"#298f45\"",
-            "Xenon.Titles@color-main": "\"#298f45\"",
-            "Xenon.Titles@text-alt": "\"#298f45\""
+            "Xenon.Anthems@color-main": "#298f45",
+            "Xenon.Titles@color-main": "#298f45",
+            "Xenon.Titles@text-alt": "#298f45"
         }
     }
 ]
