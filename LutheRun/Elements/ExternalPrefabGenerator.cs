@@ -107,20 +107,8 @@ namespace LutheRun.Elements
             if (titleelements.Count() == 2)
             {
                 // assumes service title is first element
-                string serviceTitle = GetStringFromCaptionOrHeading(titleelements.First());
-                // assume service date is second element
-                string serviceDate = GetStringFromCaptionOrHeading(titleelements.Last());
-
-                // can we do better for out of order dates/titles??
-
-                if (!DateTime.TryParse(serviceDate, out _) && DateTime.TryParse(serviceTitle, out _))
-                {
-                    // swap them
-                    var tmp = serviceDate;
-                    serviceDate = serviceTitle;
-                    serviceTitle = tmp;
-                }
-
+                string serviceTitle, serviceDate;
+                ExtractTitleAndDateFuzzy(titleelements, out serviceTitle, out serviceDate);
 
                 if (!string.IsNullOrWhiteSpace(serviceTitle) || !string.IsNullOrWhiteSpace(serviceDate))
                 {
@@ -136,15 +124,30 @@ namespace LutheRun.Elements
             return new LSBElementUnknown();
         }
 
+        private static void ExtractTitleAndDateFuzzy(IEnumerable<ILSBElement> titleelements, out string serviceTitle, out string serviceDate)
+        {
+            serviceTitle = GetStringFromCaptionOrHeading(titleelements.First());
+            // assume service date is second element
+            serviceDate = GetStringFromCaptionOrHeading(titleelements.Last());
+
+            // can we do better for out of order dates/titles??
+
+            if (!DateTime.TryParse(serviceDate, out _) && DateTime.TryParse(serviceTitle, out _))
+            {
+                // swap them
+                var tmp = serviceDate;
+                serviceDate = serviceTitle;
+                serviceTitle = tmp;
+            }
+        }
+
         public static ILSBElement GenerateEndPage(IEnumerable<ILSBElement> titleelements, LSBImportOptions options)
         {
 
             if (titleelements.Count() == 2)
             {
-                // assumes service title is first element
-                string serviceTitle = GetStringFromCaptionOrHeading(titleelements.First());
-                // assume service date is second element
-                string serviceDate = GetStringFromCaptionOrHeading(titleelements.Last());
+                string serviceTitle, serviceDate;
+                ExtractTitleAndDateFuzzy(titleelements, out serviceTitle, out serviceDate);
 
                 if (!string.IsNullOrWhiteSpace(serviceTitle) || !string.IsNullOrWhiteSpace(serviceDate))
                 {
