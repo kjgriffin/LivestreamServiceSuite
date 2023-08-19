@@ -433,6 +433,11 @@ namespace LutheRun
                     setlast = true;
                     lastselection = Camera.Center;
                 }
+                if (options.RunPIPHymnsLikeAProWithoutStutters && (nextelement?.LSBElement as ExternalPrefab)?.TypeIdentifier == "endtitle")
+                {
+                    setlast = true;
+                    lastselection = Camera.Organ;
+                }
 
 
                 if ((element.LSBElement as LSBElementCaption)?.Caption.ToLower().Contains("sermon") == true)

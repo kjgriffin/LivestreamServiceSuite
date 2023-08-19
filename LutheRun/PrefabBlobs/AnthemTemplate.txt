@@ -7,9 +7,9 @@ $>[@label::anthem-title-id$ANTHEMID]
 $>#html
 $>{
 $>$>text[title]{}
-$>$>text[composer]{}
-$>$>text[performer]{}
-$>$>text[others]{}
+$>$>text[author]{}
+$>$>text[name]{}
+$>$>text[band]{}
 $>$>
 $>}
 
