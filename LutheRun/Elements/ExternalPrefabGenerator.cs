@@ -111,11 +111,25 @@ namespace LutheRun.Elements
                 // assume service date is second element
                 string serviceDate = GetStringFromCaptionOrHeading(titleelements.Last());
 
+                // can we do better for out of order dates/titles??
+
+                if (!DateTime.TryParse(serviceDate, out _) && DateTime.TryParse(serviceTitle, out _))
+                {
+                    // swap them
+                    var tmp = serviceDate;
+                    serviceDate = serviceTitle;
+                    serviceTitle = tmp;
+                }
+
+
                 if (!string.IsNullOrWhiteSpace(serviceTitle) || !string.IsNullOrWhiteSpace(serviceDate))
                 {
                     // Since the external prefab is wrapped inside a scripted block, let the tile generate genrate the postset explicitly
+                    if (options.UseMk2CopyTitle)
+                    {
+                        return new ExternalPrefab(Mk2CopyTitleCommand(options, serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ), "copytitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
+                    }
                     return new ExternalPrefab(CopyTitleCommand(serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ, options.InferPostset, options.ServiceThemeLib), "copytitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
-
                 }
             }
 
@@ -205,7 +219,7 @@ namespace LutheRun.Elements
         {
             var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                                   .GetManifestResourceNames()
-                                  .FirstOrDefault(x => x.Contains("CopyTitle"));
+                                  .FirstOrDefault(x => x.Contains("Mk1CopyTitle"));
 
             var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                 .GetManifestResourceStream(name);
@@ -240,6 +254,52 @@ namespace LutheRun.Elements
 
             return prefabblob;
         }
+
+        private static string Mk2CopyTitleCommand(LSBImportOptions options, string serviceTitle = "", string serviceDate = "", string lsback = "", int postset = -1)
+        {
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                  .GetManifestResourceNames()
+                                  .FirstOrDefault(x => x.Contains("Mk2CopyTitle"));
+
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                .GetManifestResourceStream(name);
+
+            // wrap it into a scripted block
+            var prefabblob = "";
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                prefabblob = sr.ReadToEnd();
+            }
+
+            // inject theme
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$LIBTHEME"), "Xenon.Titles"); // TODO: allow this override?
+            // inject title
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$SERVICETITLE"), serviceTitle);
+            // inject date
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$SERVICEDATE"), serviceDate);
+
+            const string NIV = "Scripture quotations marked(NIV) are taken from the Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission of Zondervan.All rights reserved worldwide. www.zondervan.comThe “NIV” and “New International Version” are trademarks registered in the United States Patent and Trademark Office by Biblica, Inc.™";
+            string bibleack = options.ReadingTextNIVOverride ? NIV : "";
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$BIBLEACK"), bibleack);
+
+            // inject ack
+            StringBuilder sb = new StringBuilder();
+            foreach (var line in lsback.Split(Environment.NewLine))
+            {
+                sb.Append($"{line}<br>");
+            }
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$LSBACK"), sb.ToString().TrimEnd());
+            // inject postset
+            string postsetstr = "";
+            if (options.InferPostset && postset != -1)
+            {
+                postsetstr = $"::postset(last={postset})";
+            }
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$POSTSET"), postsetstr);
+
+            return prefabblob;
+        }
+
 
         private static string EndPageCommand(string serviceTitle = "")
         {

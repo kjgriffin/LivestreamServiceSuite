@@ -24,6 +24,7 @@ namespace LutheRun.Generators
         public string start { get; set; } = "";
         public string note { get; set; } = "";
         public Dictionary<string, string> macros { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> extras { get; set; } = new Dictionary<string, string>();
 
         [JsonIgnore]
         public DateTime? StartDate
@@ -41,11 +42,12 @@ namespace LutheRun.Generators
 
     internal static class XenonGenerator
     {
-        internal static (Dictionary<string, string> macros, DateTime extractedDate, string season, bool success) ApplySeasonalMacroText(List<ParsedLSBElement> service, Dictionary<string, string> macros)
+        internal static (Dictionary<string, string> macros, Dictionary<string, string> extras, DateTime extractedDate, string season, bool success) ApplySeasonalMacroText(List<ParsedLSBElement> service)
         {
             bool success = false;
             string season = "unknown";
-            Dictionary<string, string> newmacros = new Dictionary<string, string>(macros);
+            Dictionary<string, string> newmacros = new Dictionary<string, string>();
+            Dictionary<string, string> extras = new Dictionary<string, string>();
             // determine service date
 
             // try and find a caption/heading the looks like a date (this may not be the strongest way to do it...)
@@ -85,11 +87,15 @@ namespace LutheRun.Generators
                     {
                         newmacros[macro.Key] = macro.Value;
                     }
+                    foreach (var extra in sdate.extras)
+                    {
+                        extras[extra.Key] = extra.Value;
+                    }
                 }
 
             }
 
-            return (newmacros, ldate, season, success);
+            return (newmacros, extras, ldate, season, success);
         }
 
         private static List<SeasonKeyDefinition> GetKeySeasonDatesAsync()
@@ -148,7 +154,7 @@ namespace LutheRun.Generators
                 sb.AppendLine();
 
                 Dictionary<string, string> macros = options.Macros;
-                var smreq = XenonGenerator.ApplySeasonalMacroText(fullservice, macros);
+                var smreq = XenonGenerator.ApplySeasonalMacroText(fullservice);
 
                 sb.AppendLine($"// See: https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Themes".Indent(indentDepth, indentSpace));
                 if (!smreq.success)
@@ -168,10 +174,17 @@ namespace LutheRun.Generators
                     sb.AppendLine($"#var(\"{options.ServiceThemeLib}@{macro.Key}\", ```{macro.Value}```)".Indent(indentDepth, indentSpace));
                 }
 
+                // supply all the extra macros
+                foreach (var macro in smreq.extras)
+                {
+                    sb.AppendLine($"#var(\"{macro.Key}\", ```{macro.Value}```)".Indent(indentDepth, indentSpace));
+                }
+
                 // eeeewwww! but I've been backed into a corner here, since the html layout's can't handle the '"' characters in colors
                 // so I guess we just dump out any macros here???
 
                 // dump all macros in?
+                /*
                 foreach (var macro in macros)
                 {
                     // check if it's a color
@@ -187,6 +200,7 @@ namespace LutheRun.Generators
                         sb.AppendLine($"#var(\"{options.ServiceThemeLib_Anthems}@{macro.Key}\", \"#{hex}\")".Indent(indentDepth, indentSpace));
                     }
                 }
+                */
 
 
                 sb.AppendLine();

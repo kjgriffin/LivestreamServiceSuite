@@ -73,7 +73,7 @@ namespace Xenon.Renderer
         {
             while (true)
             {
-                _workAvailable.WaitOne();
+                _workAvailable.WaitOne(timeout);
                 // perform all work available
                 while (jobs.TryDequeue(out var job))
                 {

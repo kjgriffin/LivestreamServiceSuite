@@ -1,0 +1,19 @@
+﻿#scope(copytitle)
+{
+$>#var("html.Layout", "$LIBTHEME::CopyTitle")
+
+$>/// </MANUAL_UPDATE name='TitlePage Details'>
+$>#html
+$>{
+$>$>text[service-name]{$SERVICETITLE}
+$>$>text[service-type]{Worship Service}
+$>$>text[service-date]{$SERVICEDATE}
+$>$>/// </MANUAL_UPDATE name='Service Time'>
+$>$>text[service-time]{11:00 a.m.}
+$>$>text[ack-lsb]{$LSBACK}
+$>$>text[ack-bible]{$BIBLEACK}
+$>$>text[ack-ccli]{CCLI License # 524846; CSPL127841}
+$>$>img[hc-logo](HCLogo-white)
+$>$>img[church-img](HCChurch-cartoon)
+$>}$POSTSET
+}

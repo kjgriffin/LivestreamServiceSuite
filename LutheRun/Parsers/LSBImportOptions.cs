@@ -71,6 +71,8 @@ namespace LutheRun.Parsers
         [BoolSetting]
         public bool UseCopyTitle { get; set; } = true;
         [BoolSetting]
+        public bool UseMk2CopyTitle { get; set; } = true;
+        [BoolSetting]
         public bool UseTitledEnd { get; set; } = true;
         [BoolSetting]
         public bool UseThemedCreeds { get; set; } = true;
