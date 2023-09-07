@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.LayoutInfo;
@@ -142,7 +143,7 @@ namespace Xenon.SlideAssembly
             get => _Internal_SaveLayoutToLibrary;
         }
 
-        public static (bool isvalid, Image<Bgra32> main, Image<Bgra32> key) GetLayoutPreview(string layoutname, string layoutjson)
+        public static async Task< (bool isvalid, Image<Bgra32> main, Image<Bgra32> key)> GetLayoutPreview(string layoutname, string layoutjson)
         {
 
             if (LanguageKeywords.Commands.ContainsValue(layoutname))
@@ -152,7 +153,7 @@ namespace Xenon.SlideAssembly
                 {
                     if (proto.prototypicalLayoutPreviewer.IsValidLayoutJson(layoutjson))
                     {
-                        var r = proto.prototypicalLayoutPreviewer.GetPreviewForLayout(layoutjson);
+                        var r = await proto.prototypicalLayoutPreviewer.GetPreviewForLayout(layoutjson);
                         return (true, r.main, r.key);
                     }
                 }

@@ -92,43 +92,49 @@ namespace Xenon.Renderer
 
         public static async Task<Image<Bgra32>> PerformRenderWithHeadlessChrome(string html)
         {
-            // spinup a job here
-            Guid id = Guid.NewGuid();
-            jobs.Enqueue(new WorkItem
+            var _internal = await Task.Run(async () =>
             {
-                HTML = html,
-                ReqID = id,
-            });
-            _workAvailable.Set();
 
-            // wait for completion
-            bool look = true;
-            while (look)
-            {
-                _doneReady.WaitOne(timeout);
-
-                // check if we've rendered this job
-                if (_rendered.TryGetValue(id, out var res))
+                // spinup a job here
+                Guid id = Guid.NewGuid();
+                jobs.Enqueue(new WorkItem
                 {
-                    _rendered.Remove(id, out _);
-                    // keep blocking stuff again because
-                    var finished = Interlocked.Decrement(ref Completed);
-                    if (finished == 0)
+                    HTML = html,
+                    ReqID = id,
+                });
+                _workAvailable.Set();
+
+                // wait for completion
+                bool look = true;
+                while (look)
+                {
+                    _doneReady.WaitOne(timeout);
+
+                    // check if we've rendered this job
+                    if (_rendered.TryGetValue(id, out var res))
                     {
-                        _doneReady.Reset();
+                        _rendered.Remove(id, out _);
+                        // keep blocking stuff again because
+                        var finished = Interlocked.Decrement(ref Completed);
+                        if (finished == 0)
+                        {
+                            _doneReady.Reset();
+                        }
+                        return res;
                     }
-                    return res;
+                    else
+                    {
+                        // perhaps??
+                        await Task.Delay(500).ConfigureAwait(false);
+                    }
                 }
-                else
-                {
-                    // perhaps??
-                    await Task.Delay(500).ConfigureAwait(false);
-                }
-            }
 #if DEBUG
-            Debugger.Break();
+                Debugger.Break();
 #endif
-            return default(Image<Bgra32>);
+                return default(Image<Bgra32>);
+            });
+
+            return _internal;
         }
 
         private static Image<Bgra32> RenderWithHeadlessChrome(string html)
@@ -164,7 +170,7 @@ namespace Xenon.Renderer
 
         ILayoutInfoResolver<HTMLLayoutInfo> ISlideRenderer<HTMLLayoutInfo>.LayoutResolver { get => new HTMLLayoutInfo(); }
 
-        (Image<Bgra32> main, Image<Bgra32> key) ISlideLayoutPrototypePreviewer<HTMLLayoutInfo>.GetPreviewForLayout(string layoutInfo)
+        async Task<(Image<Bgra32> main, Image<Bgra32> key)> ISlideLayoutPrototypePreviewer<HTMLLayoutInfo>.GetPreviewForLayout(string layoutInfo)
         {
             HTMLLayoutInfo layout = JsonSerializer.Deserialize<HTMLLayoutInfo>(layoutInfo);
 
@@ -172,20 +178,14 @@ namespace Xenon.Renderer
             var html_key = layout.HTMLSrc_KEY;
             var css = layout.CSSSrc;
 
-            var converter = new HtmlConverter();
-
             html_main = HTML_INJECT_STYLE(html_main, css);
             html_key = HTML_INJECT_STYLE(html_key, css);
 
-            //var pngbytes_main = converter.FromHtmlString(html_main, format: ImageFormat.Png);
-            //var pngbytes_key = converter.FromHtmlString(html_key, format: ImageFormat.Png);
+            var itask = await CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_main).ConfigureAwait(false);
+            var iktask = await CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_key).ConfigureAwait(false);
 
-            //Image<Bgra32> ibmp = Image.Load<Bgra32>(pngbytes_main);
-            //Image<Bgra32> ikbmp = Image.Load<Bgra32>(pngbytes_key);
-
-
-            Image<Bgra32> ibmp = CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_main).Result;
-            Image<Bgra32> ikbmp = CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_key).Result;
+            Image<Bgra32> ibmp = itask;
+            Image<Bgra32> ikbmp = iktask;
 
             return (ibmp, ikbmp);
         }
@@ -195,16 +195,17 @@ namespace Xenon.Renderer
             return ISlideLayoutPrototypePreviewer<HTMLLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
 
-        void ISlideRenderer.VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        async Task<RenderedSlide> ISlideRenderer.VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide result)
         {
             if (slide.Format == SlideFormat.HTML)
             {
                 HTMLLayoutInfo layout = (this as ISlideRenderer<HTMLLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
-                result = RenderSlide(slide, Messages, assetResolver, layout);
+                var render = await RenderSlide(slide, Messages, assetResolver, layout);
+                return render;
             }
-
+            return result;
         }
-        public RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, IAssetResolver assetResolver, HTMLLayoutInfo layout)
+        public async Task<RenderedSlide> RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, IAssetResolver assetResolver, HTMLLayoutInfo layout)
         {
             RenderedSlide res = new RenderedSlide();
             res.MediaType = MediaType.Image;
@@ -232,16 +233,8 @@ namespace Xenon.Renderer
 
             res.RenderedAs = EXTRACT_SLIDE_TYPE(html_slide, "Liturgy");
 
-            //var converter = new HtmlConverter();
-            //var pngbytes_slide = converter.FromHtmlString(html_slide, format: ImageFormat.Png);
-            //var pngbytes_key = converter.FromHtmlString(html_key, format: ImageFormat.Png);
-
-
-            //Image<Bgra32> ibmp = Image.Load<Bgra32>(pngbytes_slide);
-            //Image<Bgra32> ikbmp = Image.Load<Bgra32>(pngbytes_key);
-
-            Image<Bgra32> ibmp = CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_slide).Result;
-            Image<Bgra32> ikbmp = CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_key).Result;
+            Image<Bgra32> ibmp = await CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_slide).ConfigureAwait(false);
+            Image<Bgra32> ikbmp = await CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_key).ConfigureAwait(false);
 
             res.Bitmap = ibmp;
             res.KeyBitmap = ikbmp;

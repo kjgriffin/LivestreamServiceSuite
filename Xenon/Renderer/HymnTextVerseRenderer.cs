@@ -4,6 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.LayoutInfo;
@@ -27,7 +28,7 @@ namespace Xenon.Renderer
         public SlideLayout Layouts { get; set; }
         public ILayoutInfoResolver<TextHymnLayoutInfo> LayoutResolver { get => new TextHymnLayoutInfo(); }
 
-        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
+        public Task<(Image<Bgra32> main, Image<Bgra32> key)> GetPreviewForLayout(string layoutInfo)
         {
             TextHymnLayoutInfo layout = JsonSerializer.Deserialize<TextHymnLayoutInfo>(layoutInfo);
 
@@ -46,7 +47,7 @@ namespace Xenon.Renderer
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.CopyrightBox, "Copyright");
             CommonPoetryTextRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.HymnContentBox);
 
-            return (ibmp, ikbmp);
+            return Task.FromResult((ibmp, ikbmp));
         }
 
         public bool IsValidLayoutJson(string json)
@@ -54,13 +55,15 @@ namespace Xenon.Renderer
             return ISlideLayoutPrototypePreviewer<TextHymnLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide result)
         {
             if (slide.Format == SlideFormat.HymnTextVerse)
             {
                 TextHymnLayoutInfo layout = (this as ISlideRenderer<TextHymnLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
-                result = RenderSlide(slide, Messages, assetResolver, layout);
+                var render = RenderSlide(slide, Messages, assetResolver, layout);
+                return Task.FromResult(render);
             }
+            return Task.FromResult(result);
         }
 
         private RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages, IAssetResolver assetResolver, TextHymnLayoutInfo layout)

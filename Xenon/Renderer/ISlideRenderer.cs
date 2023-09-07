@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Xenon.AssetManagment;
 using Xenon.Compiler;
@@ -20,7 +21,7 @@ namespace Xenon.Renderer
     }
     internal interface ISlideRenderer
     {
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result);
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide operand);
     }
     internal interface ISlideRenderer<out LayoutInfoType> where LayoutInfoType : ALayoutInfo
     {
@@ -29,7 +30,7 @@ namespace Xenon.Renderer
 
     internal interface ISlideLayoutPrototypePreviewer<out LayoutInfoType> where LayoutInfoType : ALayoutInfo
     {
-        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo);
+        public Task<(Image<Bgra32> main, Image<Bgra32> key)> GetPreviewForLayout(string layoutInfo);
 
         public bool IsValidLayoutJson(string json);
 

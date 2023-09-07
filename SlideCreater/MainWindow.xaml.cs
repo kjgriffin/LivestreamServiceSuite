@@ -852,9 +852,9 @@ namespace SlideCreater
 
             if (ofd.ShowDialog() == true)
             {
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
-                    SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>(), exportProgress); // for now ignore messages
+                    await SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>(), exportProgress); // for now ignore messages
                 });
                 ActionState = ActionState.SuccessExporting;
             }

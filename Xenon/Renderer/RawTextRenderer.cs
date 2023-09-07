@@ -52,29 +52,31 @@ namespace Xenon.Renderer
         public static string DATAKEY_KEYNAME = "keyname";
         public static string DATAKEY_RAWTEXT_TARGET = "rawtext";
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide operand)
         {
             if (slide.Format == SlideFormat.RawTextFile)
             {
-                result = new RenderedSlide();
-                result.MediaType = MediaType.Empty;
-                result.RenderedAs = "RawText";
+                var render = new RenderedSlide();
+                render.MediaType = MediaType.Empty;
+                render.RenderedAs = "RawText";
                 if (slide.Data.TryGetValue(DATAKEY_KEYNAME, out object name))
                 {
-                    result.Name = (string)name;
+                    render.Name = (string)name;
                 }
                 else
                 {
-                    Messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = $"Resource name was not specified. Will use original file name {result.Name}, but this may not produce the expected result.", ErrorName = "Resource Name Mismatch", Generator = "CopySlideRenderer", Inner = "", Level = Compiler.XenonCompilerMessageType.Warning, Token = ("", int.MaxValue) });
+                    Messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = $"Resource name was not specified. Will use original file name {render.Name}, but this may not produce the expected result.", ErrorName = "Resource Name Mismatch", Generator = "CopySlideRenderer", Inner = "", Level = Compiler.XenonCompilerMessageType.Warning, Token = ("", int.MaxValue) });
                 }
-                result.CopyExtension = ".txt";
+                render.CopyExtension = ".txt";
 
                 if (slide.Data.TryGetValue(DATAKEY_RAWTEXT_TARGET, out var text))
                 {
                     //result.Text = CommonTextContentSlideVariableReplacer.ReplaceVariablesInText((string)text, info);
-                    result.Text = (string)text;
+                    render.Text = (string)text;
                 }
+                return Task.FromResult(render);
             }
+            return Task.FromResult(operand);
         }
     }
 }

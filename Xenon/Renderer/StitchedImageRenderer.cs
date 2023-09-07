@@ -1,4 +1,6 @@
-﻿using SixLabors.ImageSharp;
+﻿using OpenQA.Selenium.Internal;
+
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
@@ -6,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.Helpers;
@@ -146,16 +149,18 @@ namespace Xenon.Renderer
             return res;
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide result)
         {
             if (slide.Format == SlideFormat.StitchedImage)
             {
                 StitchedImageSlideLayoutInfo layout = (this as ISlideRenderer<StitchedImageSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
-                result = RenderSlide(slide, Messages, assetResolver, layout);
+                var render = RenderSlide(slide, Messages, assetResolver, layout);
+                return Task.FromResult(render);
             }
+            return Task.FromResult(result);
         }
 
-        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
+        public Task<(Image<Bgra32> main, Image<Bgra32> key)> GetPreviewForLayout(string layoutInfo)
         {
             StitchedImageSlideLayoutInfo layout = JsonSerializer.Deserialize<StitchedImageSlideLayoutInfo>(layoutInfo);
 
@@ -179,7 +184,7 @@ namespace Xenon.Renderer
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.NumberBox);
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.CopyrightBox);
 
-            return (ibmp, ikbmp);
+            return Task.FromResult((ibmp, ikbmp));
         }
 
         public bool IsValidLayoutJson(string json)

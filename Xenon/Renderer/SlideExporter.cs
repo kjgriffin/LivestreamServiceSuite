@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.SlideAssembly;
@@ -84,7 +85,7 @@ namespace Xenon.Renderer
             return created;
         }
 
-        public static void ExportSlides(string directory, Project proj, List<XenonCompilerMessage> messages, IProgress<int> progress = null)
+        public static async Task ExportSlides(string directory, Project proj, List<XenonCompilerMessage> messages, IProgress<int> progress = null)
         {
             SlideRenderer slideRenderer = new SlideRenderer(proj);
 
@@ -99,7 +100,7 @@ namespace Xenon.Renderer
                 progress?.Report((int)((double)csnum / (double)TOTALSLIDES * 100d));
 
                 // render the slide
-                RenderedSlide rs = slideRenderer.RenderSlide(slide, messages);
+                RenderedSlide rs = await slideRenderer.RenderSlide(slide, messages);
 
                 if (rs.RenderedAs == "Resource")
                 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.Compiler.AST;
@@ -117,12 +118,14 @@ namespace Xenon.Renderer
             return res;
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide operand)
         {
             if (slide.Format == SlideFormat.Prefab)
             {
-                result = RenderSlide(slide, Messages, info);
+                var render = RenderSlide(slide, Messages, info);
+                return Task.FromResult(render);
             }
+            return Task.FromResult(operand);
         }
     }
 }

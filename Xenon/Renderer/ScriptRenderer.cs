@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.SlideAssembly;
@@ -28,12 +29,14 @@ namespace Xenon.Renderer
             return res;
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide operand)
         {
             if (slide.Format == SlideFormat.Script)
             {
-                result = RenderSlide(slide, Messages, info);
+                var render = RenderSlide(slide, Messages, info);
+                return Task.FromResult(render);
             }
+            return Task.FromResult(operand);
         }
     }
 }

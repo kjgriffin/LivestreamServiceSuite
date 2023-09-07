@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Xenon.AssetManagment;
 using Xenon.Compiler;
@@ -66,10 +67,10 @@ namespace Xenon.Renderer
             atsr.Layouts = proj.Layouts;
         }
 
-        public RenderedSlide RenderSlide(Slide s, List<XenonCompilerMessage> Messages)
+        public async Task<RenderedSlide> RenderSlide(Slide s, List<XenonCompilerMessage> Messages)
         {
             //var res = _RenderSlide(s, Messages);
-            var res = _ApplyRenderers(s, Messages);
+            var res = await _ApplyRenderers(s, Messages);
             res.Number = s.Number;
             res.OverridingBehaviour = s.OverridingBehaviour;
             if (s.NonRenderedMetadata.TryGetValue(XenonASTExpression.DATAKEY_CMD_SOURCECODE_LOOKUP, out var sourceCodeLookup))
@@ -127,7 +128,7 @@ namespace Xenon.Renderer
             return res;
         }
 
-        private RenderedSlide _ApplyRenderers(Slide slide, List<XenonCompilerMessage> Messages)
+        private async Task<RenderedSlide> _ApplyRenderers(Slide slide, List<XenonCompilerMessage> Messages)
         {
             RenderedSlide result = null;
             foreach (var render in Renderers)
@@ -136,7 +137,7 @@ namespace Xenon.Renderer
                 // this will enable future features
                 // in addition to what we have now 'full slide renderers' we may want to add 'post renderers' that modify exisitng slides
                 // this would allow that... though we'd need to ensure a pass order
-                render.VisitSlideForRendering(slide, this, this, Messages, ref result);
+                result = await render.VisitSlideForRendering(slide, this, this, Messages, result);
             }
             // TODO: remove once we switch everything over to the new way
             if (result == null)

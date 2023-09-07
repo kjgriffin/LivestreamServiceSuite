@@ -4,6 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.Helpers;
@@ -23,7 +24,7 @@ namespace Xenon.Renderer
         {
             return ISlideLayoutPrototypePreviewer<AdvancedImagesSlideLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
-        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
+        public Task<(Image<Bgra32> main, Image<Bgra32> key)> GetPreviewForLayout(string layoutInfo)
         {
             AdvancedImagesSlideLayoutInfo layout = JsonSerializer.Deserialize<AdvancedImagesSlideLayoutInfo>(layoutInfo);
 
@@ -39,16 +40,18 @@ namespace Xenon.Renderer
                 CommonAdvancedImageDrawingBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, advimg);
             }
 
-            return (ibmp, ikbmp);
+            return Task.FromResult((ibmp, ikbmp));
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide result)
         {
             if (slide.Format == SlideFormat.AdvancedImages)
             {
                 AdvancedImagesSlideLayoutInfo layout = (this as ISlideRenderer<AdvancedImagesSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
-                result = RenderSlide(slide, Messages, assetResolver, layout);
+                var render = RenderSlide(slide, Messages, assetResolver, layout);
+                return Task.FromResult(render);
             }
+            return Task.FromResult(result);
         }
 
         private RenderedSlide RenderSlide(Slide slide, List<Compiler.XenonCompilerMessage> messages, IAssetResolver projassets, AdvancedImagesSlideLayoutInfo layout)

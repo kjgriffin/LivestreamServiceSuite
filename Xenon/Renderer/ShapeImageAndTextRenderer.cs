@@ -4,6 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Xenon.AssetManagment;
 using Xenon.Compiler;
@@ -27,16 +28,18 @@ namespace Xenon.Renderer
             return ISlideLayoutPrototypePreviewer<ShapeImageAndTextLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide result)
         {
             if (slide.Format == SlideFormat.CustomDraw)
             {
                 ShapeImageAndTextLayoutInfo layout = (this as ISlideRenderer<ShapeImageAndTextLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
-                result = RenderSlide(slide, Messages, assetResolver, layout);
+                var render = RenderSlide(slide, Messages, assetResolver, layout);
+                return Task.FromResult(render);
             }
+            return Task.FromResult(result);
         }
 
-        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
+        public Task<(Image<Bgra32> main, Image<Bgra32> key)> GetPreviewForLayout(string layoutInfo)
         {
             ShapeImageAndTextLayoutInfo layout = JsonSerializer.Deserialize<ShapeImageAndTextLayoutInfo>(layoutInfo);
 
@@ -63,7 +66,7 @@ namespace Xenon.Renderer
                 CommonDrawingBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, image);
             }
 
-            return (ibmp, ikbmp);
+            return Task.FromResult((ibmp, ikbmp));
         }
 
 

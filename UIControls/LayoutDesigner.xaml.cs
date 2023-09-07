@@ -135,12 +135,12 @@ namespace UIControls
             }
         }
 
-        private void ShowPreviews(LayoutSourceInfo src)
+        private async Task ShowPreviews(LayoutSourceInfo src)
         {
             //string resolvedJson = ResolveLayoutMacros?.Invoke(layoutjson, LayoutName, Group, LibName);
 
             //var r = ProjectLayoutLibraryManager.GetLayoutPreview(Group, layoutjson);
-            var r = getLayoutPreview.Invoke(LayoutName, Group, LibName, src, SourceInfo.LangType);
+            var r = await getLayoutPreview.Invoke(LayoutName, Group, LibName, src, SourceInfo.LangType);
             if (r.isvalid)
             {
                 srcinvalid.Visibility = Visibility.Hidden;

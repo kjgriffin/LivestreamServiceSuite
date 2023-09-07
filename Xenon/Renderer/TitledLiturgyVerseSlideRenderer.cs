@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.Helpers;
@@ -24,7 +25,7 @@ namespace Xenon.Renderer
 
         public ILayoutInfoResolver<TitledLiturgyVerseSlideLayoutInfo> LayoutResolver { get => new TitledLiturgyVerseSlideLayoutInfo(); }
 
-        public (SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgra32> main, SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgra32> key) GetPreviewForLayout(string layoutInfo)
+        public Task<(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgra32> main, SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgra32> key)> GetPreviewForLayout(string layoutInfo)
         {
             TitledLiturgyVerseSlideLayoutInfo layout = JsonSerializer.Deserialize<TitledLiturgyVerseSlideLayoutInfo>(layoutInfo);
 
@@ -43,7 +44,7 @@ namespace Xenon.Renderer
             TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.RefBox);
             TextBoxRenderer.RenderLayoutPreview(gfx, kgfx, layout.ContentTextbox);
 
-            return (b.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>(), k.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>());
+            return Task.FromResult((b.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>(), k.ToImageSharpImage<SixLabors.ImageSharp.PixelFormats.Bgra32>()));
         }
 
         public bool IsValidLayoutJson(string json)
@@ -217,13 +218,15 @@ namespace Xenon.Renderer
             return res;
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide result)
         {
             if (slide.Format == SlideFormat.LiturgyTitledVerse)
             {
                 TitledLiturgyVerseSlideLayoutInfo layout = (this as ISlideRenderer<TitledLiturgyVerseSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
-                result = RenderSlide(slide, Messages, layout);
+                var render = RenderSlide(slide, Messages, layout);
+                return Task.FromResult(render);
             }
+            return Task.FromResult(result);
         }
     }
 }

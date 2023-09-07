@@ -3,6 +3,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.Helpers;
@@ -21,7 +22,7 @@ namespace Xenon.Renderer
 
         public ILayoutInfoResolver<_2TitleSlideLayoutInfo> LayoutResolver { get => new _2TitleSlideLayoutInfo(); }
 
-        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
+        public Task<(Image<Bgra32> main, Image<Bgra32> key)> GetPreviewForLayout(string layoutInfo)
         {
             _2TitleSlideLayoutInfo layout = JsonSerializer.Deserialize<_2TitleSlideLayoutInfo>(layoutInfo);
 
@@ -32,7 +33,7 @@ namespace Xenon.Renderer
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.MainText);
             CommonTextBoxRenderer.RenderLayoutPreview(ibmp, ikbmp, layout.SubText);
 
-            return (ibmp, ikbmp);
+            return Task.FromResult((ibmp, ikbmp));
         }
 
         public bool IsValidLayoutJson(string json)
@@ -82,13 +83,15 @@ namespace Xenon.Renderer
             return res;
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide result)
         {
             if (slide.Format == SlideFormat.TwoPartTitle)
             {
                 _2TitleSlideLayoutInfo layout = (this as ISlideRenderer<_2TitleSlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
-                result = RenderSlide(slide, Messages, assetResolver, layout);
+                var render = RenderSlide(slide, Messages, assetResolver, layout);
+                return Task.FromResult(render);
             }
+            return Task.FromResult(result);
         }
     }
 }

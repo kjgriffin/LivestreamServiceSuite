@@ -4,6 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.LayoutEngine.L2;
@@ -23,7 +24,7 @@ namespace Xenon.Renderer
             return ISlideLayoutPrototypePreviewer<ResponsiveLiturgySlideLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
 
-        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
+        public Task<(Image<Bgra32> main, Image<Bgra32> key)> GetPreviewForLayout(string layoutInfo)
         {
             ResponsiveLiturgySlideLayoutInfo layout = JsonSerializer.Deserialize<ResponsiveLiturgySlideLayoutInfo>(layoutInfo);
 
@@ -42,17 +43,19 @@ namespace Xenon.Renderer
             // preview a liturgy line in each textbox
             //_ = layout.LiturgyLineProto;
 
-            return (ibmp, ikbmp);
+            return Task.FromResult((ibmp, ikbmp));
 
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide result)
         {
             if (slide.Format == SlideFormat.ResponsiveLiturgy)
             {
                 ResponsiveLiturgySlideLayoutInfo layout = (this as ISlideRenderer<ResponsiveLiturgySlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
-                result = RenderSlide(slide, Messages, assetResolver, layout);
+                var render = RenderSlide(slide, Messages, assetResolver, layout);
+                return Task.FromResult(render);
             }
+            return Task.FromResult(result);
         }
 
         private RenderedSlide RenderSlide(Slide slide, List<XenonCompilerMessage> messages, IAssetResolver asserResolver, ResponsiveLiturgySlideLayoutInfo layout)

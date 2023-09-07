@@ -3,6 +3,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Xenon.Compiler;
 using Xenon.LayoutEngine.L2;
@@ -20,7 +21,7 @@ namespace Xenon.Renderer
 
         public ILayoutInfoResolver<TitledResponsiveLiturgySlideLayoutInfo> LayoutResolver { get => new TitledResponsiveLiturgySlideLayoutInfo(); }
 
-        public (Image<Bgra32> main, Image<Bgra32> key) GetPreviewForLayout(string layoutInfo)
+        public Task<(Image<Bgra32> main, Image<Bgra32> key)> GetPreviewForLayout(string layoutInfo)
         {
             TitledResponsiveLiturgySlideLayoutInfo layout = JsonSerializer.Deserialize<TitledResponsiveLiturgySlideLayoutInfo>(layoutInfo);
 
@@ -41,7 +42,7 @@ namespace Xenon.Renderer
             // preview a liturgy line in each textbox
             //_ = layout.LiturgyLineProto;
 
-            return (ibmp, ikbmp);
+            return Task.FromResult((ibmp, ikbmp));
         }
 
         public bool IsValidLayoutJson(string json)
@@ -49,13 +50,15 @@ namespace Xenon.Renderer
             return ISlideLayoutPrototypePreviewer<TitledResponsiveLiturgySlideLayoutInfo>._InternalDefaultIsValidLayoutJson(json);
         }
 
-        public void VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, ref RenderedSlide result)
+        public Task<RenderedSlide> VisitSlideForRendering(Slide slide, IAssetResolver assetResolver, ISlideRendertimeInfoProvider info, List<XenonCompilerMessage> Messages, RenderedSlide result)
         {
             if (slide.Format == SlideFormat.ResponsiveLiturgyTitledVerse)
             {
                 TitledResponsiveLiturgySlideLayoutInfo layout = (this as ISlideRenderer<TitledResponsiveLiturgySlideLayoutInfo>).LayoutResolver.GetLayoutInfo(slide);
-                result = RenderedSlide(slide, Messages, assetResolver, layout);
+                var render = RenderedSlide(slide, Messages, assetResolver, layout);
+                return Task.FromResult(render);
             }
+            return Task.FromResult(result);
         }
 
         private RenderedSlide RenderedSlide(Slide slide, List<XenonCompilerMessage> messages, IAssetResolver assetResolver, TitledResponsiveLiturgySlideLayoutInfo layout)
