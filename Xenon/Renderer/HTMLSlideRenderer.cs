@@ -7,6 +7,8 @@ using CoreHtmlToImage;
 
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.Firefox;
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -33,11 +35,62 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
 {
-    static class CHROME_RENDER_ENGINE
+    public enum BROWSER
     {
-        static WebDriver driver;
+        Chrome,
+        Firefox,
+        Edge,
+    }
 
-        static CHROME_RENDER_ENGINE()
+    static class WEB_RENDER_ENGINE
+    {
+        private static WebDriver driver;
+        private static bool initialized = false;
+        private static BROWSER engineType = BROWSER.Chrome;
+
+        public static void Change_Driver_Preference(BROWSER type)
+        {
+            Shutdown_Driver();
+            engineType = type;
+        }
+
+        static WebDriver PREFBROWSER
+        {
+            get
+            {
+                if (!initialized || driver == null)
+                {
+                    driver = EngineSpinup();
+                }
+                return driver;
+            }
+        }
+
+        private static WebDriver EngineSpinup()
+        {
+            initialized = true;
+            switch (engineType)
+            {
+                case BROWSER.Firefox:
+                case BROWSER.Edge:
+                    return Spinup_Edge();
+                case BROWSER.Chrome:
+                default:
+                    return Spinup_Chrome();
+            }
+        }
+
+        private static void Shutdown_Driver()
+        {
+            if (initialized)
+            {
+                driver?.Quit();
+                driver = null;
+                initialized = false;
+            }
+        }
+
+        private static WebDriver Spinup_Chrome()
         {
             ChromeOptions opts = new ChromeOptions();
             opts.AddArgument("window-size=1920x1080");
@@ -46,13 +99,61 @@ namespace Xenon.Renderer
             opts.AddArgument("--headless");
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
-            driver = new ChromeDriver(service, opts);
+            var _driver = new ChromeDriver(service, opts);
 
-            _workerThread = new Thread(RunJobs);
+            StartDriverThread();
+
             _workerThread.Name = "CHROME_RENDER_THREAD";
-            _workerThread.IsBackground = true;
-            _workerThread.Start();
+
+            return _driver;
         }
+        private static WebDriver Spinup_Edge()
+        {
+            EdgeOptions opts = new EdgeOptions();
+            opts.AddArgument("window-size=1920x1080");
+            opts.AddArgument("--hide-scrollbars");
+            opts.AddArgument("--no--sandbox");
+            opts.AddArgument("--headless");
+            EdgeDriverService service = EdgeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            var _driver = new EdgeDriver(service, opts);
+
+            StartDriverThread();
+
+            _workerThread.Name = "EDGE_RENDER_THREAD";
+
+            return _driver;
+        }
+        private static WebDriver Spinup_Firefox()
+        {
+            FirefoxOptions opts = new FirefoxOptions();
+            opts.AddArgument("window-size=1920x1080");
+            opts.AddArgument("--hide-scrollbars");
+            opts.AddArgument("--no--sandbox");
+            opts.AddArgument("--headless");
+            FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            var _driver = new FirefoxDriver(service, opts);
+
+            StartDriverThread();
+
+            _workerThread.Name = "FIREFOX_RENDER_THREAD";
+
+            return _driver;
+        }
+
+
+        private static void StartDriverThread()
+        {
+            if (!(_workerThread?.IsAlive == true))
+            {
+                _workerThread = new Thread(RunJobs);
+                _workerThread.IsBackground = true;
+                _workerThread.Start();
+            }
+        }
+
+
 
         class WorkItem
         {
@@ -69,7 +170,7 @@ namespace Xenon.Renderer
         static readonly TimeSpan timeout = TimeSpan.FromSeconds(3);
 
 
-        public static void RunJobs()
+        private static void RunJobs()
         {
             while (true)
             {
@@ -77,7 +178,7 @@ namespace Xenon.Renderer
                 // perform all work available
                 while (jobs.TryDequeue(out var job))
                 {
-                    var img = RenderWithHeadlessChrome(job.HTML);
+                    var img = RenderWithHeadlessBrowser(job.HTML);
                     _rendered[job.ReqID] = img;
                     Interlocked.Increment(ref Completed);
                 }
@@ -90,8 +191,13 @@ namespace Xenon.Renderer
             }
         }
 
-        public static async Task<Image<Bgra32>> PerformRenderWithHeadlessChrome(string html)
+        public static async Task<Image<Bgra32>> PerformRenderWithHeadlessBrowser(string html)
         {
+            if (!initialized)
+            {
+                EngineSpinup();
+            }
+
             var _internal = await Task.Run(async () =>
             {
 
@@ -137,7 +243,7 @@ namespace Xenon.Renderer
             return _internal;
         }
 
-        private static Image<Bgra32> RenderWithHeadlessChrome(string html)
+        private static Image<Bgra32> RenderWithHeadlessBrowser(string html)
         {
 
             var htmlFile = Path.GetTempFileName() + ".html";
@@ -150,8 +256,8 @@ namespace Xenon.Renderer
             // get it out of the project's tmp folder
 
             string content = "file:///" + htmlFile;
-            driver.Navigate().GoToUrl(content);
-            Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
+            PREFBROWSER.Navigate().GoToUrl(content);
+            Screenshot ss = ((ITakesScreenshot)PREFBROWSER).GetScreenshot();
             var img = Image.Load<Bgra32>(ss.AsByteArray);
 
             // cleanup up
@@ -181,8 +287,8 @@ namespace Xenon.Renderer
             html_main = HTML_INJECT_STYLE(html_main, css);
             html_key = HTML_INJECT_STYLE(html_key, css);
 
-            var itask = await CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_main).ConfigureAwait(false);
-            var iktask = await CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_key).ConfigureAwait(false);
+            var itask = await WEB_RENDER_ENGINE.PerformRenderWithHeadlessBrowser(html_main).ConfigureAwait(false);
+            var iktask = await WEB_RENDER_ENGINE.PerformRenderWithHeadlessBrowser(html_key).ConfigureAwait(false);
 
             Image<Bgra32> ibmp = itask;
             Image<Bgra32> ikbmp = iktask;
@@ -233,8 +339,8 @@ namespace Xenon.Renderer
 
             res.RenderedAs = EXTRACT_SLIDE_TYPE(html_slide, "Liturgy");
 
-            Image<Bgra32> ibmp = await CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_slide).ConfigureAwait(false);
-            Image<Bgra32> ikbmp = await CHROME_RENDER_ENGINE.PerformRenderWithHeadlessChrome(html_key).ConfigureAwait(false);
+            Image<Bgra32> ibmp = await WEB_RENDER_ENGINE.PerformRenderWithHeadlessBrowser(html_slide).ConfigureAwait(false);
+            Image<Bgra32> ikbmp = await WEB_RENDER_ENGINE.PerformRenderWithHeadlessBrowser(html_key).ConfigureAwait(false);
 
             res.Bitmap = ibmp;
             res.KeyBitmap = ikbmp;

@@ -2073,5 +2073,29 @@ namespace SlideCreater
                 // silent fail?
             }
         }
+
+        private void ClickRenderOptions_Chrome(object sender, RoutedEventArgs e)
+        {
+            mirenderoptions_chrome.IsChecked = true;
+            mirenderoptions_edge.IsChecked = false;
+            mirenderoptions_firefox.IsChecked = false;
+            builder.Configure_WebRenderEngine(BROWSER.Chrome);
+        }
+
+        private void ClickRenderOptions_Edge(object sender, RoutedEventArgs e)
+        {
+            mirenderoptions_chrome.IsChecked = false;
+            mirenderoptions_edge.IsChecked = true;
+            mirenderoptions_firefox.IsChecked = false;
+            builder.Configure_WebRenderEngine(BROWSER.Edge);
+        }
+
+        private void ClickRenderOptions_Firefox(object sender, RoutedEventArgs e)
+        {
+            mirenderoptions_chrome.IsChecked = false;
+            mirenderoptions_edge.IsChecked = false;
+            mirenderoptions_firefox.IsChecked = true;
+            builder.Configure_WebRenderEngine(BROWSER.Firefox);
+        }
     }
 }

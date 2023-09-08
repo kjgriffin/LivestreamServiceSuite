@@ -11,6 +11,8 @@ using Xenon.Helpers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
+using static Xenon.Renderer.WEB_RENDER_ENGINE;
+
 namespace Xenon.Compiler
 {
 
@@ -20,6 +22,7 @@ namespace Xenon.Compiler
         long _failedslides;
         long _completedslidecount;
         long _reusedslides;
+
 
         public Project Project { get; private set; }
 
@@ -247,6 +250,13 @@ namespace Xenon.Compiler
             }
         }
 
+
+        public void Configure_WebRenderEngine(BROWSER type)
+        {
+            // this is a blocking call, so use a new task/thread so we don't deadlock a UI by accident
+            CleanSlides();
+            Task.Run(() => WEB_RENDER_ENGINE.Change_Driver_Preference(type));
+        }
 
     }
 }

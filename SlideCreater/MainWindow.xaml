@@ -116,6 +116,10 @@
             <MenuItem Header="Options">
                 <MenuItem Foreground="Black" Name="miRenderMode" Click="ClickRenderModeToggle" IsCheckable="True" IsChecked="true" Header="Parallel Rendering"></MenuItem>
                 <MenuItem Foreground="Black" Name="miRenderClean" Click="ClickRenderFromClean" IsCheckable="True" IsChecked="false" Header="Clean Pre-Render"></MenuItem>
+                <Separator></Separator>
+                <MenuItem  Foreground="Black" Name="mirenderoptions_chrome" Click="ClickRenderOptions_Chrome" Header="Render with Chrome" IsCheckable="True" IsChecked="True"></MenuItem>
+                <MenuItem  Foreground="Black" Name="mirenderoptions_edge" Click="ClickRenderOptions_Edge" Header="Render with Edge" IsCheckable="True" IsChecked="False"></MenuItem>
+                <MenuItem  Foreground="Black" Name="mirenderoptions_firefox" Click="ClickRenderOptions_Firefox" Header="Render with Firefox" IsCheckable="True" IsChecked="False"></MenuItem>
             </MenuItem>
             <MenuItem Header="Import">
                 <MenuItem  Foreground="Black" Name="miimport" Click="ClickImportService" Header="Import from LSB Service">
