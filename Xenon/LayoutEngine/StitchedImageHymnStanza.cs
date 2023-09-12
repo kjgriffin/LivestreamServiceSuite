@@ -105,6 +105,12 @@ namespace Xenon.LayoutEngine
 
         public LSBPairedHymnLine GetLine(int line)
         {
+            if (line >= pairedlines.Count)
+            {
+                return new LSBPairedHymnLine(
+                        LSBImageResource.GetDefault(),
+                        LSBImageResource.GetDefault());
+            }
             return pairedlines[line];
         }
 
@@ -131,16 +137,19 @@ namespace Xenon.LayoutEngine
     {
         public string AssetRef { get; private set; }
         public SixLabors.ImageSharp.Size Size { get; private set; }
-        //public LSBImageResource(string assetref, Size size)
-        //{
-        //AssetRef = assetref;
-        //Size = size;
-        //}
+
         public LSBImageResource(string assetref, SixLabors.ImageSharp.Size size)
         {
             AssetRef = assetref;
             // prevent muation by copying this
             Size = new SixLabors.ImageSharp.Size(size.Width, size.Height);
+        }
+
+        static LSBImageResource DEFAULT_EMPTY = new LSBImageResource("", new SixLabors.ImageSharp.Size(1, 1));
+
+        public static LSBImageResource GetDefault()
+        {
+            return DEFAULT_EMPTY;
         }
     }
 
