@@ -90,9 +90,13 @@ namespace Xenon.Renderer
 
                         hoff += src.Height;
                     }
+                    catch(NullReferenceException ex)
+                    {
+                        messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = "Error loading image (not found)", ErrorName = "Error Loading Asset", Generator = "StitchedImageRenderer", Inner = ex.Message, Level = Compiler.XenonCompilerMessageType.Error, Token = image.AssetRef });
+                    }
                     catch (Exception ex)
                     {
-                        messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = "Error loading image", ErrorName = "Error Loading Asset", Generator = "StitchedImageRenderer", Inner = ex.Message, Level = Compiler.XenonCompilerMessageType.Error, Token = image.AssetRef });
+                        messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = "Error loading image (unknown)", ErrorName = "Error Loading Asset", Generator = "StitchedImageRenderer", Inner = ex.Message, Level = Compiler.XenonCompilerMessageType.Error, Token = image.AssetRef });
                         return null;
                     }
                 }
