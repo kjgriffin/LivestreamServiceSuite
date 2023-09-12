@@ -255,7 +255,7 @@ namespace Xenon.Compiler
         {
             // this is a blocking call, so use a new task/thread so we don't deadlock a UI by accident
             CleanSlides();
-            Task.Run(() => WEB_RENDER_ENGINE.Change_Driver_Preference(type));
+            Task.Run(() => BROWSER_RENDER_ENGINE_MK2.Change_Driver_Preference(type));
         }
 
     }

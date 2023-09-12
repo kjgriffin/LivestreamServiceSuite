@@ -42,6 +42,129 @@ namespace Xenon.Renderer
         Edge,
     }
 
+    static class BROWSER_RENDER_ENGINE_MK2
+    {
+        static volatile BROWSER _browserPref = BROWSER.Chrome;
+        static volatile Dictionary<BROWSER, WebDriver> _drivers = new Dictionary<BROWSER, WebDriver>();
+
+        static volatile object _renderLock = new object();
+        static volatile object _initLock = new object();
+
+        public static void Change_Driver_Preference(BROWSER type)
+        {
+            _browserPref = type;
+        }
+
+
+        #region Driver Spinup
+        private static WebDriver Spinup_Chrome()
+        {
+            ChromeOptions opts = new ChromeOptions();
+            opts.AddArgument("window-size=1920x1080");
+            opts.AddArgument("--hide-scrollbars");
+            opts.AddArgument("--no--sandbox");
+            opts.AddArgument("--headless");
+            ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            var _driver = new ChromeDriver(service, opts);
+            return _driver;
+        }
+        private static WebDriver Spinup_Edge()
+        {
+            EdgeOptions opts = new EdgeOptions();
+            opts.AddArgument("window-size=1920x1080");
+            opts.AddArgument("--hide-scrollbars");
+            opts.AddArgument("--no--sandbox");
+            opts.AddArgument("--headless");
+            EdgeDriverService service = EdgeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            var _driver = new EdgeDriver(service, opts);
+            return _driver;
+        }
+        private static WebDriver Spinup_Firefox()
+        {
+            FirefoxOptions opts = new FirefoxOptions();
+            opts.AddArgument("window-size=1920x1080");
+            opts.AddArgument("--hide-scrollbars");
+            opts.AddArgument("--no--sandbox");
+            opts.AddArgument("--headless");
+            FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            var _driver = new FirefoxDriver(service, opts);
+            return _driver;
+        }
+        #endregion
+
+        static Task<WebDriver> InitTask(BROWSER type)
+        {
+            WebDriver driver;
+            lock (_initLock)
+            {
+                if (_drivers.ContainsKey(type))
+                {
+                    return Task.FromResult(_drivers[type]);
+                }
+                switch (_browserPref)
+                {
+                    case BROWSER.Edge:
+                        driver = Spinup_Edge();
+                        break;
+                    case BROWSER.Firefox:
+                        driver = Spinup_Firefox();
+                        break;
+                    case BROWSER.Chrome:
+                    default:
+                        driver = Spinup_Chrome();
+                        break;
+                }
+                _drivers[_browserPref] = driver;
+            }
+            return Task.FromResult(driver);
+        }
+
+        public static async Task<Image<Bgra32>> PerformRenderWithHeadlessBrowser(string html)
+        {
+            WebDriver driver;
+            if (!_drivers.TryGetValue(_browserPref, out driver))
+            {
+                // get a new one spun up
+                await Task.Run(async () =>
+                {
+                    driver = await InitTask(_browserPref);
+                });
+            }
+
+
+            return await Task.Run(() => RenderWithHeadlessBrowser(html, driver));
+        }
+
+        private static Image<Bgra32> RenderWithHeadlessBrowser(string html, WebDriver driver)
+        {
+
+            lock (_renderLock)
+            {
+                var htmlFile = Path.GetTempFileName() + ".html";
+                using (StreamWriter sw = new StreamWriter(htmlFile))
+                {
+                    sw.Write(html);
+                }
+
+                // hmmmm, looks like we need a file on disk for this.
+                // get it out of the project's tmp folder
+
+                string content = "file:///" + htmlFile;
+                driver.Navigate().GoToUrl(content);
+                Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
+                var img = Image.Load<Bgra32>(ss.AsByteArray);
+
+                return img;
+            }
+        }
+
+
+    }
+
+
     static class WEB_RENDER_ENGINE
     {
         private static WebDriver driver;
@@ -95,6 +218,13 @@ namespace Xenon.Renderer
         {
             if (initialized)
             {
+                // cancel all pending work
+                _rendered.Clear();
+                _workAvailable.Reset();
+                jobs.Clear();
+                _doneReady.Reset();
+
+
                 driver?.Quit();
                 driver = null;
                 initialized = false;
@@ -302,8 +432,8 @@ namespace Xenon.Renderer
             html_main = HTML_INJECT_STYLE(html_main, css);
             html_key = HTML_INJECT_STYLE(html_key, css);
 
-            var itask = await WEB_RENDER_ENGINE.PerformRenderWithHeadlessBrowser(html_main).ConfigureAwait(false);
-            var iktask = await WEB_RENDER_ENGINE.PerformRenderWithHeadlessBrowser(html_key).ConfigureAwait(false);
+            var itask = await BROWSER_RENDER_ENGINE_MK2.PerformRenderWithHeadlessBrowser(html_main).ConfigureAwait(false);
+            var iktask = await BROWSER_RENDER_ENGINE_MK2.PerformRenderWithHeadlessBrowser(html_key).ConfigureAwait(false);
 
             Image<Bgra32> ibmp = itask;
             Image<Bgra32> ikbmp = iktask;
@@ -354,8 +484,8 @@ namespace Xenon.Renderer
 
             res.RenderedAs = EXTRACT_SLIDE_TYPE(html_slide, "Liturgy");
 
-            Image<Bgra32> ibmp = await WEB_RENDER_ENGINE.PerformRenderWithHeadlessBrowser(html_slide).ConfigureAwait(false);
-            Image<Bgra32> ikbmp = await WEB_RENDER_ENGINE.PerformRenderWithHeadlessBrowser(html_key).ConfigureAwait(false);
+            Image<Bgra32> ibmp = await BROWSER_RENDER_ENGINE_MK2.PerformRenderWithHeadlessBrowser(html_slide).ConfigureAwait(false);
+            Image<Bgra32> ikbmp = await BROWSER_RENDER_ENGINE_MK2.PerformRenderWithHeadlessBrowser(html_key).ConfigureAwait(false);
 
             res.Bitmap = ibmp;
             res.KeyBitmap = ikbmp;
