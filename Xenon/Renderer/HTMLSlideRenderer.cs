@@ -45,7 +45,7 @@ namespace Xenon.Renderer
     static class WEB_RENDER_ENGINE
     {
         private static WebDriver driver;
-        private static bool initialized = false;
+        private static volatile bool initialized = false;
         private static BROWSER engineType = BROWSER.Chrome;
 
         public static void Change_Driver_Preference(BROWSER type)
@@ -60,23 +60,34 @@ namespace Xenon.Renderer
             {
                 if (!initialized || driver == null)
                 {
-                    driver = EngineSpinup();
+                    EngineSpinup();
                 }
                 return driver;
             }
         }
 
-        private static WebDriver EngineSpinup()
+        private static object _singleInitLock = new object();
+        private static void EngineSpinup()
         {
-            initialized = true;
-            switch (engineType)
+            lock (_singleInitLock)
             {
-                case BROWSER.Firefox:
-                case BROWSER.Edge:
-                    return Spinup_Edge();
-                case BROWSER.Chrome:
-                default:
-                    return Spinup_Chrome();
+                if (!initialized)
+                {
+                    switch (engineType)
+                    {
+                        case BROWSER.Firefox:
+                            driver = Spinup_Firefox();
+                            break;
+                        case BROWSER.Edge:
+                            driver = Spinup_Edge();
+                            break;
+                        case BROWSER.Chrome:
+                        default:
+                            driver = Spinup_Chrome();
+                            break;
+                    }
+                    initialized = true;
+                }
             }
         }
 
@@ -149,7 +160,11 @@ namespace Xenon.Renderer
             {
                 _workerThread = new Thread(RunJobs);
                 _workerThread.IsBackground = true;
-                _workerThread.Start();
+
+                if (_workerThread.ThreadState.HasFlag(System.Threading.ThreadState.Unstarted))
+                {
+                    _workerThread.Start();
+                }
             }
         }
 
