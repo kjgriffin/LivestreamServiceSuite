@@ -80,7 +80,7 @@
 		</Span>
 
 		<Span foreground="#ffededed" multiline="true">
-			<Begin>(?&lt;=script)\s*{</Begin>
+			<Begin>(?&lt;=\#script)(?!e)</Begin>
 			<End>}</End>
 			<RuleSet>
 				<Span foreground="#ff3ea84e">
@@ -94,6 +94,49 @@
 				<Span foreground="#ffc7cc39" ruleSet="ScriptCmdLine">
 					<Begin>.*(?>:)</Begin>
 					<End>;</End>
+				</Span>
+			</RuleSet>
+		</Span>
+
+		<Span foreground="#fff542da" multiline="true">
+			<Begin>&gt;&gt;pilot</Begin>
+			<End>(?&lt;=})</End>
+			<RuleSet>
+				<Span foreground="#fff542da" multiline="true">
+					<Begin>{</Begin>
+					<End>}</End>
+					<RuleSet>
+						<Span foreground="#ff42e0f5">
+							<Begin>&lt;</Begin>
+							<End>&gt;</End>
+						</Span>
+						<Span foreground="#ffededed" multiline="true">
+							<Begin>{</Begin>
+							<End>}</End>
+							<RuleSet>
+								<Span foreground="#ff2da0ff">
+									<Begin>(run|emgrun)</Begin>
+									<End>(?=\[)</End>
+								</Span>
+								<Span foreground="#ff28de77">
+									<Begin>(?&lt;=\[)</Begin>
+									<End>(?=\])</End>
+								</Span>
+								<Span foreground="#ffa3b354">
+									<Begin>(?&lt;=\()</Begin>
+									<End>(?=\))</End>
+								</Span>
+								<Span foreground="#ffff8f2d">
+									<Begin>(?&lt;=@)</Begin>
+									<End>(?=:)</End>
+								</Span>
+								<Span foreground="#ffa3b354">
+									<Begin>(?&lt;=:)</Begin>
+									<End>(?=;)</End>
+								</Span>
+							</RuleSet>
+						</Span>
+					</RuleSet>
 				</Span>
 			</RuleSet>
 		</Span>
@@ -148,7 +191,7 @@
 			<Begin>(?&lt;=@).</Begin>
 			<End>.(?=:)</End>
 		</Span>
-	
+
 		<Span foreground="#ff9cd629">
 			<Begin>(?&lt;=:).</Begin>
 			<End>.(?=[;\[\(])</End>
@@ -167,8 +210,6 @@
 			<End>.(?=\])</End>
 		</Span>
 		<Rule foreground="#ffededed">\]</Rule>
-
-
 	</RuleSet>
 
 
