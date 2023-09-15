@@ -80,23 +80,55 @@
 		</Span>
 
 		<Span foreground="#ffededed" multiline="true">
-			<Begin>(?&lt;=\#script)(?!e)</Begin>
+			<Begin>(?&lt;=\#dynamiccontroller)</Begin>
 			<End>}</End>
 			<RuleSet>
-				<Span foreground="#ff3ea84e">
-					<Begin>\#</Begin>
-					<End>;</End>
+				<Span foreground="#ffededed" multiline="true" ruleSet="ScriptBody">
+					<Begin>(?&lt;=\[Globals\])</Begin>
+					<End>}</End>
 				</Span>
-				<Span foreground="#ff2cbfb1" ruleSet="ScriptCmdLine">
-					<Begin>@</Begin>
-					<End>;</End>
-				</Span>
-				<Span foreground="#ffc7cc39" ruleSet="ScriptCmdLine">
-					<Begin>.*(?>:)</Begin>
-					<End>;</End>
+				<Span foreground="#ffededed" multiline="true">
+					<Begin>(?&lt;=\[TButton\])</Begin>
+					<End>}</End>
+					<RuleSet>
+						<Span foreground="#ffededed" multiline="true">
+							<Begin>(?&lt;=draw)</Begin>
+							<End>}</End>
+							<RuleSet>
+								<Span foreground="#ff68ede9">
+									<Begin>(?&lt;=&lt;)</Begin>
+									<End>(?=&gt;)</End>
+								</Span>
+								<Span foreground="#ff82befa">
+									<Begin>\w+(?==)</Begin>
+									<End>(?&lt;==)</End>
+								</Span>
+								<Span foreground="#ffededed">
+									<Begin>(?&lt;==)</Begin>
+									<End>(?=;)</End>
+								</Span>
+							</RuleSet>
+						</Span>
+						<Span foreground="#ffededed" multiline="true" ruleSet="ScriptBody">
+							<Begin>(?&lt;=fire)</Begin>
+							<End>}</End>
+						</Span>
+					</RuleSet>
 				</Span>
 			</RuleSet>
 		</Span>
+
+
+		<Span foreground="#ffededed" multiline="true" ruleSet="ScriptBody">
+			<Begin>(?&lt;=\#script)(?!e)</Begin>
+			<End>}</End>
+		</Span>
+
+		<Span foreground="#ffededed" multiline="true" ruleSet="ScriptBody">
+			<Begin>(?&lt;=\#upnext)</Begin>
+			<End>}</End>
+		</Span>
+
 
 		<Span foreground="#fff542da" multiline="true">
 			<Begin>&gt;&gt;pilot</Begin>
@@ -186,17 +218,35 @@
 		</Keywords>
 	</RuleSet>
 
+	<RuleSet name="ScriptBody">
+		<Span foreground="#ff8354b3">
+			<Begin>!</Begin>
+			<End>(?=;)</End>
+		</Span>
+		<Span foreground="#ff3ea84e">
+			<Begin>\#</Begin>
+			<End>;</End>
+		</Span>
+		<Span foreground="#ff2cbfb1" ruleSet="ScriptCmdLine">
+			<Begin>@</Begin>
+			<End>;</End>
+		</Span>
+		<Span foreground="#ffc7cc39" ruleSet="ScriptCmdLine">
+			<Begin>.*(?>:)</Begin>
+			<End>;</End>
+		</Span>
+	</RuleSet>
+
+
 	<RuleSet name="ScriptCmdLine">
 		<Span foreground="#ff37acd4">
 			<Begin>(?&lt;=@).</Begin>
 			<End>.(?=:)</End>
 		</Span>
-
 		<Span foreground="#ff9cd629">
 			<Begin>(?&lt;=:).</Begin>
 			<End>.(?=[;\[\(])</End>
 		</Span>
-
 		<Rule foreground="#ffededed">\(</Rule>
 		<Span foreground="#ffe84920">
 			<Begin>(?&lt;=\().</Begin>
