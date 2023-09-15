@@ -1,0 +1,18 @@
+﻿#scope(Nicene Creed)
+{
+$>#scope(First Article)
+$>{
+$>$>#var("html.Layout", "Xenon.Creeds::html.NiceneCreed-Article1")
+$>$>#html{}
+$>}
+$>#scope(Second Article)
+$>{
+$>$>#var("html.Layout", "Xenon.Creeds::html.NiceneCreed-Article2")
+$>$>#html{}
+$>}
+$>#scope(Third Article)
+$>{
+$>$>#var("html.Layout", "Xenon.Creeds::html.NiceneCreed-Article3")
+$>$>#html{}
+$>}$POSTSET$
+}

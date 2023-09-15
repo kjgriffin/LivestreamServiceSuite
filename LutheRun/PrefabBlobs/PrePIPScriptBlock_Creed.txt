@@ -4,7 +4,7 @@
 
 $>first=#script
 $>{
-$>#PIP Creed;
+$>$>#PIP Creed;
 $>$>!displaysrc='Resource_#_forslide_#.png';
 $>$>!keysrc='Resource_#_forkey_#.png';
 $>$>@arg0:DSK1Off[Kill Key];

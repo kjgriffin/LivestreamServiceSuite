@@ -596,8 +596,7 @@ namespace LutheRun.Parsers
                         ServiceElements.Add(new ParsedLSBElement
                         {
                             LSBElement = new LSBElementIsPrefab(prefabs[ctext], element.StrippedText(), element, BlockType.CREED),
-                            Generator = $"{parGen}; (E) => E has <Caption> [Flags=UseThemedCreeds]",
-                            SourceElements = element.ItemAsEnumerable(),
+                            Generator = $"{parGen}; (E) => E has <Caption>",
                             ParentSourceElement = parent,
                             Ancestory = p,
                         });
@@ -608,11 +607,13 @@ namespace LutheRun.Parsers
                 {
                     if (prefabsMkII.Keys.Contains(ctext))
                     {
+                        string creedName = prefabsMkII[ctext] + (LSBImportOptions.ThemeCreedsWithHTML ? "HTML" : "") + ".txt";
+                        string reason = "[Flags=UseThemedCreeds" + (LSBImportOptions.ThemeCreedsWithHTML ? ",ThemeCreedsWithHTML]" : "]");
                         // use a prefab instead
                         ServiceElements.Add(new ParsedLSBElement
                         {
-                            LSBElement = ExternalPrefabGenerator.GenerateCreed(prefabsMkII[ctext], LSBImportOptions),
-                            Generator = $"{parGen}; (E) => E has <Caption>",
+                            LSBElement = ExternalPrefabGenerator.GenerateCreed(creedName, LSBImportOptions),
+                            Generator = $"{parGen}; (E) => E has <Caption> {reason}",
                             SourceElements = element.ItemAsEnumerable(),
                             ParentSourceElement = parent,
                             Ancestory = p,

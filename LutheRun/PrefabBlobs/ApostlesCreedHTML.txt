@@ -1,0 +1,5 @@
+﻿#scope(Apostles Creed)
+{
+$>#var("html.Layout", "Xenon.Creeds::html.ApostlesCreed")
+$>#html{}$POSTSET$
+}

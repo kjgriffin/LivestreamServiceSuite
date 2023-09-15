@@ -167,7 +167,7 @@ namespace LutheRun.Elements
 
             var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                            .GetManifestResourceNames()
-                           .Where(n => n.StartsWith("LutheRun.PrefabBlobs") && n.Contains(creedtype))
+                           .Where(n => n.StartsWith("LutheRun.PrefabBlobs") && n.EndsWith(creedtype))
                            .FirstOrDefault();
 
             string txtcmd = "";

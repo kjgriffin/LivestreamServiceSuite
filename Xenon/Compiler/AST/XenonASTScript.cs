@@ -215,6 +215,8 @@ namespace Xenon.Compiler.AST
 
         private static List<(string, string)> GetContextualSuggestionsForAction(string action, List<(string name, AssetType type)> knownAssets)
         {
+            var conditionless = Regex.Match(action, "^\\s*@(<.*>)?(?<line>.*)").Groups["line"]?.Value ?? action;
+            action = conditionless;
             List<(string, string)> suggestions = new List<(string, string)>();
             if (action.StartsWith("@"))
             {

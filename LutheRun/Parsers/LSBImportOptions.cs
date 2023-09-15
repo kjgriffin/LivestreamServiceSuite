@@ -77,6 +77,8 @@ namespace LutheRun.Parsers
         [BoolSetting]
         public bool UseThemedCreeds { get; set; } = true;
         [BoolSetting]
+        public bool ThemeCreedsWithHTML { get; set; } = true;
+        [BoolSetting]
         public bool UsePIPCreeds { get; set; } = true;
         [BoolSetting]
         public bool UseThemedHymns { get; set; } = true;
