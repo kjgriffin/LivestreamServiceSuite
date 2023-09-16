@@ -27,12 +27,14 @@
     <None Remove="PrefabBlobs\PrePIPScriptBlock_Hymn-std.txt" />
     <None Remove="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-fast.txt" />
     <None Remove="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-std.txt" />
+    <None Remove="PrefabBlobs\SermonHTML.txt" />
     <None Remove="PrefabBlobs\UpNext_Numbered.txt" />
     <None Remove="PrefabBlobs\UpNext_UnNumbered.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="PrefabBlobs\AnthemPanel.txt" />
+    <EmbeddedResource Include="PrefabBlobs\SermonHTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\ApostlesCreedHTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\LordsPrayerHTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\Mk2CopyTitle.txt" />

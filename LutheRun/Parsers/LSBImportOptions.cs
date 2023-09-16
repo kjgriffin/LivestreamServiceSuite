@@ -93,6 +93,8 @@ namespace LutheRun.Parsers
 
         [BoolSetting]
         public bool ExpandAnthemsForAutomation { get; internal set; } = true;
+        [BoolSetting]
+        public bool PreachWithHTMLTitles { get; internal set; } = true;
 
         [BoolSetting]
         public bool ExpandSermonWithAutoShutdown { get; internal set; } = true;
