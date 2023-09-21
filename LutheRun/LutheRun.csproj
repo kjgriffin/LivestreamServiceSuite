@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="PrefabBlobs\AllSubPanels.txt" />
     <None Remove="PrefabBlobs\AnthemPanel.txt" />
     <None Remove="PrefabBlobs\AnthemTemplate.txt" />
     <None Remove="PrefabBlobs\ApostlesCreed.txt" />
@@ -28,12 +29,15 @@
     <None Remove="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-fast.txt" />
     <None Remove="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-std.txt" />
     <None Remove="PrefabBlobs\SermonHTML.txt" />
+    <None Remove="PrefabBlobs\SubPaneledAnthemTemplate.txt" />
     <None Remove="PrefabBlobs\UpNext_Numbered.txt" />
     <None Remove="PrefabBlobs\UpNext_UnNumbered.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="PrefabBlobs\AllSubPanels.txt" />
     <EmbeddedResource Include="PrefabBlobs\AnthemPanel.txt" />
+    <EmbeddedResource Include="PrefabBlobs\SubPaneledAnthemTemplate.txt" />
     <EmbeddedResource Include="PrefabBlobs\SermonHTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\ApostlesCreedHTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\LordsPrayerHTML.txt" />

@@ -110,7 +110,7 @@ namespace LutheRun
                     if (options.OnlyKnownCaptions)
                     {
                         // removed 'postlude' since it's now handled via end title
-                        if (new[] { "bells", "prelude", "anthem", "sermon", "announcements", "offering" }.Any(c => caption.Caption.ToLower().Contains(c)))
+                        if (new[] { "bells", "prelude", "anthem", "sermon", "announcements", "offering", "praise chorus", "chorus" }.Any(c => caption.Caption.ToLower().Contains(c)))
                         {
                             //trimmed.Add(element);
                             element.FilterFromOutput = false;
@@ -234,6 +234,27 @@ namespace LutheRun
                 {
                     newService.Add(element);
                 }
+            }
+
+            if (options.RunWithSubPanels)
+            {
+                var cmdtxt = ExternalPrefabGenerator.PrepareBlob("AllSubPanels");
+                newService.Add(new ParsedLSBElement
+                {
+                    LSBElement = new ExternalPrefab(cmdtxt, "std-panel-defs", BlockType.IGNORED) { IndentReplacementIndentifier = "$>" },
+                    AddedByInference = true,
+                    Ancestory = Guid.NewGuid(),
+                    BlockType = BlockType.IGNORED,
+                    CameraUse = new CameraUsage(),
+                    ConsiderForServicification = true,
+                    ElementOrder = 0,
+                    FilterFromOutput = false,
+                    Generator = "ElementExpandification:: PANEL DEFS",
+                    HasWingsForFlighPlanning = false,
+                    //ParentSourceElement = null,
+                    //SourceElements = null,
+                    XenonCode = "TEST...",
+                });
             }
 
             return newService;

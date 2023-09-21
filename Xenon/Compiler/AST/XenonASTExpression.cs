@@ -318,11 +318,19 @@ namespace Xenon.Compiler.AST
 
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.HTML]))
             {
-                XenonASTHTML script = new XenonASTHTML();
+                XenonASTHTML html = new XenonASTHTML();
                 Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.HTML]);
-                expr.Command = (IXenonASTCommand)script.Compile(Lexer, Logger, parent);
+                expr.Command = (IXenonASTCommand)html.Compile(Lexer, Logger, parent);
                 return expr;
             }
+            if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.HTML2]))
+            {
+                XenonASTHtml2 html = new XenonASTHtml2();
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.HTML2]);
+                expr.Command = (IXenonASTCommand)html.Compile(Lexer, Logger, parent);
+                return expr;
+            }
+
 
 
 

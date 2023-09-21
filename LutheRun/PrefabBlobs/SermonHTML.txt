@@ -1,13 +1,23 @@
 ﻿#scope(Sermon)
 {
 $>#var("html.Layout", "Xenon.Sermons::html.SermonTitleBar")
-$>#html
+
+$>#scripted
 $>{
-$>$>/// </MANUAL_UPDATE name='preacher'>
-$>$>text[preacher]{PREACHER}
-$>$>/// </MANUAL_UPDATE name='sermon title'>
-$>$>text[title]{SERMON TITLE}
-$>$>/// </MANUAL_UPDATE name='sermon text'>
-$>$>text[reference]{REFERENCE}
+
+$>$>first=#script
+$>$>{
+$>$>@cmd:SetupButtons(sermon-sub-panel-std, %pres%, true);
+$>$>}
+
+$>$>#html
+$>$>{
+$>$>$>/// </MANUAL_UPDATE name='preacher'>
+$>$>$>text[preacher]{PREACHER}
+$>$>$>/// </MANUAL_UPDATE name='sermon title'>
+$>$>$>text[title]{SERMON TITLE}
+$>$>$>/// </MANUAL_UPDATE name='sermon text'>
+$>$>$>text[reference]{REFERENCE}
+$>$>}
 $>}
 }

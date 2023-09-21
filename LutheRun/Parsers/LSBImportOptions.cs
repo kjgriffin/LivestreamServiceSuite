@@ -92,7 +92,9 @@ namespace LutheRun.Parsers
         public bool RemoveEarlyServiceSpecificElements { get; internal set; } = true;
 
         [BoolSetting]
-        public bool ExpandAnthemsForAutomation { get; internal set; } = true;
+        public bool ExpandAnthemsForAutomation { get; internal set; } = false;
+        [BoolSetting]
+        public bool RunWithSubPanels { get; internal set; } = true;
         [BoolSetting]
         public bool PreachWithHTMLTitles { get; internal set; } = true;
 

@@ -104,7 +104,7 @@
 									<End>(?&lt;==)</End>
 								</Span>
 								<Span foreground="#ffededed">
-									<Begin>(?&lt;==)</Begin>
+									<Begin>(?&lt;==).*</Begin>
 									<End>(?=;)</End>
 								</Span>
 							</RuleSet>

@@ -86,9 +86,24 @@ namespace LutheRun.Elements.LSB
                 sb.AppendLine("//> INSERTION POINT: postlude".Indent(indentDepth, indentSpace));
                 sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\"){PostsetCmd}".Indent(indentDepth, indentSpace));
             }
-            else if (ctest.Contains("anthem"))
+            else if (ctest.Contains("anthem") || ctest.Contains("chorus"))
             {
-                if (lSBImportOptions.ExpandAnthemsForAutomation)
+                if (lSBImportOptions.RunWithSubPanels)
+                {
+                    string blobtext = ExternalPrefabGenerator.PrepareBlob("SubPaneledAnthemTemplate");
+
+                    int anthemID = -1;
+                    if (fullInfo.OutOfBandInfo.TryGetValue("anthemUID", out object oanthemid))
+                    {
+                        anthemID = (int)oanthemid;
+                    }
+
+                    blobtext = Regex.Replace(blobtext, Regex.Escape("$>"), "".PadLeft(indentSpace));
+                    blobtext = Regex.Replace(blobtext, Regex.Escape("$ANTHEMID"), anthemID.ToString());
+
+                    sb.AppendLine(blobtext.IndentBlock(indentDepth, indentSpace));
+                }
+                else if (lSBImportOptions.ExpandAnthemsForAutomation)
                 {
                     // anthem was pre-expanded, so do something different here....
 

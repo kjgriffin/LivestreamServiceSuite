@@ -38,6 +38,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.TextHymn] = (new TextHymnLayoutInfo(), new HymnTextVerseRenderer(), "", "json"),
             [LanguageKeywordCommand.LiturgyImage] = (new AdvancedImagesSlideLayoutInfo(), new AdvancedImageSlideRenderer(), "", "json"),
             [LanguageKeywordCommand.HTML] = (new HTMLLayoutInfo(), new HTMLSlideRenderer(), "", "html"),
+            [LanguageKeywordCommand.HTML2] = (new HTMLLayoutInfo(), new HTMLSlideRenderer(), "", "html"),
         };
 
         public static List<string> WholeWords = new List<string>()
@@ -120,6 +121,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.ComplexText] = "complextext",
             [LanguageKeywordCommand.DynamicControllerDef] = "dynamiccontroller",
             [LanguageKeywordCommand.HTML] = "html",
+            [LanguageKeywordCommand.HTML2] = "html2",
         };
 
         public static Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata> LanguageKeywordMetadata = new Dictionary<LanguageKeywordCommand, LanguageKeywordMetadata>()
@@ -166,6 +168,7 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.ComplexText] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTShapesImagesAndTextComplex()),
             [LanguageKeywordCommand.DynamicControllerDef] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, false, false, new XenonASTDynamicController()),
             [LanguageKeywordCommand.HTML] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTHTML()),
+            [LanguageKeywordCommand.HTML2] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTHtml2()),
         };
 
     }
@@ -240,6 +243,7 @@ namespace Xenon.Compiler
         ComplexText,
         DynamicControllerDef,
         HTML,
+        HTML2,
     }
 
 }
