@@ -274,6 +274,7 @@ namespace IntegratedPresenterAPIInterop
                                 YOffset = (double)parsedParams.data[6],
                                 DefaultFillSource = 0,
                             };
+                            a.DataO = pattern;
                         }
 
                         // otherwise just stuff the args directly into the args
