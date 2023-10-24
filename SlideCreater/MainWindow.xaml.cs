@@ -262,6 +262,19 @@ namespace SlideCreater
             SetupLayoutsTreeVew();
 
             ShowProjectAssets();
+
+            Task.Run(() => CheckForUpToDateVersion());
+        }
+
+        private async Task CheckForUpToDateVersion()
+        {
+            var latestRelease = await GithubVersionChecker.GetCurentReleaseVersion(Xenon.Helpers.WebHelpers.httpClient);
+            // compare version
+            if (latestRelease.ExceedsMinimumVersion(VersionInfo))
+            {
+                // we're out of date
+                MessageBox.Show($"A new version ({latestRelease}) of Slide Creater is available. You have ({VersionInfo})" ,"New Version Available!");
+            }
         }
 
 

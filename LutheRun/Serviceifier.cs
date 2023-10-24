@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Automation;
@@ -236,6 +237,13 @@ namespace LutheRun
                 }
             }
 
+            return newService;
+        }
+
+        public static List<ParsedLSBElement> AddExtraElements(this List<ParsedLSBElement> service, LSBImportOptions options)
+        {
+            List<ParsedLSBElement> newService = new List<ParsedLSBElement>();
+ 
             if (options.RunWithSubPanels)
             {
                 var cmdtxt = ExternalPrefabGenerator.PrepareBlob("AllSubPanels");
@@ -259,6 +267,7 @@ namespace LutheRun
 
             return newService;
         }
+
 
         public static List<ParsedLSBElement> StripEarlyServiceOnly(this List<ParsedLSBElement> service, LSBImportOptions options)
         {
@@ -438,6 +447,10 @@ namespace LutheRun
                 {
                     setlast = true;
                     lastselection = Camera.Pulpit;
+                    if (options.StartSermonWithCenterCam)
+                    {
+                        lastselection = Camera.Center;
+                    }
                 }
                 if (nextelement?.LSBElement is LSBElementReading || nextelement?.LSBElement is LSBElementReadingComplex)
                 {
@@ -493,6 +506,12 @@ namespace LutheRun
                         setfirst = true;
                         firstseelection = Camera.Center;
                     }
+                }
+
+                if (((element.LSBElement is LSBElementHymn && nextelement == null) || element == service.Last()) && options.UseTitledEnd)
+                {
+                    setlast = true;
+                    lastselection = Camera.Organ;
                 }
 
                 // Create Postset command

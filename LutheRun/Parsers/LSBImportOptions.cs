@@ -97,6 +97,8 @@ namespace LutheRun.Parsers
         public bool RunWithSubPanels { get; internal set; } = true;
         [BoolSetting]
         public bool PreachWithHTMLTitles { get; internal set; } = true;
+        [BoolSetting]
+        public bool StartSermonWithCenterCam { get; internal set; } = true;
 
         [BoolSetting]
         public bool ExpandSermonWithAutoShutdown { get; internal set; } = true;

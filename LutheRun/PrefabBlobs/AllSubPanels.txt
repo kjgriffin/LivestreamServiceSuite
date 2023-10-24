@@ -1,4 +1,4 @@
-﻿#dynamiccontroller(anthem-sub-pane-std)
+﻿#dynamiccontroller(anthem-sub-panel-std)
 {
 $>dynamic:matrix(4x3);
 $>

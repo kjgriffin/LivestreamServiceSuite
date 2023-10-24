@@ -62,6 +62,7 @@ namespace LutheRun.Parsers
                                           .Filter(options)
                                           .ExpandifyElements(options)
                                           .AddAdditionalInferedElements(options)
+                                          .AddExtraElements(options)
                                           .Filter(options)
                                           .Select(x =>
                                           {

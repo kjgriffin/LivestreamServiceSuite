@@ -82,9 +82,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATEMSharedState", "ATEMShar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedPresentationAPI", "SharedPresentationAPI\SharedPresentationAPI.csproj", "{C851D01B-74DC-4415-BEE7-09E736B69E2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Concord", "Concord\Concord.csproj", "{D0D36D36-0FD3-446D-A573-1FAA6F722929}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Concord", "Concord\Concord.csproj", "{D0D36D36-0FD3-446D-A573-1FAA6F722929}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LutheRunTests", "LutheRunTests\LutheRunTests.csproj", "{9926D62C-FD9F-491F-B9BC-619DDE709139}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LutheRunTests", "LutheRunTests\LutheRunTests.csproj", "{9926D62C-FD9F-491F-B9BC-619DDE709139}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReleaseTracking", "ReleaseTracking", "{8C8CCAB1-E9D0-4375-8C1D-9688866FDB37}"
+	ProjectSection(SolutionItems) = preProject
+		ReleaseVersions.json = ReleaseVersions.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

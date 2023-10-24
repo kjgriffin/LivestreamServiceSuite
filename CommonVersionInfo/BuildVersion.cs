@@ -107,6 +107,11 @@ namespace CommonVersionInfo
         {
             return CompareVersion((e, a) => a > e, minMajor, minMinor, minRevions, minBuild, matchMode, mode);
         }
+        public bool ExceedsMinimumVersion(BuildVersion version)
+        {
+            return CompareVersion((e, a) => a > e, version.MajorVersion, version.MinorVersion, version.Revision, version.Build, matchMode: false, version.Mode);
+        }
+
 
 
     }

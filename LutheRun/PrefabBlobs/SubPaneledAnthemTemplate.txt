@@ -17,10 +17,10 @@ $>$>}
 $>$>/// </MANUAL_UPDATE name='anthem'>
 $>$>#html
 $>$>{
-$>$>$>text[title]{}
-$>$>$>text[composer]{}
-$>$>$>text[performer]{}
+$>$>$>text[name]{}
 $>$>$>text[band]{}
+$>$>$>text[title]{}
+$>$>$>text[author]{}
 
 $>$>}
 

@@ -8,6 +8,9 @@ $>{
 $>$>first=#script
 $>$>{
 $>$>@cmd:SetupButtons(sermon-sub-panel-std, %pres%, true);
+$>$>cmd:DelayMs(200);
+$>$>cmd:DSK1FadeOn;
+$>$>cmd:Timer1Restart;
 $>$>}
 
 $>$>#html

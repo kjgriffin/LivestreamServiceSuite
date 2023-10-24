@@ -5,6 +5,7 @@ using LutheRun.Pilot;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -185,9 +186,18 @@ namespace LutheRun.Elements
             if (options.UsePIPCreeds)
             {
                 StringBuilder sb = new StringBuilder();
-                name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
-                                      .GetManifestResourceNames()
-                                      .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Creed"));
+                if (options.ThemeCreedsWithHTML)
+                {
+                    name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                          .GetManifestResourceNames()
+                                          .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Creed-html"));
+                }
+                else
+                {
+                    name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                          .GetManifestResourceNames()
+                                          .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Creed-std"));
+                }
 
                 var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
                     .GetManifestResourceStream(name);
