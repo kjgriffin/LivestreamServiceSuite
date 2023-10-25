@@ -92,6 +92,7 @@ namespace Xenon.Renderer
                     // for action files that have referenced real slides then we've got work to do here
                     if (ActionLoader.TryLoadActions(rs.Text, "", out var lres, checkRealMedia: false))
                     {
+                        sinfo.ForceRunOnLoad = lres.ForceRunOnLoad;
                         if (lres.AltSources)
                         {
 
@@ -190,7 +191,6 @@ namespace Xenon.Renderer
 
                 // drive?
                 sinfo.AutomationEnabled = true;
-
 
                 presDescription.Slides.Add(sinfo);
             }

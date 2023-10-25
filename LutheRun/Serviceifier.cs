@@ -158,6 +158,11 @@ namespace LutheRun
                     communion = true;
                 }
 
+                if ((elem.LSBElement as LSBElementHymn)?.Caption.ToLower().Contains("agnus dei") == true)
+                {
+                    communion = true;
+                }
+
                 if (communion)
                 {
                     var hymn = elem.LSBElement as LSBElementHymn;
@@ -242,7 +247,7 @@ namespace LutheRun
 
         public static List<ParsedLSBElement> AddExtraElements(this List<ParsedLSBElement> service, LSBImportOptions options)
         {
-            List<ParsedLSBElement> newService = new List<ParsedLSBElement>();
+            List<ParsedLSBElement> newService = new List<ParsedLSBElement>(service);
  
             if (options.RunWithSubPanels)
             {
@@ -257,7 +262,7 @@ namespace LutheRun
                     ConsiderForServicification = true,
                     ElementOrder = 0,
                     FilterFromOutput = false,
-                    Generator = "ElementExpandification:: PANEL DEFS",
+                    Generator = "PostInference-AddElements:: PANEL DEFS",
                     HasWingsForFlighPlanning = false,
                     //ParentSourceElement = null,
                     //SourceElements = null,
@@ -598,6 +603,11 @@ namespace LutheRun
                             }
                         }
                     }
+                }
+
+                if (prevelement?.LSBElement?.BlockType(options) == BlockType.ANTHEM_RESOLVED)
+                {
+                    shutdownliturgy = false;
                 }
 
                 if (shutdownliturgy)

@@ -31,6 +31,8 @@
         public bool HasPilot { get; set; }
 
 
+        public bool ForceRunOnLoad { get; set; }
+
         public bool IsFullAuto { get; set; }
 
         public bool HasOverridePrimary { get; set; }

@@ -24,7 +24,7 @@ namespace SharedPresentationAPI.Presentation
         public List<IPilotAction> EmergencyActions { get; set; } = new List<IPilotAction>();
         public string Title { get; set; } = "";
         public bool AutoOnly { get; set; } = false;
-
+        public bool ForceRunOnLoad { get; set; } = false;
         public int PresetId { get; set; }
         public bool PostsetEnabled { get; set; } = false;
         public int PostsetId { get; set; }

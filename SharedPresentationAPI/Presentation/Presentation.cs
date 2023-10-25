@@ -114,6 +114,7 @@ namespace SharedPresentationAPI.Presentation
                                 s.AltSource = res.AltSource;
                                 s.AltKeySource = res.AltKeySource;
                                 s.AutoOnly = res.AutoOnly;
+                                s.ForceRunOnLoad = res.ForceRunOnLoad;
                             }
                         }
                     }
@@ -397,6 +398,7 @@ namespace SharedPresentationAPI.Presentation
 
             _currentSlide = snum;
             _virtualCurrentSlide = snum;
+
         }
 
         public void ComputeAggregateWatchVariables()

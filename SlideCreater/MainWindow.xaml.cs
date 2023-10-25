@@ -273,7 +273,7 @@ namespace SlideCreater
             if (latestRelease.ExceedsMinimumVersion(VersionInfo))
             {
                 // we're out of date
-                MessageBox.Show($"A new version ({latestRelease}) of Slide Creater is available. You have ({VersionInfo})" ,"New Version Available!");
+                MessageBox.Show($"A new version ({latestRelease}) of Slide Creater is available. You have ({VersionInfo})", "New Version Available!");
             }
         }
 
@@ -2109,6 +2109,84 @@ namespace SlideCreater
             mirenderoptions_edge.IsChecked = false;
             mirenderoptions_firefox.IsChecked = true;
             builder.Configure_WebRenderEngine(BROWSER.Firefox);
+        }
+
+        private async void Click_BibleClassWizzard(object sender, RoutedEventArgs e)
+        {
+            BibleClassWizzard wizzard = new BibleClassWizzard();
+
+            if (wizzard.ShowDialog() == true)
+            {
+                // download source
+                var sourceTask = Xenon.Helpers.WebHelpers.DownloadText("https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/bible-class-blob-data/blob-data/XenonTemplate");
+                var libTask = Xenon.Helpers.WebHelpers.DownloadText("https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/bible-class-blob-data/blob-data/LayoutLib");
+                var panelTask = Xenon.Helpers.WebHelpers.DownloadText("https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/bible-class-blob-data/blob-data/PanelDef");
+
+                var res = await Task.WhenAll(sourceTask, libTask, panelTask);
+
+                var source = res[0].ReplaceLineEndings();
+                var lib = res[1].ReplaceLineEndings();
+                var panel = res[2].ReplaceLineEndings();
+
+
+                // add library
+                // NOTE: - this potentially overwrites a library... but this 'should' be OK
+                // SC doesn't ship loading a BibleClass Library by default
+                Xenon.SaveLoad.TrustySave.ImportLibraryFromText(_proj, lib);
+                dirty = true;
+                ProjectState = ProjectState.Dirty;
+                SetupLayoutsTreeVew();
+
+                // add asset
+                AddAssetsFromPaths(wizzard.Data.ThumbnailPath.ItemAsEnumerable(), "User");
+                var thumbnail = System.IO.Path.GetFileNameWithoutExtension(wizzard.Data.ThumbnailPath);
+
+                // fill/replace
+                source = Regex.Replace(source, Regex.Escape("$INFO$"), $"// Created with SC {VersionInfo}");
+                source = Regex.Replace(source, Regex.Escape("$THUMBNAIL$"), thumbnail);
+                source = Regex.Replace(source, Regex.Escape("$PRESENTER$"), wizzard.Data.Presenter);
+                source = Regex.Replace(source, Regex.Escape("$TITLE$"), wizzard.Data.Title);
+                source = Regex.Replace(source, Regex.Escape("$YEAR$"), wizzard.Data.Date.Year.ToString("yyyy"));
+                source = Regex.Replace(source, Regex.Escape("$MONTH$"), wizzard.Data.Date.Month.ToString("MMMM"));
+                source = Regex.Replace(source, Regex.Escape("$DAY$"), wizzard.Data.Date.Day.ToString("d"));
+
+                if (wizzard.Data.PanelAtBottom)
+                {
+                    source = Regex.Replace(source, Regex.Escape("$PANEL$"), "");
+                }
+                else
+                {
+                    source = Regex.Replace(source, Regex.Escape("$PANEL$"), panel);
+                }
+
+                // insert source/panel
+                var src = TbInput.Text;
+                if (wizzard.Data.InsertAtCarret)
+                {
+                    InsertTextCommand(source);
+                    if (wizzard.Data.PanelAtBottom)
+                    {
+                        src = src + Environment.NewLine + panel;
+                        TbInput.Text = src;
+                    }
+                }
+                else
+                {
+                    src = source + Environment.NewLine + src;
+                    if (wizzard.Data.PanelAtBottom)
+                    {
+                        src = src + Environment.NewLine + panel;
+                    }
+                    TbInput.Text = src;
+                }
+
+                // link-panel if in service
+                src = TbInput.Text;
+                src = Regex.Replace(src, Regex.Escape("/*BIBLE-CLASS-SUB-PANEL-LINK"), "");
+                src = Regex.Replace(src, Regex.Escape("BIBLE-CLASS-SUB-PANEL-LINK*/"), "");
+                TbInput.Text = src;
+
+            }
         }
     }
 }

@@ -201,6 +201,7 @@ namespace Xenon.Compiler.AST
             else
             {
                 suggestions.Add(("!fullauto;", "mark slide as fully automated."));
+                suggestions.Add(("!forcerunonload;", "mark slide to be taken automatically if presentation loads to this slide"));
                 suggestions.Add(("#SCRIPT TITLE;", "add script title"));
                 suggestions.Add(("@", "add setup action"));
                 suggestions.Add(("arg0:", "add an action taking 0 arguments"));

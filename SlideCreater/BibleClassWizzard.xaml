@@ -1,0 +1,126 @@
+﻿<Window x:Class="SlideCreater.BibleClassWizzard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SlideCreater"
+        mc:Ignorable="d"
+        Title="Bible Class Wizzard" Height="540" Width="450">
+    <Window.Resources>
+        <Style TargetType="Button" x:Name="DarkBtn" x:Key="DarkBtn">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Name="border" BorderBrush="#575757" BorderThickness="2">
+                                <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#676767" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#373737" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="{x:Type RadioButton}" TargetType="{x:Type RadioButton}">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <BulletDecorator Background="Transparent">
+                            <BulletDecorator.Bullet>
+                                <Grid Width="13" Height="13">
+                                    <Ellipse x:Name="Border" Fill="#171717" StrokeThickness="1" Stroke="#171717"/>
+                                    <Ellipse x:Name="CheckMark" Margin="4" Fill="#ff9326" />
+                                </Grid>
+                            </BulletDecorator.Bullet>
+                            <ContentPresenter Margin="4,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" RecognizesAccessKey="True"/>
+                        </BulletDecorator>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="false">
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border" Property="Fill" Value="#ffffff" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="Border" Property="Fill" Value="#ffffff" />
+                                <Setter TargetName="Border" Property="Stroke" Value="#ffffff" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="Border" Property="Fill" Value="#474747" />
+                                <Setter TargetName="Border" Property="Stroke" Value="#40000000" />
+                                <Setter Property="Foreground" Value="#80000000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="#272727">
+        <Viewbox>
+            <Grid Margin="20" Width="450" Height="500">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="80"></RowDefinition>
+                    <RowDefinition Height="80"></RowDefinition>
+                    <RowDefinition Height="120"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Foreground="#efefef" MinWidth="80" MaxHeight="20">BIBLE CLASS TITLE</TextBlock>
+                <TextBox Name="tbTITLE" Grid.Row="0" Grid.Column="1" Foreground="White" Background="#171717" MinWidth="200" Margin="10" MaxHeight="20"></TextBox>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Foreground="#efefef" MinWidth="80" MaxHeight="20">PRESENTER</TextBlock>
+                <TextBox Name="tbPRESENTER" Grid.Row="1" Grid.Column="1" Foreground="White" Background="#171717" MinWidth="200" Margin="10" MaxHeight="20"></TextBox>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Foreground="#efefef" MinWidth="80" MaxHeight="20">DATE</TextBlock>
+                <DatePicker Name="tbDATE" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"></DatePicker>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Foreground="#efefef" MinWidth="80" MaxHeight="20">INSERT POINT</TextBlock>
+                <StackPanel Grid.Row="3" Grid.Column="1" Background="#373737" Margin="5">
+                    <RadioButton Name="rbInsertTop" Foreground="White" Background="#171717" MinWidth="200" Margin="10" MaxHeight="20" IsChecked="True">TOP</RadioButton>
+                    <RadioButton Name="rbInsertCarret" Foreground="White" Background="#171717" MinWidth="200" Margin="10" MaxHeight="20" IsChecked="False">CARRET</RadioButton>
+                </StackPanel>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Foreground="#efefef" MinWidth="80" MaxHeight="20">PANEL DEFENITIONS</TextBlock>
+                <StackPanel Grid.Row="4" Grid.Column="1" Background="#373737" Margin="5">
+                    <RadioButton Name="rbPanelsWith" Foreground="White" Background="#171717" MinWidth="200" Margin="10" MaxHeight="20" IsChecked="False">WITH SOURCE</RadioButton>
+                    <RadioButton Name="rbPanelsEnd" Foreground="White" Background="#171717" MinWidth="200" Margin="10" MaxHeight="20" IsChecked="True">END OF SOURCE</RadioButton>
+                </StackPanel>
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Foreground="#efefef" MinWidth="80" MaxHeight="20">THUMBNAIL</TextBlock>
+                <Grid Grid.Row="5" Grid.Column="1">
+                    <Border BorderBrush="#171717" BorderThickness="3" Width="192" Height="108">
+                        <Button Background="Transparent" BorderBrush="Transparent" Click="Click_Thumbnail" AllowDrop="True" Drop="Border_Drop">
+                            <Image IsHitTestVisible="False" Name="imgThumbnail"></Image>
+                        </Button>
+                    </Border>
+                    <TextBlock IsHitTestVisible="False" Foreground="#afafaf" MinWidth="80" MaxHeight="20" HorizontalAlignment="Center" VerticalAlignment="Center">CLICK/DROP Image</TextBlock>
+                </Grid>
+
+            </Grid>
+        </Viewbox>
+
+        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20">
+            <Button Style="{StaticResource DarkBtn}" Foreground="White" Click="Click_Cancel" Width="100" Height="30" Margin="10">Cancel</Button>
+            <Button Style="{StaticResource DarkBtn}" Foreground="White" Click="Click_Ok" Width="100" Height="30" Margin="10">Ok</Button>
+        </StackPanel>
+    </Grid>
+</Window>

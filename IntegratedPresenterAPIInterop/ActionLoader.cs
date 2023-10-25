@@ -143,6 +143,7 @@ namespace IntegratedPresenterAPIInterop
         public class LoadActionsResult
         {
             public string Title { get; set; } = "";
+            public bool ForceRunOnLoad { get; set; } = false;
             public bool AutoOnly { get; set; } = false;
             public bool AltSources { get; set; } = false;
             public string AltSource { get; set; } = "";
@@ -207,6 +208,10 @@ namespace IntegratedPresenterAPIInterop
                                     slide.AltKeySource = m.Groups["fname"].Value;
                                 }
                             }
+                        }
+                        else if (part.StartsWith("!forcerunonload;"))
+                        {
+                            slide.ForceRunOnLoad = true;
                         }
                     }
                     else if (part.StartsWith("@"))

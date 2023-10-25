@@ -93,6 +93,7 @@ namespace SharedPresentationAPI.Presentation
                     Title = "",
                     Type = _s.SlideType,
                     AutomationEnabled = _s.AutomationEnabled,
+                    ForceRunOnLoad = _s.ForceRunOnLoad,
                     Actions = new List<TrackedAutomationAction>(),
                     SetupActions = new List<TrackedAutomationAction>(),
                     Guid = Guid.NewGuid(),
@@ -122,6 +123,7 @@ namespace SharedPresentationAPI.Presentation
                             slide.SetupActions = loaded.SetupActions;
                             slide.Actions = loaded.Actions;
                             slide.AutoOnly = loaded.AutoOnly;
+                            slide.ForceRunOnLoad = loaded.ForceRunOnLoad;
                         }
                     }
                 }

@@ -89,7 +89,7 @@ namespace Xenon.Compiler
             }
             catch (Exception ex)
             {
-                Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Failed", ErrorMessage = "Failed to compile project. Check syntax.", Generator = "Compiler", Level = XenonCompilerMessageType.Error });
+                Logger.Log(new XenonCompilerMessage() { ErrorName = "Compilation Failed", ErrorMessage = "Failed to compile project. Check syntax.", Generator = "Compiler", Level = XenonCompilerMessageType.Error, Inner = ex.ToString(), Token = Lexer.CurrentToken});
                 Debug.WriteLine($"Compilation Failed \n{ex}");
                 return Task.FromResult(proj);
             }

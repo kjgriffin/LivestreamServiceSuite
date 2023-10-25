@@ -20,6 +20,8 @@ namespace SharedPresentationAPI.Presentation
         //string AltSource { get; set; }
         //bool AltSources { get; set; }
 
+        bool ForceRunOnLoad { get; set; }
+
         bool AutomationEnabled { get; set; }
         bool AutoOnly { get; set; }
         List<IPilotAction> AutoPilotActions { get; set; }

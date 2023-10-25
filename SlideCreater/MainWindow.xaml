@@ -149,6 +149,7 @@
             </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Foreground="Black" Click="Click_GenerateArbitraryReading_Complex" Header="Generate Arbitrary Reading (Complex)"></MenuItem>
+                <MenuItem Foreground="Black" Click="Click_BibleClassWizzard" Header="Bible Class Wizzard"></MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem  Foreground="Black" Header="Commands" Click="ClickHelpCommands">

@@ -440,6 +440,21 @@ $>$>fire={
 $>$>$>cmd:SetupButtons(sermon-sub-panel-std, %pres%, true);
 $>$>}
 $>}
+$>/*BIBLE-CLASS-SUB-PANEL-LINK
+$>[TButton]2,2
+$>{
+$>$>draw={
+$>$>$>TopText=BIBLE;
+$>$>$>BottomText=PANEL;
+$>$>$>Enabled=true;
+$>$>$>BackColor=#ed5cd7;
+$>$>$>TextColor=#efefef;
+$>$>}
+$>$>fire={
+$>$>$>cmd:SetupButtons(bibleclass-sub-panel-std, %pres%, true);
+$>$>}
+$>}
+$>BIBLE-CLASS-SUB-PANEL-LINK*/
 $>
 $>
 }

@@ -184,7 +184,7 @@ namespace LutheRun.Elements.LSB
             }
             else if (ctest.Contains("anthem"))
             {
-                if (importOptions.ExpandAnthemsForAutomation)
+                if (importOptions.ExpandAnthemsForAutomation || importOptions.RunWithSubPanels)
                 {
                     return Pilot.BlockType.ANTHEM_RESOLVED;
                 }

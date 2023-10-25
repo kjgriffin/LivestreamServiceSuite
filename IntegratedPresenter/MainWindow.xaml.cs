@@ -2903,6 +2903,11 @@ namespace IntegratedPresenter.Main
                 FireOnConditionalsUpdated();
 
                 PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+
+                if (Presentation.EffectiveCurrent.ForceRunOnLoad)
+                {
+                    SlideDriveVideo_Current();
+                }
             }
             // preserve mute status
             if (MediaMuted)
@@ -4503,6 +4508,11 @@ namespace IntegratedPresenter.Main
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ResetPresentationToBegining();
+
+            if (Presentation.EffectiveCurrent.ForceRunOnLoad)
+            {
+                SlideDriveVideo_Current();
+            }
         }
 
         private void ResetPresentationToBegining()
@@ -5378,6 +5388,13 @@ namespace IntegratedPresenter.Main
             pilotUI.ClearState(calculatedLast, calculatedEmg);
 
             PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
+
+            if (Presentation.EffectiveCurrent.ForceRunOnLoad)
+            {
+                SlideDriveVideo_Current();
+            }
+
+
             // preserve mute status
             if (MediaMuted)
             {
