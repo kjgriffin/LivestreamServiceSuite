@@ -18,8 +18,7 @@
     {
         "start": "2022-11-06",
         "note": "all saints day",
-        "macros": {
-        }
+        "macros": {}
     },
     {
         "start": "2022-11-13",
@@ -187,7 +186,7 @@
     {
         "start": "2023-01-14",
         "note": "epiphany",
-         "macros": {
+        "macros": {
             "color-main": "\"#ff298f45\"",
             "text-alt": "\"#ff298f45\""
         },
