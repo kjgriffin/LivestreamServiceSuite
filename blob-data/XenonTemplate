@@ -1,0 +1,88 @@
+// BIBLE CLASS (v1.0)
+$INFO$
+
+#scripted
+{
+    first=#script
+    {
+        @cmd:PresetSelect(%cam.SLIDESHOW%)[PST Slide];
+        cmd:DelayMs(100);
+        cmd:DSK1Off[Kill GFX];
+        cmd:AutoTrans;
+        cmd:SetupButtons(master-panel-std, %pres%, true)[Master Panel];
+    }
+
+    #fitimage($THUMBNAIL$)
+
+
+
+}
+
+#scripted
+{
+    // wrap graphics slides to disable nominal automation
+    // custom buttons will perform any nessecary actions
+    all=#script{
+        #NON AUTO;
+    }
+    // 1. Title Page
+
+    [@label::title-intro]
+    #scope(title)
+    {
+        #var("html.Layout", "BibleClass::Image-GFX-KEY")
+        #var("rendermode.premultiply", "false")
+        
+        #html
+        {
+            /// <!/MANUAL_UPDATE name='Title Thumbnail'>
+            img[thumbnail]($THUMBNAIL$)
+        }
+    }
+    
+    // 2. Details Overlay
+    [@label::overlay]
+    #scope(overlay)
+    {
+        #var("html.Layout", "BibleClass::GFX-Overlay")
+        
+        #html
+        {
+            text[title]{$TITLE$}
+            text[presenter]{$PRESENTER$}
+            
+            text[year]{$YEAR$}
+            text[month]{$MONTH$}
+            text[day]{$DAY$}
+        }
+        
+    }
+
+    // 3. End Page
+    [@label::title-end]
+    #scope(static-end-page)
+    {
+        #var("Xenon.CommonColored@color-main", ```"#FFA5300F"```)
+        #var("customdraw.Layout", "Xenon.CommonColored::EndPage")
+       
+    
+        #customdraw
+        {
+            asset=("$THUMBNAIL$", "fg")
+            asset=("HCLogo-white", "fg")
+    
+            text={$TITLE$}
+    
+            text={HOLY CROSS LUTHERAN CHURCH}
+            text={KITCHENER ON.}
+            text={Website}
+            text={https:\//holycrosskitchener.org}
+            text={Previous Bible Studies}
+            text={https:\//holycrosskitchener.org/ worship-service-videos}
+            text={YouTube}
+            text={Holy Cross Audio Video}
+        }
+    }
+}
+
+$PANEL$
