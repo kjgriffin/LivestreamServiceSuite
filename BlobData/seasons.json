@@ -128,7 +128,7 @@
         "macros": {
             "color-main": "\"#ffffebaf\"",
             "text-alt": "\"#ffffebaf\"",
-            "text-main":, "\"#ff474747\""
+            "text-main": "\"#ff474747\""
         },
         "extras": {
             "Xenon.Anthems@color-main": "#ffebaf",
@@ -173,7 +173,7 @@
         "macros": {
             "color-main": "\"#ffffebaf\"",
             "text-alt": "\"#ffffebaf\"",
-            "text-main":, "\"#ff474747\""
+            "text-main": "\"#ff474747\""
         },
         "extras": {
             "Xenon.Anthems@color-main": "#ffebaf",
