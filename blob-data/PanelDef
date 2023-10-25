@@ -1,4 +1,4 @@
-#dynamiccontroller(bibleclass_panel_setup)
+#dynamiccontroller(bibleclass-sub-panel-std)
 {
 dynamic:matrix(4x3);
 
