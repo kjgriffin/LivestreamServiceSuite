@@ -1,0 +1,17 @@
+﻿#scripted
+{
+
+$>first=#script
+$>{
+$>$>!forcerunonload;
+$>$>@cmd:SetupButtons(master-panel-std, %pres%, true);
+$>$>cmd:PresetSelect(%cam.SLIDESHOW%);
+$>$>cmd:USK1Off;
+$>$>cmd:DSK1Off;
+$>$>cmd:DelayMs(100);
+$>$>cmd:AutoTrans;
+$>}
+
+$>$COPYTITLE
+
+}

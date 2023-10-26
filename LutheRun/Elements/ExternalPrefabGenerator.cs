@@ -270,19 +270,7 @@ namespace LutheRun.Elements
 
         private static string Mk2CopyTitleCommand(LSBImportOptions options, string serviceTitle = "", string serviceDate = "", string lsback = "", int postset = -1)
         {
-            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
-                                  .GetManifestResourceNames()
-                                  .FirstOrDefault(x => x.Contains("Mk2CopyTitle"));
-
-            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
-                .GetManifestResourceStream(name);
-
-            // wrap it into a scripted block
-            var prefabblob = "";
-            using (StreamReader sr = new StreamReader(stream))
-            {
-                prefabblob = sr.ReadToEnd();
-            }
+            var prefabblob = ExternalPrefabGenerator.PrepareBlob("Mk2CopyTitle-std");
 
             // inject theme
             prefabblob = Regex.Replace(prefabblob, Regex.Escape("$LIBTHEME"), "Xenon.Titles"); // TODO: allow this override?
@@ -309,6 +297,24 @@ namespace LutheRun.Elements
                 postsetstr = $"::postset(last={postset})";
             }
             prefabblob = Regex.Replace(prefabblob, Regex.Escape("$POSTSET"), postsetstr);
+
+            if (options.RunWithSubPanels)
+            {
+                var ctitle = prefabblob;
+                var wrapper = ExternalPrefabGenerator.PrepareBlob("Mk2CopyTitle-PanelWrapper");
+
+                var pmatch = Regex.Match(wrapper, "^(?<pre>.*)\\$COPYTITLE", RegexOptions.Multiline);
+
+                StringBuilder insert = new StringBuilder();
+                foreach(var line in ctitle.Split(Environment.NewLine))
+                {
+                    insert.AppendLine(line);
+                    insert.Append(pmatch.Groups["pre"]?.Value ?? "");
+                }
+
+                prefabblob = Regex.Replace(wrapper, Regex.Escape("$COPYTITLE"), insert.ToString());
+            }
+
 
             return prefabblob;
         }

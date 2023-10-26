@@ -16,7 +16,8 @@
     <None Remove="PrefabBlobs\LordsPrayer.txt" />
     <None Remove="PrefabBlobs\LordsPrayerHTML.txt" />
     <None Remove="PrefabBlobs\Mk1CopyTitle.txt" />
-    <None Remove="PrefabBlobs\Mk2CopyTitle.txt" />
+    <None Remove="PrefabBlobs\Mk2CopyTitle-PanelWrapper.txt" />
+    <None Remove="PrefabBlobs\Mk2CopyTitle-std.txt" />
     <None Remove="PrefabBlobs\NiceneCreed.txt" />
     <None Remove="PrefabBlobs\NiceneCreedHTML.txt" />
     <None Remove="PrefabBlobs\PaneledAnnouncementsTemplate.txt" />
@@ -38,12 +39,13 @@
   <ItemGroup>
     <EmbeddedResource Include="PrefabBlobs\AllSubPanels.txt" />
     <EmbeddedResource Include="PrefabBlobs\AnthemPanel.txt" />
+    <EmbeddedResource Include="PrefabBlobs\Mk2CopyTitle-PanelWrapper.txt" />
     <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Creed-html.txt" />
     <EmbeddedResource Include="PrefabBlobs\SubPaneledAnthemTemplate.txt" />
     <EmbeddedResource Include="PrefabBlobs\SermonHTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\ApostlesCreedHTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\LordsPrayerHTML.txt" />
-    <EmbeddedResource Include="PrefabBlobs\Mk2CopyTitle.txt" />
+    <EmbeddedResource Include="PrefabBlobs\Mk2CopyTitle-std.txt" />
     <EmbeddedResource Include="PrefabBlobs\NiceneCreedHTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\PaneledAnnouncementsTemplate.txt" />
     <EmbeddedResource Include="PrefabBlobs\PaneledAnthemTemplate.txt" />
