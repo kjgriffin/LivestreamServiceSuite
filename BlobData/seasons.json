@@ -108,7 +108,7 @@
         }
     },
     {
-        "start": "2022-10-29",
+        "start": "2023-10-29",
         "note": "reformation",
         "macros": {
             "color-main": "\"#ff92162b\"",
@@ -122,7 +122,7 @@
         }
     },
     {
-        "start": "2022-11-05",
+        "start": "2023-11-05",
         "note": "all saints day",
         "macros": {
             "color-main": "\"#ffffebaf\"",
@@ -139,7 +139,7 @@
         }
     },
     {
-        "start": "2022-11-12",
+        "start": "2023-11-12",
         "note": "pentecost",
         "macros": {
             "color-main": "\"#ff298f45\"",
@@ -153,7 +153,7 @@
         }
     },
     {
-        "start": "2022-12-03",
+        "start": "2023-12-03",
         "note": "advent",
         "macros": {
             "color-main": "\"#ff0b248f\"",
@@ -167,7 +167,7 @@
         }
     },
     {
-        "start": "2022-12-24",
+        "start": "2023-12-24",
         "note": "christmas",
         "macros": {
             "color-main": "\"#ffffebaf\"",
@@ -184,7 +184,7 @@
         }
     },
     {
-        "start": "2023-01-14",
+        "start": "2024-01-14",
         "note": "epiphany",
         "macros": {
             "color-main": "\"#ff298f45\"",
