@@ -76,9 +76,25 @@ namespace LutheRun.Elements.LSB
             }
             else if (ctest.Contains("prelude"))
             {
-                sb.AppendLine("/// </MANUAL_UPDATE name='prelude'>".Indent(indentDepth, indentSpace));
-                sb.AppendLine("//> INSERTION POINT: prelude".Indent(indentDepth, indentSpace));
-                sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\"){PostsetCmd}".Indent(indentDepth, indentSpace));
+                //sb.AppendLine("/// </MANUAL_UPDATE name='prelude'>".Indent(indentDepth, indentSpace));
+                //sb.AppendLine("//> INSERTION POINT: prelude".Indent(indentDepth, indentSpace));
+                //sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\"){PostsetCmd}".Indent(indentDepth, indentSpace));
+
+                sb.AppendLine("#scope(prelude)".Indent(indentDepth, indentSpace));
+                sb.AppendLine("{".Indent(indentDepth, indentSpace));
+                indentDepth++;
+                sb.AppendLine("#var(\"html.Layout\", \"Xenon.Anthems::StdTitle\")".Indent(indentDepth, indentSpace));
+                sb.AppendLine("#html".Indent(indentDepth, indentSpace));
+                sb.AppendLine("{".Indent(indentDepth, indentSpace));
+                indentDepth++;
+                sb.AppendLine("/// </MANUAL_UPDATE name='prelude'".Indent(indentDepth, indentSpace));
+                sb.AppendLine($"text[name]{{{Caption}}}".Indent(indentDepth, indentSpace));
+                sb.AppendLine($"text[band]{{{SubCaption}}}{PostsetCmd}".Indent(indentDepth, indentSpace));
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpace));
+                indentDepth--;
+                sb.AppendLine("}".Indent(indentDepth, indentSpace));
+
             }
             else if (ctest.Contains("postlude"))
             {
