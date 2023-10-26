@@ -30,8 +30,7 @@
 		</Span>
 
 		<Span color="Comment" begin="(?&lt;!\\)//" />
-		<Span color="Comment" multiline="true"
-		   begin="/\*" end="\*/" />
+		<Span color="Comment" multiline="true" begin="/\*" end="\*/" />
 
 		<Span color="String">
 			<Begin>"</Begin>
@@ -83,6 +82,8 @@
 			<Begin>(?&lt;=\#dynamiccontroller)</Begin>
 			<End>}</End>
 			<RuleSet>
+				<Span color="Comment" begin="(?&lt;!\\)//" />
+				<Span color="Comment" multiline="true" begin="/\*" end="\*/" />
 				<Span foreground="#ffededed" multiline="true" ruleSet="ScriptBody">
 					<Begin>(?&lt;=\[Globals\])</Begin>
 					<End>}</End>
@@ -91,10 +92,17 @@
 					<Begin>(?&lt;=\[TButton\])</Begin>
 					<End>}</End>
 					<RuleSet>
+
+						<Span color="Comment" begin="(?&lt;!\\)//" />
+						<Span color="Comment" multiline="true" begin="/\*" end="\*/" />
+
 						<Span foreground="#ffededed" multiline="true">
 							<Begin>(?&lt;=draw)</Begin>
 							<End>}</End>
 							<RuleSet>
+
+								<Span color="Comment" begin="(?&lt;!\\)//" />
+								<Span color="Comment" multiline="true" begin="/\*" end="\*/" />
 								<Span foreground="#ff68ede9">
 									<Begin>(?&lt;=&lt;)</Begin>
 									<End>(?=&gt;)</End>
@@ -214,6 +222,7 @@
 			<Word>#tlit</Word>
 			<Word>#dynamiccontroller</Word>
 			<Word>#html</Word>
+			<Word>#html2</Word>
 			<!-- ... -->
 		</Keywords>
 	</RuleSet>
