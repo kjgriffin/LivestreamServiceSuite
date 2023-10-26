@@ -541,7 +541,14 @@ namespace Xenon.Renderer
                         if (assetRefs.TryGetValue(tagid, out var aref))
                         {
                             var asset = assetResolver.GetProjectAssetByName(aref);
-                            (tag as IHtmlImageElement).Source = asset.CurrentPath;
+                            if (asset != null)
+                            {
+                                (tag as IHtmlImageElement).Source = asset.CurrentPath;
+                            }
+                            else
+                            {
+                                (tag as IHtmlImageElement).Source = "";
+                            }
                         }
                     }
                 }
