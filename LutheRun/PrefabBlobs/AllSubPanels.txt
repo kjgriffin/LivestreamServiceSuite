@@ -372,7 +372,7 @@ $>[TButton]0,0
 $>{
 $>$>draw={
 $>$>$>TopText=PULPIT;
-$>$>$>BottomText=FULL;
+$>$>$>BottomText=PIANO;
 $>$>$>Enabled=true;
 $>$>$><pulpitOnAir*!usk1on>BackColor=#a81120;
 $>$>$><!pulpitOnAir+usk1on>BackColor=#eaeaea;
