@@ -158,20 +158,40 @@
 									<Begin>(run|emgrun)</Begin>
 									<End>(?=\[)</End>
 								</Span>
+								<Span foreground="#ffededed">
+									<Begin>\[</Begin>
+									<End>(?=.)</End>
+								</Span>
 								<Span foreground="#ff28de77">
-									<Begin>(?&lt;=\[)</Begin>
+									<Begin>(?&lt;=\[)\w+</Begin>
 									<End>(?=\])</End>
 								</Span>
-								<Span foreground="#ffa3b354">
-									<Begin>(?&lt;=\()</Begin>
+								<Span foreground="#ffededed">
+									<Begin>\]</Begin>
+									<End>(?=.)</End>
+								</Span>
+								<Span foreground="#ffededed">
+									<Begin>\(</Begin>
+									<End>(?=.)</End>
+								</Span>
+								<Span foreground="#ffe87b4d">
+									<Begin>(?&lt;=\()\w+</Begin>
 									<End>(?=\))</End>
 								</Span>
-								<Span foreground="#ffff8f2d">
-									<Begin>(?&lt;=@)</Begin>
+								<Span foreground="#ffededed">
+									<Begin>\)</Begin>
+									<End>@</End>
+								</Span>
+								<Span foreground="#ff4de8de">
+									<Begin>(?&lt;=@)\d+</Begin>
 									<End>(?=:)</End>
 								</Span>
+								<Span foreground="#ffededed">
+									<Begin>:</Begin>
+									<End>(?=.)</End>
+								</Span>
 								<Span foreground="#ffa3b354">
-									<Begin>(?&lt;=:)</Begin>
+									<Begin>(?&lt;=:)\w+</Begin>
 									<End>(?=;)</End>
 								</Span>
 							</RuleSet>
