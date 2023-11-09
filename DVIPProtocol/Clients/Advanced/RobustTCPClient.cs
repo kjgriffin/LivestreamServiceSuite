@@ -274,6 +274,8 @@ namespace DVIPProtocol.Clients.Advanced
 
                 if (ignoreRESP)
                 {
+                    // I think we should still wait...
+                    FinishDelayWait(timer, msTime);
                     return (false, new byte[0]);
                 }
 
@@ -471,12 +473,7 @@ namespace DVIPProtocol.Clients.Advanced
                 m_log?.Info($"[{m_endpoint.ToString()}] finished reading response: {BitConverter.ToString(data)}");
 
                 // wait for any extra spin time
-                if (timer.ElapsedMilliseconds < msTime)
-                {
-                    m_log?.Info($"[{m_endpoint.ToString()}] spin waiting for timeout.");
-                }
-                while (timer.ElapsedMilliseconds < msTime) ;
-                timer.Stop();
+                FinishDelayWait(timer, msTime);
                 return (true, data);
             }
             catch (System.IO.IOException ex)
@@ -486,6 +483,17 @@ namespace DVIPProtocol.Clients.Advanced
                 return (false, new byte[0]);
             }
 
+        }
+
+        private void FinishDelayWait(Stopwatch timer, int msTime)
+        {
+            // wait for any extra spin time
+            if (timer.ElapsedMilliseconds < msTime)
+            {
+                m_log?.Info($"[{m_endpoint.ToString()}] spin waiting for timeout.");
+            }
+            while (timer.ElapsedMilliseconds < msTime) ;
+            timer.Stop();
         }
 
         private void SubmitWork(IRobustWork work)
