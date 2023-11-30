@@ -20,4 +20,16 @@
     <ProjectReference Include="..\IntegratedPresenterAPIInterop\IntegratedPresenterAPIInterop.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="CAM_Ui2.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="CAM_Ui2.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>
