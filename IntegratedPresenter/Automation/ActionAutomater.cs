@@ -33,6 +33,7 @@ namespace Integrated_Presenter.Automation
         protected IMediaDriverProvider _mediaDriverProvider;
         protected ConditionWatchProvider GetWatches;
         protected IDynamicControlProvider _dynamicControlProvider;
+        protected IExtraDynamicControlProvider _extraDynamicControlProvider;
         protected ICCPUPresetMonitor _camPresets;
 
 
@@ -49,6 +50,7 @@ namespace Integrated_Presenter.Automation
                                  IMediaDriverProvider mediaDriverProvider,
                                  ConditionWatchProvider watchProvider,
                                  IDynamicControlProvider dynamicControlProvider,
+                                 IExtraDynamicControlProvider extraDynamicControlProvider,
                                  ICCPUPresetMonitor camPresets)
         {
             _logger = logger;
@@ -64,6 +66,7 @@ namespace Integrated_Presenter.Automation
             _mediaDriverProvider = mediaDriverProvider;
             GetWatches = watchProvider;
             _dynamicControlProvider = dynamicControlProvider;
+            _extraDynamicControlProvider = extraDynamicControlProvider;
             _camPresets = camPresets;
         }
 
@@ -380,6 +383,16 @@ namespace Integrated_Presenter.Automation
                         _dynamicControlProvider.ConfigureControls((string)task.RawParams[0], (string)task.RawParams[1], (bool)task.RawParams[2]);
                         break;
 
+                    case AutomationActions.SetupExtras:
+                        if (task.RawParams.Count != 4)
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- ABORT (bad params) setup extras from file");
+                            break;
+                        }
+                        _logger.Debug($"(PerformAutomationAction) -- setup extras from file: ${task.RawParams[1]} @{task.RawParams[2]}");
+                        _extraDynamicControlProvider.ConfigureControls((string)task.RawParams[0], (string)task.RawParams[1], (string)task.RawParams[2], (bool)task.RawParams[3]);
+                        break;
+
                     case AutomationActions.ForceRunPostSet:
                         var slide = _presentationProvider.GetCurentSlide();
                         if (slide != null && slide.PostsetEnabled)
@@ -404,7 +417,7 @@ namespace Integrated_Presenter.Automation
                         slide = _presentationProvider.GetCurentSlide();
                         if (task.RawParams.Count == 1 && slide != null && slide.AutoPilotActions.Any())
                         {
-                            _logger.Debug($"(PerformAutomationAction) -- fire cam preset");
+                            _logger.Debug($"(PerformAutomationAction) -- fire active preset");
                             string camname = (string)task.RawParams[0];
 
                             // check if we have an active pilot command to fire
@@ -418,7 +431,7 @@ namespace Integrated_Presenter.Automation
                     case AutomationActions.FireCamPreset:
                         if (task.RawParams.Count == 4)
                         {
-                            _logger.Debug($"(PerformAutomationAction) -- fire active preset");
+                            _logger.Debug($"(PerformAutomationAction) -- fire cam preset");
 
                             string camname = (string)task.RawParams[0];
                             string presetname = (string)task.RawParams[1];
@@ -427,6 +440,20 @@ namespace Integrated_Presenter.Automation
 
                             _camPresets?.FirePreset_Tracked(camname, presetname, speed);
                             _camPresets?.FireZoomLevel_Tracked(camname, zoompst);
+                        }
+                        break;
+                    case AutomationActions.FireCamDrive:
+                        if (task.RawParams.Count == 5)
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- fire cam drive");
+
+                            string camname = (string)task.RawParams[0];
+                            int dX = (int)((long)task.RawParams[1]);
+                            int dY = (int)((long)task.RawParams[2]);
+                            int sX = (int)((long)task.RawParams[3]);
+                            int sY = (int)((long)task.RawParams[4]);
+
+                            _camPresets?.PanTiltDrive(camname, dX, dY, sX, sY);
                         }
                         break;
 

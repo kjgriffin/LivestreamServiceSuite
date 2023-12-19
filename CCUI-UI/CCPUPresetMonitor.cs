@@ -344,6 +344,11 @@ namespace CCUI_UI
             Guid z = ChirpZoom_Internal(camname, zoomdir, msdur);
             return (m, z);
         }
+
+        public void PanTiltDrive(string camname, int Xdir, int Ydir, int Xspeed, int Yspeed)
+        {
+            m_server?.Cam_RunMove_RELATIVE(camname, Xdir, Ydir, Xspeed, Yspeed, Guid.NewGuid());
+        }
     }
 
 

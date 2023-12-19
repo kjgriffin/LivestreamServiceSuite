@@ -25,4 +25,16 @@ namespace Integrated_Presenter.DynamicDrivers
         void ClearControls();
     }
 
+    internal interface IExtraControlWindow
+    {
+        void ShowUI();
+        //void HideUI();
+        void Focus();
+    }
+
+    internal interface IExtraDynamicDriver : IDynamicDriver, IExtraControlWindow
+    {
+
+    }
+
 }

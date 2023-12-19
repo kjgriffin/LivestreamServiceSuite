@@ -32,8 +32,9 @@ namespace Integrated_Presenter.Automation
                                  IMediaDriverProvider mediaDriverProvider,
                                  ConditionWatchProvider watchProvider,
                                  IDynamicControlProvider dynamicControlProvider,
+                                 IExtraDynamicControlProvider extraDynamicControlProvider,
                                  ICCPUPresetMonitor camPresetProvider)
-            : base(logger, switcherProvider, autoTransitionProvider, automationConditionProvider, configProvider, featureFlagProvider, userTimerProvider, mainUIProvider, presentationProvider, audioDriverProvider, mediaDriverProvider, watchProvider, dynamicControlProvider, camPresetProvider)
+            : base(logger, switcherProvider, autoTransitionProvider, automationConditionProvider, configProvider, featureFlagProvider, userTimerProvider, mainUIProvider, presentationProvider, audioDriverProvider, mediaDriverProvider, watchProvider, dynamicControlProvider, extraDynamicControlProvider, camPresetProvider)
         {
         }
 

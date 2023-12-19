@@ -1,5 +1,6 @@
 ﻿using DVIPProtocol.Clients.Advanced;
 using DVIPProtocol.Clients.Execution;
+using DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive;
 using DVIPProtocol.Protocol.Lib.Command.CamCTRL;
 using DVIPProtocol.Protocol.Lib.Command.PTDrive;
 using DVIPProtocol.Protocol.Lib.Inquiry.PTDrive;
@@ -734,6 +735,68 @@ namespace CameraDriver
                 }
             });
             m_workAvailable.Set();
+        }
+
+        public Guid Cam_RunMove_RELATIVE(string cnameID, int dirX, int dirY, int speedX, int speedY, Guid _rid = default)
+        {
+            if (string.IsNullOrEmpty(cnameID) || string.IsNullOrEmpty(cnameID))
+            {
+                return Guid.Empty;
+            }
+            Guid reqId;
+            if (_rid == Guid.Empty)
+            {
+                reqId = Guid.NewGuid();
+            }
+            else
+            {
+                reqId = _rid;
+            }
+            m_log?.Info($"[{Thread.CurrentThread.Name}] enqueing move relative job {reqId}");
+            m_dispatchCommands.Enqueue(() =>
+            {
+                m_log?.Info($"[{Thread.CurrentThread.Name}] running move relative job {reqId}");
+                if (m_clients.TryGetValue(cnameID, out IRobustClient? client))
+                {
+                    m_log?.Info($"[{Thread.CurrentThread.Name}] requesting move relative [X: {dirX} @{speedX}] [Y: {dirY} @{speedY}] for camera {cnameID}");
+
+                    var dir = PanTitlDriveDirectionBuilder.BuildDir(dirX, dirY);
+                    var move = PanTiltDrive_Direction_Command.Create(dir, (byte)speedX, (byte)speedY);
+                    var stop = PanTiltDrive_Direction_Command.Create(PanTiltDriveDirection.Stop, 0, 0);
+
+                    string dstr = $"{(dirX == -1 ? "LEFT" : dirX == 1 ? "RIGHT" : "")} @{speedX}] [Y: {(dirY == -1 ? "UP" : dirY == 1 ? "DOWN" : "")} @{speedY}]";
+
+                    RobustCommand rcmd = new RobustCommand
+                    {
+                        Data = move.PackagePayload(),
+                        IgnoreResponse = true,
+                        OnCompleted = (int attempts, byte[] resp) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting move relative [X: {dirX} @{speedX}] [Y: {dirY} @{speedY}] for camera {cnameID} COMPLETED");
+                                OnWorkCompleted?.Invoke(cnameID, "MOVE", dstr, $"after {attempts} tries", reqId.ToString());
+                            });
+                        },
+                        OnFail = (int attempts) =>
+                        {
+                            Task.Run(() =>
+                            {
+                                m_log?.Info($"[{Thread.CurrentThread.Name}] requesting move relative [X: {dirX} @{speedX}] [Y: {dirY} @{speedY}] for camera {cnameID} FAILED");
+                                OnWorkFailed?.Invoke(cnameID, "MOVE", dstr, reqId.ToString());
+                            });
+                        },
+                        RetryAttempts = 2,
+                    };
+
+                    OnWorkStarted?.Invoke(cnameID, "MOVE", dstr, reqId.ToString());
+
+                    client?.DoRobustWork(rcmd);
+                }
+            });
+            m_workAvailable.Set();
+            return reqId;
+
         }
     }
 

@@ -78,12 +78,14 @@
 
 
         SetupButtons,
+        SetupExtras,
 
         USK1SetTypePATTERN,
         ConfigurePATTERN,
         ForceRunPostSet,
         FireCamPreset,
         FireActivePreset,
+        FireCamDrive,
     }
 
 }

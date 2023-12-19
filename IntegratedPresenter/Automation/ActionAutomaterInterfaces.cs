@@ -15,6 +15,11 @@ using System.Threading.Tasks;
 namespace Integrated_Presenter.Automation
 {
 
+    internal interface IExtraDynamicControlProvider
+    {
+        void ConfigureControls(string extraID, string file, string resourcepath, bool overwriteAll);
+    }
+
     internal interface IDynamicControlProvider
     {
         void ConfigureControls(string file, string resourcepath, bool overwriteAll);

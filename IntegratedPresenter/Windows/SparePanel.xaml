@@ -1,0 +1,17 @@
+﻿<Window x:Class="Integrated_Presenter.Windows.SparePanel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Integrated_Presenter.Windows" xmlns:matrixcontrols="clr-namespace:Integrated_Presenter.ViewModels.MatrixControls"
+        mc:Ignorable="d"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        Title="Spare Panel" Height="980" Width="1820">
+    <Grid>
+        <ScrollViewer>
+            <Grid Background="#171717" Width="1800" Height="960">
+                <matrixcontrols:GenericMatrix x:Name="matrix" MatrixWidth="8" MatrixHeight="4"></matrixcontrols:GenericMatrix>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Window>

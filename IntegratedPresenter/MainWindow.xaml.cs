@@ -51,7 +51,7 @@ namespace IntegratedPresenter.Main
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider, IRaiseConditionsChanged, IDynamicControlProvider
+    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider, IRaiseConditionsChanged, IDynamicControlProvider, IExtraDynamicControlProvider
     {
 
 
@@ -84,6 +84,7 @@ namespace IntegratedPresenter.Main
         ISlideScriptActionAutomater _slideActionEngine;
         IActionAutomater _dynamicActionEngine;
         IDynamicDriver _dynamicDriver;
+        IExtraDynamicDriver _spareDriver;
 
         private readonly ILog _logger = LogManager.GetLogger("UserLogger");
 
@@ -240,12 +241,16 @@ namespace IntegratedPresenter.Main
                                                             this,
                                                             () => new Dictionary<string, WatchVariable>(),
                                                             this,
+                                                            this,
                                                             this._camMonitor);
             // when loading config driver will re-supply automation with watched variables
 
             // load the dynamic driver
             _dynamicDriver = new DynamicMatrixDriver(dynamicControlPanel, _dynamicActionEngine, this);
             //_dynamicDriver.ConfigureControls(File.ReadAllText(@"D:\Downloads\controlseg.txt"), _pres?.Folder ?? "");
+
+            // build the spare panel
+            _spareDriver = new SpareDynamicMatrixDriver(this, _dynamicActionEngine, this);
         }
 
         private void InitActionAutomater()
@@ -264,6 +269,7 @@ namespace IntegratedPresenter.Main
                                                 this,
                                                 this,
                                                 () => Presentation?.WatchedVariables,
+                                                this,
                                                 this,
                                                 this._camMonitor);
         }
@@ -1415,6 +1421,13 @@ namespace IntegratedPresenter.Main
                 ToggleAuxRow();
             }
 
+            if (e.Key == Key.F11)
+            {
+                _spareDriver.Focus();
+                // prevent extra??
+                e.Handled = true;
+                return;
+            }
 
 
             // audio
@@ -5486,6 +5499,29 @@ namespace IntegratedPresenter.Main
             }
         }
 
+        private void LoadExtraDynamicButtons(string extraID, string filetext, string resourcepath, bool overwriteAll)
+        {
+            try
+            {
+                // TODO: somewhere we may need to eventually have this USE the extraID
+                _spareDriver?.ConfigureControls(filetext, resourcepath, overwriteAll);
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Debugger.Break();
+#endif
+            }
+        }
+
+
+
+        private void clickShowSparePanel(object sender, RoutedEventArgs e)
+        {
+            _spareDriver.ShowUI();
+        }
+
+
         #region ActionAutomater Providers
         IBMDSwitcherManager ISwitcherDriverProvider.switcherManager { get => switcherManager; }
         BMDSwitcherState ISwitcherDriverProvider.switcherState { get => switcherState; }
@@ -5633,7 +5669,32 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        #endregion
+        void IExtraDynamicControlProvider.ConfigureControls(string extraID, string file, string resourcepath, bool overwriteAll)
+        {
+            // call assumes its running from presentation
+            // so point it there
 
+            string text = "";
+            string path = resourcepath;
+            if (resourcepath == "%pres%")
+            {
+                if (_pres != null)
+                {
+                    path = _pres?.Folder ?? resourcepath;
+                    if (_pres.RawTextResources.TryGetValue(file, out var ftext))
+                    {
+                        text = ftext;
+                    }
+                }
+            }
+
+            if (text != string.Empty)
+            {
+                LoadExtraDynamicButtons(extraID, text, path, overwriteAll);
+            }
+
+        }
+
+        #endregion
     }
 }

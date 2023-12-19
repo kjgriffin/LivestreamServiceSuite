@@ -318,5 +318,10 @@ namespace CCUI_UI
         {
 
         }
+
+        public void PanTiltDrive(string camname, int Xdir, int Ydir, int Xspeed, int Yspeed)
+        {
+            //throw new NotImplementedException();
+        }
     }
 }

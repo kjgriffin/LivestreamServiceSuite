@@ -146,6 +146,16 @@ namespace IntegratedPresenterAPIInterop
             },
             ExpectedVariableContents.NONE),
 
+            [AutomationActions.SetupExtras] = (4, AutomationActions.SetupExtras, "SetupExtras", new List<AutomationActionArgType>()
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.String,
+                AutomationActionArgType.String,
+                AutomationActionArgType.Boolean,
+            },
+            ExpectedVariableContents.NONE),
+
+
             [AutomationActions.ForceRunPostSet] = (2, AutomationActions.ForceRunPostSet, "ForceRunPostset", new List<AutomationActionArgType>()
             {
                 AutomationActionArgType.Boolean,
@@ -166,7 +176,15 @@ namespace IntegratedPresenterAPIInterop
                 AutomationActionArgType.String,
             },
             ExpectedVariableContents.NONE),
-
+            [AutomationActions.FireCamDrive] = (5, AutomationActions.FireCamDrive, "FireCamDrive", new List<AutomationActionArgType>()
+            {
+                AutomationActionArgType.String,
+                AutomationActionArgType.Integer,
+                AutomationActionArgType.Integer,
+                AutomationActionArgType.Integer,
+                AutomationActionArgType.Integer,
+            },
+            ExpectedVariableContents.NONE),
 
         };
 

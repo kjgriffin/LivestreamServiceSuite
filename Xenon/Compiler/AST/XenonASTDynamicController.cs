@@ -30,7 +30,7 @@ namespace Xenon.Compiler.AST
             ("\\)", false, "", new List<(string, string)>{(")", "end params")}, null),
             ("\\{", false, "", new List<(string, string)>{("{", "controller definition")}, null),
             ("dynamic:", false, "", new List<(string, string)>{("dynamic:", "controller definition")}, null),
-            ("[^;]+(?=;)", false, "", new List<(string, string)>{("panel(4x3);", "panel style")}, null),
+            ("[^;]+(?=;)", false, "", new List<(string, string)>{("panel(4x3);", "panel style"), ("panel(generic)", "panel style")}, null),
             ("[^\\]]+(?=\\])", false, "tag-type", new List<(string, string)>{("[Globals]", "define the global watches"),("[TButton]", "declare a button for the panel")}, null),
             ("\\d+,\\d+", true, "", new List<(string, string)>{("0,0", "specify instrument location")}, null),
             ("{", false, "", new List<(string, string)>{("{", "begin declaration")}, null),

@@ -2146,8 +2146,8 @@ namespace SlideCreater
                 source = Regex.Replace(source, Regex.Escape("$THUMBNAIL$"), thumbnail);
                 source = Regex.Replace(source, Regex.Escape("$PRESENTER$"), wizzard.Data.Presenter);
                 source = Regex.Replace(source, Regex.Escape("$TITLE$"), wizzard.Data.Title);
-                source = Regex.Replace(source, Regex.Escape("$YEAR$"), wizzard.Data.Date.Year.ToString("yyyy"));
-                source = Regex.Replace(source, Regex.Escape("$MONTH$"), wizzard.Data.Date.Month.ToString("MMMM"));
+                source = Regex.Replace(source, Regex.Escape("$YEAR$"), wizzard.Data.Date.ToString("yyyy"));
+                source = Regex.Replace(source, Regex.Escape("$MONTH$"), wizzard.Data.Date.ToString("MMMM"));
                 source = Regex.Replace(source, Regex.Escape("$DAY$"), wizzard.Data.Date.Day.ToString("d"));
 
                 if (wizzard.Data.PanelAtBottom)

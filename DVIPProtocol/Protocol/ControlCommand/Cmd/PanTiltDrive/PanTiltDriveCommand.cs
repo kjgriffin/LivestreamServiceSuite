@@ -29,6 +29,56 @@ namespace DVIPProtocol.Protocol.ControlCommand.Cmd.PanTiltDrive
         }
     }
 
+    public static class PanTitlDriveDirectionBuilder
+    {
+        /// <summary>
+        /// Build A Direction
+        /// </summary>
+        /// <param name="X">-1 = left, 1 = right, 0 = stop</param>
+        /// <param name="Y">-1 = up, 1 = down, 0 = stop</param>
+        /// <returns></returns>
+        public static PanTiltDriveDirection BuildDir(int X, int Y)
+        {
+            if (X == -1)
+            {
+                if (Y == -1)
+                {
+                    return PanTiltDriveDirection.UpLeft;
+                }
+                if (Y == 1)
+                {
+                    return PanTiltDriveDirection.DownLeft;
+                }
+                return PanTiltDriveDirection.Left;
+            }
+            if (X == 0)
+            {
+                if (Y == -1)
+                {
+                    return PanTiltDriveDirection.Up;
+                }
+                if (Y == 1)
+                {
+                    return PanTiltDriveDirection.Down;
+                }
+                return PanTiltDriveDirection.Stop;
+            }
+            if (X == 1)
+            {
+                if (Y == -1)
+                {
+                    return PanTiltDriveDirection.UpRight;
+                }
+                if (Y == 1)
+                {
+                    return PanTiltDriveDirection.DownRight;
+                }
+                return PanTiltDriveDirection.Right;
+            }
+            return PanTiltDriveDirection.Stop;
+        }
+    }
+
     public enum PanTiltDriveDirection : ushort
     {
         Up = 0x0301,

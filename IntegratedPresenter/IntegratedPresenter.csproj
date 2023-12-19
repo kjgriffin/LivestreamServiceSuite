@@ -245,6 +245,12 @@
 		</Reference>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="ViewModels\MatrixControls\GenericMatrix.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	</ItemGroup>
+
 	<ProjectExtensions>
 		<VisualStudio>
 			<UserProperties version_1json__JsonSchema="" />

@@ -10,5 +10,6 @@ namespace CCUI_UI
         Guid FireZoom_Tracked(string camname, int zoomdir, int msdur);
         (Guid move, Guid zoom) FirePresetWithZoom_Tracked(string camname, string presetname, int speed, int zoomdir, int msdur);
         Guid FireZoomLevel_Tracked(string camname, string presetname);
+        void PanTiltDrive(string camname, int Xdir, int Ydir, int Xspeed, int Yspeed);
     }
 }

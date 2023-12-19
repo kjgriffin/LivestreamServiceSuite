@@ -52,6 +52,7 @@
                     <MenuItem Click="clickENTEROnlyForTrans" Name="miEnterButtonClickGuard" Header="ENTER Only For Auto Trans" IsCheckable="True" IsChecked="True" IsTabStop="False" Focusable="False"></MenuItem>
                     <MenuItem Click="clickSPACEOnlyForTrans" Name="miSpaceButtonClickGuard" Header="SPACE Only For Cut Trans" IsCheckable="True" IsChecked="True" IsTabStop="False" Focusable="False"></MenuItem>
                     <MenuItem Click="clickLoadDynamicButtons" Name="miLoadDynamicButtons" Header="Load Dynamic Buttons" IsTabStop="False" Focusable="False"></MenuItem>
+                    <MenuItem Click="clickShowSparePanel" Name="miShowSparePanel" Header="Show Spare Panel Window" IsTabStop="False" Focusable="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Settings" IsTabStop="False" Focusable="False">
                     <MenuItem Header="Export Switcher Settings" Click="SaveSettings" IsTabStop="False" Focusable="False"></MenuItem>
