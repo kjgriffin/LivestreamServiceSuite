@@ -6,11 +6,13 @@
         xmlns:local="clr-namespace:Integrated_Presenter.Windows" xmlns:matrixcontrols="clr-namespace:Integrated_Presenter.ViewModels.MatrixControls"
         mc:Ignorable="d"
         PreviewKeyDown="Window_PreviewKeyDown"
-        Title="Spare Panel" Height="980" Width="1820">
+        Title="Spare Panel" Height="800" Width="1270" Background="#070707">
     <Grid>
-        <ScrollViewer>
-            <Grid Background="#171717" Width="1800" Height="960">
-                <matrixcontrols:GenericMatrix x:Name="matrix" MatrixWidth="8" MatrixHeight="4"></matrixcontrols:GenericMatrix>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid Background="#171717" Width="1250" Height="750">
+                <Viewbox>
+                    <matrixcontrols:GenericMatrix x:Name="matrix" MatrixWidth="12" MatrixHeight="7"></matrixcontrols:GenericMatrix>
+                </Viewbox>
             </Grid>
         </ScrollViewer>
     </Grid>

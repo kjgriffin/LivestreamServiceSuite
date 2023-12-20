@@ -58,6 +58,7 @@ namespace Integrated_Presenter.DynamicDrivers
 
         private async void _ui_OnButtonClick(object sender, (int x, int y) e)
         {
+            _parent?.Focus();
             // execute the actions as required
             if (_buttons.TryGetValue($"{e.x},{e.y}", out var btn))
             {
