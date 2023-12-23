@@ -45,6 +45,7 @@ namespace Xenon.Compiler
         {
             "solidcolorcanvas",
             "crop",
+            "imgset",
             "centerassetfill",
             "assets",
             "asset",

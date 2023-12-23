@@ -18,6 +18,8 @@ namespace Xenon.Compiler.AST
         public Dictionary<string, string> Texts { get; private set; } = new Dictionary<string, string>();
         public Dictionary<string, string> Images { get; private set; } = new Dictionary<string, string>();
 
+        public Dictionary<string, List<string>> SetImages { get; private set; } = new Dictionary<string, List<string>>();
+
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTHTML html = new XenonASTHTML();
@@ -53,6 +55,20 @@ namespace Xenon.Compiler.AST
                     Lexer.GobbleandLog(")");
                     html.Images[key] = data;
                 }
+                else if (Lexer.Inspect("imgset"))
+                {
+                    Lexer.Consume();
+                    Lexer.GobbleandLog("[");
+                    var key = Lexer.ConsumeUntil("]");
+                    Lexer.GobbleandLog("]");
+                    Lexer.GobbleWhitespace();
+                    Lexer.GobbleandLog("{");
+                    var data = Lexer.ConsumeUntil("}");
+                    Lexer.GobbleandLog("}");
+
+                    var datas = data.tvalue.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                    html.SetImages[key] = datas;
+                }
                 Lexer.GobbleWhitespace();
             }
             Lexer.GobbleandLog("}");
@@ -79,6 +95,7 @@ namespace Xenon.Compiler.AST
 
             slide.Data[HTMLSlideRenderer.DATAKEY_TEXTS] = Texts;
             slide.Data[HTMLSlideRenderer.DATAKEY_IMGS] = Images;
+            slide.Data[HTMLSlideRenderer.DATAKEY_SETIMGS] = SetImages;
             (this as IXenonASTCommand).ApplyLayoutOverride(project, Logger, slide, LanguageKeywordCommand.HTML);
 
             slide.AddPostset(_Parent, true, true);

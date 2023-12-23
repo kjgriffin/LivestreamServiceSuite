@@ -418,6 +418,7 @@ namespace Xenon.Renderer
     {
         public static string DATAKEY_TEXTS { get => "content-replacements"; }
         public static string DATAKEY_IMGS { get => "content-images"; }
+        public static string DATAKEY_SETIMGS { get => "set-content-images"; }
 
         ILayoutInfoResolver<HTMLLayoutInfo> ISlideRenderer<HTMLLayoutInfo>.LayoutResolver { get => new HTMLLayoutInfo(); }
 
@@ -467,6 +468,14 @@ namespace Xenon.Renderer
             var html_key = layout.HTMLSrc_KEY;
             var css = layout.CSSSrc;
 
+            // let this gen prior to regular text's
+            if (slide.Data.TryGetValue(DATAKEY_SETIMGS, out var simgs))
+            {
+                html_slide = SET_ASSET_INSERT(html_slide, simgs as Dictionary<string, List<string>>, assetResolver);
+                html_key = SET_ASSET_INSERT(html_key, simgs as Dictionary<string, List<string>>, assetResolver);
+            }
+
+
             if (slide.Data.TryGetValue(DATAKEY_TEXTS, out var texts))
             {
                 html_slide = HTML_INSERT(html_slide, texts as Dictionary<string, string>);
@@ -478,6 +487,7 @@ namespace Xenon.Renderer
                 html_slide = ASSET_INSERT(html_slide, imgs as Dictionary<string, string>, assetResolver);
                 html_key = ASSET_INSERT(html_key, imgs as Dictionary<string, string>, assetResolver);
             }
+
 
             html_slide = HTML_INJECT_STYLE(html_slide, css);
             html_key = HTML_INJECT_STYLE(html_key, css);
@@ -556,6 +566,77 @@ namespace Xenon.Renderer
 
             return document.ToHtml();
         }
+
+        private string SET_ASSET_INSERT(string src, Dictionary<string, List<string>> assetRefs, IAssetResolver assetResolver)
+        {
+            var parser = new HtmlParser();
+            var document = parser.ParseDocument(src);
+
+            // find all elements that are tagged
+            foreach (var tagid in assetRefs.Keys)
+            {
+                var tags = document.QuerySelectorAll($"*[data-set-img='{tagid}']");
+                foreach (var tag in tags)
+                {
+                    // allow non 'img' tags be used as the root?
+
+                    var par = tag.Parent;
+
+                    // remove itself from parent
+                    par.RemoveChild(tag);
+
+                    if (assetRefs.TryGetValue(tagid, out var aref))
+                    {
+                        int dynid = 0;
+                        foreach (var aid in aref)
+                        {
+                            var copy = tag.Clone() as IElement;
+
+                            // find either itself or first child as the 'img' tag
+
+                            // load in dynamic id's
+                            foreach (var dynode in copy.QuerySelectorAll("*[data-dynamic-id]"))
+                            {
+                                var did = dynode.GetAttribute("data-dynamic-id");
+                                dynode.SetAttribute("data-id", $"{did}-{dynid}");
+                            }
+                            dynid++;
+
+                            IHtmlImageElement imgtag;
+                            if (copy.LocalName == "img")
+                            {
+                                imgtag = (IHtmlImageElement)copy;
+                            }
+                            else
+                            {
+                                //imgtag = copy.Children.FirstOrDefault(x => x.LocalName == "img") as IHtmlImageElement;
+                                imgtag = copy.QuerySelectorAll("img").FirstOrDefault() as IHtmlImageElement;
+                            }
+
+                            if (imgtag == null)
+                            {
+                                break;
+                            }
+
+                            var asset = assetResolver.GetProjectAssetByName(aid);
+                            if (asset != null)
+                            {
+                                imgtag.Source = asset.CurrentPath;
+                            }
+                            else
+                            {
+                                imgtag.Source = "";
+                            }
+
+                            par.AppendChild(copy);
+                        }
+                    }
+                }
+            }
+
+            return document.ToHtml();
+        }
+
 
         private string EXTRACT_SLIDE_TYPE(string src, string defaultValue)
         {
