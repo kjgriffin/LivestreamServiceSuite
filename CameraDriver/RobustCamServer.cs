@@ -786,7 +786,7 @@ namespace CameraDriver
                                 OnWorkFailed?.Invoke(cnameID, "MOVE", dstr, reqId.ToString());
                             });
                         },
-                        RetryAttempts = 2,
+                        RetryAttempts = 1,
                     };
 
                     OnWorkStarted?.Invoke(cnameID, "MOVE", dstr, reqId.ToString());

@@ -233,12 +233,14 @@ namespace DVIPProtocol.Clients.Advanced
             // idealy we'd never give-up, but abort after some time
             // probably can get away with an order of seconds here in practice
 
+            Stopwatch timer = new Stopwatch();
             // effectively flush the read buffer
             // in the event that we'd timed out previously but it did come eventually
             // we'll just ignore it because it's stale and we're firing again
             try
             {
-                while (stream.DataAvailable)
+                timer.Start(); 
+                while (stream.DataAvailable && timer.ElapsedMilliseconds < 100) // we can't wait all day to flush the buffer
                 {
                     //stream.ReadByte();
 
@@ -256,14 +258,13 @@ namespace DVIPProtocol.Clients.Advanced
                 m_log?.Info($"[{m_endpoint.ToString()}] threw exception while flushing the read buffer {ex}");
             }
 
-            Stopwatch timer = new Stopwatch();
+            timer.Reset();
 
             // send data
             m_log?.Info($"[{m_endpoint.ToString()}] sending data: {BitConverter.ToString(msg)}");
             timer.Start();
             stream.Write(msg);
 
-            m_log?.Info($"[{m_endpoint.ToString()}] expecting response.");
             try
             {
 
@@ -276,6 +277,8 @@ namespace DVIPProtocol.Clients.Advanced
                 {
                     return (false, new byte[0]);
                 }
+
+                m_log?.Info($"[{m_endpoint.ToString()}] expecting response.");
 
                 // performance??
                 // ms are critical right

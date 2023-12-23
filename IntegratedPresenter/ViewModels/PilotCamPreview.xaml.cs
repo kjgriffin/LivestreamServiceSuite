@@ -1,4 +1,6 @@
-﻿using SharedPresentationAPI.Presentation;
+﻿#define ZOOMBUMP_FEATURE
+
+using SharedPresentationAPI.Presentation;
 
 using System;
 using System.Windows;
@@ -91,7 +93,7 @@ namespace Integrated_Presenter.ViewModels
 
         public void EnableCarlsZoom()
         {
-#if DEBUG
+#if ZOOMBUMP_FEATURE
             btnZIN.IsEnabled = true;
             btnZIN.Visibility = Visibility.Visible;
             btnZOUT.IsEnabled = true;
