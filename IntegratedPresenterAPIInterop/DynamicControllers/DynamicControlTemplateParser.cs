@@ -72,6 +72,21 @@ namespace IntegratedPresenterAPIInterop.DynamicDrivers
             return sindex;
         }
 
+        private static int ParseInt(string input, ref int index)
+        {
+            IEnumerable<char> num = new List<char>();
+            while (Regex.Match(input[index].ToString(), @"\d").Success)
+            {
+                num = num.Append(input[index]);
+                index++;
+            }
+            if (int.TryParse(string.Join("", num), out var result))
+            {
+                return result;
+            }
+            return 0;
+        }
+
         public static List<(int, int, string)> FindButtonEntries(string config)
         {
             List<(int, int, string)> result = new List<(int, int, string)>();
@@ -82,9 +97,11 @@ namespace IntegratedPresenterAPIInterop.DynamicDrivers
                 if (config.TryFind(ref index, "[TButton]"))
                 {
                     // expect
-                    int x = int.Parse(config.Substring(index++, 1));
+                    //int x = int.Parse(config.Substring(index++, 1));
+                    int x = ParseInt(config, ref index);
                     index++;
-                    int y = int.Parse(config.Substring(index++, 1));
+                    //int y = int.Parse(config.Substring(index++, 1));
+                    int y = ParseInt(config, ref index);
                     string draw;
                     index = ExtractMatchedBraces(config, index, out var btntxt);
                     result.Add((x, y, btntxt));
