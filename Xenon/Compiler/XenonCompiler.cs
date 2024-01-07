@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Documents;
 
 using Xenon.Compiler.AST;
+using Xenon.Compiler.Meta;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler
@@ -206,8 +207,8 @@ namespace Xenon.Compiler
             // fow now
             CompilerSucess = true;
 
-            // reset project
-            proj?.ClearSlidesAndVariables();
+            List<Slide> compiledSlides = new List<Slide>();
+
             foreach (var p in orderedFiles)
             {
                 if (!p.success)
@@ -216,7 +217,7 @@ namespace Xenon.Compiler
                 }
                 try
                 {
-                    p.project?.Generate(proj, null, p.log, progress);
+                    compiledSlides.AddRange(p.project?.Generate(proj, null, p.log, progress));
                 }
                 catch (Exception ex)
                 {
@@ -229,6 +230,14 @@ namespace Xenon.Compiler
                 // marshal all logs
                 Messages.AddRange(p.log.AllErrors);
             }
+
+            // reset project
+            proj?.ClearSlidesAndVariables();
+            // analyze all slides at once
+            SlideVariableSubstituter subengine = new SlideVariableSubstituter(compiledSlides, proj.BMDSwitcherConfig);
+            // at this point we can do this
+            proj.Slides.AddRange(subengine.ApplyNesscarySubstitutions());
+
 
             progress?.Report(100);
 

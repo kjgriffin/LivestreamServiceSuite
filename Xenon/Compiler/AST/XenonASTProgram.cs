@@ -29,6 +29,10 @@ namespace Xenon.Compiler.AST
                 progress?.Report(cprog + prog * 100 / total * ((100 - cprog) / 100));
             }
 
+            // TO support multifile compilation, we can't assume files aren't interdependant upon attribute tagging...
+            // so: we'll do the right thing and like any AST element, just return a bunch of slides (not modifying the project obj)
+            // and let the compiler figure out what to do with them
+            /*
             // Attribute sit outside the project right...
             // so here we can easily just 'update' the slides as required
             SlideVariableSubstituter subengine = new SlideVariableSubstituter(slides, project.BMDSwitcherConfig);
@@ -37,7 +41,10 @@ namespace Xenon.Compiler.AST
             slides.ForEach(s => s.NonRenderedMetadata[XenonASTExpression.DATAKEY_CMD_SOURCEFILE_LOOKUP] = Logger.File);
 
             project.Slides.AddRange(subengine.ApplyNesscarySubstitutions());
+            */
 
+            // mark source on slides
+            slides.ForEach(s => s.NonRenderedMetadata[XenonASTExpression.DATAKEY_CMD_SOURCEFILE_LOOKUP] = Logger.File);
 
             // at this point here we'll allow slides to be put onto the project
             //project.Slides.AddRange(slides);
