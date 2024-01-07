@@ -1,3 +1,5 @@
+#DEFINE BIBLE_CLASS_PANEL
+
 #dynamiccontroller(bibleclass-sub-panel-std)
 {
 dynamic:matrix(4x3);
