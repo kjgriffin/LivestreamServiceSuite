@@ -67,6 +67,30 @@ namespace Xenon.SaveLoad
                     }
                 }
 
+                // get extra source code
+                var extrasource = archive.GetEntry("extrasource.json");
+                proj.ExtraSourceFiles = new Dictionary<string, string>();
+                if (extrasource != null)
+                {
+                    Dictionary<string, string> extrasrcmap = new Dictionary<string, string>();
+                    // then it exists and we should use it and read it
+                    using (StreamReader sr = new StreamReader(extrasource.Open()))
+                    {
+                        var extrasrcmapjson = await sr.ReadToEndAsync();
+                        extrasrcmap = JsonSerializer.Deserialize<Dictionary<string, string>>(extrasrcmapjson);
+                    }
+                    foreach (var extrasrc in extrasrcmap)
+                    {
+                        var entry = archive.GetEntry(extrasrc.Value);
+                        using (StreamReader sr = new StreamReader(entry.Open()))
+                        {
+                            string txtsrc = await sr.ReadToEndAsync();
+                            proj.ExtraSourceFiles.Add(extrasrc.Key, txtsrc);
+                        }
+                    }
+                }
+
+
                 // get configuration
                 if (originalVersion.ExceedsMinimumVersion(1, 7, 2, 26))
                 {
@@ -515,6 +539,25 @@ namespace Xenon.SaveLoad
             using (StreamWriter writer = new StreamWriter(sourcecode.Open()))
             {
                 await writer.WriteAsync(proj.SourceCode);
+            }
+
+            ZipArchiveEntry srcmap = archive.CreateEntry("extrasource.json");
+            string extrasrcpath = $"source{Path.DirectorySeparatorChar}";
+            var extrasrcfolder = archive.CreateEntry(extrasrcpath);
+            Dictionary<string, string> srcmapdict = new Dictionary<string, string>();
+            foreach (var extrasrc in proj.ExtraSourceFiles)
+            {
+                ZipArchiveEntry extrasrcfile = archive.CreateEntry(Path.Combine(extrasrcpath, extrasrc.Key));
+                using (StreamWriter w = new StreamWriter(extrasrcfile.Open()))
+                {
+                    await w.WriteAsync(extrasrc.Value);
+                }
+                srcmapdict[extrasrc.Key] = Path.Combine(extrasrcpath, extrasrc.Key);
+            }
+            using (StreamWriter writer = new StreamWriter(srcmap.Open()))
+            {
+                var json = JsonSerializer.Serialize(srcmapdict);
+                await writer.WriteAsync(json);
             }
 
             // handle config

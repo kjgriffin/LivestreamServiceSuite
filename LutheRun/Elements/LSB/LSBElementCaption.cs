@@ -6,6 +6,7 @@ using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -54,7 +55,7 @@ namespace LutheRun.Elements.LSB
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_CAPTION. Caption:'{Caption}' SubCaption:'{SubCaption}'";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo, Dictionary<string, string> ExtraFiles)
         {
             // for now just make a title slide:: and flag it as optional
             //return $"/// <XENON_AUTO_GEN optional=\"true\">\r\n#2title(\"{Caption.Replace('\"', '\'')}\", \"{SubCaption.Replace('\"', '\'')}\", \"horizontal\")\r\n/// </XENON_AUTO_GEN>";

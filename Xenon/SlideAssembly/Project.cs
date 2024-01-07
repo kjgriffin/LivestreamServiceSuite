@@ -33,6 +33,8 @@ namespace Xenon.SlideAssembly
         public string SourceCode { get; set; } = string.Empty;
         public string SourceConfig { get; set; } = string.Empty;
 
+        public Dictionary<string, string> ExtraSourceFiles { get; set; } = new Dictionary<string, string>();
+
         public string SourceCCPUConfigFull { get; set; } = string.Empty;
         public CCPUConfig_Extended CCPUConfig { get; set; } = new CCPUConfig_Extended();
 

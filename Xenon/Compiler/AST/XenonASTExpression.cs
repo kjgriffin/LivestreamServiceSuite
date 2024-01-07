@@ -16,6 +16,7 @@ namespace Xenon.Compiler.AST
         public static string DATAKEY_PILOT_SOURCECODE_LOOKUP { get => "source-code-lookup-pilot"; }
         public static string DATAKEY_CMD_SOURCECODE_LOOKUP { get => "source-code-lookup-generating-command"; }
         public static string DATAKEY_CMD_SOURCESLIDENUM_LABELS { get => "source-code-slide-num-lookup-label"; }
+        public static string DATAKEY_CMD_SOURCEFILE_LOOKUP { get => "source-code-sourcefile-label"; }
 
         public int _SourceLine { get; private set; } = -1;
         public int _PilotSourceLine { get; private set; } = -1;
@@ -51,9 +52,17 @@ namespace Xenon.Compiler.AST
 
             foreach (var s in slides)
             {
-                if (!s.NonRenderedMetadata.TryGetValue(DATAKEY_PILOT_SOURCECODE_LOOKUP, out _))
+                if (!s.NonRenderedMetadata.TryGetValue(DATAKEY_PILOT_SOURCECODE_LOOKUP, out var oldline))
                 {
                     s.NonRenderedMetadata[DATAKEY_PILOT_SOURCECODE_LOOKUP] = _PilotSourceLine;
+                }
+                else
+                {
+                    // allow overwrite if we have better data, or crappy existing data
+                    if (_PilotSourceLine != -1 || (int)oldline == -1)
+                    {
+                        s.NonRenderedMetadata[DATAKEY_PILOT_SOURCECODE_LOOKUP] = _PilotSourceLine;
+                    }
                 }
                 if (!s.NonRenderedMetadata.TryGetValue(DATAKEY_CMD_SOURCECODE_LOOKUP, out _))
                 {
@@ -124,7 +133,8 @@ namespace Xenon.Compiler.AST
 
             foreach (var pilotSet in sanatizedCommands)
             {
-                slides[pilotSet.Key].Data[DATAKEY_PILOT] = pilotSet.Value;
+                //slides[pilotSet.Key].Data[DATAKEY_PILOT] = pilotSet.Value;
+                flightworthyslides[pilotSet.Key].Data[DATAKEY_PILOT] = pilotSet.Value;
             }
 
             return slides;

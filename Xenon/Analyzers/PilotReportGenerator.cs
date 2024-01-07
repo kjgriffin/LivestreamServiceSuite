@@ -34,6 +34,11 @@ namespace Xenon.Analyzers
                         slide.NonRenderedMetadata.TryGetValue(XenonASTExpression.DATAKEY_PILOT_SOURCECODE_LOOKUP, out var slref);
                         int sourcelineref = (int)slref;
 
+                        slide.NonRenderedMetadata.TryGetValue(XenonASTExpression.DATAKEY_CMD_SOURCEFILE_LOOKUP, out var sfref);
+                        string sourcefileref = (string)sfref;
+                        // update logger for active 'source file'
+                        logger.File = sourcefileref;
+
                         // if no-match warn about possibly invalid command
                         if (!match.Success)
                         {

@@ -4,6 +4,7 @@ namespace Xenon.Compiler
 {
     internal class XenonErrorLogger : ILexerLogger
     {
+        public string File { get; set; } = "";
 
         List<XenonCompilerMessage> messages = new List<XenonCompilerMessage>();
 
@@ -11,6 +12,7 @@ namespace Xenon.Compiler
 
         public void Log(XenonCompilerMessage message)
         {
+            message.SrcFile = File;
             messages.Add(message);
         }
 

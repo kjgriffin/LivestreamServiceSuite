@@ -43,7 +43,7 @@ namespace LutheRun.Elements.LSB
             return string.IsNullOrWhiteSpace(LSBResponsorialExtractor.ExtractResponsiveLiturgy(_litPTags, ref a, b));
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo, Dictionary<string, string> ExtraFiles)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("#liturgyresponsive".Indent(indentDepth, indentSpaces));

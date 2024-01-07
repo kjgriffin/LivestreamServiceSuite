@@ -5,6 +5,8 @@ using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
+using System.Collections.Generic;
+
 namespace LutheRun.Elements.LSB
 {
     internal class LSBElementAcknowledments : ILSBElement
@@ -24,7 +26,7 @@ namespace LutheRun.Elements.LSB
             return "";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo, Dictionary<string, string> ExtraFiles)
         {
             return $"acknowledments={{{Text}}}";
         }

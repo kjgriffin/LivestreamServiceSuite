@@ -119,7 +119,7 @@ namespace LutheRun.Elements.LSB
             }
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo, Dictionary<string, string> ExtraFiles)
         {
             StringBuilder sb = new StringBuilder();
 

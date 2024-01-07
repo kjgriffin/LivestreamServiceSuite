@@ -2,6 +2,7 @@
 using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace LutheRun.Elements
@@ -18,6 +19,8 @@ namespace LutheRun.Elements
         private BlockType btype { get; set; }
 
         public string TypeIdentifier { get; private set; }
+        public bool AuxFile { get; set; } = false;
+        public string AuxFileSrc { get; set; }
 
         public string PrefabCommand { get; private set; }
         private bool isPostset = false;
@@ -70,7 +73,7 @@ namespace LutheRun.Elements
             this.btype = btype;
         }
 
-        public override string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
+        public override string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo, Dictionary<string, string> ExtraFiles)
         {
             string postset = isPostset ? $"::postset(last={Postset})" : "";
             // Injected postset takes precedence??
@@ -87,6 +90,13 @@ namespace LutheRun.Elements
             {
                 cmd = Regex.Replace(cmd, Regex.Escape(IndentReplacementIndentifier), "".PadLeft(indentSpaces));
             }
+
+            if (AuxFile)
+            {
+                ExtraFiles[AuxFileSrc] = cmd;
+                return "";
+            }
+
             return cmd;
         }
 

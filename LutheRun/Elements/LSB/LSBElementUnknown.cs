@@ -5,6 +5,8 @@ using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
+using System.Collections.Generic;
+
 namespace LutheRun.Elements.LSB
 {
     class LSBElementUnknown : ILSBElement
@@ -25,7 +27,7 @@ namespace LutheRun.Elements.LSB
             return $"/// XENON DEBUG::Parsed as UNKNOWN. {Unknown}";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo, Dictionary<string, string> ExtraFiles)
         {
             return "";
         }

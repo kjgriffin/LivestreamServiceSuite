@@ -10,6 +10,8 @@ namespace LutheRun.Parsers
     public class LSBImportOptions
     {
         [BoolSetting]
+        public bool ImportToNewFile { get; set; } = true;
+        [BoolSetting]
         public bool InferPostset { get; set; } = true;
         [BoolSetting]
         public bool UseUpNextForHymns { get; set; } = true;

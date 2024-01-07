@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SlideCreater"
         mc:Ignorable="d"
-        Title="Bible Class Wizzard" Height="540" Width="450">
+        Title="Bible Class Wizzard" Height="400" Width="450">
     <Window.Resources>
         <Style TargetType="Button" x:Name="DarkBtn" x:Key="DarkBtn">
             <Setter Property="Template">
@@ -70,13 +70,11 @@
 
     <Grid Background="#272727">
         <Viewbox>
-            <Grid Margin="20" Width="450" Height="500">
+            <Grid Margin="20" Width="450" Height="270">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"></RowDefinition>
                     <RowDefinition Height="50"></RowDefinition>
                     <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition Height="80"></RowDefinition>
-                    <RowDefinition Height="80"></RowDefinition>
                     <RowDefinition Height="120"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -92,18 +90,6 @@
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Foreground="#efefef" MinWidth="80" MaxHeight="20">DATE</TextBlock>
                 <DatePicker Name="tbDATE" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"></DatePicker>
-
-                <TextBlock Grid.Row="3" Grid.Column="0" Foreground="#efefef" MinWidth="80" MaxHeight="20">INSERT POINT</TextBlock>
-                <StackPanel Grid.Row="3" Grid.Column="1" Background="#373737" Margin="5">
-                    <RadioButton Name="rbInsertTop" Foreground="White" Background="#171717" MinWidth="200" Margin="10" MaxHeight="20" IsChecked="True">TOP</RadioButton>
-                    <RadioButton Name="rbInsertCarret" Foreground="White" Background="#171717" MinWidth="200" Margin="10" MaxHeight="20" IsChecked="False">CARRET</RadioButton>
-                </StackPanel>
-
-                <TextBlock Grid.Row="4" Grid.Column="0" Foreground="#efefef" MinWidth="80" MaxHeight="20">PANEL DEFENITIONS</TextBlock>
-                <StackPanel Grid.Row="4" Grid.Column="1" Background="#373737" Margin="5">
-                    <RadioButton Name="rbPanelsWith" Foreground="White" Background="#171717" MinWidth="200" Margin="10" MaxHeight="20" IsChecked="False">WITH SOURCE</RadioButton>
-                    <RadioButton Name="rbPanelsEnd" Foreground="White" Background="#171717" MinWidth="200" Margin="10" MaxHeight="20" IsChecked="True">END OF SOURCE</RadioButton>
-                </StackPanel>
 
                 <TextBlock Grid.Row="5" Grid.Column="0" Foreground="#efefef" MinWidth="80" MaxHeight="20">THUMBNAIL</TextBlock>
                 <Grid Grid.Row="5" Grid.Column="1">

@@ -120,9 +120,9 @@ namespace LutheRun.Generators
             return res;
         }
 
-        public static string CompileToXenon(string ServiceFileName, LSBImportOptions options, List<ParsedLSBElement> fullservice)
+        public static string CompileToXenon(string ServiceFileName, LSBImportOptions options, List<ParsedLSBElement> fullservice, Dictionary<string, string> extraFileContents)
         {
-            CompileToXenonMappedToSource(ServiceFileName, options, fullservice);
+            CompileToXenonMappedToSource(ServiceFileName, options, fullservice, extraFileContents);
             // extract all the source code
             StringBuilder sb = new StringBuilder();
             foreach (var elem in fullservice)
@@ -132,7 +132,7 @@ namespace LutheRun.Generators
             return sb.ToString();
         }
 
-        internal static void CompileToXenonMappedToSource(string serviceFileName, LSBImportOptions options, List<ParsedLSBElement> fullservice)
+        internal static void CompileToXenonMappedToSource(string serviceFileName, LSBImportOptions options, List<ParsedLSBElement> fullservice, Dictionary<string, string> extraFileContents)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -220,7 +220,7 @@ namespace LutheRun.Generators
             {
                 if (!se.FilterFromOutput)
                 {
-                    sb.AppendLine(se.LSBElement?.XenonAutoGen(options, ref indentDepth, indentSpace, se) ?? se.XenonCode ?? "");
+                    sb.AppendLine(se.LSBElement?.XenonAutoGen(options, ref indentDepth, indentSpace, se, extraFileContents) ?? se.XenonCode ?? "");
 
                     // here we can attach pilot
                     GeneratePilotCommand(sb, ref indentDepth, indentSpace, options, se);

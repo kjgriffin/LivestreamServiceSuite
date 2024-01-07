@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,6 +13,12 @@ namespace Xenon.Compiler
         public static readonly Token EOFText = ("$EOF$", int.MaxValue);
 
         public string SingleLineComment { get; } = "//";
+
+        public string PreProcORDER { get; } = "#ORDER";
+        public string PreProcDEFINE { get; } = "#DEFINE";
+        public string PreProcIF { get; } = "#IF";
+        public string PreProcELSE { get; } = "#ELSE";
+        public string PreProcENDIF { get; } = "#ENDIF";
 
         public string EscapedSingleLineComment { get; } = @"\//";
 
@@ -255,6 +262,103 @@ namespace Xenon.Compiler
             */
 
             return nocomments;
+        }
+
+        public List<(string block, int startline)> StripPreProc(List<(string inputblock, int startline)> input, HashSet<string> DEFINED)
+        {
+            List<(string block, int startline)> allblocks = new List<(string block, int startline)>();
+
+            List<string> seperators = new List<string>()
+            {
+                System.Environment.NewLine,
+                PreProcDEFINE,
+                PreProcORDER,
+                PreProcIF,
+                PreProcELSE,
+                PreProcENDIF,
+            };
+
+            foreach (var ib in input)
+            {
+                allblocks.AddRange(SplitAndKeep(ib.inputblock, seperators, ib.startline));
+            }
+
+            List<(string block, int startline)> result = new List<(string block, int startline)>();
+
+            Stack<string> matchdir = new Stack<string>();
+            Stack<string> elsedir = new Stack<string>();
+            Stack<bool> keep = new Stack<bool>();
+
+            keep.Push(true); // by default keep lines
+
+            bool lookatdir = false;
+            bool keepline = true;
+
+            foreach (var b in allblocks)
+            {
+                if (lookatdir)
+                {
+                    // assumed to be ifdir
+                    matchdir.Push(b.block.Trim());
+                    lookatdir = false;
+                    continue;
+                }
+
+                // based on state, we may not use this block
+                if (matchdir.TryPeek(out string top))
+                {
+                    if (DEFINED.Contains(top))
+                    {
+                        // should keep
+                        keep.Push(true);
+                    }
+                    else
+                    {
+                        // should exclude
+                        keep.Push(false);
+                    }
+                    var c = matchdir.Pop();
+                    elsedir.Push(c);
+                }
+                // if we can't find anything, doesn't matter: we're not in a block
+
+                if (b.block == Environment.NewLine)
+                {
+                    keepline = true;
+                }
+                else if (b.block == PreProcDEFINE || b.block == PreProcORDER)
+                {
+                    // just remove it from excerpt
+                    keepline = false;
+                    continue;
+                }
+                else if (b.block == PreProcIF)
+                {
+                    //matchdir.Push(b.block);
+                    lookatdir = true;
+                    continue;
+                }
+                else if (b.block == PreProcELSE)
+                {
+                    // keep the state??
+                    var c = elsedir.Pop();
+                    var f = keep.Pop();
+                    keep.Push(!f);
+                    continue;
+                }
+                else if (b.block == PreProcENDIF)
+                {
+                    keep.Pop();
+                    continue;
+                }
+
+                if (keep.Peek() && keepline)
+                {
+                    result.Add(b);
+                }
+            }
+
+            return result;
         }
 
         public void Tokenize(List<(string inputblock, int startline)> input)

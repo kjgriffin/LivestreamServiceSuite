@@ -5,6 +5,7 @@ using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LutheRun.Elements.LSB
@@ -30,7 +31,7 @@ namespace LutheRun.Elements.LSB
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_HEADING. Heading:'{Heading}'";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo, Dictionary<string, string> ExtraFiles)
         {
             //return $"/// <XENON_AUTO_GEN>\r\n/// Heading: {Heading.Replace('\"', '\'')}\r\n/// </XENON_AUTO_GEN>";
             return $"// Heading: {Heading.Replace('\"', '\'')}";

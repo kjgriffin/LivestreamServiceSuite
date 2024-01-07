@@ -14,6 +14,8 @@ namespace Xenon.Compiler.AST
         public List<XenonASTExpression> Expressions { get; set; } = new List<XenonASTExpression>();
         public IXenonASTElement Parent { get; private set; }
 
+        public string SrcFile { get; set; } = "";
+
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger, IProgress<int> progress = null, int cprog = 0)
         {
             List<Slide> slides = new List<Slide>();
@@ -30,6 +32,10 @@ namespace Xenon.Compiler.AST
             // Attribute sit outside the project right...
             // so here we can easily just 'update' the slides as required
             SlideVariableSubstituter subengine = new SlideVariableSubstituter(slides, project.BMDSwitcherConfig);
+
+            // mark source on slides
+            slides.ForEach(s => s.NonRenderedMetadata[XenonASTExpression.DATAKEY_CMD_SOURCEFILE_LOOKUP] = Logger.File);
+
             project.Slides.AddRange(subengine.ApplyNesscarySubstitutions());
 
 
@@ -58,6 +64,8 @@ namespace Xenon.Compiler.AST
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
             XenonASTProgram p = new XenonASTProgram();
+            // pull the file from the logger
+            p.SrcFile = Logger.File;
             // gaurd against empty file
             if (Lexer.InspectEOF())
             {

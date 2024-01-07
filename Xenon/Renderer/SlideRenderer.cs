@@ -77,6 +77,10 @@ namespace Xenon.Renderer
             {
                 res.SourceLineRef = (int)sourceCodeLookup;
             }
+            if (s.NonRenderedMetadata.TryGetValue(XenonASTExpression.DATAKEY_CMD_SOURCEFILE_LOOKUP, out var sourceFileLookup))
+            {
+                res.SourceFileRef = (string)sourceFileLookup;
+            }
 
             // attach Postset
             if (s.Data.ContainsKey("postset"))

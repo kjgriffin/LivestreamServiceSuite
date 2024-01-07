@@ -6,7 +6,7 @@ namespace Xenon.Compiler
 {
     class XMLErrorGenerator
     {
-        public void AddXMLNotes(string source, XenonErrorLogger logger)
+        public static void AddXMLNotes(string source, XenonErrorLogger logger)
         {
 
             IEnumerable<string> lines = source.Split(new string[] { Environment.NewLine, "\r\n", "\n" }, StringSplitOptions.None);

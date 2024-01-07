@@ -75,7 +75,7 @@ namespace LutheRun.Elements
 
 
 
-        public override string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo)
+        public override string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo, Dictionary<string, string> ExtraFiles)
         {
             if (Closing)
             {

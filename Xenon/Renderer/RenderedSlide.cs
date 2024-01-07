@@ -30,6 +30,7 @@ namespace Xenon.Renderer
         public int Postset { get; set; }
 
         public int SourceLineRef { get; set; } = 0;
+        public string SourceFileRef { get; set; } = "";
 
         public SlideOverridingBehaviour OverridingBehaviour { get; set; }
 
@@ -59,6 +60,7 @@ namespace Xenon.Renderer
                 KeyBitmap = this.KeyBitmap,
                 KeyPNGMS = this.KeyPNGMS,
                 SourceLineRef = this.SourceLineRef,
+                SourceFileRef = this.SourceFileRef,
             };
         }
     }

@@ -43,6 +43,36 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style TargetType="TabItem" x:Name="DarkTabClosable" x:Key="DarkTabClosable">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border BorderThickness="1" BorderBrush="#373737">
+                            <StackPanel Orientation="Horizontal"
+                                        >
+                                <Grid Name="TabPanel">
+                                    <ContentPresenter x:Name="ContentSite"
+                                        ContentSource="Header"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Margin="10,2"/>
+                                </Grid>
+                                <Button Name="tabClose">X</Button>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="TabPanel" Property="Background" Value="#474747" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="TabPanel" Property="Background" Value="#171717" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style TargetType="Button" x:Name="DarkBtn" x:Key="DarkBtn">
             <Setter Property="Template">
                 <Setter.Value>
@@ -249,6 +279,49 @@
 
             <Border Grid.Column="0" Background="#272727">
                 <TabControl Grid.Column="0" Background="#272727" BorderBrush="#373737" BorderThickness="3">
+                    <TabItem Header="Source" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <Button Click="ClickAddNewSourceFile" Style="{StaticResource DarkBtn}" Margin="5" Width="150">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="/ViewControls/Images/NewGreen.png" Width="30" Height="30" Margin="0,-2,0,0"></Image>
+                                                <Label Foreground="White">New File</Label>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button>
+                                    <Button Click="ClickLoadSourceFile" Style="{StaticResource DarkBtn}" Margin="5" Width="150">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="/ViewControls/Images/FolderGold.png" Width="30" Height="30" Margin="0,-2,0,0"></Image>
+                                                <Label Foreground="White">Load File</Label>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                            <TreeView Grid.Row="1" Name="SourceTreeView" Background="#272727" Padding="0,10,0,0" BorderBrush="#373737" BorderThickness="0" Grid.ColumnSpan="2">
+                                <TreeView.Resources>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#676767"></SolidColorBrush>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#676767"></SolidColorBrush>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#676767"></SolidColorBrush>
+                                </TreeView.Resources>
+                                <TreeViewItem Header="Xenon" Foreground="White" IsExpanded="true" Name="tvItemSrcXenon">
+                                    <TreeViewItem Header="main.xenon" Foreground="White" PreviewMouseDown="XenonEditorTVItem_MouseDown"></TreeViewItem>
+                                </TreeViewItem>
+                                <TreeViewItem Header="Config" Foreground="White">
+                                    <TreeViewItem Header="BMDSwitcherconfig.json" Foreground="White" PreviewMouseDown="BMDConfigTVItem_MouseDown"></TreeViewItem>
+                                    <TreeViewItem Header="CCUConfig.json" Foreground="White" PreviewMouseDown="CCUConfigTVItem_MouseDown"></TreeViewItem>
+                                </TreeViewItem>
+                            </TreeView>
+                        </Grid>
+                    </TabItem>
                     <TabItem Header="Assets" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
                         <Grid Grid.Column="0" Background="#202020">
                             <Grid.RowDefinitions>
@@ -368,8 +441,8 @@
                     <!--<ScrollViewer Grid.Row="0">-->
                     <!--<uicontrols:BetterTextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged"></uicontrols:BetterTextBox>-->
 
-                    <TabControl Grid.Column="0" Background="#272727" BorderBrush="#373737" BorderThickness="3">
-                        <TabItem Header="Source" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
+                    <TabControl Grid.Column="0" Background="#272727" BorderBrush="#373737" BorderThickness="3" Name="srcfileTabCtrl">
+                        <!--<TabItem Header="Source" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
                             <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
                         </TabItem>
                         <TabItem Header="Switcher Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
@@ -386,9 +459,12 @@
                                     <Button Style="{StaticResource DarkBtn}" Foreground="White" Margin="5" Width="100" Height="30" VerticalAlignment="Top" Click="ClickOpenCCUConfigEditor">Open Editor</Button>
                                 </StackPanel>
                                 <AvalonEdit:TextEditor Grid.Row="1" IsReadOnly="true" Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfigCCU" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
-                                <!--<TextBlock Grid.Row="1" Name="TbConfigCCU" Background="#272727" Foreground="#eaeaea" FontFamily="cascadia" FontSize="14" TextWrapping="Wrap"></TextBlock>-->
+                                -->
+                        <!--<TextBlock Grid.Row="1" Name="TbConfigCCU" Background="#272727" Foreground="#eaeaea" FontFamily="cascadia" FontSize="14" TextWrapping="Wrap"></TextBlock>-->
+                        <!--
                             </Grid>
-                        </TabItem>
+                        </TabItem>-->
+
                     </TabControl>
 
 
@@ -488,6 +564,7 @@
                                     <GridViewColumn Width="100" Header="Level" DisplayMemberBinding="{Binding Level}"></GridViewColumn>
                                     <GridViewColumn Width="200" Header="Name" DisplayMemberBinding="{Binding ErrorName}"></GridViewColumn>
                                     <GridViewColumn Width="100" Header="Info" DisplayMemberBinding="{Binding ErrorMessage}"></GridViewColumn>
+                                    <GridViewColumn Width="120" Header="File" DisplayMemberBinding="{Binding SrcFile}"></GridViewColumn>
                                     <GridViewColumn Width="100" Header="Token" DisplayMemberBinding="{Binding Token}"></GridViewColumn>
                                     <GridViewColumn Width="40" Header="Inner" DisplayMemberBinding="{Binding Inner}"></GridViewColumn>
                                     <GridViewColumn Width="400" Header="Generator" DisplayMemberBinding="{Binding Generator}"></GridViewColumn>

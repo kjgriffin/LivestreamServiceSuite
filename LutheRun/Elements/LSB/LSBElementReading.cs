@@ -5,6 +5,7 @@ using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -71,7 +72,7 @@ namespace LutheRun.Elements.LSB
             return $"/// XENON DEBUG::Parsed as LSB_ELEMENT_READING. Title: {ReadingTitle} Reference: {ReadingReference} PreLiturgy: {PreLiturgy} PostLiturgy: {PostLiturgy}";
         }
 
-        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo)
+        public string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpaces, ParsedLSBElement fullInfo, Dictionary<string, string> ExtraFiles)
         {
             var postset = PostsetCmd.ExtractPostsetValues();
 

@@ -38,6 +38,7 @@ namespace LutheRun.Parsers
         public IElement HTMLHead { get; private set; }
 
         public string XenonText { get; private set; }
+        public Dictionary<string, string> ExtraFileContents { get; private set; } = new Dictionary<string, string>();
 
         private string ServiceFileName;
 
@@ -629,7 +630,8 @@ namespace LutheRun.Parsers
 
         public void CompileToXenon()
         {
-            XenonText = XenonGenerator.CompileToXenon(ServiceFileName, LSBImportOptions, ServiceElements);
+            ExtraFileContents.Clear();
+            XenonText = XenonGenerator.CompileToXenon(ServiceFileName, LSBImportOptions, ServiceElements, ExtraFileContents);
         }
 
         public Task LoadWebAssets(Action<Bitmap, string, string, string> addImageAsAsset)

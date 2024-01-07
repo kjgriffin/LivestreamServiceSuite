@@ -5,6 +5,8 @@ using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
+using System.Collections.Generic;
+
 namespace LutheRun.Elements
 {
     abstract class ExternalElement : ILSBElement
@@ -18,7 +20,7 @@ namespace LutheRun.Elements
             return $"/// XENON DEBUG::Added External Element";
         }
 
-        public virtual string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo)
+        public virtual string XenonAutoGen(LSBImportOptions lSBImportOptions, ref int indentDepth, int indentSpace, ParsedLSBElement fullInfo, Dictionary<string, string> ExtraFiles)
         {
             return "";
         }

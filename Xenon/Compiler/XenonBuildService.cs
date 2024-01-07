@@ -41,14 +41,18 @@ namespace Xenon.Compiler
 
         public async Task<(bool success, Project project)> CompileProjectAsync(Project proj, IProgress<int> progress = null)
         {
-            compiler.Logger.ClearErrors();
+            //compiler.Logger.ClearErrors();
             try
             {
-                var res = await Task.Run(() => compiler.Compile(proj, progress));
-                PilotReportGenerator.YellAboutUnkownPilotCommands(proj, compiler.Logger);
-                Messages.AddRange(compiler.Logger.AllErrors);
+                var res = await Task.Run(() => compiler.MultiCompile(proj, progress));
 
-                return (true, res);
+                Messages.AddRange(compiler.Messages);
+
+                XenonErrorLogger pilotlog = new XenonErrorLogger();
+                PilotReportGenerator.YellAboutUnkownPilotCommands(proj, pilotlog);
+                Messages.AddRange(pilotlog.AllErrors);
+
+                return (compiler.CompilerSucess, res);
             }
             catch (Exception ex)
             {
@@ -216,6 +220,10 @@ namespace Xenon.Compiler
                         if (slide.NonRenderedMetadata.TryGetValue(XenonASTExpression.DATAKEY_CMD_SOURCECODE_LOOKUP, out var sourceCodeLookup))
                         {
                             rs.SourceLineRef = (int)sourceCodeLookup;
+                        }
+                        if (slide.NonRenderedMetadata.TryGetValue(XenonASTExpression.DATAKEY_CMD_SOURCEFILE_LOOKUP, out var fileLookup))
+                        {
+                            rs.SourceFileRef = (string)fileLookup;
                         }
 
                         Messages.Add(new XenonCompilerMessage

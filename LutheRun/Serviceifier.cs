@@ -254,7 +254,7 @@ namespace LutheRun
                 var cmdtxt = ExternalPrefabGenerator.PrepareBlob("AllSubPanels");
                 newService.Add(new ParsedLSBElement
                 {
-                    LSBElement = new ExternalPrefab(cmdtxt, "std-panel-defs", BlockType.IGNORED) { IndentReplacementIndentifier = "$>" },
+                    LSBElement = new ExternalPrefab(cmdtxt, "std-panel-defs", BlockType.IGNORED) { IndentReplacementIndentifier = "$>", AuxFile = true, AuxFileSrc = "LSBImport-Panels.xenon" },
                     AddedByInference = true,
                     Ancestory = Guid.NewGuid(),
                     BlockType = BlockType.IGNORED,

@@ -4,6 +4,7 @@ using CommonVersionInfo;
 
 using Concord;
 
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Search;
 
@@ -11,6 +12,7 @@ using LutheRun.Parsers;
 
 using Microsoft.Win32;
 
+using SlideCreater.Controllers;
 using SlideCreater.ViewControls;
 
 using System;
@@ -69,7 +71,7 @@ namespace SlideCreater
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class CreaterEditorWindow : Window
+    public partial class CreaterEditorWindow : Window, IFullAccess<Project>
     {
 
         ProjectState _mProjectState;
@@ -95,6 +97,7 @@ namespace SlideCreater
             }
         }
 
+        Project IFullAccess<Project>.Value { get => _proj; }
 
         private void UpdateProjectStatusLabel()
         {
@@ -207,10 +210,18 @@ namespace SlideCreater
 
         private BuildVersion VersionInfo;
 
+        internal SourceEditorTabManager _editorTabManager;
+
+
+        // TODO REMOVE
+        TextEditor TbInput = new TextEditor();
+        //TextEditor TbConfig = new TextEditor();
+        TextEditor TbConfigCCU = new TextEditor();
+
         public CreaterEditorWindow()
         {
             InitializeComponent();
-
+            /*
             TbInput.LoadLanguage_XENON();
             TbInput.TextArea.TextEntered += TextArea_TextEntered;
             TbInput.TextArea.TextEntering += TextArea_TextEntering;
@@ -234,6 +245,7 @@ namespace SlideCreater
 
             TbConfigCCU.Options.IndentationSize = 4;
             TbConfigCCU.Options.ConvertTabsToSpaces = true;
+            */
 
             // Load Version Number
             var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SlideCreater.version.json");
@@ -249,12 +261,17 @@ namespace SlideCreater
             Xenon.Versioning.Versioning.SetVersion(VersionInfo);
 
 
-
+            _editorTabManager = new SourceEditorTabManager(srcfileTabCtrl, this, this);
+            _editorTabManager.OnTextEditDiry += _editorTabManager_OnTextEditDiry;
 
             NewProject().Wait();
             dirty = false;
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
+
+
+            // default to open main source
+            _editorTabManager.OpenEditorWindowForFile("main.xenon", SourceEditorTabManager.SourceFileType.XENON);
 
             // enable optional features
             EnableDisableOptionalFeatures();
@@ -264,6 +281,11 @@ namespace SlideCreater
             ShowProjectAssets();
 
             Task.Run(() => CheckForUpToDateVersion());
+        }
+
+        private void _editorTabManager_OnTextEditDiry(object sender, EventArgs e)
+        {
+            MarkDirty();
         }
 
         private async Task CheckForUpToDateVersion()
@@ -287,8 +309,9 @@ namespace SlideCreater
         XenonBuildService builder = new XenonBuildService();
         private async void RenderSlides(object sender, RoutedEventArgs e)
         {
-            _proj.SourceCode = TbInput.Text;
-            _proj.SourceConfig = TbConfig.Text;
+            _editorTabManager.UpdateProjectSourceFromEditors();
+            //_proj.SourceCode = TbInput.Text;
+            //_proj.SourceConfig = TbConfig.Text;
 
             TryAutoSave();
 
@@ -558,7 +581,8 @@ namespace SlideCreater
             // track the source line
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                ScrollToLine(slide.SourceLineRef);
+                //ScrollToLine(slide.SourceLineRef);
+                _editorTabManager.JumpToSource(slide.SourceFileRef, slide.SourceLineRef);
             }
         }
 
@@ -805,12 +829,15 @@ namespace SlideCreater
 
         private void InsertTextCommand(string InsertCommand)
         {
+            /*
             TbInput.Document.Insert(TbInput.CaretOffset, System.Environment.NewLine);
             foreach (var line in InsertCommand.Split(Environment.NewLine))
             {
                 TbInput.Document.Insert(TbInput.CaretOffset, line);
                 TbInput.Document.Insert(TbInput.CaretOffset, System.Environment.NewLine);
             }
+            */
+            _editorTabManager.RequestInsertTextIntoActiveTab(InsertCommand);
             //TbInput.InsertLinesAfterCursor(InsertCommand.Split(Environment.NewLine));
             //TbInput.InsertTextAtCursor(InsertCommand);
             //int newindex = TbInput.CaretIndex + InsertCommand.Length;
@@ -894,15 +921,17 @@ namespace SlideCreater
             //AssetList.Children.Clear();
             ClearProjectAssetsView();
             FocusSlide.Clear();
-            TbInput.Text = string.Empty;
+            //TbInput.Text = string.Empty;
             _proj?.CleanupResources();
             _proj = new Project(true);
 
-            TbConfig.Text = _proj.SourceConfig;
-            TbConfigCCU.Text = SanatizePNGsFromCfg(_proj.CCPUConfig).fake;
+            _editorTabManager.RefreshAllTextViews();
+            //TbConfig.Text = _proj.SourceConfig;
+            //TbConfigCCU.Text = SanatizePNGsFromCfg(_proj.CCPUConfig).fake;
 
             ShowProjectAssets();
             SetupLayoutsTreeVew();
+            UpdateEditorTreeView();
 
             ProjectState = ProjectState.NewProject;
             ActionState = ActionState.Ready;
@@ -1031,7 +1060,8 @@ namespace SlideCreater
                 save.AssetRenames.TryAdd(asset.Name, asset.DisplayName);
                 save.AssetExtensions.TryAdd(asset.Name, asset.Extension);
             }
-            save.SourceCode = TbInput.Text;
+            //save.SourceCode = TbInput.Text;
+            _editorTabManager.UpdateProjectSourceFromEditors();
             try
             {
                 string json = JsonSerializer.Serialize(save);
@@ -1196,7 +1226,7 @@ namespace SlideCreater
                 pbActionStatus.Value = 0;
                 pbActionStatus.Visibility = Visibility.Hidden;
             }
-            TbInput.Text = save.SourceCode;
+            //TbInput.Text = save.SourceCode;
         }
 
         LSBImportOptions options = new LSBImportOptions();
@@ -1234,7 +1264,28 @@ namespace SlideCreater
                 MarkDirty();
                 ShowProjectAssets();
                 ActionState = ActionState.Ready;
-                TbInput.Text = parser.XenonText;
+                // check the option to import into new file?
+                // otherwise we'll overwrite the main file
+                // update views
+                if (options.ImportToNewFile)
+                {
+                    AddXenonFileToProj("LSBImport.xenon", parser.XenonText);
+                    //_proj.ExtraSourceFiles["LSBImport.xenon"] = parser.XenonText;
+                    //_editorTabManager.RefreshAllTextViews();
+                    //_editorTabManager.OpenEditorWindowForFile("LSBImport.xenon", SourceEditorTabManager.SourceFileType.XENON);
+                }
+                else
+                {
+                    _proj.SourceCode = parser.XenonText;
+                    _editorTabManager.RefreshAllTextViews();
+                    _editorTabManager.OpenEditorWindowForFile("main.xenon", SourceEditorTabManager.SourceFileType.XENON);
+                }
+
+                // either way, add all 'extra' files
+                foreach (var extrafile in parser.ExtraFileContents)
+                {
+                    AddXenonFileToProj(extrafile.Key, extrafile.Value);
+                }
             }
         }
 
@@ -1292,16 +1343,16 @@ namespace SlideCreater
         }
 
 
-        private async void CreateProjectFromImportWizard(List<(string, string)> assets, string text)
-        {
-            await NewProject();
-            _proj.SourceCode = text;
-            TbInput.Text = text;
+        //private async void CreateProjectFromImportWizard(List<(string, string)> assets, string text)
+        //{
+        //    await NewProject();
+        //    _proj.SourceCode = text;
+        //    TbInput.Text = text;
 
-            // add all assets
-            AddNamedAssetsFromPaths(assets);
+        //    // add all assets
+        //    AddNamedAssetsFromPaths(assets);
 
-        }
+        //}
 
         private async void ClickTrustySave(object sender, RoutedEventArgs e)
         {
@@ -1352,8 +1403,9 @@ namespace SlideCreater
             if (sfd.ShowDialog() == true)
             {
                 // perhaps we should forcibly take the latest changes to the source
-                _proj.SourceCode = TbInput.Text;
-                _proj.SourceConfig = TbConfig.Text;
+                _editorTabManager.UpdateProjectSourceFromEditors();
+                //_proj.SourceCode = TbInput.Text;
+                //_proj.SourceConfig = TbConfig.Text;
                 await Xenon.SaveLoad.TrustySave.SaveTrustily(_proj, sfd.FileName, saveprogress, VersionInfo.ToString());
                 Dispatcher.Invoke(() =>
                 {
@@ -1380,34 +1432,36 @@ namespace SlideCreater
 
         private async Task TrustyOpen(string filename)
         {
-            CodePreviewUpdateFunc updatecode = (string val) =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    TbInput.Text = val;
-                });
-            };
+            //CodePreviewUpdateFunc updatecode = (string val) =>
+            //{
+            //    Dispatcher.Invoke(() =>
+            //    {
+            //        TbInput.Text = val;
+            //    });
+            //};
 
-            Action<string, CCPUConfig_Extended> updateccu = (string raw, CCPUConfig_Extended cfg) =>
-            {
-                var res = SanatizePNGsFromCfg(cfg);
-                Dispatcher.Invoke(() =>
-                {
-                    TbConfigCCU.Text = res.fake;
-                });
-            };
+            //Action<string, CCPUConfig_Extended> updateccu = (string raw, CCPUConfig_Extended cfg) =>
+            //{
+            //    var res = SanatizePNGsFromCfg(cfg);
+            //    Dispatcher.Invoke(() =>
+            //    {
+            //        TbConfigCCU.Text = res.fake;
+            //    });
+            //};
 
-            var opened = await Xenon.SaveLoad.TrustySave.OpenTrustily(VersionInfo, filename, updatecode, updateccu);
+            //var opened = await Xenon.SaveLoad.TrustySave.OpenTrustily(VersionInfo, filename, updatecode, updateccu);
+
+            // screw responsiveness, just load all text when whole project is loaded
+            var opened = await Xenon.SaveLoad.TrustySave.OpenTrustily(VersionInfo, filename, null, null);
             _proj = opened.project;
-
-
 
             // add assets
             Dispatcher.Invoke(() =>
             {
                 MarkDirty();
                 ActionState = ActionState.Downloading;
-                TbConfig.Text = _proj.SourceConfig;
+                _editorTabManager.RefreshAllTextViews();
+                //TbConfig.Text = _proj.SourceConfig;
             });
             double percent = 0;
             int total = opened.assetfilemap.Count;
@@ -1455,6 +1509,7 @@ namespace SlideCreater
                 pbActionStatus.Visibility = Visibility.Hidden;
                 pbActionStatus.Value = 0;
                 SetupLayoutsTreeVew();
+                UpdateEditorTreeView();
             });
         }
 
@@ -1477,73 +1532,73 @@ namespace SlideCreater
         }
 
 
-        bool always_show_suggestions = false;
-        bool entersuggestionwithenter = false;
+        //bool always_show_suggestions = false;
+        //bool entersuggestionwithenter = false;
 
-        CompletionWindow completionWindow;
-        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
-        {
-            if (e.Text.Length > 0 && completionWindow != null)
-            {
-                if ((e.Text[0]) == 9 || e.Text.StartsWith("\t") || (entersuggestionwithenter && e.Text.StartsWith(System.Environment.NewLine)))
-                {
-                    // Whenever a non-letter is typed while the completion window is open,
-                    // insert the currently selected element.
-                    completionWindow.CompletionList.RequestInsertion(e);
-                    if (always_show_suggestions)
-                    {
-                        ShowSuggestions();
-                    }
-                }
-            }
-        }
+        //CompletionWindow completionWindow;
+        //private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        //{
+        //    if (e.Text.Length > 0 && completionWindow != null)
+        //    {
+        //        if ((e.Text[0]) == 9 || e.Text.StartsWith("\t") || (entersuggestionwithenter && e.Text.StartsWith(System.Environment.NewLine)))
+        //        {
+        //            // Whenever a non-letter is typed while the completion window is open,
+        //            // insert the currently selected element.
+        //            completionWindow.CompletionList.RequestInsertion(e);
+        //            if (always_show_suggestions)
+        //            {
+        //                ShowSuggestions();
+        //            }
+        //        }
+        //    }
+        //}
 
-        private void TextArea_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            //const string LITURGY = "liturgy";
-            if (e.Text == " " && Keyboard.IsKeyDown(Key.LeftCtrl))
-            {
-                ShowSuggestions();
+        //private void TextArea_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        //{
+        //    //const string LITURGY = "liturgy";
+        //    if (e.Text == " " && Keyboard.IsKeyDown(Key.LeftCtrl))
+        //    {
+        //        ShowSuggestions();
 
-                e.Handled = true;
-            }
-        }
+        //        e.Handled = true;
+        //    }
+        //}
 
-        private void ShowSuggestions()
-        {
-            var suggestions = _proj.XenonSuggestionService.GetSuggestions(TbInput.Text, TbInput.CaretOffset);
-            if (suggestions.Any())
-            {
-                completionWindow = new CompletionWindow(TbInput.TextArea);
-                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-                foreach (var suggestion in suggestions)
-                {
-                    data.Add(new CommonCompletion(suggestion.item, suggestion.description));
-                }
-                completionWindow.Show();
-                completionWindow.CompletionList.SelectedItem = data.First(d => d.Text == suggestions.First().item);
-                completionWindow.Closed += delegate
-                {
-                    completionWindow = null;
-                };
-            }
-            else
-            {
-                completionWindow?.Close();
-            }
-        }
+        //private void ShowSuggestions()
+        //{
+        //    var suggestions = _proj.XenonSuggestionService.GetSuggestions(TbInput.Text, TbInput.CaretOffset);
+        //    if (suggestions.Any())
+        //    {
+        //        completionWindow = new CompletionWindow(TbInput.TextArea);
+        //        IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+        //        foreach (var suggestion in suggestions)
+        //        {
+        //            data.Add(new CommonCompletion(suggestion.item, suggestion.description));
+        //        }
+        //        completionWindow.Show();
+        //        completionWindow.CompletionList.SelectedItem = data.First(d => d.Text == suggestions.First().item);
+        //        completionWindow.Closed += delegate
+        //        {
+        //            completionWindow = null;
+        //        };
+        //    }
+        //    else
+        //    {
+        //        completionWindow?.Close();
+        //    }
+        //}
 
-        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
-        {
-            if (always_show_suggestions)
-            {
-                ShowSuggestions();
-            }
-            else if (!string.IsNullOrWhiteSpace(e.Text))
-            {
-                //ShowSuggestions();
-            }
-        }
+        //private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        //{
+        //    if (always_show_suggestions)
+        //    {
+        //        ShowSuggestions();
+        //    }
+        //    else if (!string.IsNullOrWhiteSpace(e.Text))
+        //    {
+        //        //ShowSuggestions();
+        //    }
+        //}
 
         private void error_report_view_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1557,7 +1612,8 @@ namespace SlideCreater
             if (i >= 0 && i < logs.Count)
             {
                 var selection = logs[i];
-                ScrollToLine(selection.Token.linenum);
+                //ScrollToLine(selection.Token.linenum);
+                _editorTabManager.JumpToSource(selection.SrcFile, selection.Token.linenum);
             }
         }
 
@@ -2079,7 +2135,8 @@ namespace SlideCreater
             try
             {
                 var text = LutheRun.Generators.ReadingTextGenerator.GenerateXenonComplexReading(translation, refDialog.ResultValue, 0, 4);
-                TbInput.TextArea.PerformTextInput(text);
+                //TbInput.TextArea.PerformTextInput(text);
+                _editorTabManager.RequestInsertTextIntoActiveTab(text);
             }
             catch (Exception)
             {
@@ -2150,43 +2207,120 @@ namespace SlideCreater
                 source = Regex.Replace(source, Regex.Escape("$MONTH$"), wizzard.Data.Date.ToString("MMMM"));
                 source = Regex.Replace(source, Regex.Escape("$DAY$"), wizzard.Data.Date.Day.ToString("d"));
 
-                if (wizzard.Data.PanelAtBottom)
-                {
-                    source = Regex.Replace(source, Regex.Escape("$PANEL$"), "");
-                }
-                else
-                {
-                    source = Regex.Replace(source, Regex.Escape("$PANEL$"), panel);
-                }
-
-                // insert source/panel
-                var src = TbInput.Text;
-                if (wizzard.Data.InsertAtCarret)
-                {
-                    InsertTextCommand(source);
-                    if (wizzard.Data.PanelAtBottom)
-                    {
-                        src = src + Environment.NewLine + panel;
-                        TbInput.Text = src;
-                    }
-                }
-                else
-                {
-                    src = source + Environment.NewLine + src;
-                    if (wizzard.Data.PanelAtBottom)
-                    {
-                        src = src + Environment.NewLine + panel;
-                    }
-                    TbInput.Text = src;
-                }
-
-                // link-panel if in service
-                src = TbInput.Text;
-                src = Regex.Replace(src, Regex.Escape("/*BIBLE-CLASS-SUB-PANEL-LINK"), "");
-                src = Regex.Replace(src, Regex.Escape("BIBLE-CLASS-SUB-PANEL-LINK*/"), "");
-                TbInput.Text = src;
-
+                // add the bibleclass service
+                AddXenonFileToProj("BibleClass.xenon", source);
+                AddXenonFileToProj("BibleClassPanel.xenon", panel);
             }
+        }
+
+        private void MainXenonEditorTVItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _editorTabManager.OpenEditorWindowForFile("main.xenon", SourceEditorTabManager.SourceFileType.XENON);
+        }
+
+        private void XenonEditorTVItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _editorTabManager.OpenEditorWindowForFile((sender as TreeViewItem).Header.ToString(), SourceEditorTabManager.SourceFileType.XENON);
+        }
+
+        private void BMDConfigTVItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _editorTabManager.OpenEditorWindowForFile("BMDSwitcherConfig.json", SourceEditorTabManager.SourceFileType.BMDCONFIG);
+        }
+
+        private void CCUConfigTVItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _editorTabManager.OpenEditorWindowForFile("CCUConfig.json", SourceEditorTabManager.SourceFileType.CCUCONFIG);
+        }
+
+        private void ClickAddNewSourceFile(object sender, RoutedEventArgs e)
+        {
+            TbPromptDialog dialog = new TbPromptDialog("Add New Xenon File", "Name", "newFile");
+            if (dialog.ShowDialog() == true)
+            {
+                var fname = dialog.ResultValue + ".xenon";
+                // make the project add a new file??
+                AddXenonFileToProj(fname, string.Empty);
+            }
+        }
+
+        private void AddXenonFileToProj(string fname, string text)
+        {
+            if (!_proj.ExtraSourceFiles.ContainsKey(fname))
+            {
+                //AddXenonFileToProj(fname, text);
+                _proj.ExtraSourceFiles[fname] = text;
+
+                // update tree view
+                UpdateEditorTreeView();
+
+                // open automatically
+                _editorTabManager.OpenEditorWindowForFile(fname, SourceEditorTabManager.SourceFileType.XENON);
+            }
+            MarkDirty();
+        }
+
+        private void ClickLoadSourceFile(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Load Xenon Source";
+            if (ofd.ShowDialog() == true)
+            {
+                using (StreamReader sr = new StreamReader(ofd.FileName))
+                {
+                    string fname = ofd.FileName;
+                    var txt = sr.ReadToEnd();
+                    if (Path.GetExtension(ofd.FileName) != ".xenon")
+                    {
+                        fname += ".xenon";
+                    }
+                    AddXenonFileToProj(fname, txt);
+                }
+            }
+        }
+
+        private void UpdateEditorTreeView()
+        {
+            foreach (TreeViewItem item in tvItemSrcXenon.Items)
+            {
+                item.PreviewMouseDown -= XenonEditorTVItem_MouseDown;
+                if (item.Header.ToString() != "main.xenon")
+                {
+                    item.PreviewKeyDown -= XenonEditorTVItem_PreviewKeyDown;
+                }
+            }
+
+            tvItemSrcXenon.Items.Clear();
+
+            // always have main
+            TreeViewItem main = new TreeViewItem();
+            main.Header = "main.xenon";
+            main.PreviewMouseDown += XenonEditorTVItem_MouseDown;
+            tvItemSrcXenon.Items.Add(main);
+
+            foreach (var extrasrc in _proj.ExtraSourceFiles)
+            {
+                TreeViewItem fitem = new TreeViewItem();
+                fitem.Header = extrasrc.Key;
+                fitem.PreviewMouseDown += XenonEditorTVItem_MouseDown;
+                fitem.PreviewKeyDown += XenonEditorTVItem_PreviewKeyDown;
+                // add anything else in the project
+                tvItemSrcXenon.Items.Add(fitem);
+            }
+        }
+
+        private void XenonEditorTVItem_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var fname = (sender as TreeViewItem).Header.ToString();
+            _editorTabManager.TryCloseTab_NoSave(fname);
+
+            // delete from project
+            _proj.ExtraSourceFiles.Remove(fname);
+
+            // update treeview
+            UpdateEditorTreeView();
+
+            MarkDirty();
         }
     }
 }

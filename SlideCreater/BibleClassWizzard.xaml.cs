@@ -20,15 +20,6 @@ namespace SlideCreater
             public string Presenter { get; set; }
             public string ThumbnailPath { get; set; }
             public DateTime Date { get; set; }
-
-            /// <summary>
-            /// False = at top
-            /// </summary>
-            public bool InsertAtCarret { get; set; }
-            /// <summary>
-            /// False = with source
-            /// </summary>
-            public bool PanelAtBottom { get; set; }
         }
 
         public BibleClassData Data { get; private set; }
@@ -59,8 +50,6 @@ namespace SlideCreater
                 Presenter = tbPRESENTER.Text,
                 Date = tbDATE.SelectedDate.Value,
                 ThumbnailPath = thumbnailPath,
-                InsertAtCarret = rbInsertCarret.IsChecked.Value,
-                PanelAtBottom = rbPanelsEnd.IsChecked.Value,
             };
 
             DialogResult = true;
