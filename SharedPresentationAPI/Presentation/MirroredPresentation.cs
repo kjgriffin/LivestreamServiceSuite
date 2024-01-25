@@ -183,7 +183,7 @@ namespace SharedPresentationAPI.Presentation
             // bulk copy raw resources
             pres.RawTextResources = presPackage.RawTextResources;
 
-            pres.ComputeAggregateWatchVariables();
+            pres.ComputeAggregateWatchAndCalculatedVariables();
             return pres;
         }
 

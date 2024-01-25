@@ -1,11 +1,14 @@
 ﻿
 using ATEMSharedState.SwitcherState;
 
+using Integrated_Presenter.Automation;
+
 namespace IntegratedPresenter.BMDSwitcher.Mock
 {
-    public interface ISwitcherStateProvider
+    public interface IMockSwitcherInternals : ISwitcherStateProvider
     {
-        public BMDSwitcherState GetState();
+        //public BMDSwitcherState switcherState { get; }
+
         /// <summary>
         /// Reports when a animation has completed
         /// </summary>

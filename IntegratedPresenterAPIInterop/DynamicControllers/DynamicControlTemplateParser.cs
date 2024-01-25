@@ -216,21 +216,19 @@ namespace IntegratedPresenterAPIInterop.DynamicDrivers
 
                 foreach (var action in allSlideActions.Where(x => x.Action == AutomationActions.WatchSwitcherStateBoolVal || x.Action == AutomationActions.WatchStateBoolVal))
                 {
-                    string vname = (string)action.RawParams[2];
-                    string wpath = (string)action.RawParams[0];
-                    object expectation = action.RawParams[1];
+                    string vname = (string)action.Parameters[2].LiteralValue;
+                    string wpath = (string)action.Parameters[0].LiteralValue;
+                    object expectation = action.Parameters[1].LiteralValue;
                     variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Boolean);
                 }
                 foreach (var action in allSlideActions.Where(x => x.Action == AutomationActions.WatchSwitcherStateIntVal || x.Action == AutomationActions.WatchStateIntVal))
                 {
-                    string vname = (string)action.RawParams[2];
-                    string wpath = (string)action.RawParams[0];
-                    object expectation = action.RawParams[1];
+                    string vname = (string)action.Parameters[2].LiteralValue;
+                    string wpath = (string)action.Parameters[0].LiteralValue;
+                    object expectation = action.Parameters[1].LiteralValue;
                     variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Integer);
                 }
             }
-
-
             return variables;
         }
 

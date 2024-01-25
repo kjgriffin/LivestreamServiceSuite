@@ -73,6 +73,11 @@
         WatchSwitcherStateBoolVal,
         WatchSwitcherStateIntVal,
 
+        InitComputedVal,
+        WriteComputedVal,
+        SetupComputedTrack,
+        ReleaseComputedTrack,
+
         WatchStateBoolVal,
         WatchStateIntVal,
 

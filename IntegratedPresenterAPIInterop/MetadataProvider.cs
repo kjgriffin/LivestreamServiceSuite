@@ -71,118 +71,165 @@ namespace IntegratedPresenterAPIInterop
 
             [AutomationActions.Timer1Restart] = (0, AutomationActions.Timer1Restart, "Timer1Restart", null, ExpectedVariableContents.NONE),
 
-            [AutomationActions.PresetSelect] = (1, AutomationActions.PresetSelect, "PresetSelect", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.VIDEOSOURCE),
-            [AutomationActions.ProgramSelect] = (1, AutomationActions.ProgramSelect, "ProgramSelect", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.VIDEOSOURCE),
-            [AutomationActions.AuxSelect] = (1, AutomationActions.AuxSelect, "AuxSelect", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.VIDEOSOURCE),
-            [AutomationActions.USK1Fill] = (1, AutomationActions.USK1Fill, "USK1Fill", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.VIDEOSOURCE),
-            [AutomationActions.LoadAudio] = (1, AutomationActions.LoadAudio, "LoadAudioFile", new List<AutomationActionArgType> { AutomationActionArgType.String }, ExpectedVariableContents.PROJECTASSET),
-
-            [AutomationActions.DelayMs] = (1, AutomationActions.DelayMs, "DelayMs", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.NONE),
-            [AutomationActions.DelayUntil] = (1, AutomationActions.DelayUntil, "DelayUntil", new List<AutomationActionArgType> { AutomationActionArgType.String }, ExpectedVariableContents.NONE),
-
-            [AutomationActions.JumpToSlide] = (1, AutomationActions.JumpToSlide, "JumpToSlide", new List<AutomationActionArgType> { AutomationActionArgType.Integer }, ExpectedVariableContents.NONE),
-            [AutomationActions.WatchSwitcherStateBoolVal] = (3, AutomationActions.WatchSwitcherStateBoolVal, "WatchSwitcherStateBoolVal", new List<AutomationActionArgType>
+            [AutomationActions.PresetSelect] = new AutomationActionMetadata(1, AutomationActions.PresetSelect, "PresetSelect", new List<(AutomationActionArgType, string)>
             {
-                AutomationActionArgType.String,
-                AutomationActionArgType.Boolean,
-                AutomationActionArgType.String,
-            },
-            ExpectedVariableContents.EXPOSEDSTATE),
-            [AutomationActions.WatchSwitcherStateIntVal] = (3, AutomationActions.WatchSwitcherStateIntVal, "WatchSwitcherStateIntVal", new List<AutomationActionArgType>
+                (AutomationActionArgType.Integer, "SourceID")
+            }, ExpectedVariableContents.VIDEOSOURCE),
+            [AutomationActions.ProgramSelect] = new AutomationActionMetadata(1, AutomationActions.ProgramSelect, "ProgramSelect", new List<(AutomationActionArgType, string)>
             {
-                AutomationActionArgType.String,
-                AutomationActionArgType.Integer,
-                AutomationActionArgType.String,
-            },
-            ExpectedVariableContents.EXPOSEDSTATE),
+                (AutomationActionArgType.Integer, "SourceID")
+            }, ExpectedVariableContents.VIDEOSOURCE),
+            [AutomationActions.AuxSelect] = new AutomationActionMetadata(1, AutomationActions.AuxSelect, "AuxSelect", new List<(AutomationActionArgType, string)>
+            {
+                (AutomationActionArgType.Integer, "SourceID")
+            }, ExpectedVariableContents.VIDEOSOURCE),
+            [AutomationActions.USK1Fill] = new AutomationActionMetadata(1, AutomationActions.USK1Fill, "USK1Fill", new List<(AutomationActionArgType, string)>
+            {
+                (AutomationActionArgType.Integer, "SourceID")
+            }, ExpectedVariableContents.VIDEOSOURCE),
+
+
+            [AutomationActions.LoadAudio] = (1, AutomationActions.LoadAudio, "LoadAudioFile", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.String, "AudioFile") }, ExpectedVariableContents.PROJECTASSET),
+
+
+
+            [AutomationActions.DelayMs] = (1, AutomationActions.DelayMs, "DelayMs", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.Integer, "Delay") }, ExpectedVariableContents.NONE),
+            [AutomationActions.DelayUntil] = (1, AutomationActions.DelayUntil, "DelayUntil", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.String, "DateTime") }, ExpectedVariableContents.NONE),
+
+            [AutomationActions.JumpToSlide] = (1, AutomationActions.JumpToSlide, "JumpToSlide", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.Integer, "SlideNum") }, ExpectedVariableContents.NONE),
+
             // duplicate command for backwards compatibility
-            [AutomationActions.WatchStateBoolVal] = (3, AutomationActions.WatchSwitcherStateBoolVal, "WatchStateBoolVal", new List<AutomationActionArgType>
+            [AutomationActions.WatchSwitcherStateBoolVal] = (3, AutomationActions.WatchSwitcherStateBoolVal, "WatchSwitcherStateBoolVal", new List<(AutomationActionArgType, string)>
             {
-                AutomationActionArgType.String,
-                AutomationActionArgType.Boolean,
-                AutomationActionArgType.String,
+                (AutomationActionArgType.String,"WatchVar"),
+                (AutomationActionArgType.Boolean,"ExpectedVal"),
+                (AutomationActionArgType.String,"CondName"),
             },
             ExpectedVariableContents.EXPOSEDSTATE),
-            [AutomationActions.WatchStateIntVal] = (3, AutomationActions.WatchSwitcherStateIntVal, "WatchStateIntVal", new List<AutomationActionArgType>
+            [AutomationActions.WatchSwitcherStateIntVal] = (3, AutomationActions.WatchSwitcherStateIntVal, "WatchSwitcherStateIntVal", new List<(AutomationActionArgType, string)>
             {
-                AutomationActionArgType.String,
-                AutomationActionArgType.Integer,
-                AutomationActionArgType.String,
+                (AutomationActionArgType.String,"WatchVar"),
+                (AutomationActionArgType.Integer,"ExpectedVal"),
+                (AutomationActionArgType.String,"CondName"),
             },
             ExpectedVariableContents.EXPOSEDSTATE),
 
 
-
-            [AutomationActions.PlacePIP] = (8, AutomationActions.PlacePIP, "PlacePIP", new List<AutomationActionArgType>
+            [AutomationActions.WatchStateBoolVal] = (3, AutomationActions.WatchSwitcherStateBoolVal, "WatchStateBoolVal", new List<(AutomationActionArgType, string)>
             {
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
+                (AutomationActionArgType.String,"WatchVar"),
+                (AutomationActionArgType.Boolean,"ExpectedVal"),
+                (AutomationActionArgType.String,"CondName"),
+            },
+            ExpectedVariableContents.EXPOSEDSTATE),
+            [AutomationActions.WatchStateIntVal] = (3, AutomationActions.WatchSwitcherStateIntVal, "WatchStateIntVal", new List<(AutomationActionArgType, string)>
+            {
+                (AutomationActionArgType.String,"WatchVar"),
+                (AutomationActionArgType.Integer,"ExpectedVal"),
+                (AutomationActionArgType.String,"CondName"),
+            },
+            ExpectedVariableContents.EXPOSEDSTATE),
+
+
+            [AutomationActions.InitComputedVal] = (3, AutomationActions.InitComputedVal, "InitComputedVal", new List<(AutomationActionArgType, string)>
+            {
+                (AutomationActionArgType.String,"VarName"),
+                (AutomationActionArgType.String,"TypeStr"),
+                (AutomationActionArgType.String,"VarDefaultVal"),
+            },
+            ExpectedVariableContents.EXPOSEDSTATE),
+            [AutomationActions.WriteComputedVal] = (2, AutomationActions.WriteComputedVal, "WriteComputedVal", new List<(AutomationActionArgType, string)>
+            {
+                (AutomationActionArgType.String,"VarName"),
+                (AutomationActionArgType.String,"VarVal"),
             },
             ExpectedVariableContents.NONE),
-
-            [AutomationActions.ConfigurePATTERN] = (7, AutomationActions.ConfigurePATTERN, "ApplyPATTERN", new List<AutomationActionArgType>
+            [AutomationActions.SetupComputedTrack] = (2, AutomationActions.SetupComputedTrack, "SetupTrackVal", new List<(AutomationActionArgType, string)>
             {
-                AutomationActionArgType.String,
-                AutomationActionArgType.Boolean,
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
-                AutomationActionArgType.Double,
+                (AutomationActionArgType.String,"VarName"),
+                (AutomationActionArgType.String,"TrackTarget"),
             },
-            ExpectedVariableContents.NONE),
-
-            [AutomationActions.SetupButtons] = (3, AutomationActions.SetupButtons, "SetupButtons", new List<AutomationActionArgType>
+            ExpectedVariableContents.EXPOSEDSTATE),
+            [AutomationActions.ReleaseComputedTrack] = (1, AutomationActions.InitComputedVal, "ReleaseTackVal", new List<(AutomationActionArgType, string)>
             {
-                AutomationActionArgType.String,
-                AutomationActionArgType.String,
-                AutomationActionArgType.Boolean,
-            },
-            ExpectedVariableContents.NONE),
-
-            [AutomationActions.SetupExtras] = (4, AutomationActions.SetupExtras, "SetupExtras", new List<AutomationActionArgType>()
-            {
-                AutomationActionArgType.String,
-                AutomationActionArgType.String,
-                AutomationActionArgType.String,
-                AutomationActionArgType.Boolean,
+                (AutomationActionArgType.String,"VarName"),
             },
             ExpectedVariableContents.NONE),
 
 
-            [AutomationActions.ForceRunPostSet] = (2, AutomationActions.ForceRunPostSet, "ForceRunPostset", new List<AutomationActionArgType>()
+
+
+
+            [AutomationActions.PlacePIP] = (8, AutomationActions.PlacePIP, "PlacePIP", new List<(AutomationActionArgType, string)>
             {
-                AutomationActionArgType.Boolean,
-                AutomationActionArgType.Integer,
+                (AutomationActionArgType.Double, "PosX"),
+                (AutomationActionArgType.Double, "PosY"),
+                (AutomationActionArgType.Double, "ScaleX"),
+                (AutomationActionArgType.Double, "ScaleY"),
+                (AutomationActionArgType.Double, "MaskLeft"),
+                (AutomationActionArgType.Double, "MaskRight"),
+                (AutomationActionArgType.Double, "MaskTop"),
+                (AutomationActionArgType.Double, "MaskBottom"),
             },
             ExpectedVariableContents.NONE),
 
-            [AutomationActions.FireActivePreset] = (1, AutomationActions.FireActivePreset, "FireActivePreset", new List<AutomationActionArgType>()
+            [AutomationActions.ConfigurePATTERN] = (7, AutomationActions.ConfigurePATTERN, "ApplyPATTERN", new List<(AutomationActionArgType, string)>
             {
-                AutomationActionArgType.String,
+                (AutomationActionArgType.String, "Type"),
+                (AutomationActionArgType.Boolean, "Inverted"),
+                (AutomationActionArgType.Double, "Size"),
+                (AutomationActionArgType.Double, "Symmetry"),
+                (AutomationActionArgType.Double, "Softness"),
+                (AutomationActionArgType.Double, "XOffset"),
+                (AutomationActionArgType.Double, "YOffset"),
             },
             ExpectedVariableContents.NONE),
-            [AutomationActions.FireCamPreset] = (4, AutomationActions.FireCamPreset, "FireCamPreset", new List<AutomationActionArgType>()
+
+            [AutomationActions.SetupButtons] = (3, AutomationActions.SetupButtons, "SetupButtons", new List<(AutomationActionArgType, string)>
             {
-                AutomationActionArgType.String,
-                AutomationActionArgType.String,
-                AutomationActionArgType.Integer,
-                AutomationActionArgType.String,
+                (AutomationActionArgType.String, "File"),
+                (AutomationActionArgType.String, "ResourcePath"),
+                (AutomationActionArgType.Boolean, "Overwrite"),
             },
             ExpectedVariableContents.NONE),
-            [AutomationActions.FireCamDrive] = (5, AutomationActions.FireCamDrive, "FireCamDrive", new List<AutomationActionArgType>()
+
+            [AutomationActions.SetupExtras] = (4, AutomationActions.SetupExtras, "SetupExtras", new List<(AutomationActionArgType, string)>()
             {
-                AutomationActionArgType.String,
-                AutomationActionArgType.Integer,
-                AutomationActionArgType.Integer,
-                AutomationActionArgType.Integer,
-                AutomationActionArgType.Integer,
+                (AutomationActionArgType.String, "ExtraID"),
+                (AutomationActionArgType.String, "File"),
+                (AutomationActionArgType.String, "ResourcePath"),
+                (AutomationActionArgType.Boolean, "Overwrite"),
+            },
+            ExpectedVariableContents.NONE),
+
+
+            [AutomationActions.ForceRunPostSet] = (2, AutomationActions.ForceRunPostSet, "ForceRunPostset", new List<(AutomationActionArgType, string)>()
+            {
+                (AutomationActionArgType.Boolean, "Force"),
+                (AutomationActionArgType.Integer, "SourceID"),
+            },
+            ExpectedVariableContents.NONE),
+
+            [AutomationActions.FireActivePreset] = (1, AutomationActions.FireActivePreset, "FireActivePreset", new List<(AutomationActionArgType, string)>()
+            {
+                (AutomationActionArgType.String, "CamName"),
+            },
+            ExpectedVariableContents.NONE),
+            [AutomationActions.FireCamPreset] = (4, AutomationActions.FireCamPreset, "FireCamPreset", new List<(AutomationActionArgType, string)>()
+            {
+                (AutomationActionArgType.String, "CamName"),
+                (AutomationActionArgType.String, "PresetName"),
+                (AutomationActionArgType.Integer, "Speed"),
+                (AutomationActionArgType.String, "ZoomPST"),
+            },
+            ExpectedVariableContents.NONE),
+            [AutomationActions.FireCamDrive] = (5, AutomationActions.FireCamDrive, "FireCamDrive", new List<(AutomationActionArgType, string)>()
+            {
+                (AutomationActionArgType.String, "CamName"),
+                (AutomationActionArgType.Integer, "DirX"),
+                (AutomationActionArgType.Integer, "DirY"),
+                (AutomationActionArgType.Integer, "SpeedX"),
+                (AutomationActionArgType.Integer, "SpeedY"),
             },
             ExpectedVariableContents.NONE),
 

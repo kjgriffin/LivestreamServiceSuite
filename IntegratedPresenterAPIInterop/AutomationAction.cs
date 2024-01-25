@@ -98,20 +98,133 @@ namespace IntegratedPresenterAPIInterop
 
     }
 
+    public interface ICalculatedVariableManager
+    {
+        const string PRESENTATION_OWNED_VARIABLE = "_active-presentation_";
+        const string IP_PANEL = "_dynamic-panel_";
+        void InitializeVariable(string owner, string name, AutomationActionArgType type, object initialValue);
+        void ReleaseVariables(string owner);
+        void WriteVariableValue<T>(string name, T value);
+        bool TryEvaluateVariableValue<T>(string name, out T value);
+        void SetupVariableTrack(string name, string trackingTarget);
+        void ReleaseVariableTrack(string name);
+    }
+
+    public class AutomationActionParameter
+    {
+        public string ParamName { get; set; }
+        public object LiteralValue { get; set; }
+        public bool IsLiteral { get; set; }
+        public string ComputedVaraible { get; set; }
+        public AutomationActionArgType VarType { get; set; }
+        public T Evaulate<T>(ICalculatedVariableManager calcSrc)
+        {
+            T retVal = default(T);
+
+            // check types
+            // use literal as the default
+            switch (VarType)
+            {
+                case AutomationActionArgType.Boolean:
+                    if (typeof(T) == typeof(bool))
+                    {
+                        retVal = (T)LiteralValue;
+                    }
+                    break;
+                case AutomationActionArgType.Integer:
+                    if (typeof(T) == typeof(int))
+                    {
+                        // was parsed as a long
+                        dynamic x = (int)((long)LiteralValue);
+                        retVal = x;
+                    }
+                    break;
+                case AutomationActionArgType.Double:
+                    if (typeof(T) == typeof(double))
+                    {
+                        retVal = (T)LiteralValue;
+                    }
+                    break;
+                case AutomationActionArgType.String:
+                    if (typeof(T) == typeof(string))
+                    {
+                        retVal = (T)LiteralValue;
+                    }
+                    break;
+            }
+
+            // if it's computed try and evaulate it
+            if (!IsLiteral)
+            {
+                switch (VarType)
+                {
+                    case AutomationActionArgType.Boolean:
+                        if (calcSrc.TryEvaluateVariableValue<bool>(ComputedVaraible, out bool vbool))
+                        {
+                            retVal = (dynamic)vbool;
+                        }
+                        break;
+                    case AutomationActionArgType.Integer:
+                        if (calcSrc.TryEvaluateVariableValue<int>(ComputedVaraible, out int vint))
+                        {
+                            retVal = (dynamic)vint;
+                        }
+                        break;
+                    case AutomationActionArgType.Double:
+                        if (calcSrc.TryEvaluateVariableValue<double>(ComputedVaraible, out double vdoub))
+                        {
+                            retVal = (dynamic)vdoub;
+                        }
+                        break;
+                    case AutomationActionArgType.String:
+                        if (calcSrc.TryEvaluateVariableValue<string>(ComputedVaraible, out string vstr))
+                        {
+                            retVal = (dynamic)vstr;
+                        }
+                        break;
+                }
+            }
+
+            return retVal;
+        }
+    }
+
     public class AutomationAction
     {
         public AutomationActions Action { get; set; } = AutomationActions.None;
         public string Message { get; set; } = "";
-        public int DataI { get; set; } = 0;
-        public string DataS { get; set; } = "";
-        public object DataO { get; set; } = new object();
-        public List<object> RawParams { get; set; } = new List<object>();
+        //public int DataI { get; set; } = 0;
+        //public string DataS { get; set; } = "";
+        //public object DataO { get; set; } = new object();
+        //public List<object> RawParams { get; set; } = new List<object>();
+
+        public List<AutomationActionParameter> Parameters { get; private set; } = new List<AutomationActionParameter>();
 
         public SumOfProductExpression ExpectedConditions { get; set; } = new SumOfProductExpression();
 
         public override string ToString()
         {
             return $"{Action}";
+        }
+
+        public bool TryGetAutomationActionParmeter(string id, out AutomationActionParameter p)
+        {
+            p = Parameters.FirstOrDefault(x => x.ParamName == id);
+            if (p != null)
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool TryEvaluateAutomationActionParmeter<T>(string id, ICalculatedVariableManager calculator, out T val)
+        {
+            val = default(T);
+            if (TryGetAutomationActionParmeter(id, out var param))
+            {
+                val = param.Evaulate<T>(calculator);
+                return true;
+            }
+            return false;
         }
 
         public bool MeetsConditionsToRun(Dictionary<string, bool> condValues)
@@ -123,10 +236,11 @@ namespace IntegratedPresenterAPIInterop
         {
             AutomationAction a = new AutomationAction();
             a.Action = AutomationActions.None;
-            a.DataI = 0;
-            a.DataS = "";
+            //a.DataI = 0;
+            //a.DataS = "";
             a.Message = "";
             a.ExpectedConditions = new SumOfProductExpression();
+            a.Parameters = new List<AutomationActionParameter>();
 
             string command = cline;
 
@@ -148,6 +262,10 @@ namespace IntegratedPresenterAPIInterop
 
             if (command.StartsWith("arg0:"))
             {
+                // parse it dynamically anyways
+                command = Regex.Replace(command, @"^arg0", "cmd");
+
+                /*
                 var res = Regex.Match(command, @"arg0:(?<commandname>.*?)(\[(?<msg>.*)\])?;");
                 string cmd = res.Groups["commandname"].Value;
                 string msg = res.Groups["msg"].Value;
@@ -155,9 +273,14 @@ namespace IntegratedPresenterAPIInterop
 
                 var cmdmetadata = MetadataProvider.ScriptActionsMetadata.Values.FirstOrDefault(x => x.ActionName == cmd);
                 a.Action = cmdmetadata.Action;
+                */
             }
             if (command.StartsWith("arg1:"))
             {
+                // parse it dynamically anyways
+                command = Regex.Replace(command, @"^arg1", "cmd");
+
+                /*
                 var res = Regex.Match(command, @"arg1:(?<commandname>.*?)\((?<param>.*)\)(\[(?<msg>.*)\])?;");
                 string cmd = res.Groups["commandname"].Value;
                 string arg1 = res.Groups["param"].Value;
@@ -178,9 +301,14 @@ namespace IntegratedPresenterAPIInterop
                     default:
                         break;
                 }
+                */
             }
             if (command.StartsWith("argd8:"))
             {
+                // parse it dynamically anyways
+                command = Regex.Replace(command, @"^argd8", "cmd");
+
+                /*
                 var res = Regex.Match(command, @"argd8:(?<commandname>.*?)\((?<param1>.+),(?<param2>.+),(?<param3>.+),(?<param4>.+),(?<param5>.+),(?<param6>.+),(?<param7>.+),(?<param8>.+)\)(\[(?<msg>.*)\])?;");
                 string cmd = res.Groups["commandname"].Value;
                 double arg1 = Convert.ToDouble(res.Groups["param1"].Value);
@@ -213,7 +341,9 @@ namespace IntegratedPresenterAPIInterop
                     a.DataO = placement;
                 }
 
+                */
             }
+
             if (command.StartsWith("cmd:")) // dynamically parse it
             {
                 var cmatch = Regex.Match(command, @"cmd:(?<commandname>.*?)(\((?<params>.*?)\))?(\[(?<msg>.*)\])?;");
@@ -233,6 +363,7 @@ namespace IntegratedPresenterAPIInterop
 
                     if (parsedParams.success && parsedParams.data.Count == cmdMetadata.Value.NumArgs || cmdMetadata.Value.NumArgs == 0)
                     {
+                        /*
                         // legacy support for arg0, arg1, argd8 commands
                         if (cmdMetadata.Value.NumArgs == 1)
                         {
@@ -276,10 +407,12 @@ namespace IntegratedPresenterAPIInterop
                             };
                             a.DataO = pattern;
                         }
+                        */
 
                         // otherwise just stuff the args directly into the args
                         // new commands will look there for thier values as required
-                        a.RawParams = parsedParams.data;
+                        //a.RawParams = parsedParams.data;
+                        a.Parameters = parsedParams.data;
                         a.Action = cmdMetadata.Value.Action;
                     }
                 }
@@ -288,9 +421,9 @@ namespace IntegratedPresenterAPIInterop
             return a;
         }
 
-        static (bool success, List<object> data) ParseDynamicParams(string pstr, AutomationActionMetadata cmdMetadata)
+        static (bool success, List<AutomationActionParameter> data) ParseDynamicParams(string pstr, AutomationActionMetadata cmdMetadata)
         {
-            var res = new List<object>();
+            var res = new List<AutomationActionParameter>();
 
             // expect all args to be un-enclosed (even strings!)
             // all args are comma seperated
@@ -304,35 +437,80 @@ namespace IntegratedPresenterAPIInterop
 
             for (int i = 0; i < pargs.Length; i++)
             {
-                // try parsing the value as requested
-                switch (cmdMetadata.OrderedArgTypes[i])
+                AutomationActionParameter p = new AutomationActionParameter();
+                p.ParamName = cmdMetadata.OrderedArgTypes[i].id;
+                p.VarType = cmdMetadata.OrderedArgTypes[i].type;
+                p.ComputedVaraible = ""; // default empty
+
+                // if it's a variable- handle that
+                if (pargs[i].StartsWith("$"))
                 {
-                    case AutomationActionArgType.Integer:
-                        // make life easy here and use more memory for gauranteed type safety
-                        // 64 bits is certianly better than 32 bits
-                        if (long.TryParse(pargs[i].Trim(), out var ival))
-                        {
-                            res.Add(ival);
-                        }
-                        break;
-                    case AutomationActionArgType.String:
-                        res.Add(pargs[i].Trim());
-                        break;
-                    case AutomationActionArgType.Double:
-                        if (double.TryParse(pargs[i].Trim(), out var dval))
-                        {
-                            res.Add(dval);
-                        }
-                        break;
-                    case AutomationActionArgType.Boolean:
-                        if (bool.TryParse(pargs[i].Trim(), out var bval))
-                        {
-                            res.Add(bval);
-                        }
-                        break;
-                    default:
-                        return (false, res);
+                    // it's a variable
+                    p.IsLiteral = false;
+
+                    p.ComputedVaraible = (pargs[i].Remove(0, 1)).Trim();
+
+                    // still need to setup a default
+                    switch (cmdMetadata.OrderedArgTypes[i].type)
+                    {
+                        case AutomationActionArgType.Integer:
+                            p.LiteralValue = 0;
+                            break;
+                        case AutomationActionArgType.String:
+                            p.LiteralValue = "";
+                            break;
+                        case AutomationActionArgType.Double:
+                            p.LiteralValue = 0;
+                            break;
+                        case AutomationActionArgType.Boolean:
+                            p.LiteralValue = false;
+                            break;
+                        default:
+                            // invalid cmd??
+                            // ABORT!
+                            return (false, res);
+                    }
                 }
+                else
+                {
+                    p.IsLiteral = true;
+                    // try parsing the value as requested
+                    // as a literal value
+                    switch (cmdMetadata.OrderedArgTypes[i].type)
+                    {
+                        case AutomationActionArgType.Integer:
+                            // make life easy here and use more memory for gauranteed type safety
+                            // 64 bits is certianly better than 32 bits
+                            if (long.TryParse(pargs[i].Trim(), out var ival))
+                            {
+                                p.LiteralValue = ival;
+                            }
+                            break;
+                        case AutomationActionArgType.String:
+                            //res.Add(pargs[i].Trim());
+                            p.LiteralValue = pargs[i].Trim();
+                            break;
+                        case AutomationActionArgType.Double:
+                            if (double.TryParse(pargs[i].Trim(), out var dval))
+                            {
+                                p.LiteralValue = dval;
+                                //res.Add(dval);
+                            }
+                            break;
+                        case AutomationActionArgType.Boolean:
+                            if (bool.TryParse(pargs[i].Trim(), out var bval))
+                            {
+                                p.LiteralValue = bval;
+                                //res.Add(bval);
+                            }
+                            break;
+                        default:
+                            // so there was a teensey tiny issue... just ignore it
+                            return (false, res);
+                    }
+                }
+
+                res.Add(p);
             }
 
             return (true, res);

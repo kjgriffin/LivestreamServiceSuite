@@ -36,6 +36,7 @@ namespace SharedPresentationAPI.Presentation
 
         public static ISlide EmptySlide = new Slide() { Source = "", Type = SlideType.Empty };
         public Dictionary<string, WatchVariable> WatchedVariables { get; private set; } = new Dictionary<string, WatchVariable>();
+        public HashSet<string> OwnedVariables { get; private set; } = new HashSet<string>();
 
         public bool Create(string folder)
         {
@@ -241,7 +242,7 @@ namespace SharedPresentationAPI.Presentation
             }
 
 
-            ComputeAggregateWatchVariables();
+            ComputeAggregateWatchAndCalculatedVariables();
 
             return false;
         }
@@ -401,7 +402,7 @@ namespace SharedPresentationAPI.Presentation
 
         }
 
-        public void ComputeAggregateWatchVariables()
+        public void ComputeAggregateWatchAndCalculatedVariables()
         {
             // find every slide with actions the require watches
             Dictionary<string, WatchVariable> variables = new Dictionary<string, WatchVariable>();
@@ -412,20 +413,25 @@ namespace SharedPresentationAPI.Presentation
 
                 foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateBoolVal || x.Action.Action == AutomationActions.WatchStateBoolVal))
                 {
-                    string vname = (string)action.Action.RawParams[2];
-                    string wpath = (string)action.Action.RawParams[0];
-                    object expectation = action.Action.RawParams[1];
+                    string vname = (string)action.Action.Parameters[2].LiteralValue;
+                    string wpath = (string)action.Action.Parameters[0].LiteralValue;
+                    object expectation = action.Action.Parameters[1].LiteralValue;
                     variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Boolean);
                 }
                 foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateIntVal || x.Action.Action == AutomationActions.WatchStateIntVal))
                 {
-                    string vname = (string)action.Action.RawParams[2];
-                    string wpath = (string)action.Action.RawParams[0];
-                    object expectation = action.Action.RawParams[1];
+                    string vname = (string)action.Action.Parameters[2].LiteralValue;
+                    string wpath = (string)action.Action.Parameters[0].LiteralValue;
+                    object expectation = action.Action.Parameters[1].LiteralValue;
                     variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Integer);
                 }
-            }
 
+                foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.InitComputedVal))
+                {
+                    string vname = (string)action.Action.Parameters[0].LiteralValue;
+                    OwnedVariables.Add(vname);
+                }
+            }
 
             WatchedVariables = variables;
         }

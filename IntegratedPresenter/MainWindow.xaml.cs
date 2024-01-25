@@ -51,7 +51,7 @@ namespace IntegratedPresenter.Main
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider, IRaiseConditionsChanged, IDynamicControlProvider, IExtraDynamicControlProvider
+    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider, IDynamicControlProvider, IExtraDynamicControlProvider, IUserConditionProvider
     {
 
 
@@ -79,7 +79,9 @@ namespace IntegratedPresenter.Main
 
         private BuildVersion VersionInfo;
 
-        event EventHandler OnConditionalsUpdated;
+        //event EventHandler OnConditionalsUpdated;
+
+        ConditionalsVariablesCalculator _condVarCalculator;
 
         ISlideScriptActionAutomater _slideActionEngine;
         IActionAutomater _dynamicActionEngine;
@@ -118,6 +120,10 @@ namespace IntegratedPresenter.Main
 
             _logger.Info($"{Title} Started.");
 
+
+            // setup conditional manager
+            _condVarCalculator = new ConditionalsVariablesCalculator(this, this, this);
+            _condVarCalculator.OnConditionalsChanged += _condVarCalculator_OnConditionalsChanged;
             InitActionAutomater();
 
             // initialize conditionals
@@ -226,11 +232,17 @@ namespace IntegratedPresenter.Main
             SpoolDynamicControls();
         }
 
+        private void _condVarCalculator_OnConditionalsChanged(object sender, EventArgs e)
+        {
+            FireOnConditionalsUpdated();
+        }
+
         private void SpoolDynamicControls()
         {
             _dynamicActionEngine = new ActionAutomater(_logger,
                                                             this,
                                                             this,
+                                                            _condVarCalculator,
                                                             this,
                                                             this,
                                                             this,
@@ -238,19 +250,19 @@ namespace IntegratedPresenter.Main
                                                             this,
                                                             this,
                                                             this,
+                                                            () => Presentation?.WatchedVariables ?? new Dictionary<string, WatchVariable>(),
                                                             this,
-                                                            () => new Dictionary<string, WatchVariable>(),
                                                             this,
-                                                            this,
-                                                            this._camMonitor);
+                                                            this._camMonitor,
+                                                            _condVarCalculator);
             // when loading config driver will re-supply automation with watched variables
 
             // load the dynamic driver
-            _dynamicDriver = new DynamicMatrixDriver(dynamicControlPanel, _dynamicActionEngine, this);
+            _dynamicDriver = new DynamicMatrixDriver(dynamicControlPanel, _dynamicActionEngine, _condVarCalculator);
             //_dynamicDriver.ConfigureControls(File.ReadAllText(@"D:\Downloads\controlseg.txt"), _pres?.Folder ?? "");
 
             // build the spare panel
-            _spareDriver = new SpareDynamicMatrixDriver(this, _dynamicActionEngine, this);
+            _spareDriver = new SpareDynamicMatrixDriver(this, _dynamicActionEngine, _condVarCalculator, _condVarCalculator);
         }
 
         private void InitActionAutomater()
@@ -260,7 +272,7 @@ namespace IntegratedPresenter.Main
             _slideActionEngine = new SlideActionAutomater(_logger,
                                                 this,
                                                 this,
-                                                this,
+                                                _condVarCalculator,
                                                 this,
                                                 this,
                                                 this,
@@ -271,7 +283,8 @@ namespace IntegratedPresenter.Main
                                                 () => Presentation?.WatchedVariables,
                                                 this,
                                                 this,
-                                                this._camMonitor);
+                                                this._camMonitor,
+                                                _condVarCalculator);
         }
 
         private void PilotUI_OnUserRequestForManualReRun(object sender, int e)
@@ -628,7 +641,8 @@ namespace IntegratedPresenter.Main
             keyPatternControls.UpdateFromSwitcherState(switcherState);
 
             // conditions can change if they're watched
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            _condVarCalculator?.NotifyOfChange();
         }
 
         public void ForceStateUpdateOnSwitcher()
@@ -2913,7 +2927,9 @@ namespace IntegratedPresenter.Main
                 DisableSlidePoolOverrides();
                 slidesUpdated();
 
-                FireOnConditionalsUpdated();
+                //FireOnConditionalsUpdated();
+                _condVarCalculator.ReleaseVariables(ICalculatedVariableManager.PRESENTATION_OWNED_VARIABLE);
+                _condVarCalculator?.NotifyOfChange();
 
                 PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
 
@@ -4831,6 +4847,8 @@ namespace IntegratedPresenter.Main
         UIValue<bool> _Cond3 = new UIValue<bool>();
         UIValue<bool> _Cond4 = new UIValue<bool>();
 
+
+        /*
         private Dictionary<string, ExposedVariable> GetExposedVariables()
         {
             // currently get switcher state
@@ -4903,6 +4921,7 @@ namespace IntegratedPresenter.Main
             return conditions;
 
         }
+        */
 
         private void FireOnConditionalsUpdated()
         {
@@ -4912,14 +4931,14 @@ namespace IntegratedPresenter.Main
                 return;
             }
 
-            var cstatus = GetCurrentConditionStatuses(Presentation?.WatchedVariables);
+            var cstatus = _condVarCalculator.GetConditionals(Presentation?.WatchedVariables);
             PrevPreview?.FireOnActionConditionsUpdated(cstatus);
             CurrentPreview?.FireOnActionConditionsUpdated(cstatus);
             NextPreview?.FireOnActionConditionsUpdated(cstatus);
             AfterPreview?.FireOnActionConditionsUpdated(cstatus);
             UpdateSpeculativeSlideJumpUI();
 
-            this.OnConditionalsUpdated.Invoke(this, new EventArgs());
+            //this.OnConditionalsUpdated.Invoke(this, new EventArgs());
         }
 
         private void UpdateSpeculativeSlideJumpUI()
@@ -4929,7 +4948,8 @@ namespace IntegratedPresenter.Main
                 Dispatcher.Invoke(UpdateSpeculativeSlideJumpUI);
                 return;
             }
-            var cstatus = (this as IAutomationConditionProvider).GetCurrentConditionStatus(_pres?.WatchedVariables ?? new Dictionary<string, WatchVariable>());
+            //var cstatus = (this as IAutomationConditionProvider).GetConditionals(_pres?.WatchedVariables ?? new Dictionary<string, WatchVariable>());
+            var cstatus = _condVarCalculator?.GetConditionals(_pres?.WatchedVariables ?? new Dictionary<string, WatchVariable>());
             // Speculative Update for jump slides
             var willrun = false;
             var jtarget = Presentation?.Next?.SetupActions?.FirstOrDefault(x => x.Action?.Action == AutomationActions.JumpToSlide);
@@ -4943,35 +4963,36 @@ namespace IntegratedPresenter.Main
                 willrun = jtarget.Action.MeetsConditionsToRun(cstatus);
                 if (willrun)
                 {
-                    var index = jtarget.Action.DataI;
-                    // get the slide
-                    if (index >= 0 && index < Presentation.SlideCount)
+                    if (jtarget.Action.TryEvaluateAutomationActionParmeter<int>("SlideNum", _condVarCalculator, out var index))
                     {
-                        var tslide = Presentation.Slides[index];
-                        SpeculativeJumpPreview.SetMedia(tslide, false);
-                        SpeculativeJumpPreviewDisplay.Visibility = Visibility.Visible;
-
-                        if (tslide.Type == SlideType.Video || tslide.Type == SlideType.ChromaKeyVideo)
+                        if (index >= 0 && index < Presentation.SlideCount)
                         {
-                            // Speculative don't auto-play the media here
-                            //SpeculativeJumpPreview.PlayMedia();
-                            if (SpeculativeJumpPreview.MediaLength != TimeSpan.Zero)
+                            var tslide = Presentation.Slides[index];
+                            SpeculativeJumpPreview.SetMedia(tslide, false);
+                            SpeculativeJumpPreviewDisplay.Visibility = Visibility.Visible;
+
+                            if (tslide.Type == SlideType.Video || tslide.Type == SlideType.ChromaKeyVideo)
                             {
-                                tbPreviewSpeculativeJumpVideoDuration.Text = SpeculativeJumpPreview.MediaLength.ToString("\\T\\-mm\\:ss");
-                                tbPreviewSpeculativeJumpVideoDuration.Visibility = Visibility.Visible;
+                                // Speculative don't auto-play the media here
+                                //SpeculativeJumpPreview.PlayMedia();
+                                if (SpeculativeJumpPreview.MediaLength != TimeSpan.Zero)
+                                {
+                                    tbPreviewSpeculativeJumpVideoDuration.Text = SpeculativeJumpPreview.MediaLength.ToString("\\T\\-mm\\:ss");
+                                    tbPreviewSpeculativeJumpVideoDuration.Visibility = Visibility.Visible;
+                                }
                             }
+                            else
+                            {
+                                tbPreviewSpeculativeJumpVideoDuration.Visibility = Visibility.Hidden;
+                                tbPreviewSpeculativeJumpVideoDuration.Text = "";
+                            }
+
+
+
+
+                            // only need to do this if visible
+                            SpeculativeJumpPreview?.FireOnActionConditionsUpdated(cstatus);
                         }
-                        else
-                        {
-                            tbPreviewSpeculativeJumpVideoDuration.Visibility = Visibility.Hidden;
-                            tbPreviewSpeculativeJumpVideoDuration.Text = "";
-                        }
-
-
-
-
-                        // only need to do this if visible
-                        SpeculativeJumpPreview?.FireOnActionConditionsUpdated(cstatus);
                     }
                 }
             }
@@ -4986,28 +5007,32 @@ namespace IntegratedPresenter.Main
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
             _Cond1.Value = value;
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            _condVarCalculator?.NotifyOfChange();
         }
 
         private void SetCondition2(bool value)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
             _Cond2.Value = value;
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            _condVarCalculator?.NotifyOfChange();
         }
 
         private void SetCondition3(bool value)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
             _Cond3.Value = value;
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            _condVarCalculator?.NotifyOfChange();
         }
 
         private void SetCondition4(bool value)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
             _Cond4.Value = value;
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            _condVarCalculator?.NotifyOfChange();
         }
 
 
@@ -5376,7 +5401,10 @@ namespace IntegratedPresenter.Main
             DisableSlidePoolOverrides();
             slidesUpdated();
 
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            // release all variables related to old presentation
+            _condVarCalculator.ReleaseVariables(ICalculatedVariableManager.PRESENTATION_OWNED_VARIABLE);
+            _condVarCalculator?.NotifyOfChange();
 
             // clears all emg/last and curent actions...
             // if we're hotreload into the pres we may want a way to 'clear' just the curent so it gets going again
@@ -5489,7 +5517,7 @@ namespace IntegratedPresenter.Main
         {
             try
             {
-                _dynamicDriver?.ConfigureControls(filetext, resourcepath, overwriteAll);
+                _dynamicDriver?.ConfigureControls(filetext, resourcepath, overwriteAll, _condVarCalculator);
             }
             catch (Exception ex)
             {
@@ -5504,7 +5532,7 @@ namespace IntegratedPresenter.Main
             try
             {
                 // TODO: somewhere we may need to eventually have this USE the extraID
-                _spareDriver?.ConfigureControls(filetext, resourcepath, overwriteAll);
+                _spareDriver?.ConfigureControls(filetext, resourcepath, overwriteAll, _condVarCalculator);
             }
             catch (Exception ex)
             {
@@ -5524,10 +5552,11 @@ namespace IntegratedPresenter.Main
 
         #region ActionAutomater Providers
         IBMDSwitcherManager ISwitcherDriverProvider.switcherManager { get => switcherManager; }
-        BMDSwitcherState ISwitcherDriverProvider.switcherState { get => switcherState; }
+        BMDSwitcherState ISwitcherStateProvider.switcherState { get => switcherState; }
         BMDSwitcherConfigSettings IConfigProvider._config { get => _config; }
         bool IFeatureFlagProvider.AutomationTimer1Enabled { get => _FeatureFlag_automationtimer1enabled; }
         string IPresentationProvider.Folder { get => Presentation?.Folder; }
+
         ISlide IPresentationProvider.GetCurentSlide()
         {
             return Presentation?.EffectiveCurrent;
@@ -5548,10 +5577,6 @@ namespace IntegratedPresenter.Main
         void IAutoTransitionProvider.PerformGuardedAutoTransition()
         {
             PerformGuardedAutoTransition();
-        }
-        Dictionary<string, bool> IAutomationConditionProvider.GetCurrentConditionStatus(Dictionary<string, WatchVariable> watches)
-        {
-            return GetCurrentConditionStatuses(watches);
         }
 
         void IUserTimerProvider.ResetGpTimer1()
@@ -5626,23 +5651,6 @@ namespace IntegratedPresenter.Main
             Dispatcher.Invoke(playMedia);
         }
 
-        Dictionary<string, bool> IRaiseConditionsChanged.GetConditionals(Dictionary<string, WatchVariable> watches)
-        {
-            return GetCurrentConditionStatuses(watches);
-        }
-
-        event EventHandler IRaiseConditionsChanged.OnConditionalsChanged
-        {
-            add
-            {
-                OnConditionalsUpdated += value;
-            }
-
-            remove
-            {
-                OnConditionalsUpdated -= value;
-            }
-        }
 
         void IDynamicControlProvider.ConfigureControls(string file, string resourcepath, bool overwriteAll)
         {
@@ -5693,6 +5701,18 @@ namespace IntegratedPresenter.Main
                 LoadExtraDynamicButtons(extraID, text, path, overwriteAll);
             }
 
+        }
+
+        Dictionary<string, bool> IUserConditionProvider.GetActiveUserConditions()
+        {
+            var conditions = new Dictionary<string, bool>
+            {
+                ["1"] = _Cond1.Value,
+                ["2"] = _Cond2.Value,
+                ["3"] = _Cond3.Value,
+                ["4"] = _Cond4.Value,
+            };
+            return conditions;
         }
 
         #endregion

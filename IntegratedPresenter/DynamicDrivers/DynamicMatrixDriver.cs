@@ -39,7 +39,7 @@ namespace Integrated_Presenter.DynamicDrivers
             {
                 foreach (var action in btn.Actions)
                 {
-                    await _actionEngine.PerformAutomationAction(action);
+                    await _actionEngine.PerformAutomationAction(action, ICalculatedVariableManager.IP_PANEL);
                 }
             }
         }
@@ -83,7 +83,7 @@ namespace Integrated_Presenter.DynamicDrivers
 
         }
 
-        public void ConfigureControls(string rawText, string resourcefolder, bool overwriteAll)
+        public void ConfigureControls(string rawText, string resourcefolder, bool overwriteAll, ICalculatedVariableManager calculator)
         {
             // parse it
             var entries = DynamicControlTemplateParser.FindButtonEntries(rawText);
@@ -102,6 +102,9 @@ namespace Integrated_Presenter.DynamicDrivers
 
             // inject watches into automater
             _actionEngine.ProvideWatchInfo(() => _watches);
+
+            // reset variables
+            calculator.ReleaseVariables(ICalculatedVariableManager.IP_PANEL);
 
             if (overwriteAll)
             {

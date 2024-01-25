@@ -17,8 +17,11 @@ namespace Integrated_Presenter.DynamicDrivers
 
     internal class SpareDynamicMatrixDriver : IExtraDynamicDriver
     {
+        const string SPARE_ID = "spare";
+
         IActionAutomater _actionEngine;
         IRaiseConditionsChanged _conditions;
+        ICalculatedVariableManager _calculator;
 
         Window _parent;
         SparePanel _window;
@@ -30,11 +33,12 @@ namespace Integrated_Presenter.DynamicDrivers
         string _rawText = "";
         string _folder = "";
 
-        public SpareDynamicMatrixDriver(Window parent, IActionAutomater automater, IRaiseConditionsChanged conditions)
+        public SpareDynamicMatrixDriver(Window parent, IActionAutomater automater, IRaiseConditionsChanged conditions, ICalculatedVariableManager calculator)
         {
             _parent = parent;
             _actionEngine = automater;
             _conditions = conditions;
+            _calculator = calculator;
 
             SetupUI();
             _conditions.OnConditionalsChanged += _conditions_OnConditionalsChanged;
@@ -48,7 +52,7 @@ namespace Integrated_Presenter.DynamicDrivers
             _ui = _window.matrix;
             _ui.OnButtonClick += _ui_OnButtonClick;
 
-            ConfigureControls(_rawText, _folder, true);
+            ConfigureControls(_rawText, _folder, true, _calculator);
         }
 
         private void _window_OnReleaseFocus(object sender, EventArgs e)
@@ -64,7 +68,7 @@ namespace Integrated_Presenter.DynamicDrivers
             {
                 foreach (var action in btn.Actions)
                 {
-                    await _actionEngine.PerformAutomationAction(action);
+                    await _actionEngine.PerformAutomationAction(action, SPARE_ID);
                 }
             }
         }
@@ -108,7 +112,7 @@ namespace Integrated_Presenter.DynamicDrivers
 
         }
 
-        public void ConfigureControls(string rawText, string resourcefolder, bool overwriteAll)
+        public void ConfigureControls(string rawText, string resourcefolder, bool overwriteAll, ICalculatedVariableManager calculator)
         {
             _rawText = rawText;
             _folder = resourcefolder;
@@ -129,6 +133,9 @@ namespace Integrated_Presenter.DynamicDrivers
 
             // inject watches into automater
             _actionEngine.ProvideWatchInfo(() => _watches);
+
+            // reset variables
+            calculator.ReleaseVariables(SPARE_ID);
 
             if (overwriteAll)
             {
@@ -170,7 +177,6 @@ namespace Integrated_Presenter.DynamicDrivers
         public bool SupportsConfig(string configID)
         {
             return true;
-            //return configID == "matrix(4x3)";
         }
 
         public void ShowUI()
