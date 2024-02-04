@@ -91,6 +91,12 @@ namespace Integrated_Presenter.DynamicDrivers
                     bool run = SumOfProductExpression.EvaluateExpression(dv.expr, cstate);
                     if (run)
                     {
+                        // TODO: allow dynamic variable calculation/display
+                        // compute the value here if required
+
+                        //string textVal = _calculator.Evaluate(dv.value);
+                        // handle display stringification (decimal places etc.)
+
                         if (!_ui.CheckAccess())
                         {
                             _ui.Dispatcher.Invoke(() =>

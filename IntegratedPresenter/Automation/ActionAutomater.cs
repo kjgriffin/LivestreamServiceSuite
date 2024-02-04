@@ -551,10 +551,42 @@ namespace Integrated_Presenter.Automation
                         }
                         break;
                     case AutomationActions.WriteComputedVal:
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var wvalname) && task.TryGetAutomationActionParmeter("VarVal", out var wparam))
+                        {
+                            if (wparam.IsLiteral)
+                            {
+                                switch (wparam.VarType)
+                                {
+                                    case AutomationActionArgType.Integer:
+                                        _variableManager.WriteVariableValue(wvalname, (int)wparam.LiteralValue);
+                                        break;
+                                    case AutomationActionArgType.String:
+                                        _variableManager.WriteVariableValue(wvalname, (string)wparam.LiteralValue);
+                                        break;
+                                    case AutomationActionArgType.Double:
+                                        _variableManager.WriteVariableValue(wvalname, (double)wparam.LiteralValue);
+                                        break;
+                                    case AutomationActionArgType.Boolean:
+                                        _variableManager.WriteVariableValue(wvalname, (bool)wparam.LiteralValue);
+                                        break;
+                                }
+                            }
+                        }
                         break;
                     case AutomationActions.SetupComputedTrack:
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var tvalname) && task.TryGetAutomationActionParmeter("TrackTarget", out var tparam))
+                        {
+                            if (tparam.IsLiteral)
+                            {
+                                _variableManager.SetupVariableTrack(tvalname, (string)tparam.LiteralValue);
+                            }
+                        }
                         break;
                     case AutomationActions.ReleaseComputedTrack:
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var rvalname))
+                        {
+                            _variableManager.ReleaseVariableTrack(rvalname);
+                        }
                         break;
 
                     case AutomationActions.None:
