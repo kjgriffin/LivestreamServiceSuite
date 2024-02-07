@@ -2138,7 +2138,7 @@ namespace SlideCreater
                 //TbInput.TextArea.PerformTextInput(text);
                 _editorTabManager.RequestInsertTextIntoActiveTab(text);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // silent fail?
             }

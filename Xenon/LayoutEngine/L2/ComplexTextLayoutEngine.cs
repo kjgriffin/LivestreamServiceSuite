@@ -176,7 +176,7 @@ namespace Xenon.LayoutEngine.L2
             // i.e. if possible avoid having less than a 30% difference between the fullest/emptiest slide
 
             // compute rough avg line height
-            float avgLineHeight = filledLines.Average(x => x.MaxHeight + layout.MinInterLineSpace);
+            float avgLineHeight = filledLines.Select(x => x.MaxHeight + layout.MinInterLineSpace).DefaultIfEmpty(0).Average();
             // compute rough approx max lines/slide
             int approxMaxLinesPerSlide = (int)Math.Floor(layout.Textbox.Size.Height / avgLineHeight);
             // figure out how many slides are needed
