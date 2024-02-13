@@ -146,6 +146,7 @@
             <MenuItem Header="Options">
                 <MenuItem Foreground="Black" Name="miRenderMode" Click="ClickRenderModeToggle" IsCheckable="True" IsChecked="true" Header="Parallel Rendering"></MenuItem>
                 <MenuItem Foreground="Black" Name="miRenderClean" Click="ClickRenderFromClean" IsCheckable="True" IsChecked="false" Header="Clean Pre-Render"></MenuItem>
+                <MenuItem Foreground="Black" Name="miExportLegacy" IsCheckable="True" IsChecked="false" Header="Legacy Export Mode"></MenuItem>
                 <Separator></Separator>
                 <MenuItem  Foreground="Black" Name="mirenderoptions_chrome" Click="ClickRenderOptions_Chrome" Header="Render with Chrome" IsCheckable="True" IsChecked="True"></MenuItem>
                 <MenuItem  Foreground="Black" Name="mirenderoptions_edge" Click="ClickRenderOptions_Edge" Header="Render with Edge" IsCheckable="True" IsChecked="False"></MenuItem>

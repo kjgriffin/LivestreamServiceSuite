@@ -880,6 +880,13 @@ namespace SlideCreater
             ofd.Title = "Select Output Folder";
             ofd.FileName = "Slide";
 
+            var legacyMode = false;
+
+            Dispatcher.Invoke(() =>
+            {
+                legacyMode = miExportLegacy.IsChecked;
+            });
+
             Progress<int> exportProgress = new Progress<int>(percent =>
             {
                 Dispatcher.Invoke(() =>
@@ -894,7 +901,17 @@ namespace SlideCreater
             {
                 await Task.Run(async () =>
                 {
-                    await SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>(), exportProgress); // for now ignore messages
+                    if (legacyMode)
+                    {
+                        await SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>(), exportProgress); // for now ignore messages
+                    }
+                    else
+                    {
+                        List<XenonCompilerMessage> messages = new List<XenonCompilerMessage>();
+                        await SlideExporter.ExportSlides_Parallel(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, messages, exportProgress);
+                        alllogs.AddRange(messages);
+                        UpdateErrorReport(alllogs);
+                    }
                 });
                 ActionState = ActionState.SuccessExporting;
             }
@@ -2272,7 +2289,7 @@ namespace SlideCreater
                     var txt = sr.ReadToEnd();
                     if (Path.GetExtension(ofd.FileName) != ".xenon")
                     {
-                        fname += ".xenon";
+                        fname = Path.GetFileNameWithoutExtension(fname) + ".xenon";
                     }
                     AddXenonFileToProj(fname, txt);
                 }
