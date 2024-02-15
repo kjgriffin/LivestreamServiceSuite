@@ -892,11 +892,49 @@ namespace SlideCreater
 
             if (ofd.ShowDialog() == true)
             {
-                await Task.Run(async () =>
+                String selectedDirectory = System.IO.Path.GetDirectoryName(ofd.FileName);
+
+                /* if the directory is not empty, show a warning message */
+                bool carryOn = true;
+                DirectoryInfo di = new DirectoryInfo(selectedDirectory);
+                FileInfo[] files = di.GetFiles();
+                if (files.Length > 0)
                 {
-                    await SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>(), exportProgress); // for now ignore messages
-                });
-                ActionState = ActionState.SuccessExporting;
+                    if (MessageBox.Show("The selected directory is not empty.  Do you want to delete all files in the directory and continue?", "Confirmation", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                    {
+                        foreach (FileInfo file in files)
+                        {
+                            try
+                            {
+                                file.Delete();
+                            }
+                            catch (Exception)
+                            {
+                                MessageBox.Show("Could not delete all files. Cancelling Export", "Confirmation", MessageBoxButton.OK);
+                                carryOn = false;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        carryOn = false;
+                    }
+                }
+
+                if (carryOn)
+                {
+                    await Task.Run(async () =>
+                    {
+                        await SlideExporter.ExportSlides(selectedDirectory, _proj, new List<XenonCompilerMessage>(), exportProgress); // for now ignore messages
+                    });
+                    ActionState = ActionState.SuccessExporting;
+
+                }
+                else
+                {
+                    ActionState = ActionState.ErrorExporting;
+                }
             }
             else
             {
