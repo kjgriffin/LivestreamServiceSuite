@@ -1,0 +1,101 @@
+#dynamiccontroller(master-panel-std)
+{
+    dynamic:matrix(4x3);
+    
+    [Globals]
+    {
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.PULPIT%, pulpitOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.CENTER%, centerOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.LECTERN%, lecternOnAir);
+    }
+    
+    [TButton]0,0
+    {
+        draw={
+            TopText=PULPIT;
+            BottomText=PIANO;
+            Enabled=true;
+            <pulpitOnAir*!usk1on>BackColor=#a81120;
+            <!pulpitOnAir+usk1on>BackColor=#eaeaea;
+            <pulpitOnAir*!usk1on>TextColor=#efefef;
+            <!pulpitOnAir+usk1on>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(pulpit, PIANO, 20, PIANO);
+        }
+    }
+    [TButton]1,0
+    {
+        draw={
+            TopText=CENTER;
+            BottomText=FRONT;
+            Enabled=true;
+            <centerOnAir*!usk1on>BackColor=#a81120;
+            <!centerOnAir+usk1on>BackColor=#eaeaea;
+            <centerOnAir*!usk1on>TextColor=#efefef;
+            <!centerOnAir+usk1on>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(center, FRONT, 20, FRONT);
+        }
+    }
+    [TButton]2,0
+    {
+        draw={
+            TopText=LECTERN;
+            BottomText=LEC-MID;
+            Enabled=true;
+            <lecternOnAir*!usk1on>BackColor=#a81120;
+            <!lecternOnAir+usk1on>BackColor=#eaeaea;
+            <lecternOnAir*!usk1on>TextColor=#efefef;
+            <!lecternOnAir+usk1on>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(lectern, LEC-MID, 20, LEC-MID);
+        }
+    }
+    
+    [TButton]0,2
+    {
+        draw={
+            TopText=ANTHEM;
+            BottomText=PANEL;
+            Enabled=true;
+            BackColor=#ed5cd7;
+            TextColor=#efefef;
+        }
+        fire={
+            cmd:SetupButtons(anthem-sub-panel-std, %pres%, true);
+        }
+    }
+    [TButton]1,2
+    {
+        draw={
+            TopText=SERMON;
+            BottomText=PANEL;
+            Enabled=true;
+            BackColor=#ed5cd7;
+            TextColor=#efefef;
+        }
+        fire={
+            cmd:SetupButtons(sermon-sub-panel-std, %pres%, true);
+        }
+    }
+    
+    #IF BIBLECLASS
+    [TButton]2,2
+    {
+        draw={
+            TopText=BIBLE;
+            BottomText=PANEL;
+            Enabled=true;
+            BackColor=#ed5cd7;
+            TextColor=#efefef;
+        }
+        fire={
+            cmd:SetupButtons(bibleclass-sub-panel-std, %pres%, true);
+        }
+    }
+    #ENDIF
+    
+}
