@@ -196,5 +196,19 @@
             "Xenon.Titles@text-alt": "#298f45",
             "Xenon.Creeds@color-main": "#298f45"
         }
+    },
+    {
+        "start": "2024-01-18",
+        "note": "lent",
+        "macros": {
+            "color-main": "\"#ff452351\"",
+            "text-alt": "\"#ff452351\""
+        },
+         "extras": {
+            "Xenon.Anthems@color-main": "#452351",
+            "Xenon.Titles@color-main": "#452351",
+            "Xenon.Titles@text-alt": "#452351",
+            "Xenon.Creeds@color-main": "#452351"
+        }
     }
 ]
