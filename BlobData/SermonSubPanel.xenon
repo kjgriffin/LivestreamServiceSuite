@@ -1,0 +1,98 @@
+#dynamiccontroller(sermon-sub-panel-std)
+{
+    dynamic:matrix(4x3);
+    
+    [Globals]
+    {
+        cmd:WatchSwitcherStateBoolVal(USK1OnAir, true, usk1on);
+        cmd:WatchSwitcherStateBoolVal(DSK2OnAir, true, dsk1on);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.PULPIT%, pulpitOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.CENTER%, centerOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.LECTERN%, lecternOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.ORGAN%, organOnAir);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.PULPIT%, pulpitFill);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.CENTER%, centerFill);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.LECTERN%, lecternFill);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.ORGAN%, organFill);
+        cmd:WatchSwitcherStateIntVal(PresetID, %cam.LECTERN%, lecternPst);
+    }
+    
+    [TButton]0,0
+    {
+        draw={
+            TopText=PULPIT;
+            BottomText=JESUS;
+            Enabled=true;
+            <pulpitOnAir*!usk1on>BackColor=#a81120;
+            <!pulpitOnAir+usk1on>BackColor=#eaeaea;
+            <pulpitOnAir*!usk1on>TextColor=#efefef;
+            <!pulpitOnAir+usk1on>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(pulpit, JESUS, 15, JESUS);
+        }
+    }
+    [TButton]1,0
+    {
+        draw={
+            TopText=CENTER;
+            BottomText=WIDE;
+            Enabled=true;
+            <centerOnAir*!usk1on>BackColor=#a81120;
+            <!centerOnAir+usk1on>BackColor=#eaeaea;
+            <centerOnAir*!usk1on>TextColor=#efefef;
+            <!centerOnAir+usk1on>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(center, SERMON, 15, SERMON);
+        }
+    }
+    [TButton]2,0
+    {
+        draw={
+            TopText=LECTERN;
+            BottomText=WIDE;
+            Enabled=true;
+            <lecternOnAir*!usk1on>BackColor=#a81120;
+            <!lecternOnAir+usk1on>BackColor=#eaeaea;
+            <lecternOnAir*!usk1on>TextColor=#efefef;
+            <!lecternOnAir+usk1on>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(lectern, SERMON, 15, SERMON);
+        }
+    }
+    
+    
+    [TButton]3,0
+    {
+        draw={
+            TopText=KILL;
+            BottomText=TITLE;
+            Enabled=true;
+            <usk1on>BackColor=#8cd419;
+            <!usk1on>BackColor=#383b34;
+            <usk1on>TextColor=#000000;
+            <!usk1on>TextColor=#efefef;
+        }
+        fire={
+            <usk1on>cmd:DSK1FadeOff;
+        }
+    }
+    
+    
+    [TButton]3,2
+    {
+        draw={
+            TopText=MASTER;
+            BottomText=EXIT;
+            Enabled=true;
+            BackColor=#ed5cd7;
+            TextColor=#efefef;
+        }
+        fire={
+            cmd:SetupButtons(master-panel-std, %pres%, true);
+        }
+    }
+    
+}
