@@ -258,7 +258,7 @@ namespace IntegratedPresenter.Main
             // when loading config driver will re-supply automation with watched variables
 
             // load the dynamic driver
-            _dynamicDriver = new DynamicMatrixDriver(dynamicControlPanel, _dynamicActionEngine, _condVarCalculator);
+            _dynamicDriver = new DynamicMatrixDriver(dynamicControlPanel, _dynamicActionEngine, _condVarCalculator, _condVarCalculator);
             //_dynamicDriver.ConfigureControls(File.ReadAllText(@"D:\Downloads\controlseg.txt"), _pres?.Folder ?? "");
 
             // build the spare panel
@@ -5713,6 +5713,16 @@ namespace IntegratedPresenter.Main
                 ["4"] = _Cond4.Value,
             };
             return conditions;
+        }
+
+        void IDynamicControlProvider.Repaint()
+        {
+            _dynamicDriver?.Repaint();
+        }
+
+        void IExtraDynamicControlProvider.Repaint()
+        {
+            _spareDriver?.Repaint();
         }
 
         #endregion

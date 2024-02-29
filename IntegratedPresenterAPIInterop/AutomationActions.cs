@@ -85,6 +85,8 @@
         SetupButtons,
         SetupExtras,
 
+        RedrawDynamicControls,
+
         USK1SetTypePATTERN,
         ConfigurePATTERN,
         ForceRunPostSet,

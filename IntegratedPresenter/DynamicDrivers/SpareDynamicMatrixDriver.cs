@@ -10,6 +10,7 @@ using IntegratedPresenterAPIInterop.DynamicDrivers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Integrated_Presenter.DynamicDrivers
@@ -88,25 +89,19 @@ namespace Integrated_Presenter.DynamicDrivers
                 foreach (var dv in btn.DrawValues)
                 {
                     // check if conditional
-                    bool run = SumOfProductExpression.EvaluateExpression(dv.expr, cstate);
+                    bool run = SumOfProductExpression.EvaluateExpression(dv.CondExpr, cstate);
                     if (run)
                     {
-                        // TODO: allow dynamic variable calculation/display
-                        // compute the value here if required
-
-                        //string textVal = _calculator.Evaluate(dv.value);
-                        // handle display stringification (decimal places etc.)
-
                         if (!_ui.CheckAccess())
                         {
                             _ui.Dispatcher.Invoke(() =>
                             {
-                                _ui.UpdateButton(btn.X, btn.Y, dv.pkey, dv.value);
+                                _ui.UpdateButton(btn.X, btn.Y, dv, _calculator);
                             });
                         }
                         else
                         {
-                            _ui.UpdateButton(btn.X, btn.Y, dv.pkey, dv.value);
+                            _ui.UpdateButton(btn.X, btn.Y, dv, _calculator);
                         }
                     }
                 }
@@ -142,6 +137,15 @@ namespace Integrated_Presenter.DynamicDrivers
 
             // reset variables
             calculator.ReleaseVariables(SPARE_ID);
+
+            // run all global actions?
+            Task.Run(async () =>
+            {
+                foreach (var initGlobalAction in globalActions)
+                {
+                    await _actionEngine.PerformAutomationAction(initGlobalAction, SPARE_ID);
+                }
+            }).Wait(); // ewwww!
 
             if (overwriteAll)
             {
@@ -216,6 +220,11 @@ namespace Integrated_Presenter.DynamicDrivers
                 _window.Show();
                 _window.Focus();
             }
+        }
+
+        public void Repaint()
+        {
+            DrawButtons();
         }
     }
 

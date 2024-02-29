@@ -102,12 +102,13 @@ namespace IntegratedPresenterAPIInterop
     {
         const string PRESENTATION_OWNED_VARIABLE = "_active-presentation_";
         const string IP_PANEL = "_dynamic-panel_";
-        void InitializeVariable(string owner, string name, AutomationActionArgType type, object initialValue);
+        void InitializeVariable(string owner, string name, AutomationActionArgType type, string initialValue);
         void ReleaseVariables(string owner);
         void WriteVariableValue<T>(string name, T value);
         bool TryEvaluateVariableValue<T>(string name, out T value);
         void SetupVariableTrack(string name, string trackingTarget);
         void ReleaseVariableTrack(string name);
+        bool TryGetVariableInfo(string wvalname, out CalculatedVariable vinfo);
     }
 
     public class AutomationActionParameter
@@ -135,8 +136,16 @@ namespace IntegratedPresenterAPIInterop
                     if (typeof(T) == typeof(int))
                     {
                         // was parsed as a long
-                        dynamic x = (int)((long)LiteralValue);
-                        retVal = x;
+                        if (LiteralValue is long)
+                        {
+                            dynamic x = unchecked((int)((long)LiteralValue));
+                            retVal = x;
+                        }
+                        else if (LiteralValue is int)
+                        {
+                            dynamic x = (int)(LiteralValue);
+                            retVal = x;
+                        }
                     }
                     break;
                 case AutomationActionArgType.Double:

@@ -76,7 +76,6 @@ namespace Integrated_Presenter.Automation
             _variableManager = variableManager;
         }
 
-
         public virtual async Task<ActionResult> PerformAutomationAction(AutomationAction task, string requesterID)
         {
             if (!task.MeetsConditionsToRun(_automationConditionProvider.GetConditionals(GetWatches())))
@@ -546,28 +545,29 @@ namespace Integrated_Presenter.Automation
                             }
                             if (atype != AutomationActionArgType.UNKNOWN_TYPE && iinitparam.IsLiteral)
                             {
-                                _variableManager.InitializeVariable(requesterID, ivalname, atype, iinitparam.LiteralValue);
+                                _variableManager.InitializeVariable(requesterID, ivalname, atype, (string)iinitparam.LiteralValue);
                             }
                         }
                         break;
                     case AutomationActions.WriteComputedVal:
-                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var wvalname) && task.TryGetAutomationActionParmeter("VarVal", out var wparam))
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var wvalname) && task.TryGetAutomationActionParmeter("VarVal", out var wparam) && _variableManager.TryGetVariableInfo(wvalname, out var vinfo))
                         {
                             if (wparam.IsLiteral)
                             {
-                                switch (wparam.VarType)
+                                dynamic val = CalculatedVariable.ParseDynamicVariableValue(vinfo.VarType, wparam.LiteralValue);
+                                switch (vinfo.VarType)
                                 {
                                     case AutomationActionArgType.Integer:
-                                        _variableManager.WriteVariableValue(wvalname, (int)wparam.LiteralValue);
+                                        _variableManager.WriteVariableValue(wvalname, (int)val);
                                         break;
                                     case AutomationActionArgType.String:
-                                        _variableManager.WriteVariableValue(wvalname, (string)wparam.LiteralValue);
+                                        _variableManager.WriteVariableValue(wvalname, (string)val);
                                         break;
                                     case AutomationActionArgType.Double:
-                                        _variableManager.WriteVariableValue(wvalname, (double)wparam.LiteralValue);
+                                        _variableManager.WriteVariableValue(wvalname, (double)val);
                                         break;
                                     case AutomationActionArgType.Boolean:
-                                        _variableManager.WriteVariableValue(wvalname, (bool)wparam.LiteralValue);
+                                        _variableManager.WriteVariableValue(wvalname, (bool)val);
                                         break;
                                 }
                             }
@@ -587,6 +587,11 @@ namespace Integrated_Presenter.Automation
                         {
                             _variableManager.ReleaseVariableTrack(rvalname);
                         }
+                        break;
+
+                    case AutomationActions.RedrawDynamicControls:
+                        _dynamicControlProvider.Repaint();
+                        _extraDynamicControlProvider.Repaint();
                         break;
 
                     case AutomationActions.None:

@@ -156,6 +156,7 @@ namespace IntegratedPresenterAPIInterop
             },
             ExpectedVariableContents.NONE),
 
+            [AutomationActions.RedrawDynamicControls] = (0, AutomationActions.RedrawDynamicControls, "PaintCtrls", null, ExpectedVariableContents.NONE),
 
 
 

@@ -197,7 +197,21 @@ namespace IntegratedPresenterAPIInterop.DynamicDrivers
                     {
                         expr = SumOfProductExpression.Parse(match.Groups["cond"].Value);
                     }
-                    def.DrawValues.Add((match.Groups["var"].Value, match.Groups["val"].Value, expr));
+                    var vexpr = match.Groups["val"].Value;
+                    DynamicDrawExpression dexpr = new DynamicDrawExpression
+                    {
+                        CondExpr = expr,
+                        PKey = match.Groups["var"].Value,
+                        Value = vexpr,
+                        VExpr = string.Empty,
+                        IsDynamicValue = false,
+                    };
+                    if (vexpr.StartsWith("$"))
+                    {
+                        dexpr.VExpr = vexpr.Substring(1);
+                        dexpr.IsDynamicValue = true;
+                    }
+                    def.DrawValues.Add(dexpr);
                 }
             }
 

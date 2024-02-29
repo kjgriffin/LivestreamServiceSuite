@@ -116,16 +116,18 @@ namespace Integrated_Presenter.Automation
 
         }
 
-        public void InitializeVariable(string owner, string name, AutomationActionArgType type, object initialValue)
+       
+        public void InitializeVariable(string owner, string name, AutomationActionArgType type, string initialValue)
         {
             // allow multi-init: probably
             if (!calculatedVariables.ContainsKey(name))
             {
+
                 CalculatedVariable v = new CalculatedVariable
                 {
-                    InitVal = initialValue,
+                    InitVal = CalculatedVariable.ParseVariableValue(type, initialValue),
                     IsTracking = false,
-                    LastVal = initialValue,
+                    LastVal = CalculatedVariable.ParseVariableValue(type, initialValue),
                     VarType = type,
                     VName = name,
                     Owner = owner,
@@ -201,28 +203,49 @@ namespace Integrated_Presenter.Automation
 
         public bool TryEvaluateVariableValue<T>(string name, out T value)
         {
-            var exposedVariables = GetExposedVariables();
             value = default(T);
 
             if (calculatedVariables.TryGetValue(name, out var vCalc))
             {
                 // process equation
-                if (typeof(T) == typeof(int))
+                if (typeof(T) == typeof(int) && vCalc.VarType == AutomationActionArgType.Integer)
                 {
                     // yeah.... so int's are 32 bit and longs are 64 bit
                     // so just to be safe do it with longs (even if we describe it as an int)
                     // because some bmd switcher state uses longs
-                    dynamic x = (int)((long)vCalc.LastVal);
-                    value = x;
+                    if (vCalc.LastVal is long)
+                    {
+                        dynamic lconv = unchecked((int)((long)vCalc.LastVal));
+                        value = lconv;
+                    }
+                    else if (vCalc.LastVal is int)
+                    {
+                        dynamic x = (int)(vCalc.LastVal);
+                        value = x;
+                    }
+                    else
+                    {
+                        // not sure we sould really do this?
+                        dynamic x = 0;
+                        value = x;
+                    }
+                    return true;
                 }
-                if (typeof(T) == typeof(string))
+                if (typeof(T) == typeof(string) && vCalc.VarType == AutomationActionArgType.String)
+                {
                     value = (T)vCalc.LastVal;
-                if (typeof(T) == typeof(double))
+                    return true;
+                }
+                if (typeof(T) == typeof(double) && vCalc.VarType == AutomationActionArgType.Double)
+                {
                     value = (T)vCalc.LastVal;
-                if (typeof(T) == typeof(bool))
+                    return true;
+                }
+                if (typeof(T) == typeof(bool) && vCalc.VarType == AutomationActionArgType.Boolean)
+                {
                     value = (T)vCalc.LastVal;
-
-                return true;
+                    return true;
+                }
             }
             return false;
 
@@ -244,17 +267,11 @@ namespace Integrated_Presenter.Automation
                 vCalc.IsTracking = false;
             }
         }
-    }
 
-    class CalculatedVariable
-    {
-        public string VName { get; set; }
-        public AutomationActionArgType VarType { get; set; }
-        public object InitVal { get; set; }
-        public object LastVal { get; set; }
-        public bool IsTracking { get; set; }
-        public string VSourcePath { get; set; }
-        public string Owner { get; set; }
+        public bool TryGetVariableInfo(string wvalname, out CalculatedVariable vinfo)
+        {
+            return calculatedVariables.TryGetValue(wvalname, out vinfo);
+        }
     }
 
 }
