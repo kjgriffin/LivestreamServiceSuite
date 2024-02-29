@@ -16,6 +16,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using Xenon.Compiler;
+
 using static LutheRun.Elements.LSB.LSBElementHymn;
 
 namespace LutheRun.Elements.LSB
@@ -250,25 +252,48 @@ namespace LutheRun.Elements.LSB
             return fullpackage;
         }
 
+        public string GetRefTranslationString(ref int indentDepth, int indentSpaces, LSBImportOptions options)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"#IF {XenonGenerator.PEW_DEF}");
+            string overrideString = options.ReadingTextESVOverride ? "ESV" : options.ReadingTextNIVOverride ? "NIV" : "ESV";
+            sb.AppendLine($"text={{{overrideString}}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
+            sb.AppendLine("#ELSE");
+            sb.AppendLine($"text={{ESV}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
+            sb.AppendLine("#ENDIF");
+
+            return sb.ToString();
+        }
+
         public string GetContentString(ref int indentDepth, int indentSpaces, LSBImportOptions options)
         {
-            if (!options.ReadingTextNIVOverride && !options.ReadingTextESVOverride)
-            {
-                return LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault()?.Elements ?? new List<IElement>(), ref indentDepth, indentSpaces);
-            }
+            StringBuilder builder = new StringBuilder();
 
-            // use our internal NIV translation lookup
+            builder.AppendLine($"#IF {XenonGenerator.PEW_DEF}");
+
+            // use our internal translation lookup
             try
             {
                 // ESV wins over NIV
                 var translation = options.ReadingTextESVOverride ? BibleTranslations.ESV : options.ReadingTextNIVOverride ? BibleTranslations.NIV : BibleTranslations.ESV;
 
-                return ReadingTextGenerator.GenerateXenonComplexReading(translation, ReadingReference, indentDepth, indentSpaces);
+                builder.AppendLine(ReadingTextGenerator.GenerateXenonComplexReading(translation, ReadingReference, indentDepth, indentSpaces));
             }
             catch (Exception ex)
             {
-                return "// Error Pulling Alt Reading Text";
+                builder.AppendLine("// Error Pulling Alt Reading Text".Indent(indentDepth, indentSpaces));
             }
+            finally
+            {
+                builder.AppendLine("#ELSE");
+            }
+
+            builder.AppendLine(LSBResponsorialExtractor.ExtractPoetryReading(ReadingContent.FirstOrDefault()?.Elements ?? new List<IElement>(), ref indentDepth, indentSpaces));
+
+            builder.AppendLine("#ENDIF");
+
+            return builder.ToString();
         }
 
         public void BuildVerseString(IBibleVerse verse, StringBuilder sb, ref int indentDepth, int indentSpaces, LSBImportOptions options)
@@ -375,7 +400,7 @@ namespace LutheRun.Elements.LSB
 
                 sb.AppendLine($"text={{{ReadingTitle}}}".Indent(indentDepth, indentSpaces));
                 sb.AppendLine($"text={{{ReadingReference}}}".Indent(indentDepth, indentSpaces));
-                sb.AppendLine($"text={{{(lSBImportOptions.ReadingTextNIVOverride ? "NIV" : "ESV")}}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
+                sb.AppendLine(GetRefTranslationString(ref indentDepth, indentSpaces, lSBImportOptions));
 
                 sb.AppendLine("ctext={".Indent(indentDepth, indentSpaces));
                 indentDepth++;
@@ -450,7 +475,7 @@ namespace LutheRun.Elements.LSB
 
             sb.AppendLine($"text={{{ReadingTitle}}}".Indent(indentDepth, indentSpaces));
             sb.AppendLine($"text={{{ReadingReference}}}".Indent(indentDepth, indentSpaces));
-            sb.AppendLine($"text={{{(lSBImportOptions.ReadingTextNIVOverride ? "NIV" : "ESV")}}}".Indent(indentDepth, indentSpaces)); // TODO: alert for non-ESV readings? or auto pick from service builder acknowledgements
+            sb.AppendLine(GetRefTranslationString(ref indentDepth, indentSpaces, lSBImportOptions));
 
             sb.AppendLine("ctext={".Indent(indentDepth, indentSpaces));
             indentDepth++;
