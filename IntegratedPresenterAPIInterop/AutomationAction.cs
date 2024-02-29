@@ -437,7 +437,7 @@ namespace IntegratedPresenterAPIInterop
             // expect all args to be un-enclosed (even strings!)
             // all args are comma seperated
 
-            var pargs = pstr.Split(",");
+            var pargs = pstr.Split(",").Select(x => x.Trim()).ToArray();
 
             if (pargs.Length != cmdMetadata.NumArgs)
             {
