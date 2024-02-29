@@ -82,7 +82,7 @@
         }
     }
     
-    #IF BIBLECLASS
+    #IF BIBLE_CLASS_PANEL
     [TButton]2,2
     {
         draw={
