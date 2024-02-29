@@ -140,7 +140,7 @@ namespace Xenon.Compiler
                 order = i;
             }
 
-            var m = Regex.Matches(text, @"^#DEFINE\s+(?<def>\w+)", RegexOptions.Multiline);
+            var m = Regex.Matches(text, @"^#DEFINE\s+(?<def>[^\s]+)", RegexOptions.Multiline);
             m.ToImmutableList().ForEach(x =>
             {
                 if (x.Success)
