@@ -2,5 +2,13 @@
   {
     "url" : "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/panel-defs/BlobData/CameraPanel.xenon",
     "filename": "CameraPanel.xenon"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/panel-defs/BlobData/AnthemSubPanel.xenon",
+    "filename": "AnthemPanel.xenon"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/panel-defs/BlobData/MasterPanel.xenon",
+    "filename": "MasterPanel.xenon"
   }
 ]
