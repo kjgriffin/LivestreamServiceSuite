@@ -154,11 +154,8 @@ namespace IntegratedPresenter.Main
             SetDefaultConfig();
             LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures.Default());
 
-            HideAdvancedPresControls();
             HideAdvancedPIPControls();
             HideAuxButtonConrols();
-
-            SlidePoolButtons = new List<SlidePoolSource>() { SlidePoolSource0, SlidePoolSource1, SlidePoolSource2, SlidePoolSource3 };
 
             ShowHideShortcutsUI();
 
@@ -1426,10 +1423,6 @@ namespace IntegratedPresenter.Main
             {
                 ToggleViewPrevAfter();
             }
-            if (e.Key == Key.Q)
-            {
-                ToggleViewAdvancedPresentation();
-            }
             if (e.Key == Key.X)
             {
                 ToggleAuxRow();
@@ -1499,10 +1492,6 @@ namespace IntegratedPresenter.Main
                     ClickProgram(1);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(1);
-                else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, false, SlidePoolSource0.Driven);
-                else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, true, SlidePoolSource0.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(1);
                 else if (Keyboard.IsKeyDown(Key.OemTilde))
@@ -1516,10 +1505,6 @@ namespace IntegratedPresenter.Main
                     ClickProgram(2);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(2);
-                else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, false, SlidePoolSource1.Driven);
-                else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, true, SlidePoolSource1.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(2);
                 else if (Keyboard.IsKeyDown(Key.OemTilde))
@@ -1533,10 +1518,6 @@ namespace IntegratedPresenter.Main
                     ClickProgram(3);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(3);
-                else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, false, SlidePoolSource2.Driven);
-                else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, true, SlidePoolSource2.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(3);
                 else if (Keyboard.IsKeyDown(Key.OemTilde))
@@ -1550,10 +1531,6 @@ namespace IntegratedPresenter.Main
                     ClickProgram(4);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(4);
-                else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, false, SlidePoolSource3.Driven);
-                else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, true, SlidePoolSource3.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(4);
                 else
@@ -3407,45 +3384,6 @@ namespace IntegratedPresenter.Main
             await SlideDriveVideo_Current();
         }
 
-
-        bool _FeatureFlag_viewAdvancedPresentation = false;
-        private void ClickViewAdvancedPresentation(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            ToggleViewAdvancedPresentation();
-        }
-
-        private void ToggleViewAdvancedPresentation()
-        {
-            SetViewAdvancedPresentation(!_FeatureFlag_viewAdvancedPresentation);
-        }
-
-        private void SetViewAdvancedPresentation(bool show)
-        {
-            _FeatureFlag_viewAdvancedPresentation = show;
-
-            if (_FeatureFlag_viewAdvancedPresentation)
-                ShowAdvancedPresControls();
-            else
-                HideAdvancedPresControls();
-
-            cbAdvancedPresentation.IsChecked = _FeatureFlag_viewAdvancedPresentation;
-        }
-
-        private void ShowAdvancedPresControls()
-        {
-            Width = Width + Width / 4;
-            gcAdvancedPresentation.Width = new GridLength(1.2, GridUnitType.Star);
-        }
-
-        private void HideAdvancedPresControls()
-        {
-            Width = Width - Width / 5;
-            gcAdvancedPresentation.Width = new GridLength(0);
-        }
-
-
-
         private void ClickResetgpTimer1(object sender, MouseButtonEventArgs e)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -3655,7 +3593,6 @@ namespace IntegratedPresenter.Main
             {
                 HideAdvancedPIPControls();
             }
-            cbAdvancedPresentation.IsChecked = _FeatureFlag_showadvancedpipcontrols;
         }
 
         private void ShowAdvancedPIPControls()
@@ -4325,12 +4262,6 @@ namespace IntegratedPresenter.Main
 
         private void ShowHideShortcutsUI()
         {
-            // Update Slide Pools
-            SlidePoolSource0.ShowHideShortcuts(ShowShortcuts);
-            SlidePoolSource1.ShowHideShortcuts(ShowShortcuts);
-            SlidePoolSource2.ShowHideShortcuts(ShowShortcuts);
-            SlidePoolSource3.ShowHideShortcuts(ShowShortcuts);
-
             // audio player
             audioPlayer?.ShowHideShortcuts(ShowShortcuts);
 
@@ -4700,7 +4631,6 @@ namespace IntegratedPresenter.Main
             SetShowEffectiveCurrentPreview(config.ViewSettings.View_PreviewEffectiveCurrent);
             SetViewAdvancedPIP(config.ViewSettings.View_AdvancedDVE);
             SetViewAuxRow(config.ViewSettings.View_AuxOutput);
-            SetViewAdvancedPresentation(config.ViewSettings.View_AdvancedPresentation);
             if (config.ViewSettings.View_DefaultOpenAdvancedPIPLocation)
             {
                 ShowPIPLocationControl();
@@ -4754,7 +4684,7 @@ namespace IntegratedPresenter.Main
                 {
                     View_PrevAfterPreviews = _FeatureFlag_displayPrevAfter,
                     View_AdvancedDVE = _FeatureFlag_showadvancedpipcontrols,
-                    View_AdvancedPresentation = _FeatureFlag_viewAdvancedPresentation,
+                    View_AdvancedPresentation = false,
                     View_AuxOutput = _FeatureFlag_showAuxButons,
                     View_PreviewEffectiveCurrent = _FeatureFlag_ShowEffectiveCurrentPreview,
                     View_DefaultOpenAdvancedPIPLocation = IntegratedPresenterFeatures.ViewSettings.View_DefaultOpenAdvancedPIPLocation,
