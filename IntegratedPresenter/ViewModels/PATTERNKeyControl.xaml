@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid Background="#2f2f30">
+        <Grid Background="#171717">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
@@ -34,18 +34,18 @@
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <Border PreviewMouseDown="setvbar" Grid.Column="0" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
-                    <Rectangle Name="ptn_vbar" Width="15" Height="40" Fill="#979797">
+                <Border PreviewMouseDown="setvbar" Grid.Column="0" Grid.Row="0" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Rectangle Name="ptn_vbar" Width="15" Height="40" Fill="{StaticResource grayBrush}">
                         <Rectangle.RenderTransform>
                             <TranslateTransform X="10"></TranslateTransform>
                         </Rectangle.RenderTransform>
                     </Rectangle>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource lightBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -53,18 +53,18 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="sethbar" Grid.Column="1" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
-                    <Rectangle Name="ptn_hbar" Width="40" Height="15" Fill="#979797">
+                <Border PreviewMouseDown="sethbar" Grid.Column="1" Grid.Row="0" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Rectangle Name="ptn_hbar" Width="40" Height="15" Fill="{StaticResource grayBrush}">
                         <Rectangle.RenderTransform>
                             <TranslateTransform Y="10"></TranslateTransform>
                         </Rectangle.RenderTransform>
                     </Rectangle>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -72,17 +72,17 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="setvbarn" Grid.Column="2" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="setvbarn" Grid.Column="2" Grid.Row="0" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Panel.ZIndex="10" Width="15" Height="40" Fill="#171717"></Rectangle>
-                        <Rectangle Name="ptn_vbarn" Width="40" Height="40" Fill="#979797"></Rectangle>
+                        <Rectangle Panel.ZIndex="10" Width="15" Height="40" Fill="{StaticResource lightBrush}"></Rectangle>
+                        <Rectangle Name="ptn_vbarn" Width="40" Height="40" Fill="{StaticResource grayBrush}"></Rectangle>
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -90,17 +90,17 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="sethbarn" Grid.Column="3" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="sethbarn" Grid.Column="3" Grid.Row="0" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Panel.ZIndex="10" Width="40" Height="15" Fill="#171717"></Rectangle>
-                        <Rectangle Name="ptn_hbarn" Width="40" Height="40" Fill="#979797"></Rectangle>
+                        <Rectangle Panel.ZIndex="10" Width="40" Height="15" Fill="{StaticResource lightBrush}"></Rectangle>
+                        <Rectangle Name="ptn_hbarn" Width="40" Height="40" Fill="{StaticResource grayBrush}"></Rectangle>
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -108,18 +108,18 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="settbar" Grid.Column="4" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="settbar" Grid.Column="4" Grid.Row="0" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Panel.ZIndex="10" Width="15" Height="40" Fill="#171717"></Rectangle>
-                        <Rectangle Panel.ZIndex="10" Width="40" Height="15" Fill="#171717"></Rectangle>
-                        <Rectangle Name="ptn_tbox" Width="40" Height="40" Fill="#979797"></Rectangle>
+                        <Rectangle Panel.ZIndex="10" Width="15" Height="40" Fill="{StaticResource lightBrush}"></Rectangle>
+                        <Rectangle Panel.ZIndex="10" Width="40" Height="15" Fill="{StaticResource lightBrush}"></Rectangle>
+                        <Rectangle Name="ptn_tbox" Width="40" Height="40" Fill="{StaticResource grayBrush}"></Rectangle>
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -128,14 +128,14 @@
                 </Border>
 
 
-                <Border PreviewMouseDown="setciris" Grid.Column="5" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
-                    <Ellipse Name="ptn_circle_iris" Width="20" Height="20" Fill="#979797"></Ellipse>
+                <Border PreviewMouseDown="setciris" Grid.Column="5" Grid.Row="0" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Ellipse Name="ptn_circle_iris" Width="20" Height="20" Fill="{StaticResource grayBrush}"></Ellipse>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -143,8 +143,8 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="setdiris" Grid.Column="6" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
-                    <Rectangle Name="ptn_diamond_iris" Width="15" Height="15" Fill="#979797">
+                <Border PreviewMouseDown="setdiris" Grid.Column="6" Grid.Row="0" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Rectangle Name="ptn_diamond_iris" Width="15" Height="15" Fill="{StaticResource grayBrush}">
                         <Rectangle.RenderTransformOrigin>
                             <Point X="0.5" Y="0.5"></Point>
                         </Rectangle.RenderTransformOrigin>
@@ -154,10 +154,10 @@
                     </Rectangle>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -165,14 +165,14 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="setldiag" Grid.Column="7" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
-                    <Polygon Name="ptn_ldiag" Points="5,5 40,5 5,40" Fill="#979797"></Polygon>
+                <Border PreviewMouseDown="setldiag" Grid.Column="7" Grid.Row="0" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Polygon Name="ptn_ldiag" Points="5,5 40,5 5,40" Fill="{StaticResource grayBrush}"></Polygon>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -180,14 +180,14 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="setrdiag" Grid.Column="8" Grid.Row="0" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
-                    <Polygon Name="ptn_rdiag" Points="5,5 40,5 40,40" Fill="#979797"></Polygon>
+                <Border PreviewMouseDown="setrdiag" Grid.Column="8" Grid.Row="0" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                    <Polygon Name="ptn_rdiag" Points="5,5 40,5 40,40" Fill="{StaticResource grayBrush}"></Polygon>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -195,16 +195,16 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="setriris" Grid.Column="0" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="setriris" Grid.Column="0" Grid.Row="1" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Name="ptn_rect_iris" Width="15" Height="15" Fill="#979797"></Rectangle>
+                        <Rectangle Name="ptn_rect_iris" Width="15" Height="15" Fill="{StaticResource grayBrush}"></Rectangle>
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -212,9 +212,9 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="settl" Grid.Column="1" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="settl" Grid.Column="1" Grid.Row="1" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Name="ptn_tl_box" Width="15" Height="15" Fill="#979797">
+                        <Rectangle Name="ptn_tl_box" Width="15" Height="15" Fill="{StaticResource grayBrush}">
                             <Rectangle.RenderTransform>
                                 <TranslateTransform X="-10" Y="-10"></TranslateTransform>
                             </Rectangle.RenderTransform>
@@ -222,19 +222,19 @@
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
                 </Border>
 
-                <Border PreviewMouseDown="settc" Grid.Column="2" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="settc" Grid.Column="2" Grid.Row="1" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Name="ptn_tc_box" Width="15" Height="15" Fill="#979797">
+                        <Rectangle Name="ptn_tc_box" Width="15" Height="15" Fill="{StaticResource grayBrush}">
                             <Rectangle.RenderTransform>
                                 <TranslateTransform X="0" Y="-10"></TranslateTransform>
                             </Rectangle.RenderTransform>
@@ -242,10 +242,10 @@
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -253,9 +253,9 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="settr" Grid.Column="3" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="settr" Grid.Column="3" Grid.Row="1" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Name="ptn_tr_box" Width="15" Height="15" Fill="#979797">
+                        <Rectangle Name="ptn_tr_box" Width="15" Height="15" Fill="{StaticResource grayBrush}">
                             <Rectangle.RenderTransform>
                                 <TranslateTransform X="10" Y="-10"></TranslateTransform>
                             </Rectangle.RenderTransform>
@@ -263,10 +263,10 @@
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -274,9 +274,9 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="setcr" Grid.Column="4" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="setcr" Grid.Column="4" Grid.Row="1" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Name="ptn_rc_box" Width="15" Height="15" Fill="#979797">
+                        <Rectangle Name="ptn_rc_box" Width="15" Height="15" Fill="{StaticResource grayBrush}">
                             <Rectangle.RenderTransform>
                                 <TranslateTransform X="10" Y="0"></TranslateTransform>
                             </Rectangle.RenderTransform>
@@ -284,10 +284,10 @@
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -295,9 +295,9 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="setbr" Grid.Column="5" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="setbr" Grid.Column="5" Grid.Row="1" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Name="ptn_br_box" Width="15" Height="15" Fill="#979797">
+                        <Rectangle Name="ptn_br_box" Width="15" Height="15" Fill="{StaticResource grayBrush}">
                             <Rectangle.RenderTransform>
                                 <TranslateTransform X="10" Y="10"></TranslateTransform>
                             </Rectangle.RenderTransform>
@@ -305,10 +305,10 @@
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -316,9 +316,9 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="setbc" Grid.Column="6" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="setbc" Grid.Column="6" Grid.Row="1" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Name="ptn_bc_box" Width="15" Height="15" Fill="#979797">
+                        <Rectangle Name="ptn_bc_box" Width="15" Height="15" Fill="{StaticResource grayBrush}">
                             <Rectangle.RenderTransform>
                                 <TranslateTransform X="0" Y="10"></TranslateTransform>
                             </Rectangle.RenderTransform>
@@ -326,10 +326,10 @@
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -337,9 +337,9 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="setbl" Grid.Column="7" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="setbl" Grid.Column="7" Grid.Row="1" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Name="ptn_bl_box" Width="15" Height="15" Fill="#979797">
+                        <Rectangle Name="ptn_bl_box" Width="15" Height="15" Fill="{StaticResource grayBrush}">
                             <Rectangle.RenderTransform>
                                 <TranslateTransform X="-10" Y="10"></TranslateTransform>
                             </Rectangle.RenderTransform>
@@ -347,10 +347,10 @@
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -358,9 +358,9 @@
 
                 </Border>
 
-                <Border PreviewMouseDown="setcl" Grid.Column="8" Grid.Row="1" Background="#171717" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
+                <Border PreviewMouseDown="setcl" Grid.Column="8" Grid.Row="1" Background="{StaticResource lightBrush}" Width="50" Height="50" CornerRadius="10" BorderThickness="2" Margin="2" Cursor="Hand">
                     <Grid>
-                        <Rectangle Name="ptn_lc_box" Width="15" Height="15" Fill="#979797">
+                        <Rectangle Name="ptn_lc_box" Width="15" Height="15" Fill="{StaticResource grayBrush}">
                             <Rectangle.RenderTransform>
                                 <TranslateTransform X="-10" Y="0"></TranslateTransform>
                             </Rectangle.RenderTransform>
@@ -368,10 +368,10 @@
                     </Grid>
                     <Border.Style>
                         <Style>
-                            <Setter Property="Border.BorderBrush" Value="#171717"></Setter>
+                            <Setter Property="Border.BorderBrush" Value="{StaticResource darkBrush}"></Setter>
                             <Style.Triggers>
                                 <Trigger Property="Border.IsMouseOver" Value="True">
-                                    <Setter Property="Border.BorderBrush" Value="Red"></Setter>
+                                    <Setter Property="Border.BorderBrush" Value="{StaticResource redBrush}"></Setter>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -396,7 +396,7 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">SIZE</TextBlock>
-                    <TextBlock x:Name="tbSize" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                    <TextBlock x:Name="tbSize" Grid.Column="1" FontSize="15" Foreground="{StaticResource activeTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
                     <Slider Name="slide_size" Maximum="1" Minimum="0" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="0" Margin="10">
@@ -406,7 +406,7 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">SOFT</TextBlock>
-                    <TextBlock Name="tbSoft" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                    <TextBlock Name="tbSoft" Grid.Column="1" FontSize="15" Foreground="{StaticResource activeTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
                     <Slider Minimum="0" Maximum="1" Name="slide_sharp" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
                 </Grid>
                 <Grid Grid.Row="0" Grid.Column="1" Margin="10">
@@ -416,7 +416,7 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">SYM.</TextBlock>
-                    <TextBlock PreviewMouseDown="cener_sym" x:Name="tbSym" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                    <TextBlock PreviewMouseDown="cener_sym" x:Name="tbSym" Grid.Column="1" FontSize="15" Foreground="{StaticResource activeTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
                     <Slider Minimum="0" Maximum="1" Name="slide_sym" Grid.Column="2" Focusable="False" IsTabStop="False" VerticalAlignment="Center" Cursor="Hand"></Slider>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="1" Margin="10">
@@ -426,7 +426,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">INVERT</TextBlock>
 
-                    <Button Click="ClickInvert" Grid.Column="0" Focusable="false" Name="BtnINVERT" Foreground="White" Background="Red" Cursor="Hand" Width="60" Height="35">
+                    <Button Click="ClickInvert" Grid.Column="0" Focusable="false" Name="BtnINVERT" Foreground="White" Background="{StaticResource redBrush}" Cursor="Hand" Width="60" Height="35">
                         <Button.Content>
                             INVERT
                         </Button.Content>
@@ -468,9 +468,9 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">Y:</TextBlock>
-                    <TextBlock x:Name="tbY" PreviewMouseDown="center_y" Cursor="Hand" Grid.Row="0" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                    <TextBlock x:Name="tbY" PreviewMouseDown="center_y" Cursor="Hand" Grid.Row="0" Grid.Column="1" FontSize="15" Foreground="{StaticResource activeTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
                     <TextBlock Grid.Row="1" Grid.Column="0" FontSize="15" Foreground="#afafaf" HorizontalAlignment="Center" VerticalAlignment="Center">X:</TextBlock>
-                    <TextBlock x:Name="tbX" PreviewMouseDown="center_x" Cursor="Hand" Grid.Row="1" Grid.Column="1" FontSize="15" Foreground="orange" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
+                    <TextBlock x:Name="tbX" PreviewMouseDown="center_x" Cursor="Hand" Grid.Row="1" Grid.Column="1" FontSize="15" Foreground="{StaticResource activeTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">0.00</TextBlock>
                 </Grid>
 
             </Grid>

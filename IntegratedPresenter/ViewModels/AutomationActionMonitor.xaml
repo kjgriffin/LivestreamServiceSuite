@@ -5,27 +5,35 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Integrated_Presenter.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="480">
+             d:DesignHeight="40" d:DesignWidth="400">
     <Grid>
-        <Grid VerticalAlignment="Center" MaxWidth="440">
+        <Grid VerticalAlignment="Center" Width="400" Height="40">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="120"></ColumnDefinition>
-                <ColumnDefinition Width="25"></ColumnDefinition>
-                <ColumnDefinition Width="25"></ColumnDefinition>
+                <ColumnDefinition Width="0.6*"></ColumnDefinition>
+                <ColumnDefinition Width="0.1*"></ColumnDefinition>
+                <ColumnDefinition Width="0.1*"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="100"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
+            <Grid Grid.Column="0" VerticalAlignment="Center">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="25"></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Image Grid.Column="0" Name="imgCondeIcon" Source="../Icons/RedNoEntry.png" Height="25"></Image>
-                    <StackPanel Grid.Column="1" Name="spReqCond" Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Foreground="Green" Margin="3" FontSize="20" FontWeight="Bold">1</TextBlock>
-                        <TextBlock Foreground="Red" Margin="3" FontSize="20" FontWeight="Bold">2</TextBlock>
-                    </StackPanel>
+                    <Rectangle Height="25">
+                        <Rectangle.Fill>
+                            <SolidColorBrush x:Name="imgCondBrush" Color="#cf3a53"></SolidColorBrush>
+                        </Rectangle.Fill>
+                        <Rectangle.OpacityMask>
+                            <ImageBrush x:Name="imgCondIcon" ImageSource="../Icons/RedNoEntry.png"></ImageBrush>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <Viewbox Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <StackPanel Height="30" Name="spReqCond" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Foreground="#51db8f" FontSize="20" FontWeight="Bold">1</TextBlock>
+                            <TextBlock Foreground="#cf3a53" FontSize="20" FontWeight="Bold">2</TextBlock>
+                        </StackPanel>
+                    </Viewbox>
                 </Grid>
             </Grid>
             <Grid Grid.Column="1">
@@ -35,10 +43,9 @@
                 <Image Name="imgStatusIcon" Source="../Icons/YellowWarn.png" Height="25"></Image>
             </Grid>
             <Grid Grid.Column="3">
-                <TextBlock Padding="10,1,10,1" FontWeight="Bold" Background="#80000000" Foreground="#ffededed" Name="tbMessage" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0">Some Action Message...</TextBlock>
-            </Grid>
-            <Grid Grid.Column="4">
-                <TextBlock Background="#80000000" FontStyle="Italic" Foreground="#ffadadad" Name="tbCommand" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">COMMAND</TextBlock>
+                <Viewbox HorizontalAlignment="Right">
+                    <TextBlock FontSize="20" FontWeight="Bold" Foreground="#ffededed" Name="tbMessage" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,0,0">Some action message that gets placed here</TextBlock>
+                </Viewbox>
             </Grid>
         </Grid>
     </Grid>

@@ -16,15 +16,26 @@ namespace Integrated_Presenter.ViewModels
     public partial class AutomationActionMonitor : UserControl
     {
         TrackedAutomationAction _action;
+
+        /// <summary>
+        /// DUMMY FOR TEST ONLY
+        /// </summary>
+        public AutomationActionMonitor()
+        {
+            InitializeComponent();
+
+        }
+
         public AutomationActionMonitor(TrackedAutomationAction action, Dictionary<string, bool> conditionals)
         {
             InitializeComponent();
             _action = action;
 
             // Update View
-            tbMessage.Text = _action?.Action?.Message;
+            string display = string.IsNullOrEmpty(_action?.Action.Message) ? _action?.Action.Action.ToString() : _action?.Action.Message;
+            tbMessage.Text = display;
 
-            tbCommand.Text = _action?.Action?.Action.ToString();
+            //tbCommand.Text = _action?.Action?.Action.ToString();
 
             switch (_action?.State)
             {
@@ -135,15 +146,18 @@ namespace Integrated_Presenter.ViewModels
 
             if (!willRun)
             {
-                imgCondeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/RedNoEntry.png"));
+                imgCondIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/RedNoEntry.png"));
+                imgCondBrush.Color = Color.FromRgb(0xcf, 0x3a, 0x53);
             }
             else if (_action?.Action?.ExpectedConditions?.HasConditions == true)
             {
-                imgCondeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreenPlay.png"));
+                imgCondIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/GreenPlay.png"));
+                imgCondBrush.Color = Color.FromRgb(0x51, 0xdb, 0x8f);
             }
             else
             {
-                imgCondeIcon.Source = null;
+                imgCondIcon.ImageSource = null;
+                imgCondBrush.Color = Colors.Transparent;
             }
         }
 

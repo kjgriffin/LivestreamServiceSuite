@@ -75,8 +75,6 @@ namespace IntegratedPresenter.Main
         ICCPUPresetMonitor _camMonitor;
 
 
-        List<SlidePoolSource> SlidePoolButtons;
-
         private BuildVersion VersionInfo;
 
         //event EventHandler OnConditionalsUpdated;
@@ -1419,10 +1417,6 @@ namespace IntegratedPresenter.Main
             {
                 ShowPIPLocationControl();
             }
-            if (e.Key == Key.O)
-            {
-                ToggleViewPrevAfter();
-            }
             if (e.Key == Key.X)
             {
                 ToggleAuxRow();
@@ -2633,7 +2627,6 @@ namespace IntegratedPresenter.Main
             if (Presentation?.EffectiveCurrent != null)
             {
                 _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. About to call DisableSlidePoolOverrides() for slide {Presentation.EffectiveCurrent.Title}");
-                DisableSlidePoolOverrides();
                 currentpoolsource = null;
                 if (Presentation.EffectiveCurrent.AutomationEnabled)
                 {
@@ -2647,6 +2640,13 @@ namespace IntegratedPresenter.Main
                         _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. About to re-run Actions for slide {Presentation.EffectiveCurrent.Title}");
                         // Run Actions
                         await ExecuteActionSlide(Presentation.EffectiveCurrent);
+
+                        // we will let scripts run a postset if required
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
+                        {
+                            _logger.Debug($"SlideDriveVideo_Current() -- Command preset select for postset shot. For Action type slide ({Presentation.CurrentSlide}).");
+                            switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
+                        }
                     }
                     else if (Presentation.EffectiveCurrent.Type == SlideType.Liturgy)
                     {
@@ -2901,7 +2901,6 @@ namespace IntegratedPresenter.Main
                     _keydisplay.Show();
                 }
 
-                DisableSlidePoolOverrides();
                 slidesUpdated();
 
                 //FireOnConditionalsUpdated();
@@ -3019,7 +3018,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        private void UpdatePostsetUi(MediaPlayer2 preview, ISlide slide)
+        private void UpdatePostsetUi(IMediaPlayer2 preview, ISlide slide)
         {
             if (slide.PostsetEnabled && _FeatureFlag_PostsetShot)
             {
@@ -3034,19 +3033,6 @@ namespace IntegratedPresenter.Main
 
 
         bool _FeatureFlag_displayPrevAfter = true;
-        private void UIUpdateDisplayPrevAfter()
-        {
-            if (_FeatureFlag_displayPrevAfter)
-            {
-                AfterPreviewDisplay.Visibility = Visibility.Visible;
-                PrevPreviewDisplay.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                AfterPreviewDisplay.Visibility = Visibility.Hidden;
-                PrevPreviewDisplay.Visibility = Visibility.Hidden;
-            }
-        }
 
 
         #region slideshow commands
@@ -3070,7 +3056,6 @@ namespace IntegratedPresenter.Main
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (activepresentation)
             {
-                DisableSlidePoolOverrides();
                 if (CurrentSlideMode == 1)
                 {
                     _logger.Debug("nextSlide() -- Calling SlideDriveVideo_Next");
@@ -3107,7 +3092,6 @@ namespace IntegratedPresenter.Main
                 else
                 {
                     _logger.Debug("nextSlide() -- going to previous slide");
-                    DisableSlidePoolOverrides();
                     Presentation.OverridePres = false;
                     Presentation.PrevSlide();
                     slidesUpdated();
@@ -3359,25 +3343,6 @@ namespace IntegratedPresenter.Main
             ToggleUSK1();
         }
 
-        private void ClickViewPrevAfter(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            ToggleViewPrevAfter();
-        }
-
-        private void ToggleViewPrevAfter()
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            SetViewPrevAfter(!_FeatureFlag_displayPrevAfter);
-        }
-
-        private void SetViewPrevAfter(bool show)
-        {
-            _FeatureFlag_displayPrevAfter = show;
-            cbPrevAfter.IsChecked = _FeatureFlag_displayPrevAfter;
-            UIUpdateDisplayPrevAfter();
-        }
-
         private async void ClickTakeSlide(object sender, RoutedEventArgs e)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -3403,48 +3368,6 @@ namespace IntegratedPresenter.Main
 
         SlidePoolSource currentpoolsource = null;
 
-        private async void TakeSlidePoolSlide(Slide s, int num, bool replaceMode, bool driven)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} slide: {s.Title} from pool source {num} {(replaceMode ? "in replace mode" : "in insert mode")} and {(driven ? "" : "not")} driven");
-            for (int i = 0; i < 4; i++)
-            {
-                if (num != i)
-                {
-                    SlidePoolButtons[i].Selected = false;
-                }
-            }
-
-            SlidePoolButtons[num].Selected = true;
-
-            currentpoolsource = SlidePoolButtons[num];
-
-            if (replaceMode)
-            {
-                Presentation?.NextSlide();
-            }
-
-            if (driven)
-            {
-                await SlideDriveVideo_ToSlide(s);
-            }
-            else
-            {
-                SlideUndrive_ToSlide(s);
-            }
-
-
-        }
-
-        private void DisableSlidePoolOverrides()
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                SlidePoolButtons[i].Selected = false;
-            }
-            currentpoolsource?.StopMedia();
-            UpdateMediaControls();
-        }
-
         private void OnClosing(object sender, CancelEventArgs e)
         {
             // stop timers
@@ -3459,30 +3382,6 @@ namespace IntegratedPresenter.Main
             pipctrl?.Close();
             _camMonitor?.Shutdown();
             _logger.Info("Integrated Presenter requested to close by USER");
-        }
-
-        private void ClickTakeSP0(object sender, Slide s, bool replaceMode, bool driven)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            TakeSlidePoolSlide(s, 0, replaceMode, driven);
-        }
-
-        private void ClickTakeSP1(object sender, Slide s, bool replaceMode, bool driven)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            TakeSlidePoolSlide(s, 1, replaceMode, driven);
-        }
-
-        private void ClickTakeSP2(object sender, Slide s, bool replaceMode, bool driven)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            TakeSlidePoolSlide(s, 2, replaceMode, driven);
-        }
-
-        private void ClickTakeSP3(object sender, Slide s, bool replaceMode, bool driven)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            TakeSlidePoolSlide(s, 3, replaceMode, driven);
         }
 
         private void ClickConfigureSwitcher(object sender, RoutedEventArgs e)
@@ -4627,7 +4526,6 @@ namespace IntegratedPresenter.Main
 
             SetProgramPresetBusOrder(config.ViewSettings.View_ProgramBusOverPresetBus);
 
-            SetViewPrevAfter(config.ViewSettings.View_PrevAfterPreviews);
             SetShowEffectiveCurrentPreview(config.ViewSettings.View_PreviewEffectiveCurrent);
             SetViewAdvancedPIP(config.ViewSettings.View_AdvancedDVE);
             SetViewAuxRow(config.ViewSettings.View_AuxOutput);
@@ -5328,7 +5226,6 @@ namespace IntegratedPresenter.Main
                 _keydisplay.Show();
             }
 
-            DisableSlidePoolOverrides();
             slidesUpdated();
 
             //FireOnConditionalsUpdated();

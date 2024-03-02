@@ -8,8 +8,8 @@
         Closing="OnClosing"
         PreviewKeyDown="WindowPreviewKeyDown"
         PreviewKeyUp="WindowKeyUp"
-        Background="#3f3f3f"
-        Title="Integrated Presenter" Height="600" Width="1200">
+        Background="#0a0a0a"
+        Title="Integrated Presenter" Height="1080" Width="1920">
     <Window.Resources>
 
     </Window.Resources>
@@ -37,7 +37,6 @@
                     <MenuItem Name="miMute" Header="Mute [M]" Click="ToggleMutePres" IsTabStop="False" IsCheckable="True" IsChecked="False" Focusable="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="View" IsTabStop="False" Focusable="False">
-                    <MenuItem Name="cbPrevAfter" Header="Prev/After [O]" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickViewPrevAfter" Focusable="False"></MenuItem>
                     <MenuItem Name="cbShowEffectiveCurrent" Header="Preview Effective Current" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowEffectiveCurrentPreview" Focusable="False"></MenuItem>
                     <MenuItem Name="cbShowAutomationPreviews" Header="Preview Automation Steps" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowAutomationPreviews" Focusable="False"></MenuItem>
                     <MenuItem Name="cbShowCurrentVideoCountdownTimer" Header="Video Countdown Timer (Current)" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowCurrentVideoCountdownTimer" Focusable="False"></MenuItem>
@@ -82,8 +81,8 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="343*"></ColumnDefinition>
-                <ColumnDefinition Width="686*"></ColumnDefinition>
+                <ColumnDefinition Width="4*"></ColumnDefinition>
+                <ColumnDefinition Width="6.7*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid>
@@ -115,7 +114,7 @@
                                         <StackPanel>
                                             <TextBlock HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME</TextBlock>
                                             <Viewbox>
-                                                <TextBlock Name="TbTime" Foreground="Orange">00:00:00</TextBlock>
+                                                <TextBlock Name="TbTime" Foreground="#cfcfcf">00:00:00</TextBlock>
                                             </Viewbox>
                                             <Viewbox Width="140" Height="20" Margin="0,-10,0,0">
                                                 <StackPanel Orientation="Horizontal">
@@ -129,12 +128,12 @@
                                         <Grid>
                                             <TextBlock VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIME ON SHOT</TextBlock>
                                             <Viewbox VerticalAlignment="Center">
-                                                <TextBlock Name="TbShotClock" Foreground="Orange">00:00</TextBlock>
+                                                <TextBlock Name="TbShotClock" Foreground="#cfcfcf">00:00</TextBlock>
                                             </Viewbox>
                                             <Viewbox VerticalAlignment="Bottom" Width="100" Height="20" Margin="0,-10,0,0" Cursor="Hand" MouseDown="ClickResetTotalShotCount">
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Style="{StaticResource GrayText}">Total Shots:</TextBlock>
-                                                    <TextBlock Name="tb_tos_TotalShots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
+                                                    <TextBlock Name="tb_tos_TotalShots" Margin="5,0,0,0" Foreground="#cfcfcf">0</TextBlock>
                                                 </StackPanel>
                                             </Viewbox>
                                         </Grid>
@@ -143,12 +142,12 @@
                                         <Grid>
                                             <TextBlock VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 1</TextBlock>
                                             <Viewbox VerticalAlignment="Center">
-                                                <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer1" Name="TbGPTimer1" Foreground="Orange">00:00</TextBlock>
+                                                <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer1" Name="TbGPTimer1" Foreground="#cfcfcf">00:00</TextBlock>
                                             </Viewbox>
                                             <Viewbox VerticalAlignment="Bottom" Width="100" Height="20" Margin="0,-10,0,0">
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Style="{StaticResource GrayText}">Shots:</TextBlock>
-                                                    <TextBlock Name="tb_t1_shots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
+                                                    <TextBlock Name="tb_t1_shots" Margin="5,0,0,0" Foreground="#cfcfcf">0</TextBlock>
                                                 </StackPanel>
                                             </Viewbox>
                                         </Grid>
@@ -157,12 +156,12 @@
                                         <Grid>
                                             <TextBlock VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource GrayText}">TIMER 2</TextBlock>
                                             <Viewbox VerticalAlignment="Center">
-                                                <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer2" Name="TbGPTimer2" Foreground="Orange">00:00</TextBlock>
+                                                <TextBlock Cursor="Hand" MouseDown="ClickResetgpTimer2" Name="TbGPTimer2" Foreground="#cfcfcf">00:00</TextBlock>
                                             </Viewbox>
                                             <Viewbox VerticalAlignment="Bottom" Width="100" Height="20" Margin="0,-10,0,0">
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Style="{StaticResource GrayText}">Shots:</TextBlock>
-                                                    <TextBlock Name="tb_t2_shots" Margin="5,0,0,0" Foreground="Orange">0</TextBlock>
+                                                    <TextBlock Name="tb_t2_shots" Margin="5,0,0,0" Foreground="#cfcfcf">0</TextBlock>
                                                 </StackPanel>
                                             </Viewbox>
                                         </Grid>
@@ -1347,10 +1346,10 @@
                     </Grid>
 
                     <Grid Grid.Row="5">
-                        <Viewbox HorizontalAlignment="Left">
+                        <Viewbox HorizontalAlignment="Center">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="150"></ColumnDefinition>
+                                    <ColumnDefinition Width="160"></ColumnDefinition>
                                     <ColumnDefinition Width="200"></ColumnDefinition>
                                     <ColumnDefinition Width="320"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
@@ -2290,7 +2289,7 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="2.6*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
                         <Grid>
@@ -2303,29 +2302,45 @@
                             <Grid Grid.Row="0" Grid.Column="0">
                                 <Viewbox Stretch="Uniform" HorizontalAlignment="Right">
                                     <Grid Width="1920" Height="1080">
-                                        <Border Name="PrevPreviewDisplay" BorderBrush="Orange" BorderThickness="2,2,2,2">
-                                            <Grid>
-                                                <local:MediaPlayer2 x:Name="PrevPreview"></local:MediaPlayer2>
-                                                <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
-                                            </Grid>
-                                        </Border>
+                                        <!--<Border Name="PrevPreviewDisplay" BorderBrush="Orange" BorderThickness="2,2,2,2">-->
+                                        <Grid>
+                                            <viewmodels:SlidePreview x:Name="PrevPreview"></viewmodels:SlidePreview>
+                                            <TextBlock Name="tbPreviewPrevVideoDuration" Foreground="{StaticResource whiteBrush}" FontSize="100">
+                                                <TextBlock.Text>
+                                                    00:00:00
+                                                </TextBlock.Text>
+                                                <TextBlock.RenderTransform>
+                                                    <TranslateTransform X="50" Y="900"></TranslateTransform>
+                                                </TextBlock.RenderTransform>
+                                            </TextBlock>
+                                        </Grid>
+                                        <!--</Border>-->
                                     </Grid>
                                 </Viewbox>
                             </Grid>
 
-                            <Grid Background="#272727" Grid.Row="1">
-                                <viewmodels:PilotUI x:Name="pilotUI"></viewmodels:PilotUI>
+                            <Grid Grid.Row="1">
+                                <Border Style="{StaticResource GroupBorder}" Margin="0">
+                                    <viewmodels:PilotUI x:Name="pilotUI"></viewmodels:PilotUI>
+                                </Border>
                             </Grid>
 
                             <Grid Grid.Row="2" Grid.Column="0">
                                 <Viewbox Stretch="Uniform" HorizontalAlignment="Right">
                                     <Grid Width="1920" Height="1080" >
-                                        <Border Name="AfterPreviewDisplay" BorderBrush="Blue" BorderThickness="2,2,2,2">
-                                            <Grid>
-                                                <local:MediaPlayer2 x:Name="AfterPreview" ></local:MediaPlayer2>
-                                                <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
-                                            </Grid>
-                                        </Border>
+                                        <!--<Border Name="AfterPreviewDisplay" BorderBrush="Blue" BorderThickness="2,2,2,2">-->
+                                        <Grid>
+                                            <viewmodels:SlidePreview x:Name="AfterPreview" ></viewmodels:SlidePreview>
+                                            <TextBlock Name="tbPreviewAfterVideoDuration" Foreground="{StaticResource whiteBrush}"  FontSize="100">
+                                                <TextBlock.Text>
+                                                    00:00:00
+                                                </TextBlock.Text>
+                                                <TextBlock.RenderTransform>
+                                                    <TranslateTransform X="50"  Y="900"></TranslateTransform>
+                                                </TextBlock.RenderTransform>
+                                            </TextBlock>
+                                        </Grid>
+                                        <!--</Border>-->
                                     </Grid>
                                 </Viewbox>
                             </Grid>
@@ -2334,47 +2349,59 @@
                     <Grid Grid.Row="0" Grid.Column="1">
                         <Viewbox Grid.Row="0" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                             <Grid Width="1920" Height="1080">
-                                <Border BorderBrush="Red" BorderThickness="2,2,2,2">
-                                    <Grid>
-                                        <local:MediaPlayer2  x:Name="CurrentPreview"></local:MediaPlayer2>
-                                        <TextBlock Name="tbPreviewCurrentVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
-                                    </Grid>
-                                </Border>
+                                <!--<Border BorderBrush="Red" BorderThickness="2,2,2,2">-->
+                                <Grid>
+                                    <viewmodels:SlidePreview  x:Name="CurrentPreview"></viewmodels:SlidePreview>
+                                    <TextBlock Name="tbPreviewCurrentVideoDuration" Foreground="{StaticResource redBrush}" FontSize="100">
+                                        <TextBlock.Text>00:00:00</TextBlock.Text>
+                                        <TextBlock.RenderTransform>
+                                            <TranslateTransform X="50" Y="900"></TranslateTransform>
+                                        </TextBlock.RenderTransform>
+                                    </TextBlock>
+                                </Grid>
+                                <!--</Border>-->
                             </Grid>
                         </Viewbox>
                     </Grid>
                     <Grid Grid.Row="2" Grid.Column="1">
                         <Viewbox Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Top">
                             <Grid Width="1920" Height="1080">
-                                <Border BorderBrush="Green" BorderThickness="2,2,2,2">
-                                    <Grid>
-                                        <local:MediaPlayer2 x:Name="NextPreview"></local:MediaPlayer2>
-                                        <TextBlock Name="tbPreviewNextVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500" Background="#80000000" Padding="5">00:00:00
-                                            <TextBlock.LayoutTransform>
-                                                <ScaleTransform ScaleX="0.5" ScaleY="0.5"></ScaleTransform>
-                                            </TextBlock.LayoutTransform>
-                                            <TextBlock.RenderTransform>
-                                                <TranslateTransform X="450" Y="-180"></TranslateTransform>
-                                            </TextBlock.RenderTransform>
-                                        </TextBlock>
-                                        <Viewbox Name="SpeculativeJumpPreviewDisplay" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="576" Height="424">
-                                            <Grid Height="1080" Width="1920">
-                                                <!--<Border Panel.ZIndex="10" VerticalAlignment="Top" HorizontalAlignment="Center">-->
-                                                <!--<TextBlock Foreground="Orange" FontWeight="Bold" FontSize="200">JUMP TARGET</TextBlock>-->
-                                                <!--</Border>-->
-                                                <Grid Width="1920" Height="1080">
-                                                    <Border Name="SpeculativeJumpPreviewBorder" BorderBrush="Blue" BorderThickness="2,2,2,2">
-                                                        <Grid>
-                                                            <local:MediaPlayer2 x:Name="SpeculativeJumpPreview" ></local:MediaPlayer2>
-                                                            <TextBlock Name="tbPreviewSpeculativeJumpVideoDuration" Foreground="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="500">00:00:00</TextBlock>
-                                                        </Grid>
-                                                    </Border>
-                                                </Grid>
+                                <Grid>
+                                    <viewmodels:SlidePreview x:Name="NextPreview"></viewmodels:SlidePreview>
+                                    <TextBlock Name="tbPreviewNextVideoDuration" Foreground="{StaticResource greenBrush}" FontSize="100" Padding="5">
+                                        <TextBlock.Text>00:00:00</TextBlock.Text>
+                                        <TextBlock.RenderTransform>
+                                            <TranslateTransform X="50" Y="900"></TranslateTransform>
+                                        </TextBlock.RenderTransform>
+                                    </TextBlock>
+                                    <Viewbox Name="SpeculativeJumpPreviewDisplay" Stretch="Uniform">
+                                        <Viewbox.RenderTransformOrigin>
+                                            <Point X="0" Y="0"></Point>
+                                        </Viewbox.RenderTransformOrigin>
+                                        <Viewbox.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform ScaleX="0.25" ScaleY="0.25"></ScaleTransform>
+                                                <TranslateTransform X="1000" Y="830"></TranslateTransform>
+                                            </TransformGroup>
+                                        </Viewbox.RenderTransform>
+                                        <Grid Height="1080" Width="1920">
+                                            <Grid Width="1920" Height="1080">
+                                                <Border Name="SpeculativeJumpPreviewBorder">
+                                                    <Grid>
+                                                        <viewmodels:SlidePreview x:Name="SpeculativeJumpPreview" ></viewmodels:SlidePreview>
+                                                        <TextBlock Name="tbPreviewSpeculativeJumpVideoDuration" Foreground="{StaticResource whiteBrush}" FontSize="100">
+                                                            <TextBlock.Text>00:00:00</TextBlock.Text>
+                                                            <TextBlock.RenderTransform>
+                                                                <TranslateTransform Y="900"></TranslateTransform>
+                                                            </TextBlock.RenderTransform>
+                                                        </TextBlock>
+                                                    </Grid>
+                                                </Border>
                                             </Grid>
-                                        </Viewbox>
+                                        </Grid>
+                                    </Viewbox>
 
-                                    </Grid>
-                                </Border>
+                                </Grid>
                             </Grid>
                         </Viewbox>
                     </Grid>

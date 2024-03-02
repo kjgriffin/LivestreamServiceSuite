@@ -207,7 +207,7 @@ namespace IntegratedPresenterAPIInterop
         //public object DataO { get; set; } = new object();
         //public List<object> RawParams { get; set; } = new List<object>();
 
-        public List<AutomationActionParameter> Parameters { get; private set; } = new List<AutomationActionParameter>();
+        public List<AutomationActionParameter> Parameters { get; set; } = new List<AutomationActionParameter>();
 
         public SumOfProductExpression ExpectedConditions { get; set; } = new SumOfProductExpression();
 
