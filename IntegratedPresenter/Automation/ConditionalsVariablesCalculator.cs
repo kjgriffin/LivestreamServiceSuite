@@ -55,7 +55,27 @@ namespace Integrated_Presenter.Automation
             // report pilot state
             Dictionary<string, ExposedVariable> pilotVars = new Dictionary<string, ExposedVariable>();
 
-            return new Dictionary<string, ExposedVariable>(switcherVars.Concat(presVars).Concat(pilotVars));
+            // this is a bit wack... but if we've gone a head and allowed runtime-variables they ought be watchable
+            // that probably exposes all sorts of dangers: conditional execution of writecomputedval that could loop endlessley??
+            // but perhaps it's worth the gain...
+            Dictionary<string, ExposedVariable> calculatedVars = new Dictionary<string, ExposedVariable>();
+            // build them up
+            foreach (var cVar in calculatedVariables)
+            {
+                // TODO: calculatedVariables are scoped by owner (panel driver)
+                // is that implicit here??
+                // perhaps we ought prefix these??
+                var scopedName = cVar.Value.Owner + "." + cVar.Value.VName;
+                calculatedVars.Add(scopedName, new ExposedVariable
+                {
+                    Metadata = null, // TODO: this may be dangerous
+                    Path = scopedName,
+                    TypeInfo = cVar.Value.VarType,
+                    Value = cVar.Value.LastVal,
+                });
+            }
+
+            return new Dictionary<string, ExposedVariable>(switcherVars.Concat(presVars).Concat(pilotVars).Concat(calculatedVars));
         }
 
         public Dictionary<string, bool> GetConditionals(Dictionary<string, WatchVariable> externalWatches)
@@ -116,7 +136,7 @@ namespace Integrated_Presenter.Automation
 
         }
 
-       
+
         public void InitializeVariable(string owner, string name, AutomationActionArgType type, string initialValue)
         {
             // allow multi-init: probably

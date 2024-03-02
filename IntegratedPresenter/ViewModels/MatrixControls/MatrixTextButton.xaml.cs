@@ -102,25 +102,37 @@ namespace Integrated_Presenter.ViewModels.MatrixControls
             switch (drawExpr.PKey)
             {
                 case nameof(MatrixTextButton.TopText):
-                    this.TopText = ComputeDrawValue(drawExpr, calculator);// drawExpr.Value;
+                    this.TopText = ComputeDrawValue(drawExpr, calculator);
                     break;
                 case nameof(MatrixTextButton.BottomText):
-                    this.BottomText = ComputeDrawValue(drawExpr, calculator);// drawExpr.Value;
+                    this.BottomText = ComputeDrawValue(drawExpr, calculator);
                     break;
                 case nameof(MatrixTextButton.BackColor):
-                    this.BackColor = ToColor(drawExpr.Value);
+                    this.BackColor = ComputeDrawColor(drawExpr, calculator);
                     break;
                 case nameof(MatrixTextButton.HoverColor):
-                    this.HoverColor = ToColor(drawExpr.Value);
+                    this.HoverColor = ComputeDrawColor(drawExpr, calculator);
                     break;
                 case nameof(MatrixTextButton.TextColor):
-                    this.TextColor = ToColor(drawExpr.Value);
+                    this.TextColor = ComputeDrawColor(drawExpr, calculator);
                     break;
                 case nameof(MatrixTextButton.Enabled):
-                    bool.TryParse(drawExpr.Value, out bool vb);
-                    this.Enabled = vb;
+                    this.Enabled = ComputeBoolValue(drawExpr, calculator);
                     break;
             }
+        }
+
+        private Color ComputeDrawColor(DynamicDrawExpression expr, ICalculatedVariableManager calculatedVariableManager)
+        {
+            var cval = ComputeDrawValue(expr, calculatedVariableManager);
+            return ToColor(cval);
+        }
+
+        private bool ComputeBoolValue(DynamicDrawExpression expr, ICalculatedVariableManager calculatedVariableManager)
+        {
+            var dval = ComputeDrawValue(expr, calculatedVariableManager);
+            bool.TryParse(dval, out bool vb);
+            return vb;
         }
 
         private string ComputeDrawValue(DynamicDrawExpression expr, ICalculatedVariableManager calculatedVariableManager)
