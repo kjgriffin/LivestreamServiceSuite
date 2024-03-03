@@ -226,7 +226,7 @@ namespace Xenon.Renderer
             // generate non-standard config file to load BMD switcher for DSK1 to use pre-multipled key if rendered for premultipled alpha
             proj.ProjectVariables.TryGetValue("global.rendermode.alpha", out List<string> rendermode);
             // we'd always want this now unless legacy is supplied
-            if (rendermode == null || !rendermode.Any(s => s == "legacy"))
+            if (rendermode?.Any(s => s == "legacy") == true)
             {
                 /*
                 var config = Configurations.SwitcherConfig.DefaultConfig.GetDefaultConfig();
@@ -386,7 +386,7 @@ namespace Xenon.Renderer
             // generate non-standard config file to load BMD switcher for DSK1 to use pre-multipled key if rendered for premultipled alpha
             proj.ProjectVariables.TryGetValue("global.rendermode.alpha", out List<string> rendermode);
             // we'd always want this now unless legacy is supplied
-            if (rendermode == null || !rendermode.Any(s => s == "legacy"))
+            if (rendermode?.Any(s => s == "legacy") == true)
             {
                 /*
                 var config = Configurations.SwitcherConfig.DefaultConfig.GetDefaultConfig();
