@@ -40,6 +40,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 using VariableMarkupAttributes;
 using VariableMarkupAttributes.Attributes;
@@ -105,11 +106,6 @@ namespace IntegratedPresenter.Main
 
             Title = _nominalTitle;
 
-
-            // set size
-            Width = 1200;
-            Height = 500;
-
             // enable logging
             using (Stream cstream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Integrated_Presenter.Log4Net.config"))
             {
@@ -151,9 +147,6 @@ namespace IntegratedPresenter.Main
             // set a default config
             SetDefaultConfig();
             LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures.Default());
-
-            HideAdvancedPIPControls();
-            HideAuxButtonConrols();
 
             ShowHideShortcutsUI();
 
@@ -1409,19 +1402,11 @@ namespace IntegratedPresenter.Main
 
             // extra features
 
-            if (e.Key == Key.P && !Keyboard.IsKeyDown(Key.NumPad1))
-            {
-                ToggleViewAdvancedPIP();
-            }
             if (e.Key == Key.L)
             {
                 ShowPIPLocationControl();
             }
-            if (e.Key == Key.X)
-            {
-                ToggleAuxRow();
-            }
-
+           
             if (e.Key == Key.F11)
             {
                 _spareDriver.Focus();
@@ -3469,49 +3454,6 @@ namespace IntegratedPresenter.Main
         }
 
 
-        private bool _FeatureFlag_showadvancedpipcontrols = false;
-        private void ClickViewAdvancedPIP(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            ToggleViewAdvancedPIP();
-        }
-
-        private void ToggleViewAdvancedPIP()
-        {
-            SetViewAdvancedPIP(!_FeatureFlag_showadvancedpipcontrols);
-        }
-
-        private void SetViewAdvancedPIP(bool show)
-        {
-            _FeatureFlag_showadvancedpipcontrols = show;
-            if (_FeatureFlag_showadvancedpipcontrols)
-            {
-                ShowAdvancedPIPControls();
-            }
-            else
-            {
-                HideAdvancedPIPControls();
-            }
-        }
-
-        private void ShowAdvancedPIPControls()
-        {
-            grd_advanced.Height = new GridLength(2.35, GridUnitType.Star);
-            gr_advanced_pip.Visibility = Visibility.Visible;
-            UpdateUIPIPPlaceKeys();
-            UpdateUIPIPPlaceKeysActiveState();
-        }
-
-        private void HideAdvancedPIPControls()
-        {
-            //var heightreduction = grAdvancedPIP.ActualHeight;
-            //Height -= heightreduction;
-            grd_advanced.Height = new GridLength(0);
-            gr_advanced_pip.Visibility = Visibility.Collapsed;
-            UpdateUIPIPPlaceKeys();
-            UpdateUIPIPPlaceKeysActiveState();
-        }
-
         private void ToggleTransBkgd()
         {
             switcherManager?.PerformToggleBackgroundForNextTrans();
@@ -3699,31 +3641,7 @@ namespace IntegratedPresenter.Main
 
         public BMDSwitcherConfigSettings Config { get => _config; }
 
-        bool _FeatureFlag_showAuxButons = false;
-        private void ClickViewAuxOutput(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            ToggleAuxRow();
-        }
-
-        private void ToggleAuxRow()
-        {
-            SetViewAuxRow(!_FeatureFlag_showAuxButons);
-        }
-
-        private void SetViewAuxRow(bool show)
-        {
-            _FeatureFlag_showAuxButons = show;
-            if (_FeatureFlag_showAuxButons)
-            {
-                ShowAuxButtonControls();
-            }
-            else
-            {
-                HideAuxButtonConrols();
-            }
-        }
-
+       
         private void ClickAux1(object sender, RoutedEventArgs e)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -3813,22 +3731,6 @@ namespace IntegratedPresenter.Main
             BtnAuxPgm.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
         }
 
-        private void ShowAuxButtonControls()
-        {
-            _FeatureFlag_showAuxButons = true;
-            //gridbtns.Width = 770;
-            //gcAdvancedProjector.Width = new GridLength(1.2, GridUnitType.Star);
-            grd_aux.Height = new GridLength(1, GridUnitType.Star);
-        }
-
-        private void HideAuxButtonConrols()
-        {
-            _FeatureFlag_showAuxButons = false;
-            //gridbtns.Width = 660;
-            //gcAdvancedProjector.Width = new GridLength(0);
-            grd_aux.Height = new GridLength(0, GridUnitType.Star);
-        }
-
 
         private void SetPIPPosition(BMDUSKDVESettings config)
         {
@@ -3899,13 +3801,17 @@ namespace IntegratedPresenter.Main
         {
             if (IsProgramRowLocked)
             {
-                btnProgramLock.Content = "LOCKED";
-                btnProgramLock.Foreground = Brushes.WhiteSmoke;
+                //btnProgramLock.Content = "LOCKED";
+                //btnProgramLock.Foreground = Brushes.WhiteSmoke;
+                imgPgmBusLockIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/WhiteLock.png"));
+                pgmBusLockColor.Color = (Color)FindResource("lightBlue");
             }
             else
             {
-                btnProgramLock.Content = "UNLOCKED";
-                btnProgramLock.Foreground = Brushes.Orange;
+                //btnProgramLock.Content = "UNLOCKED";
+                //btnProgramLock.Foreground = Brushes.Orange;
+                imgPgmBusLockIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/WhiteOpenLock.png"));
+                pgmBusLockColor.Color = (Color)FindResource("red");
             }
         }
 
@@ -4234,8 +4140,6 @@ namespace IntegratedPresenter.Main
             ksc_ps7.Visibility = ShortcutVisibility;
             ksc_ps8.Visibility = ShortcutVisibility;
 
-            ksc_r.Visibility = ShortcutVisibility;
-
             ksc_mplay.Visibility = ShortcutVisibility;
             ksc_mpause.Visibility = ShortcutVisibility;
             ksc_mstop.Visibility = ShortcutVisibility;
@@ -4368,7 +4272,7 @@ namespace IntegratedPresenter.Main
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ResetPresentationToBegining();
 
-            if (Presentation.EffectiveCurrent.ForceRunOnLoad)
+            if (Presentation?.EffectiveCurrent.ForceRunOnLoad == true)
             {
                 SlideDriveVideo_Current();
             }
@@ -4376,10 +4280,14 @@ namespace IntegratedPresenter.Main
 
         private void ResetPresentationToBegining()
         {
+            if (Presentation == null)
+            {
+                return;
+            }
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            Presentation.StartPres();
+            Presentation?.StartPres();
             slidesUpdated();
-            PresentationStateUpdated?.Invoke(Presentation.Current);
+            PresentationStateUpdated?.Invoke(Presentation?.Current);
         }
 
         private void ClickResetgpTimer2(object sender, MouseButtonEventArgs e)
@@ -4524,11 +4432,7 @@ namespace IntegratedPresenter.Main
         {
             _m_integratedPresenterFeatures = config;
 
-            SetProgramPresetBusOrder(config.ViewSettings.View_ProgramBusOverPresetBus);
-
             SetShowEffectiveCurrentPreview(config.ViewSettings.View_PreviewEffectiveCurrent);
-            SetViewAdvancedPIP(config.ViewSettings.View_AdvancedDVE);
-            SetViewAuxRow(config.ViewSettings.View_AuxOutput);
             if (config.ViewSettings.View_DefaultOpenAdvancedPIPLocation)
             {
                 ShowPIPLocationControl();
@@ -4581,9 +4485,7 @@ namespace IntegratedPresenter.Main
                 ViewSettings = new Configurations.FeatureConfig.IntegratedPresentationFeatures_View()
                 {
                     View_PrevAfterPreviews = _FeatureFlag_displayPrevAfter,
-                    View_AdvancedDVE = _FeatureFlag_showadvancedpipcontrols,
                     View_AdvancedPresentation = false,
-                    View_AuxOutput = _FeatureFlag_showAuxButons,
                     View_PreviewEffectiveCurrent = _FeatureFlag_ShowEffectiveCurrentPreview,
                     View_DefaultOpenAdvancedPIPLocation = IntegratedPresenterFeatures.ViewSettings.View_DefaultOpenAdvancedPIPLocation,
                     View_DefaultOpenAudioPlayer = IntegratedPresenterFeatures.ViewSettings.View_DefaultOpenAudioPlayer,
@@ -5019,30 +4921,7 @@ namespace IntegratedPresenter.Main
             SlideMediaActiveTab = 1;
         }
 
-        private void ClickToggleProgramPresetBusSwap(object sender, RoutedEventArgs e)
-        {
-            SetProgramPresetBusOrder(cbViewProgramOverPresetBus.IsChecked);
-        }
-
-        bool _FeatureFlag_ViewProgramOverPresetBus = false;
-        private void SetProgramPresetBusOrder(bool programontop)
-        {
-            _FeatureFlag_ViewProgramOverPresetBus = programontop;
-            cbViewProgramOverPresetBus.IsChecked = _FeatureFlag_ViewProgramOverPresetBus;
-            const int top = 2;
-            const int bottom = 3;
-            if (_FeatureFlag_ViewProgramOverPresetBus)
-            {
-                gr_ProgramBus.SetValue(Grid.RowProperty, top);
-                gr_PresetBus.SetValue(Grid.RowProperty, bottom);
-            }
-            else
-            {
-                gr_PresetBus.SetValue(Grid.RowProperty, top);
-                gr_ProgramBus.SetValue(Grid.RowProperty, bottom);
-            }
-        }
-
+      
         private void ClickOpenCCUDriverUI(object sender, RoutedEventArgs e)
         {
             _camMonitor?.ShowUI();
