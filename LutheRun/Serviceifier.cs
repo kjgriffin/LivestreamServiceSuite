@@ -2,6 +2,7 @@
 
 using LutheRun.Elements;
 using LutheRun.Elements.LSB;
+using LutheRun.Generators;
 using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
@@ -248,8 +249,8 @@ namespace LutheRun
         public static List<ParsedLSBElement> AddExtraElements(this List<ParsedLSBElement> service, LSBImportOptions options)
         {
             List<ParsedLSBElement> newService = new List<ParsedLSBElement>(service);
- 
-            if (options.RunWithSubPanels)
+
+            if (options.RunWithSubPanels && !options.OverrideRunWithSubPanelsToUseOnlineVersions)
             {
                 var cmdtxt = ExternalPrefabGenerator.PrepareBlob("AllSubPanels");
                 newService.Add(new ParsedLSBElement
@@ -387,9 +388,11 @@ namespace LutheRun
 
                     var acks = service.Take(2).Select(x => x.LSBElement).ToList();
 
+                    ExternalPrefabGenerator.ExtractTitleAndDateFuzzy(acks, out string serviceTitle, out string serviceDate);
+
                     newservice.Add(new ParsedLSBElement
                     {
-                        LSBElement = ExternalPrefabGenerator.GenerateCopyTitle(acks, sack, options),
+                        LSBElement = ExternalPrefabGenerator.GenerateCopyTitle(serviceTitle, serviceDate, sack, options),
                         AddedByInference = true,
                         Generator = "Converted into CopyTilte [Flags=UseCopyTitle]",
                         SourceElements = acks.Select(x => x.SourceHTML).Concat(ack.SourceHTML.ItemAsEnumerable()),
@@ -400,7 +403,7 @@ namespace LutheRun
                     {
                         end = new ParsedLSBElement
                         {
-                            LSBElement = ExternalPrefabGenerator.GenerateEndPage(acks, options),
+                            LSBElement = ExternalPrefabGenerator.GenerateEndPage(serviceTitle, serviceDate, options),
                             Generator = "Generate Copy Title [Flags=UseCopyTitle]",
                             AddedByInference = true,
                             SourceElements = acks.Select(x => x.SourceHTML),
@@ -411,6 +414,39 @@ namespace LutheRun
                 else
                 {
                     servicetoparse = service;
+
+                    // invent a title/date that's reasonableish
+                    // speculatively pick the next sunday
+                    // build a title??
+
+                    // I'm not doing stuff for work here, but I don't care
+                    // this probably breaks/has all sorts of weird behaviour in the following conditions:
+                    // - running on a system not configured to use EST/EDT
+                    // - running during a DST transition (so do your importing before/after the 1:00-2:00am window)
+                    DateTime nextSunday = XenonGenerator.GuessNextServiceDateFromNow();
+
+                    string serviceTitle = "Sunday Worship Service";
+                    string serviceDate = nextSunday.ToString("MMMM d, yyyy");
+
+                    newservice.Add(new ParsedLSBElement
+                    {
+                        LSBElement = ExternalPrefabGenerator.GenerateCopyTitle(serviceTitle, serviceDate, sack, options),
+                        AddedByInference = true,
+                        Generator = "Converted into CopyTilte [Flags=UseCopyTitle]",
+                        Ancestory = Guid.NewGuid(),
+                    });
+
+                    if (options.UseTitledEnd)
+                    {
+                        end = new ParsedLSBElement
+                        {
+                            LSBElement = ExternalPrefabGenerator.GenerateEndPage(serviceTitle, serviceDate, options),
+                            Generator = "Generate Copy Title [Flags=UseCopyTitle]",
+                            AddedByInference = true,
+                            Ancestory = Guid.NewGuid(),
+                        };
+                    }
+
                 }
 
             }
@@ -790,5 +826,5 @@ namespace LutheRun
             return newservice;
         }
 
-    }
+            }
 }

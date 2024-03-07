@@ -32,9 +32,8 @@ namespace SharedPresentationAPI.Presentation
         BMDSwitcherConfigSettings SwitcherConfig { get; }
         IntegratedPresenterFeatures UserConfig { get; }
         Dictionary<string, WatchVariable> WatchedVariables { get; }
-
+        HashSet<string> OwnedVariables { get; }
         Dictionary<string, string> RawTextResources { get; }
-
         bool Create(string folder);
         void NextSlide();
         void PrevSlide();

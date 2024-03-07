@@ -118,14 +118,14 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             pip_aux.SetPIPName("AUX");
         }
 
-        public void RefreshUI(ICameraSourceProvider cameras, ISwitcherStateProvider switcher)
+        public void RefreshUI(ICameraSourceProvider cameras, IMockSwitcherInternals switcher)
         {
             RunOnUI(() => Internal_RefreshUI(cameras, switcher));
         }
 
-        private void Internal_RefreshUI(ICameraSourceProvider cameras, ISwitcherStateProvider switcher)
+        private void Internal_RefreshUI(ICameraSourceProvider cameras, IMockSwitcherInternals switcher)
         {
-            var state = switcher.GetState();
+            var state = switcher.switcherState;
 
             // for now we'll just work on the simple pips
             for (int i = 0; i < 8; i++)
@@ -315,12 +315,12 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
         /// Start a fade in/out
         /// </summary>
         /// <param name="dir">1 = in , -1 = out</param>
-        internal void StartDSK1Fade(int dir, ISwitcherStateProvider switcher)
+        internal void StartDSK1Fade(int dir, IMockSwitcherInternals switcher)
         {
             RunOnUI(() => Internal_StartDSK1Fade(dir, switcher));
         }
 
-        private void Internal_StartDSK1Fade(int dir, ISwitcherStateProvider switcher)
+        private void Internal_StartDSK1Fade(int dir, IMockSwitcherInternals switcher)
         {
             var dur = TimeSpan.FromSeconds(_cfg.DownstreamKey1Config.Rate / _cfg.VideoSettings.VideoFPS);
             var fade = new DoubleAnimation()
@@ -346,15 +346,15 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
             });
 
         }
-        internal void StartMEFade(ISwitcherStateProvider switcher, ICameraSourceProvider cameras, int key1Dir)
+        internal void StartMEFade(IMockSwitcherInternals switcher, ICameraSourceProvider cameras, int key1Dir)
         {
             RunOnUI(() => Internal_StartMEFade(switcher, cameras, key1Dir));
         }
 
-        private void Internal_StartMEFade(ISwitcherStateProvider switcher, ICameraSourceProvider cameras, int key1Dir)
+        private void Internal_StartMEFade(IMockSwitcherInternals switcher, ICameraSourceProvider cameras, int key1Dir)
         {
 
-            var origState = switcher.GetState();
+            var origState = switcher.switcherState;
 
             int FromSID = (int)origState.ProgramID;
             int ToSID = (int)origState.PresetID;
@@ -496,14 +496,14 @@ namespace Integrated_Presenter.BMDSwitcher.Mock
 
         }
 
-        internal void StartFTB(ISwitcherStateProvider switcher, bool onair)
+        internal void StartFTB(IMockSwitcherInternals switcher, bool onair)
         {
             RunOnUI(() => Internal_StartFTB(switcher, onair));
         }
 
-        private void Internal_StartFTB(ISwitcherStateProvider switcher, bool onair)
+        private void Internal_StartFTB(IMockSwitcherInternals switcher, bool onair)
         {
-            var origState = switcher.GetState();
+            var origState = switcher.switcherState;
 
             var dur = TimeSpan.FromSeconds(_cfg.MixEffectSettings.Rate / _cfg.VideoSettings.VideoFPS);
             var fade = new DoubleAnimation()

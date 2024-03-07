@@ -9,6 +9,7 @@ using IntegratedPresenterAPIInterop.DynamicDrivers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Integrated_Presenter.DynamicDrivers
 {
@@ -17,16 +18,18 @@ namespace Integrated_Presenter.DynamicDrivers
     {
         IActionAutomater _actionEngine;
         IRaiseConditionsChanged _conditions;
+        ICalculatedVariableManager _calculator;
         _4x3Matrix _ui;
 
         Dictionary<string, DynamicControlTButtonDefinition> _buttons = new Dictionary<string, DynamicControlTButtonDefinition>();
         Dictionary<string, WatchVariable> _watches = new Dictionary<string, WatchVariable>();
 
-        public DynamicMatrixDriver(_4x3Matrix ui, IActionAutomater automater, IRaiseConditionsChanged conditions)
+        public DynamicMatrixDriver(_4x3Matrix ui, IActionAutomater automater, IRaiseConditionsChanged conditions, ICalculatedVariableManager calculator)
         {
             _ui = ui;
             _actionEngine = automater;
             _conditions = conditions;
+            _calculator = calculator;
 
             _conditions.OnConditionalsChanged += _conditions_OnConditionalsChanged;
             _ui.OnButtonClick += _ui_OnButtonClick;
@@ -39,7 +42,7 @@ namespace Integrated_Presenter.DynamicDrivers
             {
                 foreach (var action in btn.Actions)
                 {
-                    await _actionEngine.PerformAutomationAction(action);
+                    await _actionEngine.PerformAutomationAction(action, ICalculatedVariableManager.IP_PANEL);
                 }
             }
         }
@@ -59,19 +62,19 @@ namespace Integrated_Presenter.DynamicDrivers
                 foreach (var dv in btn.DrawValues)
                 {
                     // check if conditional
-                    bool run = SumOfProductExpression.EvaluateExpression(dv.expr, cstate);
+                    bool run = SumOfProductExpression.EvaluateExpression(dv.CondExpr, cstate);
                     if (run)
                     {
                         if (!_ui.CheckAccess())
                         {
                             _ui.Dispatcher.Invoke(() =>
                             {
-                                _ui.UpdateButton(btn.X, btn.Y, dv.pkey, dv.value);
+                                _ui.UpdateButton(btn.X, btn.Y, dv, _calculator);
                             });
                         }
                         else
                         {
-                            _ui.UpdateButton(btn.X, btn.Y, dv.pkey, dv.value);
+                            _ui.UpdateButton(btn.X, btn.Y, dv, _calculator);
                         }
                     }
                 }
@@ -83,7 +86,7 @@ namespace Integrated_Presenter.DynamicDrivers
 
         }
 
-        public void ConfigureControls(string rawText, string resourcefolder, bool overwriteAll)
+        public void ConfigureControls(string rawText, string resourcefolder, bool overwriteAll, ICalculatedVariableManager calculator)
         {
             // parse it
             var entries = DynamicControlTemplateParser.FindButtonEntries(rawText);
@@ -102,6 +105,18 @@ namespace Integrated_Presenter.DynamicDrivers
 
             // inject watches into automater
             _actionEngine.ProvideWatchInfo(() => _watches);
+
+            // reset variables
+            calculator.ReleaseVariables(ICalculatedVariableManager.IP_PANEL);
+
+            // run all global actions?
+            Task.Run(async () =>
+            {
+                foreach (var initGlobalAction in globalActions)
+                {
+                    await _actionEngine.PerformAutomationAction(initGlobalAction, ICalculatedVariableManager.IP_PANEL);
+                }
+            }).Wait(); // ewwwwww!
 
             if (overwriteAll)
             {
@@ -143,6 +158,11 @@ namespace Integrated_Presenter.DynamicDrivers
         public bool SupportsConfig(string configID)
         {
             return configID == "matrix(4x3)";
+        }
+
+        public void Repaint()
+        {
+            DrawButtons();
         }
     }
 

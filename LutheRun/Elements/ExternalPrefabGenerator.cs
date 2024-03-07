@@ -1,5 +1,6 @@
 ﻿using LutheRun.Elements.Interface;
 using LutheRun.Elements.LSB;
+using LutheRun.Generators;
 using LutheRun.Parsers;
 using LutheRun.Pilot;
 
@@ -102,30 +103,17 @@ namespace LutheRun.Elements
             return "";
         }
 
-        public static ILSBElement GenerateCopyTitle(IEnumerable<ILSBElement> titleelements, string lsback, LSBImportOptions options)
+        public static ILSBElement GenerateCopyTitle(string serviceTitle, string serviceDate, string lsback, LSBImportOptions options)
         {
-
-            if (titleelements.Count() == 2)
+            // Since the external prefab is wrapped inside a scripted block, let the tile generate genrate the postset explicitly
+            if (options.UseMk2CopyTitle)
             {
-                // assumes service title is first element
-                string serviceTitle, serviceDate;
-                ExtractTitleAndDateFuzzy(titleelements, out serviceTitle, out serviceDate);
-
-                if (!string.IsNullOrWhiteSpace(serviceTitle) || !string.IsNullOrWhiteSpace(serviceDate))
-                {
-                    // Since the external prefab is wrapped inside a scripted block, let the tile generate genrate the postset explicitly
-                    if (options.UseMk2CopyTitle)
-                    {
-                        return new ExternalPrefab(Mk2CopyTitleCommand(options, serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ), "copytitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
-                    }
-                    return new ExternalPrefab(CopyTitleCommand(serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ, options.InferPostset, options.ServiceThemeLib), "copytitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
-                }
+                return new ExternalPrefab(Mk2CopyTitleCommand(options, serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ), "copytitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
             }
-
-            return new LSBElementUnknown();
+            return new ExternalPrefab(CopyTitleCommand(serviceTitle, serviceDate, lsback, (int)Serviceifier.Camera.Organ, options.InferPostset, options.ServiceThemeLib), "copytitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
         }
 
-        private static void ExtractTitleAndDateFuzzy(IEnumerable<ILSBElement> titleelements, out string serviceTitle, out string serviceDate)
+        internal static void ExtractTitleAndDateFuzzy(IEnumerable<ILSBElement> titleelements, out string serviceTitle, out string serviceDate)
         {
             serviceTitle = GetStringFromCaptionOrHeading(titleelements.First());
             // assume service date is second element
@@ -142,23 +130,9 @@ namespace LutheRun.Elements
             }
         }
 
-        public static ILSBElement GenerateEndPage(IEnumerable<ILSBElement> titleelements, LSBImportOptions options)
+        public static ILSBElement GenerateEndPage(string serviceTitle, string serviceDate, LSBImportOptions options)
         {
-
-            if (titleelements.Count() == 2)
-            {
-                string serviceTitle, serviceDate;
-                ExtractTitleAndDateFuzzy(titleelements, out serviceTitle, out serviceDate);
-
-                if (!string.IsNullOrWhiteSpace(serviceTitle) || !string.IsNullOrWhiteSpace(serviceDate))
-                {
-                    // Since the external prefab is wrapped inside a scripted block, let the tile generate genrate the postset explicitly
-                    return new ExternalPrefab(EndPageCommand(serviceTitle), "endtitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
-
-                }
-            }
-
-            return new LSBElementUnknown();
+            return new ExternalPrefab(EndPageCommand(serviceTitle), "endtitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
         }
 
 
@@ -280,8 +254,11 @@ namespace LutheRun.Elements
             prefabblob = Regex.Replace(prefabblob, Regex.Escape("$SERVICEDATE"), serviceDate);
 
             const string NIV = "Scripture quotations marked(NIV) are taken from the Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission of Zondervan.All rights reserved worldwide. www.zondervan.comThe “NIV” and “New International Version” are trademarks registered in the United States Patent and Trademark Office by Biblica, Inc.™";
-            string bibleack = options.ReadingTextNIVOverride ? NIV : "";
-            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$BIBLEACK"), bibleack);
+            //string bibleackPackage = Environment.NewLine + "#IF " + XenonGenerator.NIV_DEF + Environment.NewLine + NIV + Environment.NewLine + "#ENDIF" + Environment.NewLine;
+
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$BIBLEACK"), NIV);
+
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$DEFFLAGBIBLEACK"), XenonGenerator.PEW_DEF);
 
             // inject ack
             StringBuilder sb = new StringBuilder();
@@ -306,7 +283,7 @@ namespace LutheRun.Elements
                 var pmatch = Regex.Match(wrapper, "^(?<pre>.*)\\$COPYTITLE", RegexOptions.Multiline);
 
                 StringBuilder insert = new StringBuilder();
-                foreach(var line in ctitle.Split(Environment.NewLine))
+                foreach (var line in ctitle.Split(Environment.NewLine))
                 {
                     insert.AppendLine(line);
                     insert.Append(pmatch.Groups["pre"]?.Value ?? "");

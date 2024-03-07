@@ -112,7 +112,7 @@
 									<End>(?&lt;==)</End>
 								</Span>
 								<Span foreground="#ffededed">
-									<Begin>(?&lt;==).*</Begin>
+									<Begin>(?&lt;==).+</Begin>
 									<End>(?=;)</End>
 								</Span>
 							</RuleSet>
@@ -142,10 +142,15 @@
 			<Begin>&gt;&gt;pilot</Begin>
 			<End>(?&lt;=})</End>
 			<RuleSet>
+				<Span color="Comment" begin="(?&lt;!\\)//" />
+				<Span color="Comment" multiline="true" begin="/\*" end="\*/" />
+
 				<Span foreground="#fff542da" multiline="true">
 					<Begin>{</Begin>
 					<End>}</End>
 					<RuleSet>
+						<Span color="Comment" begin="(?&lt;!\\)//" />
+						<Span color="Comment" multiline="true" begin="/\*" end="\*/" />
 						<Span foreground="#ff42e0f5">
 							<Begin>&lt;</Begin>
 							<End>&gt;</End>
@@ -154,6 +159,8 @@
 							<Begin>{</Begin>
 							<End>}</End>
 							<RuleSet>
+								<Span color="Comment" begin="(?&lt;!\\)//" />
+								<Span color="Comment" multiline="true" begin="/\*" end="\*/" />
 								<Span foreground="#ff2da0ff">
 									<Begin>(run|emgrun)</Begin>
 									<End>(?=\[)</End>
@@ -201,6 +208,13 @@
 			</RuleSet>
 		</Span>
 
+		<Keywords foreground="#ff8c8c8c">
+			<Word>#DEFINE</Word>
+			<Word>#IF</Word>
+			<Word>#ELSE</Word>
+			<Word>#ENDIF</Word>
+			<Word>#ORDER</Word>
+		</Keywords>
 
 		<Keywords foreground="#ff4f92ff">
 			<Word>#liturgyoff</Word>
@@ -248,6 +262,9 @@
 	</RuleSet>
 
 	<RuleSet name="ScriptBody">
+		<Span color="Comment" begin="(?&lt;!\\)//" />
+		<Span color="Comment" multiline="true" begin="/\*" end="\*/" />
+
 		<Span foreground="#ff8354b3">
 			<Begin>!</Begin>
 			<End>(?=;)</End>
@@ -268,6 +285,9 @@
 
 
 	<RuleSet name="ScriptCmdLine">
+		<Span color="Comment" begin="(?&lt;!\\)//" />
+		<Span color="Comment" multiline="true" begin="/\*" end="\*/" />
+
 		<Span foreground="#ff37acd4">
 			<Begin>(?&lt;=@).</Begin>
 			<End>.(?=:)</End>

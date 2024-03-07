@@ -140,7 +140,7 @@ namespace Xenon.Compiler
                 order = i;
             }
 
-            var m = Regex.Matches(text, @"^#DEFINE\s+(?<def>\w+)", RegexOptions.Multiline);
+            var m = Regex.Matches(text, @"^#DEFINE\s+(?<def>[^\s]+)", RegexOptions.Multiline);
             m.ToImmutableList().ForEach(x =>
             {
                 if (x.Success)
@@ -217,7 +217,11 @@ namespace Xenon.Compiler
                 }
                 try
                 {
-                    compiledSlides.AddRange(p.project?.Generate(proj, null, p.log, progress));
+                    var slides = p.project?.Generate(proj, null, p.log, progress);
+                    if (slides?.Any() == true)
+                    {
+                        compiledSlides.AddRange(slides);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -225,10 +229,12 @@ namespace Xenon.Compiler
                     masterlog.Log(new XenonCompilerMessage() { ErrorName = "Compilation Failed", ErrorMessage = "Failed to generate project. Something went wrong after the project was compiled.", Generator = "Project.Generate()", Inner = $"Generate threw exception {ex} at callstack {Environment.StackTrace}", Level = XenonCompilerMessageType.Error });
                     p.project.GenerateDebug(proj);
                     CompilerSucess = false;
+                    Messages.AddRange(masterlog.AllErrors);
                     return proj;
                 }
                 // marshal all logs
                 Messages.AddRange(p.log.AllErrors);
+                Messages.AddRange(masterlog.AllErrors);
             }
 
             // reset project

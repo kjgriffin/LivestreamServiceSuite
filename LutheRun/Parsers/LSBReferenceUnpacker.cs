@@ -103,7 +103,7 @@ namespace LutheRun.Parsers
             // a section has either an explicit or implicit chapter
             // it may also contain a start or end verse
 
-            var sections = refnobook.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            var sections = refnobook.Split(new string[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries);
 
             List<SectionReference> rsections = new List<SectionReference>();
 

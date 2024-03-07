@@ -118,6 +118,26 @@ namespace LutheRun.Parsers.Tests
             Assert.IsTrue(res[2].EndVerse == 32);
         }
 
+        [TestMethod()]
+        public void ParseSections_SimpleBook_MultiSection_MultiChapter()
+        {
+            var test = new LSBReferenceUnpacker();
+            var res = test.ParseSections("2 Corinthians 3:12–13; 4:1–6");
+
+            Assert.IsTrue(res.Count == 2);
+            Assert.IsTrue(res[0].Book == "2 Corinthians");
+            Assert.IsTrue(res[0].StartChapter == 3);
+            Assert.IsTrue(res[0].EndChapter == 3);
+            Assert.IsTrue(res[0].StartVerse == 12);
+            Assert.IsTrue(res[0].EndVerse == 13);
+            Assert.IsTrue(res[1].Book == "2 Corinthians");
+            Assert.IsTrue(res[1].StartChapter == 4);
+            Assert.IsTrue(res[1].EndChapter == 4);
+            Assert.IsTrue(res[1].StartVerse == 1);
+            Assert.IsTrue(res[1].EndVerse == 6);
+        }
+
+
         #endregion
 
         #region EnumerateVerses

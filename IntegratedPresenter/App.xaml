@@ -5,6 +5,25 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
+        <Color x:Key="red">#d60d49</Color>
+        <Color x:Key="green">#0dd67c</Color>
+        <Color x:Key="teal">#0dd6a0</Color>
+        <Color x:Key="lightBlue">#08a7cf</Color>
+        <Color x:Key="dark">#171717</Color>
+        <Color x:Key="light">#272727</Color>
+        <Color x:Key="gray">#8f8f8f</Color>
+        <Color x:Key="white">#efefef</Color>
+        <SolidColorBrush x:Key="redBrush" Color="{StaticResource red}"></SolidColorBrush>
+        <SolidColorBrush x:Key="greenBrush" Color="{StaticResource green}"></SolidColorBrush>
+        <SolidColorBrush x:Key="tealBrush" Color="{StaticResource teal}"></SolidColorBrush>
+        <SolidColorBrush x:Key="lightBlueBrush" Color="{StaticResource lightBlue}"></SolidColorBrush>
+        <SolidColorBrush x:Key="darkBrush" Color="{StaticResource dark}"></SolidColorBrush>
+        <SolidColorBrush x:Key="lightBrush" Color="{StaticResource light}"></SolidColorBrush>
+        <SolidColorBrush x:Key="grayBrush" Color="{StaticResource gray}"></SolidColorBrush>
+        <SolidColorBrush x:Key="whiteBrush" Color="{StaticResource white}"></SolidColorBrush>
+
+        <SolidColorBrush x:Key="activeTextBrush" Color="{StaticResource teal}"></SolidColorBrush>
+
         <Style x:Key="DarkMenu" TargetType="{x:Type Menu}">
             <Setter Property="Background" Value="#0f0f0f"></Setter>
             <Setter Property="Foreground" Value="#ededed"></Setter>
@@ -95,24 +114,27 @@
             <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
             <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
             <RadialGradientBrush.GradientStops>
-                <GradientStop Color="#FF930505" Offset="1.9"></GradientStop>
-                <GradientStop Color="#FFFFAEAE" Offset="0"></GradientStop>
+                <GradientStop Color="#99021b" Offset="1.5"></GradientStop>
+                <GradientStop Color="#cf3a53" Offset="0.9"></GradientStop>
+                <GradientStop Color="#99021b" Offset="0"></GradientStop>
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
         <RadialGradientBrush x:Key="GrayLight">
             <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
             <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
             <RadialGradientBrush.GradientStops>
-                <GradientStop Color="Black" Offset="2.0"></GradientStop>
-                <GradientStop Color="DarkGray" Offset="0"></GradientStop>
+                <GradientStop Color="#474747" Offset="1.5"></GradientStop>
+                <GradientStop Color="#373737" Offset="0.9"></GradientStop>
+                <GradientStop Color="#474747" Offset="0"></GradientStop>
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
         <RadialGradientBrush x:Key="OffLight">
             <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
             <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
             <RadialGradientBrush.GradientStops>
-                <GradientStop Color="Black" Offset="2.0"></GradientStop>
-                <GradientStop Color="Gray" Offset="0"></GradientStop>
+                <GradientStop Color="#373737" Offset="1.5"></GradientStop>
+                <GradientStop Color="#272727" Offset="0.9"></GradientStop>
+                <GradientStop Color="#373737" Offset="0"></GradientStop>
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
@@ -120,17 +142,18 @@
             <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
             <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
             <RadialGradientBrush.GradientStops>
-                <GradientStop Color="#096900" Offset="1.9"></GradientStop>
-                <GradientStop Color="#b4ffad" Offset="0"></GradientStop>
+                <GradientStop Color="#2b9962" Offset="1.5"></GradientStop>
+                <GradientStop Color="#51db8f" Offset="0.9"></GradientStop>
+                <GradientStop Color="#2b9962" Offset="0"></GradientStop>
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
         <RadialGradientBrush x:Key="YellowLight">
             <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
             <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
             <RadialGradientBrush.GradientStops>
-                <GradientStop Color="#d9d500" Offset="2.0"></GradientStop>
-                <GradientStop Color="#c4c10c" Offset="0.8"></GradientStop>
-                <GradientStop Color="#fffecc" Offset="0"></GradientStop>
+                <GradientStop Color="#a6a807" Offset="1.5"></GradientStop>
+                <GradientStop Color="#ecf018" Offset="0.9"></GradientStop>
+                <GradientStop Color="#a6a807" Offset="0"></GradientStop>
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
@@ -174,10 +197,12 @@
         </Style>
 
         <Style x:Key="GroupBorder" TargetType="Border">
-            <Setter Property="Background" Value="#2f2f30"></Setter>
+            <Setter Property="Background" Value="#171717"></Setter>
             <Setter Property="Margin" Value="10"></Setter>
             <Setter Property="Padding" Value="0"></Setter>
-            <Setter Property="CornerRadius" Value="4,4,4,4"></Setter>
+            <Setter Property="CornerRadius" Value="10,10,10,10"></Setter>
+            <Setter Property="BorderBrush" Value="#272727"></Setter>
+            <Setter Property="BorderThickness" Value="2"></Setter>
         </Style>
 
 
@@ -198,20 +223,20 @@
             <Setter Property="Height" Value="60"></Setter>
             <Setter Property="Margin" Value="10"></Setter>
             <Setter Property="Background" Value="{StaticResource GrayLight}"></Setter>
-            <Setter Property="Foreground" Value="#2a2a2a"></Setter>
+            <Setter Property="Foreground" Value="#efefef"></Setter>
             <Setter Property="IsTabStop" Value="False"></Setter>
             <Setter Property="Focusable" Value="False"></Setter>
             <Setter Property="Cursor" Value="Hand"></Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border x:Name="Border" BorderBrush="Transparent" BorderThickness="1,1,1,1" Background="{TemplateBinding Background}">
+                        <Border x:Name="Border" BorderBrush="Transparent" BorderThickness="1,1,1,1" Background="{TemplateBinding Background}" CornerRadius="5">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="Orange" TargetName="Border"></Setter>
-                                <Setter Property="BorderThickness" Value="1,1,1,1" TargetName="Border"></Setter>
+                                <Setter Property="BorderBrush" Value="#02a1e0" TargetName="Border"></Setter>
+                                <Setter Property="BorderThickness" Value="5" TargetName="Border"></Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -227,13 +252,13 @@
             <Setter Property="Height" Value="60"></Setter>
             <Setter Property="Margin" Value="10"></Setter>
             <Setter Property="Background" Value="{StaticResource OffLight}"></Setter>
-            <Setter Property="Foreground" Value="#2a2a2a"></Setter>
+            <Setter Property="Foreground" Value="#8a8a8a"></Setter>
             <Setter Property="IsTabStop" Value="False"></Setter>
             <Setter Property="Focusable" Value="False"></Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border x:Name="Border" BorderBrush="Transparent" BorderThickness="1,1,1,1" Background="{TemplateBinding Background}">
+                        <Border x:Name="Border" BorderBrush="Transparent" BorderThickness="1,1,1,1" Background="{TemplateBinding Background}" CornerRadius="5">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
                         </Border>
                     </ControlTemplate>
@@ -254,7 +279,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="Orange" TargetName="Border"></Setter>
+                                <Setter Property="BorderBrush" Value="#02a1e0" TargetName="Border"></Setter>
                                 <Setter Property="BorderThickness" Value="1,1,1,1" TargetName="Border"></Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -275,7 +300,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border BorderBrush="Gray" BorderThickness="1,1,1,1">
+                        <Border BorderBrush="Gray" BorderThickness="1,1,1,1" CornerRadius="5">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
                         </Border>
                     </ControlTemplate>

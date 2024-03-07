@@ -33,8 +33,9 @@ namespace Integrated_Presenter.Automation
                                  ConditionWatchProvider watchProvider,
                                  IDynamicControlProvider dynamicControlProvider,
                                  IExtraDynamicControlProvider extraDynamicControlProvider,
-                                 ICCPUPresetMonitor camPresetProvider)
-            : base(logger, switcherProvider, autoTransitionProvider, automationConditionProvider, configProvider, featureFlagProvider, userTimerProvider, mainUIProvider, presentationProvider, audioDriverProvider, mediaDriverProvider, watchProvider, dynamicControlProvider, extraDynamicControlProvider, camPresetProvider)
+                                 ICCPUPresetMonitor camPresetProvider,
+                                 ICalculatedVariableManager variableManager)
+            : base(logger, switcherProvider, autoTransitionProvider, automationConditionProvider, configProvider, featureFlagProvider, userTimerProvider, mainUIProvider, presentationProvider, audioDriverProvider, mediaDriverProvider, watchProvider, dynamicControlProvider, extraDynamicControlProvider, camPresetProvider, variableManager)
         {
         }
 
@@ -49,7 +50,7 @@ namespace Integrated_Presenter.Automation
                     if (keepProcessing)
                     {
                         s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
-                        var res = await PerformAutomationAction(task.Action);
+                        var res = await PerformAutomationAction(task.Action, ICalculatedVariableManager.PRESENTATION_OWNED_VARIABLE);
                         s.FireOnActionStateChange(task.ID, res.ActionState);
                         keepProcessing = res.ContinueOtherActions;
                     }
@@ -74,7 +75,7 @@ namespace Integrated_Presenter.Automation
                     if (keepProcessing)
                     {
                         s.FireOnActionStateChange(task.ID, TrackedActionState.Started);
-                        var res = await PerformAutomationAction(task.Action);
+                        var res = await PerformAutomationAction(task.Action, ICalculatedVariableManager.PRESENTATION_OWNED_VARIABLE);
                         s.FireOnActionStateChange(task.ID, res.ActionState);
                         keepProcessing = res.ContinueOtherActions;
                     }

@@ -73,12 +73,19 @@
         WatchSwitcherStateBoolVal,
         WatchSwitcherStateIntVal,
 
+        InitComputedVal,
+        WriteComputedVal,
+        SetupComputedTrack,
+        ReleaseComputedTrack,
+
         WatchStateBoolVal,
         WatchStateIntVal,
 
 
         SetupButtons,
         SetupExtras,
+
+        RedrawDynamicControls,
 
         USK1SetTypePATTERN,
         ConfigurePATTERN,

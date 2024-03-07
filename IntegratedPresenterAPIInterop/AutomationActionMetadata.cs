@@ -2,15 +2,15 @@
 
 namespace IntegratedPresenterAPIInterop
 {
-    public struct AutomationActionMetadata
+    public class AutomationActionMetadata
     {
-        public int NumArgs;
-        public AutomationActions Action;
-        public string ActionName;
-        public List<AutomationActionArgType>? OrderedArgTypes;
-        public ExpectedVariableContents ParamaterContents;
+        public int NumArgs { get; set; }
+        public AutomationActions Action { get; set; }
+        public string ActionName { get; set; }
+        public List<(AutomationActionArgType type, string id)>? OrderedArgTypes { get; set; }
+        public ExpectedVariableContents ParamaterContents { get; set; }
 
-        public AutomationActionMetadata((int nargs, AutomationActions action, string name, List<AutomationActionArgType>? argtypes, ExpectedVariableContents expectedContents) stuff)
+        public AutomationActionMetadata((int nargs, AutomationActions action, string name, List<(AutomationActionArgType, string)>? argtypes, ExpectedVariableContents expectedContents) stuff)
         {
             NumArgs = stuff.nargs;
             Action = stuff.action;
@@ -19,7 +19,16 @@ namespace IntegratedPresenterAPIInterop
             ParamaterContents = stuff.expectedContents;
         }
 
-        public static implicit operator AutomationActionMetadata((int nargs, AutomationActions action, string name, List<AutomationActionArgType>? argtypes, ExpectedVariableContents expectedContents) stuff)
+        public AutomationActionMetadata(int numArgs, AutomationActions action, string actionName, List<(AutomationActionArgType, string)>? orderedArgTypes, ExpectedVariableContents paramaterContents)
+        {
+            NumArgs = numArgs;
+            Action = action;
+            ActionName = actionName;
+            OrderedArgTypes = orderedArgTypes;
+            ParamaterContents = paramaterContents;
+        }
+
+        public static implicit operator AutomationActionMetadata((int nargs, AutomationActions action, string name, List<(AutomationActionArgType, string)>? argtypes, ExpectedVariableContents expectedContents) stuff)
         {
             return new AutomationActionMetadata(stuff);
         }

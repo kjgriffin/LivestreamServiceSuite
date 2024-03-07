@@ -92,8 +92,11 @@ namespace SlideCreater
             set
             {
                 _mActionState = value;
-                UpdateActionStatusLabel();
-                UpdateActionProgressBarVisibile();
+                Dispatcher.Invoke(() =>
+                {
+                    UpdateActionStatusLabel();
+                    UpdateActionProgressBarVisibile();
+                });
             }
         }
 
@@ -292,7 +295,7 @@ namespace SlideCreater
         {
             var latestRelease = await GithubVersionChecker.GetCurentReleaseVersion(Xenon.Helpers.WebHelpers.httpClient);
             // compare version
-            if (latestRelease.ExceedsMinimumVersion(VersionInfo))
+            if (latestRelease.GreaterVersion(VersionInfo))
             {
                 // we're out of date
                 MessageBox.Show($"A new version ({latestRelease}) of Slide Creater is available. You have ({VersionInfo})", "New Version Available!");
@@ -880,6 +883,13 @@ namespace SlideCreater
             ofd.Title = "Select Output Folder";
             ofd.FileName = "Slide";
 
+            var legacyMode = false;
+
+            Dispatcher.Invoke(() =>
+            {
+                legacyMode = miExportLegacy.IsChecked;
+            });
+
             Progress<int> exportProgress = new Progress<int>(percent =>
             {
                 Dispatcher.Invoke(() =>
@@ -900,41 +910,52 @@ namespace SlideCreater
                 FileInfo[] files = di.GetFiles();
                 if (files.Length > 0)
                 {
-                    if (MessageBox.Show("The selected directory is not empty.  Do you want to delete all files in the directory and continue?", "Confirmation", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                    // Prep Directory
+                    var files = Directory.GetFiles(Path.GetDirectoryName(ofd.FileName));
+                    if (files.Any())
                     {
-                        foreach (FileInfo file in files)
+                        if (MessageBox.Show("The selected directory is not empty. Do you want to delete all files in the direcotyr and contine?", "confirmation", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
                         {
                             try
                             {
-                                file.Delete();
+                                foreach (var file in files)
+                                {
+                                    File.Delete(file);
+                                }
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
-                                MessageBox.Show("Could not delete all files. Cancelling Export", "Confirmation", MessageBoxButton.OK);
-                                carryOn = false;
-                                break;
+                                alllogs.Add(new XenonCompilerMessage
+                                {
+                                    ErrorMessage = "Failed preparting output directory",
+                                    ErrorName = "Failed to Export!",
+                                    Generator = "Export",
+                                    Inner = ex.ToString(),
+                                    Level = XenonCompilerMessageType.Error,
+                                    SrcFile = Path.GetDirectoryName(ofd.FileName),
+                                });
+                                UpdateErrorReport(alllogs);
+                                ActionState = ActionState.ErrorExporting;
+                                return;
                             }
                         }
                     }
+
+
+                    if (legacyMode)
+                    {
+                        await SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>(), exportProgress); // for now ignore messages
+                    }
                     else
                     {
-                        carryOn = false;
+                        List<XenonCompilerMessage> messages = new List<XenonCompilerMessage>();
+                        await SlideExporter.ExportSlides_Parallel(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, messages, exportProgress);
+                        alllogs.AddRange(messages);
+                        UpdateErrorReport(alllogs);
                     }
-                }
+                });
 
-                if (carryOn)
-                {
-                    await Task.Run(async () =>
-                    {
-                        await SlideExporter.ExportSlides(selectedDirectory, _proj, new List<XenonCompilerMessage>(), exportProgress); // for now ignore messages
-                    });
-                    ActionState = ActionState.SuccessExporting;
-
-                }
-                else
-                {
-                    ActionState = ActionState.ErrorExporting;
-                }
+                ActionState = ActionState.SuccessExporting;
             }
             else
             {
@@ -2176,7 +2197,7 @@ namespace SlideCreater
                 //TbInput.TextArea.PerformTextInput(text);
                 _editorTabManager.RequestInsertTextIntoActiveTab(text);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // silent fail?
             }
@@ -2310,7 +2331,7 @@ namespace SlideCreater
                     var txt = sr.ReadToEnd();
                     if (Path.GetExtension(ofd.FileName) != ".xenon")
                     {
-                        fname += ".xenon";
+                        fname = Path.GetFileNameWithoutExtension(fname) + ".xenon";
                     }
                     AddXenonFileToProj(fname, txt);
                 }

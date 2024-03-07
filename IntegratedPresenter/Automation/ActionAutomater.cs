@@ -14,6 +14,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+
+using VariableMarkupAttributes;
 
 namespace Integrated_Presenter.Automation
 {
@@ -35,6 +38,7 @@ namespace Integrated_Presenter.Automation
         protected IDynamicControlProvider _dynamicControlProvider;
         protected IExtraDynamicControlProvider _extraDynamicControlProvider;
         protected ICCPUPresetMonitor _camPresets;
+        protected ICalculatedVariableManager _variableManager;
 
 
         internal ActionAutomater(ILog logger,
@@ -51,7 +55,8 @@ namespace Integrated_Presenter.Automation
                                  ConditionWatchProvider watchProvider,
                                  IDynamicControlProvider dynamicControlProvider,
                                  IExtraDynamicControlProvider extraDynamicControlProvider,
-                                 ICCPUPresetMonitor camPresets)
+                                 ICCPUPresetMonitor camPresets,
+                                 ICalculatedVariableManager variableManager)
         {
             _logger = logger;
             _switcherProvider = switcherProvider;
@@ -68,12 +73,12 @@ namespace Integrated_Presenter.Automation
             _dynamicControlProvider = dynamicControlProvider;
             _extraDynamicControlProvider = extraDynamicControlProvider;
             _camPresets = camPresets;
+            _variableManager = variableManager;
         }
 
-
-        public virtual async Task<ActionResult> PerformAutomationAction(AutomationAction task)
+        public virtual async Task<ActionResult> PerformAutomationAction(AutomationAction task, string requesterID)
         {
-            if (!task.MeetsConditionsToRun(_automationConditionProvider.GetCurrentConditionStatus(GetWatches())))
+            if (!task.MeetsConditionsToRun(_automationConditionProvider.GetConditionals(GetWatches())))
             {
                 return new ActionResult(TrackedActionState.Skipped);
             }
@@ -83,26 +88,55 @@ namespace Integrated_Presenter.Automation
                 switch (task.Action)
                 {
                     case AutomationActions.PresetSelect:
-                        _logger.Debug($"(PerformAutomationAction) -- Preset Select {task.DataI}");
-                        _switcherProvider?.switcherManager?.PerformPresetSelect(task.DataI);
+                        if (task.TryEvaluateAutomationActionParmeter<int>("SourceID", _variableManager, out var pstid))
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- Preset Select {pstid}");
+                            _switcherProvider?.switcherManager?.PerformPresetSelect(pstid);
+                        }
                         break;
                     case AutomationActions.ProgramSelect:
-                        _logger.Debug($"(PerformAutomationAction) -- Program Select {task.DataI}");
-                        _switcherProvider?.switcherManager?.PerformProgramSelect(task.DataI);
+                        if (task.TryEvaluateAutomationActionParmeter<int>("SourceID", _variableManager, out var pgid))
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- Program Select {pgid}");
+                            _switcherProvider?.switcherManager?.PerformProgramSelect(pgid);
+                        }
                         break;
                     case AutomationActions.AuxSelect:
-                        _logger.Debug($"(PerformAutomationAction) -- Aux Select {task.DataI}");
-                        _switcherProvider?.switcherManager?.PerformAuxSelect(task.DataI);
+                        if (task.TryEvaluateAutomationActionParmeter<int>("SourceID", _variableManager, out var auxid))
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- Aux Select {auxid}");
+                            _switcherProvider?.switcherManager?.PerformAuxSelect(auxid);
+                        }
                         break;
                     case AutomationActions.USK1Fill:
-                        _logger.Debug($"(PerformAutomationAction) -- USK1Fill {task.DataI}");
-                        _switcherProvider?.switcherManager?.PerformUSK1FillSourceSelect(task.DataI);
+                        if (task.TryEvaluateAutomationActionParmeter<int>("SourceID", _variableManager, out var ukfid))
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- USK1Fill {ukfid}");
+                            _switcherProvider?.switcherManager?.PerformUSK1FillSourceSelect(ukfid);
+                        }
                         break;
                     case AutomationActions.PlacePIP:
                         _logger.Debug($"(PerformAutomationAction) -- PlacePIP. read cfg");
-                        PIPPlaceSettings cfg = task?.DataO as PIPPlaceSettings;
-                        if (cfg != null)
+                        if (task.TryEvaluateAutomationActionParmeter<double>("PosX", _variableManager, out var posX)
+                            && task.TryEvaluateAutomationActionParmeter<double>("PosY", _variableManager, out var posY)
+                            && task.TryEvaluateAutomationActionParmeter<double>("ScaleX", _variableManager, out var scaleX)
+                            && task.TryEvaluateAutomationActionParmeter<double>("ScaleY", _variableManager, out var scaleY)
+                            && task.TryEvaluateAutomationActionParmeter<double>("MaskLeft", _variableManager, out var maskL)
+                            && task.TryEvaluateAutomationActionParmeter<double>("MaskRight", _variableManager, out var maskR)
+                            && task.TryEvaluateAutomationActionParmeter<double>("MaskTop", _variableManager, out var maskT)
+                            && task.TryEvaluateAutomationActionParmeter<double>("MaskBottom", _variableManager, out var maskB))
                         {
+                            var cfg = new PIPPlaceSettings
+                            {
+                                PosX = posX,
+                                PosY = posY,
+                                ScaleX = scaleX,
+                                ScaleY = scaleY,
+                                MaskLeft = maskL,
+                                MaskRight = maskR,
+                                MaskTop = maskT,
+                                MaskBottom = maskB,
+                            };
                             _logger.Debug($"(PerformAutomationAction) -- PlacePIP at {cfg.ToString()}");
                             var current = _switcherProvider?.switcherManager?.GetCurrentState().DVESettings;
                             var config = cfg.PlaceOverride(current);
@@ -112,12 +146,27 @@ namespace Integrated_Presenter.Automation
 
                     case AutomationActions.ConfigurePATTERN:
                         _logger.Debug($"(PerformAutomationAction) -- ApplyPATTERN. read cfg");
-                        BMDUSKPATTERNSettings ptn = task?.DataO as BMDUSKPATTERNSettings;
-                        if (ptn != null)
+                        if (task.TryEvaluateAutomationActionParmeter<string>("Type", _variableManager, out var pType)
+                            && task.TryEvaluateAutomationActionParmeter<bool>("Inverted", _variableManager, out var pInv)
+                            && task.TryEvaluateAutomationActionParmeter<double>("Size", _variableManager, out var pSize)
+                            && task.TryEvaluateAutomationActionParmeter<double>("Symmetry", _variableManager, out var pSym)
+                            && task.TryEvaluateAutomationActionParmeter<double>("Softness", _variableManager, out var pSoft)
+                            && task.TryEvaluateAutomationActionParmeter<double>("XOffset", _variableManager, out var pXOff)
+                            && task.TryEvaluateAutomationActionParmeter<double>("YOffset", _variableManager, out var pYOff))
                         {
-                            _logger.Debug($"(PerformAutomationAction) -- PlacePIP at {ptn.ToString()}");
                             var cfill = _switcherProvider?.switcherManager?.GetCurrentState().USK1FillSource;
-                            ptn.DefaultFillSource = (int)cfill;
+                            BMDUSKPATTERNSettings ptn = new BMDUSKPATTERNSettings
+                            {
+                                PatternType = pType,
+                                DefaultFillSource = (int)cfill,
+                                Inverted = pInv,
+                                Size = pSize,
+                                Softness = pSoft,
+                                Symmetry = pSym,
+                                XOffset = pXOff,
+                                YOffset = pYOff,
+                            };
+                            _logger.Debug($"(PerformAutomationAction) -- PlacePIP at {ptn.ToString()}");
                             _switcherProvider?.switcherManager?.ConfigureUSK1PATTERN(ptn);
                         }
                         break;
@@ -288,9 +337,12 @@ namespace Integrated_Presenter.Automation
                         _mainUIProvider.Focus();
                         break;
                     case AutomationActions.LoadAudio:
-                        string filename = Path.Join(_presentationProvider.Folder, task.DataS);
-                        _logger.Debug($"(PerformAutomationAction) -- Load Audio File {filename} to Aux Player");
-                        _audioDriverProvider.OpenAudio(filename);
+                        if (task.TryEvaluateAutomationActionParmeter<string>("AudioFile", _variableManager, out var audiofile))
+                        {
+                            string filename = Path.Join(_presentationProvider.Folder, audiofile);
+                            _logger.Debug($"(PerformAutomationAction) -- Load Audio File {filename} to Aux Player");
+                            _audioDriverProvider.OpenAudio(filename);
+                        }
                         break;
                     case AutomationActions.PlayAuxAudio:
                         _logger.Debug($"(PerformAutomationAction) -- Aux:PlayAudio()");
@@ -334,63 +386,78 @@ namespace Integrated_Presenter.Automation
                         _mediaDriverProvider.unmuteMedia();
                         break;
 
-
                     case AutomationActions.DelayMs:
-                        _logger.Debug($"(PerformAutomationAction) -- delay for {task.DataI} ms");
-                        await Task.Delay(task.DataI);
+                        if (task.TryEvaluateAutomationActionParmeter<int>("Delay", _variableManager, out var delayms))
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- delay for {delayms} ms");
+                            await Task.Delay(delayms);
+                        }
                         break;
                     case AutomationActions.DelayUntil:
                         {
-                            _logger.Debug($"(PerformAutomationAction) -- delay until {task.DataS}");
-
-                            // parse time as date
-                            if (DateTime.TryParse(task.DataS, out var time))
+                            if (task.TryEvaluateAutomationActionParmeter<string>("DateTime", _variableManager, out var datetime))
                             {
-                                // compute time to wait
-                                DateTime now = DateTime.Now;
-                                TimeSpan diff = time - now;
-                                if (diff.TotalMilliseconds > 0)
+                                _logger.Debug($"(PerformAutomationAction) -- delay until {datetime}");
+                                // parse time as date
+                                if (DateTime.TryParse(datetime, out var time))
                                 {
-                                    await Task.Delay((int)diff.TotalMilliseconds);
+                                    // compute time to wait
+                                    DateTime now = DateTime.Now;
+                                    TimeSpan diff = time - now;
+                                    if (diff.TotalMilliseconds > 0)
+                                    {
+                                        await Task.Delay((int)diff.TotalMilliseconds);
+                                    }
                                 }
                             }
-
                             break;
                         }
 
                     case AutomationActions.JumpToSlide:
-                        _logger.Debug($"(PerformAutomationAction) -- jump to slide {task.DataI}");
-                        continueProcessing = false;
-                        _presentationProvider.SetNextSlideTarget(task.DataI);
-                        await _presentationProvider.TakeNextSlide();
+                        if (task.TryEvaluateAutomationActionParmeter<int>("SlideNum", _variableManager, out var slidenum))
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- jump to slide {slidenum}");
+                            continueProcessing = false;
+                            _presentationProvider.SetNextSlideTarget(slidenum);
+                            await _presentationProvider.TakeNextSlide();
+                        }
                         break;
 
                     case AutomationActions.DriveNextSlide:
                         _logger.Debug($"(PerformAutomationAction) -- drive next slide");
                         continueProcessing = false;
                         // calculate next slide
-                        _presentationProvider.SetNextSlideTarget(task.DataI);
+                        //_presentationProvider.SetNextSlideTarget(task.DataI);
                         await _presentationProvider.TakeNextSlide();
                         break;
 
                     case AutomationActions.SetupButtons:
-                        if (task.RawParams.Count != 3)
+                        if (task.TryEvaluateAutomationActionParmeter<string>("File", _variableManager, out var btnFile)
+                            && task.TryEvaluateAutomationActionParmeter<string>("ResourcePath", _variableManager, out var resPath)
+                            && task.TryEvaluateAutomationActionParmeter<bool>("Overwrite", _variableManager, out var overwritePanel))
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- setup buttons from file: ${btnFile} @{resPath} ({overwritePanel})");
+                            _dynamicControlProvider.ConfigureControls(btnFile, resPath, overwritePanel);
+                        }
+                        else
                         {
                             _logger.Debug($"(PerformAutomationAction) -- ABORT (bad params) setup buttons from file");
-                            break;
                         }
-                        _logger.Debug($"(PerformAutomationAction) -- setup buttons from file: ${task.RawParams[0]} @{task.RawParams[1]}");
-                        _dynamicControlProvider.ConfigureControls((string)task.RawParams[0], (string)task.RawParams[1], (bool)task.RawParams[2]);
                         break;
 
                     case AutomationActions.SetupExtras:
-                        if (task.RawParams.Count != 4)
+                        if (task.TryEvaluateAutomationActionParmeter<string>("ExtraID", _variableManager, out var extraid)
+                            && task.TryEvaluateAutomationActionParmeter<string>("File", _variableManager, out var extraFile)
+                            && task.TryEvaluateAutomationActionParmeter<string>("ResourcePath", _variableManager, out var eresPath)
+                            && task.TryEvaluateAutomationActionParmeter<bool>("Overwrite", _variableManager, out var overwriteExtra))
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- setup extras {extraid} from file: ${extraFile} @{eresPath} ({overwriteExtra})");
+                            _extraDynamicControlProvider.ConfigureControls(extraid, extraFile, eresPath, overwriteExtra);
+                        }
+                        else
                         {
                             _logger.Debug($"(PerformAutomationAction) -- ABORT (bad params) setup extras from file");
-                            break;
                         }
-                        _logger.Debug($"(PerformAutomationAction) -- setup extras from file: ${task.RawParams[1]} @{task.RawParams[2]}");
-                        _extraDynamicControlProvider.ConfigureControls((string)task.RawParams[0], (string)task.RawParams[1], (string)task.RawParams[2], (bool)task.RawParams[3]);
                         break;
 
                     case AutomationActions.ForceRunPostSet:
@@ -403,11 +470,12 @@ namespace Integrated_Presenter.Automation
                         }
                         else
                         {
-                            if (task.RawParams.Count == 2 && (bool)task.RawParams[0])
+                            if (task.TryEvaluateAutomationActionParmeter<bool>("Force", _variableManager, out var forcePost)
+                                && task.TryEvaluateAutomationActionParmeter<int>("SourceID", _variableManager, out var postId)
+                                && forcePost)
                             {
-                                int postset = (int)((long)task.RawParams[1]);
-                                _logger.Debug($"(PerformAutomationAction) -- force run postset with fallback {postset}");
-                                _switcherProvider.switcherManager.PerformPresetSelect(postset);
+                                _logger.Debug($"(PerformAutomationAction) -- force run postset with fallback {postId}");
+                                _switcherProvider.switcherManager.PerformPresetSelect(postId);
                             }
                         }
                         break;
@@ -415,13 +483,14 @@ namespace Integrated_Presenter.Automation
 
                     case AutomationActions.FireActivePreset:
                         slide = _presentationProvider.GetCurentSlide();
-                        if (task.RawParams.Count == 1 && slide != null && slide.AutoPilotActions.Any())
+                        if (slide != null
+                            && slide.AutoPilotActions.Any()
+                            && task.TryEvaluateAutomationActionParmeter<string>("CamName", _variableManager, out var aCamId))
                         {
                             _logger.Debug($"(PerformAutomationAction) -- fire active preset");
-                            string camname = (string)task.RawParams[0];
 
                             // check if we have an active pilot command to fire
-                            var pst = slide.AutoPilotActions.FirstOrDefault(x => x.CamName == camname);
+                            var pst = slide.AutoPilotActions.FirstOrDefault(x => x.CamName == aCamId);
                             if (pst != null)
                             {
                                 pst.Execute(_camPresets, 15);
@@ -429,31 +498,27 @@ namespace Integrated_Presenter.Automation
                         }
                         break;
                     case AutomationActions.FireCamPreset:
-                        if (task.RawParams.Count == 4)
+                        if (task.TryEvaluateAutomationActionParmeter<string>("CamName", _variableManager, out var pCamId)
+                            && task.TryEvaluateAutomationActionParmeter<string>("PresetName", _variableManager, out var pstName)
+                            && task.TryEvaluateAutomationActionParmeter<int>("Speed", _variableManager, out var pstSpeed)
+                            && task.TryEvaluateAutomationActionParmeter<string>("ZoomPST", _variableManager, out var zoomPst))
                         {
                             _logger.Debug($"(PerformAutomationAction) -- fire cam preset");
 
-                            string camname = (string)task.RawParams[0];
-                            string presetname = (string)task.RawParams[1];
-                            int speed = (int)((long)task.RawParams[2]);
-                            string zoompst = (string)task.RawParams[3];
-
-                            _camPresets?.FirePreset_Tracked(camname, presetname, speed);
-                            _camPresets?.FireZoomLevel_Tracked(camname, zoompst);
+                            _camPresets?.FirePreset_Tracked(pCamId, pstName, pstSpeed);
+                            _camPresets?.FireZoomLevel_Tracked(pCamId, zoomPst);
                         }
                         break;
                     case AutomationActions.FireCamDrive:
-                        if (task.RawParams.Count == 5)
+                        if (task.TryEvaluateAutomationActionParmeter<string>("CamName", _variableManager, out var dCamId)
+                            && task.TryEvaluateAutomationActionParmeter<int>("DirX", _variableManager, out var dX)
+                            && task.TryEvaluateAutomationActionParmeter<int>("DirY", _variableManager, out var dY)
+                            && task.TryEvaluateAutomationActionParmeter<int>("SpeedX", _variableManager, out var sX)
+                            && task.TryEvaluateAutomationActionParmeter<int>("SpeedY", _variableManager, out var sY))
                         {
                             _logger.Debug($"(PerformAutomationAction) -- fire cam drive");
 
-                            string camname = (string)task.RawParams[0];
-                            int dX = (int)((long)task.RawParams[1]);
-                            int dY = (int)((long)task.RawParams[2]);
-                            int sX = (int)((long)task.RawParams[3]);
-                            int sY = (int)((long)task.RawParams[4]);
-
-                            _camPresets?.PanTiltDrive(camname, dX, dY, sX, sY);
+                            _camPresets?.PanTiltDrive(dCamId, dX, dY, sX, sY);
                         }
                         break;
 
@@ -463,6 +528,70 @@ namespace Integrated_Presenter.Automation
                     case AutomationActions.WatchStateIntVal:
                         // TODO: do we need to process these as such??
                         // or let them be handled as dynamic conditions
+                        break;
+
+                    case AutomationActions.InitComputedVal:
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var ivalname)
+                            && task.TryEvaluateAutomationActionParmeter<string>("TypeStr", _variableManager, out var ivaltype)
+                            && task.TryGetAutomationActionParmeter("VarDefaultVal", out var iinitparam))
+                        {
+                            AutomationActionArgType atype = AutomationActionArgType.UNKNOWN_TYPE;
+                            switch (ivaltype)
+                            {
+                                case "int": atype = AutomationActionArgType.Integer; break;
+                                case "double": atype = AutomationActionArgType.Double; break;
+                                case "bool": atype = AutomationActionArgType.Boolean; break;
+                                case "string": atype = AutomationActionArgType.String; break;
+                            }
+                            if (atype != AutomationActionArgType.UNKNOWN_TYPE && iinitparam.IsLiteral)
+                            {
+                                _variableManager.InitializeVariable(requesterID, ivalname, atype, (string)iinitparam.LiteralValue);
+                            }
+                        }
+                        break;
+                    case AutomationActions.WriteComputedVal:
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var wvalname) && task.TryGetAutomationActionParmeter("VarVal", out var wparam) && _variableManager.TryGetVariableInfo(wvalname, out var vinfo))
+                        {
+                            if (wparam.IsLiteral)
+                            {
+                                dynamic val = CalculatedVariable.ParseDynamicVariableValue(vinfo.VarType, wparam.LiteralValue);
+                                switch (vinfo.VarType)
+                                {
+                                    case AutomationActionArgType.Integer:
+                                        _variableManager.WriteVariableValue(wvalname, (int)val);
+                                        break;
+                                    case AutomationActionArgType.String:
+                                        _variableManager.WriteVariableValue(wvalname, (string)val);
+                                        break;
+                                    case AutomationActionArgType.Double:
+                                        _variableManager.WriteVariableValue(wvalname, (double)val);
+                                        break;
+                                    case AutomationActionArgType.Boolean:
+                                        _variableManager.WriteVariableValue(wvalname, (bool)val);
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+                    case AutomationActions.SetupComputedTrack:
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var tvalname) && task.TryGetAutomationActionParmeter("TrackTarget", out var tparam))
+                        {
+                            if (tparam.IsLiteral)
+                            {
+                                _variableManager.SetupVariableTrack(tvalname, (string)tparam.LiteralValue);
+                            }
+                        }
+                        break;
+                    case AutomationActions.ReleaseComputedTrack:
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var rvalname))
+                        {
+                            _variableManager.ReleaseVariableTrack(rvalname);
+                        }
+                        break;
+
+                    case AutomationActions.RedrawDynamicControls:
+                        _dynamicControlProvider.Repaint();
+                        _extraDynamicControlProvider.Repaint();
                         break;
 
                     case AutomationActions.None:
@@ -475,7 +604,6 @@ namespace Integrated_Presenter.Automation
                 }
             });
             return new ActionResult(TrackedActionState.Done, continueProcessing);
-
         }
 
         public void ProvideWatchInfo(ConditionWatchProvider watches)

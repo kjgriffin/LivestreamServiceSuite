@@ -42,7 +42,8 @@ namespace LutheRun.Generators
 
             foreach (var hunk in hunks)
             {
-                sb.AppendLine($"<text>{hunk}</text>".Indent(indentDepth, indentSpaces));
+                string hunkEscape = hunk.Replace("}", "}}");
+                sb.AppendLine($"<text>{hunkEscape}</text>".Indent(indentDepth, indentSpaces));
                 if (hunk != hunks.Last())
                 {
                     sb.AppendLine("<text xml:space=\"preserve\">  </text>".Indent(indentDepth, indentSpaces));

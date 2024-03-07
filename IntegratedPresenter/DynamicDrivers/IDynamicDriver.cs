@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IntegratedPresenterAPIInterop;
+
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -21,8 +23,9 @@ namespace Integrated_Presenter.DynamicDrivers
         }
 
         bool SupportsConfig(string configID);
-        void ConfigureControls(string rawText, string resourceFolder, bool overwriteAll);
+        void ConfigureControls(string rawText, string resourceFolder, bool overwriteAll, ICalculatedVariableManager calculator);
         void ClearControls();
+        void Repaint();
     }
 
     internal interface IExtraControlWindow

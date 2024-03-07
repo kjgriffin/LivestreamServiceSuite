@@ -1,4 +1,9 @@
-﻿using System;
+﻿using IntegratedPresenterAPIInterop;
+using IntegratedPresenterAPIInterop.DynamicDrivers;
+
+using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -91,6 +96,84 @@ namespace Integrated_Presenter.ViewModels.MatrixControls
             border.IsMouseDirectlyOverChanged += Border_IsMouseDirectlyOverChanged;
             border.PreviewMouseDown += Border_PreviewMouseDown;
         }
+
+        public void UpdateButton(IntegratedPresenterAPIInterop.DynamicDrivers.DynamicDrawExpression drawExpr, IntegratedPresenterAPIInterop.ICalculatedVariableManager calculator)
+        {
+            switch (drawExpr.PKey)
+            {
+                case nameof(MatrixTextButton.TopText):
+                    this.TopText = ComputeDrawValue(drawExpr, calculator);
+                    break;
+                case nameof(MatrixTextButton.BottomText):
+                    this.BottomText = ComputeDrawValue(drawExpr, calculator);
+                    break;
+                case nameof(MatrixTextButton.BackColor):
+                    this.BackColor = ComputeDrawColor(drawExpr, calculator);
+                    break;
+                case nameof(MatrixTextButton.HoverColor):
+                    this.HoverColor = ComputeDrawColor(drawExpr, calculator);
+                    break;
+                case nameof(MatrixTextButton.TextColor):
+                    this.TextColor = ComputeDrawColor(drawExpr, calculator);
+                    break;
+                case nameof(MatrixTextButton.Enabled):
+                    this.Enabled = ComputeBoolValue(drawExpr, calculator);
+                    break;
+            }
+        }
+
+        private Color ComputeDrawColor(DynamicDrawExpression expr, ICalculatedVariableManager calculatedVariableManager)
+        {
+            var cval = ComputeDrawValue(expr, calculatedVariableManager);
+            return ToColor(cval);
+        }
+
+        private bool ComputeBoolValue(DynamicDrawExpression expr, ICalculatedVariableManager calculatedVariableManager)
+        {
+            var dval = ComputeDrawValue(expr, calculatedVariableManager);
+            bool.TryParse(dval, out bool vb);
+            return vb;
+        }
+
+        private string ComputeDrawValue(DynamicDrawExpression expr, ICalculatedVariableManager calculatedVariableManager)
+        {
+            string displayVal = expr.Value;
+
+            if (expr.IsDynamicValue)
+            {
+                if (calculatedVariableManager.TryEvaluateVariableValue<int>(expr.VExpr, out int ival))
+                {
+                    displayVal = ival.ToString();
+                }
+                else if (calculatedVariableManager.TryEvaluateVariableValue<bool>(expr.VExpr, out bool bval))
+                {
+                    displayVal = bval.ToString();
+                }
+                else if (calculatedVariableManager.TryEvaluateVariableValue<string>(expr.VExpr, out string sval))
+                {
+                    displayVal = sval;
+                }
+                else if (calculatedVariableManager.TryEvaluateVariableValue<double>(expr.VExpr, out double dval))
+                {
+                    displayVal = Math.Round(dval, 2).ToString("0.00");
+                }
+            }
+
+            return displayVal;
+        }
+
+        private Color ToColor(string col)
+        {
+            if (col.Length == 7 && Regex.Match(col, "#[0-9,a-f,A-F]{6}").Success)
+            {
+                byte r = Byte.Parse(col.Substring(1, 2), NumberStyles.HexNumber);
+                byte g = Byte.Parse(col.Substring(3, 2), NumberStyles.HexNumber);
+                byte b = Byte.Parse(col.Substring(5, 2), NumberStyles.HexNumber);
+                return Color.FromRgb(r, g, b);
+            }
+            return Colors.Black;
+        }
+
 
         private void Border_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {

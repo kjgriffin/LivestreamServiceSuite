@@ -68,31 +68,36 @@ namespace LutheRun.Generators
                 }
             }
 
-            var ldate = candidateDates.FirstOrDefault();
-            if (ldate != null)
+            DateTime ldate;
+            if (candidateDates.Any())
             {
-                var keydates = GetKeySeasonDatesAsync();
+                ldate = candidateDates.FirstOrDefault();
+            }
+            else
+            {
+                ldate = GuessNextServiceDateFromNow();
+            }
+
+            var keydates = GetKeySeasonDatesAsync();
 
 
-                // try and find the 'most relevant' key date
-                // this will be the earliest date that's equal to or later than the service
-                var sdate = keydates.OrderByDescending(x => x.StartDate).FirstOrDefault(x => x.StartDate <= ldate);
+            // try and find the 'most relevant' key date
+            // this will be the earliest date that's equal to or later than the service
+            var sdate = keydates.OrderByDescending(x => x.StartDate).FirstOrDefault(x => x.StartDate <= ldate);
 
-                if (sdate != null)
+            if (sdate != null)
+            {
+                success = true;
+                season = sdate.note;
+                // add all macros
+                foreach (var macro in sdate.macros)
                 {
-                    success = true;
-                    season = sdate.note;
-                    // add all macros
-                    foreach (var macro in sdate.macros)
-                    {
-                        newmacros[macro.Key] = macro.Value;
-                    }
-                    foreach (var extra in sdate.extras)
-                    {
-                        extras[extra.Key] = extra.Value;
-                    }
+                    newmacros[macro.Key] = macro.Value;
                 }
-
+                foreach (var extra in sdate.extras)
+                {
+                    extras[extra.Key] = extra.Value;
+                }
             }
 
             return (newmacros, extras, ldate, season, success);
@@ -120,8 +125,78 @@ namespace LutheRun.Generators
             return res;
         }
 
+        internal static DateTime GuessNextServiceDateFromNow()
+        {
+            DateTime refNow = DateTime.Now;
+            DateTime nextSunday = DateTime.Now;
+            int sanity = 0;
+            while (nextSunday.DayOfWeek != DayOfWeek.Sunday && sanity++ < 10)
+            {
+                nextSunday.AddDays(1);
+            }
+
+            return nextSunday;
+        }
+
+
+
+        class PanelResourceMap
+        {
+            public string url { get; set; }
+            public string filename { get; set; }
+        }
+
+        private static List<(string fname, string fcontent)> GetExtraSourceFilesAsync()
+        {
+            // try and find info for this date
+            const string panelLookupURL = "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/panel-defs/BlobData/ResourceMap.json";
+
+            List<PanelResourceMap> res = new List<PanelResourceMap>();
+
+            try
+            {
+                Debug.WriteLine($"Fetching image {panelLookupURL} from web.");
+                var resp = WebHelpers.httpClient.GetAsync(panelLookupURL).Result?.Content;
+                var json = resp.ReadAsStringAsync().Result;
+                res = JsonSerializer.Deserialize<List<PanelResourceMap>>(json);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed trying to download: {panelLookupURL}\r\n{ex}");
+            }
+
+            List<(string, string)> result = new List<(string, string)>();
+            foreach (var resource in res)
+            {
+                try
+                {
+                    Debug.WriteLine($"Fetching image {resource.url} from web.");
+                    var resp = WebHelpers.httpClient.GetAsync(resource.url).Result?.Content;
+                    var str = resp.ReadAsStringAsync().Result.ReplaceLineEndings();
+                    result.Add((resource.filename, str));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed trying to download: {panelLookupURL}\r\n{ex}");
+                }
+            }
+
+            return result;
+        }
+
+
         public static string CompileToXenon(string ServiceFileName, LSBImportOptions options, List<ParsedLSBElement> fullservice, Dictionary<string, string> extraFileContents)
         {
+            if (options.OverrideRunWithSubPanelsToUseOnlineVersions)
+            {
+                // add extra crap
+                var extras = GetExtraSourceFilesAsync();
+                foreach (var extra in extras)
+                {
+                    extraFileContents[extra.fname] = extra.fcontent;
+                }
+            }
+
             CompileToXenonMappedToSource(ServiceFileName, options, fullservice, extraFileContents);
             // extract all the source code
             StringBuilder sb = new StringBuilder();
@@ -132,6 +207,7 @@ namespace LutheRun.Generators
             return sb.ToString();
         }
 
+        public const string PEW_DEF = "PEW-BIBLES";
         internal static void CompileToXenonMappedToSource(string serviceFileName, LSBImportOptions options, List<ParsedLSBElement> fullservice, Dictionary<string, string> extraFileContents)
         {
             StringBuilder sb = new StringBuilder();
@@ -141,6 +217,8 @@ namespace LutheRun.Generators
 
 
             sb.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{System.IO.Path.GetFileName(serviceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
+
+            sb.AppendLine($"{(options.ReadingTextNIVOverride ? "" : "// ")}#DEFINE {PEW_DEF}");
 
             if (options.UseThemedHymns || options.UseThemedCreeds)
             {

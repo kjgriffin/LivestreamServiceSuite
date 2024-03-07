@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 using Xenon.Compiler.Meta;
@@ -24,7 +25,11 @@ namespace Xenon.Compiler.AST
             foreach (var item in Expressions)
             {
                 Logger.Log(new XenonCompilerMessage() { ErrorMessage = $"Generating Expression {item.Command.GetType()}", ErrorName = "Project Generation Debug", Generator = "XenonASTProgram:Generate()", Inner = "", Level = XenonCompilerMessageType.Debug, Token = ("", int.MaxValue) });
-                slides.AddRange(item.Generate(project, this, Logger));
+                var generated = item.Generate(project, this, Logger);
+                if (generated?.Any() == true)
+                {
+                    slides.AddRange(generated);
+                }
                 prog++;
                 progress?.Report(cprog + prog * 100 / total * ((100 - cprog) / 100));
             }

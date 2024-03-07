@@ -6,6 +6,7 @@ using CCUI_UI;
 
 using CommonGraphics;
 
+using Integrated_Presenter.Automation;
 using Integrated_Presenter.BMDSwitcher.Mock;
 
 using IntegratedPresenter.BMDSwitcher.Config;
@@ -29,7 +30,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
         List<BitmapImage> GetCamChoices();
     }
 
-    public class BetterMockDriver : IMockMultiviewerDriver, ISwitcherStateProvider, IManualMoveCameraDriver
+    public class BetterMockDriver : IMockMultiviewerDriver, IMockSwitcherInternals, IManualMoveCameraDriver
     {
 
         BetterMockMVUI multiviewerWindow;
@@ -269,17 +270,14 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             multiviewerWindow.RefreshUI(_camDriver, this);
         }
 
-        BMDSwitcherState ISwitcherStateProvider.GetState()
-        {
-            return _state;
-        }
+        BMDSwitcherState ISwitcherStateProvider.switcherState => _state;
 
         internal void HandlePlaybackStateUpdate(MainWindow.MediaPlaybackEventArgs e)
         {
             multiviewerWindow.SlideVideoPlaybackUpdate(e);
         }
 
-        void ISwitcherStateProvider.ReportDSKFadeComplete(int keyerID, int endState)
+        void IMockSwitcherInternals.ReportDSKFadeComplete(int keyerID, int endState)
         {
             if (keyerID == 1)
             {
@@ -294,7 +292,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             OnSwitcherStateUpdated?.Invoke(this, _state);
         }
 
-        void ISwitcherStateProvider.ReportMETransitionComplete(int activeProgram, int activePreset, bool usk1State)
+        void IMockSwitcherInternals.ReportMETransitionComplete(int activeProgram, int activePreset, bool usk1State)
         {
             _state.InTransition = false;
             _state.ProgramID = activeProgram;
@@ -303,7 +301,7 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             OnSwitcherStateUpdated?.Invoke(this, _state);
         }
 
-        void ISwitcherStateProvider.ReportFTBComplete(bool endState)
+        void IMockSwitcherInternals.ReportFTBComplete(bool endState)
         {
             _state.FTB = endState;
             _stateFTBInFade = false;

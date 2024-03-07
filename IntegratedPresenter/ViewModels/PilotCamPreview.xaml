@@ -5,94 +5,103 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Integrated_Presenter.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="300">
+             d:DesignHeight="390" d:DesignWidth="100">
     <Grid>
-        <Border Background="#373737" Name="g_back" Padding="5" CornerRadius="20">
-            <Grid>
+        <Viewbox>
+            <Border Background="{StaticResource darkBrush}" Name="g_back" Padding="5" CornerRadius="20" VerticalAlignment="Stretch" Width="100" Height="390">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.5*"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Name="tbName" Foreground="#a0a0a0" VerticalAlignment="Center" HorizontalAlignment="Center">CAM NAME</TextBlock>
+                    <Viewbox Grid.Row="1">
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40"></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" FontSize="30" Name="tbName" Foreground="#a0a0a0" VerticalAlignment="Center" HorizontalAlignment="Center">CAM NAME</TextBlock>
-                <Viewbox Grid.Row="1">
+                        <TextBlock Name="tbOnAir" Foreground="white" FontWeight="Bold">ON AIR</TextBlock>
 
-                    <TextBlock Name="tbOnAir" Foreground="white" FontWeight="Bold">ON AIR</TextBlock>
+                    </Viewbox>
+                    <Viewbox Grid.Row="2" Margin="5,0,5,0">
+                        <TextBlock FontSize="40" FontWeight="Bold" Name="tbPstName" Foreground="#efefef" VerticalAlignment="Center" HorizontalAlignment="Center">SEVENLT</TextBlock>
+                    </Viewbox>
+                    <TextBlock Grid.Row="3" Name="tbPstInfo" Foreground="#cfcfcf" VerticalAlignment="Center" HorizontalAlignment="Center">Description/info<LineBreak/>more info here</TextBlock>
+                    <TextBlock Grid.Row="4" Name="tbStatus" Foreground="Orange" VerticalAlignment="Center" HorizontalAlignment="Center">STATUS</TextBlock>
 
-                </Viewbox>
-                <Viewbox Grid.Row="2" Margin="5,0,5,0">
-                    <TextBlock FontSize="40" FontWeight="Bold" Name="tbPstName" Foreground="#efefef" VerticalAlignment="Center" HorizontalAlignment="Center">SEVENLT</TextBlock>
-                </Viewbox>
-                <TextBlock Grid.Row="3" FontSize="35" Name="tbPstInfo" Foreground="#cfcfcf" VerticalAlignment="Center" HorizontalAlignment="Center">Description/info<LineBreak/>more info here</TextBlock>
-                <TextBlock Grid.Row="4" FontSize="40" Name="tbStatus" Foreground="Orange" VerticalAlignment="Center" HorizontalAlignment="Center">STATUS</TextBlock>
+                    <Grid Grid.Row="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Name="btnReFire" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Focusable="False" Click="ClickReRun" IsTabStop="False">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <!--<Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">-->
+                                        <ContentControl Name="tgt" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="white">Re-Run</ContentControl>
+                                        <!--</Border>-->
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                <Setter Property="Foreground" Value="Orange" TargetName="tgt"></Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
 
-                <Grid Grid.Row="5">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Name="btnReFire" Focusable="False" Click="ClickReRun" IsTabStop="False">
-                            <Button.Template>
-                                <ControlTemplate>
-                                    <!--<Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">-->
-                                    <ContentControl Name="tgt" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="white" FontSize="35">Re-Run</ContentControl>
-                                    <!--</Border>-->
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Cursor" Value="Hand"></Setter>
-                                            <Setter Property="Foreground" Value="Orange" TargetName="tgt"></Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                            <Button Name="btnZIN" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Focusable="False" Click="ClickZIn" IsTabStop="False">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <!--<Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">-->
+                                        <ContentControl Name="tgt" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="white">Z+</ContentControl>
+                                        <!--</Border>-->
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                <Setter Property="Foreground" Value="Orange" TargetName="tgt"></Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
 
-                        <Button Name="btnZIN" Focusable="False" Click="ClickZIn" IsTabStop="False" Margin="30,0,30,0">
-                            <Button.Template>
-                                <ControlTemplate>
-                                    <!--<Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">-->
-                                    <ContentControl Name="tgt" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="white" FontSize="35">Z+</ContentControl>
-                                    <!--</Border>-->
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Cursor" Value="Hand"></Setter>
-                                            <Setter Property="Foreground" Value="Orange" TargetName="tgt"></Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-
-                        <Button Name="btnZOUT" Focusable="False" Click="ClickZOut" IsTabStop="False">
-                            <Button.Template>
-                                <ControlTemplate>
-                                    <!--<Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">-->
-                                    <ContentControl Name="tgt" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="white" FontSize="35">Z-</ContentControl>
-                                    <!--</Border>-->
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Cursor" Value="Hand"></Setter>
-                                            <Setter Property="Foreground" Value="Orange" TargetName="tgt"></Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                            <Button Name="btnZOUT" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" Focusable="False" Click="ClickZOut" IsTabStop="False">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <!--<Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="WhiteSmoke" Margin="3" BorderThickness="1">-->
+                                        <ContentControl Name="tgt" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="white">Z-</ContentControl>
+                                        <!--</Border>-->
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                                <Setter Property="Foreground" Value="Orange" TargetName="tgt"></Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
 
 
-                    </StackPanel>
+                        </Grid>
 
 
+                    </Grid>
+
+
+                    <Grid Grid.Row="6">
+                        <TextBlock Name="tbSubTitle" Foreground="#a7a7a7" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="1,1,0,0">STD/EMG</TextBlock>
+                        <TextBlock Name="tbSubContent" Foreground="#a7a7a7" VerticalAlignment="Center" HorizontalAlignment="Center">EMG-EMG</TextBlock>
+                    </Grid>
                 </Grid>
-
-
-                <Grid Grid.Row="6">
-                    <TextBlock FontSize="20" Name="tbSubTitle" Foreground="#a7a7a7" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0">STD/EMG</TextBlock>
-                    <TextBlock FontSize="30" Name="tbSubContent" Foreground="#a7a7a7" VerticalAlignment="Center" HorizontalAlignment="Center">EMG-EMG</TextBlock>
-                </Grid>
-            </Grid>
-        </Border>
+            </Border>
+        </Viewbox>
     </Grid>
 </UserControl>

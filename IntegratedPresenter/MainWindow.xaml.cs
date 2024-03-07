@@ -40,6 +40,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 using VariableMarkupAttributes;
 using VariableMarkupAttributes.Attributes;
@@ -51,7 +52,7 @@ namespace IntegratedPresenter.Main
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IAutomationConditionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider, IRaiseConditionsChanged, IDynamicControlProvider, IExtraDynamicControlProvider
+    public partial class MainWindow : Window, ISwitcherDriverProvider, IAutoTransitionProvider, IConfigProvider, IFeatureFlagProvider, IUserTimerProvider, IMainUIProvider, IPresentationProvider, IAudioDriverProvider, IMediaDriverProvider, IDynamicControlProvider, IExtraDynamicControlProvider, IUserConditionProvider
     {
 
 
@@ -75,11 +76,11 @@ namespace IntegratedPresenter.Main
         ICCPUPresetMonitor _camMonitor;
 
 
-        List<SlidePoolSource> SlidePoolButtons;
-
         private BuildVersion VersionInfo;
 
-        event EventHandler OnConditionalsUpdated;
+        //event EventHandler OnConditionalsUpdated;
+
+        ConditionalsVariablesCalculator _condVarCalculator;
 
         ISlideScriptActionAutomater _slideActionEngine;
         IActionAutomater _dynamicActionEngine;
@@ -105,11 +106,6 @@ namespace IntegratedPresenter.Main
 
             Title = _nominalTitle;
 
-
-            // set size
-            Width = 1200;
-            Height = 500;
-
             // enable logging
             using (Stream cstream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Integrated_Presenter.Log4Net.config"))
             {
@@ -118,6 +114,10 @@ namespace IntegratedPresenter.Main
 
             _logger.Info($"{Title} Started.");
 
+
+            // setup conditional manager
+            _condVarCalculator = new ConditionalsVariablesCalculator(this, this, this);
+            _condVarCalculator.OnConditionalsChanged += _condVarCalculator_OnConditionalsChanged;
             InitActionAutomater();
 
             // initialize conditionals
@@ -147,12 +147,6 @@ namespace IntegratedPresenter.Main
             // set a default config
             SetDefaultConfig();
             LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures.Default());
-
-            HideAdvancedPresControls();
-            HideAdvancedPIPControls();
-            HideAuxButtonConrols();
-
-            SlidePoolButtons = new List<SlidePoolSource>() { SlidePoolSource0, SlidePoolSource1, SlidePoolSource2, SlidePoolSource3 };
 
             ShowHideShortcutsUI();
 
@@ -226,11 +220,17 @@ namespace IntegratedPresenter.Main
             SpoolDynamicControls();
         }
 
+        private void _condVarCalculator_OnConditionalsChanged(object sender, EventArgs e)
+        {
+            FireOnConditionalsUpdated();
+        }
+
         private void SpoolDynamicControls()
         {
             _dynamicActionEngine = new ActionAutomater(_logger,
                                                             this,
                                                             this,
+                                                            _condVarCalculator,
                                                             this,
                                                             this,
                                                             this,
@@ -238,19 +238,19 @@ namespace IntegratedPresenter.Main
                                                             this,
                                                             this,
                                                             this,
+                                                            () => Presentation?.WatchedVariables ?? new Dictionary<string, WatchVariable>(),
                                                             this,
-                                                            () => new Dictionary<string, WatchVariable>(),
                                                             this,
-                                                            this,
-                                                            this._camMonitor);
+                                                            this._camMonitor,
+                                                            _condVarCalculator);
             // when loading config driver will re-supply automation with watched variables
 
             // load the dynamic driver
-            _dynamicDriver = new DynamicMatrixDriver(dynamicControlPanel, _dynamicActionEngine, this);
+            _dynamicDriver = new DynamicMatrixDriver(dynamicControlPanel, _dynamicActionEngine, _condVarCalculator, _condVarCalculator);
             //_dynamicDriver.ConfigureControls(File.ReadAllText(@"D:\Downloads\controlseg.txt"), _pres?.Folder ?? "");
 
             // build the spare panel
-            _spareDriver = new SpareDynamicMatrixDriver(this, _dynamicActionEngine, this);
+            _spareDriver = new SpareDynamicMatrixDriver(this, _dynamicActionEngine, _condVarCalculator, _condVarCalculator);
         }
 
         private void InitActionAutomater()
@@ -260,7 +260,7 @@ namespace IntegratedPresenter.Main
             _slideActionEngine = new SlideActionAutomater(_logger,
                                                 this,
                                                 this,
-                                                this,
+                                                _condVarCalculator,
                                                 this,
                                                 this,
                                                 this,
@@ -271,7 +271,8 @@ namespace IntegratedPresenter.Main
                                                 () => Presentation?.WatchedVariables,
                                                 this,
                                                 this,
-                                                this._camMonitor);
+                                                this._camMonitor,
+                                                _condVarCalculator);
         }
 
         private void PilotUI_OnUserRequestForManualReRun(object sender, int e)
@@ -628,7 +629,8 @@ namespace IntegratedPresenter.Main
             keyPatternControls.UpdateFromSwitcherState(switcherState);
 
             // conditions can change if they're watched
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            _condVarCalculator?.NotifyOfChange();
         }
 
         public void ForceStateUpdateOnSwitcher()
@@ -1400,27 +1402,11 @@ namespace IntegratedPresenter.Main
 
             // extra features
 
-            if (e.Key == Key.P && !Keyboard.IsKeyDown(Key.NumPad1))
-            {
-                ToggleViewAdvancedPIP();
-            }
             if (e.Key == Key.L)
             {
                 ShowPIPLocationControl();
             }
-            if (e.Key == Key.O)
-            {
-                ToggleViewPrevAfter();
-            }
-            if (e.Key == Key.Q)
-            {
-                ToggleViewAdvancedPresentation();
-            }
-            if (e.Key == Key.X)
-            {
-                ToggleAuxRow();
-            }
-
+           
             if (e.Key == Key.F11)
             {
                 _spareDriver.Focus();
@@ -1485,10 +1471,6 @@ namespace IntegratedPresenter.Main
                     ClickProgram(1);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(1);
-                else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, false, SlidePoolSource0.Driven);
-                else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource0.Slide, 0, true, SlidePoolSource0.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(1);
                 else if (Keyboard.IsKeyDown(Key.OemTilde))
@@ -1502,10 +1484,6 @@ namespace IntegratedPresenter.Main
                     ClickProgram(2);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(2);
-                else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, false, SlidePoolSource1.Driven);
-                else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource1.Slide, 1, true, SlidePoolSource1.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(2);
                 else if (Keyboard.IsKeyDown(Key.OemTilde))
@@ -1519,10 +1497,6 @@ namespace IntegratedPresenter.Main
                     ClickProgram(3);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(3);
-                else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, false, SlidePoolSource2.Driven);
-                else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource2.Slide, 2, true, SlidePoolSource2.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(3);
                 else if (Keyboard.IsKeyDown(Key.OemTilde))
@@ -1536,10 +1510,6 @@ namespace IntegratedPresenter.Main
                     ClickProgram(4);
                 else if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     ChangeUSK1FillSource(4);
-                else if (Keyboard.IsKeyDown(Key.E))
-                    TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, false, SlidePoolSource3.Driven);
-                else if (Keyboard.IsKeyDown(Key.R))
-                    TakeSlidePoolSlide(SlidePoolSource3.Slide, 3, true, SlidePoolSource3.Driven);
                 else if (Keyboard.IsKeyDown(Key.Z))
                     ClickAux(4);
                 else
@@ -2642,7 +2612,6 @@ namespace IntegratedPresenter.Main
             if (Presentation?.EffectiveCurrent != null)
             {
                 _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. About to call DisableSlidePoolOverrides() for slide {Presentation.EffectiveCurrent.Title}");
-                DisableSlidePoolOverrides();
                 currentpoolsource = null;
                 if (Presentation.EffectiveCurrent.AutomationEnabled)
                 {
@@ -2656,6 +2625,13 @@ namespace IntegratedPresenter.Main
                         _logger.Debug($"SlideDriveVideo_ToSlide -- SLIDE type is {Presentation.EffectiveCurrent.Type}. About to re-run Actions for slide {Presentation.EffectiveCurrent.Title}");
                         // Run Actions
                         await ExecuteActionSlide(Presentation.EffectiveCurrent);
+
+                        // we will let scripts run a postset if required
+                        if (Presentation?.EffectiveCurrent.PostsetEnabled == true && _FeatureFlag_PostsetShot)
+                        {
+                            _logger.Debug($"SlideDriveVideo_Current() -- Command preset select for postset shot. For Action type slide ({Presentation.CurrentSlide}).");
+                            switcherManager?.PerformPresetSelect(Presentation.EffectiveCurrent.PostsetId);
+                        }
                     }
                     else if (Presentation.EffectiveCurrent.Type == SlideType.Liturgy)
                     {
@@ -2910,10 +2886,11 @@ namespace IntegratedPresenter.Main
                     _keydisplay.Show();
                 }
 
-                DisableSlidePoolOverrides();
                 slidesUpdated();
 
-                FireOnConditionalsUpdated();
+                //FireOnConditionalsUpdated();
+                _condVarCalculator.ReleaseVariables(ICalculatedVariableManager.PRESENTATION_OWNED_VARIABLE);
+                _condVarCalculator?.NotifyOfChange();
 
                 PresentationStateUpdated?.Invoke(Presentation.EffectiveCurrent);
 
@@ -3026,7 +3003,7 @@ namespace IntegratedPresenter.Main
             }
         }
 
-        private void UpdatePostsetUi(MediaPlayer2 preview, ISlide slide)
+        private void UpdatePostsetUi(IMediaPlayer2 preview, ISlide slide)
         {
             if (slide.PostsetEnabled && _FeatureFlag_PostsetShot)
             {
@@ -3041,19 +3018,6 @@ namespace IntegratedPresenter.Main
 
 
         bool _FeatureFlag_displayPrevAfter = true;
-        private void UIUpdateDisplayPrevAfter()
-        {
-            if (_FeatureFlag_displayPrevAfter)
-            {
-                AfterPreviewDisplay.Visibility = Visibility.Visible;
-                PrevPreviewDisplay.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                AfterPreviewDisplay.Visibility = Visibility.Hidden;
-                PrevPreviewDisplay.Visibility = Visibility.Hidden;
-            }
-        }
 
 
         #region slideshow commands
@@ -3077,7 +3041,6 @@ namespace IntegratedPresenter.Main
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             if (activepresentation)
             {
-                DisableSlidePoolOverrides();
                 if (CurrentSlideMode == 1)
                 {
                     _logger.Debug("nextSlide() -- Calling SlideDriveVideo_Next");
@@ -3114,7 +3077,6 @@ namespace IntegratedPresenter.Main
                 else
                 {
                     _logger.Debug("nextSlide() -- going to previous slide");
-                    DisableSlidePoolOverrides();
                     Presentation.OverridePres = false;
                     Presentation.PrevSlide();
                     slidesUpdated();
@@ -3366,69 +3328,11 @@ namespace IntegratedPresenter.Main
             ToggleUSK1();
         }
 
-        private void ClickViewPrevAfter(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            ToggleViewPrevAfter();
-        }
-
-        private void ToggleViewPrevAfter()
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            SetViewPrevAfter(!_FeatureFlag_displayPrevAfter);
-        }
-
-        private void SetViewPrevAfter(bool show)
-        {
-            _FeatureFlag_displayPrevAfter = show;
-            cbPrevAfter.IsChecked = _FeatureFlag_displayPrevAfter;
-            UIUpdateDisplayPrevAfter();
-        }
-
         private async void ClickTakeSlide(object sender, RoutedEventArgs e)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             await SlideDriveVideo_Current();
         }
-
-
-        bool _FeatureFlag_viewAdvancedPresentation = false;
-        private void ClickViewAdvancedPresentation(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            ToggleViewAdvancedPresentation();
-        }
-
-        private void ToggleViewAdvancedPresentation()
-        {
-            SetViewAdvancedPresentation(!_FeatureFlag_viewAdvancedPresentation);
-        }
-
-        private void SetViewAdvancedPresentation(bool show)
-        {
-            _FeatureFlag_viewAdvancedPresentation = show;
-
-            if (_FeatureFlag_viewAdvancedPresentation)
-                ShowAdvancedPresControls();
-            else
-                HideAdvancedPresControls();
-
-            cbAdvancedPresentation.IsChecked = _FeatureFlag_viewAdvancedPresentation;
-        }
-
-        private void ShowAdvancedPresControls()
-        {
-            Width = Width + Width / 4;
-            gcAdvancedPresentation.Width = new GridLength(1.2, GridUnitType.Star);
-        }
-
-        private void HideAdvancedPresControls()
-        {
-            Width = Width - Width / 5;
-            gcAdvancedPresentation.Width = new GridLength(0);
-        }
-
-
 
         private void ClickResetgpTimer1(object sender, MouseButtonEventArgs e)
         {
@@ -3449,48 +3353,6 @@ namespace IntegratedPresenter.Main
 
         SlidePoolSource currentpoolsource = null;
 
-        private async void TakeSlidePoolSlide(Slide s, int num, bool replaceMode, bool driven)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} slide: {s.Title} from pool source {num} {(replaceMode ? "in replace mode" : "in insert mode")} and {(driven ? "" : "not")} driven");
-            for (int i = 0; i < 4; i++)
-            {
-                if (num != i)
-                {
-                    SlidePoolButtons[i].Selected = false;
-                }
-            }
-
-            SlidePoolButtons[num].Selected = true;
-
-            currentpoolsource = SlidePoolButtons[num];
-
-            if (replaceMode)
-            {
-                Presentation?.NextSlide();
-            }
-
-            if (driven)
-            {
-                await SlideDriveVideo_ToSlide(s);
-            }
-            else
-            {
-                SlideUndrive_ToSlide(s);
-            }
-
-
-        }
-
-        private void DisableSlidePoolOverrides()
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                SlidePoolButtons[i].Selected = false;
-            }
-            currentpoolsource?.StopMedia();
-            UpdateMediaControls();
-        }
-
         private void OnClosing(object sender, CancelEventArgs e)
         {
             // stop timers
@@ -3505,30 +3367,6 @@ namespace IntegratedPresenter.Main
             pipctrl?.Close();
             _camMonitor?.Shutdown();
             _logger.Info("Integrated Presenter requested to close by USER");
-        }
-
-        private void ClickTakeSP0(object sender, Slide s, bool replaceMode, bool driven)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            TakeSlidePoolSlide(s, 0, replaceMode, driven);
-        }
-
-        private void ClickTakeSP1(object sender, Slide s, bool replaceMode, bool driven)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            TakeSlidePoolSlide(s, 1, replaceMode, driven);
-        }
-
-        private void ClickTakeSP2(object sender, Slide s, bool replaceMode, bool driven)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            TakeSlidePoolSlide(s, 2, replaceMode, driven);
-        }
-
-        private void ClickTakeSP3(object sender, Slide s, bool replaceMode, bool driven)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            TakeSlidePoolSlide(s, 3, replaceMode, driven);
         }
 
         private void ClickConfigureSwitcher(object sender, RoutedEventArgs e)
@@ -3615,50 +3453,6 @@ namespace IntegratedPresenter.Main
             ChangeUSK1FillSource(8);
         }
 
-
-        private bool _FeatureFlag_showadvancedpipcontrols = false;
-        private void ClickViewAdvancedPIP(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            ToggleViewAdvancedPIP();
-        }
-
-        private void ToggleViewAdvancedPIP()
-        {
-            SetViewAdvancedPIP(!_FeatureFlag_showadvancedpipcontrols);
-        }
-
-        private void SetViewAdvancedPIP(bool show)
-        {
-            _FeatureFlag_showadvancedpipcontrols = show;
-            if (_FeatureFlag_showadvancedpipcontrols)
-            {
-                ShowAdvancedPIPControls();
-            }
-            else
-            {
-                HideAdvancedPIPControls();
-            }
-            cbAdvancedPresentation.IsChecked = _FeatureFlag_showadvancedpipcontrols;
-        }
-
-        private void ShowAdvancedPIPControls()
-        {
-            grd_advanced.Height = new GridLength(2.35, GridUnitType.Star);
-            gr_advanced_pip.Visibility = Visibility.Visible;
-            UpdateUIPIPPlaceKeys();
-            UpdateUIPIPPlaceKeysActiveState();
-        }
-
-        private void HideAdvancedPIPControls()
-        {
-            //var heightreduction = grAdvancedPIP.ActualHeight;
-            //Height -= heightreduction;
-            grd_advanced.Height = new GridLength(0);
-            gr_advanced_pip.Visibility = Visibility.Collapsed;
-            UpdateUIPIPPlaceKeys();
-            UpdateUIPIPPlaceKeysActiveState();
-        }
 
         private void ToggleTransBkgd()
         {
@@ -3847,31 +3641,7 @@ namespace IntegratedPresenter.Main
 
         public BMDSwitcherConfigSettings Config { get => _config; }
 
-        bool _FeatureFlag_showAuxButons = false;
-        private void ClickViewAuxOutput(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            ToggleAuxRow();
-        }
-
-        private void ToggleAuxRow()
-        {
-            SetViewAuxRow(!_FeatureFlag_showAuxButons);
-        }
-
-        private void SetViewAuxRow(bool show)
-        {
-            _FeatureFlag_showAuxButons = show;
-            if (_FeatureFlag_showAuxButons)
-            {
-                ShowAuxButtonControls();
-            }
-            else
-            {
-                HideAuxButtonConrols();
-            }
-        }
-
+       
         private void ClickAux1(object sender, RoutedEventArgs e)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -3961,22 +3731,6 @@ namespace IntegratedPresenter.Main
             BtnAuxPgm.Background = Application.Current.FindResource("OffLight") as RadialGradientBrush;
         }
 
-        private void ShowAuxButtonControls()
-        {
-            _FeatureFlag_showAuxButons = true;
-            //gridbtns.Width = 770;
-            //gcAdvancedProjector.Width = new GridLength(1.2, GridUnitType.Star);
-            grd_aux.Height = new GridLength(1, GridUnitType.Star);
-        }
-
-        private void HideAuxButtonConrols()
-        {
-            _FeatureFlag_showAuxButons = false;
-            //gridbtns.Width = 660;
-            //gcAdvancedProjector.Width = new GridLength(0);
-            grd_aux.Height = new GridLength(0, GridUnitType.Star);
-        }
-
 
         private void SetPIPPosition(BMDUSKDVESettings config)
         {
@@ -4047,13 +3801,17 @@ namespace IntegratedPresenter.Main
         {
             if (IsProgramRowLocked)
             {
-                btnProgramLock.Content = "LOCKED";
-                btnProgramLock.Foreground = Brushes.WhiteSmoke;
+                //btnProgramLock.Content = "LOCKED";
+                //btnProgramLock.Foreground = Brushes.WhiteSmoke;
+                imgPgmBusLockIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/WhiteLock.png"));
+                pgmBusLockColor.Color = (Color)FindResource("lightBlue");
             }
             else
             {
-                btnProgramLock.Content = "UNLOCKED";
-                btnProgramLock.Foreground = Brushes.Orange;
+                //btnProgramLock.Content = "UNLOCKED";
+                //btnProgramLock.Foreground = Brushes.Orange;
+                imgPgmBusLockIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/WhiteOpenLock.png"));
+                pgmBusLockColor.Color = (Color)FindResource("red");
             }
         }
 
@@ -4309,12 +4067,6 @@ namespace IntegratedPresenter.Main
 
         private void ShowHideShortcutsUI()
         {
-            // Update Slide Pools
-            SlidePoolSource0.ShowHideShortcuts(ShowShortcuts);
-            SlidePoolSource1.ShowHideShortcuts(ShowShortcuts);
-            SlidePoolSource2.ShowHideShortcuts(ShowShortcuts);
-            SlidePoolSource3.ShowHideShortcuts(ShowShortcuts);
-
             // audio player
             audioPlayer?.ShowHideShortcuts(ShowShortcuts);
 
@@ -4387,8 +4139,6 @@ namespace IntegratedPresenter.Main
             ksc_ps6.Visibility = ShortcutVisibility;
             ksc_ps7.Visibility = ShortcutVisibility;
             ksc_ps8.Visibility = ShortcutVisibility;
-
-            ksc_r.Visibility = ShortcutVisibility;
 
             ksc_mplay.Visibility = ShortcutVisibility;
             ksc_mpause.Visibility = ShortcutVisibility;
@@ -4522,7 +4272,7 @@ namespace IntegratedPresenter.Main
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
             ResetPresentationToBegining();
 
-            if (Presentation.EffectiveCurrent.ForceRunOnLoad)
+            if (Presentation?.EffectiveCurrent.ForceRunOnLoad == true)
             {
                 SlideDriveVideo_Current();
             }
@@ -4530,10 +4280,14 @@ namespace IntegratedPresenter.Main
 
         private void ResetPresentationToBegining()
         {
+            if (Presentation == null)
+            {
+                return;
+            }
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            Presentation.StartPres();
+            Presentation?.StartPres();
             slidesUpdated();
-            PresentationStateUpdated?.Invoke(Presentation.Current);
+            PresentationStateUpdated?.Invoke(Presentation?.Current);
         }
 
         private void ClickResetgpTimer2(object sender, MouseButtonEventArgs e)
@@ -4678,13 +4432,7 @@ namespace IntegratedPresenter.Main
         {
             _m_integratedPresenterFeatures = config;
 
-            SetProgramPresetBusOrder(config.ViewSettings.View_ProgramBusOverPresetBus);
-
-            SetViewPrevAfter(config.ViewSettings.View_PrevAfterPreviews);
             SetShowEffectiveCurrentPreview(config.ViewSettings.View_PreviewEffectiveCurrent);
-            SetViewAdvancedPIP(config.ViewSettings.View_AdvancedDVE);
-            SetViewAuxRow(config.ViewSettings.View_AuxOutput);
-            SetViewAdvancedPresentation(config.ViewSettings.View_AdvancedPresentation);
             if (config.ViewSettings.View_DefaultOpenAdvancedPIPLocation)
             {
                 ShowPIPLocationControl();
@@ -4737,9 +4485,7 @@ namespace IntegratedPresenter.Main
                 ViewSettings = new Configurations.FeatureConfig.IntegratedPresentationFeatures_View()
                 {
                     View_PrevAfterPreviews = _FeatureFlag_displayPrevAfter,
-                    View_AdvancedDVE = _FeatureFlag_showadvancedpipcontrols,
-                    View_AdvancedPresentation = _FeatureFlag_viewAdvancedPresentation,
-                    View_AuxOutput = _FeatureFlag_showAuxButons,
+                    View_AdvancedPresentation = false,
                     View_PreviewEffectiveCurrent = _FeatureFlag_ShowEffectiveCurrentPreview,
                     View_DefaultOpenAdvancedPIPLocation = IntegratedPresenterFeatures.ViewSettings.View_DefaultOpenAdvancedPIPLocation,
                     View_DefaultOpenAudioPlayer = IntegratedPresenterFeatures.ViewSettings.View_DefaultOpenAudioPlayer,
@@ -4831,6 +4577,8 @@ namespace IntegratedPresenter.Main
         UIValue<bool> _Cond3 = new UIValue<bool>();
         UIValue<bool> _Cond4 = new UIValue<bool>();
 
+
+        /*
         private Dictionary<string, ExposedVariable> GetExposedVariables()
         {
             // currently get switcher state
@@ -4903,6 +4651,7 @@ namespace IntegratedPresenter.Main
             return conditions;
 
         }
+        */
 
         private void FireOnConditionalsUpdated()
         {
@@ -4912,14 +4661,14 @@ namespace IntegratedPresenter.Main
                 return;
             }
 
-            var cstatus = GetCurrentConditionStatuses(Presentation?.WatchedVariables);
+            var cstatus = _condVarCalculator.GetConditionals(Presentation?.WatchedVariables);
             PrevPreview?.FireOnActionConditionsUpdated(cstatus);
             CurrentPreview?.FireOnActionConditionsUpdated(cstatus);
             NextPreview?.FireOnActionConditionsUpdated(cstatus);
             AfterPreview?.FireOnActionConditionsUpdated(cstatus);
             UpdateSpeculativeSlideJumpUI();
 
-            this.OnConditionalsUpdated.Invoke(this, new EventArgs());
+            //this.OnConditionalsUpdated.Invoke(this, new EventArgs());
         }
 
         private void UpdateSpeculativeSlideJumpUI()
@@ -4929,7 +4678,8 @@ namespace IntegratedPresenter.Main
                 Dispatcher.Invoke(UpdateSpeculativeSlideJumpUI);
                 return;
             }
-            var cstatus = (this as IAutomationConditionProvider).GetCurrentConditionStatus(_pres?.WatchedVariables ?? new Dictionary<string, WatchVariable>());
+            //var cstatus = (this as IAutomationConditionProvider).GetConditionals(_pres?.WatchedVariables ?? new Dictionary<string, WatchVariable>());
+            var cstatus = _condVarCalculator?.GetConditionals(_pres?.WatchedVariables ?? new Dictionary<string, WatchVariable>());
             // Speculative Update for jump slides
             var willrun = false;
             var jtarget = Presentation?.Next?.SetupActions?.FirstOrDefault(x => x.Action?.Action == AutomationActions.JumpToSlide);
@@ -4943,35 +4693,36 @@ namespace IntegratedPresenter.Main
                 willrun = jtarget.Action.MeetsConditionsToRun(cstatus);
                 if (willrun)
                 {
-                    var index = jtarget.Action.DataI;
-                    // get the slide
-                    if (index >= 0 && index < Presentation.SlideCount)
+                    if (jtarget.Action.TryEvaluateAutomationActionParmeter<int>("SlideNum", _condVarCalculator, out var index))
                     {
-                        var tslide = Presentation.Slides[index];
-                        SpeculativeJumpPreview.SetMedia(tslide, false);
-                        SpeculativeJumpPreviewDisplay.Visibility = Visibility.Visible;
-
-                        if (tslide.Type == SlideType.Video || tslide.Type == SlideType.ChromaKeyVideo)
+                        if (index >= 0 && index < Presentation.SlideCount)
                         {
-                            // Speculative don't auto-play the media here
-                            //SpeculativeJumpPreview.PlayMedia();
-                            if (SpeculativeJumpPreview.MediaLength != TimeSpan.Zero)
+                            var tslide = Presentation.Slides[index];
+                            SpeculativeJumpPreview.SetMedia(tslide, false);
+                            SpeculativeJumpPreviewDisplay.Visibility = Visibility.Visible;
+
+                            if (tslide.Type == SlideType.Video || tslide.Type == SlideType.ChromaKeyVideo)
                             {
-                                tbPreviewSpeculativeJumpVideoDuration.Text = SpeculativeJumpPreview.MediaLength.ToString("\\T\\-mm\\:ss");
-                                tbPreviewSpeculativeJumpVideoDuration.Visibility = Visibility.Visible;
+                                // Speculative don't auto-play the media here
+                                //SpeculativeJumpPreview.PlayMedia();
+                                if (SpeculativeJumpPreview.MediaLength != TimeSpan.Zero)
+                                {
+                                    tbPreviewSpeculativeJumpVideoDuration.Text = SpeculativeJumpPreview.MediaLength.ToString("\\T\\-mm\\:ss");
+                                    tbPreviewSpeculativeJumpVideoDuration.Visibility = Visibility.Visible;
+                                }
                             }
+                            else
+                            {
+                                tbPreviewSpeculativeJumpVideoDuration.Visibility = Visibility.Hidden;
+                                tbPreviewSpeculativeJumpVideoDuration.Text = "";
+                            }
+
+
+
+
+                            // only need to do this if visible
+                            SpeculativeJumpPreview?.FireOnActionConditionsUpdated(cstatus);
                         }
-                        else
-                        {
-                            tbPreviewSpeculativeJumpVideoDuration.Visibility = Visibility.Hidden;
-                            tbPreviewSpeculativeJumpVideoDuration.Text = "";
-                        }
-
-
-
-
-                        // only need to do this if visible
-                        SpeculativeJumpPreview?.FireOnActionConditionsUpdated(cstatus);
                     }
                 }
             }
@@ -4986,28 +4737,32 @@ namespace IntegratedPresenter.Main
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
             _Cond1.Value = value;
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            _condVarCalculator?.NotifyOfChange();
         }
 
         private void SetCondition2(bool value)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
             _Cond2.Value = value;
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            _condVarCalculator?.NotifyOfChange();
         }
 
         private void SetCondition3(bool value)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
             _Cond3.Value = value;
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            _condVarCalculator?.NotifyOfChange();
         }
 
         private void SetCondition4(bool value)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg value {value}");
             _Cond4.Value = value;
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            _condVarCalculator?.NotifyOfChange();
         }
 
 
@@ -5166,30 +4921,7 @@ namespace IntegratedPresenter.Main
             SlideMediaActiveTab = 1;
         }
 
-        private void ClickToggleProgramPresetBusSwap(object sender, RoutedEventArgs e)
-        {
-            SetProgramPresetBusOrder(cbViewProgramOverPresetBus.IsChecked);
-        }
-
-        bool _FeatureFlag_ViewProgramOverPresetBus = false;
-        private void SetProgramPresetBusOrder(bool programontop)
-        {
-            _FeatureFlag_ViewProgramOverPresetBus = programontop;
-            cbViewProgramOverPresetBus.IsChecked = _FeatureFlag_ViewProgramOverPresetBus;
-            const int top = 2;
-            const int bottom = 3;
-            if (_FeatureFlag_ViewProgramOverPresetBus)
-            {
-                gr_ProgramBus.SetValue(Grid.RowProperty, top);
-                gr_PresetBus.SetValue(Grid.RowProperty, bottom);
-            }
-            else
-            {
-                gr_PresetBus.SetValue(Grid.RowProperty, top);
-                gr_ProgramBus.SetValue(Grid.RowProperty, bottom);
-            }
-        }
-
+      
         private void ClickOpenCCUDriverUI(object sender, RoutedEventArgs e)
         {
             _camMonitor?.ShowUI();
@@ -5373,10 +5105,12 @@ namespace IntegratedPresenter.Main
                 _keydisplay.Show();
             }
 
-            DisableSlidePoolOverrides();
             slidesUpdated();
 
-            FireOnConditionalsUpdated();
+            //FireOnConditionalsUpdated();
+            // release all variables related to old presentation
+            _condVarCalculator.ReleaseVariables(ICalculatedVariableManager.PRESENTATION_OWNED_VARIABLE);
+            _condVarCalculator?.NotifyOfChange();
 
             // clears all emg/last and curent actions...
             // if we're hotreload into the pres we may want a way to 'clear' just the curent so it gets going again
@@ -5489,7 +5223,7 @@ namespace IntegratedPresenter.Main
         {
             try
             {
-                _dynamicDriver?.ConfigureControls(filetext, resourcepath, overwriteAll);
+                _dynamicDriver?.ConfigureControls(filetext, resourcepath, overwriteAll, _condVarCalculator);
             }
             catch (Exception ex)
             {
@@ -5504,7 +5238,7 @@ namespace IntegratedPresenter.Main
             try
             {
                 // TODO: somewhere we may need to eventually have this USE the extraID
-                _spareDriver?.ConfigureControls(filetext, resourcepath, overwriteAll);
+                _spareDriver?.ConfigureControls(filetext, resourcepath, overwriteAll, _condVarCalculator);
             }
             catch (Exception ex)
             {
@@ -5524,10 +5258,11 @@ namespace IntegratedPresenter.Main
 
         #region ActionAutomater Providers
         IBMDSwitcherManager ISwitcherDriverProvider.switcherManager { get => switcherManager; }
-        BMDSwitcherState ISwitcherDriverProvider.switcherState { get => switcherState; }
+        BMDSwitcherState ISwitcherStateProvider.switcherState { get => switcherState; }
         BMDSwitcherConfigSettings IConfigProvider._config { get => _config; }
         bool IFeatureFlagProvider.AutomationTimer1Enabled { get => _FeatureFlag_automationtimer1enabled; }
         string IPresentationProvider.Folder { get => Presentation?.Folder; }
+
         ISlide IPresentationProvider.GetCurentSlide()
         {
             return Presentation?.EffectiveCurrent;
@@ -5548,10 +5283,6 @@ namespace IntegratedPresenter.Main
         void IAutoTransitionProvider.PerformGuardedAutoTransition()
         {
             PerformGuardedAutoTransition();
-        }
-        Dictionary<string, bool> IAutomationConditionProvider.GetCurrentConditionStatus(Dictionary<string, WatchVariable> watches)
-        {
-            return GetCurrentConditionStatuses(watches);
         }
 
         void IUserTimerProvider.ResetGpTimer1()
@@ -5626,23 +5357,6 @@ namespace IntegratedPresenter.Main
             Dispatcher.Invoke(playMedia);
         }
 
-        Dictionary<string, bool> IRaiseConditionsChanged.GetConditionals(Dictionary<string, WatchVariable> watches)
-        {
-            return GetCurrentConditionStatuses(watches);
-        }
-
-        event EventHandler IRaiseConditionsChanged.OnConditionalsChanged
-        {
-            add
-            {
-                OnConditionalsUpdated += value;
-            }
-
-            remove
-            {
-                OnConditionalsUpdated -= value;
-            }
-        }
 
         void IDynamicControlProvider.ConfigureControls(string file, string resourcepath, bool overwriteAll)
         {
@@ -5693,6 +5407,28 @@ namespace IntegratedPresenter.Main
                 LoadExtraDynamicButtons(extraID, text, path, overwriteAll);
             }
 
+        }
+
+        Dictionary<string, bool> IUserConditionProvider.GetActiveUserConditions()
+        {
+            var conditions = new Dictionary<string, bool>
+            {
+                ["1"] = _Cond1.Value,
+                ["2"] = _Cond2.Value,
+                ["3"] = _Cond3.Value,
+                ["4"] = _Cond4.Value,
+            };
+            return conditions;
+        }
+
+        void IDynamicControlProvider.Repaint()
+        {
+            _dynamicDriver?.Repaint();
+        }
+
+        void IExtraDynamicControlProvider.Repaint()
+        {
+            _spareDriver?.Repaint();
         }
 
         #endregion

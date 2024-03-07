@@ -18,15 +18,20 @@ namespace Integrated_Presenter.Automation
     internal interface IExtraDynamicControlProvider
     {
         void ConfigureControls(string extraID, string file, string resourcepath, bool overwriteAll);
+        void Repaint();
     }
 
     internal interface IDynamicControlProvider
     {
         void ConfigureControls(string file, string resourcepath, bool overwriteAll);
+        void Repaint();
     }
-    internal interface ISwitcherDriverProvider
+    internal interface ISwitcherDriverProvider : ISwitcherStateProvider
     {
         IBMDSwitcherManager switcherManager { get; }
+    }
+    public interface ISwitcherStateProvider
+    {
         BMDSwitcherState switcherState { get; }
     }
     internal interface IAutoTransitionProvider
@@ -35,7 +40,7 @@ namespace Integrated_Presenter.Automation
     }
     internal interface IAutomationConditionProvider
     {
-        Dictionary<string, bool> GetCurrentConditionStatus(Dictionary<string, WatchVariable> watches);
+        Dictionary<string, bool> GetConditionals(Dictionary<string, WatchVariable> watches);
     }
     internal interface IConfigProvider
     {
@@ -82,6 +87,10 @@ namespace Integrated_Presenter.Automation
 
     }
 
+    internal interface IUserConditionProvider
+    {
+        Dictionary<string, bool> GetActiveUserConditions();
+    }
 
     class ActionResult
     {

@@ -68,6 +68,8 @@
 		<None Remove="Icons\RedVideoCam.png" />
 		<None Remove="Icons\RightPIP.png" />
 		<None Remove="Icons\RightSplitPIP.png" />
+		<None Remove="Icons\WhiteLock.png" />
+		<None Remove="Icons\WhiteOpenLock.png" />
 		<None Remove="Icons\YellowBolt.png" />
 		<None Remove="Icons\YellowSkip.png" />
 		<None Remove="Icons\YellowWarn.png" />
@@ -78,6 +80,12 @@
 
 	<ItemGroup>
 		<Content Include="AppIcons\picon_RWa_icon.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Icons\WhiteLock.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -206,6 +214,9 @@
 		</Resource>
 		<Resource Include="Icons\RightSplitPIP.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Icons\WhiteOpenLock.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Icons\YellowBolt.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

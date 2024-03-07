@@ -1,4 +1,7 @@
-﻿using System;
+﻿using IntegratedPresenterAPIInterop;
+using IntegratedPresenterAPIInterop.DynamicDrivers;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -148,37 +151,12 @@ namespace Integrated_Presenter.ViewModels.MatrixControls
             }
         }
 
-        public void UpdateButton(int x, int y, string property, string value)
+        public void UpdateButton(int x, int y, DynamicDrawExpression drawExpr, ICalculatedVariableManager calculator)
         {
             if (ValidMatrixIndex(x, y))
             {
                 var btn = controls[x, y] as MatrixTextButton;
-                if (btn != null)
-                {
-                    switch (property)
-                    {
-                        case nameof(MatrixTextButton.TopText):
-                            btn.TopText = value;
-                            break;
-                        case nameof(MatrixTextButton.BottomText):
-                            btn.BottomText = value;
-                            break;
-                        case nameof(MatrixTextButton.BackColor):
-                            btn.BackColor = ToColor(value);
-                            break;
-                        case nameof(MatrixTextButton.HoverColor):
-                            btn.HoverColor = ToColor(value);
-                            break;
-                        case nameof(MatrixTextButton.TextColor):
-                            btn.TextColor = ToColor(value);
-                            break;
-                        case nameof(MatrixTextButton.Enabled):
-                            bool.TryParse(value, out bool vb);
-                            btn.Enabled = vb;
-                            break;
-                    }
-
-                }
+                btn?.UpdateButton(drawExpr, calculator);
             }
         }
 

@@ -1,8 +1,8 @@
 ﻿using ATEMSharedState.SwitcherState;
 
-using Integrated_Presenter.ViewModels;
-
 using IntegratedPresenter.BMDSwitcher.Config;
+using IntegratedPresenter.Main;
+using IntegratedPresenter.ViewModels;
 
 using IntegratedPresenterAPIInterop;
 
@@ -10,36 +10,30 @@ using SharedPresentationAPI.Presentation;
 
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Net.Mail;
+using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace IntegratedPresenter.Main
+namespace Integrated_Presenter.ViewModels
 {
-
-
-
-    public class MediaPlaybackTimeEventArgs : EventArgs
-    {
-        public TimeSpan Current { get; }
-        public TimeSpan Length { get; }
-        public TimeSpan Remaining { get; }
-        public MediaPlaybackTimeEventArgs(TimeSpan current, TimeSpan length, TimeSpan remaining)
-        {
-            Current = current;
-            Length = length;
-            Remaining = remaining;
-        }
-    }
-
     /// <summary>
-    /// Interaction logic for MediaPlayer2.xaml
+    /// Interaction logic for SlidePreview.xaml
     /// </summary>
-    public partial class MediaPlayer2 : UserControl, IMediaPlayer2
+    public partial class SlidePreview : UserControl, IMediaPlayer2
     {
-        public MediaPlayer2()
+        public SlidePreview()
         {
             InitializeComponent();
             ShowBlackSource();
@@ -48,7 +42,7 @@ namespace IntegratedPresenter.Main
             videoPlayer.MediaOpened += VideoPlayer_MediaOpened;
             videoPlayer.MediaEnded += VideoPlayer_MediaEnded;
 
-            MuteIcon.Visibility = Visibility.Hidden;
+            //MuteIcon.Visibility = Visibility.Hidden;
         }
 
 
@@ -60,11 +54,11 @@ namespace IntegratedPresenter.Main
             {
                 if (show)
                 {
-                    ksc_m.Visibility = Visibility.Visible;
+                    //ksc_m.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    ksc_m.Visibility = Visibility.Collapsed;
+                    //ksc_m.Visibility = Visibility.Collapsed;
                 }
             });
         }
@@ -75,7 +69,7 @@ namespace IntegratedPresenter.Main
             {
                 Dispatcher.Invoke(() =>
                 {
-                    MuteIcon.Visibility = Visibility.Visible;
+                    //MuteIcon.Visibility = Visibility.Visible;
                 });
             }
         }
@@ -84,7 +78,7 @@ namespace IntegratedPresenter.Main
         {
             Dispatcher.Invoke(() =>
             {
-                MuteIcon.Visibility = Visibility.Hidden;
+                //MuteIcon.Visibility = Visibility.Hidden;
             });
         }
 
@@ -492,13 +486,13 @@ namespace IntegratedPresenter.Main
             {
                 ShowActionsText(slide);
 
-                SequenceLabel.Text = slide.Title;
+                //SequenceLabel.Text = slide.Title;
 
-                SeqType.Text = slide.AutoOnly ? "AUTO" : "SEQ";
+                //SeqType.Text = slide.AutoOnly ? "AUTO" : "SEQ";
 
-                SequenceLabel.Visibility = Visibility.Visible;
-                ActionIndicator.Visibility = Visibility.Visible;
-                SeqType.Visibility = Visibility.Visible;
+                //SequenceLabel.Visibility = Visibility.Visible;
+                //ActionIndicator.Visibility = Visibility.Visible;
+                //SeqType.Visibility = Visibility.Visible;
             }
         }
 
@@ -506,47 +500,15 @@ namespace IntegratedPresenter.Main
         {
             if (!ShowBlackForActions)
             {
-                ClearActionPreviews();
-                if (slide == null)
+                Dispatcher.Invoke(() =>
                 {
-                    return;
-                }
+                    actionsList.ShowActionsText(slide, Conditionals);
 
-                foreach (var action in slide.SetupActions)
-                {
-                    spActionView.Children.Add(new AutomationActionMonitor(action, Conditionals));
-                }
-
-                foreach (var action in slide.Actions)
-                {
-                    spActionView.Children.Add(new AutomationActionMonitor(action, Conditionals));
-                }
-
-                //// Show Commands
-                //string description = "";
-                //foreach (var action in slide.Actions)
-                //{
-                //    if (action?.Action?.Message != "")
-                //    {
-                //        description += $"[{action.State}] {action.Action.Message}" + Environment.NewLine;
-                //    }
-                //}
-                //MainMessages.Text = description.Trim();
-                //MainMessages.Visibility = Visibility.Visible;
-
-                //description = "";
-                //foreach (var action in slide.SetupActions)
-                //{
-                //    if (action?.Action?.Message != "")
-                //    {
-                //        description += $"[{action.State}] {action.Action.Message}" + Environment.NewLine;
-                //    }
-                //}
-                //SetupMessages.Text = description.Trim();
-                //SetupMessages.Visibility = Visibility.Visible;
-
-                //SetupMessages.Foreground = Brushes.LightGreen;
-                //MainMessages.Foreground = Brushes.Orange;
+                    if (slide?.Type == SlideType.Action)
+                    {
+                        actionsList.Visibility = Visibility.Visible;
+                    }
+                });
             }
         }
 
@@ -554,19 +516,19 @@ namespace IntegratedPresenter.Main
         {
             Dispatcher.Invoke(() =>
             {
-                MainMessages.Visibility = Visibility.Hidden;
-                SetupMessages.Visibility = Visibility.Hidden;
-                spActionView.Children.Clear();
+                actionsList.ClearActionPreviews();
+                actionsList.Visibility = Visibility.Hidden;
             });
         }
 
         private void ShowImage(Uri source)
         {
-            SequenceLabel.Visibility = Visibility.Hidden;
-            SeqType.Visibility = Visibility.Hidden;
-            ActionIndicator.Visibility = Visibility.Hidden;
-            MainMessages.Visibility = Visibility.Hidden;
-            SetupMessages.Visibility = Visibility.Hidden;
+            //SequenceLabel.Visibility = Visibility.Hidden;
+            //SeqType.Visibility = Visibility.Hidden;
+            //ActionIndicator.Visibility = Visibility.Hidden;
+            //MainMessages.Visibility = Visibility.Hidden;
+            //SetupMessages.Visibility = Visibility.Hidden;
+            actionsList.Visibility = Visibility.Hidden;
             BlackSource.Visibility = Visibility.Hidden;
             _playbacktimer.Stop();
             videoPlayer.Stop();
@@ -585,11 +547,12 @@ namespace IntegratedPresenter.Main
 
         private void ShowImage(BitmapImage img)
         {
-            SequenceLabel.Visibility = Visibility.Hidden;
-            SeqType.Visibility = Visibility.Hidden;
-            ActionIndicator.Visibility = Visibility.Hidden;
-            MainMessages.Visibility = Visibility.Hidden;
-            SetupMessages.Visibility = Visibility.Hidden;
+            //SequenceLabel.Visibility = Visibility.Hidden;
+            //SeqType.Visibility = Visibility.Hidden;
+            //ActionIndicator.Visibility = Visibility.Hidden;
+            actionsList.Visibility = Visibility.Hidden;
+            //MainMessages.Visibility = Visibility.Hidden;
+            //SetupMessages.Visibility = Visibility.Hidden;
             BlackSource.Visibility = Visibility.Hidden;
             _playbacktimer.Stop();
             videoPlayer.Stop();
@@ -609,11 +572,12 @@ namespace IntegratedPresenter.Main
 
         private void ShowVideo(Uri source)
         {
-            SequenceLabel.Visibility = Visibility.Hidden;
-            SeqType.Visibility = Visibility.Hidden;
-            ActionIndicator.Visibility = Visibility.Hidden;
-            MainMessages.Visibility = Visibility.Hidden;
-            SetupMessages.Visibility = Visibility.Hidden;
+            //SequenceLabel.Visibility = Visibility.Hidden;
+            //SeqType.Visibility = Visibility.Hidden;
+            //ActionIndicator.Visibility = Visibility.Hidden;
+            //MainMessages.Visibility = Visibility.Hidden;
+            //SetupMessages.Visibility = Visibility.Hidden;
+            actionsList.Visibility = Visibility.Hidden;
             BlackSource.Visibility = Visibility.Hidden;
             _playbacktimer.Start();
             imagePlayer.Visibility = Visibility.Hidden;
@@ -637,12 +601,12 @@ namespace IntegratedPresenter.Main
             BlackSource.Visibility = Visibility.Visible;
             imagePlayer.Visibility = Visibility.Hidden;
             videoPlayer.Visibility = Visibility.Hidden;
-            SequenceLabel.Visibility = Visibility.Hidden;
-            SeqType.Visibility = Visibility.Hidden;
-            ActionIndicator.Visibility = Visibility.Hidden;
-            MainMessages.Visibility = Visibility.Hidden;
-            SetupMessages.Visibility = Visibility.Hidden;
+            //SequenceLabel.Visibility = Visibility.Hidden;
+            //SeqType.Visibility = Visibility.Hidden;
+            //ActionIndicator.Visibility = Visibility.Hidden;
+            //MainMessages.Visibility = Visibility.Hidden;
+            //SetupMessages.Visibility = Visibility.Hidden;
+            actionsList.Visibility = Visibility.Hidden;
         }
-
     }
 }
