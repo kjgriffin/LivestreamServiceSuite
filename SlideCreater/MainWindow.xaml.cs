@@ -902,16 +902,12 @@ namespace SlideCreater
 
             if (ofd.ShowDialog() == true)
             {
-                String selectedDirectory = System.IO.Path.GetDirectoryName(ofd.FileName);
-
-                /* if the directory is not empty, show a warning message */
-                bool carryOn = true;
-                DirectoryInfo di = new DirectoryInfo(selectedDirectory);
-                FileInfo[] files = di.GetFiles();
-                if (files.Length > 0)
+                _ = Task.Run(async () =>
                 {
+
+                    string selectedDirectory = System.IO.Path.GetDirectoryName(ofd.FileName);
+                    var files = Directory.GetFiles(selectedDirectory);
                     // Prep Directory
-                    var files = Directory.GetFiles(Path.GetDirectoryName(ofd.FileName));
                     if (files.Any())
                     {
                         if (MessageBox.Show("The selected directory is not empty. Do you want to delete all files in the direcotyr and contine?", "confirmation", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
@@ -932,7 +928,7 @@ namespace SlideCreater
                                     Generator = "Export",
                                     Inner = ex.ToString(),
                                     Level = XenonCompilerMessageType.Error,
-                                    SrcFile = Path.GetDirectoryName(ofd.FileName),
+                                    SrcFile = selectedDirectory,
                                 });
                                 UpdateErrorReport(alllogs);
                                 ActionState = ActionState.ErrorExporting;
@@ -940,7 +936,6 @@ namespace SlideCreater
                             }
                         }
                     }
-
 
                     if (legacyMode)
                     {
