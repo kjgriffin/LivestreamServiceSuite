@@ -92,8 +92,11 @@ namespace SlideCreater
             set
             {
                 _mActionState = value;
-                UpdateActionStatusLabel();
-                UpdateActionProgressBarVisibile();
+                Dispatcher.Invoke(() =>
+                {
+                    UpdateActionStatusLabel();
+                    UpdateActionProgressBarVisibile();
+                });
             }
         }
 
@@ -901,6 +904,38 @@ namespace SlideCreater
             {
                 await Task.Run(async () =>
                 {
+                    // Prep Directory
+                    var files = Directory.GetFiles(Path.GetDirectoryName(ofd.FileName));
+                    if (files.Any())
+                    {
+                        if (MessageBox.Show("The selected directory is not empty. Do you want to delete all files in the direcotyr and contine?", "confirmation", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                        {
+                            try
+                            {
+                                foreach (var file in files)
+                                {
+                                    File.Delete(file);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                alllogs.Add(new XenonCompilerMessage
+                                {
+                                    ErrorMessage = "Failed preparting output directory",
+                                    ErrorName = "Failed to Export!",
+                                    Generator = "Export",
+                                    Inner = ex.ToString(),
+                                    Level = XenonCompilerMessageType.Error,
+                                    SrcFile = Path.GetDirectoryName(ofd.FileName),
+                                });
+                                UpdateErrorReport(alllogs);
+                                ActionState = ActionState.ErrorExporting;
+                                return;
+                            }
+                        }
+                    }
+
+
                     if (legacyMode)
                     {
                         await SlideExporter.ExportSlides(System.IO.Path.GetDirectoryName(ofd.FileName), _proj, new List<XenonCompilerMessage>(), exportProgress); // for now ignore messages
@@ -913,6 +948,7 @@ namespace SlideCreater
                         UpdateErrorReport(alllogs);
                     }
                 });
+
                 ActionState = ActionState.SuccessExporting;
             }
             else

@@ -93,31 +93,6 @@ namespace Xenon.Renderer
             int csnum = 0;
             int TOTALSLIDES = proj.Slides.Count;
 
-            // manage directory correctly
-            try
-            {
-                if (Directory.Exists(directory))
-                {
-                    var files = Directory.GetFiles(directory);
-                    foreach (var file in files)
-                    {
-                        File.Delete(file);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                messages.Add(new XenonCompilerMessage
-                {
-                    ErrorName = "Failed to Export!",
-                    ErrorMessage = "Error preparing output directory",
-                    Generator = "SlideExporter",
-                    Inner = ex.ToString(),
-                    Level = XenonCompilerMessageType.Error,
-                    SrcFile = directory,
-                });
-                return;
-            }
 
             foreach (var rs in renderedSlides)
             {
