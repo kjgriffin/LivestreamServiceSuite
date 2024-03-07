@@ -902,7 +902,13 @@ namespace SlideCreater
 
             if (ofd.ShowDialog() == true)
             {
-                await Task.Run(async () =>
+                String selectedDirectory = System.IO.Path.GetDirectoryName(ofd.FileName);
+
+                /* if the directory is not empty, show a warning message */
+                bool carryOn = true;
+                DirectoryInfo di = new DirectoryInfo(selectedDirectory);
+                FileInfo[] files = di.GetFiles();
+                if (files.Length > 0)
                 {
                     // Prep Directory
                     var files = Directory.GetFiles(Path.GetDirectoryName(ofd.FileName));
