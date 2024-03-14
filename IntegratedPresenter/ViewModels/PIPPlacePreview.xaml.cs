@@ -74,15 +74,18 @@ namespace Integrated_Presenter.ViewModels
             {
                 _showActive = value;
 
+                Color red = (Color)FindResource("red");
+                //Color green = (Color)FindResource("green");
+                Color teal = (Color)FindResource("teal");
                 if (value)
                 {
-                    pipbdr.Background = new SolidColorBrush(Color.FromArgb(65, 255, 0, 0));
-                    rectpip.Fill = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
+                    pipbdr.Background = new SolidColorBrush(red) { Opacity = 0.25 };
+                    rectpip.Fill = new SolidColorBrush(red);
                 }
                 else
                 {
-                    pipbdr.Background = new SolidColorBrush(Color.FromArgb(65, 237, 175, 59));
-                    rectpip.Fill = new SolidColorBrush(Color.FromArgb(255, 237, 175, 59));
+                    pipbdr.Background = new SolidColorBrush(teal) { Opacity = 0.25 };
+                    rectpip.Fill = new SolidColorBrush(teal);
                 }
 
                 OnPropertyChanged();

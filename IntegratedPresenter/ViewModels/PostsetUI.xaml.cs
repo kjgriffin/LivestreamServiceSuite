@@ -32,14 +32,14 @@ namespace IntegratedPresenter.ViewModels
 
             Dispatcher.Invoke(() =>
             {
-                cam1.Background = mappedwindows[1] == id ? Brushes.Green : Brushes.Black;
-                cam2.Background = mappedwindows[2] == id ? Brushes.Green : Brushes.Black;
-                cam3.Background = mappedwindows[3] == id ? Brushes.Green : Brushes.Black;
-                cam4.Background = mappedwindows[4] == id ? Brushes.Green : Brushes.Black;
-                cam5.Background = mappedwindows[5] == id ? Brushes.Green : Brushes.Black;
-                cam6.Background = mappedwindows[6] == id ? Brushes.Green : Brushes.Black;
-                cam7.Background = mappedwindows[7] == id ? Brushes.Green : Brushes.Black;
-                cam8.Background = mappedwindows[8] == id ? Brushes.Green : Brushes.Black;
+                cam1.Background = mappedwindows[1] == id ? FindResource("greenBrush") as Brush : Brushes.Black;
+                cam2.Background = mappedwindows[2] == id ? FindResource("greenBrush") as Brush : Brushes.Black;
+                cam3.Background = mappedwindows[3] == id ? FindResource("greenBrush") as Brush : Brushes.Black;
+                cam4.Background = mappedwindows[4] == id ? FindResource("greenBrush") as Brush : Brushes.Black;
+                cam5.Background = mappedwindows[5] == id ? FindResource("greenBrush") as Brush : Brushes.Black;
+                cam6.Background = mappedwindows[6] == id ? FindResource("greenBrush") as Brush : Brushes.Black;
+                cam7.Background = mappedwindows[7] == id ? FindResource("greenBrush") as Brush : Brushes.Black;
+                cam8.Background = mappedwindows[8] == id ? FindResource("greenBrush") as Brush : Brushes.Black;
             });
         }
     }

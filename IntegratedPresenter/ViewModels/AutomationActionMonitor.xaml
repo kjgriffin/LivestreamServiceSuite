@@ -22,7 +22,7 @@
                     </Grid.ColumnDefinitions>
                     <Rectangle Height="25">
                         <Rectangle.Fill>
-                            <SolidColorBrush x:Name="imgCondBrush" Color="#cf3a53"></SolidColorBrush>
+                            <SolidColorBrush x:Name="imgCondBrush" Color="{StaticResource red}"></SolidColorBrush>
                         </Rectangle.Fill>
                         <Rectangle.OpacityMask>
                             <ImageBrush x:Name="imgCondIcon" ImageSource="../Icons/RedNoEntry.png"></ImageBrush>
@@ -30,17 +30,35 @@
                     </Rectangle>
                     <Viewbox Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center">
                         <StackPanel Height="30" Name="spReqCond" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Foreground="#51db8f" FontSize="20" FontWeight="Bold">1</TextBlock>
-                            <TextBlock Foreground="#cf3a53" FontSize="20" FontWeight="Bold">2</TextBlock>
+                            <TextBlock Foreground="{StaticResource greenBrush}" FontSize="20" FontWeight="Bold">1</TextBlock>
+                            <TextBlock Foreground="{StaticResource redBrush}" FontSize="20" FontWeight="Bold">2</TextBlock>
                         </StackPanel>
                     </Viewbox>
                 </Grid>
             </Grid>
             <Grid Grid.Column="1">
-                <Image Name="imgTypeIcon" Source="../Icons/BlueBefore.png" Height="25"></Image>
+                <!--<Image Name="imgTypeIcon" Source="../Icons/BlueBefore.png" Height="25"></Image>-->
+                <Rectangle Height="25">
+                    <Rectangle.Fill>
+                        <SolidColorBrush x:Name="imgTypeBrush" Color="{StaticResource teal}"></SolidColorBrush>
+                    </Rectangle.Fill>
+                    <Rectangle.OpacityMask>
+                        <ImageBrush x:Name="imgTypeIcon" ImageSource="../Icons/BlueBefore.png"></ImageBrush>
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+
             </Grid>
             <Grid Grid.Column="2">
-                <Image Name="imgStatusIcon" Source="../Icons/YellowWarn.png" Height="25"></Image>
+                <!--<Image Name="imgStatusIcon" Source="../Icons/YellowWarn.png" Height="25"></Image>-->
+                <Rectangle Height="25">
+                    <Rectangle.Fill>
+                        <SolidColorBrush x:Name="imgStatusBrush" Color="{StaticResource yellow}"></SolidColorBrush>
+                    </Rectangle.Fill>
+                    <Rectangle.OpacityMask>
+                        <ImageBrush x:Name="imgStatusIcon" ImageSource="../Icons/YellowWarn.png"></ImageBrush>
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+
             </Grid>
             <Grid Grid.Column="3">
                 <Viewbox HorizontalAlignment="Right">

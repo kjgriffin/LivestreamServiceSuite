@@ -40,16 +40,20 @@ namespace Integrated_Presenter.ViewModels
             switch (_action?.State)
             {
                 case TrackedActionState.Ready:
-                    imgStatusIcon.Source = null;
+                    imgStatusIcon.ImageSource = null;
+                    imgStatusBrush.Color = Colors.Transparent;
                     break;
                 case TrackedActionState.Started:
-                    imgStatusIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/OrangeSandTimer.png"));
+                    imgStatusIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/OrangeSandTimer.png"));
+                    imgStatusBrush.Color = (Color)FindResource("yellow");
                     break;
                 case TrackedActionState.Done:
-                    imgStatusIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreenCheck.png"));
+                    imgStatusIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/GreenCheck.png"));
+                    imgStatusBrush.Color = (Color)FindResource("green");
                     break;
                 case TrackedActionState.Skipped:
-                    imgStatusIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/YellowSkip.png"));
+                    imgStatusIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/YellowSkip.png"));
+                    imgStatusBrush.Color = (Color)FindResource("red");
                     break;
             }
 
@@ -58,27 +62,32 @@ namespace Integrated_Presenter.ViewModels
                 case TrackedActionRunType.Setup:
                     if (_action?.State == TrackedActionState.Done || _action?.State == TrackedActionState.Skipped)
                     {
-                        imgTypeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/LightBlueBefore.png"));
+                        imgTypeIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/LightBlueBefore.png"));
+                        imgTypeBrush.Color = (Color)FindResource("gray");
                     }
                     else
                     {
-                        imgTypeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/BlueBefore.png"));
+                        imgTypeIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/BlueBefore.png"));
+                        imgTypeBrush.Color = (Color)FindResource("teal");
                     }
                     break;
                 case TrackedActionRunType.Main:
-                    imgTypeIcon.Source = null;
+                    imgTypeIcon.ImageSource = null;
+                    imgTypeBrush.Color = Colors.Transparent;
                     break;
                 case TrackedActionRunType.Note:
-                    imgStatusIcon.Source = null;
-                    imgTypeIcon.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/YellowWarn.png"));
+                    imgStatusIcon.ImageSource = null;
+                    imgStatusBrush.Color = Colors.Transparent;
+                    imgTypeIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/YellowWarn.png"));
+                    imgTypeBrush.Color = (Color)FindResource("yellow");
                     break;
             }
 
             bool willRun = _action?.Action?.ExpectedConditions?.HasConditions == true ? false : true;
             spReqCond.Children.Clear();
 
-            SolidColorBrush green = new SolidColorBrush(Color.FromRgb(3, 207, 8));
-            SolidColorBrush red = new SolidColorBrush(Color.FromRgb(192, 0, 0));
+            Brush green = FindResource("greenBrush") as Brush;
+            Brush red = FindResource("redBrush") as Brush;
 
             int i = 0;
             foreach (var pexpr in _action?.Action?.ExpectedConditions?.Products)
@@ -147,12 +156,12 @@ namespace Integrated_Presenter.ViewModels
             if (!willRun)
             {
                 imgCondIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/RedNoEntry.png"));
-                imgCondBrush.Color = Color.FromRgb(0xcf, 0x3a, 0x53);
+                imgCondBrush.Color = (Color)FindResource("red");
             }
             else if (_action?.Action?.ExpectedConditions?.HasConditions == true)
             {
                 imgCondIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/GreenPlay.png"));
-                imgCondBrush.Color = Color.FromRgb(0x51, 0xdb, 0x8f);
+                imgCondBrush.Color = (Color)FindResource("green");
             }
             else
             {

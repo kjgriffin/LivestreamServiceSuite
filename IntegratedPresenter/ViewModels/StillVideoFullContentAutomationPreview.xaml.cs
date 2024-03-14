@@ -17,65 +17,74 @@ namespace Integrated_Presenter.ViewModels
     /// </summary>
     public partial class StillVideoFullContentAutomationPreview : UserControl
     {
+        Brush gray;
+        Brush red;
+        Brush green;
+        Brush teal;
+
         public StillVideoFullContentAutomationPreview()
         {
             InitializeComponent();
+            gray = FindResource("grayBrush") as Brush;
+            red = FindResource("redBrush") as Brush;
+            green = FindResource("greenBrush") as Brush;
+            teal = FindResource("tealBrush") as Brush;
         }
 
         private void DisableConditionalTrans()
         {
-            rectIfTrans1.Fill = new SolidColorBrush(Colors.Gray);
-            rectIfTrans2.Fill = new SolidColorBrush(Colors.Gray);
-            rectIfTrans3.Fill = new SolidColorBrush(Colors.Gray);
-            imgAutoTrans.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreyTransArrows.png"));
+            rectIfTrans1.Fill = gray;
+            rectIfTrans2.Fill = gray;
+            rectIfTrans3.Fill = gray;
+            imgAutoTrans.Fill = gray;
             tbAutoTransCamName.Text = "";
             tbAutoTransCamName.Foreground = new SolidColorBrush(Colors.Gray);
         }
 
         private void EnableConditionalTrans(string camName)
         {
-            rectIfTrans1.Fill = new SolidColorBrush(Colors.Red);
-            rectIfTrans2.Fill = new SolidColorBrush(Colors.Red);
-            rectIfTrans3.Fill = new SolidColorBrush(Colors.Red);
-            imgAutoTrans.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/RedTransArrows.png"));
+            rectIfTrans1.Fill = red;
+            rectIfTrans2.Fill = red;
+            rectIfTrans3.Fill = red;
+            imgAutoTrans.Fill = red;
             tbAutoTransCamName.Text = camName;
-            tbAutoTransCamName.Foreground = new SolidColorBrush(Colors.Red);
+            tbAutoTransCamName.Foreground = red;
         }
 
         private void DisableDSKConditional()
         {
-            rect1IfDSK.Fill = new SolidColorBrush(Colors.Gray);
-            rect2IfDSK.Fill = new SolidColorBrush(Colors.Gray);
-            rect3IfDSK.Fill = new SolidColorBrush(Colors.Gray);
-            imgDKSDelay.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreyTimer.png"));
-            imgDSK1Off.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/KeyGrey.png"));
+            rect1IfDSK.Fill = gray;
+            rect2IfDSK.Fill = gray;
+            rect3IfDSK.Fill = gray;
+            imgDSKDelay.Fill = gray;
+            imgDSK1Off.Fill = gray;
         }
 
         private void EnableDSKConditional()
         {
-            rect1IfDSK.Fill = new SolidColorBrush(Colors.Red);
-            rect2IfDSK.Fill = new SolidColorBrush(Colors.Red);
-            rect3IfDSK.Fill = new SolidColorBrush(Colors.Red);
-            imgDKSDelay.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/BlueTimer.png"));
-            imgDSK1Off.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/KeyRed.png"));
+            rect1IfDSK.Fill = red;
+            rect2IfDSK.Fill = red;
+            rect3IfDSK.Fill = red;
+            imgDSKDelay.Fill = teal;
+            imgDSK1Off.Fill = red;
         }
 
         private void DisableVideoPlaybackConditional()
         {
-            rect1IfVideo.Fill = new SolidColorBrush(Colors.Gray);
-            rect2IfVideo.Fill = new SolidColorBrush(Colors.Gray);
-            rect3IfVideo.Fill = new SolidColorBrush(Colors.Gray);
-            imgVideoPlay.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreyPlay.png"));
-            imgVideoPreroll.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreyTimer.png"));
+            rect1IfVideo.Fill = gray;
+            rect2IfVideo.Fill = gray;
+            rect3IfVideo.Fill = gray;
+            imgVideoPlay.Fill = gray;
+            imgVideoPreroll.Fill = gray;
         }
 
         private void EnableVideoPlaybackConditional()
         {
-            rect1IfVideo.Fill = new SolidColorBrush(Colors.Red);
-            rect2IfVideo.Fill = new SolidColorBrush(Colors.Red);
-            rect3IfVideo.Fill = new SolidColorBrush(Colors.Red);
-            imgVideoPlay.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreenPlay.png"));
-            imgVideoPreroll.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/BlueTimer.png"));
+            rect1IfVideo.Fill = red;
+            rect2IfVideo.Fill = red;
+            rect3IfVideo.Fill = red;
+            imgVideoPlay.Fill = green;
+            imgVideoPreroll.Fill = teal;
         }
 
 

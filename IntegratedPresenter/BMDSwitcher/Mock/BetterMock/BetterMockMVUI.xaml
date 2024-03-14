@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Mock Multiviewer" Height="1180" Width="1920">
     <Grid>
-        <Grid Background="#272727">
+        <Grid Background="{StaticResource darkBlackBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"></RowDefinition>
                 <RowDefinition></RowDefinition>
@@ -15,35 +15,11 @@
 
             <Grid>
                 <StackPanel Orientation="Horizontal">
-                    <Button Margin="20,0,0,0" Width="300" Height="90" Focusable="False" Click="ClickResetCameras" IsTabStop="False">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="2">
-                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke" FontSize="30">RESET CAMERAS</ContentControl>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Cursor" Value="Hand"></Setter>
-                                        <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
+                    <Button Margin="20,0,0,0" Width="300" Height="90" Focusable="False" Click="ClickResetCameras" IsTabStop="False" Style="{StaticResource SelectorTextButton}" FontSize="30">
+                        RESET CAMERAS
                     </Button>
-                    <Button Margin="20,0,0,0" Width="300" Height="90" Focusable="False" Click="ClickMoveCamera" IsTabStop="False">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="Yellow" Margin="3" BorderThickness="2">
-                                    <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke" FontSize="30">MOVE CAMERA</ContentControl>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Cursor" Value="Hand"></Setter>
-                                        <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
+                    <Button Margin="20,0,0,0" Width="300" Height="90" Focusable="False" Click="ClickMoveCamera" IsTabStop="False" Style="{StaticResource SelectorTextButton}" FontSize="30">
+                        MOVE CAMERA
                     </Button>
                 </StackPanel>
             </Grid>

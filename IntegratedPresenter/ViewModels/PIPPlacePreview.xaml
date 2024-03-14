@@ -16,7 +16,7 @@
                         </Border>
                     </Viewbox>
 
-                    <Border Name="pipbdr" Background="#60edaf3b" Width="32" Height="18">
+                    <Border Name="pipbdr" Background="{StaticResource tealOpcBrush}" Width="32" Height="18">
                         <Border.LayoutTransform>
                             <ScaleTransform x:Name="pipscaletransform" ScaleX="0.4" ScaleY="0.4"></ScaleTransform>
                         </Border.LayoutTransform>
@@ -28,7 +28,7 @@
                                 <TranslateTransform x:Name="piptranslatetransform" X="0" Y="0"></TranslateTransform>
                             </TransformGroup>
                         </Border.RenderTransform>
-                        <Rectangle Name="rectpip" Fill="#ffedaf3b">
+                        <Rectangle Name="rectpip" Fill="{StaticResource tealBrush}">
                             <Rectangle.Clip>
                                 <RectangleGeometry x:Name="pipmaskclip" Rect="0,0,32,18"></RectangleGeometry>
                             </Rectangle.Clip>

@@ -1,0 +1,272 @@
+﻿<UserControl x:Class="Integrated_Presenter.ViewModels.DVEPIPControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Integrated_Presenter.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <TextBlock TextAlignment="Center" Style="{StaticResource GrayText}" Margin="10">PICTURE IN PICTURE CONTROLS</TextBlock>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Viewbox>
+                            <StackPanel Orientation="Horizontal">
+                                <Grid>
+                                    <local:PipPresetButton x:Name="pipprestbtn_1" PlaceName="DEFAULT" KSCText="[" IsActive="false" OnClick="pipprestbtn_1_OnClick"></local:PipPresetButton>
+                                </Grid>
+                                <Grid>
+                                    <local:PipPresetButton x:Name="pipprestbtn_2" PlaceName="DEFAULT" KSCText="]" IsActive="false" OnClick="pipprestbtn_2_OnClick"></local:PipPresetButton>
+                                </Grid>
+                                <Grid>
+                                    <local:PipPresetButton x:Name="pipprestbtn_3" PlaceName="DEFAULT" KSCText="/" IsActive="false" OnClick="pipprestbtn_3_OnClick"></local:PipPresetButton>
+                                </Grid>
+                                <Grid>
+                                    <local:PipPresetButton x:Name="pipprestbtn_4" PlaceName="DEFAULT" KSCText="*" IsActive="false" OnClick="pipprestbtn_4_OnClick"></local:PipPresetButton>
+                                </Grid>
+                                <Grid>
+                                    <local:PipPresetButton x:Name="pipprestbtn_5" PlaceName="DEFAULT" KSCText="-" IsActive="false" OnClick="pipprestbtn_5_OnClick"></local:PipPresetButton>
+                                </Grid>
+                            </StackPanel>
+                        </Viewbox>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <TextBlock TextAlignment="Center" Margin="0,15,0,0" Style="{StaticResource GrayText}">FILL SOURCE</TextBlock>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Viewbox Name="ksc_pf1" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">1</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP1" Name="BtnPIPFillProgram1" Style="{StaticResource SwitcherButton_Disabled}">CAM 1</Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Viewbox Name="ksc_pf2" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">2</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP2" Name="BtnPIPFillProgram2" Style="{StaticResource SwitcherButton_Disabled}">CAM 2</Button>
+                        </Grid>
+                        <Grid Grid.Column="2">
+                            <Viewbox x:Name="ksc_pf3" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">3</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP3" Name="BtnPIPFillProgram3" Style="{StaticResource SwitcherButton_Disabled}">CAM 3</Button>
+                        </Grid>
+                        <Grid Grid.Column="3">
+                            <Viewbox Name="ksc_pf4" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">4</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP4" Name="BtnPIPFillProgram4" Style="{StaticResource SwitcherButton_Disabled}">CAM 4</Button>
+                        </Grid>
+                        <Grid Grid.Column="4">
+                            <Viewbox Name="ksc_pf5" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">5</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP5" Name="BtnPIPFillProgram5" Style="{StaticResource SwitcherButton_Disabled}">CAM 5</Button>
+                        </Grid>
+                        <Grid Grid.Column="5">
+                            <Viewbox Name="ksc_pf6" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">6</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP6" Name="BtnPIPFillProgram6" Style="{StaticResource SwitcherButton_Disabled}">CAM 6</Button>
+                        </Grid>
+                        <Grid Grid.Column="6">
+                            <Viewbox Name="ksc_pf7" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">7</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP7" Name="BtnPIPFillProgram7" Style="{StaticResource SwitcherButton_Disabled}">CAM 7</Button>
+                        </Grid>
+                        <Grid Grid.Column="7">
+                            <Viewbox Name="ksc_pf8" IsHitTestVisible="False" Panel.ZIndex="1" Height="80" Width="80">
+                                <Grid>
+                                    <TextBlock Margin="0,0,0,40" Panel.ZIndex="1" Foreground="White" FontWeight="ExtraBold" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    +
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect ShadowDepth="7" Direction="-120" Color="Black" Opacity="1" BlurRadius="4"></DropShadowEffect>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Vertical">
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">8</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Border Margin="20" Style="{StaticResource UIShortcutBdr}">
+                                            <Viewbox>
+                                                <TextBlock Style="{StaticResource UIShortcut}">L Ctrl</TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
+                            <Button IsTabStop="False" Focusable="False" Click="ClickPIP8" Name="BtnPIPFillProgram8" Style="{StaticResource SwitcherButton_Disabled}">CAM 8</Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

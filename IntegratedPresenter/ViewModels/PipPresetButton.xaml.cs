@@ -42,7 +42,7 @@ namespace Integrated_Presenter.ViewModels
             set
             {
                 _pipPlace = value;
-                var b = ((PIPPlacePreview)btn.Template.FindName("PIPPreview", btn));
+                var b = btn.Content as PIPPlacePreview;
                 if (b != null)
                 {
                     b.PIPPlace = value;
@@ -62,7 +62,7 @@ namespace Integrated_Presenter.ViewModels
             set
             {
                 _placeName = value;
-                var b = ((PIPPlacePreview)btn.Template.FindName("PIPPreview", btn));
+                var b = btn.Content as PIPPlacePreview;
                 if (b != null)
                 {
                     b.PlaceName = value;
@@ -107,16 +107,21 @@ namespace Integrated_Presenter.ViewModels
             set
             {
                 _isActive = value;
-                var b = ((PIPPlacePreview)btn.Template.FindName("PIPPreview", btn));
+                var b = btn.Content as PIPPlacePreview;
                 if (b != null)
                 {
                     b.ShowActive = value;
                 }
 
-                var bdr = ((Border)btn.Template.FindName("Border", btn));
+                var bdr = ((Border)btn.Template.FindName("BorderOnAir", btn));
                 if (bdr != null)
                 {
-                    bdr.BorderBrush = value ? Brushes.Red : Brushes.White;
+                    Brush bdrBrush = value ? FindResource("RedLight") as Brush : FindResource("tealBrush") as Brush;
+                    //if (IsMouseOver)
+                    //{
+                    //    bdrBrush = FindResource("lightBlueBrush") as Brush;
+                    //}
+                    bdr.BorderBrush = bdrBrush;
                 }
 
 

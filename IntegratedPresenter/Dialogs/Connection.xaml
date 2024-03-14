@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IntegratedPresenter.Main"
         mc:Ignorable="d"
-        Title="Connect" Height="120" Width="380" Background="#3f3f3f">
+        Title="Connect" Height="120" Width="380" Background="{StaticResource darkBlackBrush}">
     <Grid>
         <StackPanel VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal">
@@ -13,35 +13,11 @@
                 <TextBox Name="tbIP" Width="200" Margin="10,10,10,10" Style="{StaticResource darkTextbox}"></TextBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Click="Cancel" Margin="10,10,10,10" Width="100" Height="30">
-                    <Button.Template>
-                        <ControlTemplate>
-                            <Border Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="1">
-                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Orange">CANCEL</ContentControl>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Cursor" Value="Hand"></Setter>
-                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
+                <Button Click="Cancel" Margin="10,10,10,10" Width="100" Height="30" Style="{StaticResource SelectorTextButton}">
+                    CANCEL
                 </Button>
-                <Button Click="Connect" Margin="10,10,10,10" Width="100" Height="30">
-                    <Button.Template>
-                        <ControlTemplate>
-                            <Border Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="1">
-                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Orange">CONNECT</ContentControl>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Cursor" Value="Hand"></Setter>
-                                    <Setter Property="BorderBrush" Value="Red" TargetName="Border"></Setter>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
+                <Button Click="Connect" Margin="10,10,10,10" Width="100" Height="30" Style="{StaticResource SelectorTextButton}">
+                    CONNECT
                 </Button>
             </StackPanel>
         </StackPanel>

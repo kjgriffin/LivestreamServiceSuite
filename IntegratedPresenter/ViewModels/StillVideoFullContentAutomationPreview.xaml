@@ -16,52 +16,76 @@
                 <RowDefinition Height="80"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <TextBlock Background="#20000000" Foreground="White" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center">STILL / VIDEO</TextBlock>
+                <TextBlock Background="#20000000" Foreground="{StaticResource whiteBrush}" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center">STILL / VIDEO</TextBlock>
             </Grid>
             <Grid Grid.Row="1">
-                <Rectangle Name="rect1IfDSK" Margin="20,10,0,0" Fill="Red" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
-                <Rectangle Name="rect2IfDSK" Margin="20,0,0,0" Fill="Red" Width="5" Height="100" HorizontalAlignment="Left" VerticalAlignment="Center"></Rectangle>
-                <Rectangle Name="rect3IfDSK" Margin="20,0,0,10" Fill="Red" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Rectangle>
+                <Rectangle Name="rect1IfDSK" Margin="20,10,0,0" Fill="{StaticResource redBrush}" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
+                <Rectangle Name="rect2IfDSK" Margin="20,0,0,0" Fill="{StaticResource redBrush}" Width="5" Height="100" HorizontalAlignment="Left" VerticalAlignment="Center"></Rectangle>
+                <Rectangle Name="rect3IfDSK" Margin="20,0,0,10" Fill="{StaticResource redBrush}" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Rectangle>
                 <StackPanel HorizontalAlignment="Left" Orientation="Vertical" VerticalAlignment="Center" Margin="40,0,0,0">
                     <StackPanel Height="40" Orientation="Horizontal">
-                        <Image Name="imgDSK1Off" Source="../Icons/KeyGrey.png" Height="40"></Image>
+                        <Rectangle x:Name="imgDSK1Off" Fill="{StaticResource redBrush}" Height="40" Width="40">
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="../Icons/KeyGrey.png"></ImageBrush>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
                         <TextBlock Margin="10,0,0,0" Foreground="White" VerticalAlignment="Center" FontSize="20">DSK1 OFF AIR</TextBlock>
                     </StackPanel>
                     <StackPanel Height="40" Orientation="Horizontal">
-                        <Image Name="imgDKSDelay" Height="40" Source="../Icons/BlueTimer.png" HorizontalAlignment="Left"></Image>
+                        <Rectangle x:Name="imgDSKDelay" Fill="{StaticResource tealBrush}" Height="40" Width="40">
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="../Icons/BlueTimer.png"></ImageBrush>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
                         <TextBlock Margin="10,0,0,0" Foreground="#adadad" VerticalAlignment="Center" FontSize="20">WAIT</TextBlock>
                     </StackPanel>
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="2">
                 <StackPanel Height="40" Orientation="Horizontal">
-                    <Image Name="imgSlideChangeEvent" Source="../Icons/YellowBolt.png" HorizontalAlignment="Left"></Image>
+                    <Rectangle Name="imgSlideChangeEvent" Fill="{StaticResource yellowBrush}" Height="40" Width="40">
+                        <Rectangle.OpacityMask>
+                            <ImageBrush ImageSource="../Icons/YellowBolt.png"></ImageBrush>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
                     <TextBlock Margin="10,0,0,0" Foreground="#adadad" VerticalAlignment="Center" FontSize="20">NEXT SLIDE</TextBlock>
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="3">
-                <Rectangle Name="rect1IfVideo" Margin="20,10,0,0" Fill="Red" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
-                <Rectangle Name="rect2IfVideo" Margin="20,0,0,0" Fill="Red" Width="5" Height="100" HorizontalAlignment="Left" VerticalAlignment="Center"></Rectangle>
-                <Rectangle Name="rect3IfVideo" Margin="20,0,0,10" Fill="Red" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Rectangle>
+                <Rectangle Name="rect1IfVideo" Margin="20,10,0,0" Fill="{StaticResource redBrush}" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
+                <Rectangle Name="rect2IfVideo" Margin="20,0,0,0" Fill="{StaticResource redBrush}" Width="5" Height="100" HorizontalAlignment="Left" VerticalAlignment="Center"></Rectangle>
+                <Rectangle Name="rect3IfVideo" Margin="20,0,0,10" Fill="{StaticResource redBrush}" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Rectangle>
                 <StackPanel HorizontalAlignment="Left" Orientation="Vertical" VerticalAlignment="Center" Margin="40,0,0,0">
                     <StackPanel Height="40" Orientation="Horizontal">
-                        <Image Name="imgVideoPlay" Source="../Icons/GreenPlay.png" Height="40"></Image>
+                        <Rectangle Name="imgVideoPlay" Fill="{StaticResource greenBrush}" Height="40" Width="40">
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="../Icons/GreenPlay.png"></ImageBrush>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
                         <TextBlock Margin="10,0,0,0" Foreground="White" VerticalAlignment="Center" FontSize="20">START PLAYBACK</TextBlock>
                     </StackPanel>
                     <StackPanel Height="40" Orientation="Horizontal">
-                        <Image Name="imgVideoPreroll" Height="40" Source="../Icons/BlueTimer.png" HorizontalAlignment="Left"></Image>
+                        <Rectangle Name="imgVideoPreroll" Fill="{StaticResource tealBrush}" Height="40" Width="40">
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="../Icons/BlueTimer.png"></ImageBrush>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
                         <TextBlock Margin="10,0,0,0" Foreground="#adadad" VerticalAlignment="Center" FontSize="20">PREROLL</TextBlock>
                     </StackPanel>
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="4">
-                <Rectangle Name="rectIfTrans1" Margin="20,10,0,0" Fill="Red" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
-                <Rectangle Name="rectIfTrans2" Margin="20,0,0,0" Fill="Red" Width="5" Height="60" HorizontalAlignment="Left" VerticalAlignment="Center"></Rectangle>
-                <Rectangle Name="rectIfTrans3" Margin="20,0,0,10" Fill="Red" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Rectangle>
+                <Rectangle Name="rectIfTrans1" Margin="20,10,0,0" Fill="{StaticResource redBrush}" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
+                <Rectangle Name="rectIfTrans2" Margin="20,0,0,0" Fill="{StaticResource redBrush}" Width="5" Height="60" HorizontalAlignment="Left" VerticalAlignment="Center"></Rectangle>
+                <Rectangle Name="rectIfTrans3" Margin="20,0,0,10" Fill="{StaticResource redBrush}" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Rectangle>
                 <StackPanel HorizontalAlignment="Left" Orientation="Vertical" VerticalAlignment="Center" Margin="40,0,0,0">
                     <StackPanel Height="40" Orientation="Horizontal">
-                        <Image Name="imgAutoTrans" Source="../Icons/RedTransArrows.png" Height="40"></Image>
-                        <TextBlock Name="tbAutoTransCamName" Margin="10,0,0,0" Foreground="Red" VerticalAlignment="Center" FontSize="20">SLIDE</TextBlock>
+                        <Rectangle Name="imgAutoTrans" Fill="{StaticResource redBrush}" Height="40" Width="40">
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="../Icons/RedTransArrows.png"></ImageBrush>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                        <TextBlock Name="tbAutoTransCamName" Margin="10,0,0,0" Foreground="{StaticResource redBrush}" VerticalAlignment="Center" FontSize="20">SLIDE</TextBlock>
                     </StackPanel>
                 </StackPanel>
             </Grid>

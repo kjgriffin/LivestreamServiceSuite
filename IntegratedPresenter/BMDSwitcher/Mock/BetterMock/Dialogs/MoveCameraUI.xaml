@@ -13,46 +13,22 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Grid Background="#272727">
+        <Grid Background="{StaticResource darkBlackBrush}">
             <StackPanel Orientation="Horizontal">
                 <ComboBox Name="cbCams" Width="500" Margin="10" HorizontalContentAlignment="Center" VerticalAlignment="Center"></ComboBox>
-                <Button Click="MoveCamera" Margin="20,0,0,0" Width="250" Height="80" Focusable="False" IsTabStop="False">
-                    <Button.Template>
-                        <ControlTemplate>
-                            <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="2">
-                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke" FontSize="30">MOVE CAMERA</ContentControl>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Cursor" Value="Hand"></Setter>
-                                    <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
+                <Button Click="MoveCamera" Margin="20,0,0,0" Width="250" Height="80" Focusable="False" IsTabStop="False" Style="{StaticResource SelectorTextButton}" FontSize="30">
+                    MOVE CAMERA
                 </Button>
 
-                <Button Click="LoadCustom" Margin="20,0,0,0" Width="250" Height="80" Focusable="False" IsTabStop="False">
-                    <Button.Template>
-                        <ControlTemplate>
-                            <Border Padding="10" Name="Border" Background="#1d1d1d" BorderBrush="Orange" Margin="3" BorderThickness="2">
-                                <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="WhiteSmoke" FontSize="30">LOAD CUSTOM</ContentControl>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Cursor" Value="Hand"></Setter>
-                                    <Setter Property="BorderBrush" Value="red   " TargetName="Border"></Setter>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
+                <Button Click="LoadCustom" Margin="20,0,0,0" Width="250" Height="80" Focusable="False" IsTabStop="False" Style="{StaticResource SelectorTextButton}" FontSize="30">
+                LOAD CUSTOM
                 </Button>
 
 
             </StackPanel>
         </Grid>
 
-        <Grid Background="#171717" Grid.Row="1">
+        <Grid Background="{StaticResource darkBrush}" Grid.Row="1">
             <ScrollViewer>
                 <WrapPanel Name="wpOptions">
                     <WrapPanel.Resources>

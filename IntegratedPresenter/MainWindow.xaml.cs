@@ -89,10 +89,38 @@ namespace IntegratedPresenter.Main
 
         private readonly ILog _logger = LogManager.GetLogger("UserLogger");
 
+
+        Brush redBrush;
+        Brush greenBrush;
+        Brush yellowBrush;
+        Brush tealBrush;
+        Brush lightBlueBrush;
+        Brush darkBrush;
+        Brush lightBrush;
+        Brush grayBrush;
+        Brush whiteBrush;
+
+        Brush greenLight;
+        Brush redLight;
+
         public MainWindow()
         {
             DataContext = this;
             InitializeComponent();
+
+            redBrush = FindResource("redBrush") as Brush;
+            greenBrush = FindResource("greenBrush") as Brush;
+            yellowBrush = FindResource("yellowBrush") as Brush;
+            tealBrush = FindResource("tealBrush") as Brush;
+            lightBlueBrush = FindResource("lightBlueBrush") as Brush;
+            darkBrush = FindResource("darkBrush") as Brush;
+            lightBrush = FindResource("lightBrush") as Brush;
+            grayBrush = FindResource("grayBrush") as Brush;
+            whiteBrush = FindResource("whiteBrush") as Brush;
+
+            greenLight = FindResource("GreenLight") as Brush;
+            redLight = FindResource("RedLight") as Brush;
+
 
             // load build/version info
             var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Integrated_Presenter.version.json");
@@ -146,6 +174,7 @@ namespace IntegratedPresenter.Main
 
             // set a default config
             SetDefaultConfig();
+            SetSwitcherSettings(false);
             LoadUserSettings(Configurations.FeatureConfig.IntegratedPresenterFeatures.Default());
 
             ShowHideShortcutsUI();
@@ -154,9 +183,13 @@ namespace IntegratedPresenter.Main
             DisableSwitcherControls();
 
             keyPatternControls.InitUIDrivers(this.ConvertSourceIDToButton, this.ConvertButtonToSourceID);
+            chromaControls.InitUIDrivers(this.ConvertSourceIDToButton, this.ConvertButtonToSourceID);
+            dvepipControls.InitUIDrivers(this.ConvertSourceIDToButton, this.ConvertButtonToSourceID);
+            chromaControls.SetLogger(_logger);
+            dvepipControls.SetLogger(_logger);
 
             // update PIP place hotkeys
-            UpdateUIPIPPlaceKeys();
+            dvepipControls.UpdateUIPIPPlaceKeys(_lastState);
 
             UpdateRealTimeClock();
             UpdateSlideControls();
@@ -380,15 +413,15 @@ namespace IntegratedPresenter.Main
             {
                 if (timeonshot > warnShottime)
                 {
-                    TbShotClock.Foreground = Brushes.Red;
+                    TbShotClock.Foreground = redBrush;
                 }
                 else if (timeonshot > prewarnShottime)
                 {
-                    TbShotClock.Foreground = Brushes.Yellow;
+                    TbShotClock.Foreground = yellowBrush;
                 }
                 else
                 {
-                    TbShotClock.Foreground = Brushes.Orange;
+                    TbShotClock.Foreground = lightBlueBrush;
                 }
                 if (timeonshot.Hours > 0)
                 {
@@ -441,17 +474,17 @@ namespace IntegratedPresenter.Main
             if (connected)
             {
                 tb_switcherConnection.Text = "Connected";
-                tb_switcherConnection.Foreground = Brushes.LimeGreen;
+                tb_switcherConnection.Foreground = greenBrush;
             }
             else if (searching)
             {
                 tb_switcherConnection.Text = "Searching...";
-                tb_switcherConnection.Foreground = Brushes.Yellow;
+                tb_switcherConnection.Foreground = yellowBrush;
             }
             else
             {
                 tb_switcherConnection.Text = "Disconnected";
-                tb_switcherConnection.Foreground = Brushes.Red;
+                tb_switcherConnection.Foreground = redBrush;
             }
         }
 
@@ -472,7 +505,8 @@ namespace IntegratedPresenter.Main
                 // Try an use a thread safe variant
                 //switcherManager = new BMDSwitcherManager(this, autoTransMRE);
                 switcherManager = new SafeBMDSwitcher(autoTransMRE, _logger, this.Title);
-                keyPatternControls.SetSwitcherDriver(switcherManager);
+                ApplyNewSwitcher(switcherManager);
+                //keyPatternControls.SetSwitcherDriver(switcherManager);
 
 
                 switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
@@ -484,6 +518,13 @@ namespace IntegratedPresenter.Main
                 // give UI update time
                 switcherManager.TryConnect(connectWindow.IP);
             }
+        }
+
+        private void ApplyNewSwitcher(IBMDSwitcherManager switcher)
+        {
+            keyPatternControls.SetSwitcherDriver(switcher);
+            chromaControls.SetSwitcherDriver(switcher);
+            dvepipControls.SetSwitcherDriver(switcher);
         }
 
         private void SwitcherManager_OnSwitcherConnectionChanged(object sender, bool connected)
@@ -517,7 +558,8 @@ namespace IntegratedPresenter.Main
                 switcherManager.SwitcherStateChanged -= SwitcherManager_SwitcherStateChanged;
                 switcherManager.OnSwitcherConnectionChanged -= SwitcherManager_OnSwitcherConnectionChanged;
                 switcherManager = null;
-                keyPatternControls.SetSwitcherDriver(switcherManager);
+                ApplyNewSwitcher(switcherManager);
+                //keyPatternControls.SetSwitcherDriver(switcherManager);
             }
         }
 
@@ -530,7 +572,8 @@ namespace IntegratedPresenter.Main
                 return;
             }
             switcherManager = new MockBMDSwitcherManager(this);
-            keyPatternControls.SetSwitcherDriver(switcherManager);
+            ApplyNewSwitcher(switcherManager);
+            //keyPatternControls.SetSwitcherDriver(switcherManager);
             switcherManager.SwitcherStateChanged += SwitcherManager_SwitcherStateChanged;
             switcherManager.OnSwitcherConnectionChanged += SwitcherManager_OnSwitcherConnectionChanged;
             (switcherManager as MockBMDSwitcherManager)?.UpdateCCUConfig(Presentation?.CCPUConfig as CCPUConfig_Extended);
@@ -627,6 +670,8 @@ namespace IntegratedPresenter.Main
             UpdateSwitcherUI();
 
             keyPatternControls.UpdateFromSwitcherState(switcherState);
+            chromaControls.UpdateFromSwitcherState(switcherState);
+            dvepipControls.UpdateFromSwitcherState(switcherState);
 
             // conditions can change if they're watched
             //FireOnConditionalsUpdated();
@@ -742,8 +787,6 @@ namespace IntegratedPresenter.Main
             UpdateCBarsStyle();
             UpdateKeyerControls();
 
-            UpdateUIPIPPlaceKeysActiveState();
-
             // optionally update previews
             CurrentPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
             NextPreview?.FireOnSwitcherStateChangedForAutomation(_lastState, _config);
@@ -826,7 +869,6 @@ namespace IntegratedPresenter.Main
             BtnCutTrans.Background = (RadialGradientBrush)Application.Current.FindResource("GrayLight");
 
             BtnBackgroundTrans.Style = (Style)Application.Current.FindResource(style);
-            BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
 
             EnableKeyerControls();
             EnableAuxButtons();
@@ -837,11 +879,23 @@ namespace IntegratedPresenter.Main
 
         private void ShowKeyerUI()
         {
+            BtnDVE.IsEnabled = true;
+            BtnChroma.IsEnabled = true;
+            BtnPattern.IsEnabled = true;
+
+            BtnDVE.Cursor = Cursors.Hand;
+            BtnChroma.Cursor = Cursors.Hand;
+            BtnPattern.Cursor = Cursors.Hand;
+
             if (switcherState?.USK1KeyType == 1)
             {
-                BtnDVE.Foreground = Brushes.Orange;
-                BtnChroma.Foreground = Brushes.White;
-                BtnPattern.Foreground = Brushes.White;
+                BtnDVE.Foreground = whiteBrush;
+                BtnChroma.Foreground = tealBrush;
+                BtnPattern.Foreground = tealBrush;
+
+                BtnDVE.Background = tealBrush;
+                BtnChroma.Background = darkBrush;
+                BtnPattern.Background = darkBrush;
 
                 ChromaControls.Visibility = Visibility.Hidden;
                 PIPControls.Visibility = Visibility.Visible;
@@ -849,11 +903,15 @@ namespace IntegratedPresenter.Main
 
                 btnViewAdvancedFlyKeySettings.Visibility = Visibility.Visible;
             }
-            if (switcherState?.USK1KeyType == 2)
+            else if (switcherState?.USK1KeyType == 2)
             {
-                BtnDVE.Foreground = Brushes.White;
-                BtnChroma.Foreground = Brushes.Orange;
-                BtnPattern.Foreground = Brushes.White;
+                BtnDVE.Foreground = tealBrush;
+                BtnChroma.Foreground = whiteBrush;
+                BtnPattern.Foreground = tealBrush;
+
+                BtnDVE.Background = darkBrush;
+                BtnChroma.Background = tealBrush;
+                BtnPattern.Background = darkBrush;
 
                 PIPControls.Visibility = Visibility.Hidden;
                 ChromaControls.Visibility = Visibility.Visible;
@@ -861,11 +919,15 @@ namespace IntegratedPresenter.Main
 
                 btnViewAdvancedFlyKeySettings.Visibility = Visibility.Hidden;
             }
-            if (switcherState?.USK1KeyType == 3)
+            else if (switcherState?.USK1KeyType == 3)
             {
-                BtnDVE.Foreground = Brushes.White;
-                BtnChroma.Foreground = Brushes.White;
-                BtnPattern.Foreground = Brushes.Orange;
+                BtnDVE.Foreground = tealBrush;
+                BtnChroma.Foreground = tealBrush;
+                BtnPattern.Foreground = whiteBrush;
+
+                BtnDVE.Background = darkBrush;
+                BtnChroma.Background = darkBrush;
+                BtnPattern.Background = tealBrush;
 
                 PIPControls.Visibility = Visibility.Hidden;
                 ChromaControls.Visibility = Visibility.Hidden;
@@ -873,110 +935,68 @@ namespace IntegratedPresenter.Main
 
                 btnViewAdvancedFlyKeySettings.Visibility = Visibility.Visible;
             }
-
-            BtnDVE.Background = Brushes.Red;
-            BtnChroma.Background = Brushes.Red;
-            BtnPattern.Background = Brushes.Red;
-            BtnDVE.Cursor = Cursors.Hand;
-            BtnChroma.Cursor = Cursors.Hand;
-            BtnPattern.Cursor = Cursors.Hand;
+            else
+            {
+                BtnDVE.Foreground = tealBrush;
+                BtnChroma.Foreground = tealBrush;
+                BtnPattern.Foreground = tealBrush;
+                BtnDVE.Background = darkBrush;
+                BtnChroma.Background = darkBrush;
+                BtnPattern.Background = darkBrush;
+            }
         }
 
         private void DisableKeyerUI()
         {
-            BtnDVE.Foreground = Brushes.WhiteSmoke;
-            BtnChroma.Foreground = Brushes.WhiteSmoke;
-            BtnDVE.Background = Brushes.WhiteSmoke;
-            BtnChroma.Background = Brushes.WhiteSmoke;
+            btnViewAdvancedFlyKeySettings.Visibility = Visibility.Hidden;
+
+            BtnDVE.IsEnabled = false;
+            BtnChroma.IsEnabled = false;
+            BtnPattern.IsEnabled = false;
+
+            BtnDVE.Foreground = lightBrush;
+            BtnChroma.Foreground = lightBrush;
+            BtnPattern.Foreground = lightBrush;
+
+
+            BtnDVE.Background = darkBrush;
+            BtnChroma.Background = darkBrush;
+            BtnPattern.Background = darkBrush;
+
+
             BtnDVE.Cursor = Cursors.Arrow;
             BtnChroma.Cursor = Cursors.Arrow;
-            PIPControls.Visibility = Visibility.Hidden;
+            BtnPattern.Cursor = Cursors.Arrow;
+
+            PATTERNControls.Visibility = Visibility.Hidden;
+            PIPControls.Visibility = Visibility.Visible;
             ChromaControls.Visibility = Visibility.Hidden;
         }
 
         private void EnableKeyerControls()
         {
-
             keyPatternControls.EnableControls(true);
+            chromaControls.EnableControls(true);
+            dvepipControls.EnableControls(true);
             string style = "SwitcherButton";
 
-
             BtnUSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
-
-            BtnPIPFillProgram1.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram2.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram3.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram4.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram5.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram6.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram7.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram8.Style = (Style)Application.Current.FindResource(style);
-
-            BtnChromaFillProgram1.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram2.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram3.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram4.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram5.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram6.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram7.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram8.Style = (Style)Application.Current.FindResource(style);
-
-            //string pipstyle = "PIPControlButton";
-            //BtnPIPtoA.Style = (Style)Application.Current.FindResource(pipstyle);
-            //BtnPIPtoB.Style = (Style)Application.Current.FindResource(pipstyle);
-            //BtnPIPtoFull.Style = (Style)Application.Current.FindResource(pipstyle);
-
-            //BtnPIPtoPreset1.Style = (Style)Application.Current.FindResource(pipstyle);
-            //BtnPIPtoPreset2.Style = (Style)Application.Current.FindResource(pipstyle);
-            //BtnPIPtoPreset3.Style = (Style)Application.Current.FindResource(pipstyle);
-            //BtnPIPtoPreset4.Style = (Style)Application.Current.FindResource(pipstyle);
-            //BtnPIPtoPreset5.Style = (Style)Application.Current.FindResource(pipstyle);
+            BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
         }
 
         private void DisableKeyerControls()
         {
             keyPatternControls.EnableControls(false);
+            chromaControls.EnableControls(false);
+            dvepipControls.EnableControls(false);
             string style = "SwitcherButton_Disabled";
 
             BtnUSK1OnOffAir.Style = (Style)Application.Current.FindResource(style);
-
-            BtnPIPFillProgram1.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram2.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram3.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram4.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram5.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram6.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram7.Style = (Style)Application.Current.FindResource(style);
-            BtnPIPFillProgram8.Style = (Style)Application.Current.FindResource(style);
-
-            BtnChromaFillProgram1.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram2.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram3.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram4.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram5.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram6.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram7.Style = (Style)Application.Current.FindResource(style);
-            BtnChromaFillProgram8.Style = (Style)Application.Current.FindResource(style);
+            BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
 
             style = "OffLight";
             BtnUSK1OnOffAir.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-
-            BtnPIPFillProgram1.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnPIPFillProgram2.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnPIPFillProgram3.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnPIPFillProgram4.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnPIPFillProgram5.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnPIPFillProgram6.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnPIPFillProgram7.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnPIPFillProgram8.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-
-            BtnChromaFillProgram1.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnChromaFillProgram2.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnChromaFillProgram3.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnChromaFillProgram4.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnChromaFillProgram5.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnChromaFillProgram6.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnChromaFillProgram7.Background = (RadialGradientBrush)Application.Current.FindResource(style);
+            BtnTransKey1.Background = (RadialGradientBrush)Application.Current.FindResource(style);
         }
 
 
@@ -1018,7 +1038,6 @@ namespace IntegratedPresenter.Main
             BtnCutTrans.Style = (Style)Application.Current.FindResource(style);
 
             BtnBackgroundTrans.Style = (Style)Application.Current.FindResource(style);
-            BtnTransKey1.Style = (Style)Application.Current.FindResource(style);
 
             style = "OffLight";
             BtnPreset1.Background = (RadialGradientBrush)Application.Current.FindResource(style);
@@ -1054,7 +1073,6 @@ namespace IntegratedPresenter.Main
             BtnCutTrans.Background = (RadialGradientBrush)Application.Current.FindResource(style);
 
             BtnBackgroundTrans.Background = (RadialGradientBrush)Application.Current.FindResource(style);
-            BtnTransKey1.Background = (RadialGradientBrush)Application.Current.FindResource(style);
 
             DisableKeyerControls();
             DisableAuxControls();
@@ -1106,42 +1124,9 @@ namespace IntegratedPresenter.Main
             BtnTransKey1.Background = (switcherState.TransNextKey1 ? Application.Current.FindResource("YellowLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
         }
 
-        private void UpdatePIPButtonStyles()
-        {
-            BtnPIPFillProgram1.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 1 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnPIPFillProgram2.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 2 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnPIPFillProgram3.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 3 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnPIPFillProgram4.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 4 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnPIPFillProgram5.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 5 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnPIPFillProgram6.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 6 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnPIPFillProgram7.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnPIPFillProgram8.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-
-            //BtnPIPtoA.Background = switcherState.USK1KeyFrame == 1 ? Brushes.Orange : Brushes.WhiteSmoke;
-            //BtnPIPtoA.Foreground = switcherState.USK1KeyFrame == 1 ? Brushes.Orange : Brushes.WhiteSmoke;
-            //BtnPIPtoB.Background = switcherState.USK1KeyFrame == 2 ? Brushes.Orange : Brushes.WhiteSmoke;
-            //BtnPIPtoB.Foreground = switcherState.USK1KeyFrame == 2 ? Brushes.Orange : Brushes.WhiteSmoke;
-            //BtnPIPtoFull.Background = switcherState.USK1KeyFrame == 0 ? Brushes.Orange : Brushes.WhiteSmoke;
-            //BtnPIPtoFull.Foreground = switcherState.USK1KeyFrame == 0 ? Brushes.Orange : Brushes.WhiteSmoke;
-        }
-
-        private void UpdateChromaButtonStyles()
-        {
-            BtnChromaFillProgram1.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 1 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnChromaFillProgram2.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 2 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnChromaFillProgram3.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 3 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnChromaFillProgram4.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 4 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnChromaFillProgram5.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 5 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnChromaFillProgram6.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 6 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnChromaFillProgram7.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 7 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-            BtnChromaFillProgram8.Background = (ConvertSourceIDToButton(switcherState.USK1FillSource) == 8 ? Application.Current.FindResource("RedLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
-        }
-
         private void UpdateKeyerControls()
         {
             ShowKeyerUI();
-            UpdatePIPButtonStyles();
-            UpdateChromaButtonStyles();
         }
 
         private void UpdateFTBButtonStyle()
@@ -1167,23 +1152,34 @@ namespace IntegratedPresenter.Main
 
         private void UpdateSlideModeButtons()
         {
-            //BtnDrive.Background = (SlideDriveVideo ? Application.Current.FindResource("YellowLight") : Application.Current.FindResource("GrayLight")) as RadialGradientBrush;
             switch (CurrentSlideMode)
             {
                 case 0:
-                    BtnNoDrive.Foreground = Brushes.Orange;
-                    BtnDrive.Foreground = Brushes.White;
-                    BtnJump.Foreground = Brushes.White;
+                    BtnNoDrive.Foreground = whiteBrush;
+                    BtnDrive.Foreground = tealBrush;
+                    BtnJump.Foreground = tealBrush;
+
+                    BtnNoDrive.Background = tealBrush;
+                    BtnDrive.Background = darkBrush;
+                    BtnJump.Background = darkBrush;
                     break;
                 case 1:
-                    BtnNoDrive.Foreground = Brushes.White;
-                    BtnDrive.Foreground = Brushes.Orange;
-                    BtnJump.Foreground = Brushes.White;
+                    BtnNoDrive.Foreground = tealBrush;
+                    BtnDrive.Foreground = whiteBrush;
+                    BtnJump.Foreground = tealBrush;
+
+                    BtnNoDrive.Background = darkBrush;
+                    BtnDrive.Background = tealBrush;
+                    BtnJump.Background = darkBrush;
                     break;
                 case 2:
-                    BtnNoDrive.Foreground = Brushes.White;
-                    BtnDrive.Foreground = Brushes.White;
-                    BtnJump.Foreground = Brushes.Orange;
+                    BtnNoDrive.Foreground = tealBrush;
+                    BtnDrive.Foreground = tealBrush;
+                    BtnJump.Foreground = whiteBrush;
+
+                    BtnNoDrive.Background = darkBrush;
+                    BtnDrive.Background = darkBrush;
+                    BtnJump.Background = tealBrush;
                     break;
             }
         }
@@ -1382,7 +1378,7 @@ namespace IntegratedPresenter.Main
         {
 
             // dont enable shortcuts when focused on textbox
-            if (tbChromaHue.IsFocused || tbChromaGain.IsFocused || tbChromaYSuppress.IsFocused || tbChromaLift.IsFocused || tbChromaNarrow.IsFocused)
+            if (chromaControls.HasTextEntryFocus())
             {
                 return;
             }
@@ -1406,7 +1402,7 @@ namespace IntegratedPresenter.Main
             {
                 ShowPIPLocationControl();
             }
-           
+
             if (e.Key == Key.F11)
             {
                 _spareDriver.Focus();
@@ -1749,29 +1745,29 @@ namespace IntegratedPresenter.Main
             {
                 //USK1RuntoA();
                 _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Set PIP to Preset 3");
-                SetupPIPToPresetPosition(3);
+                dvepipControls.SetupPIPToPresetPosition(3);
             }
             if (e.Key == Key.Multiply)
             {
                 //USK1RuntoB();
                 _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Set PIP to Preset 4");
-                SetupPIPToPresetPosition(4);
+                dvepipControls.SetupPIPToPresetPosition(4);
             }
             if (e.Key == Key.Subtract)
             {
                 //USK1RuntoFull();
                 _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Set PIP to Preset 5");
-                SetupPIPToPresetPosition(5);
+                dvepipControls.SetupPIPToPresetPosition(5);
             }
             if (e.Key == Key.OemOpenBrackets)
             {
                 _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Set PIP to Preset 1");
-                SetupPIPToPresetPosition(1);
+                dvepipControls.SetupPIPToPresetPosition(1);
             }
             if (e.Key == Key.OemCloseBrackets)
             {
                 _logger.Debug($"USER INPUT [Keyboard] -- ({e.Key}) Set PIP to Preset 2");
-                SetupPIPToPresetPosition(2);
+                dvepipControls.SetupPIPToPresetPosition(2);
             }
 
             if (e.Key == Key.NumPad0)
@@ -3513,8 +3509,12 @@ namespace IntegratedPresenter.Main
             NextPreview.SetMVConfigForPostset(_config.MultiviewerConfig);
             AfterPreview.SetMVConfigForPostset(_config.MultiviewerConfig);
 
+            chromaControls.NewConfig(_config);
+            dvepipControls.NewConfig(_config);
+            keyPatternControls.NewConfig(_config);
+
             // update PIP place hotkeys
-            UpdateUIPIPPlaceKeys();
+            dvepipControls.UpdateUIPIPPlaceKeys(switcherState);
 
             // config switcher
             switcherManager?.ConfigureSwitcher(_config, resetPIPPositions);
@@ -3523,6 +3523,8 @@ namespace IntegratedPresenter.Main
         private void UpdateUIButtonLabels()
         {
             keyPatternControls.UpdateButtonLabels(_config.Routing);
+            chromaControls.UpdateButtonLabels(_config.Routing);
+            dvepipControls.UpdateButtonLabels(_config.Routing);
             foreach (var btn in _config.Routing)
             {
                 switch (btn.ButtonId)
@@ -3569,8 +3571,6 @@ namespace IntegratedPresenter.Main
         {
             BtnPreset1.Content = config.ButtonName;
             BtnProgram1.Content = config.ButtonName;
-            BtnPIPFillProgram1.Content = config.ButtonName;
-            BtnChromaFillProgram1.Content = config.ButtonName;
             BtnAux1.Content = config.ButtonName;
         }
 
@@ -3578,24 +3578,18 @@ namespace IntegratedPresenter.Main
         {
             BtnPreset2.Content = config.ButtonName;
             BtnProgram2.Content = config.ButtonName;
-            BtnPIPFillProgram2.Content = config.ButtonName;
-            BtnChromaFillProgram2.Content = config.ButtonName;
             BtnAux2.Content = config.ButtonName;
         }
         private void UpdateButton3Labels(ButtonSourceMapping config)
         {
             BtnPreset3.Content = config.ButtonName;
             BtnProgram3.Content = config.ButtonName;
-            BtnPIPFillProgram3.Content = config.ButtonName;
-            BtnChromaFillProgram3.Content = config.ButtonName;
             BtnAux3.Content = config.ButtonName;
         }
         private void UpdateButton4Labels(ButtonSourceMapping config)
         {
             BtnPreset4.Content = config.ButtonName;
             BtnProgram4.Content = config.ButtonName;
-            BtnPIPFillProgram4.Content = config.ButtonName;
-            BtnChromaFillProgram4.Content = config.ButtonName;
             BtnAux4.Content = config.ButtonName;
         }
 
@@ -3603,32 +3597,24 @@ namespace IntegratedPresenter.Main
         {
             BtnPreset5.Content = config.ButtonName;
             BtnProgram5.Content = config.ButtonName;
-            BtnPIPFillProgram5.Content = config.ButtonName;
-            BtnChromaFillProgram5.Content = config.ButtonName;
             BtnAux5.Content = config.ButtonName;
         }
         private void UpdateButton6Labels(ButtonSourceMapping config)
         {
             BtnPreset6.Content = config.ButtonName;
             BtnProgram6.Content = config.ButtonName;
-            BtnPIPFillProgram6.Content = config.ButtonName;
-            BtnChromaFillProgram6.Content = config.ButtonName;
             BtnAux6.Content = config.ButtonName;
         }
         private void UpdateButton7Labels(ButtonSourceMapping config)
         {
             BtnPreset7.Content = config.ButtonName;
             BtnProgram7.Content = config.ButtonName;
-            BtnPIPFillProgram7.Content = config.ButtonName;
-            BtnChromaFillProgram7.Content = config.ButtonName;
             BtnAux7.Content = config.ButtonName;
         }
         private void UpdateButton8Labels(ButtonSourceMapping config)
         {
             BtnPreset8.Content = config.ButtonName;
             BtnProgram8.Content = config.ButtonName;
-            BtnPIPFillProgram8.Content = config.ButtonName;
-            BtnChromaFillProgram8.Content = config.ButtonName;
             BtnAux8.Content = config.ButtonName;
         }
 
@@ -3641,7 +3627,7 @@ namespace IntegratedPresenter.Main
 
         public BMDSwitcherConfigSettings Config { get => _config; }
 
-       
+
         private void ClickAux1(object sender, RoutedEventArgs e)
         {
             _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -3763,11 +3749,6 @@ namespace IntegratedPresenter.Main
         }
 
 
-        private void TextEntryMode(object sender, DependencyPropertyChangedEventArgs e)
-        {
-        }
-
-
         bool _FeatureFlag_automationtimer1enabled = true;
 
         private void ClickToggleAutomationTimer1(object sender, RoutedEventArgs e)
@@ -3804,7 +3785,7 @@ namespace IntegratedPresenter.Main
                 //btnProgramLock.Content = "LOCKED";
                 //btnProgramLock.Foreground = Brushes.WhiteSmoke;
                 imgPgmBusLockIcon.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Icons/WhiteLock.png"));
-                pgmBusLockColor.Color = (Color)FindResource("lightBlue");
+                pgmBusLockColor.Color = (Color)FindResource("teal");
             }
             else
             {
@@ -3930,40 +3911,14 @@ namespace IntegratedPresenter.Main
             if (switcherManager != null)
             {
                 SwitcherManager_SwitcherStateChanged(switcherManager?.ForceStateUpdate() ?? new BMDSwitcherState());
-                tbChromaHue.Text = switcherState.ChromaSettings.Hue.ToString();
-                tbChromaGain.Text = switcherState.ChromaSettings.Gain.ToString();
-                tbChromaLift.Text = switcherState.ChromaSettings.Lift.ToString();
-                tbChromaYSuppress.Text = switcherState.ChromaSettings.YSuppress.ToString();
-                tbChromaNarrow.Text = switcherState.ChromaSettings.Narrow.ToString();
+                //chromaControls.UpdateChromaSettings(switcherState.ChromaSettings);
+                //chromaControls.tbChromaHue.Text = switcherState.ChromaSettings.Hue.ToString();
+                //chromaControls.tbChromaGain.Text = switcherState.ChromaSettings.Gain.ToString();
+                //chromaControls.tbChromaLift.Text = switcherState.ChromaSettings.Lift.ToString();
+                //chromaControls.tbChromaYSuppress.Text = switcherState.ChromaSettings.YSuppress.ToString();
+                //chromaControls.tbChromaNarrow.Text = switcherState.ChromaSettings.Narrow.ToString();
                 ShowKeyerUI();
             }
-        }
-
-        private void ClickApplyChromaSettings(object sender, RoutedEventArgs e)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()}");
-            double hue = 0;
-            double gain = 0;
-            double lift = 0;
-            double ysuppress = 0;
-            int narrow = 0;
-            double.TryParse(tbChromaHue.Text, out hue);
-            double.TryParse(tbChromaGain.Text, out gain);
-            double.TryParse(tbChromaLift.Text, out lift);
-            double.TryParse(tbChromaYSuppress.Text, out ysuppress);
-            int.TryParse(tbChromaNarrow.Text, out narrow);
-
-            BMDUSKChromaSettings chromaSettings = new BMDUSKChromaSettings()
-            {
-                FillSource = (int)((switcherState?.USK1FillSource) ?? _config.USKSettings.ChromaSettings.FillSource),
-                Hue = hue,
-                Gain = gain,
-                Lift = lift,
-                YSuppress = ysuppress,
-                Narrow = narrow
-            };
-
-            switcherManager?.ConfigureUSK1Chroma(chromaSettings);
         }
 
         private void ClickChroma1(object sender, RoutedEventArgs e)
@@ -4083,37 +4038,9 @@ namespace IntegratedPresenter.Main
             ksc_usk1t.Visibility = ShortcutVisibility;
             ksc_usk1m.Visibility = ShortcutVisibility;
 
-            ksc_cf1.Visibility = ShortcutVisibility;
-            ksc_cf2.Visibility = ShortcutVisibility;
-            ksc_cf3.Visibility = ShortcutVisibility;
-            ksc_cf4.Visibility = ShortcutVisibility;
-            ksc_cf5.Visibility = ShortcutVisibility;
-            ksc_cf6.Visibility = ShortcutVisibility;
-            ksc_cf7.Visibility = ShortcutVisibility;
-            ksc_cf8.Visibility = ShortcutVisibility;
-
-            ksc_pf1.Visibility = ShortcutVisibility;
-            ksc_pf2.Visibility = ShortcutVisibility;
-            ksc_pf3.Visibility = ShortcutVisibility;
-            ksc_pf4.Visibility = ShortcutVisibility;
-            ksc_pf5.Visibility = ShortcutVisibility;
-            ksc_pf6.Visibility = ShortcutVisibility;
-            ksc_pf7.Visibility = ShortcutVisibility;
-            ksc_pf8.Visibility = ShortcutVisibility;
-            //ksc_pkfa.Visibility = ShortcutVisibility;
-            //ksc_pkfb.Visibility = ShortcutVisibility;
-            //ksc_pkff.Visibility = ShortcutVisibility;
-
-            //ksc_pippreset1.Visibility = ShortcutVisibility;
-            //ksc_pippreset2.Visibility = ShortcutVisibility;
-            //ksc_pippreset3.Visibility = ShortcutVisibility;
-            //ksc_pippreset4.Visibility = ShortcutVisibility;
-            //ksc_pippreset5.Visibility = ShortcutVisibility;
-            pipprestbtn_1.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
-            pipprestbtn_2.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
-            pipprestbtn_3.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
-            pipprestbtn_4.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
-            pipprestbtn_5.KSCVIsible = ShortcutVisibility == Visibility.Visible ? true : false;
+            chromaControls.ShowHideShortcutsUI(ShowShortcuts);
+            dvepipControls.ShowHideShortcutsUI(ShowShortcuts);
+            keyPatternControls.ShowShortcuts(_showshortcuts);
 
             ksc_cond1.Visibility = ShortcutVisibility;
             ksc_cond2.Visibility = ShortcutVisibility;
@@ -4174,7 +4101,6 @@ namespace IntegratedPresenter.Main
 
             #endregion
 
-            keyPatternControls.ShowShortcuts(_showshortcuts);
         }
 
         public Visibility ShortcutVisibility { get; set; } = Visibility.Collapsed;
@@ -4558,19 +4484,6 @@ namespace IntegratedPresenter.Main
             _m_integratedPresenterFeatures.InterfaceSettings.SpaceKeyOnlyAsCutTrans = miSpaceButtonClickGuard.IsChecked;
         }
 
-        private void SetupPIPToPresetPosition(int presetNum)
-        {
-            _logger.Debug($"Running {System.Reflection.MethodBase.GetCurrentMethod()} with arg presetNum {presetNum}");
-            if (_config?.PIPPresets?.Presets?.ContainsKey(presetNum) == true)
-            {
-                _logger.Debug($"Requesting switcher to recall preset ({presetNum}) as configured.");
-                var cfg = _config.PIPPresets.Presets[presetNum];
-                _logger.Debug($"(SetupPIPToPresetPosition) -- PlacePIP at {cfg}");
-                var current = switcherManager?.GetCurrentState().DVESettings;
-                var config = cfg.Placement.PlaceOverride(current);
-                switcherManager?.SetPIPPosition(config);
-            }
-        }
 
         UIValue<bool> _Cond1 = new UIValue<bool>();
         UIValue<bool> _Cond2 = new UIValue<bool>();
@@ -4795,88 +4708,6 @@ namespace IntegratedPresenter.Main
             SetShowAutomationPreviews(!_FeatureFlag_AutomationPreview);
         }
 
-        private void UpdateUIPIPPlaceKeys()
-        {
-
-            PipPresetButton[] btns = new PipPresetButton[5]
-            {
-                pipprestbtn_1,
-                pipprestbtn_2,
-                pipprestbtn_3,
-                pipprestbtn_4,
-                pipprestbtn_5,
-            };
-
-            for (int i = 0; i < 5; i++)
-            {
-                btns[i].IsActive = false;
-                btns[i].UpdateLayout();
-                if (_config.PIPPresets.Presets.TryGetValue(i + 1, out var cfg))
-                {
-                    btns[i].PlaceName = cfg.Name;
-                    btns[i].PIPPlace = cfg.Placement;
-                }
-            }
-
-            UpdateUIPIPPlaceKeysActiveState();
-        }
-
-        private void UpdateUIPIPPlaceKeysActiveState()
-        {
-
-            PipPresetButton[] btns = new PipPresetButton[5]
-            {
-                pipprestbtn_1,
-                pipprestbtn_2,
-                pipprestbtn_3,
-                pipprestbtn_4,
-                pipprestbtn_5,
-            };
-
-            for (int i = 0; i < 5; i++)
-            {
-                if (_config.PIPPresets.Presets.TryGetValue(i + 1, out var cfg))
-                {
-                    // check if config matches
-                    btns[i].IsActive = cfg.Placement.Equivalent(_lastState?.DVESettings);
-                }
-                else
-                {
-                    btns[i].IsActive = false;
-                }
-            }
-
-        }
-
-        private void pipprestbtn_1_OnClick()
-        {
-            _logger.Debug($"Click: PIP Run to Preset 1");
-            SetupPIPToPresetPosition(1);
-        }
-
-        private void pipprestbtn_2_OnClick()
-        {
-            _logger.Debug($"Click: PIP Run to Preset 2");
-            SetupPIPToPresetPosition(2);
-        }
-
-        private void pipprestbtn_3_OnClick()
-        {
-            _logger.Debug($"Click: PIP Run to Preset 3");
-            SetupPIPToPresetPosition(3);
-        }
-
-        private void pipprestbtn_4_OnClick()
-        {
-            _logger.Debug($"Click: PIP Run to Preset 4");
-            SetupPIPToPresetPosition(4);
-        }
-
-        private void pipprestbtn_5_OnClick()
-        {
-            _logger.Debug($"Click: PIP Run to Preset 5");
-            SetupPIPToPresetPosition(5);
-        }
 
 
 
@@ -4897,16 +4728,20 @@ namespace IntegratedPresenter.Main
                 if (_slideMediaActiveTab == 0)
                 {
                     slideControlGroup.Visibility = Visibility.Visible;
-                    btnSlideCtrlTab.Foreground = Brushes.Orange;
+                    btnSlideCtrlTab.Foreground = whiteBrush;
+                    btnSlideCtrlTab.Background = tealBrush;
                     mediaControlGroup.Visibility = Visibility.Hidden;
-                    btnMediaCtrlTab.Foreground = Brushes.White;
+                    btnMediaCtrlTab.Foreground = tealBrush;
+                    btnMediaCtrlTab.Background = darkBrush;
                 }
                 else
                 {
                     slideControlGroup.Visibility = Visibility.Hidden;
-                    btnSlideCtrlTab.Foreground = Brushes.White;
+                    btnSlideCtrlTab.Foreground = tealBrush;
+                    btnSlideCtrlTab.Background = darkBrush;
                     mediaControlGroup.Visibility = Visibility.Visible;
-                    btnMediaCtrlTab.Foreground = Brushes.Orange;
+                    btnMediaCtrlTab.Foreground = whiteBrush;
+                    btnMediaCtrlTab.Background = tealBrush;
                 }
             });
         }
@@ -4921,7 +4756,7 @@ namespace IntegratedPresenter.Main
             SlideMediaActiveTab = 1;
         }
 
-      
+
         private void ClickOpenCCUDriverUI(object sender, RoutedEventArgs e)
         {
             _camMonitor?.ShowUI();
@@ -4998,7 +4833,7 @@ namespace IntegratedPresenter.Main
             Dispatcher.Invoke(() =>
             {
                 tbHotReloadStatus.Text = m_hotreloadpresentation ? "READY" : "OFF";
-                tbHotReloadStatus.Foreground = m_hotreloadpresentation ? Brushes.Yellow : Brushes.White;
+                tbHotReloadStatus.Foreground = m_hotreloadpresentation ? tealBrush : whiteBrush;
             });
 
 
@@ -5031,7 +4866,7 @@ namespace IntegratedPresenter.Main
             Dispatcher.Invoke(() =>
             {
                 tbHotReloadStatus.Text = "RELOADING";
-                tbHotReloadStatus.Foreground = Brushes.Orange;
+                tbHotReloadStatus.Foreground = yellowBrush;
             });
 
             // can we load on a seperate task thread, and only then swap to UI ??
@@ -5048,7 +4883,7 @@ namespace IntegratedPresenter.Main
             Dispatcher.Invoke(() =>
             {
                 tbHotReloadStatus.Text = "LOADED";
-                tbHotReloadStatus.Foreground = Brushes.LimeGreen;
+                tbHotReloadStatus.Foreground = greenBrush;
             });
         }
 

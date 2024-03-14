@@ -177,28 +177,31 @@ namespace Integrated_Presenter.ViewModels
             // update pattern params on UI
             // TODO: determine if we need to temp. disable events on controls so they don't get us stuck in a change loop
 
-            Brush selected = new SolidColorBrush(Colors.Orange);
+            Brush redBrush = FindResource("RedLight") as Brush;
+            Brush tealBrush = FindResource("tealBrush") as Brush;
+            Brush whiteBrush = FindResource("whiteBrush") as Brush;
+            Brush darkBrush = FindResource("darkBrush") as Brush;
             Brush gray = new SolidColorBrush(Color.FromRgb(0x97, 0x97, 0x97));
 
             // select which pattern is active
-            ptn_vbar.Fill = state.PATTERNSettings.PatternType == "h-bar" ? selected : gray;
-            ptn_hbar.Fill = state.PATTERNSettings.PatternType == "v-bar" ? selected : gray;
-            ptn_vbarn.Fill = state.PATTERNSettings.PatternType == "h-barn" ? selected : gray;
-            ptn_hbarn.Fill = state.PATTERNSettings.PatternType == "v-barn" ? selected : gray;
-            ptn_tbox.Fill = state.PATTERNSettings.PatternType == "t-box" ? selected : gray;
-            ptn_circle_iris.Fill = state.PATTERNSettings.PatternType == "circle-iris" ? selected : gray;
-            ptn_diamond_iris.Fill = state.PATTERNSettings.PatternType == "diamond-iris" ? selected : gray;
-            ptn_ldiag.Fill = state.PATTERNSettings.PatternType == "l-diag" ? selected : gray;
-            ptn_rdiag.Fill = state.PATTERNSettings.PatternType == "r-diag" ? selected : gray;
-            ptn_rect_iris.Fill = state.PATTERNSettings.PatternType == "rect-iris" ? selected : gray;
-            ptn_tl_box.Fill = state.PATTERNSettings.PatternType == "tl-box" ? selected : gray;
-            ptn_tc_box.Fill = state.PATTERNSettings.PatternType == "tc-box" ? selected : gray;
-            ptn_tr_box.Fill = state.PATTERNSettings.PatternType == "tr-box" ? selected : gray;
-            ptn_rc_box.Fill = state.PATTERNSettings.PatternType == "rc-box" ? selected : gray;
-            ptn_br_box.Fill = state.PATTERNSettings.PatternType == "br-box" ? selected : gray;
-            ptn_bc_box.Fill = state.PATTERNSettings.PatternType == "bc-box" ? selected : gray;
-            ptn_bl_box.Fill = state.PATTERNSettings.PatternType == "bl-box" ? selected : gray;
-            ptn_lc_box.Fill = state.PATTERNSettings.PatternType == "lc-box" ? selected : gray;
+            ptn_vbar.Fill = state.PATTERNSettings.PatternType == "h-bar" ? redBrush : gray;
+            ptn_hbar.Fill = state.PATTERNSettings.PatternType == "v-bar" ? redBrush : gray;
+            ptn_vbarn.Fill = state.PATTERNSettings.PatternType == "h-barn" ? redBrush : gray;
+            ptn_hbarn.Fill = state.PATTERNSettings.PatternType == "v-barn" ? redBrush : gray;
+            ptn_tbox.Fill = state.PATTERNSettings.PatternType == "t-box" ? redBrush : gray;
+            ptn_circle_iris.Fill = state.PATTERNSettings.PatternType == "circle-iris" ? redBrush : gray;
+            ptn_diamond_iris.Fill = state.PATTERNSettings.PatternType == "diamond-iris" ? redBrush : gray;
+            ptn_ldiag.Fill = state.PATTERNSettings.PatternType == "l-diag" ? redBrush : gray;
+            ptn_rdiag.Fill = state.PATTERNSettings.PatternType == "r-diag" ? redBrush : gray;
+            ptn_rect_iris.Fill = state.PATTERNSettings.PatternType == "rect-iris" ? redBrush : gray;
+            ptn_tl_box.Fill = state.PATTERNSettings.PatternType == "tl-box" ? redBrush : gray;
+            ptn_tc_box.Fill = state.PATTERNSettings.PatternType == "tc-box" ? redBrush : gray;
+            ptn_tr_box.Fill = state.PATTERNSettings.PatternType == "tr-box" ? redBrush : gray;
+            ptn_rc_box.Fill = state.PATTERNSettings.PatternType == "rc-box" ? redBrush : gray;
+            ptn_br_box.Fill = state.PATTERNSettings.PatternType == "br-box" ? redBrush : gray;
+            ptn_bc_box.Fill = state.PATTERNSettings.PatternType == "bc-box" ? redBrush : gray;
+            ptn_bl_box.Fill = state.PATTERNSettings.PatternType == "bl-box" ? redBrush : gray;
+            ptn_lc_box.Fill = state.PATTERNSettings.PatternType == "lc-box" ? redBrush : gray;
 
             // update other params
             tbSize.Text = $"{state.PATTERNSettings.Size:0.00}";
@@ -207,7 +210,8 @@ namespace Integrated_Presenter.ViewModels
             tbX.Text = $"{state.PATTERNSettings.XOffset:0.00}";
             tbY.Text = $"{state.PATTERNSettings.YOffset:0.00}";
 
-            BtnINVERT.Foreground = state.PATTERNSettings.Inverted ? Brushes.Orange : Brushes.White;
+            BtnINVERT.Foreground = state.PATTERNSettings.Inverted ? whiteBrush : tealBrush;
+            BtnINVERT.Background = state.PATTERNSettings.Inverted ? tealBrush : darkBrush;
 
             UIDriven = false;
 
@@ -430,5 +434,9 @@ namespace Integrated_Presenter.ViewModels
             SetPatternType("lc-box");
         }
 
+        internal void NewConfig(BMDSwitcherConfigSettings config)
+        {
+            //throw new NotImplementedException();
+        }
     }
 }

@@ -1,23 +1,29 @@
 ﻿<Application x:Class="IntegratedPresenter.Main.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:IntegratedPresenter.Main"
+             xmlns:local="clr-namespace:IntegratedPresenter.Main" xmlns:viewmodels="clr-namespace:Integrated_Presenter.ViewModels"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
         <Color x:Key="red">#d60d49</Color>
         <Color x:Key="green">#0dd67c</Color>
-        <Color x:Key="teal">#0dd6a0</Color>
+        <Color x:Key="teal">#4682B4</Color>
+        <Color x:Key="tealOpc">#804682B4</Color>
+        <Color x:Key="yellow">#ecf018</Color>
         <Color x:Key="lightBlue">#08a7cf</Color>
+        <Color x:Key="darkBlack">#0a0a0a</Color>
         <Color x:Key="dark">#171717</Color>
         <Color x:Key="light">#272727</Color>
         <Color x:Key="gray">#8f8f8f</Color>
         <Color x:Key="white">#efefef</Color>
         <SolidColorBrush x:Key="redBrush" Color="{StaticResource red}"></SolidColorBrush>
         <SolidColorBrush x:Key="greenBrush" Color="{StaticResource green}"></SolidColorBrush>
+        <SolidColorBrush x:Key="yellowBrush" Color="{StaticResource yellow}"></SolidColorBrush>
         <SolidColorBrush x:Key="tealBrush" Color="{StaticResource teal}"></SolidColorBrush>
+        <SolidColorBrush x:Key="tealOpcBrush" Color="{StaticResource tealOpc}"></SolidColorBrush>
         <SolidColorBrush x:Key="lightBlueBrush" Color="{StaticResource lightBlue}"></SolidColorBrush>
         <SolidColorBrush x:Key="darkBrush" Color="{StaticResource dark}"></SolidColorBrush>
+        <SolidColorBrush x:Key="darkBlackBrush" Color="{StaticResource darkBlack}"></SolidColorBrush>
         <SolidColorBrush x:Key="lightBrush" Color="{StaticResource light}"></SolidColorBrush>
         <SolidColorBrush x:Key="grayBrush" Color="{StaticResource gray}"></SolidColorBrush>
         <SolidColorBrush x:Key="whiteBrush" Color="{StaticResource white}"></SolidColorBrush>
@@ -123,7 +129,7 @@
             <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
             <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
             <RadialGradientBrush.GradientStops>
-                <GradientStop Color="#474747" Offset="1.5"></GradientStop>
+                <GradientStop Color="#171717" Offset="1.5"></GradientStop>
                 <GradientStop Color="#373737" Offset="0.9"></GradientStop>
                 <GradientStop Color="#474747" Offset="0"></GradientStop>
             </RadialGradientBrush.GradientStops>
@@ -132,7 +138,7 @@
             <RadialGradientBrush.GradientOrigin>0.5, 0.5</RadialGradientBrush.GradientOrigin>
             <RadialGradientBrush.Center>0.5, 0.5</RadialGradientBrush.Center>
             <RadialGradientBrush.GradientStops>
-                <GradientStop Color="#373737" Offset="1.5"></GradientStop>
+                <GradientStop Color="#131313" Offset="1.5"></GradientStop>
                 <GradientStop Color="#272727" Offset="0.9"></GradientStop>
                 <GradientStop Color="#373737" Offset="0"></GradientStop>
             </RadialGradientBrush.GradientStops>
@@ -207,15 +213,76 @@
 
 
         <Style x:Key="darkTextbox" TargetType="{x:Type TextBox}">
-            <Setter Property="Background" Value="#1f1f1f"></Setter>
+            <Setter Property="Background" Value="{StaticResource lightBrush}"></Setter>
             <Setter Property="Cursor" Value="IBeam"></Setter>
-            <Setter Property="Foreground" Value="Orange"></Setter>
-            <Setter Property="BorderBrush" Value="DarkGray"></Setter>
+            <Setter Property="Foreground" Value="{StaticResource tealBrush}"></Setter>
+            <Setter Property="BorderBrush" Value="{StaticResource grayBrush}"></Setter>
             <Setter Property="BorderThickness" Value="0"></Setter>
-            <Setter Property="CaretBrush" Value="White"></Setter>
+            <Setter Property="CaretBrush" Value="{StaticResource whiteBrush}"></Setter>
             <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
             <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
             <Setter Property="Margin" Value="3"></Setter>
+        </Style>
+
+        <Style x:Key="CondButton" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Width="40" Height="40" Name="Border" CornerRadius="18" Background="{StaticResource darkBrush}" BorderBrush="{TemplateBinding Foreground}" Margin="10,5,10,5" BorderThickness="1">
+                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Value}" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource greenBrush}" TargetName="Border"></Setter>
+                                <Setter Property="Background" Value="{StaticResource GreenLight}" TargetName="Border"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Value}" Value="False">
+                                <Setter Property="BorderBrush" Value="{StaticResource redBrush}" TargetName="Border"></Setter>
+                                <Setter Property="Background" Value="{StaticResource RedLight}" TargetName="Border"></Setter>
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                <Setter Property="BorderBrush" Value="{StaticResource lightBlueBrush}" TargetName="Border"></Setter>
+                                <Setter Property="BorderThickness" Value="5" TargetName="Border"></Setter>
+                                <!--<Setter Property="Background" Value="{StaticResource redBrush}" TargetName="Border"></Setter>-->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+
+        <Style x:Key="SelectorTextButton" TargetType="Button">
+            <Setter Property="IsTabStop" Value="False"></Setter>
+            <Setter Property="Background" Value="{StaticResource darkBrush}"></Setter>
+            <Setter Property="Foreground" Value="{StaticResource tealBrush}"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Name="Border" Background="{TemplateBinding Background}" BorderBrush="{StaticResource tealBrush}" Margin="3" BorderThickness="1">
+                            <ContentControl VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}" Content="{Binding Path=Content, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"></ContentControl>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsEnabled" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                    <Setter Property="BorderBrush" Value="{StaticResource lightBlueBrush}" TargetName="Border"></Setter>
+                                    <Setter Property="BorderThickness" Value="5" TargetName="Border"></Setter>
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Cursor" Value="Arrow"></Setter>
+                                <Setter Property="BorderBrush" Value="{StaticResource lightBrush}" TargetName="Border"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="SwitcherButton"  TargetType="{x:Type Button}">
@@ -318,18 +385,19 @@
             <Setter Property="Margin" Value="5"></Setter>
             <Setter Property="IsTabStop" Value="False"></Setter>
             <Setter Property="Focusable" Value="False"></Setter>
+            <Setter Property="IsEnabled" Value="True"></Setter>
+            <Setter Property="Cursor" Value="Hand"></Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Border Name="BorderOnAir" BorderThickness="2" BorderBrush="{TemplateBinding Property=Background}">
-                            <Border Name="Border" BorderBrush="Gray" BorderThickness="1">
-                                <ContentPresenter Content="{TemplateBinding Property=ContentControl.Content}"></ContentPresenter>
-                            </Border>
+                        <Border Name="BorderOnAir" BorderThickness="2" BorderBrush="{StaticResource tealBrush}">
+                            <ContentPresenter Content="{TemplateBinding Property=ContentControl.Content}"></ContentPresenter>
+                            <!--<viewmodels:PipPresetButton></viewmodels:PipPresetButton>-->
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="Orange" TargetName="Border"></Setter>
-                                <Setter Property="BorderThickness" Value="1,1,1,1" TargetName="Border"></Setter>
+                                <Setter Property="BorderBrush" Value="{StaticResource lightBlueBrush}" TargetName="BorderOnAir"></Setter>
+                                <Setter Property="BorderThickness" Value="5" TargetName="BorderOnAir"></Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
 
@@ -344,15 +412,19 @@
             <Setter Property="Margin" Value="5"></Setter>
             <Setter Property="IsTabStop" Value="False"></Setter>
             <Setter Property="Focusable" Value="False"></Setter>
+            <Setter Property="IsEnabled" Value="False"></Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Border Name="Border" BorderBrush="Gray" BorderThickness="1">
-                            <ContentPresenter Content="{TemplateBinding Property=ContentControl.Content}"></ContentPresenter>
+                        <Border Name="Border" BorderBrush="{StaticResource grayBrush}" BorderThickness="1">
+                            <Grid>
+                                <ContentPresenter Content="{TemplateBinding Property=ContentControl.Content}"></ContentPresenter>
+                                <!--<viewmodels:PipPresetButton></viewmodels:PipPresetButton>-->
+                                <Rectangle Fill="#89000000"></Rectangle>
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
                         </ControlTemplate.Triggers>
-
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

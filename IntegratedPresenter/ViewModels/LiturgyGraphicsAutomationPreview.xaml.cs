@@ -22,13 +22,13 @@ namespace Integrated_Presenter.ViewModels
 
         private void DisableConditionalTrans()
         {
-            rectIfTrans1.Fill = new SolidColorBrush(Colors.Gray);
-            rectIfTrans2.Fill = new SolidColorBrush(Colors.Gray);
-            rectIfTrans3.Fill = new SolidColorBrush(Colors.Gray);
-            imgAutoTrans.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreyTransArrows.png"));
-            imgTransDelay.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/GreyTimer.png"));
+            rectIfTrans1.Fill = (Brush)FindResource("grayBrush");
+            rectIfTrans2.Fill = (Brush)FindResource("grayBrush");
+            rectIfTrans3.Fill = (Brush)FindResource("grayBrush");
+            btnTransArrows.Fill = (Brush)FindResource("grayBrush");
+            btnTransDelay.Fill = (Brush)FindResource("grayBrush");
             tbAutoTransCamName.Text = "";
-            tbAutoTransCamName.Foreground = new SolidColorBrush(Colors.Gray);
+            tbAutoTransCamName.Foreground = (Brush)FindResource("grayBrush");
         }
 
         private void EnableConditionalTrans(string camName)
@@ -36,10 +36,10 @@ namespace Integrated_Presenter.ViewModels
             rectIfTrans1.Fill = new SolidColorBrush(Colors.Red);
             rectIfTrans2.Fill = new SolidColorBrush(Colors.Red);
             rectIfTrans3.Fill = new SolidColorBrush(Colors.Red);
-            imgAutoTrans.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/RedTransArrows.png"));
-            imgTransDelay.Source = new BitmapImage(new Uri("pack://application:,,,/Icons/BlueTimer.png"));
+            btnTransArrows.Fill = (Brush)FindResource("redBrush");
+            btnTransDelay.Fill = (Brush)FindResource("tealBrush");
             tbAutoTransCamName.Text = camName;
-            tbAutoTransCamName.Foreground = new SolidColorBrush(Colors.Red);
+            tbAutoTransCamName.Foreground =(Brush)FindResource("redBrush");
         }
 
         public void FireOnSwitcherStateChanged(BMDSwitcherState state, BMDSwitcherConfigSettings config)

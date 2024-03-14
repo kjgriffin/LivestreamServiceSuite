@@ -15,34 +15,49 @@
                 <RowDefinition Height="40"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <TextBlock Background="#20000000" Foreground="White" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center">GRAPHICS</TextBlock>
+                <TextBlock Background="#20000000" Foreground="{StaticResource whiteBrush}" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center">GRAPHICS</TextBlock>
             </Grid>
             <Grid Grid.Row="1">
-                <Rectangle Name="rectIfTrans1" Margin="20,10,0,0" Fill="Red" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
-                <Rectangle Name="rectIfTrans2" Margin="20,0,0,0" Fill="Red" Width="5" Height="100" HorizontalAlignment="Left" VerticalAlignment="Center"></Rectangle>
-                <Rectangle Name="rectIfTrans3" Margin="20,0,0,10" Fill="Red" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Rectangle>
+                <Rectangle Name="rectIfTrans1" Margin="20,10,0,0" Fill="{StaticResource redBrush}" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
+                <Rectangle Name="rectIfTrans2" Margin="20,0,0,0" Fill="{StaticResource redBrush}" Width="5" Height="100" HorizontalAlignment="Left" VerticalAlignment="Center"></Rectangle>
+                <Rectangle Name="rectIfTrans3" Margin="20,0,0,10" Fill="{StaticResource redBrush}" Width="20" Height="5" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Rectangle>
                 <StackPanel HorizontalAlignment="Left" Orientation="Vertical" VerticalAlignment="Center" Margin="40,0,0,0">
                     <StackPanel Height="40" Orientation="Horizontal">
-                        <Image Name="imgAutoTrans" Source="../Icons/RedTransArrows.png" Height="40"></Image>
+                        <Rectangle Name="btnTransArrows" Fill="{StaticResource redBrush}" Width="40" Height="40">
+                            <Rectangle.OpacityMask>
+                                <ImageBrush x:Name="imgAutoTrans" ImageSource="../Icons/RedTransArrows.png"></ImageBrush>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
                         <TextBlock Name="tbAutoTransCamName" Margin="10,0,0,0" Foreground="White" VerticalAlignment="Center" FontSize="20">ORGAN</TextBlock>
                     </StackPanel>
                     <StackPanel Height="40" Orientation="Horizontal">
-                        <Image Name="imgTransDelay" Height="40" Source="../Icons/BlueTimer.png" HorizontalAlignment="Left"></Image>
+                        <Rectangle Name="btnTransDelay" Fill="{StaticResource tealBrush}" Width="40" Height="40">
+                            <Rectangle.OpacityMask>
+                                <ImageBrush x:Name="imgTransDelay" ImageSource="../Icons/BlueTimer.png"></ImageBrush>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
                         <TextBlock Name="tbAutoTransDelay" Margin="10,0,0,0" Foreground="#adadad" VerticalAlignment="Center" FontSize="20">WAIT</TextBlock>
                     </StackPanel>
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="2">
                 <StackPanel Height="40" Orientation="Horizontal">
-                    <Image Name="imgSlideChangeEvent" Source="../Icons/YellowBolt.png" HorizontalAlignment="Left"></Image>
+                    <Rectangle Fill="{StaticResource yellowBrush}" Width="40" Height="40">
+                        <Rectangle.OpacityMask>
+                            <ImageBrush ImageSource="../Icons/YellowBolt.png"></ImageBrush>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
                     <TextBlock Margin="10,0,0,0" Foreground="#adadad" VerticalAlignment="Center" FontSize="20">NEXT SLIDE</TextBlock>
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="3">
                 <StackPanel Orientation="Horizontal">
-                    <!--<Image Height="40" Source="../Icons/KeyGrey.png"></Image>-->
-                    <Image Name="imgDSKAction" Height="40" Source="../Icons/KeyRed.png"></Image>
-                    <TextBlock Name="tbDSKAction" Margin="10,0,0,0" Foreground="Red" VerticalAlignment="Center" FontSize="20">DSK1 ON AIR</TextBlock>
+                    <Rectangle Fill="{StaticResource redBrush}" Width="40" Height="40">
+                        <Rectangle.OpacityMask>
+                            <ImageBrush ImageSource="../Icons/KeyRed.png"></ImageBrush>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <TextBlock Name="tbDSKAction" Margin="10,0,0,0" Foreground="{StaticResource redBrush}" VerticalAlignment="Center" FontSize="20">DSK1 ON AIR</TextBlock>
                 </StackPanel>
             </Grid>
         </Grid>
