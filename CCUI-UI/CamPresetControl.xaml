@@ -14,7 +14,7 @@
         </ResourceDictionary>
     </Control.Resources>
     <Grid>
-        <Grid Background="#272727">
+        <Grid Background="{StaticResource darkBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="200"></RowDefinition>
                 <RowDefinition Height="5"></RowDefinition>
@@ -32,22 +32,22 @@
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">Camera Name</TextBlock>
-                <TextBox Name="tbCamName" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
+                <TextBox Name="tbCamName" Grid.Row="0" Grid.Column="1" Style="{StaticResource darkTextbox}" FontSize="30"></TextBox>
                 <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DarkTextblock}">IP Address</TextBlock>
-                <TextBox Name="tbCamIP" Grid.Row="1" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
+                <TextBox Name="tbCamIP" Grid.Row="1" Grid.Column="1" Style="{StaticResource darkTextbox}" FontSize="30"></TextBox>
                 <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource DarkTextblock}">Port</TextBlock>
-                <TextBox x:Name="tbCamPort" Grid.Row="2" Grid.Column="1" Style="{StaticResource DarkTextbox}"></TextBox>
+                <TextBox x:Name="tbCamPort" Grid.Row="2" Grid.Column="1" Style="{StaticResource darkTextbox}" FontSize="30"></TextBox>
 
                 <Grid Grid.Row="3" Grid.ColumnSpan="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Button Click="btnReStart_Click" x:Name="btnReStart" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="LightGreen" FontSize="15">(RE)/START</Button>
-                    <Button Click="btnStop_Click" x:Name="btnStop" Width="100" Grid.Column="1" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="Orange" FontSize="15">STOP</Button>
+                    <Button Click="btnReStart_Click" x:Name="btnReStart" Width="100" Grid.Column="0" Height="40" Style="{StaticResource SelectorTextButton}" Background="{StaticResource greenBrush}" Foreground="{StaticResource whiteBrush}" FontSize="15">(RE)/START</Button>
+                    <Button Click="btnStop_Click" x:Name="btnStop" Width="100" Grid.Column="1" Height="40" Style="{StaticResource SelectorTextButton}" Background="{StaticResource redBrush}" Foreground="{StaticResource whiteBrush}" FontSize="15">STOP</Button>
                 </Grid>
             </Grid>
-            <Grid Grid.Row="1" Background="#777777" Margin="10,0,10,0"></Grid>
+            <Grid Grid.Row="1" Background="{StaticResource grayBrush}" Margin="10,0,10,0"></Grid>
             <Grid Grid.Row="2">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -77,23 +77,21 @@
                             <!--</Grid.ColumnDefinitions>-->
                             <StackPanel>
                                 <TextBlock Margin="0" HorizontalAlignment="Center" Style="{StaticResource DarkTextblock}">Pos Preset Name</TextBlock>
-                                <TextBox Margin="5,0,5,0" VerticalAlignment="Top" Name="tbPresetName" Style="{StaticResource DarkTextbox}"></TextBox>
+                                <TextBox Name="tbPresetName" Style="{StaticResource darkTextbox}" FontSize="20"></TextBox>
                             </StackPanel>
                         </Grid>
                         <Grid Grid.Row="1">
-                            <StackPanel Orientation="Horizontal">
-                                <Button Click="btnSavePreset_Click" x:Name="btnSavePreset" Width="80" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">SAVE PST</Button>
-                            </StackPanel>
+                            <Button Click="btnSavePreset_Click" x:Name="btnSavePreset" Width="80" Height="40" Grid.Column="0" Margin="5" Style="{StaticResource SelectorTextButton}" FontSize="15" HorizontalAlignment="Center">SAVE PST</Button>
                         </Grid>
-                        <Grid Grid.Row="2" Background="#171717" Margin="10,0,10,0"></Grid>
+                        <Grid Grid.Row="2" Background="{StaticResource darkBrush}" Margin="10,0,10,0"></Grid>
                         <Grid Grid.Row="3">
                             <StackPanel>
                                 <TextBlock Margin="0" HorizontalAlignment="Center" Style="{StaticResource DarkTextblock}">Recall Speed</TextBlock>
-                                <TextBox Margin="5,0,5,0" Name="tbPresetSpeed" Style="{StaticResource DarkTextbox}">15</TextBox>
+                                <TextBox Name="tbPresetSpeed" Style="{StaticResource darkTextbox}" FontSize="20">15</TextBox>
                             </StackPanel>
                         </Grid>
 
-                        <Grid Grid.Row="0" Grid.RowSpan="4" Grid.Column="1" Background="#171717"></Grid>
+                        <Grid Grid.Row="0" Grid.RowSpan="4" Grid.Column="1" Background="{StaticResource darkBrush}"></Grid>
 
                         <Grid Grid.Row="0" Grid.Column="2">
                             <Grid.ColumnDefinitions>
@@ -103,14 +101,14 @@
                             <Grid Grid.Column="0">
                                 <StackPanel>
                                     <TextBlock Margin="0" HorizontalAlignment="Center" Style="{StaticResource DarkTextblock}">Zoom Preset Name</TextBlock>
-                                    <TextBox Margin="5,0,5,0" Name="tbZPstName" Style="{StaticResource DarkTextbox}"></TextBox>
+                                    <TextBox Name="tbZPstName" Style="{StaticResource darkTextbox}" FontSize="20"></TextBox>
                                 </StackPanel>
                             </Grid>
 
                             <Grid Grid.Column="1">
                                 <StackPanel>
                                     <TextBlock HorizontalAlignment="Center" Margin="0" Style="{StaticResource DarkTextblock}">Duration (ms)</TextBlock>
-                                    <TextBox Margin="5,0,5,0" Name="tbZProgDurMs" Style="{StaticResource DarkTextbox}">200</TextBox>
+                                    <TextBox Name="tbZProgDurMs" Style="{StaticResource darkTextbox}" FontSize="20">200</TextBox>
                                 </StackPanel>
                             </Grid>
                         </Grid>
@@ -120,11 +118,11 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="btnZoomModeTELE" Click="bntSetZoomModeTELE" Width="100" Grid.Column="0" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">TELE</Button>
-                            <Button x:Name="btnZoomModeWIDE" Click="btnSetZoomModeWIDE" Width="100" Grid.Column="1" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">WIDE</Button>
+                            <Button x:Name="btnZoomModeTELE" Click="bntSetZoomModeTELE" Width="100" Height="40" Grid.Column="0" Style="{StaticResource SelectorTextButton}" Background="{StaticResource tealBrush}" Foreground="{StaticResource whiteBrush}" FontSize="15" HorizontalAlignment="Center">TELE</Button>
+                            <Button x:Name="btnZoomModeWIDE" Click="btnSetZoomModeWIDE" Width="100" Height="40" Grid.Column="1" Style="{StaticResource SelectorTextButton}" FontSize="15" HorizontalAlignment="Center">WIDE</Button>
                         </Grid>
 
-                        <Grid Grid.Row="2" Grid.Column="2" Background="#171717" Margin="10,0,10,0"></Grid>
+                        <Grid Grid.Row="2" Grid.Column="2" Background="{StaticResource darkBrush}" Margin="10,0,10,0"></Grid>
 
                         <!--<Grid Grid.Row="3" Grid.Column="2">-->
                         <!--<Grid.ColumnDefinitions>-->
@@ -137,8 +135,8 @@
 
                         <Grid Grid.Row="3" Grid.Column="2">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Click="btnSavePresetZoom_Click" x:Name="btnSaveZoom" Width="100" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="CornflowerBlue" FontSize="15" HorizontalAlignment="Center">SAVE ZOOM</Button>
-                                <Button Click="btnRunZoom_Click" x:Name="btnRunZoom" Width="100" Margin="10" Style="{StaticResource DarkishBtn}" Foreground="Orange" FontSize="15" HorizontalAlignment="Center">RUN ZOOM</Button>
+                                <Button Click="btnSavePresetZoom_Click" x:Name="btnSaveZoom" Width="100" Height="40" Style="{StaticResource SelectorTextButton}" FontSize="15" HorizontalAlignment="Center">SAVE ZOOM</Button>
+                                <Button Click="btnRunZoom_Click" x:Name="btnRunZoom" Width="100" Height="40" Style="{StaticResource SelectorTextButton}" Foreground="{StaticResource whiteBrush}" Background="{StaticResource redBrush}" FontSize="15" HorizontalAlignment="Center">RUN ZOOM</Button>
                             </StackPanel>
                         </Grid>
 
@@ -153,12 +151,12 @@
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
                             <ScrollViewer Grid.Row="0">
-                                <ListView Name="lvPresets" Background="#171717" Margin="10" BorderBrush="#474747" HorizontalContentAlignment="Stretch">
+                                <ListView Name="lvPresets" Background="{StaticResource darkBrush}" Margin="10" BorderBrush="{StaticResource tealBrush}" HorizontalContentAlignment="Stretch">
                                 </ListView>
                             </ScrollViewer>
-                            <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Background="#474747"></GridSplitter>
+                            <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Background="{StaticResource lightBrush}"></GridSplitter>
                             <ScrollViewer Grid.Row="2">
-                                <ListView Name="lvZoomPresets" Background="#171717" Margin="10" BorderBrush="#474747" HorizontalContentAlignment="Stretch">
+                                <ListView Name="lvZoomPresets" Background="{StaticResource darkBrush}" Margin="10" BorderBrush="{StaticResource tealBrush}" HorizontalContentAlignment="Stretch">
                                 </ListView>
                             </ScrollViewer>
                         </Grid>
@@ -174,7 +172,7 @@
                                 <ColumnDefinition Width="75"></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="Orange">Command:</TextBlock>
+                            <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="{StaticResource tealBrush}">Command:</TextBlock>
                             <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="#8a8a8a">Status:</TextBlock>
                             <TextBlock Name="tbPending" Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" FontSize="25" Foreground="White"></TextBlock>
                             <TextBlock Name="tbStatus" Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" FontSize="20" Foreground="LimeGreen"></TextBlock>

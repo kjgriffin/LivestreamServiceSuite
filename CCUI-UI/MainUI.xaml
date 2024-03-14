@@ -17,23 +17,23 @@
 
     </Window.Resources>
     <Grid>
-        <Grid Background="#373737">
+        <Grid Background="{StaticResource darkBlackBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"></RowDefinition>
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Menu Grid.Row="0" Background="#171717" Foreground="#efefef" VerticalContentAlignment="Center" VerticalAlignment="Top">
-                <MenuItem Header="File" Background="#171717" Foreground="#efefef">
-                    <MenuItem Click="ClickLoad" Header="Load State" Background="#171717" Foreground="#efefef"></MenuItem>
-                    <MenuItem Click="ClickExport" Header="Export State" Background="#171717" Foreground="#efefef"></MenuItem>
+            <Menu Grid.Row="0" VerticalContentAlignment="Center" VerticalAlignment="Top" Style="{StaticResource DarkMenu}">
+                <MenuItem Header="File"  Style="{StaticResource DarkMenuHeader}">
+                    <MenuItem Click="ClickLoad" Header="Load State" Style="{StaticResource DarkMenuItem}" ></MenuItem>
+                    <MenuItem Click="ClickExport" Header="Export State" Style="{StaticResource DarkMenuItem}"></MenuItem>
                 </MenuItem>
-                <MenuItem Header="Connection" Background="#171717" Foreground="#efefef">
-                    <MenuItem Name="miFakeClients" Click="ClickToggleMock" IsCheckable="True" IsChecked="False" Header="Fake Cameras" Background="#171717" Foreground="#efefef"></MenuItem>
+                <MenuItem Header="Connection" Style="{StaticResource DarkMenuHeader}">
+                    <MenuItem Name="miFakeClients" Click="ClickToggleMock" IsCheckable="True" IsChecked="False" Header="Fake Cameras" Style="{StaticResource DarkMenuItem}"   ></MenuItem>
                 </MenuItem>
-                <MenuItem Header="View" Background="#171717" Foreground="#efefef">
-                    <MenuItem Name="miRefresh" Click="ClickRefresh" Header="Refresh" Background="#171717" Foreground="#efefef"></MenuItem>
-                    <MenuItem Name="miOnTop" Click="ClickOnTop" Header="Always On Top" Background="#171717" Foreground="#efefef" IsCheckable="True" IsChecked="True"></MenuItem>
+                <MenuItem Header="View" Style="{StaticResource DarkMenuHeader}">
+                    <MenuItem Name="miRefresh" Click="ClickRefresh" Header="Refresh" Style="{StaticResource DarkMenuItem}" ></MenuItem>
+                    <MenuItem Name="miOnTop" Click="ClickOnTop" Header="Always On Top" Style="{StaticResource DarkMenuItem}" ></MenuItem>
                 </MenuItem>
             </Menu>
 
@@ -43,12 +43,12 @@
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
+                        <!--<ColumnDefinition></ColumnDefinition>-->
                     </Grid.ColumnDefinitions>
                     <local:CamPresetControl x:Name="cam1" Grid.Column="0" Margin="10"></local:CamPresetControl>
                     <local:CamPresetControl x:Name="cam2" Grid.Column="1" Margin="10"></local:CamPresetControl>
                     <local:CamPresetControl x:Name="cam3" Grid.Column="2" Margin="10"></local:CamPresetControl>
-                    <local:CamPresetControl x:Name="cam4" Grid.Column="3" Margin="10"></local:CamPresetControl>
+                    <!--<local:CamPresetControl x:Name="cam4" Grid.Column="3" Margin="10"></local:CamPresetControl>-->
                 </Grid>
             </Viewbox>
         </Grid>

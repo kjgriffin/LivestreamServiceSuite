@@ -62,14 +62,14 @@ namespace CCUI_UI
             cam3.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
             cam3.OnRunZoomProgramRequest += Cam_OnChripZoomRequest;
 
-            cam4.OnRestartRequest += Cam_OnRestartRequest;
-            cam4.OnStopRequest += Cam_OnStopRequest;
-            cam4.OnSavePresetRequest += Cam_OnSavePresetRequest;
-            cam4.OnSaveZoomRequest += Cam_OnSaveZoomRequest;
-            cam4.OnFirePresetRequest += Cam_OnFirePresetRequest;
-            cam4.OnFireZoomRequest += Cam_OnFireZoomRequest;
-            cam4.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
-            cam4.OnRunZoomProgramRequest += Cam_OnChripZoomRequest;
+            //cam4.OnRestartRequest += Cam_OnRestartRequest;
+            //cam4.OnStopRequest += Cam_OnStopRequest;
+            //cam4.OnSavePresetRequest += Cam_OnSavePresetRequest;
+            //cam4.OnSaveZoomRequest += Cam_OnSaveZoomRequest;
+            //cam4.OnFirePresetRequest += Cam_OnFirePresetRequest;
+            //cam4.OnFireZoomRequest += Cam_OnFireZoomRequest;
+            //cam4.OnDeletePresetRequest += Cam_OnDeletePresetRequest;
+            //cam4.OnRunZoomProgramRequest += Cam_OnChripZoomRequest;
 
 
             miFakeClients.IsChecked = (m_monitor as CCPUPresetMonitor)?.m_usingFake ?? false;
@@ -211,14 +211,14 @@ namespace CCUI_UI
             cam3.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
             cam3.OnRunZoomProgramRequest -= Cam_OnChripZoomRequest;
 
-            cam4.OnRestartRequest -= Cam_OnRestartRequest;
-            cam4.OnStopRequest -= Cam_OnStopRequest;
-            cam4.OnSavePresetRequest -= Cam_OnSavePresetRequest;
-            cam4.OnSaveZoomRequest -= Cam_OnSaveZoomRequest;
-            cam4.OnFirePresetRequest -= Cam_OnFirePresetRequest;
-            cam4.OnFireZoomRequest -= Cam_OnFireZoomRequest;
-            cam4.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
-            cam4.OnRunZoomProgramRequest -= Cam_OnChripZoomRequest;
+            //cam4.OnRestartRequest -= Cam_OnRestartRequest;
+            //cam4.OnStopRequest -= Cam_OnStopRequest;
+            //cam4.OnSavePresetRequest -= Cam_OnSavePresetRequest;
+            //cam4.OnSaveZoomRequest -= Cam_OnSaveZoomRequest;
+            //cam4.OnFirePresetRequest -= Cam_OnFirePresetRequest;
+            //cam4.OnFireZoomRequest -= Cam_OnFireZoomRequest;
+            //cam4.OnDeletePresetRequest -= Cam_OnDeletePresetRequest;
+            //cam4.OnRunZoomProgramRequest -= Cam_OnChripZoomRequest;
         }
 
         internal void AddKnownPreset(string cname, string pname)
@@ -240,10 +240,10 @@ namespace CCUI_UI
             {
                 cam3.NewPresetAdded(pname);
             }
-            else if (cam4.LockedSettings && cam4.CamName == cname)
-            {
-                cam4.NewPresetAdded(pname);
-            }
+            //else if (cam4.LockedSettings && cam4.CamName == cname)
+            //{
+            //    cam4.NewPresetAdded(pname);
+            //}
         }
         internal void AddKnownZoom(string cname, string pname)
         {
@@ -264,10 +264,10 @@ namespace CCUI_UI
             {
                 cam3.NewZoomAdded(pname);
             }
-            else if (cam4.LockedSettings && cam4.CamName == cname)
-            {
-                cam4.NewZoomAdded(pname);
-            }
+            //else if (cam4.LockedSettings && cam4.CamName == cname)
+            //{
+            //    cam4.NewZoomAdded(pname);
+            //}
         }
 
 
@@ -372,10 +372,10 @@ namespace CCUI_UI
             {
                 cam3.UpdateLastStatus(cmd, status, ok);
             }
-            else if (cname == cam4?.CamName)
-            {
-                cam4.UpdateLastStatus(cmd, status, ok);
-            }
+            //else if (cname == cam4?.CamName)
+            //{
+            //    cam4.UpdateLastStatus(cmd, status, ok);
+            //}
         }
 
         private void ClickRefresh(object sender, RoutedEventArgs e)

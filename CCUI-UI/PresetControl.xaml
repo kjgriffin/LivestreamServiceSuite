@@ -14,28 +14,32 @@
         </ResourceDictionary>
 
     </Control.Resources>
-    <Grid Background="#373737" MouseDown="_PreviewMouseDown">
+    <Grid Background="{StaticResource darkBrush}" MouseDown="_PreviewMouseDown">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width="50"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Button Click="btnDelete_Click" Name="btnDelete" Grid.Column="0" Style="{StaticResource DarkBtn}" Width="40" Height="40">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="pack://Application:,,,/CommonIcons;component/Icons/RedErase.png"></Image>
-            </StackPanel>
+        <Button Click="btnDelete_Click" Name="btnDelete" Grid.Column="0" Style="{StaticResource SelectorTextButton}" Background="Transparent" Width="40" Height="40">
+            <Rectangle Fill="{StaticResource redBrush}" Width="30" Height="30">
+                <Rectangle.OpacityMask>
+                    <ImageBrush ImageSource="pack://Application:,,,/CommonIcons;component/Icons/RedErase.png"></ImageBrush>
+                </Rectangle.OpacityMask>
+            </Rectangle>
         </Button>
 
         <Grid Grid.Column="1" PreviewMouseDown="_PreviewMouseDown">
-            <Viewbox Stretch="Uniform">
-                <TextBlock Name="tbName" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#efefef" Margin="2,0,2,3">PRESET NAME</TextBlock>
+            <Viewbox Stretch="Uniform" VerticalAlignment="Center">
+                <TextBlock Name="tbName" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Foreground="#efefef" Margin="2,0,2,0">PRESET NAME</TextBlock>
             </Viewbox>
         </Grid>
 
-        <Button Click="btnRun_Click" Name="btnRun" Grid.Column="2" Style="{StaticResource DarkBtn}" Width="40" Height="40">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="pack://Application:,,,/CommonIcons;component/Icons/LightGreenPlay.png"></Image>
-            </StackPanel>
+        <Button Click="btnRun_Click" Name="btnRun" Grid.Column="2" Style="{StaticResource SelectorTextButton}" Background="Transparent" Width="40" Height="40">
+            <Rectangle Fill="{StaticResource greenBrush}" Width="30" Height="30">
+                <Rectangle.OpacityMask>
+                    <ImageBrush ImageSource="pack://Application:,,,/CommonIcons;component/Icons/LightGreenPlay.png"></ImageBrush>
+                </Rectangle.OpacityMask>
+            </Rectangle>
         </Button>
     </Grid>
 </UserControl>

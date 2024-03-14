@@ -60,16 +60,22 @@ namespace CCUI_UI
                     switch (m_zmode)
                     {
                         case -1:
-                            btnZoomModeTELE.Foreground = Brushes.CornflowerBlue;
-                            btnZoomModeWIDE.Foreground = Brushes.Orange;
+                            btnZoomModeTELE.Foreground = teal;
+                            btnZoomModeTELE.Background = dark;
+                            btnZoomModeWIDE.Foreground = white;
+                            btnZoomModeWIDE.Background = teal;
                             break;
                         case 1:
-                            btnZoomModeTELE.Foreground = Brushes.Orange;
-                            btnZoomModeWIDE.Foreground = Brushes.CornflowerBlue;
+                            btnZoomModeTELE.Foreground = white;
+                            btnZoomModeTELE.Background = teal;
+                            btnZoomModeWIDE.Foreground = teal;
+                            btnZoomModeWIDE.Background = dark;
                             break;
                         default:
-                            btnZoomModeTELE.Foreground = Brushes.CornflowerBlue;
-                            btnZoomModeWIDE.Foreground = Brushes.CornflowerBlue;
+                            btnZoomModeTELE.Foreground = teal;
+                            btnZoomModeTELE.Background = dark;
+                            btnZoomModeWIDE.Foreground = teal;
+                            btnZoomModeWIDE.Background = dark;
                             break;
                     }
                 });
@@ -97,10 +103,20 @@ namespace CCUI_UI
 
         Dictionary<string, ZoomProgram> m_zoomprograms = new Dictionary<string, ZoomProgram>();
 
+        Brush white;
+        Brush dark;
+        Brush teal;
+        Brush green;
+        Brush red;
         public CamPresetControl()
         {
             InitializeComponent();
             ZoomMode = 0;
+            white = (Brush)FindResource("whiteBrush");
+            red = (Brush)FindResource("redBrush");
+            green = (Brush)FindResource("greenBrush");
+            teal = (Brush)FindResource("tealBrush");
+            dark = (Brush)FindResource("darkBrush");
         }
 
         internal void Reconfigure(string name, string ip, string port, List<string> pos_presets, Dictionary<string, ZoomProgram> z_presets)
@@ -331,7 +347,7 @@ namespace CCUI_UI
 
             tbPending.Text = command;
             tbStatus.Text = status;
-            tbStatus.Foreground = OK ? Brushes.LimeGreen : Brushes.Red;
+            tbStatus.Foreground = OK ? green : red;
         }
 
         private void RunPreset(string pName)
