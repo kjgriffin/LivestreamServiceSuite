@@ -134,7 +134,7 @@ namespace Integrated_Presenter.DynamicDrivers
                 string top = "";
                 string bottom = "";
                 string backcolor = "#eaeaea";
-                string hovercolor = "#ffa500";
+                string hovercolor = "#08a7cf";
                 bool enabled = false;
 
                 // dump in defaults for now
