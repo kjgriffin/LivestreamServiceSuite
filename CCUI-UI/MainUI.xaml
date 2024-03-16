@@ -38,7 +38,7 @@
             </Menu>
 
             <Viewbox Grid.Row="1">
-                <Grid Height="1000" Width="1200">
+                <Grid Height="1000">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
