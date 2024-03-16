@@ -34,9 +34,22 @@ namespace Integrated_Presenter.ViewModels
 
         Dictionary<int, string> cams = new Dictionary<int, string> { [1] = "pulpit", [2] = "center", [3] = "lectern" };
 
+        Brush green;
+        Brush red;
+        Brush yellow;
+        Brush teal;
+        Brush gray;
+
         public PilotUI()
         {
             InitializeComponent();
+
+            green = FindResource("greenBrush") as Brush;
+            red = FindResource("redBrush") as Brush;
+            yellow = FindResource("yellowBrush") as Brush;
+            gray = FindResource("grayBrush") as Brush;
+            teal = FindResource("tealBrush") as Brush;
+
             pvCurrent_plt.OnUserRequestForManualReRun += PvCurrent_plt_OnUserRequestForManualReRun;
             pvCurrent_ctr.OnUserRequestForManualReRun += PvCurrent_ctr_OnUserRequestForManualReRun;
             pvCurrent_lec.OnUserRequestForManualReRun += PvCurrent_lec_OnUserRequestForManualReRun;
@@ -147,40 +160,40 @@ namespace Integrated_Presenter.ViewModels
             }
 
             this.mode = mode;
-            ellipseState.Fill = PilotEnabled ? Brushes.LimeGreen : Brushes.Red;
+            ellipseState.Fill = PilotEnabled ? green : red;
 
             if (mode == PilotMode.STD)
             {
                 tbSTDmode.FontWeight = FontWeights.Bold;
-                tbSTDmode.Foreground = Brushes.White;
+                tbSTDmode.Foreground = teal;
 
                 tbLASTmode.FontWeight = FontWeights.Regular;
-                tbLASTmode.Foreground = Brushes.Gray;
+                tbLASTmode.Foreground = gray;
 
                 tbEMGmode.FontWeight = FontWeights.Regular;
-                tbEMGmode.Foreground = Brushes.Gray;
+                tbEMGmode.Foreground = gray;
             }
             else if (mode == PilotMode.LAST)
             {
                 tbSTDmode.FontWeight = FontWeights.Regular;
-                tbSTDmode.Foreground = Brushes.Gray;
+                tbSTDmode.Foreground = gray;
 
                 tbLASTmode.FontWeight = FontWeights.Bold;
-                tbLASTmode.Foreground = Brushes.Orange;
+                tbLASTmode.Foreground = teal;
 
                 tbEMGmode.FontWeight = FontWeights.Regular;
-                tbEMGmode.Foreground = Brushes.Gray;
+                tbEMGmode.Foreground = gray;
             }
             else if (mode == PilotMode.EMG)
             {
                 tbSTDmode.FontWeight = FontWeights.Regular;
-                tbSTDmode.Foreground = Brushes.Gray;
+                tbSTDmode.Foreground = gray;
 
                 tbLASTmode.FontWeight = FontWeights.Regular;
-                tbLASTmode.Foreground = Brushes.Gray;
+                tbLASTmode.Foreground = gray;
 
                 tbEMGmode.FontWeight = FontWeights.Bold;
-                tbEMGmode.Foreground = Brushes.OrangeRed;
+                tbEMGmode.Foreground = red;
             }
 
             // if we get an update that invalidates the slide number for the curent slide, then we should change the curent cache

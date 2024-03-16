@@ -15,7 +15,7 @@
                     <RowDefinition Height="395"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid Width="300" Height="50">
-                    <Border BorderBrush="{StaticResource lightBrush}" BorderThickness="5" CornerRadius="30">
+                    <Border BorderBrush="{StaticResource lightBrush}" BorderThickness="5" CornerRadius="10">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition></ColumnDefinition>
@@ -24,13 +24,13 @@
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Grid Grid.Column="0" HorizontalAlignment="Center">
-                                <TextBlock Cursor="Hand" MouseDown="tbLASTmode_MouseDown" Name="tbLASTmode" Foreground="#a0a0a0" VerticalAlignment="Center" FontSize="25">LAST</TextBlock>
+                                <TextBlock Cursor="Hand" MouseDown="tbLASTmode_MouseDown" Name="tbLASTmode" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" FontSize="25">LAST</TextBlock>
                             </Grid>
                             <Grid Grid.Column="1" HorizontalAlignment="Center">
-                                <TextBlock Cursor="Hand" MouseDown="tbEMGmode_MouseDown" Name="tbEMGmode" Foreground="#a0a0a0" VerticalAlignment="Center" FontSize="25" Margin="0,0,10,0">EMG</TextBlock>
+                                <TextBlock Cursor="Hand" MouseDown="tbEMGmode_MouseDown" Name="tbEMGmode" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" FontSize="25" Margin="0,0,10,0">EMG</TextBlock>
                             </Grid>
                             <Grid Grid.Column="2" HorizontalAlignment="Center">
-                                <TextBlock Cursor="Hand" MouseDown="tbSTDmode_MouseDown" Name="tbSTDmode" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" FontSize="25">STD</TextBlock>
+                                <TextBlock Cursor="Hand" MouseDown="tbSTDmode_MouseDown" Name="tbSTDmode" FontWeight="Bold" Foreground="{StaticResource tealBrush}" VerticalAlignment="Center" FontSize="25">STD</TextBlock>
                             </Grid>
                             <Grid Grid.Column="4" HorizontalAlignment="Center">
                                 <Ellipse Cursor="Hand" MouseDown="ellipseState_MouseDown" Name="ellipseState" Width="35" Height="35" Fill="{StaticResource redBrush}"></Ellipse>

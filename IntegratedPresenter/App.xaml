@@ -7,6 +7,7 @@
 
         <Color x:Key="red">#d60d49</Color>
         <Color x:Key="green">#0dd67c</Color>
+        <Color x:Key="darkGreen">#4e875d</Color>
         <Color x:Key="teal">#4682B4</Color>
         <Color x:Key="tealOpc">#804682B4</Color>
         <Color x:Key="yellow">#ecf018</Color>
@@ -18,6 +19,7 @@
         <Color x:Key="white">#efefef</Color>
         <SolidColorBrush x:Key="redBrush" Color="{StaticResource red}"></SolidColorBrush>
         <SolidColorBrush x:Key="greenBrush" Color="{StaticResource green}"></SolidColorBrush>
+        <SolidColorBrush x:Key="darkGreenBrush" Color="{StaticResource darkGreen}"></SolidColorBrush>
         <SolidColorBrush x:Key="yellowBrush" Color="{StaticResource yellow}"></SolidColorBrush>
         <SolidColorBrush x:Key="tealBrush" Color="{StaticResource teal}"></SolidColorBrush>
         <SolidColorBrush x:Key="tealOpcBrush" Color="{StaticResource tealOpc}"></SolidColorBrush>

@@ -3,6 +3,8 @@
 using SharedPresentationAPI.Presentation;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -44,41 +46,65 @@ namespace Integrated_Presenter.ViewModels
                 _displayStates = value;
 
                 // update state UI
-                g_back.Dispatcher.Invoke(() =>
+                grStatus.Dispatcher.Invoke(() =>
                 {
                     // failure overrides all
+                    bdrOnAir.Background = dark;
+                    tbStatus.Foreground = white;
                     if (_displayStates.HasFlag(WSTATES.RUN_FAILED))
                     {
-                        g_back.Background = Brushes.Red;
+                        grStatus.Background = red;
                     }
                     else if (_displayStates.HasFlag(WSTATES.WARN_ONAIR))
                     {
-                        g_back.Background = Brushes.OrangeRed;
+                        bdrOnAir.Background = red;
+                        grStatus.Background = yellow;
+                        tbStatus.Foreground = dark;
                     }
                     else if (_displayStates.HasFlag(WSTATES.RUN_RUNNING))
                     {
-                        g_back.Background = Brushes.LimeGreen;
+                        grStatus.Background = green;
                     }
                     else if (_displayStates.HasFlag(WSTATES.RUN_DONE))
                     {
-                        g_back.Background = Brushes.Green;
+                        grStatus.Background = darkGreen;
                     }
                     else if (_displayStates.HasFlag(WSTATES.RUN_READY))
                     {
-                        g_back.Background = Brushes.Teal;
+                        grStatus.Background = blue;
                     }
                     else
                     {
-                        g_back.Background = new SolidColorBrush(Color.FromRgb(55, 55, 55));
+                        grStatus.Background = dark;
                     }
                 });
             }
         }
 
+        Brush blue;
+        Brush teal;
+        Brush green;
+        Brush darkGreen;
+        Brush red;
+        Brush yellow;
+        Brush white;
+        Brush gray;
+        Brush dark;
+
         public PilotCamPreview()
         {
             InitializeComponent();
             UpdateOnAirWarning(false);
+
+            blue = FindResource("lightBlueBrush") as Brush;
+            teal = FindResource("tealBrush") as Brush;
+            green = FindResource("greenBrush") as Brush;
+            darkGreen = FindResource("darkGreenBrush") as Brush;
+            red = FindResource("redBrush") as Brush;
+            yellow = FindResource("yellowBrush") as Brush;
+            white = FindResource("whiteBrush") as Brush;
+            gray = FindResource("grayBrush") as Brush;
+            dark = FindResource("darkBrush") as Brush;
         }
 
         public void HideManualReRun()
@@ -106,24 +132,32 @@ namespace Integrated_Presenter.ViewModels
 #endif
         }
 
-        string splitify(string input)
+        List<string> splitify(string input)
         {
-            //if (input.Length > 12)
-            //{
-            //    return input.Substring(0, 6) + Environment.NewLine + input.Substring(6, 6) + Environment.NewLine + input.Substring(12);
-            //}
-            //if (input.Length > 6)
-            //{
-            //    return input.Substring(0, 6) + Environment.NewLine + input.Substring(6);
-            //}
-            //return input;
-
-            // limit to 7 leters
-            if (input.Length > 7)
+            List<string> res = new List<string>();
+            if (input.Length <= 7)
             {
-                return input.Substring(0, 7);
+                res.Add(input);
             }
-            return input;
+            else if (input.Length <= 14)
+            {
+                var l1 = string.Concat(input.Take(7));
+                var l2 = string.Concat(input.Skip(7).Take(7));
+                res.Add(l1);
+                res.Add(l2);
+            }
+            else
+            {
+                // max 21 ??
+
+                var l1 = string.Concat(input.Take(7));
+                var l2 = string.Concat(input.Skip(7).Take(7));
+                var l3 = string.Concat(input.Skip(14).Take(7));
+                res.Add(l1);
+                res.Add(l2);
+                res.Add(l3);
+            }
+            return res;
         }
 
         internal void UpdateOnAirWarning(bool warn)
@@ -131,13 +165,11 @@ namespace Integrated_Presenter.ViewModels
             if (warn && hasAction)
             {
                 DisplayState |= WSTATES.WARN_ONAIR;
-                //g_back.Background = Brushes.Red;
                 tbOnAir.Visibility = Visibility.Visible;
             }
             else
             {
                 DisplayState &= ~WSTATES.WARN_ONAIR;
-                //g_back.Background = new SolidColorBrush(Color.FromRgb(55, 55, 55));
                 tbOnAir.Visibility = Visibility.Hidden;
             }
         }
@@ -159,18 +191,20 @@ namespace Integrated_Presenter.ViewModels
                 DisplayState = WSTATES.CLEAR;
             }
 
-            //g_back.Background = new SolidColorBrush(Color.FromRgb(80, 80, 80));
-
 
             tbName.Text = action.CamName.ToUpper();
-            tbPstName.Text = splitify(action.PresetName);
+
+            var splits = splitify(action.PresetName);
+            tbPstName.Text = string.Join(Environment.NewLine, splits);
+
+
             tbPstInfo.Text = action.DisplayInfo;
 
             switch (action.Status)
             {
                 case "READY":
                     tbStatus.Text = "READY";
-                    tbStatus.Foreground = Brushes.Gray;
+                    //tbStatus.Foreground = Brushes.Gray;
                     DisplayState |= WSTATES.RUN_READY;
                     DisplayState &= ~WSTATES.RUN_RUNNING;
                     DisplayState &= ~WSTATES.RUN_FAILED;
@@ -179,7 +213,7 @@ namespace Integrated_Presenter.ViewModels
 
                 case "STARTED":
                     tbStatus.Text = "RUNNING";
-                    tbStatus.Foreground = Brushes.Orange;
+                    //tbStatus.Foreground = Brushes.Orange;
                     DisplayState &= ~WSTATES.RUN_READY;
                     DisplayState |= WSTATES.RUN_RUNNING;
                     DisplayState &= ~WSTATES.RUN_FAILED;
@@ -188,7 +222,7 @@ namespace Integrated_Presenter.ViewModels
 
                 case "DONE":
                     tbStatus.Text = "DONE";
-                    tbStatus.Foreground = Brushes.LimeGreen;
+                    //tbStatus.Foreground = Brushes.LimeGreen;
                     DisplayState &= ~WSTATES.RUN_READY;
                     DisplayState &= ~WSTATES.RUN_RUNNING;
                     DisplayState &= ~WSTATES.RUN_FAILED;
@@ -197,7 +231,7 @@ namespace Integrated_Presenter.ViewModels
 
                 case "FAILED":
                     tbStatus.Text = "FAILED";
-                    tbStatus.Foreground = Brushes.Red;
+                    //tbStatus.Foreground = Brushes.Red;
                     DisplayState &= ~WSTATES.RUN_READY;
                     DisplayState &= ~WSTATES.RUN_RUNNING;
                     DisplayState |= WSTATES.RUN_FAILED;
@@ -206,7 +240,7 @@ namespace Integrated_Presenter.ViewModels
 
                 default:
                     tbStatus.Text = action.Status;
-                    tbStatus.Foreground = Brushes.Yellow;
+                    //tbStatus.Foreground = Brushes.Yellow;
                     DisplayState &= ~WSTATES.RUN_READY;
                     DisplayState &= ~WSTATES.RUN_RUNNING;
                     DisplayState |= WSTATES.RUN_FAILED; // mark failed??
@@ -244,8 +278,6 @@ namespace Integrated_Presenter.ViewModels
 
             hasAction = false;
             DisplayState = WSTATES.CLEAR;
-
-            //g_back.Background = new SolidColorBrush(Color.FromRgb(20, 20, 20));
 
             tbName.Text = cname;
 
