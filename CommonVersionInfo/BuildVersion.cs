@@ -19,6 +19,14 @@ namespace CommonVersionInfo
             Mode = string.Empty;
         }
 
+        public BuildVersion(int majorVersion, int minorVersion, int revision, int build, string mode)
+        {
+            MajorVersion = majorVersion;
+            MinorVersion = minorVersion;
+            Revision = revision;
+            Build = build;
+            Mode = mode;
+        }
 
         public override string ToString()
         {
