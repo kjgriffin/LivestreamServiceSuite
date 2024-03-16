@@ -78,7 +78,6 @@
                                         <ColumnDefinition></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
                                     <Button Grid.Column="0" Click="btnSavePreset_Click" x:Name="btnSavePreset" Width="80" Height="40" Margin="5" Style="{StaticResource SelectorTextButton}" FontSize="15" HorizontalAlignment="Center">SAVE PST</Button>
-                                    <!--<TextBlock Grid.Column="0" Margin="0" HorizontalAlignment="Center" Style="{StaticResource DarkTextblock}">Pos Preset Name</TextBlock>-->
                                     <TextBox Grid.Column="1" Name="tbPresetName" Style="{StaticResource darkTextbox}" FontSize="20"></TextBox>
                                 </Grid>
                             </Grid>
@@ -125,7 +124,6 @@
                                     <ColumnDefinition Width="110"></ColumnDefinition>
                                     <ColumnDefinition></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
-                                <!--<TextBlock Margin="0" HorizontalAlignment="Center" Style="{StaticResource DarkTextblock}">Zoom Preset Name</TextBlock>-->
                                 <Button Grid.Column="0" Click="btnSavePresetZoom_Click" x:Name="btnSaveZoom" Width="100" Height="40" Style="{StaticResource SelectorTextButton}" FontSize="15" HorizontalAlignment="Center">SAVE ZOOM</Button>
                                 <TextBox Grid.Column="1" Name="tbZPstName" Style="{StaticResource darkTextbox}" FontSize="20"></TextBox>
                             </Grid>
@@ -136,7 +134,6 @@
                                     <ColumnDefinition Width="100"></ColumnDefinition>
                                     <ColumnDefinition Width="100"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
-                                <!--<TextBlock HorizontalAlignment="Center" Margin="0" Style="{StaticResource DarkTextblock}">Duration (ms)</TextBlock>-->
                                 <TextBox Grid.Column="2" Name="tbZProgDurMs" Style="{StaticResource darkTextbox}" FontSize="20">200</TextBox>
                                 <Button x:Name="btnZoomModeTELE" Click="bntSetZoomModeTELE" Width="100" Height="40" Grid.Column="0" Style="{StaticResource SelectorTextButton}" Background="{StaticResource tealBrush}" Foreground="{StaticResource whiteBrush}" FontSize="15" HorizontalAlignment="Center">TELE</Button>
                                 <Button x:Name="btnZoomModeWIDE" Click="btnSetZoomModeWIDE" Width="100" Height="40" Grid.Column="1" Style="{StaticResource SelectorTextButton}" FontSize="15" HorizontalAlignment="Center">WIDE</Button>
@@ -165,18 +162,20 @@
 
             <Grid Grid.Row="2">
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="75"></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="{StaticResource tealBrush}">Command:</TextBlock>
-                    <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="#8a8a8a">Status:</TextBlock>
-                    <TextBlock Name="tbPending" Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" FontSize="25" Foreground="White"></TextBlock>
-                    <TextBlock Name="tbStatus" Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" FontSize="20" Foreground="LimeGreen"></TextBlock>
+                    <ScrollViewer>
+                        <ListView Name="lvStatus" Background="{StaticResource darkBrush}" Margin="10" BorderBrush="{StaticResource tealBrush}" HorizontalContentAlignment="Stretch">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                    <Setter Property="DockPanel.Dock" Value="Bottom"></Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <DockPanel LastChildFill="False"></DockPanel>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListView>
+                    </ScrollViewer>
                 </Grid>
             </Grid>
 

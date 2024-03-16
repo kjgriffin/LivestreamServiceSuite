@@ -337,6 +337,7 @@ namespace CCUI_UI
             }
         }
 
+        FixedSizeQueue<CCU_Report> reports = new FixedSizeQueue<CCU_Report>(100);
         internal void UpdateLastStatus(string command, string status, bool OK)
         {
             if (!CheckAccess())
@@ -345,9 +346,17 @@ namespace CCUI_UI
                 return;
             }
 
-            tbPending.Text = command;
-            tbStatus.Text = status;
-            tbStatus.Foreground = OK ? green : red;
+            CCU_Report report = new CCU_Report(command, status, OK);
+            StatusItem item = new StatusItem();
+            item.Build(report);
+
+            lvStatus.Items.Add(item);
+
+            if (lvStatus.Items.Count > 100)
+            {
+                var indxLast = lvStatus.Items.Count - 1;
+                lvStatus.Items.RemoveAt(indxLast);
+            }
         }
 
         private void RunPreset(string pName)
