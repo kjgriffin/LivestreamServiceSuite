@@ -12,7 +12,7 @@
         Width="600"
         Height="490"
         Title="Picture In Picture Positioning">
-    <Grid Background="#0D0D0D">
+    <Grid Background="{StaticResource darkBlackBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="7*"/>
             <ColumnDefinition Width="93*"/>
@@ -39,20 +39,20 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="0" Style="{StaticResource GrayText}">[Z/X] SCALE</TextBlock>
-            <TextBlock Grid.Row="0" Grid.Column="1" Foreground="Orange" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbScale">0</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="1" Foreground="{StaticResource tealBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbScale">0</TextBlock>
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="0" Style="{StaticResource GrayText}">[A/D] POS X</TextBlock>
-            <TextBlock Grid.Row="1" Grid.Column="1" Foreground="Orange" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbX">0</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="1" Foreground="{StaticResource tealBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbX">0</TextBlock>
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="2" Style="{StaticResource GrayText}">[W/S] POS Y</TextBlock>
-            <TextBlock Grid.Row="1" Grid.Column="3" Foreground="Orange" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbY">0</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="3" Foreground="{StaticResource tealBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbY">0</TextBlock>
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="2" Grid.Column="0" Style="{StaticResource GrayText}">[Q/E] MASK LR</TextBlock>
-            <TextBlock Grid.Row="2" Grid.Column="1" Foreground="Orange" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbMaskLR">0</TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="1" Foreground="{StaticResource tealBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbMaskLR">0</TextBlock>
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="2" Grid.Column="2" Style="{StaticResource GrayText}">[R/F] MASK TB</TextBlock>
-            <TextBlock Grid.Row="2" Grid.Column="3" Foreground="Orange" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbMaskTB">0</TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="3" Foreground="{StaticResource tealBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Name="tbMaskTB">0</TextBlock>
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="2" Style="{StaticResource GrayText}">[Space] CONTROL</TextBlock>
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">[U] MASK SLEW DRIVE</TextBlock>
-            <TextBlock Name="tbSlewDrive" Foreground="Yellow" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">ON</TextBlock>
+            <TextBlock Name="tbSlewDrive" Foreground="{StaticResource yellowBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">ON</TextBlock>
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">[RShift] FINE CONTROL</TextBlock>
-            <TextBlock Name="tbFineMode" Foreground="Yellow" Margin="0,0,10,0" HorizontalAlignment="Left" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">FINE</TextBlock>
+            <TextBlock Name="tbFineMode" Foreground="{StaticResource yellowBrush}" Margin="0,0,10,0" HorizontalAlignment="Left" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">FINE</TextBlock>
 
 
             <TextBlock Margin="0,0,10,0" HorizontalAlignment="Right" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="1" Style="{StaticResource GrayText}">[P] PRESET FILL FEATURE</TextBlock>
@@ -84,13 +84,13 @@
         </Grid>
         <Viewbox Grid.Row="1" Grid.ColumnSpan="2">
             <Grid Name="extragrid" Width="600" Height="450">
-                <Grid Name="displaygrid" Background="Gray" Width="384" Height="216">
+                <Grid Name="displaygrid" Background="{StaticResource tealBrush}" Width="384" Height="216">
                     <Rectangle Name="maskedbox" Width="153.6" Height="86.4" Fill="Black">
                         <Rectangle.RenderTransform>
                             <TranslateTransform X="115.2" Y="64"></TranslateTransform>
                         </Rectangle.RenderTransform>
                     </Rectangle>
-                    <Rectangle Name="viewbox" Width="100" Height="80" Fill="Orange">
+                    <Rectangle Name="viewbox" Width="100" Height="80" Fill="{StaticResource greenBrush}">
                         <Rectangle.RenderTransform>
                             <TranslateTransform X="115.2" Y="64"></TranslateTransform>
                         </Rectangle.RenderTransform>
@@ -117,12 +117,12 @@
                             <TranslateTransform X="0" Y="0"></TranslateTransform>
                         </Border.RenderTransform>
                     </Border>
-                    <Border Name="trueviewbox" Width="100" Height="80" BorderThickness="3">
+                    <Border Name="trueviewbox" Width="100" Height="80" BorderThickness="3" Background="{StaticResource redBrush}" Opacity="0.5">
                         <Border.BorderBrush>
                             <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
                                 <DrawingBrush.Drawing>
                                     <DrawingGroup>
-                                        <GeometryDrawing Brush="Red">
+                                        <GeometryDrawing Brush="{StaticResource redBrush}">
                                             <GeometryDrawing.Geometry>
                                                 <GeometryGroup>
                                                     <RectangleGeometry Rect="0,0,50,50" />

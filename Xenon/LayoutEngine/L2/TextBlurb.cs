@@ -142,7 +142,7 @@ namespace Xenon.LayoutEngine.L2
                 }
             }
 
-            TextOptions tops = new TextOptions(FontManager.GetFont(new LWJFont(fname, fsize, (int)style)))
+            RichTextOptions tops = new RichTextOptions(FontManager.GetFont(new LWJFont(fname, fsize, (int)style)))
             {
                 // todo: do we need to set any more options?
                 Dpi = 96,
@@ -238,7 +238,7 @@ namespace Xenon.LayoutEngine.L2
                 kcolor = Color.FromRgb((byte)fcol.Alpha, (byte)fcol.Alpha, (byte)fcol.Alpha);
             }
 
-            TextOptions topts = new TextOptions(FontManager.GetFont(new LWJFont(fname, fsize, (int)style)))
+            RichTextOptions topts = new RichTextOptions(FontManager.GetFont(new LWJFont(fname, fsize, (int)style)))
             {
                 Dpi = 96,
                 Origin = new PointF(Pos.X, Pos.Y),

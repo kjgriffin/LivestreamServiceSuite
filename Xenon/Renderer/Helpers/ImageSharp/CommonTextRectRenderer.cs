@@ -12,6 +12,8 @@ using Xenon.FontManagement;
 using Xenon.LayoutInfo;
 using Xenon.LayoutInfo.BaseTypes;
 
+using IBrush = SixLabors.ImageSharp.Drawing.Processing.Brush;
+
 namespace Xenon.Renderer.Helpers.ImageSharp
 {
     internal static class CommonTextRectRenderer
@@ -47,11 +49,25 @@ namespace Xenon.Renderer.Helpers.ImageSharp
         private static void DrawText(this IImageProcessingContext ctx, string text, Font font, Color fcolor, RectangleF rect, LWJHAlign HAlign, LWJVAlign VAlign, float linespace = 1f)
         {
             DrawingOptions otps = new DrawingOptions();
+            /*
             TextOptions tops = new TextOptions(font)
             {
                 HorizontalAlignment = HAlign.HALIGN(), // to simulate GDI+ behaviour: move the origin to compensate
                 VerticalAlignment = VAlign.VALIGN(), // to simulate GDI+ behaviour: move the origin to compensate 
-                WordBreaking = WordBreaking.Normal,
+                WordBreaking = WordBreaking.Standard,
+                LineSpacing = linespace,
+                TextDirection = TextDirection.LeftToRight,
+                TextAlignment = TextAlignment.Start,
+                WrappingLength = rect.Width,
+                Dpi = 96, // we'll statically assume DPI of 96 everywhere
+                Origin = GDI_Compensate(HAlign, VAlign, rect),
+            };
+            */
+            RichTextOptions rtops = new RichTextOptions(font)
+            {
+                HorizontalAlignment = HAlign.HALIGN(), // to simulate GDI+ behaviour: move the origin to compensate
+                VerticalAlignment = VAlign.VALIGN(), // to simulate GDI+ behaviour: move the origin to compensate 
+                WordBreaking = WordBreaking.Standard,
                 LineSpacing = linespace,
                 TextDirection = TextDirection.LeftToRight,
                 TextAlignment = TextAlignment.Start,
@@ -63,15 +79,15 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 
             if (HAlign == LWJHAlign.Centered)
             {
-                DrawText_ManualOverflowCenter(ctx, text, otps, tops, brush, rect, VAlign);
+                DrawText_ManualOverflowCenter(ctx, text, otps, rtops, brush, rect, VAlign);
             }
             else
             {
-                ctx.DrawText(otps, tops, text, brush, null);
+                ctx.DrawText(otps, rtops, text, brush, null);
             }
         }
 
-        private static void DrawText_ManualOverflowCenter(this IImageProcessingContext ctx, string text, DrawingOptions opts, TextOptions topts, IBrush brush, RectangleF rect, LWJVAlign valign)
+        private static void DrawText_ManualOverflowCenter(this IImageProcessingContext ctx, string text, DrawingOptions opts, RichTextOptions topts, IBrush brush, RectangleF rect, LWJVAlign valign)
         {
 
             if (string.IsNullOrWhiteSpace(text))
@@ -105,7 +121,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                 {
                     tmp = word;
                 }
-                if (TextMeasurer.Measure(cur + tmp, topts).Width <= rect.Width)
+                if (TextMeasurer.MeasureSize(cur + tmp, topts).Width <= rect.Width)
                 {
                     // -- if so add it
                     sb.Append(tmp);
@@ -129,7 +145,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
             List<FontRectangle> linesizes = new List<FontRectangle>();
             foreach (var line in lines)
             {
-                linesizes.Add(TextMeasurer.Measure(line, topts));
+                linesizes.Add(TextMeasurer.MeasureSize(line, topts));
             }
 
             // need to space them correctly

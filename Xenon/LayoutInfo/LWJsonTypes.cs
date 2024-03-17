@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text.Json.Serialization;
 
+using IBrush = SixLabors.ImageSharp.Drawing.Processing.Brush;
+
 namespace Xenon.LayoutInfo
 {
     class LWJPoint

@@ -27,7 +27,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
                 return;
             }
 
-            double lhmax = lines.Max(x => TextMeasurer.Measure(x, new TextOptions(FontManager.GetFont(layout.Font)) { Dpi = 96 }).Height);
+            double lhmax = lines.Max(x => TextMeasurer.MeasureSize(x, new RichTextOptions(FontManager.GetFont(layout.Font)) { Dpi = 96 }).Height);
 
             // compute interline spacing
             double interspace = (layout.Textbox.Size.Height - (lines.Count * lhmax)) / (layout.VPaddingEnabled ? lines.Count + 1 : Math.Max(lines.Count - 1, 1));
@@ -60,7 +60,7 @@ namespace Xenon.Renderer.Helpers.ImageSharp
             yoff += layout.VPaddingEnabled ? interspace : 0;
 
 
-            TextOptions tops = new TextOptions(FontManager.GetFont(layout.Font))
+            RichTextOptions tops = new RichTextOptions(FontManager.GetFont(layout.Font))
             {
                 HorizontalAlignment = layout.HorizontalAlignment.HALIGN(),
                 VerticalAlignment = VerticalAlignment.Top,
@@ -70,12 +70,12 @@ namespace Xenon.Renderer.Helpers.ImageSharp
 
 
             var f = FontManager.GetFont(new LWJFont(preSymbolFont, layout.Font.Size, layout.Font.Style));
-            TextOptions ptops = new TextOptions(f);
+            RichTextOptions ptops = new RichTextOptions(f);
             ptops.HorizontalAlignment = HorizontalAlignment.Left;
             ptops.Dpi = 96;
             ptops.Origin = new Vector2(layout.Textbox.Origin.X, layout.Textbox.Origin.Y + (float)yoff);
-            float pxoff = TextMeasurer.Measure(preSymbolText, ptops).Width;
-            float doxx = TextMeasurer.Measure(lines.FirstOrDefault(""), tops).Width;
+            float pxoff = TextMeasurer.MeasureSize(preSymbolText, ptops).Width;
+            float doxx = TextMeasurer.MeasureSize(lines.FirstOrDefault(""), tops).Width;
 
             float xoff = preSymbol ? pxoff : 0;
 

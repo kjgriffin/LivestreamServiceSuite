@@ -1,6 +1,4 @@
-﻿using OpenQA.Selenium.DevTools.V113.DOM;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
