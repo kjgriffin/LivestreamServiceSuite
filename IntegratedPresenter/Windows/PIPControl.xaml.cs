@@ -22,9 +22,23 @@ namespace IntegratedPresenter.Main
         bool _startupComplete = false;
 
         MainWindow _parent;
+
+        Brush green;
+        Brush red;
+        Brush yellow;
+        Brush teal;
+        Brush white;
+        Brush gray;
         public PIPControl(MainWindow parent, Action<BMDUSKDVESettings> setpiponswitcher, Action<BMDUSKDVESettings> setpipkeyaonswitcher, Action<BMDUSKDVESettings> setpipkeybonswitcher, BMDUSKDVESettings current, long? USK1FillSource, Func<int, int> convertbuttontosourceid)
         {
             InitializeComponent();
+
+            green = FindResource("greenBrush") as Brush;
+            red = FindResource("redBrush") as Brush;
+            yellow = FindResource("yellowBrush") as Brush;
+            teal = FindResource("tealBrush") as Brush;
+            white = FindResource("whiteBrush") as Brush;
+            gray = FindResource("grayBrush") as Brush;
 
             _startupComplete = false;
 
@@ -213,30 +227,30 @@ namespace IntegratedPresenter.Main
             tbMaskTB.Text = $"{pipmt:0.##}/{pipmb:0.##} :: {(pipmt + pipmb) / 2 / maxmtb * 100:0.##}%";
 
             tbFineMode.Text = mode_FineControl ? "FINE" : "OFF";
-            tbFineMode.Foreground = mode_FineControl ? Brushes.Yellow : Brushes.LightSlateGray;
+            tbFineMode.Foreground = mode_FineControl ? yellow : gray;
 
             tbSlewDrive.Text = mode_SlewDrive ? "ON" : "OFF";
-            tbSlewDrive.Foreground = mode_SlewDrive ? Brushes.Yellow : Brushes.LightSlateGray;
+            tbSlewDrive.Foreground = mode_SlewDrive ? yellow : gray;
 
             tbPresetFillEnabled.Text = featurePresetEnabled ? "ACTIVE" : "DISABLED";
-            tbPresetFillEnabled.Foreground = featurePresetEnabled ? Brushes.Yellow : Brushes.LightSlateGray;
+            tbPresetFillEnabled.Foreground = featurePresetEnabled ? yellow : gray;
 
 
             for (int i = 0; i < 8; i++)
             {
-                pipfills[i].Background = Brushes.Gray;
+                pipfills[i].Background = gray;
                 pipfills[i].BorderBrush = Brushes.Transparent;
                 if (currentfillsource == ConvertButtonToSourceID(i + 1))
                 {
-                    pipfills[i].Background = Brushes.Red;
+                    pipfills[i].Background = red;
                     if (presetfillsource == i + 1)
                     {
-                        pipfills[i].BorderBrush = Brushes.LimeGreen;
+                        pipfills[i].BorderBrush = green;
                     }
                 }
                 else if (presetfillsource == i + 1)
                 {
-                    pipfills[i].Background = Brushes.LimeGreen;
+                    pipfills[i].Background = green;
                 }
             }
 
@@ -338,11 +352,11 @@ namespace IntegratedPresenter.Main
                 sendcmd = value;
                 if (sendcmd)
                 {
-                    cmdlight.Fill = Brushes.Orange;
+                    cmdlight.Fill = teal;
                 }
                 else
                 {
-                    cmdlight.Fill = Brushes.Gray;
+                    cmdlight.Fill = gray;
                 }
             }
         }
@@ -355,11 +369,11 @@ namespace IntegratedPresenter.Main
                 cmdmode = value;
                 if (cmdmode)
                 {
-                    ctrllight.Fill = Brushes.LawnGreen;
+                    ctrllight.Fill = green;
                 }
                 else
                 {
-                    ctrllight.Fill = Brushes.WhiteSmoke;
+                    ctrllight.Fill = white;
                 }
             }
         }
