@@ -157,6 +157,8 @@ namespace LutheRun
                 if (cap != null && cap.Caption.ToLower().Contains("distribution"))
                 {
                     communion = true;
+                    // reset incase we trigger early on agnus dei
+                    foundCHymns = false;
                 }
 
                 if ((elem.LSBElement as LSBElementHymn)?.Caption.ToLower().Contains("agnus dei") == true)
