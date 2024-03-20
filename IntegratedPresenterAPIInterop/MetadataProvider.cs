@@ -98,6 +98,8 @@ namespace IntegratedPresenterAPIInterop
 
             [AutomationActions.JumpToSlide] = (1, AutomationActions.JumpToSlide, "JumpToSlide", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.Integer, "SlideNum") }, ExpectedVariableContents.NONE),
 
+            [AutomationActions.SetTargetSlide] = (1, AutomationActions.SetTargetSlide, "SetNextSlideTarget", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.Integer, "STargetNum") }, ExpectedVariableContents.NONE),
+
             // duplicate command for backwards compatibility
             [AutomationActions.WatchSwitcherStateBoolVal] = (3, AutomationActions.WatchSwitcherStateBoolVal, "WatchSwitcherStateBoolVal", new List<(AutomationActionArgType, string)>
             {

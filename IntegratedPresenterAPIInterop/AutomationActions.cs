@@ -70,6 +70,7 @@
         PlacePIP,
 
         JumpToSlide,
+        SetTargetSlide,
         WatchSwitcherStateBoolVal,
         WatchSwitcherStateIntVal,
 

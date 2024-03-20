@@ -422,6 +422,15 @@ namespace Integrated_Presenter.Automation
                             await _presentationProvider.TakeNextSlide();
                         }
                         break;
+                    case AutomationActions.SetTargetSlide:
+                        if (task.TryEvaluateAutomationActionParmeter<int>("STargetNum", _variableManager, out var starget))
+                        {
+                            _logger.Debug($"(PerformAutomationAction) -- target next slide {starget}");
+                            continueProcessing = false;
+                            _presentationProvider.SetNextSlideTarget(starget);
+                        }
+                        break;
+
 
                     case AutomationActions.DriveNextSlide:
                         _logger.Debug($"(PerformAutomationAction) -- drive next slide");
