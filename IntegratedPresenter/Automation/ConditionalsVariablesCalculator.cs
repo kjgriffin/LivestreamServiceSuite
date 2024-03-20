@@ -50,7 +50,8 @@ namespace Integrated_Presenter.Automation
             Dictionary<string, ExposedVariable> presVars = new Dictionary<string, ExposedVariable>();
             if (_pres != null)
             {
-                presVars = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(_pres);
+                //presVars = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(_pres);
+                presVars = _pres.GetExposedVariables();
             }
             // report pilot state
             Dictionary<string, ExposedVariable> pilotVars = new Dictionary<string, ExposedVariable>();

@@ -12,6 +12,8 @@ using SwitcherControl.BMDSwitcher;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using VariableMarkupAttributes.Attributes;
+
 namespace Integrated_Presenter.Automation
 {
 
@@ -65,6 +67,7 @@ namespace Integrated_Presenter.Automation
         ISlide GetCurentSlide();
         void SetNextSlideTarget(int target);
         Task TakeNextSlide();
+        Dictionary<string, ExposedVariable> GetExposedVariables();
     }
     internal delegate Dictionary<string, WatchVariable> ConditionWatchProvider();
     internal interface IAudioDriverProvider

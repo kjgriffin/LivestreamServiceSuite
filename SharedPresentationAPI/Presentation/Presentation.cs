@@ -6,6 +6,7 @@ using IntegratedPresenterAPIInterop;
 
 using SharedPresentationAPI.Presentation;
 
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -252,6 +253,9 @@ namespace SharedPresentationAPI.Presentation
         [ExposedAsVariable(nameof(CurrentSlide))]
         public int CurrentSlide { get => _currentSlide + 1; }
 
+        [ExposedAsVariable(nameof(CurrentSlide0Index))]
+        public int CurrentSlide0Index { get => _currentSlide; }
+
         private int _currentSlide = 0;
         private int _virtualCurrentSlide = 0;
 
@@ -416,14 +420,30 @@ namespace SharedPresentationAPI.Presentation
                     string vname = (string)action.Action.Parameters[2].LiteralValue;
                     string wpath = (string)action.Action.Parameters[0].LiteralValue;
                     object expectation = action.Action.Parameters[1].LiteralValue;
-                    variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Boolean);
+                    if (variables.ContainsKey(vname) && variables[vname].VPath != wpath && variables[vname].ExpectedVal != expectation)
+                    {
+                        Debugger.Break();
+                        // TODO: consider if we need to make some sneaky, dynamic swapping and adjust a few things to auto-unmask
+                    }
+                    //else
+                    {
+                        variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Boolean);
+                    }
                 }
                 foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.WatchSwitcherStateIntVal || x.Action.Action == AutomationActions.WatchStateIntVal))
                 {
                     string vname = (string)action.Action.Parameters[2].LiteralValue;
                     string wpath = (string)action.Action.Parameters[0].LiteralValue;
                     object expectation = action.Action.Parameters[1].LiteralValue;
-                    variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Integer);
+                    if (variables.ContainsKey(vname) && variables[vname].VPath != wpath && variables[vname].ExpectedVal != expectation)
+                    {
+                        Debugger.Break();
+                        // TODO: consider if we need to make some sneaky, dynamic swapping and adjust a few things to auto-unmask
+                    }
+                    //else
+                    {
+                        variables[vname] = new WatchVariable(wpath, expectation, AutomationActionArgType.Integer);
+                    }
                 }
 
                 foreach (var action in allSlideActions.Where(x => x.Action.Action == AutomationActions.InitComputedVal))

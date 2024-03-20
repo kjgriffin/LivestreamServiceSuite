@@ -571,6 +571,36 @@ namespace Integrated_Presenter.Automation
                                         break;
                                 }
                             }
+                            else
+                            {
+                                switch (vinfo.VarType)
+                                {
+                                    case AutomationActionArgType.Integer:
+                                        if (_variableManager.TryEvaluateVariableValue<int>(wparam.ComputedVaraible, out int ival))
+                                        {
+                                            _variableManager.WriteVariableValue(wvalname, ival);
+                                        }
+                                        break;
+                                    case AutomationActionArgType.String:
+                                        if (_variableManager.TryEvaluateVariableValue<string>(wparam.ComputedVaraible, out string sval))
+                                        {
+                                            _variableManager.WriteVariableValue(wvalname, sval);
+                                        }
+                                        break;
+                                    case AutomationActionArgType.Double:
+                                        if (_variableManager.TryEvaluateVariableValue<double>(wparam.ComputedVaraible, out double dval))
+                                        {
+                                            _variableManager.WriteVariableValue(wvalname, dval);
+                                        }
+                                        break;
+                                    case AutomationActionArgType.Boolean:
+                                        if (_variableManager.TryEvaluateVariableValue<bool>(wparam.ComputedVaraible, out bool bval))
+                                        {
+                                            _variableManager.WriteVariableValue(wvalname, bval);
+                                        }
+                                        break;
+                                }
+                            }
                         }
                         break;
                     case AutomationActions.SetupComputedTrack:

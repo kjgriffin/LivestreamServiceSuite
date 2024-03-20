@@ -461,6 +461,8 @@ namespace IntegratedPresenter.Main
             UpdateMediaControls();
             UpdatePilotUI();
             UpdateSpeculativeSlideJumpUI();
+
+            _condVarCalculator?.NotifyOfChange();
         }
 
         IBMDSwitcherManager switcherManager;
@@ -5097,6 +5099,15 @@ namespace IntegratedPresenter.Main
         BMDSwitcherConfigSettings IConfigProvider._config { get => _config; }
         bool IFeatureFlagProvider.AutomationTimer1Enabled { get => _FeatureFlag_automationtimer1enabled; }
         string IPresentationProvider.Folder { get => Presentation?.Folder; }
+
+        Dictionary<string, ExposedVariable> IPresentationProvider.GetExposedVariables()
+        {
+            if (_pres != null)
+            {
+                return VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(_pres);
+            }
+            return new Dictionary<string, ExposedVariable>();
+        }
 
         ISlide IPresentationProvider.GetCurentSlide()
         {
