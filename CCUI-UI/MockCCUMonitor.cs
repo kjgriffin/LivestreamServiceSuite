@@ -122,27 +122,29 @@ namespace CCUI_UI
             //var pst = _knownPresets.FirstOrDefault(x => x.AssociatedCamera == camname && x.PresetName == presetname);
 
             PresetMockInfo pst = null;
-            m_presetConfig.CameraAssociations.TryGetValue(camname, out var associatedCam);
+            if (m_presetConfig?.CameraAssociations?.TryGetValue(camname, out var associatedCam) == true)
+            {
 
-            if (!(m_presetConfig.KeyedPresets.TryGetValue(camname, out var camPresets) && camPresets.TryGetValue(presetname, out _)))
-            {
-                return Guid.Empty;
-            }
-            if (!(m_presetConfig.MockPresetInfo.TryGetValue(camname, out var mockPreset) && mockPreset.TryGetValue(presetname, out pst)))
-            {
-                return Guid.Empty;
-            }
-
-            if (pst != null)
-            {
-                Task.Run(async () =>
+                if (!(m_presetConfig.KeyedPresets.TryGetValue(camname, out var camPresets) && camPresets.TryGetValue(presetname, out _)))
                 {
-                    OnCommandUpdate?.Invoke(camname, "STARTED", "DRIVE.ABSPOS", presetname, reqid.ToString());
-                    OnCameraMoved?.Invoke(this, new CameraDriveEventArgs(associatedCam ?? camname, CameraMoveState.Moving, pst.Thumbnail, pst.RuntimeMS));
-                    await Task.Delay(pst.RuntimeMS);
-                    OnCommandUpdate?.Invoke(camname, "COMPLETED", "DRIVE.ABSPOS", presetname, "after 1 tries", reqid.ToString());
-                    OnCameraMoved?.Invoke(this, new CameraDriveEventArgs(associatedCam ?? camname, CameraMoveState.Arrived, pst.Thumbnail, pst.RuntimeMS));
-                });
+                    return Guid.Empty;
+                }
+                if (!(m_presetConfig.MockPresetInfo.TryGetValue(camname, out var mockPreset) && mockPreset.TryGetValue(presetname, out pst)))
+                {
+                    return Guid.Empty;
+                }
+
+                if (pst != null)
+                {
+                    Task.Run(async () =>
+                    {
+                        OnCommandUpdate?.Invoke(camname, "STARTED", "DRIVE.ABSPOS", presetname, reqid.ToString());
+                        OnCameraMoved?.Invoke(this, new CameraDriveEventArgs(associatedCam ?? camname, CameraMoveState.Moving, pst.Thumbnail, pst.RuntimeMS));
+                        await Task.Delay(pst.RuntimeMS);
+                        OnCommandUpdate?.Invoke(camname, "COMPLETED", "DRIVE.ABSPOS", presetname, "after 1 tries", reqid.ToString());
+                        OnCameraMoved?.Invoke(this, new CameraDriveEventArgs(associatedCam ?? camname, CameraMoveState.Arrived, pst.Thumbnail, pst.RuntimeMS));
+                    });
+                }
             }
             return reqid;
         }
@@ -156,28 +158,30 @@ namespace CCUI_UI
         {
             Guid reqid = Guid.NewGuid();
 
-            m_presetConfig.CameraAssociations.TryGetValue(camname, out var associatedCam);
-
-            if (!(m_presetConfig.KeyedZooms.TryGetValue(camname, out var camPresets) && camPresets.TryGetValue(presetname, out var pst)))
+            if (m_presetConfig?.CameraAssociations?.TryGetValue(camname, out var associatedCam) == true)
             {
-                return Guid.Empty;
-            }
 
-
-            CameraZoomEventArgs.ZDir zdir = pst.Mode == "WIDE" ? CameraZoomEventArgs.ZDir.WIDE : CameraZoomEventArgs.ZDir.TELE;
-            const int ZSETUP_MS = 3800;
-
-            if (pst != null)
-            {
-                Task.Run(async () =>
+                if (!(m_presetConfig.KeyedZooms.TryGetValue(camname, out var camPresets) && camPresets.TryGetValue(presetname, out var pst)))
                 {
-                    OnCommandUpdate?.Invoke(camname, "STARTED", "CHIRP", "duration ms", pst.Mode, reqid.ToString());
+                    return Guid.Empty;
+                }
 
-                    OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Zomming, zdir, ZSETUP_MS, pst.ZoomMS));
-                    await Task.Delay(pst.ZoomMS + ZSETUP_MS);
-                    OnCommandUpdate?.Invoke(camname, "COMPLETED", "CHIRP", pst.Mode, "after 1 tries", reqid.ToString());
-                    OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Arrived, zdir, ZSETUP_MS, pst.ZoomMS));
-                });
+
+                CameraZoomEventArgs.ZDir zdir = pst.Mode == "WIDE" ? CameraZoomEventArgs.ZDir.WIDE : CameraZoomEventArgs.ZDir.TELE;
+                const int ZSETUP_MS = 3800;
+
+                if (pst != null)
+                {
+                    Task.Run(async () =>
+                    {
+                        OnCommandUpdate?.Invoke(camname, "STARTED", "CHIRP", "duration ms", pst.Mode, reqid.ToString());
+
+                        OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Zomming, zdir, ZSETUP_MS, pst.ZoomMS));
+                        await Task.Delay(pst.ZoomMS + ZSETUP_MS);
+                        OnCommandUpdate?.Invoke(camname, "COMPLETED", "CHIRP", pst.Mode, "after 1 tries", reqid.ToString());
+                        OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Arrived, zdir, ZSETUP_MS, pst.ZoomMS));
+                    });
+                }
             }
             return reqid;
         }
@@ -186,20 +190,22 @@ namespace CCUI_UI
         {
             Guid reqid = Guid.NewGuid();
 
-            m_presetConfig.CameraAssociations.TryGetValue(camname, out var associatedCam);
-
-            CameraZoomEventArgs.ZDir zdir = zoomdir == -1 ? CameraZoomEventArgs.ZDir.WIDE : CameraZoomEventArgs.ZDir.TELE;
-            const int ZSETUP_MS = 3800;
-
-            Task.Run(async () =>
+            if (m_presetConfig?.CameraAssociations?.TryGetValue(camname, out var associatedCam) == true)
             {
-                OnCommandUpdate?.Invoke(camname, "STARTED", "CHIRP", "duration ms", zoomdir == -1 ? "WIDE" : "TELE", reqid.ToString());
 
-                OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Zomming, zdir, ZSETUP_MS, msdur));
-                await Task.Delay(msdur + ZSETUP_MS);
-                OnCommandUpdate?.Invoke(camname, "COMPLETED", "CHIRP", zoomdir == -1 ? "WIDE" : "TELE", "after 1 tries", reqid.ToString());
-                OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Arrived, zdir, ZSETUP_MS, msdur));
-            });
+                CameraZoomEventArgs.ZDir zdir = zoomdir == -1 ? CameraZoomEventArgs.ZDir.WIDE : CameraZoomEventArgs.ZDir.TELE;
+                const int ZSETUP_MS = 3800;
+
+                Task.Run(async () =>
+                {
+                    OnCommandUpdate?.Invoke(camname, "STARTED", "CHIRP", "duration ms", zoomdir == -1 ? "WIDE" : "TELE", reqid.ToString());
+
+                    OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Zomming, zdir, ZSETUP_MS, msdur));
+                    await Task.Delay(msdur + ZSETUP_MS);
+                    OnCommandUpdate?.Invoke(camname, "COMPLETED", "CHIRP", zoomdir == -1 ? "WIDE" : "TELE", "after 1 tries", reqid.ToString());
+                    OnCameraMoved?.Invoke(this, new CameraZoomEventArgs(associatedCam ?? camname, CameraMoveState.Arrived, zdir, ZSETUP_MS, msdur));
+                });
+            }
             return reqid;
         }
 
