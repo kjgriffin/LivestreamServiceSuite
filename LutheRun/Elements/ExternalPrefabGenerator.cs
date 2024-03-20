@@ -30,14 +30,18 @@ namespace LutheRun.Elements
             var match = Regex.Match(hymn.Caption, @"(?<number>\d+)?(?<name>.*)");
             string name = match.Groups["name"]?.Value.Trim() ?? "";
             string number = match.Groups["number"]?.Value.Trim().Length > 0 ? "LSB " + match.Groups["number"]?.Value.Trim() : "";
-            if (!string.IsNullOrWhiteSpace(number) && useUpNextForHymns)
+            if (/*!string.IsNullOrWhiteSpace(number) &&*/ useUpNextForHymns)
             {
-                return new ExternalPrefab(UpNextCommand("UpNext_Numbered", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
+                //return new ExternalPrefab(UpNextCommand("UpNext_Numbered", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
+                return new ExternalPrefab(HTMLUpNextCommand("UpNext_HTML", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
             }
+            /*
             else if (!string.IsNullOrWhiteSpace(name) && useUpNextForHymns)
             {
+                //return new ExternalPrefab(UpNextCommand("UpNext_UnNumbered", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
                 return new ExternalPrefab(UpNextCommand("UpNext_UnNumbered", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
             }
+            */
             else
             {
                 return new ExternalPrefab("#organintro", "organintro", BlockType.HYMN_INTRO);
@@ -88,6 +92,32 @@ namespace LutheRun.Elements
 
             return prefabblob;
         }
+
+        private static string HTMLUpNextCommand(string blobfile, string hname, string hnumber, string postset)
+        {
+            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                             .GetManifestResourceNames()
+                                             .FirstOrDefault(x => x.Contains(blobfile));
+
+            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                .GetManifestResourceStream(name);
+
+            var prefabblob = "";
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                prefabblob = sr.ReadToEnd();
+            }
+
+            // inject name
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$HYMN"), hnumber);
+            // inject number (if no-number, we just won't replace anythin)
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$ANNOTATION"), hname);
+            // inject postset
+            prefabblob = Regex.Replace(prefabblob, Regex.Escape("$POSTSET"), postset);
+
+            return prefabblob;
+        }
+
 
 
         private static string GetStringFromCaptionOrHeading(ILSBElement element)

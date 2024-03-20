@@ -1,0 +1,31 @@
+﻿#scope(upnext-hymn)
+{
+$>#var("html.Layout", "Xenon.HymnTitles::UpNext")
+$>#scripted
+$>{
+$>$>first=#script
+$>$>{
+$>$>$>#Organ Intro;
+$>$>$>!displaysrc='#_Liturgy.png';
+$>$>$>!keysrc='Key_#.png';
+$>$>$>cmd:DSK1FadeOn[Key Fade On];
+$>$>}
+
+$>$>duplast=#script
+$>$>{
+$>$>$>#Organ Intro;
+$>$>$>!displaysrc='#_Liturgy.png';
+$>$>$>!keysrc='Key_#.png';
+$>$>$>@cmd:DSK1FadeOn[Key Fade On];
+$>$>$>@arg1:PresetSelect(%cam.ORGAN%)[Preset Organ];
+$>$>$>@arg1:DelayMs(100);
+$>$>$>@arg0:AutoTrans[Take Organ];
+$>$>}
+
+$>$>#html
+$>$>{
+$>$>$>text[annotation]{$ANNOTATION}
+$>$>$>text[hymn]{$HYMN}
+$>$>}$POSTSET
+$>}
+}

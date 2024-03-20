@@ -27,6 +27,7 @@
     <None Remove="LayoutInfo\Defaults\NewLibBundles\Xenon.Anthems.lib.json" />
     <None Remove="LayoutInfo\Defaults\NewLibBundles\Xenon.CommonColored.lib.json" />
     <None Remove="LayoutInfo\Defaults\NewLibBundles\Xenon.Creeds.lib.json" />
+    <None Remove="LayoutInfo\Defaults\NewLibBundles\Xenon.HymnTitles.lib.json" />
     <None Remove="LayoutInfo\Defaults\NewLibBundles\Xenon.Readings.lib.json" />
     <None Remove="LayoutInfo\Defaults\NewLibBundles\Xenon.Sermons.lib.json" />
     <None Remove="LayoutInfo\Defaults\NewLibBundles\Xenon.Titles.lib.json" />
@@ -60,6 +61,7 @@
     <EmbeddedResource Include="LayoutInfo\Defaults\NewLibBundles\Xenon.Anthems.lib.json" />
     <EmbeddedResource Include="LayoutInfo\Defaults\NewLibBundles\Xenon.CommonColored.lib.json" />
     <EmbeddedResource Include="LayoutInfo\Defaults\NewLibBundles\Xenon.Creeds.lib.json" />
+    <EmbeddedResource Include="LayoutInfo\Defaults\NewLibBundles\Xenon.HymnTitles.lib.json" />
     <EmbeddedResource Include="LayoutInfo\Defaults\NewLibBundles\Xenon.Readings.lib.json" />
     <EmbeddedResource Include="LayoutInfo\Defaults\NewLibBundles\Xenon.Sermons.lib.json" />
     <EmbeddedResource Include="LayoutInfo\Defaults\NewLibBundles\Xenon.Titles.lib.json" />
