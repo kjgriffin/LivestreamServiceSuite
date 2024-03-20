@@ -10,5 +10,9 @@
   {
     "url": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/panel-defs/BlobData/MasterPanel.xenon",
     "filename": "MasterPanel.xenon"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/panel-defs/BlobData/SermonSubPanel.xenon",
+    "filename": "SermonPanel.xenon"
   }
 ]
