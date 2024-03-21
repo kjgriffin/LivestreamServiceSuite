@@ -10,6 +10,7 @@ $>$>cmd:USK1Off;
 $>$>cmd:DSK1Off;
 $>$>cmd:DelayMs(100);
 $>$>cmd:AutoTrans;
+$>$>cmd:DelayMs(1500);
 $>}
 
 $>$COPYTITLE
