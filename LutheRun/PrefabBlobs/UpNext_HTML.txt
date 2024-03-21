@@ -6,16 +6,18 @@ $>{
 $>$>first=#script
 $>$>{
 $>$>$>#Organ Intro;
-$>$>$>!displaysrc='#_Liturgy.png';
-$>$>$>!keysrc='Key_#.png';
+$>$>$>@cmd:WatchStateIntVal(ProgramID, %cam.SLIDESHOW%, upnext);
+$>$>$>@<upnext>cmd:PresetSelect(%cam.ORGAN%)[Preset Organ];
+$>$>$>@<upnext>cmd:DSK1TieOff;
+$>$>$>@<upnext>cmd:DelayMs(100);
+$>$>$>@<upnext>cmd:AutoTrans(100);
+$>$>$>@<upnext>cmd:DelayMs(1500);
 $>$>$>cmd:DSK1FadeOn[Key Fade On];
 $>$>}
 
 $>$>duplast=#script
 $>$>{
 $>$>$>#Organ Intro;
-$>$>$>!displaysrc='#_Liturgy.png';
-$>$>$>!keysrc='Key_#.png';
 $>$>$>@cmd:DSK1FadeOn[Key Fade On];
 $>$>$>@arg1:PresetSelect(%cam.ORGAN%)[Preset Organ];
 $>$>$>@arg1:DelayMs(100);
