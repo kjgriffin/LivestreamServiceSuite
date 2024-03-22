@@ -61,42 +61,43 @@ namespace Integrated_Presenter.ViewModels
 
         private void ClickPIP8(object sender, RoutedEventArgs e)
         {
-
+            _switcher?.PerformUSK1FillSourceSelect(_ConvertButtonToSourceID(8));
         }
 
         private void ClickPIP7(object sender, RoutedEventArgs e)
         {
-
+            _switcher?.PerformUSK1FillSourceSelect(_ConvertButtonToSourceID(7));
         }
 
         private void ClickPIP6(object sender, RoutedEventArgs e)
         {
 
+            _switcher?.PerformUSK1FillSourceSelect(_ConvertButtonToSourceID(6));
         }
 
         private void ClickPIP5(object sender, RoutedEventArgs e)
         {
-
+            _switcher?.PerformUSK1FillSourceSelect(_ConvertButtonToSourceID(5));
         }
 
         private void ClickPIP4(object sender, RoutedEventArgs e)
         {
-
+            _switcher?.PerformUSK1FillSourceSelect(_ConvertButtonToSourceID(4));
         }
 
         private void ClickPIP3(object sender, RoutedEventArgs e)
         {
-
+            _switcher?.PerformUSK1FillSourceSelect(_ConvertButtonToSourceID(3));
         }
 
         private void ClickPIP2(object sender, RoutedEventArgs e)
         {
-
+            _switcher?.PerformUSK1FillSourceSelect(_ConvertButtonToSourceID(2));
         }
 
         private void ClickPIP1(object sender, RoutedEventArgs e)
         {
-
+            _switcher?.PerformUSK1FillSourceSelect(_ConvertButtonToSourceID(1));
         }
 
         internal void UpdateUIPIPPlaceKeys(BMDSwitcherState state)

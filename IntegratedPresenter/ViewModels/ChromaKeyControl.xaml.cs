@@ -84,42 +84,47 @@ namespace Integrated_Presenter.ViewModels
 
         private void ClickChroma1(object sender, RoutedEventArgs e)
         {
-
+            _switcher?.PerformUSK1FillSourceSelect(_convertButtonToSourceID(1));
         }
 
         private void ClickChroma2(object sender, RoutedEventArgs e)
         {
+            _switcher?.PerformUSK1FillSourceSelect(_convertButtonToSourceID(2));
 
         }
 
         private void ClickChroma3(object sender, RoutedEventArgs e)
         {
+            _switcher?.PerformUSK1FillSourceSelect(_convertButtonToSourceID(3));
 
         }
 
         private void ClickChroma4(object sender, RoutedEventArgs e)
         {
+            _switcher?.PerformUSK1FillSourceSelect(_convertButtonToSourceID(4));
 
         }
 
         private void ClickChroma5(object sender, RoutedEventArgs e)
         {
+            _switcher?.PerformUSK1FillSourceSelect(_convertButtonToSourceID(5));
 
         }
 
         private void ClickChroma6(object sender, RoutedEventArgs e)
         {
+            _switcher?.PerformUSK1FillSourceSelect(_convertButtonToSourceID(6));
 
         }
 
         private void ClickChroma7(object sender, RoutedEventArgs e)
         {
-
+            _switcher?.PerformUSK1FillSourceSelect(_convertButtonToSourceID(7));
         }
 
         private void ClickChroma8(object sender, RoutedEventArgs e)
         {
-
+            _switcher?.PerformUSK1FillSourceSelect(_convertButtonToSourceID(8));
         }
 
         private void ClickApplyChromaSettings(object sender, RoutedEventArgs e)
