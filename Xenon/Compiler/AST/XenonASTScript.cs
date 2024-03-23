@@ -297,15 +297,17 @@ namespace Xenon.Compiler.AST
             return false;
         }
 
-        private static bool IsInsideParamList(string action, out string cmdname)
+        private static bool IsInsideParamList(string action, out string cmdname, out string insidetext)
         {
             cmdname = "";
+            insidetext = "";
             int i = action.Length;
             while (--i >= 0 && action[i] != ')')
             {
                 if (action[i] == '(')
                 {
                     cmdname = action.Substring(0, i);
+                    insidetext = action.Substring(i + 1);
                     return true;
                 }
             }
@@ -327,12 +329,12 @@ namespace Xenon.Compiler.AST
                 return new List<(string, string)>() { (";", "end command") };
             }
 
-            if (IsInsideParamList(action, out string cmd))
+            if (IsInsideParamList(action, out string cmd, out string insidetext))
             {
 
                 // TODO: confirm request wants a camera
                 // for now assume it might and allow variable '%' substituion for any of the named variables in the config
-                suggestions.AddRange(GetParameterSuggestions(cmd, knownAssets));
+                suggestions.AddRange(GetParameterSuggestions(cmd, knownAssets, insidetext));
             }
 
 
@@ -366,7 +368,7 @@ namespace Xenon.Compiler.AST
                 return new List<(string, string)>() { (";", "end command") };
             }
 
-            if (IsInsideParamList(action, out _))
+            if (IsInsideParamList(action, out _, out _))
             {
                 // get command and look it up by string
 
@@ -404,12 +406,12 @@ namespace Xenon.Compiler.AST
                 return new List<(string, string)>() { (";", "end command") };
             }
 
-            if (IsInsideParamList(action, out string cmd))
+            if (IsInsideParamList(action, out string cmd, out string insidetext))
             {
 
                 // TODO: confirm request wants a camera
                 // for now assume it might and allow variable '%' substituion for any of the named variables in the config
-                suggestions.AddRange(GetParameterSuggestions(cmd, knownAssets));
+                suggestions.AddRange(GetParameterSuggestions(cmd, knownAssets, insidetext));
             }
 
 
@@ -423,17 +425,57 @@ namespace Xenon.Compiler.AST
 
             if (suggestions.Any(s => s.Item1.Length == action.Length))
             {
-                suggestions.Add(("(", ""));
+                if (MetadataProvider.TryGetScriptActionMetadataByCommandName(action, out var metadata) && metadata.NumArgs > 0)
+                {
+                    suggestions.Add(("(", ""));
+                }
+                else
+                {
+                    suggestions.Add((";", ""));
+                }
             }
 
             return suggestions;
         }
 
-        private static List<(string, string)> GetParameterSuggestions(string cmd, List<(string name, AssetType type)> knownAssets)
+        private static List<(string, string)> GetParameterSuggestions(string cmd, List<(string name, AssetType type)> knownAssets, string insidetext)
         {
             List<(string, string)> suggestions = new List<(string, string)>();
             if (MetadataProvider.TryGetScriptActionMetadataByCommandName(cmd, out var cmdMetadata))
             {
+                // differentiate between parameters
+                var splittybois = insidetext.Split(",", StringSplitOptions.None);
+                var pnum = splittybois.Length;
+
+                // build API helper
+                Dictionary<AutomationActionArgType, string> argID = new Dictionary<AutomationActionArgType, string>()
+                {
+                    [AutomationActionArgType.Integer] = "int",
+                    [AutomationActionArgType.Boolean] = "bool",
+                    [AutomationActionArgType.String] = "string",
+                    [AutomationActionArgType.Double] = "double",
+                };
+
+                if (pnum <= cmdMetadata.NumArgs && cmdMetadata.NumArgs > 0)
+                {
+                    var aid = Math.Max(pnum - 1, 0);
+                    var arg = cmdMetadata.OrderedArgTypes[aid];
+                    suggestions.Add(($"<{arg.id}:{arg.type}>", $"[API] parameter ({pnum}/{cmdMetadata.NumArgs})"));
+                }
+
+                /*
+                if (cmdMetadata.NumArgs > 0)
+                {
+                    //var paramDescriptions = cmdMetadata.OrderedArgTypes.Select(x => $"<{x.id}:{argID[x.type]}>");
+                    //string usage = string.Join(", ", paramDescriptions);
+                    //suggestions.Add(($"{usage}", $"[API] {cmdMetadata.ActionName}"));
+                }
+                else
+                {
+                    //suggestions.Add(($";", $"[API] {cmdMetadata.ActionName}"));
+                }
+                */
+
                 // expose watch variables
                 // expose assets
 
@@ -454,7 +496,7 @@ namespace Xenon.Compiler.AST
                         SharedPresentationAPI_AssemblyDummyLoader.Load();
 
                         AutomationActionArgType argType = AutomationActionArgType.UNKNOWN_TYPE;
-                        switch(cmdMetadata.Action)
+                        switch (cmdMetadata.Action)
                         {
                             case AutomationActions.WatchSwitcherStateBoolVal:
                             case AutomationActions.WatchStateBoolVal:

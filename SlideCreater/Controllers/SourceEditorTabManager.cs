@@ -367,6 +367,7 @@ namespace SlideCreater.Controllers
                     data.Add(new CommonCompletion(suggestion.item, suggestion.description));
                 }
                 completionWindow.Show();
+                completionWindow.SizeToContent = SizeToContent.Width;
                 completionWindow.CompletionList.SelectedItem = data.First(d => d.Text == suggestions.First().item);
                 completionWindow.Closed += delegate
                 {
