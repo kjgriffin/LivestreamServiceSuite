@@ -44,6 +44,7 @@ namespace Xenon.Renderer
 
             return input;
         }
+
     }
 
     internal class RawTextRenderer : ISlideRenderer

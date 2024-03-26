@@ -136,7 +136,7 @@ namespace Xenon.Compiler.AST
 
         #region Suggestions
 
-        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForPanelDeclarations = (priorcaptures, sourcesnippet, remainingsnippet, knownAssets, knownLayouts) =>
+        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForPanelDeclarations = (priorcaptures, sourcesnippet, remainingsnippet, knownAssets, knownLayouts, extraInfo) =>
                 {
                     // its' not validation we're doing, so just get the start of the line and work from there.
 
@@ -155,7 +155,7 @@ namespace Xenon.Compiler.AST
                     if (RollBackToStackedBrace(sourcesnippet, "\\[Globals\\]\\s*", out string gsnippet, out _))
                     {
                         // globals
-                        return XenonASTScript.GetContextualSuggestionsForScriptCommands.Invoke(priorcaptures, gsnippet, remainingsnippet, knownAssets, knownLayouts);
+                        return XenonASTScript.GetContextualSuggestionsForScriptCommands.Invoke(priorcaptures, gsnippet, remainingsnippet, knownAssets, knownLayouts, extraInfo);
                     }
                     else if (RollBackToStackedBrace(sourcesnippet, "\\[TButton\\]\\s*\\d+,\\d+\\s*", out _, out _))
                     {
@@ -167,7 +167,7 @@ namespace Xenon.Compiler.AST
                     else if (RollBackToStackedBrace(sourcesnippet, "fire\\s*\\=\\s*", out string fsnippets, out _))
                     {
                         // in a button def -> script
-                        return XenonASTScript.GetContextualSuggestionsForScriptCommands.Invoke(priorcaptures, fsnippets, remainingsnippet, knownAssets, knownLayouts);
+                        return XenonASTScript.GetContextualSuggestionsForScriptCommands.Invoke(priorcaptures, fsnippets, remainingsnippet, knownAssets, knownLayouts, extraInfo);
                     }
                     else if (RollBackToStackedBrace(sourcesnippet, "draw\\s*\\=\\s*", out _, out _))
                     {

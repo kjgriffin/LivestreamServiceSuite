@@ -161,7 +161,7 @@ namespace Xenon.Compiler.AST
         };
         public int _SourceLine { get; set; }
 
-        public static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForScriptCommands = (priorcaptures, sourcesnippet, remainingsnippet, knownAssets, knownLayouts) =>
+        public static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForScriptCommands = (priorcaptures, sourcesnippet, remainingsnippet, knownAssets, knownLayouts, extraInfo) =>
         {
             // its' not validation we're doing, so just get the start of the line and work from there.
 
@@ -195,7 +195,7 @@ namespace Xenon.Compiler.AST
             // parse commands
             else if (currentline.TrimStart().Length > 0)
             {
-                suggestions.AddRange(GetContextualSuggestionsForAction(currentline.TrimStart(), knownAssets));
+                suggestions.AddRange(GetContextualSuggestionsForAction(currentline.TrimStart(), knownAssets, extraInfo));
             }
             // list all options
             else
@@ -214,7 +214,7 @@ namespace Xenon.Compiler.AST
             return (false, suggestions);
         };
 
-        private static List<(string, string)> GetContextualSuggestionsForAction(string action, List<(string name, AssetType type)> knownAssets)
+        private static List<(string, string)> GetContextualSuggestionsForAction(string action, List<(string name, AssetType type)> knownAssets, IXenonCommandExtraInfoProvider extraInfo)
         {
             var conditionless = Regex.Match(action, "^\\s*@?(<.*>)?(?<line>.*)").Groups["line"]?.Value ?? action;
             action = conditionless;
@@ -222,7 +222,7 @@ namespace Xenon.Compiler.AST
             if (action.StartsWith("@"))
             {
                 // doesn't really matter for the purpose of suggestions, so just eat it and try again
-                return GetContextualSuggestionsForAction(action.Remove(0, 1), knownAssets);
+                return GetContextualSuggestionsForAction(action.Remove(0, 1), knownAssets, extraInfo);
             }
 
             if (action.StartsWith("arg0:"))
@@ -231,7 +231,7 @@ namespace Xenon.Compiler.AST
             }
             else if (action.StartsWith("arg1:"))
             {
-                return GetcontextualSuggestionsForArg1Action(action.Remove(0, 5), knownAssets);
+                return GetcontextualSuggestionsForArg1Action(action.Remove(0, 5), knownAssets, extraInfo);
             }
             else if (action.StartsWith("argd8:"))
             {
@@ -239,7 +239,7 @@ namespace Xenon.Compiler.AST
             }
             else if (action.StartsWith("cmd:"))
             {
-                return GetcontextualSuggestiongsForCmdAction(action.Remove(0, 4), knownAssets);
+                return GetcontextualSuggestiongsForCmdAction(action.Remove(0, 4), knownAssets, extraInfo);
             }
             else
             {
@@ -314,7 +314,7 @@ namespace Xenon.Compiler.AST
             return false;
         }
 
-        private static List<(string, string)> GetcontextualSuggestionsForArg1Action(string action, List<(string name, AssetType type)> knownAssets)
+        private static List<(string, string)> GetcontextualSuggestionsForArg1Action(string action, List<(string name, AssetType type)> knownAssets, IXenonCommandExtraInfoProvider extraInfo)
         {
 
             List<(string, string)> suggestions = new List<(string, string)>();
@@ -334,7 +334,7 @@ namespace Xenon.Compiler.AST
 
                 // TODO: confirm request wants a camera
                 // for now assume it might and allow variable '%' substituion for any of the named variables in the config
-                suggestions.AddRange(GetParameterSuggestions(cmd, knownAssets, insidetext));
+                suggestions.AddRange(GetParameterSuggestions(cmd, knownAssets, insidetext, extraInfo));
             }
 
 
@@ -391,7 +391,7 @@ namespace Xenon.Compiler.AST
             return suggestions;
         }
 
-        private static List<(string, string)> GetcontextualSuggestiongsForCmdAction(string action, List<(string name, AssetType type)> knownAssets)
+        private static List<(string, string)> GetcontextualSuggestiongsForCmdAction(string action, List<(string name, AssetType type)> knownAssets, IXenonCommandExtraInfoProvider extraInfo)
         {
 
             List<(string, string)> suggestions = new List<(string, string)>();
@@ -411,7 +411,7 @@ namespace Xenon.Compiler.AST
 
                 // TODO: confirm request wants a camera
                 // for now assume it might and allow variable '%' substituion for any of the named variables in the config
-                suggestions.AddRange(GetParameterSuggestions(cmd, knownAssets, insidetext));
+                suggestions.AddRange(GetParameterSuggestions(cmd, knownAssets, insidetext, extraInfo));
             }
 
 
@@ -438,7 +438,7 @@ namespace Xenon.Compiler.AST
             return suggestions;
         }
 
-        private static List<(string, string)> GetParameterSuggestions(string cmd, List<(string name, AssetType type)> knownAssets, string insidetext)
+        private static List<(string, string)> GetParameterSuggestions(string cmd, List<(string name, AssetType type)> knownAssets, string insidetext, IXenonCommandExtraInfoProvider extraInfo)
         {
             List<(string, string)> suggestions = new List<(string, string)>();
             if (MetadataProvider.TryGetScriptActionMetadataByCommandName(cmd, out var cmdMetadata))
@@ -459,69 +459,61 @@ namespace Xenon.Compiler.AST
                 if (pnum <= cmdMetadata.NumArgs && cmdMetadata.NumArgs > 0)
                 {
                     var aid = Math.Max(pnum - 1, 0);
-                    var arg = cmdMetadata.OrderedArgTypes[aid];
-                    suggestions.Add(($"<{arg.id}:{arg.type}>", $"[API] parameter ({pnum}/{cmdMetadata.NumArgs})"));
-                }
+                    var arg = cmdMetadata.OrderedParameters[aid];
+                    suggestions.Add(($"<{arg.ArgName}:{arg.ArgType}>", $"[API] parameter ({pnum}/{cmdMetadata.NumArgs})"));
+                    suggestions.AddRange(arg.StaticHints);
 
-                /*
-                if (cmdMetadata.NumArgs > 0)
-                {
-                    //var paramDescriptions = cmdMetadata.OrderedArgTypes.Select(x => $"<{x.id}:{argID[x.type]}>");
-                    //string usage = string.Join(", ", paramDescriptions);
-                    //suggestions.Add(($"{usage}", $"[API] {cmdMetadata.ActionName}"));
-                }
-                else
-                {
-                    //suggestions.Add(($";", $"[API] {cmdMetadata.ActionName}"));
-                }
-                */
+                    switch (arg.ParamValueHints)
+                    {
+                        case ExpectedVariableContents.VIDEOSOURCE:
+                            // TODO: map cameras
+                            suggestions.AddRange(extraInfo.ProjectConfigState.Routing.Select(x => ($"%cam.{x.LongName}%", $"'{x.KeyName}' button: ({x.ButtonName},{x.ButtonId}) physical source: ({x.PhysicalInputId})")));
+                            break;
+                        case ExpectedVariableContents.PROJECTASSET:
+                            suggestions.AddRange(knownAssets.Select(x => (x.name, $"({x.type})")));
+                            break;
+                        case ExpectedVariableContents.EXPOSEDSTATE:
 
-                // expose watch variables
-                // expose assets
+                            // for now just bmd state exposed
+                            // eventually find all assemblies loaded and extract
+                            //DummyLoader
+                            ATEMSharedState_AssemblyDummyLoader.Load();
+                            SharedPresentationAPI_AssemblyDummyLoader.Load();
 
-                switch (cmdMetadata.ParamaterContents)
-                {
-                    case ExpectedVariableContents.VIDEOSOURCE:
-                        // TODO: map cameras
-                        break;
-                    case ExpectedVariableContents.PROJECTASSET:
-                        suggestions.AddRange(knownAssets.Select(x => (x.name, $"({x.type})")));
-                        break;
-                    case ExpectedVariableContents.EXPOSEDSTATE:
+                            HashSet<AutomationActionArgType> validTypes = new HashSet<AutomationActionArgType>() { AutomationActionArgType.UNKNOWN_TYPE };
 
-                        // for now just bmd state exposed
-                        // eventually find all assemblies loaded and extract
-                        //DummyLoader
-                        ATEMSharedState_AssemblyDummyLoader.Load();
-                        SharedPresentationAPI_AssemblyDummyLoader.Load();
-
-                        AutomationActionArgType argType = AutomationActionArgType.UNKNOWN_TYPE;
-                        switch (cmdMetadata.Action)
-                        {
-                            case AutomationActions.WatchSwitcherStateBoolVal:
-                            case AutomationActions.WatchStateBoolVal:
-                                argType = AutomationActionArgType.Boolean;
-                                break;
-                            case AutomationActions.WatchSwitcherStateIntVal:
-                            case AutomationActions.WatchStateIntVal:
-                                argType = AutomationActionArgType.Integer;
-                                break;
-                        }
-
-                        foreach (var ass in AppDomain.CurrentDomain.GetAssemblies().OrderBy(x => x.FullName))
-                        {
-                            foreach (Type t in ass.GetTypes())
+                            switch (cmdMetadata.Action)
                             {
-                                if (t.IsClass && !t.IsAbstract && t.GetCustomAttribute<ExposesWatchableVariablesAttribute>() != null)
+                                case AutomationActions.WatchSwitcherStateBoolVal:
+                                case AutomationActions.WatchStateBoolVal:
+                                    validTypes.Add(AutomationActionArgType.Boolean);
+                                    break;
+                                case AutomationActions.WatchSwitcherStateIntVal:
+                                case AutomationActions.WatchStateIntVal:
+                                    validTypes.Add(AutomationActionArgType.Integer);
+                                    break;
+                                case AutomationActions.SetupComputedTrack:
+                                    validTypes.Add(AutomationActionArgType.Integer);
+                                    validTypes.Add(AutomationActionArgType.Boolean);
+                                    validTypes.Add(AutomationActionArgType.String);
+                                    validTypes.Add(AutomationActionArgType.Double);
+                                    break;
+                            }
+
+                            foreach (var ass in AppDomain.CurrentDomain.GetAssemblies().OrderBy(x => x.FullName))
+                            {
+                                foreach (Type t in ass.GetTypes())
                                 {
-                                    var instance = Activator.CreateInstance(t);
-                                    var props = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(instance);
-                                    suggestions.AddRange(props.Where(x => x.Value.TypeInfo == argType).Select(x => (x.Key, $"Exposed State Type<{x.Value.TypeInfo}>")));
+                                    if (t.IsClass && !t.IsAbstract && t.GetCustomAttribute<ExposesWatchableVariablesAttribute>() != null)
+                                    {
+                                        var instance = Activator.CreateInstance(t);
+                                        var props = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(instance);
+                                        suggestions.AddRange(props.Where(x => validTypes.Contains(x.Value.TypeInfo)).Select(x => (x.Key, $"Exposed State Type<{x.Value.TypeInfo}>")));
+                                    }
                                 }
                             }
-                        }
-
-                        break;
+                            break;
+                    }
                 }
 
             }

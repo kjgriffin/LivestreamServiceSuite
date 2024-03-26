@@ -68,7 +68,7 @@ namespace Xenon.Compiler.AST
             ("\\)", false, "", new List<(string, string)>(){(")", "")}, null),
         };
 
-        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableValue = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet, List<(string, AssetManagment.AssetType)> knownAssets, List<(string, LanguageKeywordCommand, string)> knownLayouts) =>
+        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableValue = (Dictionary<string, string> priorcaptures, string sourcesnippet, string remainingsnippet, List<(string, AssetManagment.AssetType)> knownAssets, List<(string, LanguageKeywordCommand, string)> knownLayouts, IXenonCommandExtraInfoProvider extraInfo) =>
         {
             if (priorcaptures.GetOrDefault("varname", "") == "global.rendermode.alpha")
             {

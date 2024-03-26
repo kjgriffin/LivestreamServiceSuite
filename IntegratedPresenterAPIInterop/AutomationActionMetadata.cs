@@ -1,34 +1,27 @@
-﻿using VariableMarkupAttributes;
-
-namespace IntegratedPresenterAPIInterop
+﻿namespace IntegratedPresenterAPIInterop
 {
     public class AutomationActionMetadata
     {
-        public int NumArgs { get; set; }
+        public int NumArgs { get => OrderedParameters.Count; }
         public AutomationActions Action { get; set; }
         public string ActionName { get; set; }
-        public List<(AutomationActionArgType type, string id)>? OrderedArgTypes { get; set; }
-        public ExpectedVariableContents ParamaterContents { get; set; }
+        public List<AutomationActionParameterMetadata> OrderedParameters { get; set; } = new List<AutomationActionParameterMetadata>();
 
-        public AutomationActionMetadata((int nargs, AutomationActions action, string name, List<(AutomationActionArgType, string)>? argtypes, ExpectedVariableContents expectedContents) stuff)
+        public AutomationActionMetadata((AutomationActions action, string name) stuff)
         {
-            NumArgs = stuff.nargs;
             Action = stuff.action;
             ActionName = stuff.name;
-            OrderedArgTypes = stuff.argtypes;
-            ParamaterContents = stuff.expectedContents;
+            OrderedParameters = new List<AutomationActionParameterMetadata>();
         }
 
-        public AutomationActionMetadata(int numArgs, AutomationActions action, string actionName, List<(AutomationActionArgType, string)>? orderedArgTypes, ExpectedVariableContents paramaterContents)
+        public AutomationActionMetadata(AutomationActions action, string actionName, List<AutomationActionParameterMetadata> paramdefs)
         {
-            NumArgs = numArgs;
             Action = action;
             ActionName = actionName;
-            OrderedArgTypes = orderedArgTypes;
-            ParamaterContents = paramaterContents;
+            OrderedParameters = paramdefs ?? new List<AutomationActionParameterMetadata>();
         }
 
-        public static implicit operator AutomationActionMetadata((int nargs, AutomationActions action, string name, List<(AutomationActionArgType, string)>? argtypes, ExpectedVariableContents expectedContents) stuff)
+        public static implicit operator AutomationActionMetadata((AutomationActions action, string name) stuff)
         {
             return new AutomationActionMetadata(stuff);
         }

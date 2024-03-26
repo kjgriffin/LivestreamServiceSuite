@@ -289,8 +289,9 @@ namespace SlideCreater.Controllers
             closeButton.Click += CloseButton_Click;
 
             // events??
-            editor.TextArea.TextEntering += TextArea_TextEntering;
+            //editor.TextArea.TextEntering += TextArea_TextEntering;
             editor.TextArea.PreviewTextInput += TextArea_PreviewTextInput;
+            editor.TextArea.TextInput += TextArea_TextInput;
             editor.TextChanged += Editor_TextChanged;
 
             editor.LoadLanguage_XENON();
@@ -326,58 +327,61 @@ namespace SlideCreater.Controllers
         }
 
         CompletionWindow completionWindow;
-        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+
+        private void TextArea_TextInput(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text.Length > 0 && completionWindow != null)
-            {
-                if ((e.Text[0]) == 9 || e.Text.StartsWith("\t"))
-                {
-                    // Whenever a non-letter is typed while the completion window is open,
-                    // insert the currently selected element.
-                    completionWindow.CompletionList.RequestInsertion(e);
-                    //if (always_show_suggestions)
-                    //{
-                    ShowSuggestionsForEditor(sender as TextArea);
-                    //}
-                }
-            }
+            // run suggestions after input too?
+            _ = ShowSuggestionsForEditor(sender as TextArea);
         }
 
         private void TextArea_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            //const string LITURGY = "liturgy";
             if (e.Text == " " && Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                ShowSuggestionsForEditor(sender as TextArea);
-
                 e.Handled = true;
             }
+            _ = ShowSuggestionsForEditor(sender as TextArea);
         }
 
-        private void ShowSuggestionsForEditor(TextArea editor)
+        private async Task ShowSuggestionsForEditor(TextArea editor)
         {
-            var x = editor.Document.Text;
-            var suggestions = _proj?.Value?.XenonSuggestionService.GetSuggestions(editor.Document.Text, editor.Caret.Offset);
-            if (suggestions.Any())
+            var text = editor.Document.Text;
+            int offset = editor.Caret.Offset;
+            List<(string item, string description, int cindex)> suggestions = new List<(string, string, int)>();
+            await Task.Run(() =>
             {
-                completionWindow = new CompletionWindow(editor);
-                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-                foreach (var suggestion in suggestions)
+                suggestions = _proj?.Value?.XenonSuggestionService.GetSuggestions(text, offset);
+            });
+            editor.Dispatcher.Invoke(() =>
+            {
+                if (suggestions.Any())
                 {
-                    data.Add(new CommonCompletion(suggestion.item, suggestion.description));
+                    completionWindow = new CompletionWindow(editor);
+                    IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+                    foreach (var suggestion in suggestions)
+                    {
+                        data.Add(new CommonCompletion(suggestion.item, suggestion.description, suggestion.cindex));
+                    }
+                    completionWindow.Show();
+                    completionWindow.SizeToContent = SizeToContent.Width;
+                    completionWindow.CompletionList.SelectedItem = data.First(d => d.Text == suggestions.First().item);
+                    completionWindow.Closed += delegate
+                    {
+                        completionWindow.CompletionList.InsertionRequested -= CompletionList_InsertionRequested;
+                        completionWindow = null;
+                    };
+                    completionWindow.CompletionList.InsertionRequested += CompletionList_InsertionRequested;
                 }
-                completionWindow.Show();
-                completionWindow.SizeToContent = SizeToContent.Width;
-                completionWindow.CompletionList.SelectedItem = data.First(d => d.Text == suggestions.First().item);
-                completionWindow.Closed += delegate
+                else
                 {
-                    completionWindow = null;
-                };
-            }
-            else
-            {
-                completionWindow?.Close();
-            }
+                    completionWindow?.Close();
+                }
+            });
+        }
+
+        private void CompletionList_InsertionRequested(object sender, EventArgs e)
+        {
+            _ = ShowSuggestionsForEditor(((sender as CompletionList)?.Parent as CompletionWindow)?.TextArea);
         }
 
         private void OpenBMDFile(string filename)
@@ -471,8 +475,9 @@ namespace SlideCreater.Controllers
 
                 if (tab is TextEditor editor)
                 {
-                    editor.TextArea.TextEntering -= TextArea_TextEntering;
+                    //editor.TextArea.TextEntering -= TextArea_TextEntering;
                     editor.TextArea.PreviewTextInput -= TextArea_PreviewTextInput;
+                    editor.TextArea.TextInput -= TextArea_TextInput;
                     editor.TextChanged -= Editor_TextChanged;
                 }
                 else if (tab is CCUEditorCtrl ctrl)

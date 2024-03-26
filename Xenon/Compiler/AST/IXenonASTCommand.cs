@@ -17,7 +17,7 @@ namespace Xenon.Compiler.AST
 
         public TopLevelCommandContextualSuggestions GetContextualSuggestions(XenonSuggestionService service, string sourcecode)
         {
-            return (false, new List<(string suggestion, string description)>());
+            return (false, new List<(string suggestion, string description, int captureIndex)>());
         }
 
         public static XenonASTExpression GetParentExpression(IXenonASTCommand cmd)

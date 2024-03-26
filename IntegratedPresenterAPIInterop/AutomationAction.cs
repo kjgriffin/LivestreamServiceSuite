@@ -447,8 +447,8 @@ namespace IntegratedPresenterAPIInterop
             for (int i = 0; i < pargs.Length; i++)
             {
                 AutomationActionParameter p = new AutomationActionParameter();
-                p.ParamName = cmdMetadata.OrderedArgTypes[i].id;
-                p.VarType = cmdMetadata.OrderedArgTypes[i].type;
+                p.ParamName = cmdMetadata.OrderedParameters[i].ArgName;
+                p.VarType = cmdMetadata.OrderedParameters[i].ArgType;
                 p.ComputedVaraible = ""; // default empty
 
                 // if it's a variable- handle that
@@ -460,7 +460,7 @@ namespace IntegratedPresenterAPIInterop
                     p.ComputedVaraible = (pargs[i].Remove(0, 1)).Trim();
 
                     // still need to setup a default
-                    switch (cmdMetadata.OrderedArgTypes[i].type)
+                    switch (cmdMetadata.OrderedParameters[i].ArgType)
                     {
                         case AutomationActionArgType.Integer:
                             p.LiteralValue = 0;
@@ -485,7 +485,7 @@ namespace IntegratedPresenterAPIInterop
                     p.IsLiteral = true;
                     // try parsing the value as requested
                     // as a literal value
-                    switch (cmdMetadata.OrderedArgTypes[i].type)
+                    switch (cmdMetadata.OrderedParameters[i].ArgType)
                     {
                         case AutomationActionArgType.Integer:
                             // make life easy here and use more memory for gauranteed type safety

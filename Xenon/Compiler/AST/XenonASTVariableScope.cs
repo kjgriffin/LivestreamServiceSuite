@@ -26,7 +26,7 @@ namespace Xenon.Compiler.AST
             new RegexMatchedContextualSuggestions("#var", false, "", new List<(string, string)>{ ("#var", "") }, null),
             new RegexMatchedContextualSuggestions("\\(", false, "", new List<(string, string)>{ ("(", "Begin Parameters") }, null),
             new RegexMatchedContextualSuggestions("\"", false, "", new List<(string, string)>{ ("\"", "Begin Variable Name") }, null),
-            new RegexMatchedContextualSuggestions("[^\"]+", false, "varname", null, GetContextualSuggestionsForVariableName),
+            new RegexMatchedContextualSuggestions("[^\"]+(?\")", false, "varname", null, GetContextualSuggestionsForVariableName),
             new RegexMatchedContextualSuggestions("\"", false, "", new List<(string, string)>{("\"", "End Variable Name")}, null),
             new RegexMatchedContextualSuggestions(",", false, "", new List<(string, string)>{ (",", "") }, null),
             new RegexMatchedContextualSuggestions("(```)|(\")", false, "septype", new List<(string, string)>{ ("```", "Enclose Value"), ("\"", "Enclose Value") }, null),
@@ -34,14 +34,14 @@ namespace Xenon.Compiler.AST
         };
         public int _SourceLine { get; set; }
 
-        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableName = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts) =>
+        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableName = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts, extraInfo) =>
         {
             return (false, new List<(string, string)>() { ("\"", "End Variable Name") }
             .Concat(LanguageKeywords.LayoutForType.Select(x => ($"{LanguageKeywords.Commands[x.Key]}.Layout", $"Set layout override for layout type: {LanguageKeywords.Commands[x.Key]}")))
             .Concat((SlideRenderer.VARNAME_SLIDE_PREMULTIPLEY_OVERRIDE, "true/false to override all slides render behaviour (implied true by default)").ItemAsEnumerable()).ToList());
         };
 
-        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestsionForEndOfCommand = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts) =>
+        static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestsionForEndOfCommand = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts, extraInfo) =>
         {
             if (Regex.Match(remainingsnippet, $"${priorcaptures["septype"]}").Success)
             {

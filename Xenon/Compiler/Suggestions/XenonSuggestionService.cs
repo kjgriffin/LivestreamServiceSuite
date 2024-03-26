@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Configurations.SwitcherConfig;
+
+using IntegratedPresenter.BMDSwitcher.Config;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +15,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.Suggestions
 {
-    public class XenonSuggestionService
+    public class XenonSuggestionService : IXenonCommandExtraInfoProvider
     {
 
 
@@ -27,7 +31,7 @@ namespace Xenon.Compiler.Suggestions
 
             Dictionary<string, string> priormatches = new Dictionary<string, string>();
 
-            List<(string, string)> lastsuggestions = new List<(string, string)>();
+            List<(string, string, int)> lastsuggestions = new List<(string, string, int)>();
 
             foreach (var option in sequentialoptions)
             {
@@ -45,7 +49,7 @@ namespace Xenon.Compiler.Suggestions
                 }
                 else if (option.Optional)
                 {
-                    lastsuggestions.AddRange(option.Suggestions);
+                    lastsuggestions.AddRange(option.Suggestions.Select(x => (x.Item1, x.Item2, strbuffer.Length)));
                 }
                 else
                 {
@@ -60,15 +64,19 @@ namespace Xenon.Compiler.Suggestions
                         //var suggestions = dfunc.Invoke(priormatches, sourcecode, strbuffer.ToString()).Concat(lastsuggestions);
                         //return (false, suggestions.ToList());
                         //}
-                        var suggestions = option.ExternalFunc?.Invoke(priormatches, sourcecode, strbuffer.ToString(), GetKnownAssets(), GetKnownLayouts());
-                        suggestions?.suggestions.Concat(lastsuggestions);
-                        return suggestions ?? (false, lastsuggestions); // really shouldn't ever return the default here
+                        var suggestions = option.ExternalFunc?.Invoke(priormatches, sourcecode, strbuffer.ToString(), GetKnownAssets(), GetKnownLayouts(), this);
+                        var suggested = suggestions?.suggestions.Select(x => (x.suggestion, x.description, strbuffer.Length)).Concat(lastsuggestions).ToList();
+                        if (suggestions.HasValue)
+                        {
+                            return (suggestions.Value.complete, suggested);
+                        }
+                        return (false, lastsuggestions); // really shouldn't ever return the default here
                     }
 
                     // order suggestions by partial completion, then alphabetically
                     string remainder = strbuffer.ToString();
 
-                    return (false, option.Suggestions.Concat(lastsuggestions).OrderByClosestMatch(remainder).ToList());
+                    return (false, option.Suggestions.Select(x => (x.Item1, x.Item2, strbuffer.Length)).Concat(lastsuggestions).OrderByClosestMatch(remainder).ToList());
                 }
             }
 
@@ -77,9 +85,9 @@ namespace Xenon.Compiler.Suggestions
         }
 
 
-        public List<(string item, string description)> GetSuggestions(string sourcetext, int caretpos)
+        public List<(string item, string description, int startIndex)> GetSuggestions(string sourcetext, int caretpos)
         {
-            List<(string, string)> suggestions = new List<(string, string)>();
+            List<(string, string, int)> suggestions = new List<(string, string, int)>();
 
             if (!IsOnCommentLine(sourcetext.Substring(0, caretpos)))
             {
@@ -107,7 +115,7 @@ namespace Xenon.Compiler.Suggestions
         }
 
 
-        private List<(string item, string description)> GetSuggestionsByLookBehind(string sourcetext, int caretpos)
+        private List<(string item, string description, int startPos)> GetSuggestionsByLookBehind(string sourcetext, int caretpos)
         {
             /*
             1. compute current context (if preformance allows) -> scan backwards and try to build an infered stack of where in the AST we are. Only need to go to the most curent top level element
@@ -121,31 +129,27 @@ namespace Xenon.Compiler.Suggestions
                 List<(string, string)> res = new List<(string, string)>();
                 if (toplevelcmd.index == -1 || toplevelcmd.index + LanguageKeywords.Commands.GetValueOrDefault(toplevelcmd.cmd, "#").Length == caretpos)
                 {
-                    return AllCommandKeywords();
+                    return AllCommandKeywords().Select(k => (k.Item1, k.Item2, caretpos - 1)).ToList();
                 }
                 else
                 {
-                    var partialmatch = Regex.Match(sourcetext.Substring(toplevelcmd.index), @"#(?<partial>\w*)").Groups["partial"].Value;
-                    var partialsuggestions = GetPartialMatchedTopLevelCommands(partialmatch).Select(m => ("#" + m.cmdstr, ""));
+                    var partialmatch = Regex.Match(sourcetext.Substring(toplevelcmd.index), @"#(?<partial>\w*)").Groups["partial"];//.Value;
+                    var partialsuggestions = GetPartialMatchedTopLevelCommands(partialmatch.Value).Select(m => ("#" + m.cmdstr, ""));
                     if (partialsuggestions.Any())
                     {
-                        return partialsuggestions.ToList();
+                        return partialsuggestions.Select(x => (x.Item1, x.Item2, partialmatch.Index - 1)).ToList();
                     }
-                    return AllCommandKeywords();
+                    return AllCommandKeywords().Select(x => (x.Item1, x.Item2, toplevelcmd.index - 1)).ToList();
                 }
             }
             else
             {
                 if (toplevelcmd.completed)
                 {
-                    return AllCommandKeywords();
+                    return AllCommandKeywords().Select(x => (x.Item1, x.Item2, caretpos)).ToList();
                 }
-                //if (toplevelcmd.index + LanguageKeywords.Commands[toplevelcmd.cmd].Length <= caretpos)
-                //{
-                //return AllCommandKeywords();
-                //}
-                //return new List<(string item, string description)>() { ("command already found", LanguageKeywords.Commands[toplevelcmd.cmd]) };
-                return GetCommandContextualSuggestions(toplevelcmd.cmd, sourcetext.Substring(toplevelcmd.index, caretpos - toplevelcmd.index));
+                // TODO: add index here
+                return GetCommandContextualSuggestions(toplevelcmd.cmd, sourcetext.Substring(toplevelcmd.index, caretpos - toplevelcmd.index)).Select(x => (x.suggestion, x.description, caretpos - x.captureIndex)).ToList();
             }
 
         }
@@ -279,15 +283,15 @@ namespace Xenon.Compiler.Suggestions
                 .ToList();
         }
 
-        private List<(string suggestion, string description)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode)
+        private List<(string suggestion, string description, int captureIndex)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode)
         {
             //CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => new List<(string, string)>())
-            return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string)>())).Invoke(sourcecode).Suggestions;
+            return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string, int)>())).Invoke(sourcecode).Suggestions;
         }
 
         private bool IsCommandComplete(LanguageKeywordCommand cmd, string sourcecode)
         {
-            return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string)>())).Invoke(sourcecode).Complete;
+            return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string, int)>())).Invoke(sourcecode).Complete;
         }
 
         private Dictionary<LanguageKeywordCommand, Func<string, TopLevelCommandContextualSuggestions>> CommandContextutalSuggestionDispatcher = new Dictionary<LanguageKeywordCommand, Func<string, TopLevelCommandContextualSuggestions>>();
@@ -303,6 +307,8 @@ namespace Xenon.Compiler.Suggestions
         }
 
         private Project proj;
+
+        BMDSwitcherConfigSettings IXenonCommandExtraInfoProvider.ProjectConfigState { get => this.proj?.BMDSwitcherConfig ?? DefaultConfig.GetDefaultConfig(); }
 
         public XenonSuggestionService(Project proj)
         {

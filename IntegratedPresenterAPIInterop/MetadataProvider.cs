@@ -17,224 +17,223 @@ namespace IntegratedPresenterAPIInterop
 
         public static Dictionary<AutomationActions, AutomationActionMetadata> ScriptActionsMetadata = new Dictionary<AutomationActions, AutomationActionMetadata>()
         {
-            [AutomationActions.OpsNote] = (0, AutomationActions.OpsNote, "note", null, ExpectedVariableContents.NONE),
+            [AutomationActions.OpsNote] = (AutomationActions.OpsNote, "note"),
 
-            [AutomationActions.AutoTrans] = (0, AutomationActions.AutoTrans, "AutoTrans", null, ExpectedVariableContents.NONE),
-            [AutomationActions.CutTrans] = (0, AutomationActions.CutTrans, "CutTrans", null, ExpectedVariableContents.NONE),
-            [AutomationActions.AutoTakePresetIfOnSlide] = (0, AutomationActions.AutoTakePresetIfOnSlide, "AutoTakePresetIfOnSlide", null, ExpectedVariableContents.NONE),
+            [AutomationActions.AutoTrans] = (AutomationActions.AutoTrans, "AutoTrans"),
+            [AutomationActions.CutTrans] = (AutomationActions.CutTrans, "CutTrans"),
+            [AutomationActions.AutoTakePresetIfOnSlide] = (AutomationActions.AutoTakePresetIfOnSlide, "AutoTakePresetIfOnSlide"),
 
-            [AutomationActions.DSK1On] = (0, AutomationActions.DSK1On, "DSK1On", null, ExpectedVariableContents.NONE),
-            [AutomationActions.DSK1Off] = (0, AutomationActions.DSK1Off, "DSK1Off", null, ExpectedVariableContents.NONE),
-            [AutomationActions.DSK1FadeOn] = (0, AutomationActions.DSK1FadeOn, "DSK1FadeOn", null, ExpectedVariableContents.NONE),
-            [AutomationActions.DSK1FadeOff] = (0, AutomationActions.DSK1FadeOff, "DSK1FadeOff", null, ExpectedVariableContents.NONE),
-            [AutomationActions.DSK1TieOn] = (0, AutomationActions.DSK1TieOn, "DSK1TieOn", null, ExpectedVariableContents.NONE),
-            [AutomationActions.DSK1TieOff] = (0, AutomationActions.DSK1TieOff, "DSK1TieOff", null, ExpectedVariableContents.NONE),
+            [AutomationActions.DSK1On] = (AutomationActions.DSK1On, "DSK1On"),
+            [AutomationActions.DSK1Off] = (AutomationActions.DSK1Off, "DSK1Off"),
+            [AutomationActions.DSK1FadeOn] = (AutomationActions.DSK1FadeOn, "DSK1FadeOn"),
+            [AutomationActions.DSK1FadeOff] = (AutomationActions.DSK1FadeOff, "DSK1FadeOff"),
+            [AutomationActions.DSK1TieOn] = (AutomationActions.DSK1TieOn, "DSK1TieOn"),
+            [AutomationActions.DSK1TieOff] = (AutomationActions.DSK1TieOff, "DSK1TieOff"),
 
-            [AutomationActions.DSK2On] = (0, AutomationActions.DSK2On, "DSK2On", null, ExpectedVariableContents.NONE),
-            [AutomationActions.DSK2Off] = (0, AutomationActions.DSK2Off, "DSK2Off", null, ExpectedVariableContents.NONE),
-            [AutomationActions.DSK2FadeOn] = (0, AutomationActions.DSK2FadeOn, "DSK2FadeOn", null, ExpectedVariableContents.NONE),
-            [AutomationActions.DSK2FadeOff] = (0, AutomationActions.DSK2FadeOff, "DSK2FadeOff", null, ExpectedVariableContents.NONE),
-            [AutomationActions.DSK2TieOn] = (0, AutomationActions.DSK2TieOn, "DSK2TieOn", null, ExpectedVariableContents.NONE),
-            [AutomationActions.DSK2TieOff] = (0, AutomationActions.DSK2TieOff, "DSK2TieOff", null, ExpectedVariableContents.NONE),
-
-
-            [AutomationActions.BKGDTieOn] = (0, AutomationActions.BKGDTieOn, "BKGDTieOn", null, ExpectedVariableContents.NONE),
-            [AutomationActions.BKGDTieOff] = (0, AutomationActions.BKGDTieOff, "BKGDTieOff", null, ExpectedVariableContents.NONE),
-
-            [AutomationActions.USK1On] = (0, AutomationActions.USK1On, "USK1On", null, ExpectedVariableContents.NONE),
-            [AutomationActions.USK1Off] = (0, AutomationActions.USK1Off, "USK1Off", null, ExpectedVariableContents.NONE),
-            [AutomationActions.USK1TieOn] = (0, AutomationActions.USK1TieOn, "USK1TieOn", null, ExpectedVariableContents.NONE),
-            [AutomationActions.USK1TieOff] = (0, AutomationActions.USK1TieOff, "USK1TieOff", null, ExpectedVariableContents.NONE),
-            [AutomationActions.USK1SetTypeChroma] = (0, AutomationActions.USK1SetTypeChroma, "USK1SetTypeChroma", null, ExpectedVariableContents.NONE),
-            [AutomationActions.USK1SetTypeDVE] = (0, AutomationActions.USK1SetTypeDVE, "USK1SetTypeDVE", null, ExpectedVariableContents.NONE),
-            [AutomationActions.USK1SetTypePATTERN] = (0, AutomationActions.USK1SetTypePATTERN, "USK1SetTypePATTERN", null, ExpectedVariableContents.NONE),
-
-            [AutomationActions.RecordStart] = (0, AutomationActions.RecordStart, "RecordStart", null, ExpectedVariableContents.NONE),
-            [AutomationActions.RecordStop] = (0, AutomationActions.RecordStop, "RecordStop", null, ExpectedVariableContents.NONE),
-
-            [AutomationActions.OpenAudioPlayer] = (0, AutomationActions.OpenAudioPlayer, "OpenAudioPlayer", null, ExpectedVariableContents.NONE),
-            [AutomationActions.PlayAuxAudio] = (0, AutomationActions.PlayAuxAudio, "PlayAuxAudio", null, ExpectedVariableContents.NONE),
-            [AutomationActions.StopAuxAudio] = (0, AutomationActions.StopAuxAudio, "StopAuxAudio", null, ExpectedVariableContents.NONE),
-            [AutomationActions.PauseAuxAudio] = (0, AutomationActions.PauseAuxAudio, "PauseAuxAudio", null, ExpectedVariableContents.NONE),
-            [AutomationActions.ReplayAuxAudio] = (0, AutomationActions.ReplayAuxAudio, "ReplayAuxAudio", null, ExpectedVariableContents.NONE),
-
-            [AutomationActions.PlayMedia] = (0, AutomationActions.PlayMedia, "PlayMedia", null, ExpectedVariableContents.NONE),
-            [AutomationActions.PauseMedia] = (0, AutomationActions.PauseMedia, "PauseMedia", null, ExpectedVariableContents.NONE),
-            [AutomationActions.StopMedia] = (0, AutomationActions.StopMedia, "StopMedia", null, ExpectedVariableContents.NONE),
-            [AutomationActions.RestartMedia] = (0, AutomationActions.RestartMedia, "RestartMedia", null, ExpectedVariableContents.NONE),
-            [AutomationActions.MuteMedia] = (0, AutomationActions.MuteMedia, "MuteMedia", null, ExpectedVariableContents.NONE),
-            [AutomationActions.UnMuteMedia] = (0, AutomationActions.UnMuteMedia, "UnMuteMedia", null, ExpectedVariableContents.NONE),
-
-            [AutomationActions.DriveNextSlide] = (0, AutomationActions.DriveNextSlide, "DriveNextSlide", null, ExpectedVariableContents.NONE),
-            [AutomationActions.Timer1Restart] = (0, AutomationActions.Timer1Restart, "Timer1Restart", null, ExpectedVariableContents.NONE),
+            [AutomationActions.DSK2On] = (AutomationActions.DSK2On, "DSK2On"),
+            [AutomationActions.DSK2Off] = (AutomationActions.DSK2Off, "DSK2Off"),
+            [AutomationActions.DSK2FadeOn] = (AutomationActions.DSK2FadeOn, "DSK2FadeOn"),
+            [AutomationActions.DSK2FadeOff] = (AutomationActions.DSK2FadeOff, "DSK2FadeOff"),
+            [AutomationActions.DSK2TieOn] = (AutomationActions.DSK2TieOn, "DSK2TieOn"),
+            [AutomationActions.DSK2TieOff] = (AutomationActions.DSK2TieOff, "DSK2TieOff"),
 
 
-            [AutomationActions.Timer1Restart] = (0, AutomationActions.Timer1Restart, "Timer1Restart", null, ExpectedVariableContents.NONE),
+            [AutomationActions.BKGDTieOn] = (AutomationActions.BKGDTieOn, "BKGDTieOn"),
+            [AutomationActions.BKGDTieOff] = (AutomationActions.BKGDTieOff, "BKGDTieOff"),
 
-            [AutomationActions.PresetSelect] = new AutomationActionMetadata(1, AutomationActions.PresetSelect, "PresetSelect", new List<(AutomationActionArgType, string)>
+            [AutomationActions.USK1On] = (AutomationActions.USK1On, "USK1On"),
+            [AutomationActions.USK1Off] = (AutomationActions.USK1Off, "USK1Off"),
+            [AutomationActions.USK1TieOn] = (AutomationActions.USK1TieOn, "USK1TieOn"),
+            [AutomationActions.USK1TieOff] = (AutomationActions.USK1TieOff, "USK1TieOff"),
+            [AutomationActions.USK1SetTypeChroma] = (AutomationActions.USK1SetTypeChroma, "USK1SetTypeChroma"),
+            [AutomationActions.USK1SetTypeDVE] = (AutomationActions.USK1SetTypeDVE, "USK1SetTypeDVE"),
+            [AutomationActions.USK1SetTypePATTERN] = (AutomationActions.USK1SetTypePATTERN, "USK1SetTypePATTERN"),
+
+            [AutomationActions.RecordStart] = (AutomationActions.RecordStart, "RecordStart"),
+            [AutomationActions.RecordStop] = (AutomationActions.RecordStop, "RecordStop"),
+
+            [AutomationActions.OpenAudioPlayer] = (AutomationActions.OpenAudioPlayer, "OpenAudioPlayer"),
+            [AutomationActions.PlayAuxAudio] = (AutomationActions.PlayAuxAudio, "PlayAuxAudio"),
+            [AutomationActions.StopAuxAudio] = (AutomationActions.StopAuxAudio, "StopAuxAudio"),
+            [AutomationActions.PauseAuxAudio] = (AutomationActions.PauseAuxAudio, "PauseAuxAudio"),
+            [AutomationActions.ReplayAuxAudio] = (AutomationActions.ReplayAuxAudio, "ReplayAuxAudio"),
+
+            [AutomationActions.PlayMedia] = (AutomationActions.PlayMedia, "PlayMedia"),
+            [AutomationActions.PauseMedia] = (AutomationActions.PauseMedia, "PauseMedia"),
+            [AutomationActions.StopMedia] = (AutomationActions.StopMedia, "StopMedia"),
+            [AutomationActions.RestartMedia] = (AutomationActions.RestartMedia, "RestartMedia"),
+            [AutomationActions.MuteMedia] = (AutomationActions.MuteMedia, "MuteMedia"),
+            [AutomationActions.UnMuteMedia] = (AutomationActions.UnMuteMedia, "UnMuteMedia"),
+
+            [AutomationActions.DriveNextSlide] = (AutomationActions.DriveNextSlide, "DriveNextSlide"),
+            [AutomationActions.Timer1Restart] = (AutomationActions.Timer1Restart, "Timer1Restart"),
+
+
+            [AutomationActions.Timer1Restart] = (AutomationActions.Timer1Restart, "Timer1Restart"),
+
+            [AutomationActions.PresetSelect] = new AutomationActionMetadata(AutomationActions.PresetSelect, "PresetSelect", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.Integer, "SourceID")
-            }, ExpectedVariableContents.VIDEOSOURCE),
-            [AutomationActions.ProgramSelect] = new AutomationActionMetadata(1, AutomationActions.ProgramSelect, "ProgramSelect", new List<(AutomationActionArgType, string)>
+                new AutomationActionParameterMetadata("SourceID", AutomationActionArgType.Integer, ExpectedVariableContents.VIDEOSOURCE)
+            }),
+            [AutomationActions.ProgramSelect] = new AutomationActionMetadata(AutomationActions.ProgramSelect, "ProgramSelect", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.Integer, "SourceID")
-            }, ExpectedVariableContents.VIDEOSOURCE),
-            [AutomationActions.AuxSelect] = new AutomationActionMetadata(1, AutomationActions.AuxSelect, "AuxSelect", new List<(AutomationActionArgType, string)>
+                new AutomationActionParameterMetadata("SourceID", AutomationActionArgType.Integer, ExpectedVariableContents.VIDEOSOURCE)
+            }),
+            [AutomationActions.AuxSelect] = new AutomationActionMetadata(AutomationActions.AuxSelect, "AuxSelect", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.Integer, "SourceID")
-            }, ExpectedVariableContents.VIDEOSOURCE),
-            [AutomationActions.USK1Fill] = new AutomationActionMetadata(1, AutomationActions.USK1Fill, "USK1Fill", new List<(AutomationActionArgType, string)>
+                new AutomationActionParameterMetadata("SourceID", AutomationActionArgType.Integer, ExpectedVariableContents.VIDEOSOURCE)
+            }),
+            [AutomationActions.USK1Fill] = new AutomationActionMetadata(AutomationActions.USK1Fill, "USK1Fill", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.Integer, "SourceID")
-            }, ExpectedVariableContents.VIDEOSOURCE),
+                new AutomationActionParameterMetadata("SourceID", AutomationActionArgType.Integer, ExpectedVariableContents.VIDEOSOURCE)
+            }),
 
 
-            [AutomationActions.LoadAudio] = (1, AutomationActions.LoadAudio, "LoadAudioFile", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.String, "AudioFile") }, ExpectedVariableContents.PROJECTASSET),
+            [AutomationActions.LoadAudio] = new AutomationActionMetadata(AutomationActions.LoadAudio, "LoadAudioFile", new List<AutomationActionParameterMetadata>
+            {
+                new AutomationActionParameterMetadata("AudioFile", AutomationActionArgType.String, ExpectedVariableContents.PROJECTASSET),
+            }),
 
 
+            [AutomationActions.DelayMs] =
+            new AutomationActionMetadata(AutomationActions.DelayMs, "DelayMs", new List<AutomationActionParameterMetadata>
+            {
+                new AutomationActionParameterMetadata("Delay", AutomationActionArgType.Integer)
+            }),
+            [AutomationActions.DelayUntil] = new AutomationActionMetadata(AutomationActions.DelayUntil, "DelayUntil", new List<AutomationActionParameterMetadata>
+            {
+                new AutomationActionParameterMetadata("DateTime", AutomationActionArgType.String)
+            }),
 
-            [AutomationActions.DelayMs] = (1, AutomationActions.DelayMs, "DelayMs", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.Integer, "Delay") }, ExpectedVariableContents.NONE),
-            [AutomationActions.DelayUntil] = (1, AutomationActions.DelayUntil, "DelayUntil", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.String, "DateTime") }, ExpectedVariableContents.NONE),
+            [AutomationActions.JumpToSlide] = new AutomationActionMetadata(AutomationActions.JumpToSlide, "JumpToSlide", new List<AutomationActionParameterMetadata>
+            {
+                new AutomationActionParameterMetadata("SlideNum", AutomationActionArgType.Integer, staticHints: new List<(string, string)>{("%slide.num.<LABEL>.0%", "[Use Label]")})
+            }),
 
-            [AutomationActions.JumpToSlide] = (1, AutomationActions.JumpToSlide, "JumpToSlide", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.Integer, "SlideNum") }, ExpectedVariableContents.NONE),
-
-            [AutomationActions.SetTargetSlide] = (1, AutomationActions.SetTargetSlide, "SetNextSlideTarget", new List<(AutomationActionArgType, string)> { (AutomationActionArgType.Integer, "STargetNum") }, ExpectedVariableContents.NONE),
+            [AutomationActions.SetTargetSlide] = new AutomationActionMetadata(AutomationActions.SetTargetSlide, "SetNextSlideTarget", new List<AutomationActionParameterMetadata>
+            {
+                new AutomationActionParameterMetadata("STargetNum", AutomationActionArgType.Integer, staticHints: new List<(string, string)>{("%slide.num.<LABEL>.0%", "[Use Label]")})
+            }),
 
             // duplicate command for backwards compatibility
-            [AutomationActions.WatchSwitcherStateBoolVal] = (3, AutomationActions.WatchSwitcherStateBoolVal, "WatchSwitcherStateBoolVal", new List<(AutomationActionArgType, string)>
+            [AutomationActions.WatchSwitcherStateBoolVal] = new AutomationActionMetadata(AutomationActions.WatchSwitcherStateBoolVal, "WatchSwitcherStateBoolVal", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.String,"WatchVar"),
-                (AutomationActionArgType.Boolean,"ExpectedVal"),
-                (AutomationActionArgType.String,"CondName"),
-            },
-            ExpectedVariableContents.EXPOSEDSTATE),
-            [AutomationActions.WatchSwitcherStateIntVal] = (3, AutomationActions.WatchSwitcherStateIntVal, "WatchSwitcherStateIntVal", new List<(AutomationActionArgType, string)>
+                new AutomationActionParameterMetadata("WatchVar", AutomationActionArgType.String, ExpectedVariableContents.EXPOSEDSTATE),
+                new AutomationActionParameterMetadata("ExpectedVal", AutomationActionArgType.Boolean, staticHints: new List<(string item, string description)>{("true", ""), ("false", "")}),
+                new AutomationActionParameterMetadata("CondName", AutomationActionArgType.String),
+            }),
+            [AutomationActions.WatchSwitcherStateIntVal] = new AutomationActionMetadata(AutomationActions.WatchSwitcherStateIntVal, "WatchSwitcherStateIntVal", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.String,"WatchVar"),
-                (AutomationActionArgType.Integer,"ExpectedVal"),
-                (AutomationActionArgType.String,"CondName"),
-            },
-            ExpectedVariableContents.EXPOSEDSTATE),
+                new AutomationActionParameterMetadata("WatchVar", AutomationActionArgType.String, ExpectedVariableContents.EXPOSEDSTATE),
+                new AutomationActionParameterMetadata("ExpectedVal", AutomationActionArgType.Integer),
+                new AutomationActionParameterMetadata("CondName", AutomationActionArgType.String),
+            }),
 
 
-            [AutomationActions.WatchStateBoolVal] = (3, AutomationActions.WatchSwitcherStateBoolVal, "WatchStateBoolVal", new List<(AutomationActionArgType, string)>
+            [AutomationActions.WatchStateBoolVal] = new AutomationActionMetadata(AutomationActions.WatchSwitcherStateBoolVal, "WatchStateBoolVal", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.String,"WatchVar"),
-                (AutomationActionArgType.Boolean,"ExpectedVal"),
-                (AutomationActionArgType.String,"CondName"),
-            },
-            ExpectedVariableContents.EXPOSEDSTATE),
-            [AutomationActions.WatchStateIntVal] = (3, AutomationActions.WatchSwitcherStateIntVal, "WatchStateIntVal", new List<(AutomationActionArgType, string)>
+                new AutomationActionParameterMetadata("WatchVar", AutomationActionArgType.String, ExpectedVariableContents.EXPOSEDSTATE),
+                new AutomationActionParameterMetadata("ExpectedVal", AutomationActionArgType.Boolean, staticHints: new List<(string item, string description)>{("true", ""), ("false", "")}),
+                new AutomationActionParameterMetadata("CondName", AutomationActionArgType.String),
+            }),
+            [AutomationActions.WatchStateIntVal] = new AutomationActionMetadata(AutomationActions.WatchSwitcherStateIntVal, "WatchStateIntVal", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.String,"WatchVar"),
-                (AutomationActionArgType.Integer,"ExpectedVal"),
-                (AutomationActionArgType.String,"CondName"),
-            },
-            ExpectedVariableContents.EXPOSEDSTATE),
+                new AutomationActionParameterMetadata("WatchVar", AutomationActionArgType.String, ExpectedVariableContents.EXPOSEDSTATE),
+                new AutomationActionParameterMetadata("ExpectedVal", AutomationActionArgType.Integer),
+                new AutomationActionParameterMetadata("CondName", AutomationActionArgType.String),
+            }),
 
 
-            [AutomationActions.InitComputedVal] = (3, AutomationActions.InitComputedVal, "InitComputedVal", new List<(AutomationActionArgType, string)>
+            [AutomationActions.InitComputedVal] = new AutomationActionMetadata(AutomationActions.InitComputedVal, "InitComputedVal", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.String,"VarName"),
-                (AutomationActionArgType.String,"TypeStr"),
-                (AutomationActionArgType.String,"VarDefaultVal"),
-            },
-            ExpectedVariableContents.EXPOSEDSTATE),
-            [AutomationActions.WriteComputedVal] = (2, AutomationActions.WriteComputedVal, "WriteComputedVal", new List<(AutomationActionArgType, string)>
+                new AutomationActionParameterMetadata("VarName", AutomationActionArgType.String),
+                new AutomationActionParameterMetadata("TypeStr", AutomationActionArgType.String),
+                new AutomationActionParameterMetadata("VarDefaultVal", AutomationActionArgType.String),
+            }),
+            [AutomationActions.WriteComputedVal] = new AutomationActionMetadata(AutomationActions.WriteComputedVal, "WriteComputedVal", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.String,"VarName"),
-                (AutomationActionArgType.String,"VarVal"),
-            },
-            ExpectedVariableContents.NONE),
-            [AutomationActions.SetupComputedTrack] = (2, AutomationActions.SetupComputedTrack, "SetupTrackVal", new List<(AutomationActionArgType, string)>
+                new AutomationActionParameterMetadata("VarName", AutomationActionArgType.String),
+                new AutomationActionParameterMetadata("VarVal", AutomationActionArgType.String),
+            }),
+            [AutomationActions.SetupComputedTrack] = new AutomationActionMetadata(AutomationActions.SetupComputedTrack, "SetupTrackVal", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.String,"VarName"),
-                (AutomationActionArgType.String,"TrackTarget"),
-            },
-            ExpectedVariableContents.EXPOSEDSTATE),
-            [AutomationActions.ReleaseComputedTrack] = (1, AutomationActions.InitComputedVal, "ReleaseTackVal", new List<(AutomationActionArgType, string)>
+                new AutomationActionParameterMetadata("VarName", AutomationActionArgType.String),
+                new AutomationActionParameterMetadata("TrackTarget", AutomationActionArgType.String, ExpectedVariableContents.EXPOSEDSTATE),
+            }),
+            [AutomationActions.ReleaseComputedTrack] = new AutomationActionMetadata(AutomationActions.InitComputedVal, "ReleaseTackVal", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.String,"VarName"),
-            },
-            ExpectedVariableContents.NONE),
+                new AutomationActionParameterMetadata("VarName", AutomationActionArgType.String),
+            }),
 
-            [AutomationActions.RedrawDynamicControls] = (0, AutomationActions.RedrawDynamicControls, "PaintCtrls", null, ExpectedVariableContents.NONE),
+            [AutomationActions.RedrawDynamicControls] = (AutomationActions.RedrawDynamicControls, "PaintCtrls"),
 
 
 
 
-            [AutomationActions.PlacePIP] = (8, AutomationActions.PlacePIP, "PlacePIP", new List<(AutomationActionArgType, string)>
+            [AutomationActions.PlacePIP] = new AutomationActionMetadata(AutomationActions.PlacePIP, "PlacePIP", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.Double, "PosX"),
-                (AutomationActionArgType.Double, "PosY"),
-                (AutomationActionArgType.Double, "ScaleX"),
-                (AutomationActionArgType.Double, "ScaleY"),
-                (AutomationActionArgType.Double, "MaskLeft"),
-                (AutomationActionArgType.Double, "MaskRight"),
-                (AutomationActionArgType.Double, "MaskTop"),
-                (AutomationActionArgType.Double, "MaskBottom"),
-            },
-            ExpectedVariableContents.NONE),
+                new AutomationActionParameterMetadata("PosX", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("PosY", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("ScaleX", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("ScaleY", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("MaskLeft", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("MaskRight", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("MaskTop", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("MaskBottom", AutomationActionArgType.Double),
+            }),
 
-            [AutomationActions.ConfigurePATTERN] = (7, AutomationActions.ConfigurePATTERN, "ApplyPATTERN", new List<(AutomationActionArgType, string)>
+            [AutomationActions.ConfigurePATTERN] = new AutomationActionMetadata(AutomationActions.ConfigurePATTERN, "ApplyPATTERN", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.String, "Type"),
-                (AutomationActionArgType.Boolean, "Inverted"),
-                (AutomationActionArgType.Double, "Size"),
-                (AutomationActionArgType.Double, "Symmetry"),
-                (AutomationActionArgType.Double, "Softness"),
-                (AutomationActionArgType.Double, "XOffset"),
-                (AutomationActionArgType.Double, "YOffset"),
-            },
-            ExpectedVariableContents.NONE),
+                new AutomationActionParameterMetadata("Type", AutomationActionArgType.String),
+                new AutomationActionParameterMetadata("Inverted", AutomationActionArgType.Boolean),
+                new AutomationActionParameterMetadata("Size", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("Symmetry", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("Softness", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("XOffset", AutomationActionArgType.Double),
+                new AutomationActionParameterMetadata("YOffset", AutomationActionArgType.Double),
+            }),
 
-            [AutomationActions.SetupButtons] = (3, AutomationActions.SetupButtons, "SetupButtons", new List<(AutomationActionArgType, string)>
+            [AutomationActions.SetupButtons] = new AutomationActionMetadata(AutomationActions.SetupButtons, "SetupButtons", new List<AutomationActionParameterMetadata>
             {
-                (AutomationActionArgType.String, "File"),
-                (AutomationActionArgType.String, "ResourcePath"),
-                (AutomationActionArgType.Boolean, "Overwrite"),
-            },
-            ExpectedVariableContents.NONE),
+                new AutomationActionParameterMetadata("File", AutomationActionArgType.String),
+                new AutomationActionParameterMetadata("ResourcePath", AutomationActionArgType.String, staticHints: new List<(string item, string description)>{("%pres%", "Use the relative folder of the loaded presentation")}),
+                new AutomationActionParameterMetadata("Overwrite", AutomationActionArgType.Boolean, staticHints : new List <(string item, string description) > {("true", ""),("false", "") }),
+            }),
 
-            [AutomationActions.SetupExtras] = (4, AutomationActions.SetupExtras, "SetupExtras", new List<(AutomationActionArgType, string)>()
+            [AutomationActions.SetupExtras] = new AutomationActionMetadata(AutomationActions.SetupExtras, "SetupExtras", new List<AutomationActionParameterMetadata>()
             {
-                (AutomationActionArgType.String, "ExtraID"),
-                (AutomationActionArgType.String, "File"),
-                (AutomationActionArgType.String, "ResourcePath"),
-                (AutomationActionArgType.Boolean, "Overwrite"),
-            },
-            ExpectedVariableContents.NONE),
+                new AutomationActionParameterMetadata("ExtraID", AutomationActionArgType.String, staticHints: new List<(string item, string description)>{("spare1", "[API NOTE] Param does nothing curently")}),
+                new AutomationActionParameterMetadata("File", AutomationActionArgType.String),
+                new AutomationActionParameterMetadata("ResourcePath", AutomationActionArgType.String, staticHints: new List<(string item, string description)>{("%pres%", "Use the relative folder of the loaded presentation")}),
+                new AutomationActionParameterMetadata("Overwrite", AutomationActionArgType.Boolean, staticHints : new List <(string item, string description) > {("true", ""),("false", "") }),
+            }),
 
 
-            [AutomationActions.ForceRunPostSet] = (2, AutomationActions.ForceRunPostSet, "ForceRunPostset", new List<(AutomationActionArgType, string)>()
+            [AutomationActions.ForceRunPostSet] = new AutomationActionMetadata(AutomationActions.ForceRunPostSet, "ForceRunPostset", new List<AutomationActionParameterMetadata>()
             {
-                (AutomationActionArgType.Boolean, "Force"),
-                (AutomationActionArgType.Integer, "SourceID"),
-            },
-            ExpectedVariableContents.NONE),
+                new AutomationActionParameterMetadata("Force", AutomationActionArgType.Boolean, staticHints : new List <(string item, string description) > {("true", ""),("false", "") }),
+                new AutomationActionParameterMetadata("SourceID", AutomationActionArgType.Integer, ExpectedVariableContents.VIDEOSOURCE),
+            }),
 
-            [AutomationActions.FireActivePreset] = (1, AutomationActions.FireActivePreset, "FireActivePreset", new List<(AutomationActionArgType, string)>()
+            [AutomationActions.FireActivePreset] = new AutomationActionMetadata(AutomationActions.FireActivePreset, "FireActivePreset", new List<AutomationActionParameterMetadata>()
             {
-                (AutomationActionArgType.String, "CamName"),
-            },
-            ExpectedVariableContents.NONE),
-            [AutomationActions.FireCamPreset] = (4, AutomationActions.FireCamPreset, "FireCamPreset", new List<(AutomationActionArgType, string)>()
+                new AutomationActionParameterMetadata("CamName", AutomationActionArgType.String),
+            }),
+            [AutomationActions.FireCamPreset] = new AutomationActionMetadata(AutomationActions.FireCamPreset, "FireCamPreset", new List<AutomationActionParameterMetadata>()
             {
-                (AutomationActionArgType.String, "CamName"),
-                (AutomationActionArgType.String, "PresetName"),
-                (AutomationActionArgType.Integer, "Speed"),
-                (AutomationActionArgType.String, "ZoomPST"),
-            },
-            ExpectedVariableContents.NONE),
-            [AutomationActions.FireCamDrive] = (5, AutomationActions.FireCamDrive, "FireCamDrive", new List<(AutomationActionArgType, string)>()
+                new AutomationActionParameterMetadata("CamName", AutomationActionArgType.String),
+                new AutomationActionParameterMetadata("PresetName", AutomationActionArgType.String),
+                new AutomationActionParameterMetadata("Speed", AutomationActionArgType.Integer),
+                new AutomationActionParameterMetadata("ZoomPST", AutomationActionArgType.String),
+            }),
+            [AutomationActions.FireCamDrive] = new AutomationActionMetadata(AutomationActions.FireCamDrive, "FireCamDrive", new List<AutomationActionParameterMetadata>()
             {
-                (AutomationActionArgType.String, "CamName"),
-                (AutomationActionArgType.Integer, "DirX"),
-                (AutomationActionArgType.Integer, "DirY"),
-                (AutomationActionArgType.Integer, "SpeedX"),
-                (AutomationActionArgType.Integer, "SpeedY"),
-            },
-            ExpectedVariableContents.NONE),
+                new AutomationActionParameterMetadata("CamName", AutomationActionArgType.String),
+                new AutomationActionParameterMetadata("DirX", AutomationActionArgType.Integer),
+                new AutomationActionParameterMetadata("DirY", AutomationActionArgType.Integer),
+                new AutomationActionParameterMetadata("SpeedX", AutomationActionArgType.Integer),
+                new AutomationActionParameterMetadata("SpeedY", AutomationActionArgType.Integer),
+            }),
 
         };
 
