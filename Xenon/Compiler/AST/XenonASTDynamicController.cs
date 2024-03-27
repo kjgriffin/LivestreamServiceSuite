@@ -140,7 +140,7 @@ namespace Xenon.Compiler.AST
                 {
                     // its' not validation we're doing, so just get the start of the line and work from there.
 
-                    List<(string suggestion, string description)> suggestions = new List<(string suggestion, string description)>();
+                    List<(string suggestion, string description, int captureindex)> suggestions = new List<(string suggestion, string description, int captureindex)>();
 
                     string currentline = remainingsnippet.Split(Environment.NewLine, StringSplitOptions.None).LastOrDefault() ?? "";
 
@@ -152,35 +152,35 @@ namespace Xenon.Compiler.AST
                     // based on prior capture, determine the tag type
                     var x = sourcesnippet;
 
-                    if (RollBackToStackedBrace(sourcesnippet, "\\[Globals\\]\\s*", out string gsnippet, out _))
+                    if (RollBackToStackedBrace(sourcesnippet, "\\[Globals\\]\\s*", out string gsnippet, out _, out int bindex))
                     {
                         // globals
                         return XenonASTScript.GetContextualSuggestionsForScriptCommands.Invoke(priorcaptures, gsnippet, remainingsnippet, knownAssets, knownLayouts, extraInfo);
                     }
-                    else if (RollBackToStackedBrace(sourcesnippet, "\\[TButton\\]\\s*\\d+,\\d+\\s*", out _, out _))
+                    else if (RollBackToStackedBrace(sourcesnippet, "\\[TButton\\]\\s*\\d+,\\d+\\s*", out _, out _, out bindex))
                     {
                         // in a button def
-                        suggestions.Add(("draw={", "specify UI display info"));
-                        suggestions.Add(("fire={", "specify on-click action"));
+                        suggestions.Add(("draw={", "specify UI display info", bindex));
+                        suggestions.Add(("fire={", "specify on-click action", bindex));
                         return (false, suggestions);
                     }
-                    else if (RollBackToStackedBrace(sourcesnippet, "fire\\s*\\=\\s*", out string fsnippets, out _))
+                    else if (RollBackToStackedBrace(sourcesnippet, "fire\\s*\\=\\s*", out string fsnippets, out _, out bindex))
                     {
                         // in a button def -> script
                         return XenonASTScript.GetContextualSuggestionsForScriptCommands.Invoke(priorcaptures, fsnippets, remainingsnippet, knownAssets, knownLayouts, extraInfo);
                     }
-                    else if (RollBackToStackedBrace(sourcesnippet, "draw\\s*\\=\\s*", out _, out _))
+                    else if (RollBackToStackedBrace(sourcesnippet, "draw\\s*\\=\\s*", out _, out _, out bindex))
                     {
                         // in a button def -> display
-                        suggestions.Add((";", "complete statement"));
-                        suggestions.Add(("TopText=", "Specify the top line of text displayed (string)"));
-                        suggestions.Add(("BottomText=", "Specify the bottom line of text displayed (string)"));
-                        suggestions.Add(("BackColor=#", "Specify the background color (hex)"));
-                        suggestions.Add(("TextColor=#", "Specify the text color (hex)"));
-                        suggestions.Add(("Enabled=", "true/false if click fires script"));
+                        suggestions.Add((";", "complete statement", bindex));
+                        suggestions.Add(("TopText=", "Specify the top line of text displayed (string)", bindex));
+                        suggestions.Add(("BottomText=", "Specify the bottom line of text displayed (string)", bindex));
+                        suggestions.Add(("BackColor=#", "Specify the background color (hex)", bindex));
+                        suggestions.Add(("TextColor=#", "Specify the text color (hex)", bindex));
+                        suggestions.Add(("Enabled=", "true/false if click fires script", bindex));
                         return (false, suggestions);
                     }
-                    else if (!RollBackToStackedBrace(sourcesnippet, "", out _, out bool unpaired) && !unpaired)
+                    else if (!RollBackToStackedBrace(sourcesnippet, "", out _, out bool unpaired, out bindex) && !unpaired)
                     {
                         // allow us to exit
                         suggestions.Clear();
@@ -188,23 +188,24 @@ namespace Xenon.Compiler.AST
                     }
 
                     // otherwise allow [Globals] / [TButton] at this point
-                    suggestions.Add(("[Globals]", "define global watches"));
-                    suggestions.Add(("[TButton]", "define button"));
-                    suggestions.Add(("}", "end controller"));
+                    suggestions.Add(("[Globals]", "define global watches", 0));
+                    suggestions.Add(("[TButton]", "define button", 0));
+                    suggestions.Add(("}", "end controller", 0));
 
 
                     return (false, suggestions);
                 };
 
 
-        static bool RollBackToStackedBrace(string text, string regexTest, out string block, out bool unpaired)
+        static bool RollBackToStackedBrace(string text, string regexTest, out string block, out bool unpaired, out int index)
         {
             unpaired = true;
             block = "";
+            index = 0;
             try
             {
                 //var index = text.LastIndexOf("{");
-                var index = FindFirstUnmatchedOpeningBrace(text);
+                index = FindFirstUnmatchedOpeningBrace(text);
                 if (index == -1)
                 {
                     unpaired = false;

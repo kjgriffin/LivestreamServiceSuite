@@ -2,8 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-
-using Xenon.Compiler;
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.LayoutInfo;
 using Xenon.SaveLoad;
 using Xenon.SlideAssembly.LayoutManagement;

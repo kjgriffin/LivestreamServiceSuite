@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.Suggestions;
 using Xenon.SlideAssembly;
 

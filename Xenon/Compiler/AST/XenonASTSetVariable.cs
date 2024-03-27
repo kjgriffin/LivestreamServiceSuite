@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
 using Xenon.SlideAssembly;
@@ -72,9 +72,9 @@ namespace Xenon.Compiler.AST
         {
             if (priorcaptures.GetOrDefault("varname", "") == "global.rendermode.alpha")
             {
-                return (false, new List<(string suggestion, string description)>() { ("premultiplied", "Renders images premultiplied against keys."), ("\"", "") });
+                return (false, new List<(string suggestion, string description, int)>() { ("premultiplied", "Renders images premultiplied against keys.", 0), ("\"", "", 0) });
             }
-            return (false, new List<(string suggestion, string description)>());
+            return (false, new List<(string suggestion, string description, int)>());
         };
 
         public IXenonASTElement Parent { get; private set; }

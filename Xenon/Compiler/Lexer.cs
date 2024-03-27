@@ -4,6 +4,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Xenon.Compiler.LanguageDefinition;
 
 namespace Xenon.Compiler
 {

@@ -9,8 +9,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
-using Xenon.Compiler;
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Helpers;
 using Xenon.LayoutInfo;
 using Xenon.SaveLoad;

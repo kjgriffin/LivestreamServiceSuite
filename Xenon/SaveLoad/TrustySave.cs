@@ -13,8 +13,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Xenon.Compiler;
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.LayoutInfo;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;

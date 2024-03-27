@@ -4,12 +4,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Helpers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
+    [XenonSTDCmdMetadata(LanguageKeywordCommand.TwoPartTitle, true)]
+    [XenonSTDCmdParams(DefinitionRequirement.REQUIRED, true, "Part1", "Part2")]
     class XenonAST2PartTitle : IXenonASTCommand
     {
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.SubParsers;
 using Xenon.Renderer;
 using Xenon.SlideAssembly;

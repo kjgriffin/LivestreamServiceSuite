@@ -291,7 +291,8 @@ namespace SlideCreater.Controllers
             // events??
             //editor.TextArea.TextEntering += TextArea_TextEntering;
             editor.TextArea.PreviewTextInput += TextArea_PreviewTextInput;
-            editor.TextArea.TextInput += TextArea_TextInput;
+            //editor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
+            editor.TextArea.TextEntered += TextArea_TextEntered;
             editor.TextChanged += Editor_TextChanged;
 
             editor.LoadLanguage_XENON();
@@ -321,6 +322,12 @@ namespace SlideCreater.Controllers
             }
         }
 
+        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        {
+            _ = ShowSuggestionsForEditor(sender as TextArea);
+        }
+
+     
         private void Editor_TextChanged(object sender, EventArgs e)
         {
             OnTextEditDiry?.Invoke(this, e);
@@ -328,11 +335,6 @@ namespace SlideCreater.Controllers
 
         CompletionWindow completionWindow;
 
-        private void TextArea_TextInput(object sender, TextCompositionEventArgs e)
-        {
-            // run suggestions after input too?
-            _ = ShowSuggestionsForEditor(sender as TextArea);
-        }
 
         private void TextArea_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -475,9 +477,8 @@ namespace SlideCreater.Controllers
 
                 if (tab is TextEditor editor)
                 {
-                    //editor.TextArea.TextEntering -= TextArea_TextEntering;
                     editor.TextArea.PreviewTextInput -= TextArea_PreviewTextInput;
-                    editor.TextArea.TextInput -= TextArea_TextInput;
+                    editor.TextArea.TextEntered -= TextArea_TextEntered;
                     editor.TextChanged -= Editor_TextChanged;
                 }
                 else if (tab is CCUEditorCtrl ctrl)

@@ -4,7 +4,7 @@ using Xenon.Compiler.AST;
 using Xenon.LayoutInfo;
 using Xenon.Renderer;
 
-namespace Xenon.Compiler
+namespace Xenon.Compiler.LanguageDefinition
 {
     static class LanguageKeywords
     {
@@ -172,79 +172,6 @@ namespace Xenon.Compiler
             [LanguageKeywordCommand.HTML2] = (true, LanguageKeywordCommand.INVALIDUNKNOWN, true, true, new XenonASTHtml2()),
         };
 
-    }
-
-    internal struct LanguageKeywordMetadata
-    {
-        internal bool toplevel;
-        internal LanguageKeywordCommand parent;
-        internal bool hasLayoutInfo;
-        internal bool acceptsOverrideExportMode;
-        internal IXenonASTElement implementation;
-
-        public LanguageKeywordMetadata((bool istoplevel, LanguageKeywordCommand parentcmd, bool hasLayout, bool acceptOverrideExportMode, IXenonASTElement impl) stuff)
-        {
-            toplevel = stuff.istoplevel;
-            parent = stuff.parentcmd;
-            hasLayoutInfo = stuff.hasLayout;
-            implementation = stuff.impl;
-            this.acceptsOverrideExportMode = stuff.acceptOverrideExportMode;
-        }
-
-        public static implicit operator LanguageKeywordMetadata((bool, LanguageKeywordCommand INVALIDUNKNOWN, bool layoutinfo, bool overrideexport, IXenonASTElement impl) v)
-        {
-            return new LanguageKeywordMetadata(v);
-        }
-    }
-
-
-
-    public enum LanguageKeywordCommand
-    {
-        INVALIDUNKNOWN,
-        SetVar,
-        Break,
-        Video,
-        FilterImage,
-        FullImage,
-        FitImage,
-        AutoFitImage,
-        StitchedImage,
-        LiturgyImage,
-        Liturgy,
-        LiturgyVerse,
-        TitledLiturgyVerse,
-        Reading,
-        Sermon,
-        AnthemTitle,
-        TwoPartTitle,
-        TextHymn,
-        Verse,
-        Copyright,
-        ViewServices,
-        ViewSeries,
-        ApostlesCreed,
-        NiceneCreed,
-        LordsPrayer,
-        Resource,
-        Script,
-        Script_LiturgyOff,
-        Script_OrganIntro,
-        Postset, // Doesn't translate into a true AST command, but is of same priority so we'd better add it here
-        ScopedVariable,
-        VariableScope,
-        PostFilter,
-        Liturgy2,
-        UpNext,
-        CustomText,
-        Scripted,
-        CustomDraw,
-        TitledLiturgyVerse2,
-        ReStitchedHymn,
-        ComplexText,
-        DynamicControllerDef,
-        HTML,
-        HTML2,
     }
 
 }

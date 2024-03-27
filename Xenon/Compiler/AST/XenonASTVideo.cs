@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Helpers;
 using Xenon.SlideAssembly;
 

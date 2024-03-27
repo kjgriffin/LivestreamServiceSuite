@@ -4,12 +4,14 @@ using IntegratedPresenter.BMDSwitcher.Config;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
 using Xenon.AssetManagment;
 using Xenon.Compiler.AST;
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
@@ -49,7 +51,7 @@ namespace Xenon.Compiler.Suggestions
                 }
                 else if (option.Optional)
                 {
-                    lastsuggestions.AddRange(option.Suggestions.Select(x => (x.Item1, x.Item2, strbuffer.Length)));
+                    lastsuggestions.AddRange(option.Suggestions.Select(x => (x.Item1, x.Item2, strbuffer.ToString().Length)));
                 }
                 else
                 {
@@ -65,7 +67,7 @@ namespace Xenon.Compiler.Suggestions
                         //return (false, suggestions.ToList());
                         //}
                         var suggestions = option.ExternalFunc?.Invoke(priormatches, sourcecode, strbuffer.ToString(), GetKnownAssets(), GetKnownLayouts(), this);
-                        var suggested = suggestions?.suggestions.Select(x => (x.suggestion, x.description, strbuffer.Length)).Concat(lastsuggestions).ToList();
+                        var suggested = suggestions?.suggestions.Select(x => (x.suggestion, x.description, /*strbuffer.ToString().Length*/ x.captureindex)).Concat(lastsuggestions).ToList();
                         if (suggestions.HasValue)
                         {
                             return (suggestions.Value.complete, suggested);
@@ -76,7 +78,7 @@ namespace Xenon.Compiler.Suggestions
                     // order suggestions by partial completion, then alphabetically
                     string remainder = strbuffer.ToString();
 
-                    return (false, option.Suggestions.Select(x => (x.Item1, x.Item2, strbuffer.Length)).Concat(lastsuggestions).OrderByClosestMatch(remainder).ToList());
+                    return (false, option.Suggestions.Select(x => (x.Item1, x.Item2, strbuffer.ToString().Length)).Concat(lastsuggestions).OrderByClosestMatch(remainder).ToList());
                 }
             }
 
@@ -129,7 +131,7 @@ namespace Xenon.Compiler.Suggestions
                 List<(string, string)> res = new List<(string, string)>();
                 if (toplevelcmd.index == -1 || toplevelcmd.index + LanguageKeywords.Commands.GetValueOrDefault(toplevelcmd.cmd, "#").Length == caretpos)
                 {
-                    return AllCommandKeywords().Select(k => (k.Item1, k.Item2, caretpos - 1)).ToList();
+                    return GetExpressionSuggestion(sourcetext.Substring(Math.Max(toplevelcmd.index, 0)), caretpos, caretpos - 1);
                 }
                 else
                 {
@@ -137,22 +139,78 @@ namespace Xenon.Compiler.Suggestions
                     var partialsuggestions = GetPartialMatchedTopLevelCommands(partialmatch.Value).Select(m => ("#" + m.cmdstr, ""));
                     if (partialsuggestions.Any())
                     {
-                        return partialsuggestions.Select(x => (x.Item1, x.Item2, partialmatch.Index - 1)).ToList();
+                        return partialsuggestions.Select(x => (x.Item1, x.Item2, toplevelcmd.index)).ToList();
                     }
-                    return AllCommandKeywords().Select(x => (x.Item1, x.Item2, toplevelcmd.index - 1)).ToList();
+                    // don't think we ever get here??
+                    Debugger.Break();
+                    return GetExpressionSuggestion(sourcetext, caretpos, toplevelcmd.index - 1);
                 }
             }
             else
             {
                 if (toplevelcmd.completed)
                 {
-                    return AllCommandKeywords().Select(x => (x.Item1, x.Item2, caretpos)).ToList();
+                    return GetExpressionSuggestion(sourcetext.Substring(toplevelcmd.index + 1 + LanguageKeywords.Commands[toplevelcmd.cmd].Length), caretpos, caretpos);
                 }
-                // TODO: add index here
-                return GetCommandContextualSuggestions(toplevelcmd.cmd, sourcetext.Substring(toplevelcmd.index, caretpos - toplevelcmd.index)).Select(x => (x.suggestion, x.description, caretpos - x.captureIndex)).ToList();
+
+                return GetCommandContextualSuggestions(toplevelcmd.cmd, sourcetext.Substring(toplevelcmd.index, caretpos - toplevelcmd.index))
+                    .Select(x => (x.suggestion, x.description, caretpos - x.captureIndex)) // indicies are relative to index behind carret
+                    .ToList();
             }
 
         }
+
+        private List<(string, string, int)> GetExpressionSuggestion(string sourcetext, int rootcaretpos, int indexcapture)
+        {
+            var cmdsug = AllCommandKeywords().Select(k => (k.Item1, k.Item2, indexcapture));
+
+            var suggestsions = new List<(string, string, int)>();
+            // expression
+            // can be either command
+            // or prefix annotation
+            // or postfix postset
+            // or postfix pilot
+
+            var tsource = sourcetext;
+
+
+            if (IsInDecorator(tsource, 0, out int offset))
+            {
+                suggestsions.Add(("[@label::<label-name>]", "Mark slide for used with script subsitutions of form '%slide.num.<label-name>.<index>%'", indexcapture - 1));
+            }
+            else if (tsource.Substring(offset).TrimStart().StartsWith("#") /* && tsource.TrimEnd().LastIndexOf("#") < offset*/)
+            {
+                suggestsions.AddRange(cmdsug);
+            }
+            else
+            {
+                suggestsions.Add(("[", "Decorate expression with attribute", indexcapture));
+                suggestsions.AddRange(AllCommandKeywords().Select(k => (k.Item1, k.Item2, indexcapture)));
+            }
+
+            return suggestsions;
+        }
+
+        private bool IsInDecorator(string source, int startindex, out int captureindex)
+        {
+            string remainder = source.TrimStart();
+            captureindex = startindex + source.Length - remainder.Length;
+
+            var index = remainder.IndexOf("[");
+            if (index == -1)
+                return false;
+            remainder = remainder.Remove(0, index + 1); // replace can re-replace the '['
+            captureindex += index + 1;
+
+            index = remainder.IndexOf("]");
+            if (index != -1)
+            {
+                captureindex += index + 1;
+                return IsInDecorator(remainder.Remove(0, index + 1), captureindex, out captureindex);
+            }
+            return true;
+        }
+
 
         internal static List<(string, string)> AllCommandKeywords()
         {
@@ -285,12 +343,27 @@ namespace Xenon.Compiler.Suggestions
 
         private List<(string suggestion, string description, int captureIndex)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode)
         {
-            //CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => new List<(string, string)>())
+            if (CommandContextutalSuggestionDispatcher.ContainsKey(cmd))
+            {
+                return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string, int)>())).Invoke(sourcecode).Suggestions;
+            }
+            else if (XenonAPIConstructor.APIMetadata.TryGetValue(cmd, out var xapi))
+            {
+                return XAPISuggestionHelper.GetCommandContextualSuggestions(xapi, sourcecode);
+            }
             return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string, int)>())).Invoke(sourcecode).Suggestions;
         }
 
         private bool IsCommandComplete(LanguageKeywordCommand cmd, string sourcecode)
         {
+            if (CommandContextutalSuggestionDispatcher.ContainsKey(cmd))
+            {
+                return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string, int)>())).Invoke(sourcecode).Complete;
+            }
+            else if (XenonAPIConstructor.APIMetadata.TryGetValue(cmd, out var xapi))
+            {
+                return XAPISuggestionHelper.IsCommandComplete(xapi, sourcecode);
+            }
             return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string, int)>())).Invoke(sourcecode).Complete;
         }
 

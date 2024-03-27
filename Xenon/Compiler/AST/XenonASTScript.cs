@@ -16,6 +16,7 @@ using VariableMarkupAttributes;
 using VariableMarkupAttributes.Attributes;
 
 using Xenon.AssetManagment;
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.Meta;
 using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
@@ -165,7 +166,7 @@ namespace Xenon.Compiler.AST
         {
             // its' not validation we're doing, so just get the start of the line and work from there.
 
-            List<(string suggestion, string description)> suggestions = new List<(string suggestion, string description)>();
+            List<(string suggestion, string description, int index)> suggestions = new List<(string suggestion, string description, int index)>();
 
             string currentline = remainingsnippet.Split(Environment.NewLine, StringSplitOptions.None).LastOrDefault() ?? "";
 
@@ -179,7 +180,7 @@ namespace Xenon.Compiler.AST
             {
                 if (!currentline.EndsWith(";"))
                 {
-                    suggestions.Add((";", "end script title"));
+                    suggestions.Add((";", "end script title", 0));
                 }
             }
             // Full auto line
@@ -187,9 +188,9 @@ namespace Xenon.Compiler.AST
             {
                 if (!currentline.EndsWith(";"))
                 {
-                    suggestions.Add(("fullauto;", "mark slide as fully automated."));
-                    suggestions.Add(("displaysrc='<slide>';", "specify alt graphic for action slide"));
-                    suggestions.Add(("keysrc='<slide>';", "specify alt key graphic for action slide"));
+                    suggestions.Add(("fullauto;", "mark slide as fully automated.", 0));
+                    suggestions.Add(("displaysrc='<slide>';", "specify alt graphic for action slide", 0));
+                    suggestions.Add(("keysrc='<slide>';", "specify alt key graphic for action slide", 0));
                 }
             }
             // parse commands
@@ -200,25 +201,25 @@ namespace Xenon.Compiler.AST
             // list all options
             else
             {
-                suggestions.Add(("!fullauto;", "mark slide as fully automated."));
-                suggestions.Add(("!forcerunonload;", "mark slide to be taken automatically if presentation loads to this slide"));
-                suggestions.Add(("#SCRIPT TITLE;", "add script title"));
-                suggestions.Add(("@", "add setup action"));
-                suggestions.Add(("arg0:", "add an action taking 0 arguments"));
-                suggestions.Add(("arg1:", "add an action taking 1 arguments"));
-                suggestions.Add(("argd8:", "add an action taking 8 arguments"));
-                suggestions.Add(("cmd:", "add an action (arguments will be parsed dynamically)"));
+                suggestions.Add(("!fullauto;", "mark slide as fully automated.", 0));
+                suggestions.Add(("!forcerunonload;", "mark slide to be taken automatically if presentation loads to this slide", 0));
+                suggestions.Add(("#SCRIPT TITLE;", "add script title", 0));
+                suggestions.Add(("@", "add setup action", 0));
+                suggestions.Add(("arg0:", "add an action taking 0 arguments", 0));
+                suggestions.Add(("arg1:", "add an action taking 1 arguments", 0));
+                suggestions.Add(("argd8:", "add an action taking 8 arguments", 0));
+                suggestions.Add(("cmd:", "add an action (arguments will be parsed dynamically)", 0));
                 //suggestions.AddRange(LanguageKeywords.ScriptActionsMetadata.Select(c => (c.Value.ActionName, "")));
             }
 
             return (false, suggestions);
         };
 
-        private static List<(string, string)> GetContextualSuggestionsForAction(string action, List<(string name, AssetType type)> knownAssets, IXenonCommandExtraInfoProvider extraInfo)
+        private static List<(string, string, int)> GetContextualSuggestionsForAction(string action, List<(string name, AssetType type)> knownAssets, IXenonCommandExtraInfoProvider extraInfo)
         {
             var conditionless = Regex.Match(action, "^\\s*@?(<.*>)?(?<line>.*)").Groups["line"]?.Value ?? action;
             action = conditionless;
-            List<(string, string)> suggestions = new List<(string, string)>();
+            List<(string, string, int)> suggestions = new List<(string, string, int)>();
             if (action.StartsWith("@"))
             {
                 // doesn't really matter for the purpose of suggestions, so just eat it and try again
@@ -227,15 +228,15 @@ namespace Xenon.Compiler.AST
 
             if (action.StartsWith("arg0:"))
             {
-                return GetcontextualSuggestionsForArg0Action(action.Remove(0, 5));
+                return GetcontextualSuggestionsForArg0Action(action.Remove(0, 5)).Select(x => (x.Item1, x.Item2, 0)).ToList();
             }
             else if (action.StartsWith("arg1:"))
             {
-                return GetcontextualSuggestionsForArg1Action(action.Remove(0, 5), knownAssets, extraInfo);
+                return GetcontextualSuggestionsForArg1Action(action.Remove(0, 5), knownAssets, extraInfo).Select(x => (x.Item1, x.Item2, 0)).ToList();
             }
             else if (action.StartsWith("argd8:"))
             {
-                return GetcontextualSuggestionsForArgd8Action(action.Remove(0, 6));
+                return GetcontextualSuggestionsForArgd8Action(action.Remove(0, 6)).Select(x => (x.Item1, x.Item2, 0)).ToList();
             }
             else if (action.StartsWith("cmd:"))
             {
@@ -243,10 +244,10 @@ namespace Xenon.Compiler.AST
             }
             else
             {
-                suggestions.Add(("arg0:", "add an action taking 0 arguments"));
-                suggestions.Add(("arg1:", "add an action taking 1 arguments"));
-                suggestions.Add(("argd8:", "add an action taking 8 arguments"));
-                suggestions.Add(("cmd:", "add an action (arguments will be parsed dynamically)"));
+                suggestions.Add(("arg0:", "add an action taking 0 arguments", 0));
+                suggestions.Add(("arg1:", "add an action taking 1 arguments", 0));
+                suggestions.Add(("argd8:", "add an action taking 8 arguments", 0));
+                suggestions.Add(("cmd:", "add an action (arguments will be parsed dynamically)", 0));
                 return suggestions
                     .OrderByClosestStrictMatch(action)
                     .ToList();
@@ -334,7 +335,7 @@ namespace Xenon.Compiler.AST
 
                 // TODO: confirm request wants a camera
                 // for now assume it might and allow variable '%' substituion for any of the named variables in the config
-                suggestions.AddRange(GetParameterSuggestions(cmd, knownAssets, insidetext, extraInfo));
+                suggestions.AddRange(GetParameterSuggestions(cmd, knownAssets, insidetext, extraInfo).Select(x => (x.Item1, x.Item2)));
             }
 
 
@@ -391,19 +392,19 @@ namespace Xenon.Compiler.AST
             return suggestions;
         }
 
-        private static List<(string, string)> GetcontextualSuggestiongsForCmdAction(string action, List<(string name, AssetType type)> knownAssets, IXenonCommandExtraInfoProvider extraInfo)
+        private static List<(string, string, int)> GetcontextualSuggestiongsForCmdAction(string action, List<(string name, AssetType type)> knownAssets, IXenonCommandExtraInfoProvider extraInfo)
         {
 
-            List<(string, string)> suggestions = new List<(string, string)>();
+            List<(string, string, int)> suggestions = new List<(string, string, int)>();
 
             if (IsInsideAnnotation(action))
             {
-                return new List<(string, string)>() { ("];", "end command annotation") };
+                return new List<(string, string, int)>() { ("];", "end command annotation", 0) };
             }
 
             if (action.EndsWith(']'))
             {
-                return new List<(string, string)>() { (";", "end command") };
+                return new List<(string, string, int)>() { (";", "end command", 0) };
             }
 
             if (IsInsideParamList(action, out string cmd, out string insidetext))
@@ -420,32 +421,33 @@ namespace Xenon.Compiler.AST
                 .Select(sm => (sm.Value.ActionName, sm.Value))
                 //.Where(c => c.Value.NumArgs == 1)
                 .OrderByClosestStrictMatch(action)
-                .Select(x => (x.Item1, ""))
+                .Select(x => (x.Item1, "", 0))
                 .Where(x => x.Item1.Length >= action.Length));
 
             if (suggestions.Any(s => s.Item1.Length == action.Length))
             {
                 if (MetadataProvider.TryGetScriptActionMetadataByCommandName(action, out var metadata) && metadata.NumArgs > 0)
                 {
-                    suggestions.Add(("(", ""));
+                    suggestions.Add(("(", "", 0));
                 }
                 else
                 {
-                    suggestions.Add((";", ""));
+                    suggestions.Add((";", "", 0));
                 }
             }
 
             return suggestions;
         }
 
-        private static List<(string, string)> GetParameterSuggestions(string cmd, List<(string name, AssetType type)> knownAssets, string insidetext, IXenonCommandExtraInfoProvider extraInfo)
+        private static List<(string, string, int)> GetParameterSuggestions(string cmd, List<(string name, AssetType type)> knownAssets, string insidetext, IXenonCommandExtraInfoProvider extraInfo)
         {
-            List<(string, string)> suggestions = new List<(string, string)>();
+            List<(string, string, int)> suggestions = new List<(string, string, int)>();
             if (MetadataProvider.TryGetScriptActionMetadataByCommandName(cmd, out var cmdMetadata))
             {
                 // differentiate between parameters
                 var splittybois = insidetext.Split(",", StringSplitOptions.None);
                 var pnum = splittybois.Length;
+                var index = 0;
 
                 // build API helper
                 Dictionary<AutomationActionArgType, string> argID = new Dictionary<AutomationActionArgType, string>()
@@ -460,17 +462,17 @@ namespace Xenon.Compiler.AST
                 {
                     var aid = Math.Max(pnum - 1, 0);
                     var arg = cmdMetadata.OrderedParameters[aid];
-                    suggestions.Add(($"<{arg.ArgName}:{arg.ArgType}>", $"[API] parameter ({pnum}/{cmdMetadata.NumArgs})"));
-                    suggestions.AddRange(arg.StaticHints);
+                    suggestions.Add(($"<{arg.ArgName}:{arg.ArgType}>", $"[API] parameter ({pnum}/{cmdMetadata.NumArgs})", index));
+                    suggestions.AddRange(arg.StaticHints.Select(x => (x.item, x.description, index)));
 
                     switch (arg.ParamValueHints)
                     {
                         case ExpectedVariableContents.VIDEOSOURCE:
                             // TODO: map cameras
-                            suggestions.AddRange(extraInfo.ProjectConfigState.Routing.Select(x => ($"%cam.{x.LongName}%", $"'{x.KeyName}' button: ({x.ButtonName},{x.ButtonId}) physical source: ({x.PhysicalInputId})")));
+                            suggestions.AddRange(extraInfo.ProjectConfigState.Routing.Select(x => ($"%cam.{x.LongName}%", $"'{x.KeyName}' button: ({x.ButtonName},{x.ButtonId}) physical source: ({x.PhysicalInputId})", index)));
                             break;
                         case ExpectedVariableContents.PROJECTASSET:
-                            suggestions.AddRange(knownAssets.Select(x => (x.name, $"({x.type})")));
+                            suggestions.AddRange(knownAssets.Select(x => (x.name, $"({x.type})", index)));
                             break;
                         case ExpectedVariableContents.EXPOSEDSTATE:
 
@@ -508,7 +510,7 @@ namespace Xenon.Compiler.AST
                                     {
                                         var instance = Activator.CreateInstance(t);
                                         var props = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(instance);
-                                        suggestions.AddRange(props.Where(x => validTypes.Contains(x.Value.TypeInfo)).Select(x => (x.Key, $"Exposed State Type<{x.Value.TypeInfo}>")));
+                                        suggestions.AddRange(props.Where(x => validTypes.Contains(x.Value.TypeInfo)).Select(x => (x.Key, $"Exposed State Type<{x.Value.TypeInfo}>", index)));
                                     }
                                 }
                             }

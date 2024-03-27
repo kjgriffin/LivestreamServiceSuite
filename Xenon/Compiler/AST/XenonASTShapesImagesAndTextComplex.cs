@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 
 using Xenon.AssetManagment;
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.SubParsers;
 using Xenon.LayoutEngine.L2;
 using Xenon.LayoutInfo;

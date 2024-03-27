@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
 using Xenon.Renderer;
@@ -36,9 +36,9 @@ namespace Xenon.Compiler.AST
 
         static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestionsForVariableName = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts, extraInfo) =>
         {
-            return (false, new List<(string, string)>() { ("\"", "End Variable Name") }
-            .Concat(LanguageKeywords.LayoutForType.Select(x => ($"{LanguageKeywords.Commands[x.Key]}.Layout", $"Set layout override for layout type: {LanguageKeywords.Commands[x.Key]}")))
-            .Concat((SlideRenderer.VARNAME_SLIDE_PREMULTIPLEY_OVERRIDE, "true/false to override all slides render behaviour (implied true by default)").ItemAsEnumerable()).ToList());
+            return (false, new List<(string, string, int)>() { ("\"", "End Variable Name", 0) }
+            .Concat(LanguageKeywords.LayoutForType.Select(x => ($"{LanguageKeywords.Commands[x.Key]}.Layout", $"Set layout override for layout type: {LanguageKeywords.Commands[x.Key]}", 0)))
+            .Concat((SlideRenderer.VARNAME_SLIDE_PREMULTIPLEY_OVERRIDE, "true/false to override all slides render behaviour (implied true by default)", 0).ItemAsEnumerable()).ToList());
         };
 
         static IXenonCommandSuggestionCallback.GetContextualSuggestionsForCommand GetContextualSuggestsionForEndOfCommand = (priorcaptures, sourcesnippet, remainingsnippet, knownassets, knownlayouts, extraInfo) =>
@@ -47,24 +47,24 @@ namespace Xenon.Compiler.AST
             {
                 if (Regex.Match(remainingsnippet, "$\\)").Success)
                 {
-                    return (true, new List<(string, string)>());
+                    return (true, new List<(string, string, int)>());
                 }
-                return (false, new List<(string suggestion, string description)> { (")", "End Parameters") });
+                return (false, new List<(string suggestion, string description, int)> { (")", "End Parameters", 0) });
             }
             else
             {
-                return (false, new List<(string suggestion, string description)> { (priorcaptures["septype"], "Enclose Value") }.Concat(GetContextualSuggestionsForValueOfVariableName(priorcaptures["varname"], knownlayouts)).ToList());
+                return (false, new List<(string suggestion, string description, int)> { (priorcaptures["septype"], "Enclose Value", 0) }.Concat(GetContextualSuggestionsForValueOfVariableName(priorcaptures["varname"], knownlayouts)).ToList());
             }
         };
 
-        static List<(string, string)> GetContextualSuggestionsForValueOfVariableName(string varname, List<(string lib, LanguageKeywordCommand grp, string lname)> knownlayouts)
+        static List<(string, string, int)> GetContextualSuggestionsForValueOfVariableName(string varname, List<(string lib, LanguageKeywordCommand grp, string lname)> knownlayouts)
         {
             var vname = Regex.Match(varname, "(?<name>.*)\\.Layout");
             if (vname.Success)
             {
-                return knownlayouts.Where(x => x.grp == LanguageKeywords.Commands.First(c => c.Value == vname.Groups["name"].Value).Key).Select(x => ($"{x.lib}::{x.lname}", $"Use Layout {{{x.lname}}} from Library {{{x.lib}}}")).ToList();
+                return knownlayouts.Where(x => x.grp == LanguageKeywords.Commands.First(c => c.Value == vname.Groups["name"].Value).Key).Select(x => ($"{x.lib}::{x.lname}", $"Use Layout {{{x.lname}}} from Library {{{x.lib}}}", 0)).ToList();
             }
-            return new List<(string, string)>();
+            return new List<(string, string, int)>();
         }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.Suggestions;
 using Xenon.SlideAssembly;
 

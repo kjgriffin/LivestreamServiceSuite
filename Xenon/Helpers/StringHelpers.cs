@@ -49,8 +49,23 @@ namespace Xenon.Helpers
             }).OrderBy(x => x.Item2).Select(x => x.d);
         }
 
+        public static IEnumerable<(string, T1)> OrderByClosestStrictMatch<T1>(this IEnumerable<(string str, T1 itemA)> data, string comparison)
+        {
+            return data
+                .Select(d =>
+                {
+                    if (d.str.StartsWith(comparison, System.StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return (str: d, rank: d.str.Length - comparison.Length);
+                    }
+                    else return (str: d, rank: int.MaxValue);
+                })
+                .Where(d => d.rank < int.MaxValue)
+                .OrderBy(x => x.rank)
+                .Select(x => x.str);
+        }
 
-        public static IEnumerable<(string, T)> OrderByClosestStrictMatch<T>(this IEnumerable<(string str, T other)> data, string comparison)
+        public static IEnumerable<(string, T1, T2)> OrderByClosestStrictMatch<T1, T2>(this IEnumerable<(string str, T1 itemA, T2 itemB)> data, string comparison)
         {
             return data
                 .Select(d =>
