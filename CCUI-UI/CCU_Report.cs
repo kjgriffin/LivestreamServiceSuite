@@ -17,7 +17,7 @@ namespace CCUI_UI
             this.CMDName = cmd;
             var sword = status.Split(Environment.NewLine);
             CMDStatus = sword[0];
-            UID = sword.Length > 1 ? Guid.Parse(sword[1]) : Guid.Empty;
+            UID = Guid.TryParse(sword.Length > 1 ? sword[1] : "", out var uid) ? uid : Guid.Empty;
         }
     }
 
