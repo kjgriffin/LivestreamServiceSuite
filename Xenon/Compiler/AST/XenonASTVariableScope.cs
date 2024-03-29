@@ -26,7 +26,7 @@ namespace Xenon.Compiler.AST
             new RegexMatchedContextualSuggestions("#var", false, "", new List<(string, string)>{ ("#var", "") }, null),
             new RegexMatchedContextualSuggestions("\\(", false, "", new List<(string, string)>{ ("(", "Begin Parameters") }, null),
             new RegexMatchedContextualSuggestions("\"", false, "", new List<(string, string)>{ ("\"", "Begin Variable Name") }, null),
-            new RegexMatchedContextualSuggestions("[^\"]+(?\")", false, "varname", null, GetContextualSuggestionsForVariableName),
+            new RegexMatchedContextualSuggestions("[^\"]+(?=\")", false, "varname", null, GetContextualSuggestionsForVariableName),
             new RegexMatchedContextualSuggestions("\"", false, "", new List<(string, string)>{("\"", "End Variable Name")}, null),
             new RegexMatchedContextualSuggestions(",", false, "", new List<(string, string)>{ (",", "") }, null),
             new RegexMatchedContextualSuggestions("(```)|(\")", false, "septype", new List<(string, string)>{ ("```", "Enclose Value"), ("\"", "Enclose Value") }, null),
