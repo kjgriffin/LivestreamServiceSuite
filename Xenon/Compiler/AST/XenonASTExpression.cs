@@ -303,6 +303,27 @@ namespace Xenon.Compiler.AST
             XenonASTExpression expr = new XenonASTExpression();
             IXenonASTElement parent = expr;
 
+            // warn for deprecated
+            var cmd = Lexer.Peek();
+
+            var CMeta = LanguageKeywords.Commands.OrderByDescending(x => x.Value.Length).FirstOrDefault(x => x.Value == cmd);
+            if (XenonAPIConstructor.APIMetadata.TryGetValue(CMeta.Key, out var xapi))
+            {
+                if (xapi.STDMetadata.Deprecated)
+                {
+                    Logger.Log(new XenonCompilerMessage()
+                    {
+                        ErrorName = "Command Deprecated",
+                        ErrorMessage = $"{CMeta.Value} has been deprecated",
+                        Generator = "Compiler::XenonASTExpression::XenonAPIConstructor",
+                        Inner = "",
+                        Level = XenonCompilerMessageType.Error,
+                        Token = cmd,
+                        SrcFile = Logger.File,
+                    });
+                }
+            }
+
             if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.Resource]))
             {
                 XenonASTResource resource = new XenonASTResource();

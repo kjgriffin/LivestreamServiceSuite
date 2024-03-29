@@ -38,12 +38,75 @@ namespace Xenon.Compiler.Suggestions
             // TODO: check for flags
 
             // TODO: check for body
+            if (cmdMeta.HasBody == DefinitionRequirement.REQUIRED)
+            {
+                if (!IsBodyComplete(cmdMeta, remainder, out remainder))
+                {
+                    return false;
+                }
+            }
+            else if (remainder.StartsWith("{") && cmdMeta.HasBody == DefinitionRequirement.OPTIONAL)
+            {
+                if (!IsBodyComplete(cmdMeta, remainder, out remainder))
+                {
+                    return false;
+                }
+            }
 
 
             return true;
         }
 
-        internal static List<(string suggestion, string description, int captureIndex)> GetCommandContextualSuggestions(XenonCommandAPIMetadata cmdMeta, string sourcecode)
+        internal static bool IsBodyComplete(XenonCommandAPIMetadata cmdMeta, string sourcecode, out string remainder)
+        {
+            // just match braces (with escape?)
+            string text = sourcecode;
+            int braceStack = 0;
+            bool anyBody = false;
+
+            text = text.TrimStart();
+
+            while (text.Length > 0)
+            {
+                var iOpen = text.IndexOf("{");
+                var iClose = text.IndexOf("}");
+
+                if (iOpen != -1 && ((iOpen < iClose && iClose != -1) || iClose == -1))
+                {
+                    anyBody = true;
+                    braceStack++;
+                    text = text.Remove(0, iOpen + 1);
+                    continue;
+                }
+                else if (iClose != -1)
+                {
+                    // double check escaped brace
+                    // }}
+
+                    if (text.Length > iClose + 1 && text[iClose + 1] == '}')
+                    {
+                        text.Remove(0, iClose + 2);
+                        // remove silently, since this is escaped
+                    }
+
+                    text = text.Remove(0, iClose + 1);
+                    braceStack--;
+                    continue;
+                }
+
+                if (iOpen == -1 && iClose == -1)
+                {
+                    // dump out
+                    break;
+                }
+
+            }
+
+            remainder = text;
+            return anyBody && braceStack == 0;
+        }
+
+        internal static List<(string suggestion, string description, int captureIndex)> GetCommandContextualSuggestions(XenonCommandAPIMetadata cmdMeta, string sourcecode, int rootcaretpos, int index)
         {
             // we expect to have captured at LEAST the whole command
             // trim that off and see what's happening
@@ -70,11 +133,49 @@ namespace Xenon.Compiler.Suggestions
             // TODO: check for flags
 
             // TODO: check for body
+            string bremainder = premainder;
+            if (cmdMeta.HasBody == DefinitionRequirement.REQUIRED)
+            {
+                if (!IsBodyComplete(cmdMeta, premainder, out bremainder))
+                {
+                    return GetBodySuggestions(cmdMeta, premainder, rootcaretpos, index);
+                }
+            }
+            else if (remainder.StartsWith("{") && cmdMeta.HasBody == DefinitionRequirement.OPTIONAL)
+            {
+                if (!IsBodyComplete(cmdMeta, premainder, out bremainder))
+                {
+                    return GetBodySuggestions(cmdMeta, premainder, rootcaretpos, index);
+                }
+            }
+
 
             // return empty??
             // shouldn't really get here since cmd is complete
             return new List<(string suggestion, string description, int captureIndex)>();
         }
+
+        private static List<(string suggestion, string description, int captureIndex)> GetBodySuggestions(XenonCommandAPIMetadata cmdMeta, string sourcecode, int rootcaretpos, int index)
+        {
+            string remainder = sourcecode;
+
+            // check open brace
+            if (!CheckUntilAndRemove(remainder, "{", out remainder))
+                return new List<(string suggestion, string description, int captureIndex)> { ("{", "", 0) };
+
+            // always OK to suggest ending the body?
+            var suggestions = new List<(string suggestion, string description, int captureIndex)> { ("}", "", 0) };
+
+            // optional call into body suggestion strategy
+            if (cmdMeta.STDBody.BodyNestsExpression)
+            {
+                return suggestions.Concat(XenonSuggestionService.GetExpressionSuggestion(sourcecode, rootcaretpos, index)).ToList();
+            }
+
+
+            return suggestions;
+        }
+
 
         private static List<(string suggestion, string description, int captureIndex)> GetParameterSuggestions(XenonCommandAPIMetadata cmdMeta, string sourcecode)
         {

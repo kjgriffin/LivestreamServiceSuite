@@ -142,7 +142,7 @@ namespace Xenon.Compiler.Suggestions
                         return partialsuggestions.Select(x => (x.Item1, x.Item2, toplevelcmd.index)).ToList();
                     }
                     // don't think we ever get here??
-                    Debugger.Break();
+                    //Debugger.Break();
                     return GetExpressionSuggestion(sourcetext, caretpos, toplevelcmd.index - 1);
                 }
             }
@@ -153,14 +153,14 @@ namespace Xenon.Compiler.Suggestions
                     return GetExpressionSuggestion(sourcetext.Substring(toplevelcmd.index + 1 + LanguageKeywords.Commands[toplevelcmd.cmd].Length), caretpos, caretpos);
                 }
 
-                return GetCommandContextualSuggestions(toplevelcmd.cmd, sourcetext.Substring(toplevelcmd.index, caretpos - toplevelcmd.index))
+                return GetCommandContextualSuggestions(toplevelcmd.cmd, sourcetext.Substring(toplevelcmd.index, caretpos - toplevelcmd.index), caretpos, toplevelcmd.index)
                     .Select(x => (x.suggestion, x.description, caretpos - x.captureIndex)) // indicies are relative to index behind carret
                     .ToList();
             }
 
         }
 
-        private List<(string, string, int)> GetExpressionSuggestion(string sourcetext, int rootcaretpos, int indexcapture)
+        internal static List<(string, string, int)> GetExpressionSuggestion(string sourcetext, int rootcaretpos, int indexcapture)
         {
             var cmdsug = AllCommandKeywords().Select(k => (k.Item1, k.Item2, indexcapture));
 
@@ -191,7 +191,7 @@ namespace Xenon.Compiler.Suggestions
             return suggestsions;
         }
 
-        private bool IsInDecorator(string source, int startindex, out int captureindex)
+        private static bool IsInDecorator(string source, int startindex, out int captureindex)
         {
             string remainder = source.TrimStart();
             captureindex = startindex + source.Length - remainder.Length;
@@ -341,7 +341,7 @@ namespace Xenon.Compiler.Suggestions
                 .ToList();
         }
 
-        private List<(string suggestion, string description, int captureIndex)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode)
+        private List<(string suggestion, string description, int captureIndex)> GetCommandContextualSuggestions(LanguageKeywordCommand cmd, string sourcecode, int rootcaretpos, int index)
         {
             if (CommandContextutalSuggestionDispatcher.ContainsKey(cmd))
             {
@@ -349,7 +349,7 @@ namespace Xenon.Compiler.Suggestions
             }
             else if (XenonAPIConstructor.APIMetadata.TryGetValue(cmd, out var xapi))
             {
-                return XAPISuggestionHelper.GetCommandContextualSuggestions(xapi, sourcecode);
+                return XAPISuggestionHelper.GetCommandContextualSuggestions(xapi, sourcecode, rootcaretpos, index);
             }
             return CommandContextutalSuggestionDispatcher.GetValueOrDefault(cmd, (_) => (true, new List<(string, string, int)>())).Invoke(sourcecode).Suggestions;
         }
@@ -373,7 +373,6 @@ namespace Xenon.Compiler.Suggestions
         {
             CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.SetVar] = (str) => (IXenonASTCommand.GetInstance<XenonASTSetVariable>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTSetVariable>());
             CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.Liturgy] = (str) => (IXenonASTCommand.GetInstance<XenonASTLiturgy>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTLiturgy>());
-            CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.AnthemTitle] = (str) => (IXenonASTCommand.GetInstance<XenonASTAnthemTitle>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTAnthemTitle>());
             CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.Script] = (str) => (IXenonASTCommand.GetInstance<XenonASTScript>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTScript>());
             CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.ScopedVariable] = (str) => (IXenonASTCommand.GetInstance<XenonASTVariableScope>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTVariableScope>());
             CommandContextutalSuggestionDispatcher[LanguageKeywordCommand.DynamicControllerDef] = (str) => (IXenonASTCommand.GetInstance<XenonASTDynamicController>() as IXenonCommandSuggestionCallback).GetContextualSuggestionsFromOption(this, str, IXenonASTCommand.GetInstance<XenonASTDynamicController>());

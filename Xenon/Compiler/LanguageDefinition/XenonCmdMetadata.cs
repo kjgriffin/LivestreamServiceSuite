@@ -47,4 +47,19 @@ namespace Xenon.Compiler.LanguageDefinition
         }
     }
 
+    internal class XenonSTDBodyAttribute : Attribute
+    {
+        public DefinitionRequirement Requirement { get; private set; }
+
+        public bool BodyNestsExpression { get; private set; }
+        public bool CustomBodySuggester { get; private set; }
+        //public Func<string, int, int, List<(string suggestion, string description, int replaceindex)>> BodySuggestionProvider;
+
+        public XenonSTDBodyAttribute(DefinitionRequirement requirement, bool bodyNestsExpression = false)
+        {
+            Requirement = requirement;
+            BodyNestsExpression = bodyNestsExpression;
+        }
+    }
+
 }

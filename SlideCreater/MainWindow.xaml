@@ -485,6 +485,11 @@
                                     <CheckBox Foreground="White" Margin="0,0,10,0" Name="cb_message_view_debug" Click="cb_message_view_debug_Click">Debug</CheckBox>
                                     <CheckBox Foreground="White" Margin="0,0,10,0" Name="cb_message_view_info" Click="cb_message_view_info_Click">Info</CheckBox>
                                 </StackPanel>
+                                <TextBlock>
+                                    <Hyperlink Click="BtnTextViewErrors_Click" Foreground="Orange" Background="Transparent">
+                                        View All
+                                    </Hyperlink>
+                                </TextBlock>
                             </StackPanel>
                         </Grid>
                         <!--<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">-->

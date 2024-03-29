@@ -10,6 +10,8 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
+    [XenonSTDCmdMetadata(LanguageKeywordCommand.Scripted)]
+    [XenonSTDBody(DefinitionRequirement.REQUIRED, true)]
     internal class XenonASTAsScripted : IXenonASTCommand
     {
         public IXenonASTElement Parent { get; private set; }

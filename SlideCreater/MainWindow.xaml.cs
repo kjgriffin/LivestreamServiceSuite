@@ -10,6 +10,7 @@ using ICSharpCode.AvalonEdit.Search;
 
 using LutheRun.Parsers;
 
+using Microsoft.Web.WebView2.Wpf;
 using Microsoft.Win32;
 
 using SlideCreater.Controllers;
@@ -2375,6 +2376,38 @@ namespace SlideCreater
             UpdateEditorTreeView();
 
             MarkDirty();
+        }
+
+        private void BtnTextViewErrors_Click(object sender, RoutedEventArgs e)
+        {
+            Window w = new Window();
+            Task.Run(async () =>
+            {
+                try
+                {
+                    //var path = Path.Combine(Path.GetTempPath(), DateTime.UtcNow.ToShortDateString() + "-Errors.html");
+                    //File.WriteAllText(path, errorText);
+
+                    // open with default text editor
+                    // guess we're gonna use edge??
+                    // write out into a text file
+                    string errorText = ErrorFormatter.Format(alllogs);
+
+                    await Dispatcher.Invoke(async () =>
+                    {
+                        WebView2 View = new WebView2();
+                        w.Content = View;
+                        w.Show();
+                        await View.EnsureCoreWebView2Async();
+                        View.NavigateToString(errorText);
+                    });
+
+                }
+                catch (Exception)
+                {
+                    // at this point I dunno...
+                }
+            });
         }
     }
 }

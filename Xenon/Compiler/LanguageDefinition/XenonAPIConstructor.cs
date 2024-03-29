@@ -24,6 +24,7 @@ namespace Xenon.Compiler.LanguageDefinition
         public DefinitionRequirement HasParams { get; internal set; } = DefinitionRequirement.NONE;
         public XenonSTDCmdParamsAttribute STDParams { get; internal set; }
         public DefinitionRequirement HasBody { get; internal set; } = DefinitionRequirement.NONE;
+        public XenonSTDBodyAttribute STDBody { get; internal set; }
     }
 
     static class XenonAPIConstructor
@@ -42,6 +43,8 @@ namespace Xenon.Compiler.LanguageDefinition
             {
                 var paramAttr = xcmd.type.GetCustomAttribute<XenonSTDCmdParamsAttribute>();
 
+                var bodyAttr = xcmd.type.GetCustomAttribute<XenonSTDBodyAttribute>();
+
                 APIMetadata[xcmd.stdcmd.Command] = new XenonCommandAPIMetadata()
                 {
                     XType = xcmd.type,
@@ -49,6 +52,8 @@ namespace Xenon.Compiler.LanguageDefinition
                     STDMetadata = xcmd.stdcmd,
                     STDParams = paramAttr,
                     HasParams = paramAttr?.Requirement ?? DefinitionRequirement.NONE,
+                    HasBody = bodyAttr?.Requirement ?? DefinitionRequirement.NONE,
+                    STDBody = bodyAttr,
                 };
             } 
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+
 using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.Suggestions;
 using Xenon.Helpers;
@@ -11,7 +12,9 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
-    class XenonASTAnthemTitle : IXenonASTCommand, IXenonCommandSuggestionCallback
+    [XenonSTDCmdMetadata(LanguageKeywordCommand.AnthemTitle)]
+    [XenonSTDCmdParams(DefinitionRequirement.REQUIRED, true, "Title", "Musician", "Accompianist", "Credits")]
+    class XenonASTAnthemTitle : IXenonASTCommand
     {
 
         public string AnthemTitle { get; set; }
@@ -85,22 +88,6 @@ namespace Xenon.Compiler.AST
             sb.AppendLine($"(\"{AnthemTitle}\", \"{Musician}\", \"{Accompanianst}\", \"{Credits}\")");
         }
 
-        List<RegexMatchedContextualSuggestions> IXenonCommandSuggestionCallback.contextualsuggestions { get; } = new List<RegexMatchedContextualSuggestions>()
-        {
-            ("#anthemtitle", false, "", new List<(string, string)> { ("#anthemtitle", "")}, null),
-            ("\\(\"", false, "", new List<(string, string)> { ("(\"", "insert anthem name")}, null),
-            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end anthem name")}, null ),
-            (",", false, "", new List<(string, string)> {(",", "") }, null),
-            ("\"", false, "", new List<(string, string)> { ("\"", "insert muscian name")}, null),
-            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end musician name")}, null ),
-            (",", false, "", new List<(string, string)> {(",", "") }, null),
-            ("\"", false, "", new List<(string, string)> { ("\"", "insert accompanist")}, null),
-            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end accompanist")}, null ),
-            (",", false, "", new List<(string, string)> {(",", "") }, null),
-            ("\"", false, "", new List<(string, string)> { ("\"", "insert credits")}, null),
-            ("[^\"](?=\")", false, "", new List<(string, string)> { ("\"", "end credits")}, null ),
-            ("\\)", false, "", new List<(string, string)> {(")", "") }, null),
-        };
         public int _SourceLine { get; set; }
     }
 }

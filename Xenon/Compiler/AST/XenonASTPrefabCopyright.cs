@@ -7,6 +7,7 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
+    [XenonSTDCmdMetadata(LanguageKeywordCommand.Copyright, true)]
     class XenonASTPrefabCopyright : IXenonASTCommand
     {
         public IXenonASTElement Parent { get; private set; }

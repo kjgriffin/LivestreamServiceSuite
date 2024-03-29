@@ -214,10 +214,11 @@ namespace SlideCreater.Controllers
                 if (line >= 0 && line <= editor.LineCount)
                 {
                     editor.ScrollToLine(line);
-                    editor.TextArea.Caret.Line = line + 1;
-                    editor.TextArea.Caret.Column = 0;
+                    //editor.TextArea.Caret.Line = line + 1;
+                    //editor.TextArea.Caret.Column = 0;
                     editor.TextArea.Focus();
-                    editor.Select(editor.CaretOffset, editor.Document.Lines[line].Length);
+                    //editor.Select(editor.CaretOffset, editor.Document.Lines[line + 1].Length);
+                    editor.Select(editor.Document.Lines[line].Offset, editor.Document.Lines[line].Length);
                 }
                 else
                 {
@@ -327,7 +328,7 @@ namespace SlideCreater.Controllers
             _ = ShowSuggestionsForEditor(sender as TextArea);
         }
 
-     
+
         private void Editor_TextChanged(object sender, EventArgs e)
         {
             OnTextEditDiry?.Invoke(this, e);
