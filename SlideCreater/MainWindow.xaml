@@ -236,6 +236,20 @@
                     </Grid>
                 </Button>
 
+                <Button Style="{StaticResource DarkBtn}" Click="ButtonSuggestions_Click" Width="115" Padding="10,0,10,0" Margin="10,5,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Name="ibSuggestions" Fill="Gray" Width="30" Height="30">
+                                <Rectangle.OpacityMask>
+                                    <ImageBrush ImageSource="/ViewControls/Images/Question.png"></ImageBrush>
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                            <TextBlock VerticalAlignment="Center" Foreground="White">Suggestions</TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+
+
 
                 <!--<Button Style="{StaticResource DarkBtn}" Click="FormatCode" Width="100" Padding="10,0,10,0" Margin="180,5,0,0">
                     <Grid>

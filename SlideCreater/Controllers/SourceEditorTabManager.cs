@@ -51,6 +51,7 @@ namespace SlideCreater.Controllers
 
         HashSet<string> _openFiles = new HashSet<string>();
 
+        public bool SuggestionsEnabled { get; set; } = false;
         public SourceEditorTabManager(TabControl host, Window parent, IFullAccess<Project> proj)
         {
             _Host = host;
@@ -348,6 +349,11 @@ namespace SlideCreater.Controllers
 
         private async Task ShowSuggestionsForEditor(TextArea editor)
         {
+            if (!SuggestionsEnabled)
+            {
+                return;
+            }
+
             var text = editor.Document.Text;
             int offset = editor.Caret.Offset;
             List<(string item, string description, int cindex)> suggestions = new List<(string, string, int)>();

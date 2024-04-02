@@ -10,6 +10,8 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
+    [XenonSTDCmdMetadata(LanguageKeywordCommand.HTML2)]
+    [XenonSTDBody(DefinitionRequirement.REQUIRED)]
     internal class XenonASTHtml2 : IXenonASTCommand
     {
         public int _SourceLine { get; set; }
