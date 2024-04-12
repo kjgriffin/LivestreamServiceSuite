@@ -286,6 +286,7 @@ cmd:USK1TieOff;
 }
 }
 
+#IF MASTER_PANEL
 [TButton]3,2
 {
 draw={
@@ -299,5 +300,6 @@ fire={
 cmd:SetupButtons(master-panel-std, %pres%, true);
 }
 }
+#ENDIF
 
 }
