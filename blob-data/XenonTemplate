@@ -14,7 +14,7 @@ $INFO$
 #IF MASTER_PANEL
         cmd:SetupButtons(master-panel-std, %pres%, true)[Master Panel];
 #ELSE
-        cmd:SetupButtons(bibleclass-sub-panel-std, %pres%, true)[Master Panel];
+        cmd:SetupButtons(bibleclass-sub-panel-std, %pres%, true)[Bible Panel];
 #ENDIF
     }
 
