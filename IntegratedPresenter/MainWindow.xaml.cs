@@ -3365,6 +3365,7 @@ namespace IntegratedPresenter.Main
             pipctrl?.Close();
             _camMonitor?.Shutdown();
             _logger.Info("Integrated Presenter requested to close by USER");
+            Application.Current.Shutdown();
         }
 
         private void ClickConfigureSwitcher(object sender, RoutedEventArgs e)
