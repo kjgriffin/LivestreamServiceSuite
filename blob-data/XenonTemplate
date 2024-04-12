@@ -6,6 +6,7 @@ $INFO$
 {
     first=#script
     {
+        !forcerunonload;
         @cmd:PresetSelect(%cam.SLIDESHOW%)[PST Slide];
         cmd:DelayMs(100);
         cmd:DSK1Off[Kill GFX];
