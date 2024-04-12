@@ -1,3 +1,4 @@
+#DEFINE MASTER_PANEL
 #dynamiccontroller(master-panel-std)
 {
     dynamic:matrix(4x3);
