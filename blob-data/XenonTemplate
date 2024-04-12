@@ -10,7 +10,11 @@ $INFO$
         cmd:DelayMs(100);
         cmd:DSK1Off[Kill GFX];
         cmd:AutoTrans;
+#IF MASTER_PANEL
         cmd:SetupButtons(master-panel-std, %pres%, true)[Master Panel];
+#ELSE
+        cmd:SetupButtons(bibleclass-sub-panel-std, %pres%, true)[Master Panel];
+#ENDIF
     }
 
     #fitimage($THUMBNAIL$)
