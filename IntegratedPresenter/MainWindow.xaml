@@ -39,6 +39,7 @@
                     <MenuItem Name="cbShowCurrentVideoCountdownTimer" Header="Video Countdown Timer (Current)" IsTabStop="False" IsCheckable="True" IsChecked="True" Click="ClickToggleShowCurrentVideoCountdownTimer" Focusable="False"></MenuItem>
                     <MenuItem Header="Audio Player [A]" IsTabStop="False" Click="ClickViewAudioPlayer" Focusable="False"></MenuItem>
                     <MenuItem Name="cbAdvancedPIPMovement" Header="Advanced PIP Location [L]" IsTabStop="False" Click="ClickViewAdvancedFlyKeySettings" Focusable="False"></MenuItem>
+                    <MenuItem Name="miOpenAuxPlayer" Header="Open Aux Player" IsTabStop="False" Click="ClickOpenAuxPlayer" Focusable="False"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Interaction" IsTabStop="False" Focusable="False">
                     <MenuItem Click="clickENTEROnlyForTrans" Name="miEnterButtonClickGuard" Header="ENTER Only For Auto Trans" IsCheckable="True" IsChecked="True" IsTabStop="False" Focusable="False"></MenuItem>

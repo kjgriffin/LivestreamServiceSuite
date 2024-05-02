@@ -1,15 +1,18 @@
-﻿using SharedPresentationAPI.Presentation;
+﻿using Integrated_Presenter.Windows;
+
+using SharedPresentationAPI.Presentation;
 
 using System;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace IntegratedPresenter.Main
 {
     /// <summary>
     /// Interaction logic for PresenterDisplay.xaml
     /// </summary>
-    public partial class PresenterDisplay : Window
+    public partial class PresenterDisplay : Window, IAuxOverride
     {
 
         MainWindow _control;
@@ -335,6 +338,18 @@ namespace IntegratedPresenter.Main
             {
                 ExitFullscreen();
             }
+        }
+
+        public void ShowAuxSource(VisualBrush brush)
+        {
+            auxOverride.Fill = brush;
+            auxOverride.Visibility = Visibility.Visible;
+        }
+
+        public void HideAuxSource()
+        {
+            auxOverride.Fill = null;
+            auxOverride.Visibility = Visibility.Hidden;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

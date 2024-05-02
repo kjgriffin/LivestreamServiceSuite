@@ -11,6 +11,7 @@ using Configurations.FeatureConfig;
 using Integrated_Presenter.Automation;
 using Integrated_Presenter.DynamicDrivers;
 using Integrated_Presenter.ViewModels;
+using Integrated_Presenter.Windows;
 
 using IntegratedPresenter.BMDSwitcher;
 using IntegratedPresenter.BMDSwitcher.Config;
@@ -2871,6 +2872,7 @@ namespace IntegratedPresenter.Main
                 {
                     _logger.Info($"Graphics Engine has no active display window. Creating window now.");
                     _display = new PresenterDisplay(this, false);
+                    player.AuxDisplay = _display;
                     _display.OnMediaPlaybackTimeUpdated += _display_OnMediaPlaybackTimeUpdated;
                     // start display
                     _display.Show();
@@ -4930,6 +4932,7 @@ namespace IntegratedPresenter.Main
             {
                 _logger.Info($"Graphics Engine has no active display window. Creating window now.");
                 _display = new PresenterDisplay(this, false);
+                player.AuxDisplay = _display;
                 _display.OnMediaPlaybackTimeUpdated += _display_OnMediaPlaybackTimeUpdated;
                 // start display
                 _display.Show();
@@ -5279,5 +5282,11 @@ namespace IntegratedPresenter.Main
         }
 
         #endregion
+
+        AuxPlayer player = new AuxPlayer();
+        private void ClickOpenAuxPlayer(object sender, RoutedEventArgs e)
+        {
+            player.Show();
+        }
     }
 }

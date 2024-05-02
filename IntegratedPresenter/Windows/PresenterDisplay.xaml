@@ -20,6 +20,7 @@
         <local:MediaPlayer2 x:Name="mediaPlayerA" Grid.ColumnSpan="2"></local:MediaPlayer2>
         <local:MediaPlayer2 x:Name="mediaPlayerB" Grid.ColumnSpan="2"></local:MediaPlayer2>
         <local:MediaPlayer2 x:Name="mediaPlayerC" Grid.ColumnSpan="2"></local:MediaPlayer2>
+        <Rectangle Name="auxOverride" Grid.ColumnSpan="2" Panel.ZIndex="20"></Rectangle>
         <Viewbox Name="blackcover" Panel.ZIndex="10" Grid.ColumnSpan="2">
             <Rectangle Fill="Black"></Rectangle>
         </Viewbox>

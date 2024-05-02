@@ -1,0 +1,56 @@
+﻿<Window x:Class="Integrated_Presenter.Windows.AuxPlayer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Integrated_Presenter.Windows"
+        mc:Ignorable="d"
+        Title="Aux Player" Height="450" Width="800">
+    <Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Viewbox Grid.Row="0">
+                    <MediaElement Width="1920" Height="1080" Name="player" LoadedBehavior="Manual"></MediaElement>
+                </Viewbox>
+
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Vertical">
+
+                        <Slider Name="scrubber" Thumb.DragStarted="scrubber_DragStarted" Thumb.DragDelta="scrubber_DragDelta" Thumb.DragCompleted="scrubber_DragCompleted"></Slider>
+
+                        <StackPanel Orientation="Horizontal">
+
+                            <Button Click="Click_Show" Margin="10">SHOW</Button>
+                            <Button Click="Click_Hide" Margin="10">HIDE</Button>
+
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Click="Click_Play">Play</Button>
+                    <Button Grid.Column="1" Click="Click_Pause">Pause</Button>
+                    <Button Grid.Column="2" Click="Click_Loop">Loop</Button>
+                </Grid>
+            </Grid>
+            <Grid Grid.Column="1" Drop="Grid_Drop" AllowDrop="True">
+                <ListBox Name="lbFiles"></ListBox>
+            </Grid>
+        </Grid>
+
+    </Grid>
+</Window>
