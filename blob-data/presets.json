@@ -1,7 +1,7 @@
 [
     {
         "Id": "ANTHEM",
-        "DefaultName": "ANTHEM",
+        "DefaultName": "center-ANTHEM",
         "Description": "",
         "Camera": "center",
         "Pan": 1044384,
@@ -9,11 +9,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 800,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/ANTHEM.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/center-ANTHEM.png"
     },
     {
         "Id": "ANTHEM-INTRO",
-        "DefaultName": "ANTHEM-INTRO",
+        "DefaultName": "center-ANTHEM-INTRO",
         "Description": "",
         "Camera": "center",
         "Pan": 1044384,
@@ -21,11 +21,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 1100,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/ANTHEM-INTRO.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/center-ANTHEM-INTRO.png"
     },
     {
         "Id": "CHOIR",
-        "DefaultName": "CHOIR",
+        "DefaultName": "center-CHOIR",
         "Description": "",
         "Camera": "center",
         "Pan": 1044384,
@@ -33,11 +33,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 1100,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/CHOIR.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/center-CHOIR.png"
     },
     {
         "Id": "LEC-MID",
-        "DefaultName": "LEC-MID",
+        "DefaultName": "center-LEC-MID",
         "Description": "",
         "Camera": "center",
         "Pan": 1042336,
@@ -45,11 +45,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 200,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/LEC-MID.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/center-LEC-MID.png"
     },
     {
         "Id": "FRONT",
-        "DefaultName": "FRONT",
+        "DefaultName": "center-FRONT",
         "Description": "",
         "Camera": "center",
         "Pan": 1044448,
@@ -57,11 +57,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 1100,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/FRONT.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/center-FRONT.png"
     },
     {
         "Id": "SERMON",
-        "DefaultName": "SERMON",
+        "DefaultName": "center-SERMON",
         "Description": "",
         "Camera": "center",
         "Pan": 1047520,
@@ -69,11 +69,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 600,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/SERMON.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/center-SERMON.png"
     },
     {
         "Id": "STEPS",
-        "DefaultName": "STEPS",
+        "DefaultName": "lectern-STEPS",
         "Description": "",
         "Camera": "lectern",
         "Pan": 1030912,
@@ -81,11 +81,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 1000,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/STEPS.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/lectern-STEPS.png"
     },
     {
         "Id": "OPENING",
-        "DefaultName": "OPENING",
+        "DefaultName": "lectern-OPENING",
         "Description": "",
         "Camera": "lectern",
         "Pan": 1032000,
@@ -93,11 +93,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 700,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/OPENING.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/lectern-OPENING.png"
     },
     {
         "Id": "LEC-MID",
-        "DefaultName": "LEC-MID",
+        "DefaultName": "lectern-LEC-MID",
         "Description": "",
         "Camera": "lectern",
         "Pan": 1026848,
@@ -105,11 +105,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 400,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/LEC-MID.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/lectern-LEC-MID.png"
     },
     {
         "Id": "READING",
-        "DefaultName": "READING",
+        "DefaultName": "lectern-READING",
         "Description": "",
         "Camera": "lectern",
         "Pan": 1026880,
@@ -117,11 +117,11 @@
         "ZoomDir": "TELE",
         "ZoomMs": 2600,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/READING.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/lectern-READING.png"
     },
     {
         "Id": "SERMON",
-        "DefaultName": "SERMON",
+        "DefaultName": "lectern-SERMON",
         "Description": "",
         "Camera": "lectern",
         "Pan": 1034112,
@@ -129,11 +129,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 600,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/SERMON.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/lectern-SERMON.png"
     },
     {
         "Id": "ALTER",
-        "DefaultName": "ALTER",
+        "DefaultName": "lectern-ALTER",
         "Description": "",
         "Camera": "lectern",
         "Pan": 1027136,
@@ -141,11 +141,11 @@
         "ZoomDir": "TELE",
         "ZoomMs": 2300,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/ALTER.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/lectern-ALTER.png"
     },
     {
         "Id": "PIANO",
-        "DefaultName": "PIANO",
+        "DefaultName": "lectern-PIANO",
         "Description": "",
         "Camera": "lectern",
         "Pan": 1023584,
@@ -153,11 +153,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 550,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/PIANO.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/lectern-PIANO.png"
     },
     {
         "Id": "ANTHEM",
-        "DefaultName": "ANTHEM",
+        "DefaultName": "pulpit-ANTHEM",
         "Description": "",
         "Camera": "pulpit",
         "Pan": 14304,
@@ -165,11 +165,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 900,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/ANTHEM.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/pulpit-ANTHEM.png"
     },
     {
         "Id": "STEPS",
-        "DefaultName": "STEPS",
+        "DefaultName": "pulpit-STEPS",
         "Description": "",
         "Camera": "pulpit",
         "Pan": 14304,
@@ -177,11 +177,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 1600,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/STEPS.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/pulpit-STEPS.png"
     },
     {
         "Id": "OFFERING",
-        "DefaultName": "OFFERING",
+        "DefaultName": "pulpit-OFFERING",
         "Description": "",
         "Camera": "pulpit",
         "Pan": 13664,
@@ -189,11 +189,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 1200,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/OFFERING.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/pulpit-OFFERING.png"
     },
     {
         "Id": "CHOIR",
-        "DefaultName": "CHOIR",
+        "DefaultName": "pulpit-CHOIR",
         "Description": "",
         "Camera": "pulpit",
         "Pan": 13216,
@@ -201,11 +201,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 2000,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/CHOIR.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/pulpit-CHOIR.png"
     },
     {
         "Id": "OPENING",
-        "DefaultName": "OPENING",
+        "DefaultName": "pulpit-OPENING",
         "Description": "",
         "Camera": "pulpit",
         "Pan": 17632,
@@ -213,11 +213,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 650,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/OPENING.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/pulpit-OPENING.png"
     },
     {
         "Id": "LEC",
-        "DefaultName": "LEC",
+        "DefaultName": "pulpit-LEC",
         "Description": "",
         "Camera": "pulpit",
         "Pan": 11264,
@@ -225,11 +225,11 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 420,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/LEC.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/pulpit-LEC.png"
     },
     {
         "Id": "JESUS",
-        "DefaultName": "JESUS",
+        "DefaultName": "pulpit-JESUS",
         "Description": "",
         "Camera": "pulpit",
         "Pan": 18240,
@@ -237,11 +237,11 @@
         "ZoomDir": "TELE",
         "ZoomMs": 1200,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/JESUS.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/pulpit-JESUS.png"
     },
     {
         "Id": "PIANO",
-        "DefaultName": "PIANO",
+        "DefaultName": "pulpit-PIANO",
         "Description": "",
         "Camera": "pulpit",
         "Pan": 7488,
@@ -249,6 +249,6 @@
         "ZoomDir": "WIDE",
         "ZoomMs": 500,
         "Tags": [],
-        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/PIANO.png"
+        "ImgUrl": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/pulpit-PIANO.png"
     }
 ]
