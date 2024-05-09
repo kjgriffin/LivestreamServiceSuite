@@ -60,13 +60,28 @@ namespace IntegratedPresenter.BMDSwitcher.Config
     {
         [ExposedAsVariable(nameof(DefaultFillSource))]
         public int DefaultFillSource { get; set; }
+
         public int IsBordered { get; set; }
+
+        [ExposedAsVariable(nameof(IsMasked))]
         public int IsMasked { get; set; }
+
+        [ExposedAsVariable(nameof(MaskTop))]
         public float MaskTop { get; set; }
+
+        [ExposedAsVariable(nameof(MaskBottom))]
         public float MaskBottom { get; set; }
+
+        [ExposedAsVariable(nameof(MaskLeft))]
         public float MaskLeft { get; set; }
+
+        [ExposedAsVariable(nameof(MaskRight))]
         public float MaskRight { get; set; }
+
+
+        [ExposedAsVariable(nameof(Current))]
         public KeyFrameSettings Current { get; set; }
+
         public KeyFrameSettings KeyFrameA { get; set; }
         public KeyFrameSettings KeyFrameB { get; set; }
 

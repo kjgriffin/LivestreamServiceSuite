@@ -22,8 +22,8 @@ namespace CCUPresetDesigner.DataModel
         public string DefaultName { get; set; }
         public string Description { get; set; }
         public string Camera { get; set; }
-        public int Pan { get; set; }
-        public int Tilt { get; set; }
+        public long Pan { get; set; }
+        public long Tilt { get; set; }
         public ZoomDir ZoomDir { get; set; }
         public int ZoomMs { get; set; }
         public List<string> Tags { get; set; } = new List<string>();

@@ -3,12 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:CCUPresetDesigner"
+             xmlns:local="clr-namespace:CCUPresetDesigner" xmlns:viewmodel="clr-namespace:CCUPresetDesigner.ViewModel"
              mc:Ignorable="d" 
-             d:DesignHeight="216" d:DesignWidth="384">
-    <Grid>
+             d:DesignHeight="170" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="CommonStyles.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Background="{StaticResource darkBrush}">
         <Viewbox>
-            <Grid Width="1920" Height="1080">
+            <Grid Width="450" Height="270">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
@@ -20,14 +27,16 @@
                 </Grid.RowDefinitions>
 
                 <Viewbox Grid.Row="0" Grid.Column="0">
-                    <Image Width="1920" Height="1080" Source="https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/choir.png"></Image>
+                    <Border Padding="20" BorderThickness="20" CornerRadius="10" BorderBrush="{StaticResource whiteBrush}">
+                        <Image Name="imgThumbnail" Width="1920" Height="1080" Source="https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/choir.png"></Image>
+                    </Border>
                 </Viewbox>
 
                 <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="60"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
@@ -35,19 +44,52 @@
                         <RowDefinition></RowDefinition>
                         <RowDefinition></RowDefinition>
                         <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0">CAMERA</TextBlock>
-                    <TextBlock Grid.Row="1">CAMERA</TextBlock>
-                    <TextBlock Grid.Row="2">CAMERA</TextBlock>
-                    <TextBlock Grid.Row="3">CAMERA</TextBlock>
-                    <TextBlock Grid.Row="4">CAMERA</TextBlock>
-                    <TextBlock Grid.Row="5">CAMERA</TextBlock>
-                    <TextBlock Grid.Row="6">CAMERA</TextBlock>
-                    <TextBlock Grid.Row="7">CAMERA</TextBlock>
-                    <TextBlock Grid.Row="8">CAMERA</TextBlock>
-                    
+                    <TextBlock Grid.Column="0" Grid.Row="0" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" HorizontalAlignment="Right">Camera:</TextBlock>
+                    <TextBlock Name="tbCamera" Grid.Column="1" Grid.Row="0" Foreground="{StaticResource whiteBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Text="LECTERN"></TextBlock>
+
+
+                    <TextBlock Grid.Column="0" Grid.Row="1" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" HorizontalAlignment="Right">Pan:</TextBlock>
+                    <TextBox Name="tbPan" Grid.Column="1" Grid.Row="1" Style="{StaticResource darkTextbox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Text="102391"></TextBox>
+
+                    <TextBlock Grid.Column="0" Grid.Row="2" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" HorizontalAlignment="Right">Tilt:</TextBlock>
+                    <TextBox Name="tbTilt" Grid.Column="1" Grid.Row="2" Style="{StaticResource darkTextbox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >1001023</TextBox>
+
+                    <TextBlock Grid.Column="0" Grid.Row="3" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" HorizontalAlignment="Right">Zoom Dir:</TextBlock>
+                    <TextBox Name="tbZoomDir" Grid.Column="1" Grid.Row="3" Style="{StaticResource darkTextbox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >WIDE</TextBox>
+
+                    <TextBlock Grid.Column="0" Grid.Row="4" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" HorizontalAlignment="Right">Zoom Ms:</TextBlock>
+                    <TextBox Name="tbZoomMs" Grid.Column="1" Grid.Row="4" Style="{StaticResource darkTextbox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >1800</TextBox>
+
+                    <TextBlock Grid.Column="0" Grid.Row="5" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" HorizontalAlignment="Right">Name:</TextBlock>
+                    <TextBox Name="tbName" Grid.Column="1" Grid.Row="5" Style="{StaticResource darkTextbox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >CHOIR</TextBox>
+
                 </Grid>
+
+                <Grid Grid.Column="0" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="35"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Grid.Row="0" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" HorizontalAlignment="Center">ID:</TextBlock>
+                    <TextBlock Name="tbId" Grid.Column="1" Grid.Row="0" Foreground="{StaticResource whiteBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">LECTERN ABC PRESET</TextBlock>
+
+                    <TextBlock Grid.Column="0" Grid.Row="1" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" HorizontalAlignment="Center">Info:</TextBlock>
+                    <TextBlock Name="tbInfo" Grid.Column="1" Grid.Row="1" Foreground="{StaticResource whiteBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">Some text here that describes this preset and gives hints as to how to deploy it</TextBlock>
+
+                    <TextBlock Grid.Column="0" Grid.Row="5" Foreground="{StaticResource grayBrush}" VerticalAlignment="Center" HorizontalAlignment="Center">Tags:</TextBlock>
+                    <TextBlock Name="tbTags" Grid.Column="1" Grid.Row="5" Foreground="{StaticResource whiteBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" >List, Of, Tags, Here, That, Show, What, Its, Been, Associated, With</TextBlock>
+
+                </Grid>
+
 
             </Grid>
         </Viewbox>

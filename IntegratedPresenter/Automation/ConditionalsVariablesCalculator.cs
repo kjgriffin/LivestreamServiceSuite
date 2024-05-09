@@ -278,6 +278,7 @@ namespace Integrated_Presenter.Automation
             {
                 vCalc.IsTracking = true;
                 vCalc.VSourcePath = trackingTarget;
+                NotifyOfChange();
             }
         }
 

@@ -1,8 +1,17 @@
 ﻿using CCU.Config;
 
+using CCUPresetDesigner.DataModel;
+
+using CommonGraphics;
+
 using ICSharpCode.AvalonEdit.Search;
 
 using Microsoft.Win32;
+
+using OpenQA.Selenium.DevTools.V120.Network;
+
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 using SlideCreater.Controllers;
 
@@ -15,16 +24,11 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using UIControls;
 
+using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
 namespace SlideCreater.ViewControls
@@ -46,9 +50,9 @@ namespace SlideCreater.ViewControls
             TbConfigCCU.Options.IndentationSize = 4;
             TbConfigCCU.Options.ConvertTabsToSpaces = true;
             TbConfigCCU.TextArea.TextView.LinkTextForegroundBrush = System.Windows.Media.Brushes.LawnGreen;
-            TbConfigCCU.Background = new SolidColorBrush(Color.FromRgb(0x27, 0x27, 0x27));
-            TbConfigCCU.Foreground = new SolidColorBrush(Color.FromRgb(0xea, 0xea, 0xea));
-            TbConfigCCU.FontFamily = new FontFamily("cascadia code");
+            TbConfigCCU.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x27, 0x27, 0x27));
+            TbConfigCCU.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xea, 0xea, 0xea));
+            TbConfigCCU.FontFamily = new System.Windows.Media.FontFamily("cascadia code");
             TbConfigCCU.FontSize = 14;
             TbConfigCCU.ShowLineNumbers = true;
             TbConfigCCU.Padding = new Thickness(3);
@@ -84,7 +88,7 @@ namespace SlideCreater.ViewControls
 
             if (m_ccueditor == null || m_ccueditor?.WasClosed == true)
             {
-                m_ccueditor = new CCUConfigEditor(cfg, SaveCCUConfigChanges);
+                m_ccueditor = new CCUConfigEditor(cfg, SaveCCUConfigChanges, ExportCCUConfigChanges);
             }
             m_ccueditor.Show();
         }
@@ -128,6 +132,59 @@ namespace SlideCreater.ViewControls
                 TbConfigCCU.Text = res.fake;
             });
         }
+
+        private void ExportCCUConfigChanges(CCPUConfig_Extended cfg)
+        {
+            // build 2 copies of the JSON file...
+            // 1 to display that will ignore the images to improve text loading...
+            // 1 true copy to stuff into the project for rendering
+
+            OpenFolderDialog ofd = new OpenFolderDialog();
+
+            if (ofd.ShowDialog() == true)
+            {
+                List<CamPresetMk2> pstDefs = new List<CamPresetMk2>();
+                List<(string file, string base64)> images = new List<(string, string)>();
+
+                var combined = cfg.CompileIntoPresetInfo();
+                foreach (var pst in combined)
+                {
+                    string uniqueName = $"{pst.CamName}-{pst.ZoomPresetName}";
+                    var mk2 = new CamPresetMk2
+                    {
+                        Camera = pst.CamName,
+                        DefaultName = uniqueName,
+                        Description = "",
+                        Id = pst.PresetPosName,
+                        ImgUrl = $"https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/ccu-blob-data/blob-data/img/{uniqueName}.png",
+                        Pan = pst.Pan,
+                        Tilt = pst.Tilt,
+                        Tags = new List<string>(),
+                        ZoomDir = (ZoomDir)Enum.Parse(typeof(ZoomDir), pst.ZoomMode),
+                        ZoomMs = pst.ZoomMS,
+                    };
+                    pstDefs.Add(mk2);
+                    images.Add((uniqueName, pst.Thumbnail));
+                }
+
+                using (StreamWriter sw = new StreamWriter(File.Create(Path.Combine(ofd.FolderName, "preset.json"))))
+                {
+                    sw.Write(JsonSerializer.Serialize(pstDefs));
+                }
+                foreach (var pst in images)
+                {
+                    using (var filestream = new FileStream(Path.Combine(ofd.FolderName, $"{pst.file}.png"), FileMode.Create))
+                    {
+                        BitmapEncoder pngEncoder = new PngBitmapEncoder();
+                        BitmapImage img = pst.base64.ToBitmapImage();
+                        pngEncoder.Frames.Add(BitmapFrame.Create(img));
+                        pngEncoder.Save(filestream);
+                    }
+                }
+
+            }
+        }
+
 
         private (string fake, string full) SanatizePNGsFromCfg(CCPUConfig_Extended cfg)
         {

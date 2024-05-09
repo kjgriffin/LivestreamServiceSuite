@@ -160,7 +160,7 @@ namespace IntegratedPresenterAPIInterop
                 new AutomationActionParameterMetadata("VarName", AutomationActionArgType.String),
                 new AutomationActionParameterMetadata("TrackTarget", AutomationActionArgType.String, ExpectedVariableContents.EXPOSEDSTATE),
             }),
-            [AutomationActions.ReleaseComputedTrack] = new AutomationActionMetadata(AutomationActions.InitComputedVal, "ReleaseTackVal", new List<AutomationActionParameterMetadata>
+            [AutomationActions.ReleaseComputedTrack] = new AutomationActionMetadata(AutomationActions.ReleaseComputedTrack, "ReleaseTackVal", new List<AutomationActionParameterMetadata>
             {
                 new AutomationActionParameterMetadata("VarName", AutomationActionArgType.String),
             }),

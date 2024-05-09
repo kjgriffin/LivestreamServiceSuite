@@ -8,4 +8,9 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CCUI-UI\CCUI-Controls.csproj" />
+    <ProjectReference Include="..\Xenon\Xenon.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -20,6 +20,8 @@ namespace UIControls
 
         Action<CCPUConfig_Extended> _saveChanges;
 
+        Action<CCPUConfig_Extended> _exportChanges;
+
         CCPUConfig_Extended _cfgOrig;
 
         bool _newchanges = false;
@@ -37,7 +39,7 @@ namespace UIControls
             }
         }
 
-        public CCUConfigEditor(CCPUConfig_Extended cfg, Action<CCPUConfig_Extended> SaveChanges)
+        public CCUConfigEditor(CCPUConfig_Extended cfg, Action<CCPUConfig_Extended> SaveChanges, Action<CCPUConfig_Extended> exportChanges)
         {
             InitializeComponent();
 
@@ -71,6 +73,7 @@ namespace UIControls
 
 
             NewChanges = false;
+            _exportChanges = exportChanges;
         }
 
         private void Ctrl_OnEditsMade(object sender, EventArgs e)
@@ -117,6 +120,15 @@ namespace UIControls
         }
 
         private void ClickSaveChanges(object sender, RoutedEventArgs e)
+        {
+            CCPUConfig_Extended newCFG = ConsolidateConfig();
+
+            _saveChanges?.Invoke(newCFG);
+
+            NewChanges = false;
+        }
+
+        private CCPUConfig_Extended ConsolidateConfig()
         {
             List<CombinedPresetInfo> info = new List<CombinedPresetInfo>();
 
@@ -198,9 +210,7 @@ namespace UIControls
                 }
             }
 
-            _saveChanges?.Invoke(newCFG);
-
-            NewChanges = false;
+            return newCFG;
         }
 
         private void AddClient(object sender, RoutedEventArgs e)
@@ -209,6 +219,13 @@ namespace UIControls
             ctrl.OnDeleteRequest += Ctrl_OnDeleteRequest_client;
             ctrl.OnEditsMade += Ctrl_OnEditsMade;
             wpClients.Children.Add(ctrl);
+        }
+
+        private void ClickExportAll(object sender, RoutedEventArgs e)
+        {
+            CCPUConfig_Extended newCFG = ConsolidateConfig();
+
+            _exportChanges?.Invoke(newCFG);
         }
     }
 }

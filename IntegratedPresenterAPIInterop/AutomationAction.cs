@@ -151,7 +151,9 @@ namespace IntegratedPresenterAPIInterop
                 case AutomationActionArgType.Double:
                     if (typeof(T) == typeof(double))
                     {
-                        retVal = (T)LiteralValue;
+                        //retVal = (T)LiteralValue;
+                        dynamic dval = System.Convert.ToDouble((object)LiteralValue);
+                        retVal = dval;
                     }
                     break;
                 case AutomationActionArgType.String:

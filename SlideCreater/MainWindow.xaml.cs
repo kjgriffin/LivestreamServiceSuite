@@ -1,5 +1,7 @@
 ﻿using CCU.Config;
 
+using CCUPresetDesigner;
+
 using CommonVersionInfo;
 
 using Concord;
@@ -1314,6 +1316,11 @@ namespace SlideCreater
                 await parser.ParseHTML(ofd.FileName);
                 parser.Serviceify(options);
 
+                // at this point we should allow user to import/assign/add CCU stuff
+                CCUPresetDesignerWindow ccuDesigner = new CCUPresetDesignerWindow();
+                ccuDesigner.ShowDialog();
+
+
                 parser.CompileToXenon();
                 ActionState = ActionState.Downloading;
                 await parser.LoadWebAssets(_proj.CreateImageAsset);
@@ -1326,9 +1333,6 @@ namespace SlideCreater
                 if (options.ImportToNewFile)
                 {
                     AddXenonFileToProj("LSBImport.xenon", parser.XenonText);
-                    //_proj.ExtraSourceFiles["LSBImport.xenon"] = parser.XenonText;
-                    //_editorTabManager.RefreshAllTextViews();
-                    //_editorTabManager.OpenEditorWindowForFile("LSBImport.xenon", SourceEditorTabManager.SourceFileType.XENON);
                 }
                 else
                 {
@@ -2103,7 +2107,7 @@ namespace SlideCreater
 
             if (m_ccueditor == null || m_ccueditor?.WasClosed == true)
             {
-                m_ccueditor = new CCUConfigEditor(cfg, SaveCCUConfigChanges);
+                m_ccueditor = new CCUConfigEditor(cfg, SaveCCUConfigChanges, ExportCCUConfigChanges);
             }
             m_ccueditor.Show();
         }
@@ -2147,6 +2151,25 @@ namespace SlideCreater
                 TbConfigCCU.Text = res.fake;
             });
         }
+
+        private void ExportCCUConfigChanges(CCPUConfig_Extended cfg)
+        {
+            // build 2 copies of the JSON file...
+            // 1 to display that will ignore the images to improve text loading...
+            // 1 true copy to stuff into the project for rendering
+
+            MarkDirty();
+
+            var res = SanatizePNGsFromCfg(cfg);
+
+            _proj.CCPUConfig = cfg;
+            _proj.SourceCCPUConfigFull = res.full;
+            Dispatcher.Invoke(() =>
+            {
+                TbConfigCCU.Text = res.fake;
+            });
+        }
+
 
         private (string fake, string full) SanatizePNGsFromCfg(CCPUConfig_Extended cfg)
         {

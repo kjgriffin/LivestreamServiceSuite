@@ -340,16 +340,18 @@ namespace SlideCreater.Controllers
 
         private void TextArea_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
+            bool forceShow = false;
             if (e.Text == " " && Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 e.Handled = true;
+                forceShow = true;
             }
-            _ = ShowSuggestionsForEditor(sender as TextArea);
+            _ = ShowSuggestionsForEditor(sender as TextArea, forceShow);
         }
 
-        private async Task ShowSuggestionsForEditor(TextArea editor)
+        private async Task ShowSuggestionsForEditor(TextArea editor, bool forceShow = false)
         {
-            if (!SuggestionsEnabled)
+            if (!SuggestionsEnabled && !forceShow)
             {
                 return;
             }
