@@ -243,5 +243,19 @@
             "Xenon.Creeds@color-main": "#ffebaf",
             "Xenon.Creeds@text-main": "#474747"
         }
+    },
+    {
+        "start": "2024-06-02",
+        "note": "pentecost",
+        "macros": {
+            "color-main": "\"#ff298f45\"",
+            "text-alt": "\"#ff298f45\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#298f45",
+            "Xenon.Titles@color-main": "#298f45",
+            "Xenon.Titles@text-alt": "#298f45",
+            "Xenon.Creeds@color-main": "#298f45"
+        }
     }
 ]
