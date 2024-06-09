@@ -84,13 +84,17 @@ namespace Xenon.Renderer
         private static WebDriver Spinup_Firefox()
         {
             FirefoxOptions opts = new FirefoxOptions();
-            opts.AddArgument("window-size=1920x1080");
+            opts.AddArgument("--window-size=1920,1080");
+            opts.AddArgument("--width=1920");
+            opts.AddArgument("--height=1080");
             opts.AddArgument("--hide-scrollbars");
             opts.AddArgument("--no--sandbox");
             opts.AddArgument("--headless");
             FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             var _driver = new FirefoxDriver(service, opts);
+            _driver.Manage().Window.Size = new System.Drawing.Size(1920, 1080);
+
             return _driver;
         }
         #endregion

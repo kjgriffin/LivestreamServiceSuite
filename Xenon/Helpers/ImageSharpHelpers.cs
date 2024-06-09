@@ -210,11 +210,18 @@ namespace Xenon.Helpers
             return res;
         }
 
+        public static PngEncoder _encoder = new PngEncoder()
+        {
+            TransparentColorMode = PngTransparentColorMode.Preserve,
+            BitDepth = PngBitDepth.Bit8,
+            ColorType = PngColorType.RgbWithAlpha,
+        };
+
         public static MemoryStream ToPNGStream(this Image<Bgra32> bmp)
         {
             System.Windows.Media.Imaging.BitmapImage res = new System.Windows.Media.Imaging.BitmapImage();
             MemoryStream ms = new MemoryStream();
-            bmp.SaveAsPng(ms);
+            bmp.SaveAsPng(ms, _encoder);
             return ms;
         }
 

@@ -8,8 +8,6 @@ using ICSharpCode.AvalonEdit.Search;
 
 using Microsoft.Win32;
 
-using OpenQA.Selenium.DevTools.V120.Network;
-
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 

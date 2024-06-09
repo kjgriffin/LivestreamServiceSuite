@@ -1,6 +1,4 @@
-﻿using OpenQA.Selenium.DevTools.V120.DOMStorage;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
