@@ -1318,7 +1318,9 @@ namespace SlideCreater
 
                 // at this point we should allow user to import/assign/add CCU stuff
                 CCUPresetDesignerWindow ccuDesigner = new CCUPresetDesignerWindow();
+#if DEBUG
                 ccuDesigner.ShowDialog();
+#endif
 
 
                 parser.CompileToXenon();
