@@ -199,7 +199,7 @@ namespace Xenon.Helpers
         {
             System.Windows.Media.Imaging.BitmapImage res = new System.Windows.Media.Imaging.BitmapImage();
             MemoryStream ms = new MemoryStream();
-            bmp.SaveAsPng(ms);
+            bmp.SaveAsPng(ms, _encoder);
             res.BeginInit();
             ms.Seek(0, SeekOrigin.Begin);
             res.StreamSource = ms;

@@ -1,4 +1,5 @@
 ﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
 
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Xenon.Compiler;
+using Xenon.Helpers;
 using Xenon.SlideAssembly;
 
 namespace Xenon.Renderer
@@ -133,11 +135,11 @@ namespace Xenon.Renderer
 
                     using (var stream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
-                        rs.Bitmap.SaveAsPng(stream);
+                        rs.Bitmap.SaveAsPng(stream, ImageSharpHelpers._encoder);
                     }
                     using (var stream = new FileStream(kfilename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
-                        rs.KeyBitmap.SaveAsPng(stream);
+                        rs.KeyBitmap.SaveAsPng(stream, ImageSharpHelpers._encoder);
                     }
                 }
                 else if (rs.MediaType == MediaType.Video)
@@ -156,7 +158,7 @@ namespace Xenon.Renderer
                     File.Copy(rs.AssetPath, filename);
                     using (var stream = new FileStream(kfilename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
-                        rs.KeyBitmap.SaveAsPng(stream);
+                        rs.KeyBitmap.SaveAsPng(stream, ImageSharpHelpers._encoder);
                     }
                 }
                 else if (rs.MediaType == MediaType.Video_KeyedVideo)
@@ -293,11 +295,11 @@ namespace Xenon.Renderer
 
                     using (var stream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
-                        rs.Bitmap.SaveAsPng(stream);
+                        rs.Bitmap.SaveAsPng(stream, ImageSharpHelpers._encoder);
                     }
                     using (var stream = new FileStream(kfilename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
-                        rs.KeyBitmap.SaveAsPng(stream);
+                        rs.KeyBitmap.SaveAsPng(stream, ImageSharpHelpers._encoder);
                     }
                 }
                 else if (rs.MediaType == MediaType.Video)
@@ -316,7 +318,7 @@ namespace Xenon.Renderer
                     File.Copy(rs.AssetPath, filename);
                     using (var stream = new FileStream(kfilename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
-                        rs.KeyBitmap.SaveAsPng(stream);
+                        rs.KeyBitmap.SaveAsPng(stream, ImageSharpHelpers._encoder);
                     }
                 }
                 else if (rs.MediaType == MediaType.Video_KeyedVideo)
