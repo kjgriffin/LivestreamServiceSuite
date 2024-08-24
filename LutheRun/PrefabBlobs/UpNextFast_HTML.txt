@@ -1,0 +1,26 @@
+﻿#scope(upnext-hymn)
+{
+$>#var("html.Layout", "Xenon.HymnTitles::UpNext")
+$>#scripted
+$>{
+
+$>$>first=#script
+$>$>{
+$>$>$>#Organ Intro;
+#IF GRAND_PIANO_COMMUNION
+$>$>$>@arg1:PresetSelect(%cam.PROJECTOR%)[Preset Organ];
+#ELSE
+$>$>$>@arg1:PresetSelect(%cam.ORGAN%)[Preset Organ];
+#ENDIF
+$>$>$>@arg1:DelayMs(100);
+$>$>$>@arg0:AutoTrans[Take Organ];
+$>$>$>@cmd:DSK1FadeOn[Key Fade On];
+$>$>}
+
+$>$>#html
+$>$>{
+$>$>$>text[annotation]{$ANNOTATION}
+$>$>$>text[hymn]{$HYMN}
+$>$>}$POSTSET
+$>}
+}

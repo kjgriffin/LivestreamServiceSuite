@@ -32,6 +32,7 @@
     <None Remove="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-std.txt" />
     <None Remove="PrefabBlobs\SermonHTML.txt" />
     <None Remove="PrefabBlobs\SubPaneledAnthemTemplate.txt" />
+    <None Remove="PrefabBlobs\UpNextFast_HTML.txt" />
     <None Remove="PrefabBlobs\UpNext_HTML.txt" />
     <None Remove="PrefabBlobs\UpNext_Numbered.txt" />
     <None Remove="PrefabBlobs\UpNext_UnNumbered.txt" />
@@ -70,6 +71,7 @@
     <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Hymn-fast.txt" />
     <EmbeddedResource Include="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-std.txt" />
     <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Hymn-std.txt" />
+    <EmbeddedResource Include="PrefabBlobs\UpNextFast_HTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNext_Numbered.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNext_HTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNext_UnNumbered.txt" />

@@ -208,6 +208,7 @@ namespace LutheRun.Generators
         }
 
         public const string PEW_DEF = "PEW-BIBLES";
+        public const string GRAND_PIANO_COMMUNION = "GRAND_PIANO_COMMUNION";
         internal static void CompileToXenonMappedToSource(string serviceFileName, LSBImportOptions options, List<ParsedLSBElement> fullservice, Dictionary<string, string> extraFileContents)
         {
             StringBuilder sb = new StringBuilder();
@@ -219,6 +220,10 @@ namespace LutheRun.Generators
             sb.Append($"\r\n////////////////////////////////////\r\n// XENON AUTO GEN: From Service File '{System.IO.Path.GetFileName(serviceFileName)}'\r\n////////////////////////////////////\r\n\r\n");
 
             sb.AppendLine($"{(options.ReadingTextNIVOverride ? "" : "// ")}#DEFINE {PEW_DEF}");
+            if (options.FasterCommunionHymnIntros)
+            {
+                sb.AppendLine($"// #DEFINE {GRAND_PIANO_COMMUNION}");
+            }
 
             if (options.UseThemedHymns || options.UseThemedCreeds)
             {

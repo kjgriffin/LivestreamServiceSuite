@@ -25,6 +25,8 @@ namespace LutheRun.Parsers
 
         [BoolSetting]
         public bool ImSoProICanRunPIPHymsWithoutStuttersEvenDuringCommunion { get; set; } = false;
+        [BoolSetting]
+        public bool FasterCommunionHymnIntros { get; set; } = true;
 
         [BoolSetting]
         public bool OnlyKnownCaptions { get; set; } = true;

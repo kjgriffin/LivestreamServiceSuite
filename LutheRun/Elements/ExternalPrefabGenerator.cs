@@ -2,6 +2,7 @@
 using LutheRun.Elements.LSB;
 using LutheRun.Generators;
 using LutheRun.Parsers;
+using LutheRun.Parsers.DataModel;
 using LutheRun.Pilot;
 
 using System;
@@ -24,30 +25,37 @@ namespace LutheRun.Elements
         }
 
 
-        public static ExternalPrefab BuildHymnIntroSlides(LSBElementHymn hymn, bool useUpNextForHymns)
+        public static bool BuildHymnIntroSlides(ParsedLSBElement pHymn, bool useUpNextForHymns, bool fasterCommunionHymns, out ExternalPrefab fab)
         {
+            fab = null;
+            var hymn = pHymn.LSBElement as LSBElementHymn;
             // we can use the new up-next tabs if we have a hymn #
             var match = Regex.Match(hymn.Caption, @"(?<number>\d+)?(?<name>.*)");
             string name = match.Groups["name"]?.Value.Trim() ?? "";
             string number = match.Groups["number"]?.Value.Trim().Length > 0 ? "LSB " + match.Groups["number"]?.Value.Trim() : "";
-            if (/*!string.IsNullOrWhiteSpace(number) &&*/ useUpNextForHymns)
+            if (useUpNextForHymns)
             {
-                //return new ExternalPrefab(UpNextCommand("UpNext_Numbered", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
-                return new ExternalPrefab(HTMLUpNextCommand("UpNext_HTML", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
+                if (fasterCommunionHymns && pHymn.OutOfBandInfo.ContainsKey("is-agnus-dei"))
+                {
+                    fab = new ExternalPrefab(HTMLUpNextCommand("UpNextFast_HTML", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
+                    return true;
+                }
+                if (fasterCommunionHymns && pHymn.OutOfBandInfo.ContainsKey("is-distribution"))
+                {
+                    // fast communion hymns don't use up-next. Don't generate
+                    fab = null;
+                    return false;
+                }
+                fab = new ExternalPrefab(HTMLUpNextCommand("UpNext_HTML", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
+                return true;
             }
-            /*
-            else if (!string.IsNullOrWhiteSpace(name) && useUpNextForHymns)
-            {
-                //return new ExternalPrefab(UpNextCommand("UpNext_UnNumbered", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
-                return new ExternalPrefab(UpNextCommand("UpNext_UnNumbered", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
-            }
-            */
             else
             {
-                return new ExternalPrefab("#organintro", "organintro", BlockType.HYMN_INTRO);
+                fab = new ExternalPrefab("#organintro", "organintro", BlockType.HYMN_INTRO);
+                return true;
             }
 
-
+            return false;
         }
 
         public static string PrepareBlob(string blobfile)

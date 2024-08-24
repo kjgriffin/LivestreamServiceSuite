@@ -164,6 +164,11 @@ namespace LutheRun
                 if ((elem.LSBElement as LSBElementHymn)?.Caption.ToLower().Contains("agnus dei") == true)
                 {
                     communion = true;
+                    elem.OutOfBandInfo["is-agnus-dei"] = true;
+                }
+                else if (elem.LSBElement is LSBElementHymn && communion)
+                {
+                    elem.OutOfBandInfo["is-distribution"] = true;
                 }
 
                 if (communion)
@@ -679,15 +684,18 @@ namespace LutheRun
 
                     if (dointro)
                     {
-                        // we can use the new up-next tabs if we have a hymn #
-                        newservice.Add(new ParsedLSBElement
+                        if (ExternalPrefabGenerator.BuildHymnIntroSlides(element, options.UseUpNextForHymns, options.FasterCommunionHymnIntros, out var slide))
                         {
-                            LSBElement = ExternalPrefabGenerator.BuildHymnIntroSlides(element.LSBElement as LSBElementHymn, options.UseUpNextForHymns),
-                            AddedByInference = true,
-                            Generator = "Next element is [hymn]",
-                            ParentSourceElement = element.ParentSourceElement,
-                            Ancestory = Guid.NewGuid(),
-                        });
+                            // we can use the new up-next tabs if we have a hymn #
+                            newservice.Add(new ParsedLSBElement
+                            {
+                                LSBElement = slide,
+                                AddedByInference = true,
+                                Generator = "Next element is [hymn]",
+                                ParentSourceElement = element.ParentSourceElement,
+                                Ancestory = Guid.NewGuid(),
+                            });
+                        }
                     }
                 }
 
@@ -828,5 +836,5 @@ namespace LutheRun
             return newservice;
         }
 
-            }
+    }
 }

@@ -49,6 +49,7 @@ namespace LutheRun.Wizard
                 sb.Append($"<div style='border-color: black; border-style: solid; width: 250px; min-width: 250px; padding: 10px;'>");
                 sb.Append($"<div style='word-break: break-word;'>{EscapeXenonTextInHTML(elem.Generator, false)}</div>");
                 sb.Append($"<div>{EscapeXenonTextInHTML($"Block Type: [{elem.BlockType}] id<{elem.ElementOrder}>", false)}</div>");
+                sb.Append($"<div>{EscapeXenonTextInHTML("Out of Band Info:" + string.Join(';', elem.OutOfBandInfo.Select(v => v.Key + " : " + v.Value.ToString())), false)}</div>");
                 sb.Append($"</div>");
 
 
