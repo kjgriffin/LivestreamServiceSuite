@@ -63,7 +63,7 @@ namespace Xenon.Renderer
             opts.AddArgument("window-size=1920x1080");
             opts.AddArgument("--hide-scrollbars");
             opts.AddArgument("--no--sandbox");
-            opts.AddArgument("--headless");
+            opts.AddArgument("--headless=old");
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             var _driver = new ChromeDriver(service, opts);
@@ -75,7 +75,7 @@ namespace Xenon.Renderer
             opts.AddArgument("window-size=1920x1080");
             opts.AddArgument("--hide-scrollbars");
             opts.AddArgument("--no--sandbox");
-            opts.AddArgument("--headless");
+            opts.AddArgument("--headless=old");
             EdgeDriverService service = EdgeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             var _driver = new EdgeDriver(service, opts);
