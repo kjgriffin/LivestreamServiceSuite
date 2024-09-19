@@ -137,7 +137,8 @@ namespace SlideCreater.ViewControls
             // 1 to display that will ignore the images to improve text loading...
             // 1 true copy to stuff into the project for rendering
 
-            OpenFolderDialog ofd = new OpenFolderDialog();
+            //OpenFolderDialog ofd = new OpenFolderDialog();
+            OpenFileDialog ofd = new OpenFileDialog();
 
             if (ofd.ShowDialog() == true)
             {
@@ -165,13 +166,13 @@ namespace SlideCreater.ViewControls
                     images.Add((uniqueName, pst.Thumbnail));
                 }
 
-                using (StreamWriter sw = new StreamWriter(File.Create(Path.Combine(ofd.FolderName, "preset.json"))))
+                using (StreamWriter sw = new StreamWriter(File.Create(Path.Combine(ofd.FileName, "preset.json"))))
                 {
                     sw.Write(JsonSerializer.Serialize(pstDefs));
                 }
                 foreach (var pst in images)
                 {
-                    using (var filestream = new FileStream(Path.Combine(ofd.FolderName, $"{pst.file}.png"), FileMode.Create))
+                    using (var filestream = new FileStream(Path.Combine(ofd.FileName, $"{pst.file}.png"), FileMode.Create))
                     {
                         BitmapEncoder pngEncoder = new PngBitmapEncoder();
                         BitmapImage img = pst.base64.ToBitmapImage();

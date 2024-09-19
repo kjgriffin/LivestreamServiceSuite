@@ -6,95 +6,98 @@
         Closing="OnWindowClosing"
         Title="Slide Creater" Height="800" Width="1000">
     <Window.Resources>
-        <Style TargetType="{x:Type TreeViewItem}">
-            <Setter Property="Foreground" Value="White"></Setter>
-            <Style.Triggers>
-                <Trigger Property="IsSelectionActive" Value="True">
-                    <Setter Property="Foreground" Value="White"></Setter>
-                </Trigger>
-                <Trigger Property="IsSelectionActive" Value="False">
-                    <Setter Property="Foreground" Value="White"></Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style TargetType="TabItem" x:Name="DarkTab" x:Key="DarkTab">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-                        <Border BorderThickness="1" BorderBrush="#373737">
-                            <Grid Name="TabPanel">
-                                <ContentPresenter x:Name="ContentSite"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        ContentSource="Header"
-                                        Margin="10,2"/>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="TabPanel" Property="Background" Value="#474747" />
-                                <Setter Property="FontWeight" Value="Bold" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="False">
-                                <Setter TargetName="TabPanel" Property="Background" Value="#171717" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="TabItem" x:Name="DarkTabClosable" x:Key="DarkTabClosable">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-                        <Border BorderThickness="1" BorderBrush="#373737">
-                            <StackPanel Orientation="Horizontal"
-                                        >
+        <ResourceDictionary>
+
+            <Style TargetType="{x:Type TreeViewItem}">
+                <Setter Property="Foreground" Value="White"></Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsSelectionActive" Value="True">
+                        <Setter Property="Foreground" Value="White"></Setter>
+                    </Trigger>
+                    <Trigger Property="IsSelectionActive" Value="False">
+                        <Setter Property="Foreground" Value="White"></Setter>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="TabItem" x:Name="DarkTab" x:Key="DarkTab">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TabItem">
+                            <Border BorderThickness="1" BorderBrush="#373737">
                                 <Grid Name="TabPanel">
                                     <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="10,2"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="TabPanel" Property="Background" Value="#474747" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="False">
+                                    <Setter TargetName="TabPanel" Property="Background" Value="#171717" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="TabItem" x:Name="DarkTabClosable" x:Key="DarkTabClosable">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TabItem">
+                            <Border BorderThickness="1" BorderBrush="#373737">
+                                <StackPanel Orientation="Horizontal"
+                                        >
+                                    <Grid Name="TabPanel">
+                                        <ContentPresenter x:Name="ContentSite"
                                         ContentSource="Header"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
                                         Margin="10,2"/>
-                                </Grid>
-                                <Button Name="tabClose">X</Button>
-                            </StackPanel>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="TabPanel" Property="Background" Value="#474747" />
-                                <Setter Property="FontWeight" Value="Bold" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="False">
-                                <Setter TargetName="TabPanel" Property="Background" Value="#171717" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="Button" x:Name="DarkBtn" x:Key="DarkBtn">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Border Name="border" BorderBrush="#575757" BorderThickness="2">
-                                <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                                    </Grid>
+                                    <Button Name="tabClose">X</Button>
+                                </StackPanel>
                             </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#676767" />
-                                <Setter Property="FontWeight" Value="Bold" />
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="False">
-                                <Setter TargetName="border" Property="Background" Value="#373737" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="TabPanel" Property="Background" Value="#474747" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="False">
+                                    <Setter TargetName="TabPanel" Property="Background" Value="#171717" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="DarkBtn" x:Name="DarkBtn" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Border Name="border" BorderBrush="#575757" BorderThickness="2">
+                                    <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#676767" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="#373737" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid Background="#272727">
 

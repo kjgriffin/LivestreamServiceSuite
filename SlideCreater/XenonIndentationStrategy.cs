@@ -3,10 +3,13 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Indentation;
 using ICSharpCode.AvalonEdit.Indentation.CSharp;
 
+using System.Windows.Forms;
+
 namespace SlideCreater
 {
     internal class XenonIndentationStrategy : DefaultIndentationStrategy
     {
+        Form dummmy = new Form();
 
         string m_indentationString = "    ";
 

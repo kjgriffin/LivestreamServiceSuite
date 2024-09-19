@@ -77,7 +77,6 @@ namespace SlideCreater
     /// </summary>
     public partial class CreaterEditorWindow : Window, IFullAccess<Project>
     {
-
         ProjectState _mProjectState;
         public ProjectState ProjectState
         {
