@@ -11,12 +11,25 @@ namespace Configurations.SwitcherConfig
     public class BMDUSKPATTERNSettings
     {
 
+        [ExposedAsVariable(nameof(PatternType))]
         public string PatternType { get; set; }
+
+        [ExposedAsVariable(nameof(Inverted))]
         public bool Inverted { get; set; }
+
+        [ExposedAsVariable(nameof(Softness))]
         public double Softness { get; set; }
+
+        [ExposedAsVariable(nameof(Symmetry))]
         public double Symmetry { get; set; }
+
+        [ExposedAsVariable(nameof(Size))]
         public double Size { get; set; }
+
+        [ExposedAsVariable(nameof(XOffset))]
         public double XOffset { get; set; }
+
+        [ExposedAsVariable(nameof(YOffset))]
         public double YOffset { get; set; }
 
         public override string ToString()
