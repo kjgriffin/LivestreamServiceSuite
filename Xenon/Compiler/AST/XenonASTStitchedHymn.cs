@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+
 using Xenon.Compiler.LanguageDefinition;
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
@@ -21,6 +22,11 @@ namespace Xenon.Compiler.AST
         public string Number { get; set; }
         public string CopyrightInfo { get; set; }
         public bool StitchAll { get; set; }
+        public bool ManualStitch { get; set; }
+
+        public string ParseDef { get; set; }
+        public string Stitching { get; set; }
+
         public IXenonASTElement Parent { get; private set; }
 
 
@@ -85,6 +91,10 @@ namespace Xenon.Compiler.AST
                 {
                     hymn.StitchAll = true;
                 }
+                else if (fargs.flags.Contains("manualstitch"))
+                {
+                    hymn.ManualStitch = true;
+                }
 
                 if (fargs.args.TryGetValue("minMusicHeight", out var val) && int.TryParse(val.tvalue, out int mmh))
                 {
@@ -102,6 +112,23 @@ namespace Xenon.Compiler.AST
             while (!Lexer.InspectEOF() && !Lexer.Inspect("}"))
             {
                 Lexer.GobbleWhitespace();
+
+                if (Lexer.Inspect("parsedef") && ManualStitch)
+                {
+                    Lexer.Gobble("parsedef");
+                    Lexer.Gobble("[");
+                    ParseDef = Lexer.ConsumeUntil("]");
+                    Lexer.Gobble("]");
+                    Lexer.Gobble(";");
+                }
+                if (Lexer.Inspect("stitching") && ManualStitch)
+                {
+                    Lexer.Gobble("stitching");
+                    Lexer.Gobble("[");
+                    ParseDef = Lexer.ConsumeUntil("]");
+                    Lexer.Gobble("]");
+                    Lexer.Gobble(";");
+                }
 
                 // optionally parse for box id
                 int id = 0;
@@ -242,6 +269,24 @@ namespace Xenon.Compiler.AST
                 return slide.ToList();
 
             }
+
+
+            // check for manual stitching
+            // either direct or implicit
+
+            if (!ManualStitch && _Parent?.TryGetScopedVariable($"{this.HymnName}.parsedef", out var parsedef).found == true && _Parent?.TryGetScopedVariable($"{this.HymnName}.stitching", out var stitchdef).found == true)
+            {
+                // pull in the stitching an make it 'manual'
+                ManualStitch = true;
+                ParseDef = parsedef;
+                Stitching = stitchdef;
+            }
+
+            if (ManualStitch)
+            {
+                return BuildFromManualStitch(project, _Parent, Logger);
+            }
+
 
             bool unconfidentaboutlinetype = false;
             List<string> badlines = new List<string>();
@@ -526,6 +571,48 @@ namespace Xenon.Compiler.AST
 
             }
             return slides;
+        }
+
+        private List<Slide> BuildFromManualStitch(Project project, IXenonASTElement _Parent, XenonErrorLogger logger)
+        {
+            // NO CLUE HOW to handle box assigned images???
+            // just dump them into the first box
+
+            // 1. build the defs
+            // 2. validate/apply the defs to the set of assets
+            // 3. then just iterate and spit out slides
+
+
+            // just a bunch of image lines...
+            // can stop right here and build a slide
+            Slide slide = new Slide();
+            slide.Name = $"stitchedhymn";
+            slide.Number = project.NewSlideNumber;
+            slide.Asset = "";
+            slide.Lines = new List<SlideLine>();
+            slide.Format = SlideFormat.StitchedImage;
+            slide.MediaType = MediaType.Image;
+
+            slide.Data[StitchedImageRenderer.DATAKEY_TITLE] = Title;
+            slide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
+            slide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
+            slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
+            if (CopyrightText != CopyrightTune)
+            {
+                slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
+                slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
+            }
+
+            //slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = ImageAssets.Select(i => new LSBImageResource(i.name, ImageSizes[i.name])).ToList();
+            //slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = ImageAssets.Select(i => (new LSBImageResource(i.name, ImageSizes[i.name]), i.bid)).ToList();
+
+            slide.AddPostset(_Parent, true, true);
+
+            (this as IXenonASTCommand).ApplyLayoutOverride(project, logger, slide, LanguageKeywordCommand.StitchedImage);
+            //project.Slides.Add(slide);
+            //WarnVerseOverheight(logger, ImageSizes);
+
+            return slide.ToList();
         }
 
         private void WarnVerseOverheight(XenonErrorLogger Logger, Dictionary<string, SixLabors.ImageSharp.Size> ImageSizes)
