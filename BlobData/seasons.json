@@ -285,5 +285,67 @@
             "Xenon.Titles@text-alt": "#298f45",
             "Xenon.Creeds@color-main": "#298f45"
         }
+    },
+    {
+        "start": "2024-11-02",
+        "note": "all saints day",
+        "macros": {
+            "color-main": "\"#ffffebaf\"",
+            "text-alt": "\"#ffffebaf\"",
+            "text-main": "\"#ff474747\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#ffebaf",
+            "Xenon.Titles@color-main": "#ffebaf",
+            "Xenon.Titles@text-alt": "#ffebaf",
+            "Xenon.Titles@text-main": "#474747",
+            "Xenon.Creeds@color-main": "#ffebaf",
+            "Xenon.Creeds@text-main": "#474747"
+        }
+    },
+    {
+        "start": "2024-11-04",
+        "note": "pentecost",
+        "macros": {
+            "color-main": "\"#ff298f45\"",
+            "text-alt": "\"#ff298f45\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#298f45",
+            "Xenon.Titles@color-main": "#298f45",
+            "Xenon.Titles@text-alt": "#298f45",
+            "Xenon.Creeds@color-main": "#298f45"
+        }
+    },
+    {
+        "start": "2024-11-30",
+        "note": "advent",
+        "macros": {
+            "color-main": "\"#ff0b248f\"",
+            "text-alt": "\"#ff0b248f\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#0b248f",
+            "Xenon.Titles@color-main": "#0b248f",
+            "Xenon.Titles@text-alt": "#0b248f",
+            "Xenon.Creeds@color-main": "#0b248f"
+        }
+    },
+    {
+        "start": "2024-12-24",
+        "note": "christmas",
+        "macros": {
+            "color-main": "\"#ffffebaf\"",
+            "text-alt": "\"#ffffebaf\"",
+            "text-main": "\"#ff474747\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#ffebaf",
+            "Xenon.Titles@color-main": "#ffebaf",
+            "Xenon.Titles@text-alt": "#ffebaf",
+            "Xenon.Titles@text-main": "#474747",
+            "Xenon.Creeds@color-main": "#ffebaf",
+            "Xenon.Creeds@text-main": "#474747"
+        }
     }
 ]
