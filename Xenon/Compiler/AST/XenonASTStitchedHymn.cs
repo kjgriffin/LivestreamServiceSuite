@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 using Xenon.Compiler.LanguageDefinition;
+using Xenon.Compiler.SubParsers;
 using Xenon.Helpers;
 using Xenon.LayoutEngine;
 using Xenon.LayoutInfo;
@@ -113,21 +114,23 @@ namespace Xenon.Compiler.AST
             {
                 Lexer.GobbleWhitespace();
 
-                if (Lexer.Inspect("parsedef") && ManualStitch)
+                if (Lexer.Inspect("parsedef") && hymn.ManualStitch)
                 {
                     Lexer.Gobble("parsedef");
                     Lexer.Gobble("[");
-                    ParseDef = Lexer.ConsumeUntil("]");
+                    hymn.ParseDef = Lexer.ConsumeUntil("]");
                     Lexer.Gobble("]");
                     Lexer.Gobble(";");
+                    continue;
                 }
-                if (Lexer.Inspect("stitching") && ManualStitch)
+                if (Lexer.Inspect("stitching") && hymn.ManualStitch)
                 {
                     Lexer.Gobble("stitching");
                     Lexer.Gobble("[");
-                    ParseDef = Lexer.ConsumeUntil("]");
+                    hymn.Stitching = Lexer.ConsumeUntil("]");
                     Lexer.Gobble("]");
                     Lexer.Gobble(";");
+                    continue;
                 }
 
                 // optionally parse for box id
@@ -284,7 +287,7 @@ namespace Xenon.Compiler.AST
 
             if (ManualStitch)
             {
-                return BuildFromManualStitch(project, _Parent, Logger);
+                return BuildFromManualStitch(project, _Parent, Logger, ImageSizes);
             }
 
 
@@ -573,7 +576,7 @@ namespace Xenon.Compiler.AST
             return slides;
         }
 
-        private List<Slide> BuildFromManualStitch(Project project, IXenonASTElement _Parent, XenonErrorLogger logger)
+        private List<Slide> BuildFromManualStitch(Project project, IXenonASTElement _Parent, XenonErrorLogger logger, Dictionary<string, SixLabors.ImageSharp.Size> imageSizes)
         {
             // NO CLUE HOW to handle box assigned images???
             // just dump them into the first box
@@ -581,38 +584,46 @@ namespace Xenon.Compiler.AST
             // 1. build the defs
             // 2. validate/apply the defs to the set of assets
             // 3. then just iterate and spit out slides
+            SewPattern pattern = new SewPattern(ParseDef, Stitching, ImageAssets.Select(x => x.name).ToList());
+            var seq = pattern.GenerateStitchedSequence();
 
+            List<Slide> slides = new List<Slide>();
 
-            // just a bunch of image lines...
-            // can stop right here and build a slide
-            Slide slide = new Slide();
-            slide.Name = $"stitchedhymn";
-            slide.Number = project.NewSlideNumber;
-            slide.Asset = "";
-            slide.Lines = new List<SlideLine>();
-            slide.Format = SlideFormat.StitchedImage;
-            slide.MediaType = MediaType.Image;
-
-            slide.Data[StitchedImageRenderer.DATAKEY_TITLE] = Title;
-            slide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
-            slide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
-            slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
-            if (CopyrightText != CopyrightTune)
+            foreach (var slideToMake in seq)
             {
-                slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
-                slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
+                // just a bunch of image lines...
+                // can stop right here and build a slide
+                Slide slide = new Slide();
+                slide.Name = $"stitchedhymn_manual";
+                slide.Number = project.NewSlideNumber;
+                slide.Asset = "";
+                slide.Lines = new List<SlideLine>();
+                slide.Format = SlideFormat.StitchedImage;
+                slide.MediaType = MediaType.Image;
+
+                slide.Data[StitchedImageRenderer.DATAKEY_TITLE] = Title;
+                slide.Data[StitchedImageRenderer.DATAKEY_NAME] = HymnName;
+                slide.Data[StitchedImageRenderer.DATAKEY_NUMBER] = Number;
+                slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT] = CopyrightInfo;
+                if (CopyrightText != CopyrightTune)
+                {
+                    slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TEXT] = CopyrightText;
+                    slide.Data[StitchedImageRenderer.DATAKEY_COPYRIGHT_TUNE] = CopyrightTune;
+                }
+
+                // only support box id 0
+                slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = slideToMake.Select(i => (new LSBImageResource(i, imageSizes[i]), 0)).ToList();
+
+                slide.AddPostset(_Parent, true, true);
+
+                (this as IXenonASTCommand).ApplyLayoutOverride(project, logger, slide, LanguageKeywordCommand.StitchedImage);
+                //project.Slides.Add(slide);
+                //WarnVerseOverheight(logger, ImageSizes);
+                slides.Add(slide);
             }
 
-            //slide.Data[StitchedImageRenderer.DATAKEY_IMAGES] = ImageAssets.Select(i => new LSBImageResource(i.name, ImageSizes[i.name])).ToList();
-            //slide.Data[StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES] = ImageAssets.Select(i => (new LSBImageResource(i.name, ImageSizes[i.name]), i.bid)).ToList();
-
-            slide.AddPostset(_Parent, true, true);
-
-            (this as IXenonASTCommand).ApplyLayoutOverride(project, logger, slide, LanguageKeywordCommand.StitchedImage);
-            //project.Slides.Add(slide);
-            //WarnVerseOverheight(logger, ImageSizes);
-
-            return slide.ToList();
+            //return slide.ToList();
+            return slides;
         }
 
         private void WarnVerseOverheight(XenonErrorLogger Logger, Dictionary<string, SixLabors.ImageSharp.Size> ImageSizes)

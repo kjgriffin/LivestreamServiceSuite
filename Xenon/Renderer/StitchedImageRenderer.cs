@@ -62,6 +62,7 @@ namespace Xenon.Renderer
             {
                 List<LSBImageResource> imageresources = allimageresources.Where(x => x.bid == b).Select(x => x.img).ToList();
 
+
                 if (!imageresources.Any())
                 {
                     continue;
