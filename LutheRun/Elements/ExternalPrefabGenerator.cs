@@ -35,7 +35,7 @@ namespace LutheRun.Elements
             string number = match.Groups["number"]?.Value.Trim().Length > 0 ? "LSB " + match.Groups["number"]?.Value.Trim() : "";
             if (useUpNextForHymns)
             {
-                if (fasterCommunionHymns && pHymn.OutOfBandInfo.ContainsKey("is-agnus-dei"))
+                if (fasterCommunionHymns && (pHymn.OutOfBandInfo.ContainsKey("is-agnus-dei") || pHymn.OutOfBandInfo.ContainsKey("is-sanctus")))
                 {
                     fab = new ExternalPrefab(HTMLUpNextCommand("UpNextFast_HTML", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
                     return true;

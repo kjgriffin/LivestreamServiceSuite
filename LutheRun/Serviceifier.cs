@@ -166,6 +166,11 @@ namespace LutheRun
                     communion = true;
                     elem.OutOfBandInfo["is-agnus-dei"] = true;
                 }
+                else if ((elem.LSBElement as LSBElementHymn)?.Caption.ToLower().Contains("sanctus") == true)
+                {
+                    communion = true;
+                    elem.OutOfBandInfo["is-sanctus"] = true;
+                }
                 else if (elem.LSBElement is LSBElementHymn && communion)
                 {
                     elem.OutOfBandInfo["is-distribution"] = true;
