@@ -347,5 +347,33 @@
             "Xenon.Creeds@color-main": "#ffebaf",
             "Xenon.Creeds@text-main": "#474747"
         }
+    },
+    {
+        "start": "2025-01-19",
+        "note": "epiphany",
+        "macros": {
+            "color-main": "\"#ff298f45\"",
+            "text-alt": "\"#ff298f45\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#298f45",
+            "Xenon.Titles@color-main": "#298f45",
+            "Xenon.Titles@text-alt": "#298f45",
+            "Xenon.Creeds@color-main": "#298f45"
+        }
+    },
+    {
+        "start": "2025-03-05",
+        "note": "lent",
+        "macros": {
+            "color-main": "\"#ff452351\"",
+            "text-alt": "\"#ff452351\""
+        },
+         "extras": {
+            "Xenon.Anthems@color-main": "#452351",
+            "Xenon.Titles@color-main": "#452351",
+            "Xenon.Titles@text-alt": "#452351",
+            "Xenon.Creeds@color-main": "#452351"
+        }
     }
 ]
