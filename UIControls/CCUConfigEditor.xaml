@@ -67,6 +67,7 @@
             <Button Margin="10" Click="ClickCreateNewPreset" Width="150" Height="30" Style="{StaticResource DarkBtn}" Foreground="SkyBlue">Create Preset Placeholder</Button>
             <Button Name="btnSave" Margin="10" Click="ClickSaveChanges" Width="150" Height="30" Style="{StaticResource DarkBtn}" Foreground="Orange">Save Changes</Button>
             <Button Name="btnExport" Margin="10" Click="ClickExportAll" Width="150" Height="30" Style="{StaticResource DarkBtn}" Foreground="LimeGreen">Export All</Button>
+            <Button Name="btnDumpImg" Margin="10" Click="DumpImg" Width="150" Height="30" Style="{StaticResource DarkBtn}" Foreground="Purple">Dump Images</Button>
         </StackPanel>
         <Grid Grid.Row="1" Background="#171717">
 

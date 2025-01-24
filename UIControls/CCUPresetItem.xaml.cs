@@ -4,12 +4,17 @@ using CommonGraphics;
 
 using Microsoft.Win32;
 
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+
 using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+
+using Xenon.Helpers;
 
 namespace UIControls
 {
@@ -95,18 +100,26 @@ namespace UIControls
             {
                 var img = new BitmapImage(new Uri(ofd.FileName));
                 var frame = BitmapFrame.Create(img);
-
+                /*
+                var img = SixLabors.ImageSharp.Image.Load(ofd.FileName);
+                if (img.Width > 1920 || img.Height > 1080)
+                {
+                    img.Mutate(x => x.Resize(img.Width / 4, img.Height / 4));
+                }
+                */
                 imgThumbnail.Source = img;
-
                 PngBitmapEncoder encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(frame);
 
+                /*
                 using (var ms = new MemoryStream())
                 {
-                    encoder.Save(ms);
+                    //encoder.Save(ms);
+                    img.SaveAsPng(ms);
                     var str64 = ms.ToBase64PngString();
                     _thumbnail = str64;
                 }
+                */
             }
 
             OnEditsChanged?.Invoke(this, new EventArgs());

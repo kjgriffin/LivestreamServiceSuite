@@ -1,10 +1,18 @@
 ﻿using CCU.Config;
 
+using CommonGraphics;
+
+using SixLabors.ImageSharp;
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
+
+using Xenon.Helpers;
 
 namespace UIControls
 {
@@ -226,6 +234,40 @@ namespace UIControls
             CCPUConfig_Extended newCFG = ConsolidateConfig();
 
             _exportChanges?.Invoke(newCFG);
+        }
+
+        private void DumpImg(object sender, RoutedEventArgs e)
+        {
+            CCPUConfig_Extended newCFG = ConsolidateConfig();
+
+            using (var sfd = new SaveFileDialog())
+            {
+                if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    // use the filename as a folder name
+                    try
+                    {
+                        var dir = Directory.CreateDirectory(Path.GetDirectoryName(sfd.FileName));
+                        foreach (var cam in newCFG.MockPresetInfo)
+                        {
+                            string camName = cam.Key;
+                            foreach (var pst in cam.Value)
+                            {
+                                var bytes = Convert.FromBase64String(pst.Value.Thumbnail);
+                                using (var img = Image.Load(bytes))
+                                {
+                                    var path = Path.Combine(dir.FullName, $"{camName}_{pst.Key}.png");
+                                    img.SaveAsPng(path);
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // sad. do nothing
+                    }
+                }
+            }
         }
     }
 }

@@ -50,8 +50,8 @@ namespace Integrated_Presenter.ViewModels
                 spMain.Children.Add(new AutomationActionMonitor(action, conditionals));
             }
 
-            string seqType = slide.AutoOnly ? "(AUTO) SCRIPT" : "SCRIPT";
-            tbSEQ.Text = seqType;
+            string seqType = slide.AutoOnly ? "AUTO SCRIPT" : "SCRIPT";
+            tbSEQ.Text = $"[{seqType}] {slide.Title}";
         }
 
         public void ClearActionPreviews()
