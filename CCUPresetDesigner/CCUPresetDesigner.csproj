@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Selenium.WebDriver" Version="4.28.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CCUI-UI\CCUI-Controls.csproj" />
     <ProjectReference Include="..\Xenon\Xenon.csproj" />
   </ItemGroup>

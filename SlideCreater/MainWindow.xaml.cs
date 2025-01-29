@@ -1033,6 +1033,7 @@ namespace SlideCreater
 
         private async void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            await builder?.Release_WebRenderEngine();
             if (dirty)
             {
                 bool saved = await CheckSaveChanges();
@@ -2224,27 +2225,42 @@ namespace SlideCreater
             }
         }
 
+        private void ClickRenderOptions_Puppet(object sender, RoutedEventArgs e)
+        {
+            mirenderoptions_puppet.IsChecked = true;
+            mirenderoptions_chrome.IsChecked = false;
+            mirenderoptions_edge.IsChecked = false;
+            mirenderoptions_firefox.IsChecked = false;
+            builder.Configure_WebRenderEngine(BROWSER.PUPPETEER);
+        }
+
         private void ClickRenderOptions_Chrome(object sender, RoutedEventArgs e)
         {
+            mirenderoptions_puppet.IsChecked = false;
             mirenderoptions_chrome.IsChecked = true;
             mirenderoptions_edge.IsChecked = false;
             mirenderoptions_firefox.IsChecked = false;
+            MessageBox.Show("Chrome v132+ no longer supports --headless=old. Rendering won't work. Use PUPPET instead!", "DEPRECATED Renderer");
             builder.Configure_WebRenderEngine(BROWSER.Chrome);
         }
 
         private void ClickRenderOptions_Edge(object sender, RoutedEventArgs e)
         {
+            mirenderoptions_puppet.IsChecked = false;
             mirenderoptions_chrome.IsChecked = false;
             mirenderoptions_edge.IsChecked = true;
             mirenderoptions_firefox.IsChecked = false;
+            MessageBox.Show("Edge (chromium) v132+ no longer supports --headless=old. Rendering won't work. Use PUPPET instead!", "DEPRECATED Renderer");
             builder.Configure_WebRenderEngine(BROWSER.Edge);
         }
 
         private void ClickRenderOptions_Firefox(object sender, RoutedEventArgs e)
         {
+            mirenderoptions_puppet.IsChecked = false;
             mirenderoptions_chrome.IsChecked = false;
             mirenderoptions_edge.IsChecked = false;
             mirenderoptions_firefox.IsChecked = true;
+            MessageBox.Show("Firefox renderer still doesn't generate slides with the correct aspect ratio (16:9). Use at own risk.", "UNSTABLE Renderer");
             builder.Configure_WebRenderEngine(BROWSER.Firefox);
         }
 
@@ -2448,5 +2464,6 @@ namespace SlideCreater
                 ibSuggestions.Fill = Brushes.Gray;
             }
         }
+
     }
 }

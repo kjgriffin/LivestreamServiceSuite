@@ -266,5 +266,10 @@ namespace Xenon.Compiler
             Task.Run(() => BROWSER_RENDER_ENGINE_MK2.Change_Driver_Preference(type));
         }
 
+        public async Task Release_WebRenderEngine()
+        {
+            await BROWSER_RENDER_ENGINE_MK2.SpindownPUPPET();
+        }
+
     }
 }

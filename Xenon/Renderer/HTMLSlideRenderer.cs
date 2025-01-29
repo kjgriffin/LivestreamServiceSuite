@@ -5,13 +5,20 @@ using AngleSharp.Html.Parser;
 
 using CoreHtmlToImage;
 
+using Microsoft.Extensions.Logging.Abstractions;
+
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Chromium;
+using OpenQA.Selenium.DevTools.V130.Runtime;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 
+using PuppeteerSharp;
+
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
@@ -40,12 +47,17 @@ namespace Xenon.Renderer
         Chrome,
         Firefox,
         Edge,
+        PUPPETEER,
     }
 
     static class BROWSER_RENDER_ENGINE_MK2
     {
-        static volatile BROWSER _browserPref = BROWSER.Chrome;
+        static volatile BROWSER _browserPref = BROWSER.PUPPETEER;
         static volatile Dictionary<BROWSER, WebDriver> _drivers = new Dictionary<BROWSER, WebDriver>();
+
+        static volatile BrowserFetcher _fetcher;
+        static volatile IBrowser _puppet;
+        static volatile SemaphoreSlim _puppetSem = new SemaphoreSlim(1);
 
         static volatile object _renderLock = new object();
         static volatile object _initLock = new object();
@@ -57,16 +69,21 @@ namespace Xenon.Renderer
 
 
         #region Driver Spinup
+
         private static WebDriver Spinup_Chrome()
         {
             ChromeOptions opts = new ChromeOptions();
-            opts.AddArgument("window-size=1920x1080");
+            //opts.AddArgument("window-size=1920x1080");
+            opts.AddArgument("window-size=1280x720");
             opts.AddArgument("--hide-scrollbars");
             opts.AddArgument("--no--sandbox");
             opts.AddArgument("--headless=old");
+            //opts.AddArgument("--remote-debugging-pipe");
+            //opts.AddArgument("--remote-debugging-port=9222");
+            //opts.AddArgument("--disable-dev-shm-usage");
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
-            var _driver = new ChromeDriver(service, opts);
+            var _driver = new ChromeDriver(service, opts, TimeSpan.FromSeconds(5));
             return _driver;
         }
         private static WebDriver Spinup_Edge()
@@ -93,6 +110,7 @@ namespace Xenon.Renderer
             FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             var _driver = new FirefoxDriver(service, opts);
+            _driver.Manage().Window.Position = new System.Drawing.Point(0, 0);
             _driver.Manage().Window.Size = new System.Drawing.Size(1920, 1080);
 
             return _driver;
@@ -128,6 +146,60 @@ namespace Xenon.Renderer
 
         public static async Task<Image<Bgra32>> PerformRenderWithHeadlessBrowser(string html)
         {
+            if (_browserPref == BROWSER.PUPPETEER)
+            {
+                // concurrent access is probably OK
+                if (_puppet != null)
+                {
+                    var res = await Task.Run(() => RenderWithHeadlessPuppeteer(html, _puppet));
+                    return res;
+                }
+
+                // only need to manage if not
+                await _puppetSem.WaitAsync();
+                if (_puppet == null)
+                {
+                    await Task.Run(async () =>
+                    {
+                        var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                        string cachePath = Path.GetFullPath(Path.Combine(programFiles, "chrome-headless-browser"));
+                        var opts = new BrowserFetcherOptions
+                        {
+                            Browser = SupportedBrowser.ChromeHeadlessShell,
+                        };
+                        _fetcher = new BrowserFetcher(opts);
+                        _fetcher.CacheDir = cachePath;
+                        try
+                        {
+                            await _fetcher.DownloadAsync();
+                            var installed = _fetcher.GetInstalledBrowsers().Where(x => x.Browser == SupportedBrowser.ChromeHeadlessShell).FirstOrDefault();
+                            var exePath = _fetcher.GetExecutablePath(installed.BuildId);
+                            _puppet = await Puppeteer.LaunchAsync(new LaunchOptions
+                            {
+                                Headless = true,
+                                Args = new string[] { "--single-process" },
+                                ExecutablePath = exePath,
+                            });
+                            _puppet.Closed += _puppet_Closed;
+                        }
+                        catch (Exception ex)
+                        {
+                            // geee, what should we do?
+                            if (_puppet != null)
+                            {
+                                _puppet.Closed -= _puppet_Closed;
+                                _puppet?.Dispose();
+                                _puppet = null;
+                            }
+                        }
+                    });
+                }
+                _puppetSem.Release();
+
+                var res2 = await Task.Run(() => RenderWithHeadlessPuppeteer(html, _puppet));
+                return res2;
+            }
+
             WebDriver driver;
             if (!_drivers.TryGetValue(_browserPref, out driver))
             {
@@ -140,6 +212,12 @@ namespace Xenon.Renderer
 
 
             return await Task.Run(() => RenderWithHeadlessBrowser(html, driver));
+        }
+
+        private static void _puppet_Closed(object sender, EventArgs e)
+        {
+            _puppet.Dispose();
+            _puppet = null;
         }
 
         private static Image<Bgra32> RenderWithHeadlessBrowser(string html, WebDriver driver)
@@ -165,7 +243,24 @@ namespace Xenon.Renderer
             }
         }
 
+        private static async Task<Image<Bgra32>> RenderWithHeadlessPuppeteer(string html, IBrowser driver)
+        {
+            // Big improvements:
+            // 1- we can render each request in parallel, by using a new page
+            // 2- we don't need to write tmp files to disk to load, but can directly navigate to a string html page
+            await using var page = await driver.NewPageAsync();
+            await page.SetViewportAsync(new ViewPortOptions { Height = 1080, Width = 1920 });
+            await page.SetContentAsync(html);
+            var stream = await page.ScreenshotStreamAsync(new ScreenshotOptions { Type = ScreenshotType.Png });
+            var img = Image.Load<Bgra32>(stream);
+            return img;
+        }
 
+        internal static async Task SpindownPUPPET()
+        {
+            await _puppetSem.WaitAsync();
+            await _puppet.CloseAsync();
+        }
     }
 
 

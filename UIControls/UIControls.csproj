@@ -52,6 +52,8 @@
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.2.0.78" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.28.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.1" />
   </ItemGroup>
 
   <ItemGroup>
