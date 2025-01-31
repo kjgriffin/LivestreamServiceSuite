@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Text.Json;
+
+using Xenon.LayoutEngine;
+using Xenon.Renderer;
 
 namespace Xenon.SlideAssembly
 {
@@ -81,7 +85,26 @@ namespace Xenon.SlideAssembly
 
                 // maybe just use data as a string???
                 // perhaps expensive....
-                var datahash = JsonSerializer.Serialize(Data);
+                StringBuilder sb = new StringBuilder();
+                //var datahash = JsonSerializer.Serialize(Data);
+                sb.Append(JsonSerializer.Serialize(Data));
+
+                // this isn't good enough to handle stitchedHymns. The boxed-assigned-ordered-images doesn't serialize correctly
+                // ... rather than actually fix this, we'll just special case it
+                if (Data.TryGetValue(StitchedImageRenderer.DATAKEY_BOX_ASSIGNED_IMAGES, out var boxAssignments))
+                {
+                    // how to hash this?
+                    // just append it to the previous string?
+                    foreach (var item in boxAssignments as List<(LSBImageResource rsx, int index)>)
+                    {
+                        sb.Append(item.rsx.Size.ToString());
+                        sb.Append(item.rsx.AssetRef.ToString());
+                        sb.Append(item.index);
+                    }
+                    
+                }
+
+                var datahash = sb.ToString();
                 hashcode = hashcode * 7302013 ^ datahash.GetHashCode();
 
                 return hashcode;
