@@ -277,7 +277,7 @@ namespace Xenon.Compiler.AST
             // check for manual stitching
             // either direct or implicit
 
-            if (!ManualStitch && _Parent?.TryGetScopedVariable($"{this.HymnName}.parsedef", out var parsedef).found == true && _Parent?.TryGetScopedVariable($"{this.HymnName}.stitching", out var stitchdef).found == true)
+            if (!ManualStitch && _Parent?.TryGetScopedVariable($"sewing.{this.Number}.parsedef", out var parsedef).found == true && _Parent?.TryGetScopedVariable($"sewing.{this.Number}.stitching", out var stitchdef).found == true)
             {
                 // pull in the stitching an make it 'manual'
                 ManualStitch = true;

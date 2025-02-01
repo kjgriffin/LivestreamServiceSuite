@@ -48,7 +48,7 @@ namespace Xenon.Compiler.SubParsers
                     {
                         throw new Exception("Missing Tag!");
                     }
-                    var lgen = b.GenerateSequence(srcGen.Indice);
+                    var lgen = b.GenerateSequence(srcGen);
                     lines.AddRange(lgen);
                 }
                 slides.Add(lines);
@@ -60,11 +60,11 @@ namespace Xenon.Compiler.SubParsers
 
     internal class StitchMark
     {
-        public StitchMark(string tag, int indice, bool isIndexed)
+        public StitchMark(string tag, List<int> indicies)
         {
             Tag = tag;
-            Indice = indice;
-            IsIndexed = isIndexed;
+            Indicies = indicies;
+            IsIndexed = (indicies?.Any() == true && indicies.First() > 0) == true;
         }
 
         public static List<List<StitchMark>> Parse(string input)
@@ -77,15 +77,17 @@ namespace Xenon.Compiler.SubParsers
                 var threads = stitch.Split(",", StringSplitOptions.RemoveEmptyEntries);
                 foreach (var thread in threads)
                 {
-                    var match = Regex.Match(thread, @"(?<id>\w+)(\((?<arg>\d+)\))?");
+                    var match = Regex.Match(thread, @"(?<id>\w+)(\((?<arg>[\d\.]+)\))?");
                     if (match.Success)
                     {
-                        int index = 1;
+                        List<int> indicies = new List<int> { 1 };
                         if (!string.IsNullOrEmpty(match.Groups["arg"].Value))
                         {
-                            index = int.Parse(match.Groups["arg"].Value);
+                            // allow multiple verses per mark
+                            var args = match.Groups["arg"].Value.Split(".", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                            indicies = args.Select(i => int.Parse(i)).ToList();
                         }
-                        slidethreads.Add(new StitchMark(match.Groups["id"].Value, index, index > -1));
+                        slidethreads.Add(new StitchMark(match.Groups["id"].Value, indicies));
                     }
                 }
                 if (slidethreads.Any())
@@ -97,7 +99,7 @@ namespace Xenon.Compiler.SubParsers
         }
 
         public string Tag { get; private set; }
-        public int Indice { get; private set; }
+        public List<int> Indicies { get; private set; }
         public bool IsIndexed { get; private set; }
     }
 
@@ -140,14 +142,21 @@ namespace Xenon.Compiler.SubParsers
             _AssetRefs = assets;
         }
 
-        public List<string> GenerateSequence(int verse = 1)
+        public List<string> GenerateSequence(StitchMark mark)
         {
             if (!ManyToOneMapping || Mapping == 1)
             {
                 return _AssetRefs;
             }
 
-            if (verse > Mapping)
+            if (!mark.IsIndexed)
+            {
+                return _AssetRefs;
+            }
+
+            var verses = mark.Indicies?.Any() == true ? mark.Indicies : new List<int> { 0 };
+
+            if (verses.Any(x => x > Mapping))
             {
                 throw new XenonCompilerException(); // requesting verse that was defined to not exist!
             }
@@ -162,7 +171,10 @@ namespace Xenon.Compiler.SubParsers
             for (int l = 0; l < systems; l++)
             {
                 result.Add(_AssetRefs[(l * lnum)]);
-                result.Add(_AssetRefs[(l * lnum) + verse]);
+                foreach (var verse in verses)
+                {
+                    result.Add(_AssetRefs[(l * lnum) + verse]);
+                }
             }
 
             return result;
