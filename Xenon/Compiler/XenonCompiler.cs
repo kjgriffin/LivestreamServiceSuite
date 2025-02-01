@@ -240,8 +240,8 @@ namespace Xenon.Compiler
             // analyze all slides at once
             SlideVariableSubstituter subengine = new SlideVariableSubstituter(compiledSlides, proj.BMDSwitcherConfig);
             // at this point we can do this
-            proj.Slides.AddRange(subengine.ApplyNesscarySubstitutions());
-
+            proj.Slides.AddRange(subengine.ApplyNesscarySubstitutions(masterlog));
+            Messages.AddRange(masterlog.AllErrors);
 
             progress?.Report(100);
 

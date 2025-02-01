@@ -100,8 +100,10 @@ namespace Xenon.Compiler.AST
 
             // resolve variables
             // for now only check if a button in the config file
+            /*
             foreach (var match in Regex.Matches(Source, "%(?<var>.*)%").AsEnumerable())
             {
+                // pretty sure that this is now better handled with camera substitution
                 // check if we have that one
                 if (project.BMDSwitcherConfig.Routing.Any(x => x.ButtonName == match?.Groups["var"]?.Value))
                 {
@@ -129,6 +131,7 @@ namespace Xenon.Compiler.AST
                     });
                 }
             }
+            */
 
 
             SlideVariableSubstituter.UnresolvedText unresolved = new SlideVariableSubstituter.UnresolvedText

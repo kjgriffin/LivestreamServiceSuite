@@ -10,7 +10,7 @@ $>$>$>@cmd:WatchStateIntVal(ProgramID, %cam.SLIDESHOW%, upnext);
 $>$>$>@<upnext>cmd:PresetSelect(%cam.ORGAN%)[Preset Organ];
 $>$>$>@<upnext>cmd:DSK1TieOff;
 $>$>$>@<upnext>cmd:DelayMs(100);
-$>$>$>@<upnext>cmd:AutoTrans(100);
+$>$>$>@<upnext>cmd:AutoTrans;
 $>$>$>@<upnext>cmd:DelayMs(1500);
 $>$>$>cmd:DSK1FadeOn[Key Fade On];
 $>$>}

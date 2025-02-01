@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Controls.Ribbon.Primitives;
+
 using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.Meta;
 using Xenon.Renderer;
@@ -10,20 +13,75 @@ using Xenon.SlideAssembly;
 
 namespace Xenon.Compiler.AST
 {
+
+    internal class ScriptSolution
+    {
+        XenonASTCalledScript _invokedScript { get; set; }
+        XenonASTScript _backingScript { get; set; }
+        internal string Source { get => IsBacked ? _backingScript?.Source : ""; }
+        internal bool IsBacked { get; private set; }
+
+        internal void DecompileFormatted(StringBuilder sb, ref int indentDepth, int indentSize)
+        {
+            if (IsBacked)
+            {
+                _backingScript?.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+            else
+            {
+                _invokedScript.DecompileFormatted(sb, ref indentDepth, indentSize);
+            }
+        }
+
+        internal static ScriptSolution Create(XenonASTCalledScript script)
+        {
+            return new ScriptSolution
+            {
+                IsBacked = false,
+                _invokedScript = script,
+            };
+        }
+
+        internal static ScriptSolution Create(XenonASTScript script)
+        {
+            return new ScriptSolution
+            {
+                IsBacked = true,
+                _backingScript = script,
+            };
+        }
+
+        internal SlideVariableSubstituter.UnresolvedScript BuildUnresolvedScrip()
+        {
+            if (IsBacked)
+                return null;
+
+            return new SlideVariableSubstituter.UnresolvedScript
+            {
+                InvokedScriptID = _invokedScript.InvokedScript,
+                Arguments = _invokedScript.InvokedArguments,
+                DKEY = SlideVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT,
+            };
+        }
+    }
+
     [XenonSTDCmdMetadata(LanguageKeywordCommand.Scripted)]
     [XenonSTDBody(DefinitionRequirement.REQUIRED, true)]
     internal class XenonASTAsScripted : IXenonASTCommand
     {
+        public static string DATAKEY_DISPLAYSRC { get => "slide-display-src"; }
+        public static string DATAKEY_KEYSRC { get => "slide-key-src"; }
+
         public IXenonASTElement Parent { get; private set; }
 
         public XenonASTElementCollection Children { get; private set; }
 
-        public XenonASTScript AllScript { get; private set; }
-        public XenonASTScript FirstScript { get; private set; }
-        public XenonASTScript LastScript { get; private set; }
+        public ScriptSolution AllScript { get; private set; }
+        public ScriptSolution FirstScript { get; private set; }
+        public ScriptSolution LastScript { get; private set; }
 
-        public XenonASTScript DupLastScript { get; private set; }
-        public XenonASTScript DupFirstScript { get; private set; }
+        public ScriptSolution DupLastScript { get; private set; }
+        public ScriptSolution DupFirstScript { get; private set; }
 
         public bool HasAll { get; private set; }
         public bool HasFirst { get; private set; }
@@ -31,6 +89,35 @@ namespace Xenon.Compiler.AST
         public bool HasDupLast { get; private set; }
         public bool HasDupFirst { get; private set; }
         public int _SourceLine { get; set; }
+
+
+        private ScriptSolution CompileScriptImplementation(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement element)
+        {
+            Lexer.GobbleandLog("=", "expected = to assign all script");
+            Lexer.GobbleWhitespace();
+            Lexer.GobbleandLog("#", "expected #");
+
+            ScriptSolution solution = null;
+
+            if (Lexer.Inspect("script"))
+            {
+                Lexer.GobbleandLog("script", "expected script command");
+                Lexer.GobbleWhitespace();
+                XenonASTScript script = new XenonASTScript();
+                script = (XenonASTScript)script.Compile(Lexer, Logger, element);
+                solution = ScriptSolution.Create(script);
+            }
+            else if (Lexer.Inspect("callscript"))
+            {
+                Lexer.Gobble("callscript");
+                Lexer.GobbleWhitespace();
+                XenonASTCalledScript script = new XenonASTCalledScript();
+                script = (XenonASTCalledScript)script.Compile(Lexer, Logger, element);
+                solution = ScriptSolution.Create(script);
+            }
+
+            return solution;
+        }
 
         public IXenonASTElement Compile(Lexer Lexer, XenonErrorLogger Logger, IXenonASTElement Parent)
         {
@@ -67,6 +154,9 @@ namespace Xenon.Compiler.AST
                 {
                     Lexer.Consume();
                     Lexer.GobbleWhitespace();
+
+                    element.AllScript = CompileScriptImplementation(Lexer, Logger, element);
+                    /*
                     Lexer.GobbleandLog("=", "expected = to assign all script");
                     Lexer.GobbleWhitespace();
                     Lexer.GobbleandLog("#", "expected #");
@@ -75,12 +165,14 @@ namespace Xenon.Compiler.AST
                     XenonASTScript script = new XenonASTScript();
                     script = (XenonASTScript)script.Compile(Lexer, Logger, element);
                     element.AllScript = script;
+                    */
                     element.HasAll = true;
                 }
                 else if (Lexer.Inspect("first"))
                 {
                     Lexer.Consume();
                     Lexer.GobbleWhitespace();
+                    /*
                     Lexer.GobbleandLog("=", "expected = to assign first script");
                     Lexer.GobbleWhitespace();
                     Lexer.GobbleandLog("#", "expected #");
@@ -89,6 +181,8 @@ namespace Xenon.Compiler.AST
                     XenonASTScript script = new XenonASTScript();
                     script = (XenonASTScript)script.Compile(Lexer, Logger, element);
                     element.FirstScript = script;
+                    */
+                    element.FirstScript = CompileScriptImplementation(Lexer, Logger, element);
                     element.HasFirst = true;
                 }
                 else if (Lexer.Inspect("last"))
@@ -107,6 +201,7 @@ namespace Xenon.Compiler.AST
                     }
                     Lexer.Consume();
                     Lexer.GobbleWhitespace();
+                    /*
                     Lexer.GobbleandLog("=", "expected = to assign last script");
                     Lexer.GobbleWhitespace();
                     Lexer.GobbleandLog("#", "expected #");
@@ -115,6 +210,8 @@ namespace Xenon.Compiler.AST
                     XenonASTScript script = new XenonASTScript();
                     script = (XenonASTScript)script.Compile(Lexer, Logger, element);
                     element.LastScript = script;
+                    */
+                    element.LastScript = CompileScriptImplementation(Lexer, Logger, element);
                     element.HasLast = true;
                 }
                 else if (Lexer.Inspect("duplast"))
@@ -133,6 +230,7 @@ namespace Xenon.Compiler.AST
                     }
                     Lexer.Consume();
                     Lexer.GobbleWhitespace();
+                    /*
                     Lexer.GobbleandLog("=", "expected = to assign duplicating last script");
                     Lexer.GobbleWhitespace();
                     Lexer.GobbleandLog("#", "expected #");
@@ -141,6 +239,8 @@ namespace Xenon.Compiler.AST
                     XenonASTScript script = new XenonASTScript();
                     script = (XenonASTScript)script.Compile(Lexer, Logger, element);
                     element.DupLastScript = script;
+                    */
+                    element.DupLastScript = CompileScriptImplementation(Lexer, Logger, element);
                     element.HasDupLast = true;
                 }
                 else if (Lexer.Inspect("dupfirst"))
@@ -159,6 +259,7 @@ namespace Xenon.Compiler.AST
                     }
                     Lexer.Consume();
                     Lexer.GobbleWhitespace();
+                    /*
                     Lexer.GobbleandLog("=", "expected = to assign duplicating first script");
                     Lexer.GobbleWhitespace();
                     Lexer.GobbleandLog("#", "expected #");
@@ -167,6 +268,8 @@ namespace Xenon.Compiler.AST
                     XenonASTScript script = new XenonASTScript();
                     script = (XenonASTScript)script.Compile(Lexer, Logger, element);
                     element.DupFirstScript = script;
+                    */
+                    element.DupFirstScript = CompileScriptImplementation(Lexer, Logger, element);
                     element.HasDupFirst = true;
                 }
 
@@ -411,7 +514,7 @@ namespace Xenon.Compiler.AST
             return modifiedslides;
         }
 
-        private (Slide scripted, Slide resource) SwapForScript(Slide slide, XenonASTScript script, Project proj, XenonErrorLogger log)
+        private (Slide scripted, Slide resource) SwapForScript(Slide slide, ScriptSolution script, Project proj, XenonErrorLogger log)
         {
             int place = slide.Number;
 
@@ -495,6 +598,22 @@ namespace Xenon.Compiler.AST
             string keyFile = $"!keysrc='{behaviour.OverrideExportKeyName}.{ktype}';";
 
 
+
+            scriptslide.Data[DATAKEY_DISPLAYSRC] = srcFile;
+            scriptslide.Data[DATAKEY_KEYSRC] = keyFile;
+
+            if (script.IsBacked)
+            {
+                // if we can resolve now, do so
+                InjectScriptData(scriptslide, script.Source);
+            }
+            else
+            {
+                // otherwise we'll need to let the substituter handle everything
+                scriptslide.Data[SlideVariableSubstituter.UnresolvedScript.DATAKEY_UNRESOLVEDSCRIPT] = script.BuildUnresolvedScrip();
+            }
+
+            /*
             // extract the PostScript slide's commands and run overwrite/inject the appropriate src/key file overrides 
             var lines = script.Source.Split(';').Select(x => x.Trim()).Where(x => x.Length > 0).ToList();
             List<string> newlines = new List<string>();
@@ -552,8 +671,82 @@ namespace Xenon.Compiler.AST
                 Raw = string.Join(Environment.NewLine, newlines),
             };
             scriptslide.Data[SlideVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
+*/
 
             return (scriptslide, slide);
+        }
+
+        public static void InjectScriptData(Slide target, string scriptSource)
+        {
+            // extract the PostScript slide's commands and run overwrite/inject the appropriate src/key file overrides 
+            var lines = scriptSource.Split(';').Select(x => x.Trim()).Where(x => x.Length > 0).ToList();
+            List<string> newlines = new List<string>();
+
+
+            string srcFile = string.Empty;
+            string keyFile = string.Empty;
+            if (target.Data.TryGetValue(DATAKEY_DISPLAYSRC, out var dfile))
+            {
+                srcFile = dfile as string;
+            }
+            if (target.Data.TryGetValue(DATAKEY_DISPLAYSRC, out var kfile))
+            {
+                keyFile = kfile as string;
+            }
+
+            bool setsrc = false;
+            bool setkey = false;
+
+            string titleline = "";
+
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("#"))
+                {
+                    titleline = line + ";";
+                }
+                else if (line.StartsWith("!displaysrc="))
+                {
+                    // make some noise we're overriding it?
+                    newlines.Add(srcFile);
+                    setsrc = true;
+                }
+                else if (line.StartsWith("!keysrc="))
+                {
+                    // make some noise we're overriding it?
+                    newlines.Add(keyFile);
+                    setkey = true;
+                }
+                else
+                {
+                    newlines.Add(line + ";");
+                }
+            }
+
+            if (!setkey)
+            {
+                newlines.Insert(0, keyFile);
+            }
+            if (!setsrc)
+            {
+                newlines.Insert(0, srcFile);
+            }
+
+            //if (slide.MediaType == MediaType.Video)
+            //{
+            //    // need to point it here
+            //    string vsrcFile = $"!videosrc='{behaviour.OverrideExportName}.mp4';";
+            //    newlines.Insert(0, vsrcFile);
+            //}
+
+            newlines.Insert(0, titleline);
+
+            SlideVariableSubstituter.UnresolvedText unresolved = new SlideVariableSubstituter.UnresolvedText
+            {
+                DKEY = ScriptRenderer.DATAKEY_SCRIPTSOURCE_TARGET,
+                Raw = string.Join(Environment.NewLine, newlines),
+            };
+            target.Data[SlideVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT] = unresolved;
         }
 
         public void GenerateDebug(Project project)

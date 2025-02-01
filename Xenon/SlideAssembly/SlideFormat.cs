@@ -19,6 +19,7 @@
         HymnTextVerse,
         Prefab,
 
+        NamedScript,
         Script,
         ResourceCopy,
         RawTextFile,

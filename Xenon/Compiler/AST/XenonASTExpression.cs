@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+
 using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.SubParsers;
 using Xenon.Renderer;
@@ -603,6 +604,14 @@ namespace Xenon.Compiler.AST
                 expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.NamedScript]))
+            {
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.NamedScript]);
+                var command = new XenonASTNamedScript();
+                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
+                return expr;
+            }
+
             else
             {
                 Logger.Log(new XenonCompilerMessage() { Level = XenonCompilerMessageType.Error, ErrorName = "Unknown Command", ErrorMessage = $"{Lexer.Peek()} is not a recognized command", Token = Lexer.Peek(), Generator = "Compiler" });

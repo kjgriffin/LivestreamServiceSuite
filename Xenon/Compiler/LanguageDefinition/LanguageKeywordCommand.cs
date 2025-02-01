@@ -39,6 +39,8 @@
         UpNext,
         CustomText,
         Scripted,
+        NamedScript,
+        CalledScript,
         CustomDraw,
         TitledLiturgyVerse2,
         ReStitchedHymn,
