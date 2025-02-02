@@ -247,10 +247,18 @@ namespace Xenon.Renderer
         {
             // Big improvements:
             // 1- we can render each request in parallel, by using a new page
-            // 2- we don't need to write tmp files to disk to load, but can directly navigate to a string html page
+
+            // I stand corrected: using project assets seems to require we load from file on disk
+            var htmlFile = Path.GetTempFileName() + ".html";
+            using (StreamWriter sw = new StreamWriter(htmlFile))
+            {
+                sw.Write(html);
+            }
+
             await using var page = await driver.NewPageAsync();
             await page.SetViewportAsync(new ViewPortOptions { Height = 1080, Width = 1920 });
-            await page.SetContentAsync(html);
+            //await page.SetContentAsync(html);
+            await page.GoToAsync(htmlFile);
             var stream = await page.ScreenshotStreamAsync(new ScreenshotOptions { Type = ScreenshotType.Png });
             var img = Image.Load<Bgra32>(stream);
             return img;
