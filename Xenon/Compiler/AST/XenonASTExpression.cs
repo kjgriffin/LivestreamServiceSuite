@@ -611,6 +611,13 @@ namespace Xenon.Compiler.AST
                 expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
                 return expr;
             }
+            else if (Lexer.Inspect(LanguageKeywords.Commands[LanguageKeywordCommand.CalledScript]))
+            {
+                Lexer.GobbleandLog(LanguageKeywords.Commands[LanguageKeywordCommand.CalledScript]);
+                var command = new XenonASTCalledScript();
+                expr.Command = (IXenonASTCommand)command.Compile(Lexer, Logger, parent);
+                return expr;
+            }
 
             else
             {

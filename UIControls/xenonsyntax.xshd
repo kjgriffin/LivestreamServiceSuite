@@ -251,6 +251,8 @@
 			<Word>#upnext</Word>
 			<Word>#customtext</Word>
 			<Word>#scripted</Word>
+			<Word>#namedscript</Word>
+			<Word>#callscript</Word>
 			<Word>#customdraw</Word>
 			<Word>#complextext</Word>
 			<Word>#tlit</Word>

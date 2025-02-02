@@ -43,7 +43,7 @@ namespace Xenon.Compiler.AST
                     Lexer.Gobble(")");
                 }
                 if (Lexer.Inspect("parameter"))
-                { 
+                {
                     Lexer.Gobble("parameter");
                     Lexer.Gobble("(");
                     string pname = Lexer.ConsumeUntil(")", escapewithbackslash: true);
@@ -97,8 +97,27 @@ namespace Xenon.Compiler.AST
 
         public List<Slide> Generate(Project project, IXenonASTElement _Parent, XenonErrorLogger Logger)
         {
-            // called scripts don't generate
-            return new List<Slide>();
+            // if this is a top-level command, it would need to generate itself
+
+            var slide = new Slide
+            {
+                Asset = "",
+                Data = new Dictionary<string, object>(),
+                NonRenderedMetadata = new Dictionary<string, object>(),
+                Name = $"CalledScript_{this.InvokedScript}",
+                Number = project.NewSlideNumber,
+                MediaType = MediaType.Text,
+                Format = SlideFormat.Script,
+            };
+
+            slide.Data[SlideVariableSubstituter.UnresolvedScript.DATAKEY_UNRESOLVEDSCRIPT] = new SlideVariableSubstituter.UnresolvedScript
+            {
+                InvokedScriptID = this.InvokedScript,
+                Arguments = this.InvokedArguments,
+                DKEY = SlideVariableSubstituter.UnresolvedText.DATAKEY_UNRESOLVEDTEXT,
+            };
+
+            return new List<Slide> { slide };
         }
         public void GenerateDebug(Project project)
         {
