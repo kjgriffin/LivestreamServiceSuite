@@ -689,7 +689,7 @@ namespace Xenon.Compiler.AST
             {
                 srcFile = dfile as string;
             }
-            if (target.Data.TryGetValue(DATAKEY_DISPLAYSRC, out var kfile))
+            if (target.Data.TryGetValue(DATAKEY_KEYSRC, out var kfile))
             {
                 keyFile = kfile as string;
             }
