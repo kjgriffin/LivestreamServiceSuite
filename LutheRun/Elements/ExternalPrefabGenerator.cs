@@ -25,7 +25,7 @@ namespace LutheRun.Elements
         }
 
 
-        public static bool BuildHymnIntroSlides(ParsedLSBElement pHymn, bool useUpNextForHymns, bool fasterCommunionHymns, out ExternalPrefab fab)
+        public static bool BuildHymnIntroSlides(ParsedLSBElement pHymn, LSBImportOptions options, out ExternalPrefab fab)
         {
             fab = null;
             var hymn = pHymn.LSBElement as LSBElementHymn;
@@ -33,20 +33,22 @@ namespace LutheRun.Elements
             var match = Regex.Match(hymn.Caption, @"(?<number>\d+)?(?<name>.*)");
             string name = match.Groups["name"]?.Value.Trim() ?? "";
             string number = match.Groups["number"]?.Value.Trim().Length > 0 ? "LSB " + match.Groups["number"]?.Value.Trim() : "";
-            if (useUpNextForHymns)
+            if (options.UseUpNextForHymns)
             {
-                if (fasterCommunionHymns && (pHymn.OutOfBandInfo.ContainsKey("is-agnus-dei") || pHymn.OutOfBandInfo.ContainsKey("is-sanctus")))
+                var file = options.CallCommonScripts ? "commonscript-upnext-full" : "UpNext_HTML";
+                if (options.FasterCommunionHymnIntros && (pHymn.OutOfBandInfo.ContainsKey("is-agnus-dei") || pHymn.OutOfBandInfo.ContainsKey("is-sanctus")))
                 {
-                    fab = new ExternalPrefab(HTMLUpNextCommand("UpNextFast_HTML", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
+                    file = options.CallCommonScripts ? "commonscript-upnext-fast" : "UpNextFast_HTML";
+                    fab = new ExternalPrefab(HTMLUpNextCommand(file, name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
                     return true;
                 }
-                if (fasterCommunionHymns && pHymn.OutOfBandInfo.ContainsKey("is-distribution"))
+                if (options.FasterCommunionHymnIntros && pHymn.OutOfBandInfo.ContainsKey("is-distribution"))
                 {
                     // fast communion hymns don't use up-next. Don't generate
                     fab = null;
                     return false;
                 }
-                fab = new ExternalPrefab(HTMLUpNextCommand("UpNext_HTML", name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
+                fab = new ExternalPrefab(HTMLUpNextCommand(file, name, number, ""), "upnext", BlockType.HYMN_INTRO) { IndentReplacementIndentifier = "$>" };
                 return true;
             }
             else
@@ -170,7 +172,7 @@ namespace LutheRun.Elements
 
         public static ILSBElement GenerateEndPage(string serviceTitle, string serviceDate, LSBImportOptions options)
         {
-            return new ExternalPrefab(EndPageCommand(serviceTitle), "endtitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
+            return new ExternalPrefab(EndPageCommand(options, serviceTitle), "endtitle", BlockType.TITLEPAGE) { IndentReplacementIndentifier = "$>" };
         }
 
 
@@ -200,9 +202,18 @@ namespace LutheRun.Elements
                 StringBuilder sb = new StringBuilder();
                 if (options.ThemeCreedsWithHTML)
                 {
-                    name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
-                                          .GetManifestResourceNames()
-                                          .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Creed-html"));
+                    if (options.CallCommonScripts)
+                    {
+                        name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                              .GetManifestResourceNames()
+                                              .FirstOrDefault(x => x.Contains("commonscript-pip-creed"));
+                    }
+                    else
+                    {
+                        name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
+                                              .GetManifestResourceNames()
+                                              .FirstOrDefault(x => x.Contains("PrePIPScriptBlock_Creed-html"));
+                    }
                 }
                 else
                 {
@@ -316,7 +327,7 @@ namespace LutheRun.Elements
             if (options.RunWithSubPanels)
             {
                 var ctitle = prefabblob;
-                var wrapper = ExternalPrefabGenerator.PrepareBlob("Mk2CopyTitle-PanelWrapper");
+                var wrapper = options.CallCommonScripts ? PrepareBlob("commonscript-title-panel") : PrepareBlob("Mk2CopyTitle-PanelWrapper");
 
                 var pmatch = Regex.Match(wrapper, "^(?<pre>.*)\\$COPYTITLE", RegexOptions.Multiline);
 
@@ -335,21 +346,9 @@ namespace LutheRun.Elements
         }
 
 
-        private static string EndPageCommand(string serviceTitle = "")
+        private static string EndPageCommand(LSBImportOptions options, string serviceTitle = "")
         {
-            var name = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
-                                  .GetManifestResourceNames()
-                                  .FirstOrDefault(x => x.Contains("EndTitle"));
-
-            var stream = System.Reflection.Assembly.GetAssembly(typeof(ExternalPrefabGenerator))
-                .GetManifestResourceStream(name);
-
-            // wrap it into a scripted block
-            var prefabblob = "";
-            using (StreamReader sr = new StreamReader(stream))
-            {
-                prefabblob = sr.ReadToEnd();
-            }
+            var prefabblob = options.CallCommonScripts ? PrepareBlob("commonscript-endtitle") : PrepareBlob("EndTitle");
 
             // inject title
             prefabblob = Regex.Replace(prefabblob, Regex.Escape("$SERVICETITLE"), serviceTitle);

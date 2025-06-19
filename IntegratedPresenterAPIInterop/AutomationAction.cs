@@ -105,10 +105,13 @@ namespace IntegratedPresenterAPIInterop
         void InitializeVariable(string owner, string name, AutomationActionArgType type, string initialValue);
         void ReleaseVariables(string owner);
         void WriteVariableValue<T>(string name, T value);
+        void PurgeVariable(string owner, string name);
         bool TryEvaluateVariableValue<T>(string name, out T value);
         void SetupVariableTrack(string name, string trackingTarget);
         void ReleaseVariableTrack(string name);
         bool TryGetVariableInfo(string wvalname, out CalculatedVariable vinfo);
+        void StoreState<T>(string owner, string name, T state);
+        bool RecallState<T>(string owner, string name, out T state);
     }
 
     public class AutomationActionParameter

@@ -507,14 +507,21 @@ namespace Xenon.Compiler.AST
 
                             foreach (var ass in AppDomain.CurrentDomain.GetAssemblies().OrderBy(x => x.FullName))
                             {
-                                foreach (Type t in ass.GetTypes())
+                                try
                                 {
-                                    if (t.IsClass && !t.IsAbstract && t.GetCustomAttribute<ExposesWatchableVariablesAttribute>() != null)
+                                    foreach (Type t in ass.GetTypes())
                                     {
-                                        var instance = Activator.CreateInstance(t);
-                                        var props = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(instance);
-                                        suggestions.AddRange(props.Where(x => validTypes.Contains(x.Value.TypeInfo)).Select(x => (x.Key, $"Exposed State Type<{x.Value.TypeInfo}>", index)));
+                                        if (t.IsClass && !t.IsAbstract && t.GetCustomAttribute<ExposesWatchableVariablesAttribute>() != null)
+                                        {
+                                            var instance = Activator.CreateInstance(t);
+                                            var props = VariableAttributeFinderHelpers.FindPropertiesExposedAsVariables(instance);
+                                            suggestions.AddRange(props.Where(x => validTypes.Contains(x.Value.TypeInfo)).Select(x => (x.Key, $"Exposed State Type<{x.Value.TypeInfo}>", index)));
+                                        }
                                     }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Debugger.Break();
                                 }
                             }
                             break;

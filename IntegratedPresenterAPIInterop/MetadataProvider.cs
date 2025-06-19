@@ -129,6 +129,15 @@ namespace IntegratedPresenterAPIInterop
                 new AutomationActionParameterMetadata("CondName", AutomationActionArgType.String),
             }),
 
+            [AutomationActions.CaptureSwitcherState] = new AutomationActionMetadata(AutomationActions.CaptureSwitcherState, "CaptureSwitcherState", new List<AutomationActionParameterMetadata>
+            {
+                new AutomationActionParameterMetadata("VarName", AutomationActionArgType.String, ExpectedVariableContents.NONE),
+            }),
+            [AutomationActions.ApplySwitcherState] = new AutomationActionMetadata(AutomationActions.ApplySwitcherState, "ApplySwitcherState", new List<AutomationActionParameterMetadata>
+            {
+                new AutomationActionParameterMetadata("VarName", AutomationActionArgType.String, ExpectedVariableContents.NONE),
+            }),
+
 
             [AutomationActions.WatchStateBoolVal] = new AutomationActionMetadata(AutomationActions.WatchSwitcherStateBoolVal, "WatchStateBoolVal", new List<AutomationActionParameterMetadata>
             {
@@ -154,6 +163,10 @@ namespace IntegratedPresenterAPIInterop
             {
                 new AutomationActionParameterMetadata("VarName", AutomationActionArgType.String),
                 new AutomationActionParameterMetadata("VarVal", AutomationActionArgType.String),
+            }),
+            [AutomationActions.PurgeComputedVal] = new AutomationActionMetadata(AutomationActions.PurgeComputedVal, "PurgeComputedVal", new List<AutomationActionParameterMetadata>
+            {
+                new AutomationActionParameterMetadata("VarName", AutomationActionArgType.String),
             }),
             [AutomationActions.SetupComputedTrack] = new AutomationActionMetadata(AutomationActions.SetupComputedTrack, "SetupTrackVal", new List<AutomationActionParameterMetadata>
             {

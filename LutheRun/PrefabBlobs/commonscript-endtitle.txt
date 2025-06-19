@@ -1,0 +1,63 @@
+﻿#scripted
+{
+
+$>first=#callscript{scriptname(pip-postlude)}
+$>last=#callscript{scriptname(end-fade)}
+
+
+$>#scope(endpage-live)
+$>{
+$>$>#var("customdraw.Layout", "Xenon.CommonColored::EndPage-Live")
+
+
+$>$>#customdraw
+$>$>{
+$>$>$>asset=("HCLogo-white", "fg")
+
+$>$>$>/// </MANUAL_UPDATE name='EndPage Service Title'>
+$>$>$>text={$SERVICETITLE}
+
+$>$>$>text={HOLY CROSS LUTHERAN CHURCH}
+$>$>$>text={KITCHENER ON.}
+$>$>$>text={Website}
+$>$>$>text={https:\//holycrosskitchener.org}
+$>$>$>text={Previous Services}
+$>$>$>text={https:\//holycrosskitchener.org/ worship-service-videos}
+$>$>$>text={YouTube}
+$>$>$>text={Holy Cross Audio Video}
+
+
+$>$>$>/// </MANUAL_UPDATE name='EndPage Postlude Title'>
+$>$>$>text={TITLE}
+$>$>$>/// </MANUAL_UPDATE name='EndPage Postlude Musician/Composer'>
+$>$>$>text={COMPOSER}
+
+$>$>}
+
+$>}
+
+$>#scope(endpage-static)
+$>{
+$>$>#var("customdraw.Layout", "Xenon.CommonColored::EndPage")
+
+$>$>#customdraw
+$>$>{
+$>$>$>asset=("HCFront", "fg")
+$>$>$>asset=("HCLogo-white", "fg")
+
+$>$>$>/// </MANUAL_UPDATE name='EndPage Service Title'>
+$>$>$>text={$SERVICETITLE}
+
+$>$>$>text={HOLY CROSS LUTHERAN CHURCH}
+$>$>$>text={KITCHENER ON.}
+$>$>$>text={Website}
+$>$>$>text={https:\//holycrosskitchener.org}
+$>$>$>text={Previous Services}
+$>$>$>text={https:\//holycrosskitchener.org/ worship-service-videos}
+$>$>$>text={YouTube}
+$>$>$>text={Holy Cross Audio Video}
+$>$>}
+
+$>}
+
+}

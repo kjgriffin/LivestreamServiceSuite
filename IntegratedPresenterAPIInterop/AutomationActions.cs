@@ -76,8 +76,12 @@
 
         InitComputedVal,
         WriteComputedVal,
+        PurgeComputedVal,
         SetupComputedTrack,
         ReleaseComputedTrack,
+
+        CaptureSwitcherState,
+        ApplySwitcherState,
 
         WatchStateBoolVal,
         WatchStateIntVal,

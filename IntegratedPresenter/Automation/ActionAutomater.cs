@@ -1,4 +1,6 @@
-﻿using CCUI_UI;
+﻿using ATEMSharedState.SwitcherState;
+
+using CCUI_UI;
 
 using Configurations.SwitcherConfig;
 
@@ -531,6 +533,26 @@ namespace Integrated_Presenter.Automation
                         }
                         break;
 
+                    case AutomationActions.CaptureSwitcherState:
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var stateValName))
+                        {
+                            var qname = CalculatedVariable.ParseForQualifiedName(stateValName, requesterID);
+                            var state = _switcherProvider.switcherState.Copy();
+                            _variableManager.StoreState(qname.prefix, qname.name, state);
+                        }
+                        break;
+                    case AutomationActions.ApplySwitcherState:
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var captureName))
+                        {
+                            var qname = CalculatedVariable.ParseForQualifiedName(captureName, requesterID);
+                            if (_variableManager.RecallState<BMDSwitcherState>(qname.prefix, qname.name, out var state))
+                            {
+                                _switcherProvider.switcherManager.ApplyState(state);
+                            }
+                        }
+                        break;
+
+
                     case AutomationActions.WatchSwitcherStateBoolVal:
                     case AutomationActions.WatchSwitcherStateIntVal:
                     case AutomationActions.WatchStateBoolVal:
@@ -554,7 +576,13 @@ namespace Integrated_Presenter.Automation
                             }
                             if (atype != AutomationActionArgType.UNKNOWN_TYPE && iinitparam.IsLiteral)
                             {
-                                _variableManager.InitializeVariable(requesterID, ivalname, atype, (string)iinitparam.LiteralValue);
+                                // scope name correctly to allow global variables
+                                // pretty sure I made variables globally accessiable... so this is more for managing lifecycle
+                                // because variables defined on a panel only exist for the lifetime of the panel
+                                // so this allows pannels to setup variables that outlive the panel (i.e. master panel setups something that may be needed on a sub-panel, or in the presentation after having loaded a different panel in the meanwhile)
+                                // should be backwards compatible with scripts written before I figured this hack out
+                                var vname = CalculatedVariable.ParseForQualifiedName(ivalname, requesterID);
+                                _variableManager.InitializeVariable(vname.prefix, vname.name, atype, (string)iinitparam.LiteralValue);
                             }
                         }
                         break;
@@ -612,6 +640,14 @@ namespace Integrated_Presenter.Automation
                             }
                         }
                         break;
+                    case AutomationActions.PurgeComputedVal:
+                        if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var pvalname))
+                        {
+                            var qualifiedName = CalculatedVariable.ParseForQualifiedName(pvalname, requesterID);
+                            _variableManager.PurgeVariable(qualifiedName.prefix, qualifiedName.name);
+                        }
+                        break;
+
                     case AutomationActions.SetupComputedTrack:
                         if (task.TryEvaluateAutomationActionParmeter<string>("VarName", _variableManager, out var tvalname) && task.TryGetAutomationActionParmeter("TrackTarget", out var tparam))
                         {

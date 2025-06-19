@@ -109,6 +109,9 @@ namespace LutheRun.Parsers
         [BoolSetting]
         public bool ExpandSermonWithAutoShutdown { get; internal set; } = true;
 
+        [BoolSetting]
+        public bool CallCommonScripts { get; internal set; } = true;
+
         public string ServiceThemeLib { get; set; } = "Xenon.CommonColored";
         public string ServiceThemeLib_Anthems { get; set; } = "Xenon.Anthems";
 

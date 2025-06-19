@@ -1,0 +1,8 @@
+﻿#scripted
+{
+
+$>first=#callscript{scriptname(load-master-panel)}
+
+$>$COPYTITLE
+
+}

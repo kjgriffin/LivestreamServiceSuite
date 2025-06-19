@@ -70,17 +70,21 @@ namespace LutheRun.Elements.LSB
 
             if (ctest.Contains("bells"))
             {
-                foreach (var line in ExternalPrefabGenerator.BellsCommand(indentSpace).Split(Environment.NewLine))
+                if (lSBImportOptions.CallCommonScripts)
                 {
-                    sb.AppendLine(line.Indent(indentDepth, indentSpace));
+                    sb.AppendLine("/// </MANUAL_UPDATE name='bells-filename'>".Indent(indentDepth, indentSpace));
+                    sb.AppendLine("#callscript{scriptname(worship-bells)parameter(BellsFile){Resource_Bells.wav}}".Indent(indentDepth, indentSpace));
+                }
+                else
+                {
+                    foreach (var line in ExternalPrefabGenerator.BellsCommand(indentSpace).Split(Environment.NewLine))
+                    {
+                        sb.AppendLine(line.Indent(indentDepth, indentSpace));
+                    }
                 }
             }
             else if (ctest.Contains("prelude"))
             {
-                //sb.AppendLine("/// </MANUAL_UPDATE name='prelude'>".Indent(indentDepth, indentSpace));
-                //sb.AppendLine("//> INSERTION POINT: prelude".Indent(indentDepth, indentSpace));
-                //sb.AppendLine($"#2title(\"{Caption}\", \"{SubCaption}\"){PostsetCmd}".Indent(indentDepth, indentSpace));
-
                 sb.AppendLine("#scope(prelude)".Indent(indentDepth, indentSpace));
                 sb.AppendLine("{".Indent(indentDepth, indentSpace));
                 indentDepth++;
@@ -88,7 +92,7 @@ namespace LutheRun.Elements.LSB
                 sb.AppendLine("#html".Indent(indentDepth, indentSpace));
                 sb.AppendLine("{".Indent(indentDepth, indentSpace));
                 indentDepth++;
-                sb.AppendLine("/// </MANUAL_UPDATE name='prelude'".Indent(indentDepth, indentSpace));
+                sb.AppendLine("/// </MANUAL_UPDATE name='prelude'>".Indent(indentDepth, indentSpace));
                 sb.AppendLine($"text[name]{{{Caption}}}".Indent(indentDepth, indentSpace));
                 sb.AppendLine($"text[band]{{{SubCaption}}}{PostsetCmd}".Indent(indentDepth, indentSpace));
                 indentDepth--;
@@ -107,7 +111,8 @@ namespace LutheRun.Elements.LSB
             {
                 if (lSBImportOptions.RunWithSubPanels)
                 {
-                    string blobtext = ExternalPrefabGenerator.PrepareBlob("SubPaneledAnthemTemplate");
+                    string file = lSBImportOptions.CallCommonScripts ? "commonscript-paneled-anthem" : "SubPaneledAnthemTemplate";
+                    string blobtext = ExternalPrefabGenerator.PrepareBlob(file);
 
                     int anthemID = -1;
                     if (fullInfo.OutOfBandInfo.TryGetValue("anthemUID", out object oanthemid))
@@ -153,7 +158,8 @@ namespace LutheRun.Elements.LSB
             {
                 if (lSBImportOptions.PreachWithHTMLTitles)
                 {
-                    string blobtext = ExternalPrefabGenerator.PrepareBlob("SermonHTML");
+                    string file = lSBImportOptions.CallCommonScripts ? "commonscript-sermon" : "SermonHTML";
+                    string blobtext = ExternalPrefabGenerator.PrepareBlob(file);
                     blobtext = Regex.Replace(blobtext, Regex.Escape("$>"), "".PadLeft(indentSpace));
                     sb.AppendLine(blobtext.IndentBlock(indentDepth, indentSpace));
                 }
@@ -166,7 +172,8 @@ namespace LutheRun.Elements.LSB
             }
             else if (ctest.Contains("announcements") || ctest.Contains("offering"))
             {
-                string blobtext = ExternalPrefabGenerator.PrepareBlob("PaneledAnnouncementsTemplate");
+                string file = lSBImportOptions.CallCommonScripts ? "commonscript-announcements" : "PaneledAnnouncementsTemplate";
+                string blobtext = ExternalPrefabGenerator.PrepareBlob(file);
 
                 blobtext = Regex.Replace(blobtext, Regex.Escape("$>"), "".PadLeft(indentSpace));
                 //blobtext = Regex.Replace(blobtext, Regex.Escape("$ANTHEMID"), fullInfo.ElementOrder.ToString());

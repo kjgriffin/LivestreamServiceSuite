@@ -189,6 +189,5 @@ namespace ATEMSharedState.SwitcherState
             };
 
         }
-
     }
 }

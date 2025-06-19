@@ -1,0 +1,5 @@
+﻿
+#scripted
+{
+$>first=#callscript{scriptname(pip-setup)}
+$>duplast=#callscript{scriptname(pip-teardown-auto)}

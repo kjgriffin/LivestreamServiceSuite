@@ -1,0 +1,15 @@
+﻿#scope(upnext-hymn)
+{
+$>#var("html.Layout", "Xenon.HymnTitles::UpNext")
+$>#scripted
+$>{
+$>$>first=#callscript{scriptname(upnext-first)}
+$>$>duplast=#callscript{scriptname(upnext-last)}
+
+$>$>#html
+$>$>{
+$>$>$>text[annotation]{$ANNOTATION}
+$>$>$>text[hymn]{$HYMN}
+$>$>}$POSTSET
+$>}
+}

@@ -671,5 +671,11 @@ namespace IntegratedPresenter.BMDSwitcher.Mock
             (mockMultiviewer as BetterMockDriver)?.UpdateCCUConfig(cfg);
         }
 
+        public void ApplyState(BMDSwitcherState state)
+        {
+            _logger.Info($"[Mock SW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            _state = state;
+            SwitcherStateChanged?.Invoke(_state);
+        }
     }
 }

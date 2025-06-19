@@ -155,7 +155,7 @@ namespace LutheRun.Generators
 
             try
             {
-                Debug.WriteLine($"Fetching image {panelLookupURL} from web.");
+                Debug.WriteLine($"Fetching resource {panelLookupURL} from web.");
                 var resp = WebHelpers.httpClient.GetAsync(panelLookupURL).Result?.Content;
                 var json = resp.ReadAsStringAsync().Result;
                 res = JsonSerializer.Deserialize<List<PanelResourceMap>>(json);
@@ -170,7 +170,7 @@ namespace LutheRun.Generators
             {
                 try
                 {
-                    Debug.WriteLine($"Fetching image {resource.url} from web.");
+                    Debug.WriteLine($"Fetching resource {resource.url} from web.");
                     var resp = WebHelpers.httpClient.GetAsync(resource.url).Result?.Content;
                     var str = resp.ReadAsStringAsync().Result.ReplaceLineEndings();
                     result.Add((resource.filename, str));

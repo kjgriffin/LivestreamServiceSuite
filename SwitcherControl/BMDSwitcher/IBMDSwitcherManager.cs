@@ -65,5 +65,6 @@ namespace SwitcherControl.BMDSwitcher
 
         void Close();
         void ConfigureSwitcher(BMDSwitcherConfigSettings config, bool hardUpdate = true);
+        void ApplyState(BMDSwitcherState state);
     }
 }

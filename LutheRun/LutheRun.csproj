@@ -41,8 +41,17 @@
   <ItemGroup>
     <EmbeddedResource Include="PrefabBlobs\AllSubPanels.txt" />
     <EmbeddedResource Include="PrefabBlobs\AnthemPanel.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-title-panel.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-endtitle.txt" />
     <EmbeddedResource Include="PrefabBlobs\Mk2CopyTitle-PanelWrapper.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-announcements.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-pip-reading.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-pip-creed.txt" />
     <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Creed-html.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-paneled-anthem.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-sermon.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-pip-hymn-auto.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-pip-hymn-manual.txt" />
     <EmbeddedResource Include="PrefabBlobs\SubPaneledAnthemTemplate.txt" />
     <EmbeddedResource Include="PrefabBlobs\SermonHTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\ApostlesCreedHTML.txt" />
@@ -71,7 +80,9 @@
     <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Hymn-fast.txt" />
     <EmbeddedResource Include="PrefabBlobs\PrePIPScriptIntroBlock_Hymn-std.txt" />
     <EmbeddedResource Include="PrefabBlobs\PrePIPScriptBlock_Hymn-std.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-upnext-fast.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNextFast_HTML.txt" />
+    <EmbeddedResource Include="PrefabBlobs\commonscript-upnext-full.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNext_Numbered.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNext_HTML.txt" />
     <EmbeddedResource Include="PrefabBlobs\UpNext_UnNumbered.txt" />

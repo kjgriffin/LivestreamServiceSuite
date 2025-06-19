@@ -212,26 +212,29 @@ namespace LutheRun
             foreach (var element in service)
             {
                 // need to add some meat onto anthems
-                if (options.ExpandAnthemsForAutomation && (element.LSBElement is LSBElementCaption) && (element.LSBElement as LSBElementCaption).Caption.ToLower().Contains("anthem"))
+                if ((element.LSBElement is LSBElementCaption) && (element.LSBElement as LSBElementCaption).Caption.ToLower().Contains("anthem"))
                 {
-                    var cmdtxt = ExternalPrefabGenerator.PrepareBlob("AnthemPanel");
-                    cmdtxt = Regex.Replace(cmdtxt, Regex.Escape("$ANTHEMID"), (anthemUID).ToString());
-                    newService.Add(new ParsedLSBElement
+                    if (options.ExpandAnthemsForAutomation)
                     {
-                        LSBElement = new ExternalPrefab(cmdtxt, "anthem-intro", BlockType.ANTHEM_RESOLVED) { IndentReplacementIndentifier = "$>" },
-                        AddedByInference = true,
-                        Ancestory = element.Ancestory,
-                        BlockType = BlockType.ANTHEM_RESOLVED,
-                        CameraUse = new CameraUsage(),
-                        ConsiderForServicification = true,
-                        ElementOrder = 0,
-                        FilterFromOutput = false,
-                        Generator = "ElementExpandification:: ANTHEM INTRO",
-                        HasWingsForFlighPlanning = true,
-                        ParentSourceElement = element.ParentSourceElement,
-                        SourceElements = element.SourceElements,
-                        XenonCode = "TEST...",
-                    });
+                        var cmdtxt = ExternalPrefabGenerator.PrepareBlob("AnthemPanel");
+                        cmdtxt = Regex.Replace(cmdtxt, Regex.Escape("$ANTHEMID"), (anthemUID).ToString());
+                        newService.Add(new ParsedLSBElement
+                        {
+                            LSBElement = new ExternalPrefab(cmdtxt, "anthem-intro", BlockType.ANTHEM_RESOLVED) { IndentReplacementIndentifier = "$>" },
+                            AddedByInference = true,
+                            Ancestory = element.Ancestory,
+                            BlockType = BlockType.ANTHEM_RESOLVED,
+                            CameraUse = new CameraUsage(),
+                            ConsiderForServicification = true,
+                            ElementOrder = 0,
+                            FilterFromOutput = false,
+                            Generator = "ElementExpandification:: ANTHEM INTRO",
+                            HasWingsForFlighPlanning = true,
+                            ParentSourceElement = element.ParentSourceElement,
+                            SourceElements = element.SourceElements,
+                            XenonCode = "TEST...",
+                        });
+                    }
                     // modify element to have it's id
                     element.OutOfBandInfo["anthemUID"] = anthemUID;
                     newService.Add(element);
@@ -689,7 +692,7 @@ namespace LutheRun
 
                     if (dointro)
                     {
-                        if (ExternalPrefabGenerator.BuildHymnIntroSlides(element, options.UseUpNextForHymns, options.FasterCommunionHymnIntros, out var slide))
+                        if (ExternalPrefabGenerator.BuildHymnIntroSlides(element, options, out var slide))
                         {
                             // we can use the new up-next tabs if we have a hymn #
                             newservice.Add(new ParsedLSBElement
@@ -709,15 +712,17 @@ namespace LutheRun
 
                 if (options.WrapConsecuitivePackages)
                 {
+                    string wrappername = "";
                     if (element.LSBElement is LSBElementReadingComplex && options.FullPackageReadings && !element.FilterFromOutput && (element.LSBElement as LSBElementReadingComplex)?.ShouldBePackaged(options, out _) == true)
                     {
                         // assume the first consecutive reading element setups the block 
                         if (prevelement.LSBElement is not LSBElementReadingComplex || (prevelement.LSBElement as LSBElementReadingComplex)?.ShouldBePackaged(options, out _) == false)
                         {
                             // add the reading prefab intro block
+                            wrappername = options.CallCommonScripts ? "commonscript-pip-reading" : "PIPReadingScriptIntroBlock";
                             newservice.Add(new ParsedLSBElement
                             {
-                                LSBElement = ScriptedWrapper.FromBlob(BlockType.READING, "PIPReadingScriptIntroBlock"),
+                                LSBElement = ScriptedWrapper.FromBlob(BlockType.READING, wrappername),
                                 AddedByInference = true,
                                 Generator = "Next element is [reading]",
                                 ParentSourceElement = element.ParentSourceElement,
@@ -740,7 +745,7 @@ namespace LutheRun
                                 ["$POSTCAM"] = isCommunionHymn ? "ORGAN" : "CENTER",
                             };
 
-                            string wrappername = "PrePIPScriptIntroBlock_Hymn-std";
+                            wrappername = options.CallCommonScripts ? "commonscript-pip-hymn-manual" : "PrePIPScriptIntroBlock_Hymn-std";
 
                             if (options.RunPIPHymnsLikeAProWithoutStutters)
                             {
@@ -750,7 +755,7 @@ namespace LutheRun
                                 }
                                 else
                                 {
-                                    wrappername = "PrePIPScriptIntroBlock_Hymn-fast";
+                                    wrappername = options.CallCommonScripts ? "commonscript-pip-hymn-auto" : "PrePIPScriptIntroBlock_Hymn-fast";
                                 }
                             }
 

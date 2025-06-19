@@ -1,0 +1,2 @@
+﻿first=#callscript{scriptname(pip-setup)parameter(PIPFill){%cam.$PIPCAM%}}
+duplast=#callscript{scriptname(pip-teardown-auto)parameter(PostCam){%cam.$POSTCAM%}}

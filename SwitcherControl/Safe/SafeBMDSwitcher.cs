@@ -1073,6 +1073,57 @@ namespace SwitcherControl.Safe
             chromaParameters.SetNarrow(_config.USKSettings.ChromaSettings.Narrow);
 
         }
+        private void ApplyUSK1ChromaSettings(BMDUSKChromaSettings settings)
+        {
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+
+            IBMDSwitcherKeyChromaParameters chromaParameters = (IBMDSwitcherKeyChromaParameters)_BMDSwitcherUpstreamKey1;
+
+            chromaParameters.SetHue(settings.Hue);
+            chromaParameters.SetGain(settings.Gain);
+            chromaParameters.SetYSuppress(settings.YSuppress);
+            chromaParameters.SetLift(settings.Lift);
+            chromaParameters.SetNarrow(settings.Narrow);
+        }
+
+
+        private void ApplyStateToSwitcher(BMDSwitcherState state)
+        {
+            PerformPresetSelect((int)state.PresetID);
+            PerformProgramSelect((int)state.ProgramID);
+            PerformAuxSelect((int)state.AuxID);
+            PerformSetDSK1(state.DSK1OnAir);
+            PerformSetDSK2(state.DSK1OnAir);
+            PerformSetTieDSK1(state.DSK1Tie);
+            PerformSetTieDSK2(state.DSK2Tie);
+            if (!_state.FTB && state.FTB)
+            {
+                PerformToggleFTB();
+            }
+            PerformUSK1FillSourceSelect((int)state.USK1FillSource);
+            PerformSetNextTransition(state.TransNextBackground, state.TransNextKey1);
+            ApplyUSK1ChromaSettings(state.ChromaSettings);
+            ApplyUSK1PATTERNSettings(state.PATTERNSettings);
+            SetPIPPosition(state.DVESettings);
+            SetUSK1State(state.USK1OnAir);
+            switch ((_BMDSwitcherKeyType)state.USK1KeyType)
+            {
+                case _BMDSwitcherKeyType.bmdSwitcherKeyTypeLuma:
+                    break;
+                case _BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma:
+                    SetUSK1TypeChroma();
+                    break;
+                case _BMDSwitcherKeyType.bmdSwitcherKeyTypePattern:
+                    SetUSK1TypePATTERN();
+                    break;
+                case _BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE:
+                    SetUSK1TypeDVE();
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private void ForceStateUpdate_ChromaSettings()
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -1343,6 +1394,12 @@ namespace SwitcherControl.Safe
             //_BMDSwitcherUpstreamKey1.set
         }
 
+        private void PerformSetDSK1(bool on)
+        {
+            var val = on ? 1 : 0;
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {on}");
+            _BMDSwitcherDownstreamKey1.SetOnAir(val);
+        }
         private void PerformToggleDSK1()
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {(_state.DSK1OnAir ? 0 : 1)}");
@@ -1372,6 +1429,12 @@ namespace SwitcherControl.Safe
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} 0");
             _BMDSwitcherDownstreamKey1.PerformAutoTransitionInDirection(0);
+        }
+        private void PerformSetDSK2(bool on)
+        {
+            var val = on ? 1 : 0;
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()} {on}");
+            _BMDSwitcherDownstreamKey1.SetOnAir(val);
         }
         private void PerformToggleDSK2()
         {
@@ -1523,6 +1586,22 @@ namespace SwitcherControl.Safe
             _BMDSwitcherTransitionParameters.SetNextTransitionSelection((_BMDSwitcherTransitionSelection)val);
         }
 
+        private void PerformSetNextTransition(bool nextBKDG, bool nextUSK1)
+        {
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            _BMDSwitcherTransitionSelection val = 0;
+            if (nextBKDG)
+            {
+                val |= _BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionBackground;
+            }
+            if (nextUSK1)
+            {
+                val |= _BMDSwitcherTransitionSelection.bmdSwitcherTransitionSelectionKey1;
+            }
+
+            _BMDSwitcherTransitionParameters.SetNextTransitionSelection(val);
+        }
+
         private void ConfigureUSK1PATTERNSettings(BMDUSKPATTERNSettings pattern)
         {
             _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
@@ -1546,6 +1625,29 @@ namespace SwitcherControl.Safe
 
             _BMDSwitcherFlyKeyParamters.SetFly(1);
         }
+
+        private void ApplyUSK1PATTERNSettings(BMDUSKPATTERNSettings pattern)
+        {
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            IBMDSwitcherKeyPatternParameters patternParameters = (IBMDSwitcherKeyPatternParameters)_BMDSwitcherUpstreamKey1;
+
+            if (!BMDUSKPATTERNSettings.Patterns.TryGetValue(pattern.PatternType, out var ptype))
+            {
+                ptype = BMDUSKPATTERNSettings.DEFAULTPATTERNTYPE;
+            }
+
+            patternParameters.SetPattern(ptype);
+
+            patternParameters.SetInverse(pattern.Inverted ? 1 : 0);
+            patternParameters.SetVerticalOffset(pattern.YOffset);
+            patternParameters.SetHorizontalOffset(pattern.XOffset);
+            patternParameters.SetSoftness(pattern.Softness);
+            patternParameters.SetSize(pattern.Size);
+            patternParameters.SetSymmetry(pattern.Symmetry);
+
+            _BMDSwitcherFlyKeyParamters.SetFly(1);
+        }
+
 
         private void SetPIPPosition(BMDUSKDVESettings settings)
         {
@@ -1668,6 +1770,12 @@ namespace SwitcherControl.Safe
             ConfigureUSKforChroma();
 
             ForceStateUpdate();
+        }
+
+        private void SetUSK1State(bool OnAir)
+        {
+            _logger?.Debug($"[BMD HW] {System.Reflection.MethodBase.GetCurrentMethod()}");
+            _BMDSwitcherUpstreamKey1.SetOnAir(OnAir ? 1 : 0);
         }
 
         private void PerformOnAirUSK1()
@@ -1984,6 +2092,11 @@ namespace SwitcherControl.Safe
 
             // TODO: is this right??
             _executor.Stop();
+        }
+
+        void IBMDSwitcherManager.ApplyState(BMDSwitcherState state)
+        {
+            _executor.EnqueueWork(() => ApplyStateToSwitcher(state));
         }
 
 

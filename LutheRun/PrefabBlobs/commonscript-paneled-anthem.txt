@@ -1,0 +1,15 @@
+﻿#scope(auto-id$ANTHEMID-anthem)
+{
+$>#var("html.Layout", "Xenon.Anthems::StdTitle")
+
+$>#scripted
+$>{
+$>$>first=#callscript{scriptname(anthem)}
+$>$>/// </MANUAL_UPDATE name='anthem $ANTHEMID'>
+$>$>#html
+$>$>{
+$>$>$>text[name]{}
+$>$>$>text[band]{}
+$>$>}
+$>}
+}

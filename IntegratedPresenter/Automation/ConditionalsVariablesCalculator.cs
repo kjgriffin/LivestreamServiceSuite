@@ -16,6 +16,14 @@ using VariableMarkupAttributes.Attributes;
 
 namespace Integrated_Presenter.Automation
 {
+    internal class StateObject
+    {
+        public object Value { get; set; }
+        public string Name { get; set; }
+        public string Owner { get; set; }
+        public Type Type { get; set; }
+    }
+
     internal class ConditionalsVariablesCalculator : IRaiseConditionsChanged, ICalculatedVariableManager
     {
         IPresentationProvider _pres;
@@ -26,6 +34,7 @@ namespace Integrated_Presenter.Automation
 
 
         Dictionary<string, CalculatedVariable> calculatedVariables = new Dictionary<string, CalculatedVariable>();
+        Dictionary<string, StateObject> states = new Dictionary<string, StateObject>();
 
         public ConditionalsVariablesCalculator(IPresentationProvider pres, ISwitcherStateProvider switcherState, IUserConditionProvider userConditions)
         {
@@ -165,6 +174,11 @@ namespace Integrated_Presenter.Automation
             {
                 calculatedVariables.Remove(item);
             }
+            keys = states.Values.Where(x => x.Owner == owner).Select(x => x.Name).ToList();
+            foreach (var item in keys)
+            {
+                states.Remove(item);
+            }
         }
 
         private void UpdateCalculatedVariables()
@@ -293,6 +307,37 @@ namespace Integrated_Presenter.Automation
         public bool TryGetVariableInfo(string wvalname, out CalculatedVariable vinfo)
         {
             return calculatedVariables.TryGetValue(wvalname, out vinfo);
+        }
+
+        public void PurgeVariable(string owner, string name)
+        {
+            if (calculatedVariables.TryGetValue(name, out var vCalc) && vCalc.Owner == owner)
+            {
+                calculatedVariables.Remove(name);
+            }
+        }
+
+        public void StoreState<T>(string owner, string name, T state)
+        {
+            StateObject oState = new StateObject
+            {
+                Name = name,
+                Owner = owner,
+                Type = typeof(T),
+                Value = state,
+            };
+            states[name] = oState;
+        }
+
+        public bool RecallState<T>(string owner, string name, out T state)
+        {
+            state = default(T);
+            if (states.TryGetValue(name, out var sobj) && sobj?.Owner == owner && sobj.Type == typeof(T))
+            {
+                state = (T)sobj.Value;
+                return true;
+            }
+            return false;
         }
     }
 

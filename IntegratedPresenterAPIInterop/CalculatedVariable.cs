@@ -1,4 +1,6 @@
-﻿using VariableMarkupAttributes;
+﻿using System.Text.RegularExpressions;
+
+using VariableMarkupAttributes;
 
 namespace IntegratedPresenterAPIInterop
 {
@@ -11,6 +13,23 @@ namespace IntegratedPresenterAPIInterop
         public bool IsTracking { get; set; }
         public string VSourcePath { get; set; }
         public string Owner { get; set; }
+
+        public static (string prefix, string name) ParseForQualifiedName(string name, string requester)
+        {
+            var match = Regex.Match(name, @"((?<prefix>.*)\.)?(?<name>.+)");
+            var prefix = requester;
+            var vname = name;
+            if (match.Success)
+            {
+                prefix = match.Groups["prefix"].Value;
+                vname = match.Groups["name"].Value;
+            }
+            if (prefix == "this")
+            {
+                prefix = requester;
+            }
+            return (prefix, vname);
+        }
 
         public static dynamic ParseDynamicVariableValue(AutomationActionArgType type, dynamic valueSource)
         {

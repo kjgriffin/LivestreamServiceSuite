@@ -1,0 +1,20 @@
+﻿#scope(Sermon)
+{
+$>#var("html.Layout", "Xenon.Sermons::html.SermonTitleBar")
+
+$>#scripted
+$>{
+
+$>$>first=#callscript{scriptname(sermon)}
+
+$>$>#html
+$>$>{
+$>$>$>/// </MANUAL_UPDATE name='preacher'>
+$>$>$>text[preacher]{PREACHER}
+$>$>$>/// </MANUAL_UPDATE name='sermon title'>
+$>$>$>text[title]{SERMON_TITLE}
+$>$>$>/// </MANUAL_UPDATE name='sermon text'>
+$>$>$>text[reference]{REFERENCE}
+$>$>}
+$>}
+}
