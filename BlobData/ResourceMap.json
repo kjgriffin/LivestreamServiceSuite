@@ -14,5 +14,13 @@
   {
     "url": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/panel-defs/BlobData/SermonSubPanel.xenon",
     "filename": "SermonPanel.xenon"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/panel-defs/BlobData/HymnPanel.xenon",
+    "filename": "HymnPanel.xenon"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/panel-defs/BlobData/CommonScripts.xenon",
+    "filename": "CommonScripts.xenon"
   }
 ]
