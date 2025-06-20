@@ -40,6 +40,7 @@
         
         cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.piano-side-bar-gfx.0%, gfx-insert);
         cmd:InitComputedVal(global._SLIDERESUME, int, 0);
+        cmd:InitComputedVal(global._SLIDERESUMEAFTER, int, 0);
     
         cmd:WatchSwitcherStateIntVal(ProgramID, %cam.PULPIT%, pulpitOnAir);
         cmd:WatchSwitcherStateIntVal(ProgramID, %cam.CENTER%, centerOnAir);
@@ -91,6 +92,8 @@
         fire={
             <!gfx-insert>cmd:SetupTrackVal(_SLIDERESUME, CurrentSlide0Index);
             <!gfx-insert>cmd:ReleaseTackVal(_SLIDERESUME);
+            <!gfx-insert>cmd:SetupTrackVal(_SLIDERESUMEAFTER, CurrentSlide);
+            <!gfx-insert>cmd:ReleaseTackVal(_SLIDERESUMEAFTER);
             <!gfx-insert>cmd:CaptureSwitcherState(global.pre-insert-state);
             cmd:USK1Off;
             cmd:DSK1Off;
@@ -103,6 +106,7 @@
             cmd:AutoTrans;
             cmd:Delay(1200);
             cmd:DSK1TieOff;
+            cmd:SetNextSlideTarget($_SLIDERESUMEAFTER);
         }
     }
     
