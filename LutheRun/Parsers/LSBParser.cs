@@ -140,6 +140,23 @@ namespace LutheRun.Parsers
             });
         }
 
+        internal static bool TryParseLSBServiceElementAsCaption(IElement element, out ParsedLSBElement caption, Guid parTrack, string parGen = "", IElement parent = null)
+        {
+            caption = null;
+            if (element?.ClassList.Contains("caption") == true)
+            {
+                caption = new ParsedLSBElement
+                {
+                    LSBElement = LSBElementCaption.Parse(element),
+                    Generator = $"{parGen}; (E) => E.C:caption",
+                    SourceElements = element.ItemAsEnumerable(),
+                    ParentSourceElement = parent,
+                    Ancestory = parTrack,
+                };
+                return true;
+            }
+            return false;
+        }
 
         internal bool _ParseLSBServiceElement(IElement element, Guid parTrack, IElement parent = null, string parGen = "[Top LSB Element]")
         {
@@ -147,16 +164,9 @@ namespace LutheRun.Parsers
             Guid p = parTrack == Guid.Empty ? Guid.NewGuid() : parTrack;
             var parsed = false;
             List<string> rejected = new List<string>();
-            if (element.ClassList.Contains("caption"))
+            if (TryParseLSBServiceElementAsCaption(element, out var caption, p, parGen, parent))
             {
-                ServiceElements.Add(new ParsedLSBElement
-                {
-                    LSBElement = LSBElementCaption.Parse(element),
-                    Generator = $"{parGen}; (E) => E.C:caption",
-                    SourceElements = element.ItemAsEnumerable(),
-                    ParentSourceElement = parent,
-                    Ancestory = p,
-                });
+                ServiceElements.Add(caption);
                 return true;
             }
             else if (element.ClassList.Contains("heading"))
@@ -356,7 +366,7 @@ namespace LutheRun.Parsers
             var anySuccess = false;
             foreach (var content in element.Children.Where(x => x.LocalName == "lsb-content"))
             {
-                var parsed = _ParseLSBContentIntoLiturgy(content, $"{parGen}; (E) => E.Children.Where(c=>c.LN=lsb-content) => c", parent, p);
+                var parsed = _ParseLSBContentIntoLiturgy(content, $"{parGen}; (E) => E.Children.Where(c=>c.LN=lsb-content) => c", element, p);
                 anySuccess |= parsed;
             }
             return anySuccess;

@@ -321,6 +321,18 @@ namespace LutheRun
                             removedRoots.Add(elem.Ancestory);
                         }
                     }
+
+                    // handles' the case where in a static selected group where the top-level caption marks 8:30
+                    // special case this to not be too greedy about fuzzy searching any inner text for 8:30
+                    if (elem?.ParentSourceElement?.FirstElementChild?.ClassList.Contains("lsb-caption") == true)
+                    {
+                        if (elem?.ParentSourceElement?.TextContent?.ToLower().Contains("8:30") == true)
+                        {
+                            // mark it for removal
+                            elem.FilterFromOutput = true;
+                            removedRoots.Add(elem.Ancestory);
+                        }
+                    }
                 }
 
                 // remove everything with a parent listed as being removed

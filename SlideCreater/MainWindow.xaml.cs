@@ -2271,9 +2271,9 @@ namespace SlideCreater
             if (wizzard.ShowDialog() == true)
             {
                 // download source
-                var sourceTask = Xenon.Helpers.WebHelpers.DownloadText("https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/bible-class-blob-data/blob-data/XenonTemplate");
-                var libTask = Xenon.Helpers.WebHelpers.DownloadText("https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/bible-class-blob-data/blob-data/LayoutLib");
-                var panelTask = Xenon.Helpers.WebHelpers.DownloadText("https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/bible-class-blob-data/blob-data/PanelDef");
+                var sourceTask = Xenon.Helpers.WebHelpers.DownloadText("https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/bible-class-blob-data/blob-data/XenonTemplatev2.xenon");
+                var libTask = Xenon.Helpers.WebHelpers.DownloadText("https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/bible-class-blob-data/blob-data/BibleClass.lib.json");
+                var panelTask = Xenon.Helpers.WebHelpers.DownloadText("https://raw.githubusercontent.com/kjgriffin/LivestreamServiceSuite/bible-class-blob-data/blob-data/BiblePanelDef.txt");
 
                 var res = await Task.WhenAll(sourceTask, libTask, panelTask);
 
