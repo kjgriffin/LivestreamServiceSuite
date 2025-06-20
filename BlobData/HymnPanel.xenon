@@ -8,7 +8,7 @@
 {
     #scripted
     {
-        #var("html.Layout","Xenon.Communion::html.pianoSideBar")
+        #var("html.Layout","Xenon.Titles::PianoSideBarImg")
         
         first=#script
         {
@@ -21,7 +21,7 @@
         {
             text[title]{}
             text[subtitle]{}
-            img[image](Angel-Test)
+            //img[image]()
         }
     }
 }
