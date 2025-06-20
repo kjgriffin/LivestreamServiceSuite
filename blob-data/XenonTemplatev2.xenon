@@ -1,0 +1,98 @@
+#ORDER -1
+// BIBLE CLASS (v2.1)
+$INFO$
+
+#scripted
+{
+    first=#script
+    {
+        !forcerunonload;
+        @cmd:PresetSelect(%cam.SLIDESHOW%)[PST Slide];
+        cmd:DelayMs(100);
+        cmd:DSK1Off[Kill GFX];
+        cmd:AutoTrans;
+#IF MASTER_PANEL
+        cmd:SetupButtons(master-panel-std, %pres%, true)[Master Panel];
+#ELSE
+        cmd:SetupButtons(bibleclass-sub-panel-std, %pres%, true)[Bible Panel];
+#ENDIF
+    }
+
+    #fitimage($THUMBNAIL$)
+
+
+
+}
+
+#scripted
+{
+    // wrap graphics slides to disable nominal automation
+    // custom buttons will perform any nessecary actions
+    all=#script{
+        #NON AUTO;
+    }
+    // 1. Title Page
+
+    [@label::title-intro]
+    #scope(title)
+    {
+        #var("html.Layout", "BibleClass::Image-GFX-KEY")
+        #var("rendermode.premultiply", "false")
+        
+        #html
+        {
+            /// <!/MANUAL_UPDATE name='Title Thumbnail'>
+            img[thumbnail]($THUMBNAIL$)
+        }
+    }
+    
+    // 2.a Details Overlay
+    [@label::overlay]
+    #scope(overlay)
+    {
+        #var("html.Layout", "BibleClass::GFX-Overlay")
+        
+        #html
+        {
+            text[title]{$TITLE$}
+            text[presenter]{$PRESENTER$}
+            
+            text[year]{$YEAR$}
+            text[month]{$MONTH$}
+            text[day]{$DAY$}
+        }
+        
+    }
+
+    // 2.b Details Overlay
+    [@label::overlay-alt]
+    #scope(overlay)
+    {
+        #var("html.Layout", "BibleClass::GFX-OverlayAlt")
+        
+        #html
+        {
+            text[title]{$TITLE$}
+            text[presenter]{$PRESENTER$}
+            
+            text[year]{$YEAR$}
+            text[month]{$MONTH$}
+            text[day]{$DAY$}
+        }
+        
+    }
+
+    // 3. End Page
+    [@label::title-end]
+    #scope(static-end-page)
+    {
+        #var("Xenon.Titles@color-main", "#A5300F")
+        #var("html.Layout", "Xenon.Titles::EndPage")
+       
+    
+        #html
+        {
+            text[title]{$TITLE$}
+        }
+    }
+}
