@@ -83,6 +83,22 @@
         }
     }
     
+    #IF HYMN_PANEL
+    [TButton]3,1
+    {
+        draw={
+            TopText=HYMN;
+            BottomText=PANEL;
+            Enabled=true;
+            BackColor=#ed5cd7;
+            TextColor=#efefef;
+        }
+        fire={
+            cmd:SetupButtons(hymn-sub-panel-std, %pres%, true);
+        }
+    }
+    #ENDIF
+    
     #IF BIBLE_CLASS_PANEL
     [TButton]2,2
     {
