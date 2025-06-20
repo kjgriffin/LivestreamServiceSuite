@@ -1,0 +1,169 @@
+#ORDER 10
+#DEFINE HYMN_PANEL
+// panel references graphics
+// we'll define the slide for that here (rendered out as a resource)
+// bump the compilation order so it's gauranteed to generate after the 'regular' slides from the service
+
+#scope(piano-gfx)
+{
+    #scripted
+    {
+        #var("html.Layout","Xenon.Communion::html.pianoSideBar")
+        
+        first=#script
+        {
+            #PIANO GFX;
+        }
+        
+        
+        [@label::piano-side-bar-gfx]
+        #html
+        {
+            text[title]{}
+            text[subtitle]{}
+            img[image](Angel-Test)
+        }
+    }
+}
+
+#dynamiccontroller(hymn-sub-panel-std)
+{
+    dynamic:matrix(4x3);
+    
+    [Globals]
+    {
+        cmd:InitComputedVal(global._HYMNFILL, int, %cam.ORGAN%);
+        cmd:InitComputedVal(global.__HYMNFILL, int, %cam.ORGAN%);
+        cmd:WatchStateIntVal(global._HYMNFILL, %cam.ORGAN%, hfillorgan);
+        cmd:WatchStateIntVal(global._HYMNFILL, %cam.LECTERN%, hfilllec);
+        cmd:WatchStateIntVal(global._HYMNFILL, %cam.PROJECTOR%, hfillpiano);
+        
+        cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.piano-side-bar-gfx.0%, gfx-insert);
+        cmd:InitComputedVal(global._SLIDERESUME, int, 0);
+    
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.PULPIT%, pulpitOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.CENTER%, centerOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.LECTERN%, lecternOnAir);
+    }
+    
+    [TButton]0,0
+    {
+        draw={
+            TopText=PULPIT;
+            BottomText=PIANO;
+            Enabled=true;
+            <pulpitOnAir*!usk1on>BackColor=#a81120;
+            <!pulpitOnAir+usk1on>BackColor=#eaeaea;
+            <pulpitOnAir*!usk1on>TextColor=#efefef;
+            <!pulpitOnAir+usk1on>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(pulpit, PIANO, 20, PIANO);
+        }
+    }
+    [TButton]2,0
+    {
+        draw={
+            TopText=LECTERN;
+            BottomText=PIANO;
+            Enabled=true;
+            <lecternOnAir*!usk1on>BackColor=#a81120;
+            <!lecternOnAir+usk1on>BackColor=#eaeaea;
+            <lecternOnAir*!usk1on>TextColor=#efefef;
+            <!lecternOnAir+usk1on>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(lectern, PIANO, 20, PIANO);
+        }
+    }
+    
+    // button to put proj/piano cam with graphic as insert slide
+    [TButton]3,0
+    {
+        draw={
+            TopText=JUMP;
+            BottomText=PIANO BAR;
+            Enabled=true;
+            <!gfx-insert>BackColor=#d6ad45;
+            <gfx-insert>BackColor=#d65645;
+            TextColor=#efefef;
+        }
+        fire={
+            <!gfx-insert>cmd:SetupTrackVal(_SLIDERESUME, CurrentSlide0Index);
+            <!gfx-insert>cmd:ReleaseTackVal(_SLIDERESUME);
+            <!gfx-insert>cmd:CaptureSwitcherState(global.pre-insert-state);
+            cmd:USK1Off;
+            cmd:DSK1Off;
+            cmd:USK1TieOff;
+            cmd:PresetSelect(%cam.PROJECTOR%);
+            cmd:DSK1TieOn;
+            cmd:PaintCtrls;
+            cmd:Delay(100);
+            cmd:JumpToSlide(%slide.num.piano-side-bar-gfx.0%);
+            cmd:AutoTrans;
+            cmd:Delay(1200);
+            cmd:DSK1TieOff;
+        }
+    }
+    
+    [TButton]3,1
+    {
+        draw={
+            TopText=PIANO BAR;
+            BottomText=RESUME;
+            <gfx-insert>Enabled=true;
+            <!gfx-insert>Enabled=false;
+            <!gfx-insert>BackColor=#2b2828;
+            <gfx-insert>BackColor=#117352;
+            TextColor=#efefef;
+        }
+        fire={
+            <gfx-insert>cmd:ApplySwitcherState(global.pre-insert-state);
+            <gfx-insert>cmd:JumpToSlide($_SLIDERESUME);
+            cmd:PaintCtrls;
+        }
+    }
+    
+    
+    // button state for hymn cam
+    [TButton]0,1
+    {
+        draw={
+            TopText=HYMN CAM;
+            <hfillorgan>BottomText=ORGAN;
+            <hfilllec>BottomText=LECTERN;
+            <hfillpiano>BottomText=PIANO;
+            Enabled=true;
+            <hfillorgan>BackColor=#1d6118;
+            <hfilllec>BackColor=#613818;
+            <hfillpiano>BackColor=#283878;
+            <!hfillorgan*!hfilllec*!hfillpiano>BackColor=#212120;
+            TextColor=#efefef;
+        }
+        fire={
+            <hfillorgan>cmd:WriteComputedVal(__HYMNFILL, %cam.LECTERN%);
+            <hfilllec>cmd:WriteComputedVal(__HYMNFILL, %cam.PROJECTOR%);
+            <hfillpiano>cmd:WriteComputedVal(__HYMNFILL, %cam.ORGAN%);
+            cmd:WriteComputedVal(_HYMNFILL, $__HYMNFILL);
+            cmd:PaintCtrls;
+        }
+    }
+    
+    
+    
+    [TButton]3,2
+    {
+        draw={
+            TopText=MASTER;
+            BottomText=EXIT;
+            Enabled=true;
+            BackColor=#ed5cd7;
+            TextColor=#efefef;
+        }
+        fire={
+            cmd:SetupButtons(master-panel-std, %pres%, true);
+        }
+    }
+    
+    
+}
