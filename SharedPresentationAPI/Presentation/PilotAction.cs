@@ -307,6 +307,11 @@ namespace SharedPresentationAPI.Presentation
                         doSpeed = true;
                     }
                 }
+                string zname = match.Groups["cam"].Value;
+                if (match.Groups.TryGetValue("zpst", out var zpst))
+                {
+                    zname = zpst.Value;
+                }
                 pilot = new PilotDriveNamedPresetWithNamedZoom
                 {
                     CamName = match.Groups["cam"].Value,
