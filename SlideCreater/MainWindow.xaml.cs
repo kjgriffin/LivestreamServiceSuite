@@ -1302,27 +1302,18 @@ namespace SlideCreater
                 parser.LSBImportOptions = options;
                 if (options.UseThemedCreeds || options.UseThemedHymns)
                 {
-                    // make user select the theme
-                    //options.ServiceThemeLib = GetUserSelectedThemeForImport();
-
-                    // Xenon.CommonColored should be used
-
                     // lets ask Xenon for the macros for the libray
                     var tmp = IProjectLayoutLibraryManager.GetDefaultBundledLibraries();
                     options.Macros = IProjectLayoutLibraryManager.GetDefaultBundledLibraries()
                                                                  .FirstOrDefault(x => x.LibName == options.ServiceThemeLib)?.Macros ?? new Dictionary<string, string>();
-
                 }
                 await parser.ParseHTML(ofd.FileName);
                 parser.Serviceify(options);
-
+#if DEBUG_CCUPRESETDESIGNER
                 // at this point we should allow user to import/assign/add CCU stuff
                 CCUPresetDesignerWindow ccuDesigner = new CCUPresetDesignerWindow();
-#if DEBUG
                 ccuDesigner.ShowDialog();
 #endif
-
-
                 parser.CompileToXenon();
                 ActionState = ActionState.Downloading;
                 await parser.LoadWebAssets(_proj.CreateImageAsset);

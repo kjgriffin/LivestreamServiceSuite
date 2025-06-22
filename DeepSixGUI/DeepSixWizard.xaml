@@ -1,0 +1,285 @@
+﻿<Window x:Class="DeepSixGUI.DeepSixWizard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DeepSixGUI"
+        mc:Ignorable="d"
+        Title="Deep Six Wizard" Height="900" Width="500">
+    <Window.Resources>
+        <Style TargetType="Button" x:Name="DarkBtn" x:Key="DarkBtn">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Name="border" BorderBrush="#575757" BorderThickness="2">
+                                <ContentPresenter x:Name="contentpres" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#676767" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#373737" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="{x:Type RadioButton}" TargetType="{x:Type RadioButton}">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <BulletDecorator Background="Transparent">
+                            <BulletDecorator.Bullet>
+                                <Grid Width="20" Height="20">
+                                    <Ellipse x:Name="Border" Fill="#171717" StrokeThickness="3" Stroke="#474747"/>
+                                    <Ellipse x:Name="CheckMark" Margin="3" Fill="#2deba5" />
+                                </Grid>
+                            </BulletDecorator.Bullet>
+                            <ContentPresenter Margin="4,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" RecognizesAccessKey="True"/>
+                        </BulletDecorator>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="false">
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border" Property="Fill" Value="#ffffff" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="Border" Property="Fill" Value="#ffffff" />
+                                <Setter TargetName="Border" Property="Stroke" Value="#ffffff" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="Border" Property="Fill" Value="#474747" />
+                                <Setter TargetName="Border" Property="Stroke" Value="#40000000" />
+                                <Setter Property="Foreground" Value="#80000000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Focus Visual -->
+        <Style x:Key="CheckBoxFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border>
+                            <Rectangle 
+              Margin="15,0,0,0"
+              StrokeThickness="1"
+              Stroke="#60000000"
+              StrokeDashArray="1 2"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- SimpleStyles: CheckBox -->
+        <Style x:Key="{x:Type CheckBox}" TargetType="CheckBox">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="FocusVisualStyle"	Value="{StaticResource CheckBoxFocusVisual}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <BulletDecorator Background="Transparent">
+                            <BulletDecorator.Bullet>
+                                <Border x:Name="Border"  
+                Width="20" 
+                Height="20" 
+                CornerRadius="5" 
+                Background="#171717"
+                BorderThickness="2"
+                BorderBrush="#373737">
+                                    <Rectangle 
+                  Width="15" Height="15" 
+                  x:Name="CheckMark"
+                  Visibility="Visible"
+                  SnapsToDevicePixels="False" 
+                  Fill="#2deba5" 
+                  RadiusX="5"
+                  RadiusY="5"
+                                    />
+                                </Border>
+                            </BulletDecorator.Bullet>
+                            <ContentPresenter Margin="4,0,0,0"
+              VerticalAlignment="Center"
+              HorizontalAlignment="Left"
+              RecognizesAccessKey="True"/>
+                        </BulletDecorator>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="false">
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="{x:Null}">
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#2d92eb" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="TextBox" x:Name="DarkTextbox" x:Key="DarkTextbox">
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="Background" Value="#171717"></Setter>
+            <Setter Property="MinWidth" Value="20"></Setter>
+            <Setter Property="MaxHeight" Value="20"></Setter>
+            <Setter Property="Margin" Value="10"></Setter>
+            <Setter Property="TextAlignment" Value="Center"></Setter>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Name="DarkTextblock" x:Key="DarkTextblock">
+            <Setter Property="Foreground" Value="#efefef"></Setter>
+            <Setter Property="MinWidth" Value="80"></Setter>
+            <Setter Property="MaxHeight" Value="20"></Setter>
+            <Setter Property="TextAlignment" Value="Center"></Setter>
+        </Style>
+
+
+    </Window.Resources>
+    <Grid Background="#272727">
+        <Viewbox>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="20"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="20"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DarkTextblock}">SERVICE NAME</TextBlock>
+                <TextBox Name="tbServiceType" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextbox}">Christian Funeral Service</TextBox>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DarkTextblock}">SERVICE DATE</TextBlock>
+                <DatePicker Name="tbServiceDate" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"></DatePicker>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource DarkTextblock}">SERVICE TIME</TextBlock>
+                <TextBox Name="tbServiceTime" Grid.Row="2" Grid.Column="1" Style="{StaticResource DarkTextbox}">11:00</TextBox>
+
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource DarkTextblock}">DECEASED NAME</TextBlock>
+                <TextBox Name="tbDeceasedName" Grid.Row="3" Grid.Column="1" Style="{StaticResource DarkTextbox}">NAME</TextBox>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource DarkTextblock}">LIFESPAN</TextBlock>
+                <TextBox Name="tbBirthDeath" Grid.Row="4" Grid.Column="1" Style="{StaticResource DarkTextbox}">BORN YYYY -- DIED YYYY</TextBox>
+
+                <Grid Grid.Row="5" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Separator Grid.Column="0" Margin="10,0,0,0" Height="10"></Separator>
+                    <TextBlock Grid.Column="1" TextAlignment="Center" VerticalAlignment="Center" Foreground="#afafaf">HYMNS</TextBlock>
+                    <Separator Grid.Column="2" Margin="0,0,10,0"></Separator>
+                </Grid>
+
+                <StackPanel Grid.Row="6" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox Name="cbHymn1" VerticalAlignment="Center"></CheckBox>
+                    <TextBlock Style="{StaticResource DarkTextblock}">HYMN 1</TextBlock>
+                </StackPanel>
+                <TextBox Name="tbHymn1" Grid.Row="6" Grid.Column="1" Style="{StaticResource DarkTextbox}">###</TextBox>
+
+                <StackPanel Grid.Row="7" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox Name="cbHymn2" VerticalAlignment="Center"></CheckBox>
+                    <TextBlock Style="{StaticResource DarkTextblock}">HYMN 2</TextBlock>
+                </StackPanel>
+                <TextBox Name="tbHymn2" Grid.Row="7" Grid.Column="1" Style="{StaticResource DarkTextbox}">###</TextBox>
+
+                <StackPanel Grid.Row="8" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox Name="cbHymn3" VerticalAlignment="Center"></CheckBox>
+                    <TextBlock Style="{StaticResource DarkTextblock}">HYMN 3</TextBlock>
+                </StackPanel>
+                <TextBox Name="tbHymn3" Grid.Row="8" Grid.Column="1" Style="{StaticResource DarkTextbox}">###</TextBox>
+
+
+                <StackPanel Grid.Row="9" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox Name="cbHymn4" VerticalAlignment="Center"></CheckBox>
+                    <TextBlock Style="{StaticResource DarkTextblock}">HYMN 4</TextBlock>
+                </StackPanel>
+                <TextBox Name="tbHymn4" Grid.Row="9" Grid.Column="1" Style="{StaticResource DarkTextbox}">###</TextBox>
+
+                <StackPanel Grid.Row="10" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Width="150" Height="30" Margin="10" Foreground="#efefef" Style="{StaticResource DarkBtn}" Click="ChooseServiceButton_Click">CHOOSE SERVICE FILE</Button>
+                </StackPanel>
+                <Border Grid.Row="10" Grid.Column="1" Margin="10" MaxHeight="20" BorderBrush="#878787" BorderThickness="1" Background="#272727">
+                    <TextBlock Name="tbServiceFile" MaxWidth="200" Margin="0" Padding="0" Style="{StaticResource DarkTextblock}" TextTrimming="CharacterEllipsis">../path/to/service</TextBlock>
+                </Border>
+
+                <Grid Grid.Row="11" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Separator Grid.Column="0" Margin="10,0,0,0" Height="10"></Separator>
+                    <TextBlock Grid.Column="1" TextAlignment="Center" VerticalAlignment="Center" Foreground="#afafaf">READINGS</TextBlock>
+                    <Separator Grid.Column="2" Margin="0,0,10,0"></Separator>
+                </Grid>
+
+                <StackPanel Grid.Row="12" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <RadioButton Name="rbNIV" Margin="10" IsChecked="true" Foreground="#efefef">NIV</RadioButton>
+                    <RadioButton Name="rbESV" Margin="10" Foreground="#efefef">ESV</RadioButton>
+                </StackPanel>
+
+                <StackPanel Grid.Row="13" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox Name="cbReading1" VerticalAlignment="Center"></CheckBox>
+                    <TextBlock Style="{StaticResource DarkTextblock}">READING 1</TextBlock>
+                </StackPanel>
+                <TextBox Name="tbReading1" Grid.Row="13" Grid.Column="1" Style="{StaticResource DarkTextbox}">ref.</TextBox>
+
+                <StackPanel Grid.Row="14" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox Name="cbReading2" VerticalAlignment="Center"></CheckBox>
+                    <TextBlock Style="{StaticResource DarkTextblock}">READING 2</TextBlock>
+                </StackPanel>
+                <TextBox Name="tbReading2" Grid.Row="14" Grid.Column="1" Style="{StaticResource DarkTextbox}">ref.</TextBox>
+
+                <StackPanel Grid.Row="15" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox Name="cbReading3" VerticalAlignment="Center"></CheckBox>
+                    <TextBlock Style="{StaticResource DarkTextblock}">READING 3</TextBlock>
+                </StackPanel>
+                <TextBox Name="tbReading3" Grid.Row="15" Grid.Column="1" Style="{StaticResource DarkTextbox}">ref.</TextBox>
+
+                <StackPanel Grid.Row="16" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox Name="cbReading4" VerticalAlignment="Center"></CheckBox>
+                    <TextBlock Style="{StaticResource DarkTextblock}">READING 4</TextBlock>
+                </StackPanel>
+                <TextBox Name="tbReading4" Grid.Row="16" Grid.Column="1" Style="{StaticResource DarkTextbox}">ref.</TextBox>
+
+                <Button Grid.Row="17" Grid.ColumnSpan="2" Width="150" Height="30" Margin="10" Foreground="#efefef" Style="{StaticResource DarkBtn}">CREATE</Button>
+            </Grid>
+        </Viewbox>
+    </Grid>
+</Window>
