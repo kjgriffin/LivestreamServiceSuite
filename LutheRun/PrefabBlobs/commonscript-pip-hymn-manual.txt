@@ -1,2 +1,2 @@
-﻿first=#callscript{scriptname(pip-setup)parameter(PIPFill){%cam.$PIPCAM}%}
+﻿first=#callscript{scriptname(pip-setup)parameter(PIPFill){%cam.$PIPCAM%}}
 duplast=#callscript{scriptname(pip-teardown)}
