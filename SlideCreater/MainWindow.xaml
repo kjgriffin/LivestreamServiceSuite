@@ -297,7 +297,7 @@
             <GridSplitter Background="#474747" Width="3" Grid.Column="3" HorizontalAlignment="Stretch"></GridSplitter>
 
             <Border Grid.Column="0" Background="#272727">
-                <TabControl Grid.Column="0" Background="#272727" BorderBrush="#373737" BorderThickness="3">
+                <TabControl Grid.Column="0" Background="#272727" BorderBrush="#373737" BorderThickness="3" TabStripPlacement="Top">
                     <TabItem Header="Source" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -460,29 +460,21 @@
                     <!--<ScrollViewer Grid.Row="0">-->
                     <!--<uicontrols:BetterTextBox x:Name="TbInput" FontFamily="Arial" FontSize="14" TextChanged="SourceTextChanged"></uicontrols:BetterTextBox>-->
 
-                    <TabControl Grid.Column="0" Background="#272727" BorderBrush="#373737" BorderThickness="3" Name="srcfileTabCtrl">
-                        <!--<TabItem Header="Source" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
-                            <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbInput" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True"></AvalonEdit:TextEditor>
-                        </TabItem>
-                        <TabItem Header="Switcher Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
-                            <AvalonEdit:TextEditor Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfig" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
-                        </TabItem>
-                        <TabItem Header="CCU Config" Background="#474747" Foreground="White" FontWeight="Regular" Style="{StaticResource DarkTab}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="40"></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Style="{StaticResource DarkBtn}" Foreground="White" Margin="5" Width="100" Height="30" VerticalAlignment="Top" Click="ClickLoadCCUFile">Load CCU Config</Button>
-                                    <Button Style="{StaticResource DarkBtn}" Foreground="White" Margin="5" Width="100" Height="30" VerticalAlignment="Top" Click="ClickOpenCCUConfigEditor">Open Editor</Button>
-                                </StackPanel>
-                                <AvalonEdit:TextEditor Grid.Row="1" IsReadOnly="true" Background="#272727" Padding="3" Foreground="#eaeaea" Name="TbConfigCCU" FontFamily="cascadia" FontSize="14" TextChanged="SourceTextChanged" ShowLineNumbers="True" SyntaxHighlighting="JavaScript"></AvalonEdit:TextEditor>
-                                -->
-                        <!--<TextBlock Grid.Row="1" Name="TbConfigCCU" Background="#272727" Foreground="#eaeaea" FontFamily="cascadia" FontSize="14" TextWrapping="Wrap"></TextBlock>-->
-                        <!--
-                            </Grid>
-                        </TabItem>-->
+                    <TabControl Grid.Column="0" Background="#272727" BorderBrush="#373737" BorderThickness="3" Name="srcfileTabCtrl" TabStripPlacement="Top">
+                        <TabControl.Template>
+                            <ControlTemplate TargetType="{x:Type TabControl}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                                        <TabPanel x:Name="HeaderPanel" IsItemsHost="true" Margin="0,4,0,0"></TabPanel>
+                                    </ScrollViewer>
+                                    <ContentPresenter x:Name="PART_SelectedContentHost" Margin="4" ContentSource="SelectedContent" Grid.Row="1"></ContentPresenter>
+                                </Grid>
+                            </ControlTemplate>
+                        </TabControl.Template>
 
                     </TabControl>
 
