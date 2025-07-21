@@ -32,8 +32,11 @@
     
     [Globals]
     {
+#IF MASTER_PANEL
+#ELSE
         cmd:InitComputedVal(global._HYMNFILL, int, %cam.ORGAN%);
         cmd:InitComputedVal(global.__HYMNFILL, int, %cam.ORGAN%);
+#ENDIF
         cmd:WatchStateIntVal(global._HYMNFILL, %cam.ORGAN%, hfillorgan);
         cmd:WatchStateIntVal(global._HYMNFILL, %cam.LECTERN%, hfilllec);
         cmd:WatchStateIntVal(global._HYMNFILL, %cam.PROJECTOR%, hfillpiano);
