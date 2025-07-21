@@ -5,6 +5,10 @@
     
     [Globals]
     {
+#IF HYMN_PANEL
+        cmd:InitComputedVal(global._HYMNFILL, int, %cam.ORGAN%);
+        cmd:InitComputedVal(global.__HYMNFILL, int, %cam.ORGAN%);
+#ENDIF
         cmd:WatchSwitcherStateIntVal(ProgramID, %cam.PULPIT%, pulpitOnAir);
         cmd:WatchSwitcherStateIntVal(ProgramID, %cam.CENTER%, centerOnAir);
         cmd:WatchSwitcherStateIntVal(ProgramID, %cam.LECTERN%, lecternOnAir);
