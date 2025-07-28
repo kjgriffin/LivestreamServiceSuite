@@ -1,0 +1,225 @@
+#scope(STDElements)
+{
+
+    #var("stitchedimage.Layout", "Xenon.CommonColored::SideBar")
+    #var("texthymn.Layout", "Xenon.CommonColored::SideBar")
+
+    // See: https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Themes
+    #var("Xenon.CommonColored@color-main", ```"#ff141417"```)
+    #var("Xenon.CommonColored@text-alt", ```"#ff373737"```)
+    #var("Xenon.Anthems@color-main", ```#141417```)
+    #var("Xenon.Titles@color-main", ```#141417```)
+    #var("Xenon.Titles@text-alt", ```#373737```)
+    #var("Xenon.Creeds@color-main", ```#141417```)
+    
+    
+    #var("DeepSix@color-main", ```#141417```)
+    #var("DeepSix@Titles@text-alt", ```#373737```)
+
+
+    #scripted
+    {
+    
+        first=#script
+        {
+            !forcerunonload;
+            @cmd:SetupButtons(hymn-sub-panel-std, %pres%, true);
+            @cmd:SetupButtons(master-panel-std, %pres%, true);
+            cmd:PresetSelect(%cam.SLIDESHOW%);
+            cmd:USK1Off;
+            cmd:DSK1Off;
+            cmd:DelayMs(100);
+            cmd:AutoTrans;
+            cmd:DelayMs(1500);
+        }
+    
+        #scope(copytitle)
+        {
+            #var("html.Layout", "DeepSix::CopyTitleFuneral")
+        
+            /// </MANUAL_UPDATE name='TitlePage Details'>
+            [@label::title-main]
+            #html
+            {
+                text[deceased-name]{$$NAME$$}
+                text[birth-death]{$$DEATH$$}
+                text[service-type]{$$TITLE$$}
+                text[service-date]{$$DATE$$}
+                /// </MANUAL_UPDATE name='Service Time'>
+                text[service-time]{$$TIME$$}
+                text[ack-lsb]{Acknowledgments<br>Unless otherwise indicated, Scripture quotations are from the ESV® Bible (The Holy Bible, English Standard Version®), copyright © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.<br>Created by Lutheran Service Builder © 2025 Concordia Publishing House.<br>}
+                text[ack-bible]{}
+                text[ack-ccli]{CCLI License # 524846; CSPL127841}
+                img[hc-logo](HCLogo-white)
+                img[church-img](HCChurch-cartoon)
+            }
+        }
+        
+    
+    }
+    
+    #scope(prelude)
+    {
+        #var("html.Layout", "Xenon.Anthems::StdTitle")
+        
+        [@label::title-prelude]
+        #html
+        {
+            /// </MANUAL_UPDATE name='prelude'
+            text[name]{Prelude}
+            text[band]{}
+        }
+    }
+
+    #scope(euleogy)
+    {
+        #var("html.Layout", "Xenon.Anthems::StdTitle")
+        
+        [@label::title-euleogy]
+        #html
+        {
+            /// </MANUAL_UPDATE name='euleogy'
+            text[name]{Speaker}
+            text[band]{}
+        }
+    }
+
+    #scope(euleogy)
+    {
+        #var("html.Layout", "Xenon.Anthems::StdTitle")
+        
+        [@label::title-music]
+        #html
+        {
+            /// </MANUAL_UPDATE name='music/anthem'
+            text[name]{Anthem/Music}
+            text[band]{}
+        }
+    }
+
+    [@label::invocation]
+    #liturgyresponsive
+    {
+        <line speaker='P'>
+            <text>In the name of the Father and of the Son and of the Holy Spirit.</text>
+        </line>
+        <line speaker='C'>
+            <text>Amen.</text>
+        </line>
+        <line speaker='P'>
+            <text>The Lord has given and the Lord has taken away,</text>
+        </line>
+        <line speaker='C'>
+            <text>Blessed be the name of the Lord.</text>
+        </line>
+        <line speaker='P'>
+            <text>Blessed be the God and Father of our Lord Jesus Christ, the source of all mercy and the God of all consolation.  He comforts us in our sorrows so that we can comfort others in their sorrows with the consolation we ourselves have received from God.</text>
+        </line>
+        <line speaker='C'>
+            <text>Thanks be to God.</text>
+        </line>
+    }
+    #liturgyoff
+    
+    
+    #scripted
+    {
+    
+        first=#callscript
+        {
+            scriptname(pip-setup)
+        }
+        
+        [@label::psalm23]
+        #scope(Psalm 23)
+        {
+            #var("html.Layout", "DeepSix::Psalm23")
+            #html{}
+        }
+    }
+    
+          
+
+    #scope(Sermon)
+    {
+        #var("html.Layout", "Xenon.Anthems::StdTitle")
+    
+        #scripted
+        {   
+            [@label::sermon-title]
+            #html
+            {
+                /// </MANUAL_UPDATE name='preacher'
+                text[name]{PREACHER}
+                text[band]{}
+            }
+        }
+    }
+    
+    #scripted
+    {
+    
+        first=#callscript
+        {
+            scriptname(pip-setup)
+        }
+        
+        [@label::apostles-creed]
+        #scope(Apostles Creed)
+        {
+            #var("html.Layout", "Xenon.Creeds::html.ApostlesCreed")
+            #html{}::postset(last=7)
+        }
+    }
+
+    
+    #scripted
+    {
+    
+        first=#callscript
+        {
+            scriptname(pip-setup)
+        }
+        
+        [@label::lords-prayer]
+        #scope(Lords Prayer)
+        {
+            #var("html.Layout", "Xenon.Creeds::html.LordsPrayer")
+            #html{}
+        }
+    }
+    
+    #scripted
+    {
+        first=#callscript{scriptname(pip-postlude)}
+        last=#callscript{scriptname(end-fade)}
+    
+        #scope(endpage-live)
+        {
+            #var("html.Layout", "Xenon.Titles::EndPageLive")
+    
+            [@label::title-end]
+            #html
+            {
+                /// <!/MANUAL_UPDATE name='EndPage Service Title'>
+                text[title]{Seventh Sunday After Pentecost}
+                /// <!/MANUAL_UPDATE name='EndPage Postlude Title'>
+                text[postlude]{}
+                /// <!/MANUAL_UPDATE name='EndPage Postlude Musician/Composer'>
+                text[credit]{}
+            }
+        }
+    
+        #scope(endpage-static)
+        {
+            #var("html.Layout", "Xenon.Titles::EndPage")
+            #html
+            {
+                /// <!/MANUAL_UPDATE name='EndPage Service Title'>
+                text[title]{$$TITLE$$}
+            }
+        }
+    
+    }
+
+}

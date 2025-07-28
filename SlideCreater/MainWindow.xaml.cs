@@ -3,6 +3,7 @@
 using CCUPresetDesigner;
 
 using CommonVersionInfo;
+using DeepSixGUI;
 
 using Concord;
 
@@ -2299,6 +2300,35 @@ namespace SlideCreater
                 AddXenonFileToProj("BibleClassPanel.xenon", panel);
             }
         }
+        private async void Click_DeepSix(object sender, RoutedEventArgs e)
+        {
+            var dialog = new DeepSixWizard();
+            var grave = GravePlot.Default;
+            dialog.ApplyCFGObj(grave);
+
+            if (dialog.ShowDialog() == true)
+            {
+                // add deep-six library
+                var lib = GraveDigger.GetLayoutLib();
+                Xenon.SaveLoad.TrustySave.ImportLibraryFromText(_proj, lib);
+                dirty = true;
+                ProjectState = ProjectState.Dirty;
+                SetupLayoutsTreeVew();
+
+                ActionState = ActionState.Downloading;
+
+                // pass in templating info to generator
+                var plot = await GraveDigger.Bury(grave, _proj.CreateImageAsset);
+                foreach (var file in plot)
+                {
+                    AddXenonFileToProj(file.Key, file.Value);
+                }
+
+                _editorTabManager.RefreshAllTextViews();
+                ShowProjectAssets();
+            }
+        }
+
 
         private void MainXenonEditorTVItem_MouseDown(object sender, MouseButtonEventArgs e)
         {

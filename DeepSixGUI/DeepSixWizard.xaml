@@ -278,7 +278,7 @@
                 </StackPanel>
                 <TextBox Name="tbReading4" Grid.Row="16" Grid.Column="1" Style="{StaticResource DarkTextbox}">ref.</TextBox>
 
-                <Button Grid.Row="17" Grid.ColumnSpan="2" Width="150" Height="30" Margin="10" Foreground="#efefef" Style="{StaticResource DarkBtn}">CREATE</Button>
+                <Button Grid.Row="17" Grid.ColumnSpan="2" Width="150" Height="30" Margin="10" Foreground="#efefef" Style="{StaticResource DarkBtn}" Click="Click_Create">CREATE</Button>
             </Grid>
         </Viewbox>
     </Grid>

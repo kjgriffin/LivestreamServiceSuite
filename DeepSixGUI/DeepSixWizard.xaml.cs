@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿using DeepSixGUI.Templates;
+
+using Microsoft.Win32;
 
 using System.Text;
 using System.Windows;
@@ -24,7 +26,7 @@ namespace DeepSixGUI
         }
 
         GravePlot _grave;
-        internal void ApplyCFGObj(GravePlot plot)
+        public void ApplyCFGObj(GravePlot plot)
         {
             _grave = plot;
 
@@ -71,9 +73,9 @@ namespace DeepSixGUI
             _grave.Hymns[2].Use = cbHymn3.IsChecked ?? false;
             _grave.Hymns[3].Use = cbHymn4.IsChecked ?? false;
             _grave.Hymns[0].Number = tbHymn1.Text;
-            _grave.Hymns[0].Number = tbHymn2.Text;
-            _grave.Hymns[0].Number = tbHymn3.Text;
-            _grave.Hymns[0].Number = tbHymn4.Text;
+            _grave.Hymns[1].Number = tbHymn2.Text;
+            _grave.Hymns[2].Number = tbHymn3.Text;
+            _grave.Hymns[3].Number = tbHymn4.Text;
 
             _grave.Readings[0].Use = cbReading1.IsChecked ?? false;
             _grave.Readings[1].Use = cbReading2.IsChecked ?? false;
@@ -100,6 +102,11 @@ namespace DeepSixGUI
                 _grave.ServicePath = ofd.FileName;
                 tbServiceFile.Text = ofd.FileName;
             }
+        }
+
+        private void Click_Create(object sender, RoutedEventArgs e)
+        {
+            Create();
         }
     }
 }

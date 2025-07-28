@@ -9,7 +9,34 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Templates\Blobs\AnthemPanel.xenon" />
+    <None Remove="Templates\Blobs\CommonScripts.xenon" />
+    <None Remove="Templates\Blobs\deep-six-elements.xenon" />
+    <None Remove="Templates\Blobs\deep-six-hymn-rdg.xenon" />
+    <None Remove="Templates\Blobs\DeepSix.json" />
+    <None Remove="Templates\Blobs\HymnPanel.xenon" />
+    <None Remove="Templates\Blobs\MasterPanel.xenon" />
+    <None Remove="Templates\Blobs\SermonPanel.xenon" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Blobs\AnthemPanel.xenon" />
+    <EmbeddedResource Include="Templates\Blobs\CommonScripts.xenon" />
+    <EmbeddedResource Include="Templates\Blobs\deep-six-elements.xenon" />
+    <EmbeddedResource Include="Templates\Blobs\deep-six-hymn-rdg.xenon" />
+    <EmbeddedResource Include="Templates\Blobs\DeepSix.json" />
+    <EmbeddedResource Include="Templates\Blobs\ReadingTemplate.xenon" />
+    <EmbeddedResource Include="Templates\Blobs\HymnIntro.xenon" />
+    <EmbeddedResource Include="Templates\Blobs\HymnPanel.xenon" />
+    <EmbeddedResource Include="Templates\Blobs\FuneralTheme.xenon" />
+    <EmbeddedResource Include="Templates\Blobs\STDElement.xenon" />
+    <EmbeddedResource Include="Templates\Blobs\MasterPanel.xenon" />
+    <EmbeddedResource Include="Templates\Blobs\SermonPanel.xenon" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Concord\Concord.csproj" />
+    <ProjectReference Include="..\LutheRun\LutheRun.csproj" />
   </ItemGroup>
 
 </Project>

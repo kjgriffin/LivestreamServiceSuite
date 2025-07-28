@@ -1,0 +1,259 @@
+#dynamiccontroller(deep-six-hymn-rdg-sub-panel-std)
+{
+    dynamic:matrix(4x3);
+    
+    [Globals]
+    {
+        cmd:WatchSwitcherStateBoolVal(USK1OnAir, true, usk1on);
+        cmd:WatchSwitcherStateBoolVal(DSK1OnAir, true, dsk1on);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.PULPIT%, pulpitOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.CENTER%, centerOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.LECTERN%, lecternOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.ORGAN%, organOnAir);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.PULPIT%, pulpitFill);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.CENTER%, centerFill);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.LECTERN%, lecternFill);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.ORGAN%, organFill);
+        cmd:WatchSwitcherStateIntVal(PresetID, %cam.LECTERN%, lecternPst);
+        
+        cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.hymn1.0%, hymn1);
+        cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.hymn2.0%, hymn2);
+        cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.hymn3.0%, hymn3);
+        cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.rdg1.0%, rdg1);
+        cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.rdg2.0%, rdg2);
+        cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.rdg3.0%, rdg3);
+    }
+    
+    #IF HYMN_1
+    [TButton]0,0
+    {
+        draw={
+            TopText=HYMN;
+            BottomText=1;
+            Enabled=true;
+            <!hymn1>BackColor=#5f55e0;
+            <hymn1>BackColor=#a81120;
+            <!hymn1>TextColor=#efefef;
+            <hymn1>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.hymn1.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    #ENDIF
+
+    #IF HYMN_2
+    [TButton]1,0
+    {
+        draw={
+            TopText=HYMN;
+            BottomText=2;
+            Enabled=true;
+            <!hymn2>BackColor=#5f55e0;
+            <hymn2>BackColor=#a81120;
+            <!hymn2>TextColor=#efefef;
+            <hymn2>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.hymn2.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    #ENDIF
+
+    #IF HYMN_3
+    [TButton]2,0
+    {
+        draw={
+            TopText=HYMN;
+            BottomText=3;
+            Enabled=true;
+            <!hymn3>BackColor=#5f55e0;
+            <hymn3>BackColor=#a81120;
+            <!hymn3>TextColor=#efefef;
+            <hymn3>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.hymn3.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    #ENDIF
+
+	#IF HYMN_4
+    [TButton]3,0
+    {
+        draw={
+            TopText=HYMN;
+            BottomText=4;
+            Enabled=true;
+            <!hymn3>BackColor=#5f55e0;
+            <hymn3>BackColor=#a81120;
+            <!hymn3>TextColor=#efefef;
+            <hymn3>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.hymn4.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    #ENDIF
+
+    #IF RDG_1
+    [TButton]0,1
+    {
+        draw={
+            TopText=RDG;
+            BottomText=1;
+            Enabled=true;
+            <!rdg1>BackColor=#1a4c91;
+            <rdg1>BackColor=#a81120;
+            <!rdg1>TextColor=#efefef;
+            <rdg1>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.rdg1.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    #ENDIF
+
+
+    #IF RDG_2
+    [TButton]1,1
+    {
+        draw={
+            TopText=RDG;
+            BottomText=2;
+            Enabled=true;
+            <!rdg2>BackColor=#1a4c91;
+            <rdg2>BackColor=#a81120;
+            <!rdg2>TextColor=#efefef;
+            <rdg2>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.rdg2.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    #ENDIF
+
+    #IF RDG_3
+    [TButton]2,1
+    {
+        draw={
+            TopText=RDG;
+            BottomText=3;
+            Enabled=true;
+            <!rdg3>BackColor=#1a4c91;
+            <rdg3>BackColor=#a81120;
+            <!rdg3>TextColor=#efefef;
+            <rdg3>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.rdg3.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    #ENDIF
+
+    #IF RDG_4
+    [TButton]3,1
+    {
+        draw={
+            TopText=RDG;
+            BottomText=4;
+            Enabled=true;
+            <!rdg3>BackColor=#1a4c91;
+            <rdg3>BackColor=#a81120;
+            <!rdg3>TextColor=#efefef;
+            <rdg3>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.rdg4.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    #ENDIF
+    
+    [TButton]0,2
+    {
+        draw={
+            TopText=MOVE;
+            BottomText=LEC-RDG;
+            Enabled=true;
+            <lecternOnAir*!usk1on>BackColor=#a81120;
+            <!lecternOnAir+usk1on>BackColor=#fcd303;
+            <lecternOnAir*!usk1on>TextColor=#efefef;
+            <!lecternOnAir+usk1on>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(lectern, READING, 20, READING);
+        }
+    }
+    
+    [TButton]1,2
+    {
+        draw={
+            TopText=TAKE;
+            BottomText=CENTER;
+            Enabled=true;
+            BackColor=#03fc41;
+            TextColor=#000000;
+        }
+        fire={
+            cmd:PresetSelect(%cam.CENTER%);
+            cmd:DSK1Off;
+            cmd:USK1Off;
+            cmd:USK1TieOff;
+            cmd:DSK1TieOff;
+            cmd:DelayMs(500);
+            cmd:AutoTrans;
+        }
+    }
+    
+    [TButton]2,2
+    {
+        draw={
+            TopText=TAKE;
+            BottomText=LECTERN;
+            Enabled=true;
+            BackColor=#03fc41;
+            TextColor=#000000;
+        }
+        fire={
+            cmd:PresetSelect(%cam.LECTERN%);
+            cmd:DSK1Off;
+            cmd:USK1Off;
+            cmd:USK1TieOff;
+            cmd:DSK1TieOff;
+            cmd:DelayMs(500);
+            cmd:AutoTrans;
+        }
+    }
+    
+    
+    [TButton]3,2
+    {
+        draw={
+            TopText=MAIN;
+            BottomText=MENU;
+            Enabled=true;
+            BackColor=#ed5cd7;
+            TextColor=#efefef;
+        }
+        fire={
+            cmd:SetupButtons(master-panel-std, %pres%, true);
+        }
+    }
+    
+}

@@ -1,0 +1,19 @@
+$$DEF$$
+
+#scope($$SCOPE$$)
+{
+
+    #var("stitchedimage.Layout", "Xenon.CommonColored::SideBar")
+    #var("texthymn.Layout", "Xenon.CommonColored::SideBar")
+
+    // See: https://github.com/kjgriffin/LivestreamServiceSuite/wiki/Themes
+    #var("Xenon.CommonColored@color-main", ```"#ff141417"```)
+    #var("Xenon.CommonColored@text-alt", ```"#ff373737"```)
+    #var("Xenon.Anthems@color-main", ```#141417```)
+    #var("Xenon.Titles@color-main", ```#141417```)
+    #var("Xenon.Titles@text-alt", ```#373737```)
+    #var("Xenon.Creeds@color-main", ```#141417```)
+    
+    
+    #var("DeepSix@color-main", ```#141417```)
+    #var("DeepSix@Titles@text-alt", ```#373737```)

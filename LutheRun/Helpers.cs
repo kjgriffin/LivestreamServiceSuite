@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace LutheRun
 {
-    static class Helpers
+    public static class Helpers
     {
 
         public static string Indent(this string str, int indentdepth, int indentspace)

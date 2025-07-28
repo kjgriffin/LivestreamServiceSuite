@@ -20,4 +20,10 @@ namespace LutheRun.Elements.Interface
 
         internal BlockType BlockType(LSBImportOptions importOptions);
     }
+
+    public interface ICaptionElement
+    {
+        string Caption { get; }
+        string SubCaption { get; }
+    }
 }

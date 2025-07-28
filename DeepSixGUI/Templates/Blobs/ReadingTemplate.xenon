@@ -1,0 +1,23 @@
+#scripted
+{
+    first=#callscript{scriptname(reading-setup)}
+    duplast=#callscript{scriptname(reading-teardown)}
+    
+
+    #scope(Reading$$READING_NUM$$)
+    {
+        #var("complextext.Layout","Xenon.Readings::SideBarReading2")
+    
+        [@label::rdg$$READING_NUM$$]
+        #complextext
+        {
+            text={Reading}
+            text={$$REFERENCE$$}
+            text={$$TRANSLATION$$}
+            ctext=
+            {
+                $$CONTENT$$
+            }
+        }
+    }
+}

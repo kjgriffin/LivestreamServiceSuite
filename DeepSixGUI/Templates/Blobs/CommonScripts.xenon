@@ -1,0 +1,248 @@
+#namedscript
+{
+    name=(load-master-panel)
+    script=#script
+    {
+        !forcerunonload;
+        @cmd:SetupButtons(master-panel-std, %pres%, true);
+        cmd:PresetSelect(%cam.SLIDESHOW%);
+        cmd:USK1Off;
+        cmd:DSK1Off;
+        cmd:DelayMs(100);
+        cmd:AutoTrans;
+        cmd:DelayMs(1500);
+    }
+}
+
+#namedscript
+{
+    name=(worship-bells)
+    parameter(BellsFile){Resource_Bells.wav}
+    script=#script
+    {
+        #Worship Bells;
+        @cmd:DSK1FadeOff[Kill Liturgy];
+        @cmd:OpenAudioPlayer;
+        @cmd:LoadAudioFile(%param.BellsFile%)[Load Bells];
+        @cmd:PresetSelect(%cam.CENTER%)[Preset Center];
+        @cmd:DelayMs(100);
+        @cmd:AutoTrans[Take Center];
+        @cmd:DelayMs(2000);
+        @cmd:PlayAuxAudio[Play Bells];
+        cmd:PresetSelect(%cam.PULPIT%)[Preset Pulpit];
+    }
+}
+
+#namedscript
+{
+    name=(upnext-first)
+    script=#script
+    {
+        #Hymn Intro;
+        @cmd:WatchStateIntVal(ProgramID, %cam.SLIDESHOW%, upnext);
+        @<upnext>cmd:PresetSelect($_HYMNFILL)[Preset HYMN CAM];
+        @<upnext>cmd:DSK1TieOff;
+        @<upnext>cmd:DelayMs(100);
+        @<upnext>cmd:AutoTrans;
+        @<upnext>cmd:DelayMs(1500);
+        cmd:DSK1FadeOn[Key Fade On];
+    }
+}
+
+#namedscript
+{
+    name=(upnext-last)
+    script=#script
+    {
+        #Hymn Intro;
+        cmd:DSK1FadeOn[Key Fade On];
+        cmd:PresetSelect($_HYMNFILL)[Preset HYMN CAM];
+        cmd:DelayMs(100);
+        cmd:AutoTrans[Take Organ];
+    }
+}
+
+#namedscript
+{
+    name=(upnext-fast)
+    script=#script
+    {
+        #Hymn Intro;
+        @cmd:PresetSelect($_HYMNFILL)[Preset HYMN CAM];
+        @cmd:DelayMs(100);
+        @cmd:AutoTrans[Take Organ];
+        cmd:DSK1FadeOn[Key Fade On];
+    }
+}
+
+#namedscript
+{
+    name=(pip-setup)
+    parameter(PIPFill){%cam.BACK%}
+    script=#script
+    {
+        #PIP SETUP;
+        @arg0:DSK1Off[Kill Key];
+        @arg0:USK1Off[Kill Key];
+        @arg1:DelayMs(100);
+        @<1>arg1:USK1Fill(%param.PIPFill%)[Fill PIP %param.PIPFill%];
+        arg1:PresetSelect(%cam.SLIDESHOW%)[Preset Hymn];
+        <2>argd8:PlacePIP(-11.2,-5.5,0.27,0.27,0,0,0,0)[Setup PIP];
+        <2>arg0:USK1TieOn[Tie PIP];
+        arg1:DelayMs(100);
+        arg0:AutoTrans[Take Hymn];
+        cmd:DelayMs(1500);
+    }
+}
+
+#namedscript
+{
+    name=(pip-teardown-auto)
+    parameter(PostCam){%cam.CENTER%}
+    script=#script
+    {
+        #AUTO TEARDOWN;
+        cmd:WatchStateBoolVal(TransNextKey1, true, tie);
+        cmd:WatchSwitcherStateBoolVal(USK1OnAir, true, pip);
+        cmd:DSK1Off[Kill gfx];
+        <pip*!tie>cmd:USK1TieOn[kill pip];
+        <!pip*tie>cmd:USK1TieOff[kill pip];
+        cmd:ForceRunPostset(true, %param.PostCam%);
+        cmd:DelayMs(100);
+        cmd:AutoTrans;
+        cmd:DelayMs(1500);
+        cmd:USK1TieOff;
+        cmd:DSK1Off;
+        cmd:DriveNextSlide[NEXT];
+    }
+}
+
+#namedscript
+{
+    name=(pip-teardown)
+    script=#script
+    {
+        #PIP TEARDOWN;
+        arg0:USK1TieOff[Un Tie];
+        arg0:USK1Off[Kill Key];
+    }
+}
+
+
+
+#namedscript
+{
+    name=(reading-setup)
+    parameter(ReadingCam){%cam.LECTERN%}
+    script=#script
+    {
+        #PIP Reading;
+        @arg0:DSK1Off[Kill Key];
+        @arg1:PresetSelect(%param.ReadingCam%)[Preset %param.ReadingCam%];
+        @<2>arg0:USK1Off[Kill Key];
+        @arg1:DelayMs(100);
+        @<1>arg1:USK1Fill(%param.ReadingCam%)[Fill PIP %param.ReadingCam%];
+        @<2>argd8:PlacePIP(-6.4,0,1,1,6.4,6.4,0,0)[Setup PIP];
+        @<2>arg0:USK1TieOn[Tie PIP];
+        @arg0:DSK1TieOn[Tie DSK];
+        arg1:DelayMs(100);
+        arg0:AutoTrans[Take Reading];
+        arg1:DelayMs(1100);
+        arg0:DSK1TieOff[Un Tie];
+    }
+}
+
+#namedscript
+{
+    name=(reading-teardown)
+    parameter(ReadingCam){%cam.LECTERN%}
+    script=#script
+    {
+        #PIP Teardown;
+        <2>arg1:ProgramSelect(%param.ReadingCam%)[Force %param.ReadingCam%];
+        arg0:USK1TieOff[Un Tie];
+        arg0:USK1Off[Kill Key];
+        arg0:DSK1FadeOff[Kill DSK];
+    }
+}
+
+#namedscript
+{
+    name=(anthem)
+    parameter(AnthemCam){%cam.CENTER%}
+    script=#script
+    {
+        #ANTHEM START;
+        @cmd:SetupButtons(anthem-sub-panel-std, %pres%, true);
+        @cmd:PresetSelect(%param.AnthemCam%);
+        @cmd:DelayMs(100);
+        @cmd:AutoTrans;
+        cmd:DelayMs(1500);
+        cmd:DSK1FadeOn;
+    }
+}
+
+
+
+#namedscript
+{
+    name=(sermon)
+    script=#script
+    {
+        @cmd:SetupButtons(sermon-sub-panel-std, %pres%, true);
+        cmd:DelayMs(200);
+        cmd:DSK1FadeOn;
+        cmd:Timer1Restart;
+    }
+}
+
+#namedscript
+{
+    name=(announcements)
+    script=#script
+    {
+        #Announcements;
+        @cmd:WatchSwitcherStateIntVal(ProgramID, %cam.SLIDESHOW%, cam);
+        @<cam>cmd:PresetSelect(%cam.CENTER%);
+        @<cam>cmd:DelayMs(100);
+        @<cam>cmd:AutoTrans;
+        @<cam>cmd:DelayMs(1500);
+        @cmd:PresetSelect(%cam.LECTERN%);
+    }
+}
+
+#namedscript
+{
+    name=(pip-postlude)
+    parameter(FillCam){%cam.ORGAN%}
+    script=#script
+    {
+        #PIP Postlude;
+        @arg1:PresetSelect(%param.FillCam%)[Preset %param.FillCam%];
+        @arg1:DelayMs(100);
+        @arg0:AutoTrans[Take %param.FillCam%];
+        @arg1:DelayMs(1200);
+        @arg0:DSK1Off[Kill Key];
+        @arg0:USK1Off[Kill Key];
+        @arg1:DelayMs(100);
+        @<1>arg1:USK1Fill(%param.FillCam%)[Fill PIP %param.FillCam%];
+        arg1:PresetSelect(%cam.SLIDESHOW%)[Preset Slide];
+        <2>argd8:PlacePIP(-4.8,-0.9,0.7,0.7,0,0,0,0)[Setup PIP];
+        <2>arg0:USK1TieOn[Tie PIP];
+        arg1:DelayMs(100);
+        arg0:AutoTrans[Take Hymn];
+    }
+}
+
+#namedscript
+{
+    name=(end-fade)
+    script=#script
+    {
+        #END;
+        @<2>arg0:USK1TieOn[Tie PIP];
+        @arg1:PresetSelect(%cam.SLIDESHOW%)[Preset Slide];
+        @arg1:DelayMs(100);
+        arg0:AutoTrans[Fade Off];
+    }
+}

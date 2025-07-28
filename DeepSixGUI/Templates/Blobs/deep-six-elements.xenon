@@ -1,0 +1,261 @@
+#dynamiccontroller(deep-six-elements-sub-panel-std)
+{
+    dynamic:matrix(4x3);
+    
+    [Globals]
+    {
+        cmd:WatchSwitcherStateBoolVal(USK1OnAir, true, usk1on);
+        cmd:WatchSwitcherStateBoolVal(DSK1OnAir, true, dsk1on);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.PULPIT%, pulpitOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.CENTER%, centerOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.LECTERN%, lecternOnAir);
+        cmd:WatchSwitcherStateIntVal(ProgramID, %cam.ORGAN%, organOnAir);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.PULPIT%, pulpitFill);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.CENTER%, centerFill);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.LECTERN%, lecternFill);
+        cmd:WatchSwitcherStateIntVal(USK1FillSource, %cam.ORGAN%, organFill);
+        cmd:WatchSwitcherStateIntVal(PresetID, %cam.LECTERN%, lecternPst);
+        cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.psalm23.0%, ispsalm);
+        cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.apostles-creed.0%, iscreed);
+        cmd:WatchStateIntVal(CurrentSlide0Index, %slide.num.lords-prayer.0%, isprayer);
+    }
+    
+    [TButton]0,0
+    {
+        draw={
+            TopText=PSLM;
+            BottomText=23;
+            Enabled=true;
+            <!ispsalm>BackColor=#8cd419;
+            <ispsalm>BackColor=#a81120;
+            <!ispsalm>TextColor=#000000;
+            <ispsalm>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.psalm23.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    
+    /*
+    [TButton]0,1
+    {
+        draw={
+            TopText=PSALM;
+            BottomText=GFX;
+            Enabled=true;
+            <centerOnAir*!usk1on>BackColor=#a81120;
+            <!centerOnAir+usk1on>BackColor=#fcd303;
+            <centerOnAir*!usk1on>TextColor=#efefef;
+            <!centerOnAir+usk1on>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(center, SERMON, 15, SERMON);
+        }
+    }
+    */
+    
+    
+    [TButton]1,0
+    {
+        draw={
+            TopText=APSTL;
+            BottomText=CREED;
+            Enabled=true;
+            <!iscreed>BackColor=#8cd419;
+            <iscreed>BackColor=#a81120;
+            <!iscreed>TextColor=#000000;
+            <iscreed>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.apostles-creed.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    
+    
+    [TButton]2,0
+    {
+        draw={
+            TopText=LORDS;
+            BottomText=PRYR;
+            Enabled=true;
+            <!isprayer>BackColor=#8cd419;
+            <isprayer>BackColor=#a81120;
+            <!isprayer>TextColor=#000000;
+            <isprayer>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.lords-prayer.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    
+    [TButton]1,2
+    {
+        draw={
+            TopText=LIT;
+            BottomText=INVOK;
+            Enabled=true;
+            <!dsk1on>BackColor=#8cd419;
+            <dsk1on>BackColor=#a81120;
+            <!dsk1on>TextColor=#000000;
+            <dsk1on>TextColor=#efefef;
+        }
+        fire={
+            cmd:PresetSelect(%cam.CENTER%);
+            cmd:DelayMs(200);
+            cmd:AutoTrans;
+            cmd:JumpToSlide(%slide.num.invocation.0%);
+            cmd:DelayMs(200);
+            cmd:DSK1FadeOn;
+            cmd:DelayMs(1500);
+        }
+    }
+
+    [TButton]0,1
+    {
+        draw={
+            TopText=TITLE;
+            BottomText=START;
+            Enabled=true;
+            <!dsk1on>BackColor=#8cd419;
+            <dsk1on>BackColor=#a81120;
+            <!dsk1on>TextColor=#000000;
+            <dsk1on>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.title-main.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+
+    [TButton]1,1
+    {
+        draw={
+            TopText=PRE;
+            BottomText=LUDE;
+            Enabled=true;
+            <!dsk1on>BackColor=#8cd419;
+            <dsk1on>BackColor=#a81120;
+            <!dsk1on>TextColor=#000000;
+            <dsk1on>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.title-prelude.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+
+
+    [TButton]2,1
+    {
+        draw={
+            TopText=TITLE;
+            BottomText=END;
+            Enabled=true;
+            <!dsk1on>BackColor=#8cd419;
+            <dsk1on>BackColor=#a81120;
+            <!dsk1on>TextColor=#000000;
+            <dsk1on>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.title-end.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+
+    [TButton]2,2
+    {
+        draw={
+            TopText=EUL-;
+            BottomText=EOGY;
+            Enabled=true;
+            <!dsk1on>BackColor=#8cd419;
+            <dsk1on>BackColor=#a81120;
+            <!dsk1on>TextColor=#000000;
+            <dsk1on>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.title-euleogy.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+    
+    [TButton]0,2
+    {
+        draw={
+            TopText=MUSIC;
+            BottomText=TITLE;
+            Enabled=true;
+            <!dsk1on>BackColor=#8cd419;
+            <dsk1on>BackColor=#a81120;
+            <!dsk1on>TextColor=#000000;
+            <dsk1on>TextColor=#efefef;
+        }
+        fire={
+            cmd:SetNextSlideTarget(%slide.num.title-music.0%);
+            cmd:DelayMs(200);
+            cmd:DriveNextSlide;
+        }
+    }
+
+    
+    [TButton]3,0
+    {
+        draw={
+            TopText=MOVE;
+            BottomText=FRONT;
+            Enabled=true;
+            <centerOnAir>BackColor=#a81120;
+            <!centerOnAir>BackColor=#fcd303;
+            <centerOnAir>TextColor=#efefef;
+            <!centerOnAir>TextColor=#000000;
+        }
+        fire={
+            cmd:FireCamPreset(center, FRONT, 20, FRONT);
+        }
+    }
+    [TButton]3,1
+    {
+        draw={
+            TopText=TAKE;
+            BottomText=FRONT;
+            Enabled=true;
+            BackColor=#03fc41;
+            TextColor=#000000;
+        }
+        fire={
+            cmd:PresetSelect(%cam.CENTER%);
+            cmd:DSK1Off;
+            cmd:USK1Off;
+            cmd:USK1TieOff;
+            cmd:DSK1TieOff;
+            cmd:DelayMs(500);
+            cmd:AutoTrans;
+        }
+    }
+    
+    
+    [TButton]3,2
+    {
+        draw={
+            TopText=MAIN;
+            BottomText=MENU;
+            Enabled=true;
+            BackColor=#ed5cd7;
+            TextColor=#efefef;
+        }
+        fire={
+            cmd:SetupButtons(master-panel-std, %pres%, true);
+        }
+    }
+    
+}

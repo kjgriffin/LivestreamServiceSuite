@@ -19,7 +19,7 @@ using Xenon.Helpers;
 
 namespace LutheRun.Elements.LSB
 {
-    class LSBElementHymn : ILSBElement, IDownloadWebResource
+    class LSBElementHymn : ILSBElement, ICaptionElement, IDownloadWebResource
     {
 
         public string PostsetCmd { get; set; } = "";
@@ -252,7 +252,7 @@ namespace LutheRun.Elements.LSB
             return XenonAutoGen_Simple(ref indentDepth, indentSpaces);
         }
 
-        private string XenonAutoGen_Simple(ref int indentDepth, int indentSpaces)
+        public string XenonAutoGen_Simple(ref int indentDepth, int indentSpaces)
         {
             // Assumes that any text verses will always be at the end.
             StringBuilder sb = new StringBuilder();
@@ -275,6 +275,7 @@ namespace LutheRun.Elements.LSB
             //sb.AppendLine("/// </XENON_AUTO_GEN>");
             return sb.ToString();
         }
+
         private string XenonAutoGen_PIP(ref int indentDepth, int indentSpaces, LSBImportOptions lSBImportOptions)
         {
             // Assumes that any text verses will always be at the end.
@@ -401,9 +402,8 @@ namespace LutheRun.Elements.LSB
             if (ImageUrls.Count() > 0)
             {
                 var match = Regex.Match(Caption, @"(?<number>\d+)?(?<name>.*)");
-                string title = "Hymn";
-                string name = match.Groups["name"]?.Value.Trim() ?? "";
-                string number = match.Groups["number"]?.Value.Trim().Length > 0 ? "LSB " + match.Groups["number"]?.Value.Trim() : "";
+
+                HymnCaptionExtractor.ExtractAsHymnInfo(this, out var title, out var name, out var number);
                 string copyright = Copyright;
 
                 sb.AppendLine($"#stitchedimage(\"{title}\", \"{name}\", \"{number}\", \"{copyright}\")".Indent(indentDepth, indentSpaces));
@@ -546,6 +546,17 @@ namespace LutheRun.Elements.LSB
         }
 
 
+    }
+
+    public static class HymnCaptionExtractor
+    {
+        public static void ExtractAsHymnInfo(ICaptionElement element, out string title, out string name, out string number)
+        {
+            var match = Regex.Match(element.Caption, @"(?<number>\d+)?(?<name>.*)");
+            title = "Hymn";
+            name = match.Groups["name"]?.Value.Trim() ?? "";
+            number = match.Groups["number"]?.Value.Trim().Length > 0 ? "LSB " + match.Groups["number"]?.Value.Trim() : "";
+        }
     }
 
 }

@@ -360,6 +360,11 @@ namespace SharedPresentationAPI.Presentation
                 // treat this as having someone use skip mode to get to just prior to the target jump point
                 _virtualCurrentSlide = target - 1;
             }
+            // jump to 0??
+            if (target == 0)
+            {
+                _virtualCurrentSlide = target;
+            }
         }
 
         public void PrevSlide()

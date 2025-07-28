@@ -672,5 +672,10 @@ namespace LutheRun.Parsers
             return Task.WhenAll(tasks);
         }
 
+        public List<ParsedLSBElement> ExtractOnlyHymns()
+        {
+            return ServiceElements.Where(x => x.LSBElement is LSBElementHymn).ToList();
+        }
+
     }
 }
