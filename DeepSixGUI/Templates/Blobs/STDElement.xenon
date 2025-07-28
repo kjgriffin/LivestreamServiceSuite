@@ -1,3 +1,5 @@
+#ORDER 1
+
 #scope(STDElements)
 {
 
@@ -38,6 +40,27 @@
             #var("html.Layout", "DeepSix::CopyTitleFuneral")
         
             /// </MANUAL_UPDATE name='TitlePage Details'>
+            #html
+            {
+                text[deceased-name]{$$NAME$$}
+                text[birth-death]{$$DEATH$$}
+                text[service-type]{$$TITLE$$}
+                text[service-date]{$$DATE$$}
+                /// </MANUAL_UPDATE name='Service Time'>
+                text[service-time]{$$TIME$$}
+                text[ack-lsb]{Acknowledgments<br>Unless otherwise indicated, Scripture quotations are from the ESV® Bible (The Holy Bible, English Standard Version®), copyright © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.<br>Created by Lutheran Service Builder © 2025 Concordia Publishing House.<br>}
+                text[ack-bible]{}
+                text[ack-ccli]{CCLI License # 524846; CSPL127841}
+                img[hc-logo](HCLogo-white)
+                img[church-img](HCChurch-cartoon)
+            }
+        }
+
+        #scope(copytitle)
+        {
+            #var("html.Layout", "DeepSix::CopyTitleFuneral")
+        
+            /// </MANUAL_UPDATE name='TitlePage Details'>
             [@label::title-main]
             #html
             {
@@ -65,7 +88,7 @@
         [@label::title-prelude]
         #html
         {
-            /// </MANUAL_UPDATE name='prelude'
+            /// </MANUAL_UPDATE name='prelude'>
             text[name]{Prelude}
             text[band]{}
         }
@@ -78,7 +101,7 @@
         [@label::title-euleogy]
         #html
         {
-            /// </MANUAL_UPDATE name='euleogy'
+            /// </MANUAL_UPDATE name='euleogy'>
             text[name]{Speaker}
             text[band]{}
         }
@@ -91,7 +114,7 @@
         [@label::title-music]
         #html
         {
-            /// </MANUAL_UPDATE name='music/anthem'
+            /// </MANUAL_UPDATE name='music/anthem'>
             text[name]{Anthem/Music}
             text[band]{}
         }
@@ -149,7 +172,7 @@
             [@label::sermon-title]
             #html
             {
-                /// </MANUAL_UPDATE name='preacher'
+                /// </MANUAL_UPDATE name='preacher'>
                 text[name]{PREACHER}
                 text[band]{}
             }
@@ -201,11 +224,11 @@
             [@label::title-end]
             #html
             {
-                /// <!/MANUAL_UPDATE name='EndPage Service Title'>
-                text[title]{Seventh Sunday After Pentecost}
-                /// <!/MANUAL_UPDATE name='EndPage Postlude Title'>
+                /// </MANUAL_UPDATE name='EndPage Service Title'>
+                text[title]{$$TITLE$$<br>$$NAME$$}
+                /// </MANUAL_UPDATE name='EndPage Postlude Title'>
                 text[postlude]{}
-                /// <!/MANUAL_UPDATE name='EndPage Postlude Musician/Composer'>
+                /// </MANUAL_UPDATE name='EndPage Postlude Musician/Composer'>
                 text[credit]{}
             }
         }
@@ -215,8 +238,8 @@
             #var("html.Layout", "Xenon.Titles::EndPage")
             #html
             {
-                /// <!/MANUAL_UPDATE name='EndPage Service Title'>
-                text[title]{$$TITLE$$}
+                /// </MANUAL_UPDATE name='EndPage Service Title'>
+                text[title]{$$TITLE$$<br>$$NAME$$}
             }
         }
     
