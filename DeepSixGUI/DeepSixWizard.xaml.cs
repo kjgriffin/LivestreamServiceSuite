@@ -88,8 +88,17 @@ namespace DeepSixGUI
 
             _grave.Translation = rbNIV.IsChecked.Value ? "NIV" : "ESV";
 
-            DialogResult = true;
-            this.Close();
+            // validate readings??
+            if (GraveDigger.CatchBadReadings(_grave, out var fails))
+            {
+                MessageBox.Show(string.Join(Environment.NewLine, fails), "Invalid Reading References!");
+                return;
+            }
+            else
+            {
+                DialogResult = true;
+                this.Close();
+            }
         }
 
         private void ChooseServiceButton_Click(object sender, RoutedEventArgs e)

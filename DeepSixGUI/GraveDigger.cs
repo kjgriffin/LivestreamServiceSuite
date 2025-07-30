@@ -1,5 +1,6 @@
 ﻿using Concord;
 
+using DeepSixGUI;
 using DeepSixGUI.Templates;
 
 using LutheRun;
@@ -73,6 +74,40 @@ namespace DeepSixGUI
             return files;
         }
 
+        public static bool CatchBadReadings(GravePlot plot, out List<string> failedReferences)
+        {
+            failedReferences = new List<string>();
+            var translation = GetTranslation(plot);
+            bool failed = false;
+            for (int i = 0; i < plot.Readings.Length; i++)
+            {
+                if (plot.Readings[i].Use)
+                {
+                    if (!ValidateReading(plot.Readings[i], translation))
+                    {
+                        failedReferences.Add(plot.Readings[i].Reference);
+                        failed = true;
+                    }
+                }
+            }
+            return failed;
+        }
+
+        public static bool ValidateReading(ReadingDef reading, BibleTranslations translation)
+        {
+            try
+            {
+                LSBReferenceUnpacker refdecoder = new LSBReferenceUnpacker();
+                var sections = refdecoder.ParseSections(reading.Reference);
+                //IBibleAPI bible = BibleBuilder.BuildAPI(translation);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static string BuildReadings(GravePlot plot)
         {
             StringBuilder sb = new StringBuilder();
@@ -102,7 +137,7 @@ namespace DeepSixGUI
             {
                 if (plot.Readings[i].Use)
                 {
-                    var translation = plot.Translation == "niv" ? BibleTranslations.NIV : BibleTranslations.ESV;
+                    var translation = GetTranslation(plot);
                     var rblock = TemplateHelper.PrepareBlob("ReadingTemplate")
                                                .ReplaceBlob("$$READING_NUM$$", plot.Readings[i].ID.ToString())
                                                .ReplaceBlob("$$TRANSLATION$$", plot.Translation)
@@ -121,6 +156,11 @@ namespace DeepSixGUI
             sb.AppendLine("}");
 
             return sb.ToString();
+        }
+
+        public static BibleTranslations GetTranslation(GravePlot plot)
+        {
+            return plot.Translation == "niv" ? BibleTranslations.NIV : BibleTranslations.ESV;
         }
 
         public static string ExtractHymnsFromImport(GravePlot plot, List<ParsedLSBElement> elements)
