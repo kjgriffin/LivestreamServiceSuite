@@ -121,6 +121,13 @@ namespace LutheRun.Elements.LSB
                 return res;
             }
 
+            // what about a full text hymn that's been custom imported?
+            if (content?.Children.All(x => x.ClassList.Contains("body") || x.ClassList.Contains("copyright")) == true)
+            {
+                BuildTextVersesFromBodyElement(res, content, true);
+                return res;
+            }
+
             foreach (var child in content?.Children)
             {
                 if (child.ClassList.Contains("numbered-stanza"))
@@ -187,51 +194,69 @@ namespace LutheRun.Elements.LSB
                 }
                 else if (child.ClassList.Contains("body"))
                 {
-                    // this often is a bit 'over eager' to find anything that looks like text...
-                    // so lets make it check that there's actually something that looks vaugley like words beforew we start going after it
-                    var unnumberedlines = child.ParagraphText2();
-                    if (unnumberedlines.All(x => string.IsNullOrWhiteSpace(x)) || unnumberedlines.FirstOrDefault()?.StartsWith('<') == true) // yeah... probably not anything we'd need to worry about
+                    bool flowControl = BuildTextVersesFromBodyElement(res, child);
+                    if (!flowControl)
                     {
                         continue;
                     }
-
-
-                    res.HasText = true;
-
-
-                    List<HymnTextVerse> verses = new List<HymnTextVerse>();
-
-                    HymnTextVerse verse = new HymnTextVerse();
-                    int vnum = 1;
-                    verse.Number = vnum.ToString();
-                    verse.Lines = new List<string>();
-
-                    foreach (var line in unnumberedlines)
-                    {
-                        if (string.IsNullOrWhiteSpace(line))
-                        {
-                            verses.Add(verse);
-                            vnum += 1;
-                            verse = new HymnTextVerse();
-                            verse.Lines = new List<string>();
-                            verse.Number = vnum.ToString();
-                            continue;
-                        }
-                        else
-                        {
-                            verse.Lines.Add(line);
-                        }
-                    }
-                    if (verse.Lines.Any())
-                    {
-                        verses.Add(verse);
-                    }
-                    res.TextVerses.AddRange(verses);
 
                 }
             }
 
             return res;
+        }
+
+        private static bool BuildTextVersesFromBodyElement(LSBElementHymn res, IElement child, bool knownToBeText = false)
+        {
+            List<string> unnumberedlines = new List<string>();
+            if (!knownToBeText)
+            {
+                // this often is a bit 'over eager' to find anything that looks like text...
+                // so lets make it check that there's actually something that looks vaugley like words beforew we start going after it
+                unnumberedlines = child.ParagraphText2();
+                if (unnumberedlines.All(x => string.IsNullOrWhiteSpace(x)) || unnumberedlines.FirstOrDefault()?.StartsWith('<') == true) // yeah... probably not anything we'd need to worry about
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                unnumberedlines = child.Children.Where(x => x.LocalName == "p").Select(x => x.TextContent).ToList();
+            }
+
+
+                res.HasText = true;
+
+
+            List<HymnTextVerse> verses = new List<HymnTextVerse>();
+
+            HymnTextVerse verse = new HymnTextVerse();
+            int vnum = 1;
+            verse.Number = vnum.ToString();
+            verse.Lines = new List<string>();
+
+            foreach (var line in unnumberedlines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    verses.Add(verse);
+                    vnum += 1;
+                    verse = new HymnTextVerse();
+                    verse.Lines = new List<string>();
+                    verse.Number = vnum.ToString();
+                    continue;
+                }
+                else
+                {
+                    verse.Lines.Add(line);
+                }
+            }
+            if (verse.Lines.Any())
+            {
+                verses.Add(verse);
+            }
+            res.TextVerses.AddRange(verses);
+            return true;
         }
 
         public string DebugString()

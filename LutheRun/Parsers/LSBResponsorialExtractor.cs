@@ -150,7 +150,8 @@ namespace LutheRun.Parsers
                 int snum = 0;
                 // build a Liturgy-Response
                 // go through all childern
-                if (ptags.ClassList.Contains("lsb-responsorial-continued_poetry"))
+                var classListItems = ptags.ClassList.Where(t => t.StartsWith("lsb")).Select(t => t.Split(new string[] { "_", "-" }, StringSplitOptions.RemoveEmptyEntries)).ToList();
+                if (ptags.ClassList.Contains("lsb-responsorial-continued_poetry") || classListItems.Any(x => x.Contains("poetry") && x.Contains("continued")))
                 {
                     // keep adding to the same 'logical line'
                     snum = 1;
@@ -159,7 +160,7 @@ namespace LutheRun.Parsers
                     // 2 spaces... ????
                     line.TextSegments.Add(new TextBlock("  ", false, false, whitespacesensitive: true));
                 }
-                else if (ptags.ClassList.Contains("lsb-responsorial_poetry"))
+                else if (ptags.ClassList.Contains("lsb-responsorial_poetry") || classListItems.Any(x => x.Contains("poetry")))
                 {
                 }
                 else

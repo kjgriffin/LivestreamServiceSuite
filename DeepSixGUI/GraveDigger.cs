@@ -9,7 +9,6 @@ using LutheRun.Elements.LSB;
 using LutheRun.Parsers;
 using LutheRun.Parsers.DataModel;
 
-using OpenQA.Selenium.DevTools.V130.Media;
 
 using System;
 using System.Collections.Generic;
@@ -160,7 +159,7 @@ namespace DeepSixGUI
 
         public static BibleTranslations GetTranslation(GravePlot plot)
         {
-            return plot.Translation == "niv" ? BibleTranslations.NIV : BibleTranslations.ESV;
+            return plot.Translation.ToLower() == "niv" ? BibleTranslations.NIV : BibleTranslations.ESV;
         }
 
         public static string ExtractHymnsFromImport(GravePlot plot, List<ParsedLSBElement> elements)

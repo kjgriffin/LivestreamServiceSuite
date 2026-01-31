@@ -548,7 +548,7 @@ namespace LutheRun.Elements.LSB
             var content = element.Children.FirstOrDefault(e => e.LocalName == "lsb-content");
             if (content != null)
             {
-                if (content.Children.Where(c => c.LocalName == "p").All(c => c.ClassList.Any(x => x.StartsWith("lsb-responsorial"))))
+                if (content.Children.Where(c => c.LocalName == "p" && !string.IsNullOrWhiteSpace(c.TextContent)).All(c => c.ClassList.Any(x => x.StartsWith("lsb-responsorial"))))
                 {
                     if (options.ForcePsalmsAsTitledLiturgy)
                     {

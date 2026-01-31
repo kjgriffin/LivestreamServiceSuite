@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
-using OpenQA.Selenium.DevTools.V130.Runtime;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 

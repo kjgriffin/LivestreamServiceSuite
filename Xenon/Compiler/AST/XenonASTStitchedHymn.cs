@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Xenon.Compiler.LanguageDefinition;
 using Xenon.Compiler.SubParsers;
@@ -63,6 +64,16 @@ namespace Xenon.Compiler.AST
                 {
                     return CopyrightInfo;
                 }
+            }
+        }
+
+        private string NumberNameID
+        {
+            get
+            {
+                var s = (string.IsNullOrWhiteSpace(Number) ? "" : (Number + "-")) + HymnName;
+                s = s.Replace(" ", "_");
+                return s;
             }
         }
 
@@ -277,12 +288,27 @@ namespace Xenon.Compiler.AST
             // check for manual stitching
             // either direct or implicit
 
-            if (!ManualStitch && _Parent?.TryGetScopedVariable($"sewing.{this.Number}.parsedef", out var parsedef).found == true && _Parent?.TryGetScopedVariable($"sewing.{this.Number}.stitching", out var stitchdef).found == true)
+            if (_Parent?.TryGetScopedVariable($"sewing.{this.NumberNameID}.parsedef", out var parsedef).found == true && _Parent?.TryGetScopedVariable($"sewing.{this.NumberNameID}.stitching", out var stitchdef).found == true)
             {
-                // pull in the stitching an make it 'manual'
-                ManualStitch = true;
-                ParseDef = parsedef;
-                Stitching = stitchdef;
+                // allow override and log
+                if (ManualStitch)
+                {
+                    Logger.Log(new XenonCompilerMessage
+                    {
+                        ErrorName = "Variable Masked",
+                        ErrorMessage = "Manual stitching is overriden locally",
+                        Generator = nameof(XenonASTStitchedHymn) + ":" + nameof(Generate),
+                        Inner = $"Parent scope defines stitching for this hymn {NumberNameID}, but is being locally overriden",
+                        Level = XenonCompilerMessageType.Warning,
+                    });
+                }
+                else
+                {
+                    // pull in the stitching an make it 'manual'
+                    ManualStitch = true;
+                    ParseDef = parsedef;
+                    Stitching = stitchdef;
+                }
             }
 
             if (ManualStitch)

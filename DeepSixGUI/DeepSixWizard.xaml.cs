@@ -2,7 +2,9 @@
 
 using Microsoft.Win32;
 
+using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -116,6 +118,33 @@ namespace DeepSixGUI
         private void Click_Create(object sender, RoutedEventArgs e)
         {
             Create();
+        }
+
+        private void Click_Load(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Load Saved Grave Plot";
+            ofd.Filter = "LSB Service (*.json)|*.json";
+            var savePath = System.IO.Path.Combine(System.IO.Path.Join(System.IO.Path.GetTempPath(), "slidecreaterautosaves"));
+            ofd.DefaultDirectory = savePath;
+            ofd.InitialDirectory = savePath;
+            if (ofd.ShowDialog() == true)
+            {
+                try
+                {
+                    using (var stream = File.OpenRead(ofd.FileName))
+                    using (var reader = new StreamReader(stream))
+                    { 
+                        var obj = reader.ReadToEnd();
+                        var sobj = JsonSerializer.Deserialize<GravePlot>(obj);
+                        ApplyCFGObj(sobj);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+
         }
     }
 }

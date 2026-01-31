@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Configurations>Debug;Release;FullTest</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="log4net" Version="3.0.0" />
+    <PackageReference Include="log4net" Version="3.2.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <RootNamespace>CCUI_UI</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>

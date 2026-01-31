@@ -91,7 +91,7 @@ namespace Xenon.Renderer
 
                         hoff += src.Height;
                     }
-                    catch(NullReferenceException ex)
+                    catch (NullReferenceException ex)
                     {
                         messages.Add(new Compiler.XenonCompilerMessage() { ErrorMessage = "Error loading image (not found)", ErrorName = "Error Loading Asset", Generator = "StitchedImageRenderer", Inner = ex.Message, Level = Compiler.XenonCompilerMessageType.Error, Token = image.AssetRef });
                     }
@@ -135,10 +135,8 @@ namespace Xenon.Renderer
             CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.NumberBox, number);
 
             // draw copyright
-            if (slide.Data.ContainsKey(DATAKEY_COPYRIGHT))
+            if (slide.Data.TryGetValue(DATAKEY_COPYRIGHT_TUNE, out var copyrighttune) && slide.Data.TryGetValue(DATAKEY_COPYRIGHT_TEXT, out var copyrighttext))
             {
-                string copyrighttune = (string)slide.Data.GetOrDefault(DATAKEY_COPYRIGHT_TUNE, "");
-                string copyrighttext = (string)slide.Data.GetOrDefault(DATAKEY_COPYRIGHT_TEXT, "");
                 // change behaviour- let the textbox renderer just render out 2 lines
                 string copyright = string.Join(Environment.NewLine, copyrighttune, copyrighttext);
                 CommonTextBoxRenderer.Render(ibmp, ikbmp, layout.CopyrightBox, copyright);

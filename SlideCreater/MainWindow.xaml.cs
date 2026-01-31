@@ -1295,7 +1295,7 @@ namespace SlideCreater
             await NewProject();
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Import from save of Lutheran Service Bulletin";
-            ofd.Filter = "LSB Service (*.html)|*.html";
+            ofd.Filter = "LSB Service (*.html,*.htm)|*.html;*.htm";
             if (ofd.ShowDialog() == true)
             {
                 ActionState = ActionState.Building;
@@ -2308,6 +2308,21 @@ namespace SlideCreater
 
             if (dialog.ShowDialog() == true)
             {
+                // save out a tmp of the grave
+                try
+                {
+                    var savePath = System.IO.Path.Combine(System.IO.Path.Join(System.IO.Path.GetTempPath(), "slidecreaterautosaves", $"{DateTime.Now:yyy-MM-dd_HH-mm-ss}.autosave.grave.json"));
+                    using (var stream = File.OpenWrite(savePath))
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        await writer.WriteAsync(JsonSerializer.Serialize(grave));
+                    }
+                }
+                catch (Exception)
+                {
+                    // swallow it silently
+                }
+
                 // add deep-six library
                 var lib = GraveDigger.GetLayoutLib();
                 Xenon.SaveLoad.TrustySave.ImportLibraryFromText(_proj, lib);

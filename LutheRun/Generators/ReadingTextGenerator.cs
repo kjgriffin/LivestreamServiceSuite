@@ -23,9 +23,19 @@ namespace LutheRun.Generators
             {
                 sb.AppendLine("<block>".Indent(indentDepth, indentSpaces));
                 indentDepth++;
-                foreach (var vlist in refdecoder.EnumerateVerses(section, bible))
+
+
+                try
                 {
-                    BuildVerseString(bible.GetVerse(vlist.Book, vlist.Chapter, vlist.Verse), sb, indentDepth, indentSpaces);
+                    foreach (var vlist in refdecoder.EnumerateVerses(section, bible))
+                    {
+                        BuildVerseString(bible.GetVerse(vlist.Book, vlist.Chapter, vlist.Verse), sb, indentDepth, indentSpaces);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    sb.Append("//");
+                    sb.AppendLine(ex.Message);
                 }
                 indentDepth--;
                 sb.AppendLine("</block>".Indent(indentDepth, indentSpaces));
