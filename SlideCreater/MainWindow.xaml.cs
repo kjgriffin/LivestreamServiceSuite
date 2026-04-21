@@ -2308,6 +2308,11 @@ namespace SlideCreater
 
             if (dialog.ShowDialog() == true)
             {
+                // prompt for save if durty??
+                await NewProject();
+
+                grave = dialog.GetGraavePlot();
+                
                 // save out a tmp of the grave
                 try
                 {

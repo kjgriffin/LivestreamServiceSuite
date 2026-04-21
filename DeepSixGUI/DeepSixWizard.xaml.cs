@@ -1,7 +1,15 @@
-﻿using DeepSixGUI.Templates;
+﻿using Concord;
+
+using DeepSixGUI.Templates;
+
+using LutheRun.Parsers;
 
 using Microsoft.Win32;
 
+using OpenQA.Selenium;
+using OpenQA.Selenium.DevTools.V138.Network;
+
+using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -28,6 +36,16 @@ namespace DeepSixGUI
         }
 
         GravePlot _grave;
+
+        public GravePlot GetGraavePlot()
+        {
+            if (DialogResult == true)
+            {
+                return _grave;
+            }
+            throw new InvalidOperationException("Plot not dug yet!");
+        }
+
         public void ApplyCFGObj(GravePlot plot)
         {
             _grave = plot;
@@ -134,7 +152,7 @@ namespace DeepSixGUI
                 {
                     using (var stream = File.OpenRead(ofd.FileName))
                     using (var reader = new StreamReader(stream))
-                    { 
+                    {
                         var obj = reader.ReadToEnd();
                         var sobj = JsonSerializer.Deserialize<GravePlot>(obj);
                         ApplyCFGObj(sobj);
@@ -146,5 +164,78 @@ namespace DeepSixGUI
             }
 
         }
+
+        private async void tbReading1_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textbox = sender as TextBox;
+            _ = VerifyReadingOnEdit(1, textbox, textbox.Text);
+        }
+        private void tbReading2_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textbox = sender as TextBox;
+            _ = VerifyReadingOnEdit(2, textbox, textbox.Text);
+        }
+
+        private void tbReading3_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textbox = sender as TextBox;
+            _ = VerifyReadingOnEdit(3, textbox, textbox.Text);
+        }
+
+        private void tbReading4_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textbox = sender as TextBox;
+            _ = VerifyReadingOnEdit(4, textbox, textbox.Text);
+        }
+
+        ConcurrentDictionary<int, long> lastRefEditBatch = new ConcurrentDictionary<int, long>();
+
+
+        private async Task VerifyReadingOnEdit(int id, TextBox sender, string reference)
+        {
+            var now = DateTime.Now;
+            lastRefEditBatch[id] = now.Ticks;
+
+            await VerifyReadingOnEdit_Internal(id, sender, reference);
+        }
+        private async Task VerifyReadingOnEdit_Internal(int id, TextBox sender, string reference)
+        {
+            // wait for 1 second
+            await Task.Delay(1000).ContinueWith(t =>
+            {
+                bool success = false;
+                var now2 = DateTime.Now;
+                if (TimeSpan.FromTicks(now2.Ticks - lastRefEditBatch[id]).TotalSeconds >= 1)
+                {
+                    // do the check
+                    BibleTranslations translation = BibleTranslations.NIV;
+                    Dispatcher.Invoke(() =>
+                    {
+                        translation = rbESV.IsChecked == true ? BibleTranslations.ESV : BibleTranslations.NIV;
+                    });
+                    if (!ConcordReadingVerifyier.ValidateReadingIsGeneratable(translation, reference))
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            // need the UI thread again to actually do something
+                            sender.Foreground = new SolidColorBrush(Colors.Red);
+                        });
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            sender.Foreground = new SolidColorBrush(Colors.White);
+                            success = true;
+                        });
+                    }
+                }
+                else
+                {
+                    _ = VerifyReadingOnEdit_Internal(id, sender, reference);
+                }
+            });
+        }
+
     }
 }

@@ -258,25 +258,25 @@
                     <CheckBox Name="cbReading1" VerticalAlignment="Center"></CheckBox>
                     <TextBlock Style="{StaticResource DarkTextblock}">READING 1</TextBlock>
                 </StackPanel>
-                <TextBox Name="tbReading1" Grid.Row="13" Grid.Column="1" Style="{StaticResource DarkTextbox}">ref.</TextBox>
+                <TextBox Name="tbReading1" Grid.Row="13" Grid.Column="1" Style="{StaticResource DarkTextbox}" TextChanged="tbReading1_TextChanged">ref.</TextBox>
 
                 <StackPanel Grid.Row="14" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                     <CheckBox Name="cbReading2" VerticalAlignment="Center"></CheckBox>
                     <TextBlock Style="{StaticResource DarkTextblock}">READING 2</TextBlock>
                 </StackPanel>
-                <TextBox Name="tbReading2" Grid.Row="14" Grid.Column="1" Style="{StaticResource DarkTextbox}">ref.</TextBox>
+                <TextBox Name="tbReading2" Grid.Row="14" Grid.Column="1" Style="{StaticResource DarkTextbox}" TextChanged="tbReading2_TextChanged">ref.</TextBox>
 
                 <StackPanel Grid.Row="15" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                     <CheckBox Name="cbReading3" VerticalAlignment="Center"></CheckBox>
                     <TextBlock Style="{StaticResource DarkTextblock}">READING 3</TextBlock>
                 </StackPanel>
-                <TextBox Name="tbReading3" Grid.Row="15" Grid.Column="1" Style="{StaticResource DarkTextbox}">ref.</TextBox>
+                <TextBox Name="tbReading3" Grid.Row="15" Grid.Column="1" Style="{StaticResource DarkTextbox}" TextChanged="tbReading3_TextChanged">ref.</TextBox>
 
                 <StackPanel Grid.Row="16" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                     <CheckBox Name="cbReading4" VerticalAlignment="Center"></CheckBox>
                     <TextBlock Style="{StaticResource DarkTextblock}">READING 4</TextBlock>
                 </StackPanel>
-                <TextBox Name="tbReading4" Grid.Row="16" Grid.Column="1" Style="{StaticResource DarkTextbox}">ref.</TextBox>
+                <TextBox Name="tbReading4" Grid.Row="16" Grid.Column="1" Style="{StaticResource DarkTextbox}" TextChanged="tbReading4_TextChanged">ref.</TextBox>
 
                 <StackPanel Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal">
                     <Button Width="150" Height="30" Margin="10" Foreground="#efefef" Style="{StaticResource DarkBtn}" Click="Click_Load">LOAD</Button>

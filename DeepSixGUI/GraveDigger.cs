@@ -207,10 +207,26 @@ namespace DeepSixGUI
                                                             .ReplaceBlob("$$TITLE$$", name)
                                                             .ReplaceBlob("$$NUMBER$$", number);
                 // if number is referenced, then use it
-                var hdef = plot.Hymns.FirstOrDefault(h => h.Number == number);
-                if (hdef != null)
+                var hdefStrictNum = plot.Hymns.FirstOrDefault(h => h.Number == number);
+                // be more relaxed about references
+                var hdefLooseNum = plot.Hymns.FirstOrDefault(h => "LSB " + h.Number == number); // prefix with LSB if user is lazy, since all imported hymns are prefixed with LSB
+                // or just match with name. Case insensitive. Should we also remove whitespace and apostrophies?/punctuation?
+                var hdefName = plot.Hymns.FirstOrDefault(h => h.Number.ToLower() == name.ToLower());
+
+                // prefer absolute strict num match
+                if (hdefStrictNum != null)
                 {
-                    intro = intro.ReplaceBlob("$$LABEL$$", $"[@label::hymn{hdef.ID}]");
+                    intro = intro.ReplaceBlob("$$LABEL$$", $"[@label::hymn{hdefStrictNum.ID}]");
+                }
+                // if we don't find a num match, fallback to looser
+                else if (hdefLooseNum != null)
+                {
+                    intro = intro.ReplaceBlob("$$LABEL$$", $"[@label::hymn{hdefLooseNum.ID}]");
+                }
+                // or try searching by name
+                else if (hdefName != null)
+                {
+                    intro = intro.ReplaceBlob("$$LABEL$$", $"[@label::hymn{hdefName.ID}]");
                 }
                 else
                 {
