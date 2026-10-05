@@ -482,5 +482,171 @@
             "Xenon.Titles@text-alt": "#0b248f",
             "Xenon.Creeds@color-main": "#0b248f"
         }
+    },
+        {
+        "start": "2026-06-07",
+        "note": "pentecost",
+        "macros": {
+            "color-main": "\"#ff298f45\"",
+            "text-alt": "\"#ff298f45\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#298f45",
+            "Xenon.Titles@color-main": "#298f45",
+            "Xenon.Titles@text-alt": "#298f45",
+            "Xenon.Creeds@color-main": "#298f45"
+        }
+    },
+
+        {
+        "start": "2026-10-25",
+        "note": "reformation",
+        "macros": {
+            "color-main": "\"#ff92162b\"",
+            "text-alt": "\"#ff92162b\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#92162b",
+            "Xenon.Titles@color-main": "#92162b",
+            "Xenon.Titles@text-alt": "#92162b",
+            "Xenon.Creeds@color-main": "#92162b"
+        }
+    },
+    {
+        "start": "2026-11-01",
+        "note": "all saints day",
+        "macros": {
+            "color-main": "\"#ffffebaf\"",
+            "text-alt": "\"#ffffebaf\"",
+            "text-main": "\"#ff474747\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#ffebaf",
+            "Xenon.Titles@color-main": "#ffebaf",
+            "Xenon.Titles@text-alt": "#ffebaf",
+            "Xenon.Titles@text-main": "#474747",
+            "Xenon.Creeds@color-main": "#ffebaf",
+            "Xenon.Creeds@text-main": "#474747"
+        }
+    },
+    {
+        "start": "2026-11-03",
+        "note": "pentecost",
+        "macros": {
+            "color-main": "\"#ff298f45\"",
+            "text-alt": "\"#ff298f45\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#298f45",
+            "Xenon.Titles@color-main": "#298f45",
+            "Xenon.Titles@text-alt": "#298f45",
+            "Xenon.Creeds@color-main": "#298f45"
+        }
+    },
+    {
+        "start": "2026-11-29",
+        "note": "advent",
+        "macros": {
+            "color-main": "\"#ff0b248f\"",
+            "text-alt": "\"#ff0b248f\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#0b248f",
+            "Xenon.Titles@color-main": "#0b248f",
+            "Xenon.Titles@text-alt": "#0b248f",
+            "Xenon.Creeds@color-main": "#0b248f"
+        }
+    },
+    {
+        "start": "2026-12-24",
+        "note": "christmas",
+        "macros": {
+            "color-main": "\"#ffffebaf\"",
+            "text-alt": "\"#ffffebaf\"",
+            "text-main": "\"#ff474747\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#ffebaf",
+            "Xenon.Titles@color-main": "#ffebaf",
+            "Xenon.Titles@text-alt": "#ffebaf",
+            "Xenon.Titles@text-main": "#474747",
+            "Xenon.Creeds@color-main": "#ffebaf",
+            "Xenon.Creeds@text-main": "#474747"
+        }
+    },
+    {
+        "start": "2027-01-17",
+        "note": "epiphany",
+        "macros": {
+            "color-main": "\"#ff298f45\"",
+            "text-alt": "\"#ff298f45\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#298f45",
+            "Xenon.Titles@color-main": "#298f45",
+            "Xenon.Titles@text-alt": "#298f45",
+            "Xenon.Creeds@color-main": "#298f45"
+        }
+    },
+    {
+        "start": "2027-02-14",
+        "note": "lent",
+        "macros": {
+            "color-main": "\"#ff452351\"",
+            "text-alt": "\"#ff452351\""
+        },
+         "extras": {
+            "Xenon.Anthems@color-main": "#452351",
+            "Xenon.Titles@color-main": "#452351",
+            "Xenon.Titles@text-alt": "#452351",
+            "Xenon.Creeds@color-main": "#452351"
+        }
+    },
+    {
+        "start": "2027-03-26",
+        "note": "good-friday",
+        "macros": {
+            "color-main": "\"#ff141417\"",
+            "text-alt": "\"#ff373737\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#141417",
+            "Xenon.Titles@color-main": "#141417",
+            "Xenon.Titles@text-alt": "#373737",
+            "Xenon.Creeds@color-main": "#141417"
+        }
+    },
+    {
+        "start": "2027-03-28",
+        "note": "easter",
+        "macros": {
+            "color-main": "\"#ffffebaf\"",
+            "color-sub": "\"#fff9ceee\"",
+            "text-main": "\"#ff474747\"",
+            "text-alt": "\"#fff9ceee\"",
+            "text-sub": "\"#ff474747\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#ffebaf",
+            "Xenon.Titles@color-main": "#ffebaf",
+            "Xenon.Titles@text-alt": "#ffebaf",
+            "Xenon.Titles@text-main": "#474747",
+            "Xenon.Creeds@color-main": "#ffebaf",
+            "Xenon.Creeds@text-main": "#474747"
+        }
+    },
+    {
+        "start": "2027-05-30",
+        "note": "pentecost",
+        "macros": {
+            "color-main": "\"#ff298f45\"",
+            "text-alt": "\"#ff298f45\""
+        },
+        "extras": {
+            "Xenon.Anthems@color-main": "#298f45",
+            "Xenon.Titles@color-main": "#298f45",
+            "Xenon.Titles@text-alt": "#298f45",
+            "Xenon.Creeds@color-main": "#298f45"
+        }
     }
 ]
